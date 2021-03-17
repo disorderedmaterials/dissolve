@@ -1,23 +1,5 @@
-/*
-    *** ConfigurationTab Functions
-    *** src/gui/configurationtab_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/units.h"
@@ -25,12 +7,9 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "gui/configurationtab.h"
-#include "gui/delegates/combolist.hui"
-#include "gui/delegates/exponentialspin.hui"
 #include "gui/getconfigurationnamedialog.h"
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
@@ -46,7 +25,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     configuration_ = cfg;
 
     // Populate coordinates file format combo
-    for (int n = 0; n < cfg->inputCoordinates().nFormats(); ++n)
+    for (auto n = 0; n < cfg->inputCoordinates().nFormats(); ++n)
         ui_.CoordinatesFileFormatCombo->addItem(QString::fromStdString(std::string(cfg->inputCoordinates().formatKeyword(n))));
 
     // Populate density units combo
@@ -149,7 +128,7 @@ void ConfigurationTab::updateControls()
     ui_.TemperatureSpin->setValue(configuration_->temperature());
 
     // Current Box
-    const Box *box = configuration_->box();
+    const auto *box = configuration_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
     ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
     ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
@@ -245,14 +224,6 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
         return;
 
     configuration_->setRequestedSizeFactor(value);
+
+    dissolveWindow_->setModified();
 }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool ConfigurationTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
-
-// Write widget state through specified LineParser
-bool ConfigurationTab::writeState(LineParser &parser) const { return true; }

@@ -128,7 +128,7 @@ Configuration  'Bulk'
   # Modules
   Generator
     Parameters
-      Real  rho  8.760000e-01
+      Parameter  rho  8.760000e-01
     EndParameters
     Box
       Lengths  1.000000e+00  1.000000e+00  1.000000e+00
@@ -204,28 +204,31 @@ Layer  'RDF / Neutron S(Q)'
     IntraBroadening    Gaussian  1.800000e-01
   EndModule
 
+  Module  SQ  'SQ01'
+    Frequency  1
+    SourceRDFs  'RDF01'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+  EndModule
+
   Module  NeutronSQ  'C6H6'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
+    SourceSQs  'SQ01'
   EndModule
 
   Module  NeutronSQ  'C6D6'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
-    Isotopologue  'Bulk'  'Benzene'  'Deuterated'  1.000000
+    SourceSQs  'SQ01'
+    Isotopologue  'Benzene'  'Deuterated'  1.000000
   EndModule
 
   Module  NeutronSQ  '5050'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
-    Isotopologue  'Bulk'  'Benzene'  'Natural'  1.000000
-    Isotopologue  'Bulk'  'Benzene'  'Deuterated'  1.000000
+    SourceSQs  'SQ01'
+    Isotopologue  'Benzene'  'Natural'  1.000000
+    Isotopologue  'Benzene'  'Deuterated'  1.000000
   EndModule
 EndLayer
 

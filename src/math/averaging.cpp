@@ -1,35 +1,53 @@
-/*
-    *** Averaging
-    *** src/math/averaging.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/averaging.h"
 
-// Return enum option info for AveragingScheme
-EnumOptions<Averaging::AveragingScheme> &Averaging::averagingSchemes()
+namespace Averaging
 {
-    static EnumOptionsList AveragingSchemeOptions = EnumOptionsList()
-                                                    << EnumOption(Averaging::LinearAveraging, "Linear")
-                                                    << EnumOption(Averaging::ExponentialAveraging, "Exponential");
 
-    static EnumOptions<Averaging::AveragingScheme> options("AveragingScheme", AveragingSchemeOptions,
-                                                           Averaging::LinearAveraging);
-
-    return options;
+// Return enum option info for AveragingScheme
+EnumOptions<Averaging::AveragingScheme> averagingSchemes()
+{
+    return EnumOptions<Averaging::AveragingScheme>(
+        "AveragingScheme", {{Averaging::LinearAveraging, "Linear"}, {Averaging::ExponentialAveraging, "Exponential"}});
 }
+
+// Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary
+int pruneOldData(GenericList &moduleData, std::string_view name, std::string_view prefix, int nSetsInAverage)
+{
+    // Establish how many stored datasets we have
+    int nStored = 0;
+    for (nStored = 0; nStored < nSetsInAverage; ++nStored)
+        if (!moduleData.contains(fmt::format("{}_{}", name, nStored + 1), prefix))
+            break;
+    Messenger::print("Average requested over {} datasets - {} available in module data ({} max).\n", nSetsInAverage, nStored,
+                     nSetsInAverage - 1);
+
+    // Remove the oldest dataset if it exists, and shuffle the others down
+    if (nStored == nSetsInAverage)
+    {
+        moduleData.remove(fmt::format("{}_{}", name, nStored), prefix);
+        --nStored;
+    }
+    for (auto n = nStored; n > 0; --n)
+        moduleData.rename(fmt::format("{}_{}", name, n), prefix, fmt::format("{}_{}", name, n + 1), prefix);
+
+    return nStored;
+}
+
+// Return exponential decay factor
+double expDecay() { return 0.7; }
+
+// Return the normalisation factor for the supplied scheme and number of data
+double normalisationFactor(Averaging::AveragingScheme scheme, int nData)
+{
+    if (scheme == Averaging::LinearAveraging)
+        return nData;
+    else if (scheme == Averaging::ExponentialAveraging)
+        return (1.0 - pow(expDecay(), nData)) / (1.0 - expDecay());
+
+    return 1.0;
+}
+
+} // namespace Averaging

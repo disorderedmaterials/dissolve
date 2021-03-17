@@ -1,49 +1,30 @@
-add_library(data
-  atomicmass.cpp
-  atomicradius.cpp
+add_library(
+  data
+  atomicmasses.cpp
+  atomicradii.cpp
   elementcolours.cpp
   elements.cpp
-  ff.cpp
-  ffangleterm.cpp
-  ffatomtype.cpp
-  ffbondterm.cpp
-  ffimproperterm.cpp
-  fflibrary.cpp
-  ffparameters.cpp
-  fftorsionterm.cpp
   formfactordata.cpp
   formfactors.cpp
   formfactors_dummy.cpp
   formfactors_wk1995.cpp
   isotopes.cpp
   spacegroups.cpp
-
-  atomicmass.h
-  atomicradius.h
+  structurefactors.cpp
+  atomicmasses.h
+  atomicradii.h
   elementcolours.h
   elements.h
-  ff.h
-  ffangleterm.h
-  ffatomtype.h
-  ffbondterm.h
-  ffimproperterm.h
-  fflibrary.h
-  ffparameters.h
-  fftorsionterm.h
   formfactordata.h
   formfactors.h
   formfactors_dummy.h
   formfactors_wk1995.h
   isotopes.h
   spacegroups.h
+  structurefactors.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(data PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 add_subdirectory(ff)
 add_subdirectory(sg)

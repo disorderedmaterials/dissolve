@@ -1,23 +1,5 @@
-/*
-    *** CalculateSDF Module Widget - Functions
-    *** src/modules/calculate_sdf/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -99,38 +81,11 @@ void CalculateSDFModuleWidget::updateControls(int flags)
     for (CalculateAvgMolModule *module : avgMolModules)
         refMolecules.append(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species
-    ListIterator<Species> speciesIterator(coreData_.constSpecies());
-    while (Species *sp = speciesIterator.iterate())
-        refMolecules.append(sp, fmt::format("{} (Species)", sp->name()));
+    for (const auto &sp : coreData_.species())
+        refMolecules.append(sp.get(), fmt::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
     refreshing_ = false;
-}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateSDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!sdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateSDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!sdfGraph_->readSession(parser))
-        return false;
-
-    setGraphDataTargets();
-
-    return true;
 }
 
 /*
@@ -152,9 +107,9 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
     for (Configuration *cfg : module_->targetConfigurations())
     {
         // Calculated SDF
-        sdfRenderable_ = dynamic_cast<RenderableData3D *>(sdfGraph_->createRenderable(
+        sdfRenderable_ = sdfGraph_->createRenderable(
             Renderable::Data3DRenderable, fmt::format("{}//Process3D//{}//SDF", module_->uniqueName(), cfg->niceName()),
-            fmt::format("SDF//{}", cfg->niceName()), cfg->niceName()));
+            fmt::format("SDF//{}", cfg->niceName()), cfg->niceName());
 
         if (sdfRenderable_)
         {
@@ -167,14 +122,17 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
             ui_.LowerCutoffSpin->setValue(lowerCutoff);
             ui_.UpperCutoffSpin->setValue(upperCutoff);
 
-            sdfRenderable_->setLowerCutoff(lowerCutoff);
-            sdfRenderable_->setUpperCutoff(upperCutoff);
+            auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+            r3d->setLowerCutoff(lowerCutoff);
+            r3d->setUpperCutoff(upperCutoff);
         }
 
         // Reference molecule
         if (referenceMolecule_)
-            referenceMoleculeRenderable_ = dynamic_cast<RenderableSpecies *>(sdfGraph_->createRenderable(
-                Renderable::SpeciesRenderable, referenceMolecule_->objectTag(), "Reference Molecule"));
+        {
+            referenceMoleculeRenderable_ = std::make_shared<RenderableSpecies>(referenceMolecule_);
+            sdfGraph_->addRenderable(referenceMoleculeRenderable_);
+        }
     }
 }
 
@@ -183,7 +141,8 @@ void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
     if (refreshing_ || !sdfRenderable_)
         return;
 
-    sdfRenderable_->setLowerCutoff(value);
+    auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+    r3d->setLowerCutoff(value);
 
     sdfGraph_->postRedisplay();
 }
@@ -193,7 +152,8 @@ void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
     if (refreshing_ || !sdfRenderable_)
         return;
 
-    sdfRenderable_->setUpperCutoff(value);
+    auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+    r3d->setUpperCutoff(value);
 
     sdfGraph_->postRedisplay();
 }

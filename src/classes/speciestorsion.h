@@ -1,23 +1,5 @@
-/*
-    *** SpeciesTorsion Definition
-    *** src/classes/speciestorsion.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -34,19 +16,12 @@ class ProcessPool;
 class SpeciesTorsion : public SpeciesIntra
 {
     public:
-    SpeciesTorsion(const SpeciesTorsion &source);
-    SpeciesTorsion(const SpeciesTorsion &&source);
+    SpeciesTorsion(SpeciesTorsion &source);
+    SpeciesTorsion(SpeciesTorsion &&source);
     SpeciesTorsion(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
     ~SpeciesTorsion();
     SpeciesTorsion &operator=(const SpeciesTorsion &source);
     SpeciesTorsion &operator=(SpeciesTorsion &&source);
-
-    /*
-     * DynamicArrayObject Virtuals
-     */
-    public:
-    // Clear object, ready for re-use
-    void clear();
 
     /*
      * Atom Information
@@ -60,12 +35,14 @@ class SpeciesTorsion : public SpeciesIntra
     SpeciesAtom *k_;
     // Fourth SpeciesAtom in interaction
     SpeciesAtom *l_;
+
+    private:
+    // Set Atoms involved in Torsion
+    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Detach from current atoms
     void detach();
 
     public:
-    // Set Atoms involved in Torsion
-    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
@@ -103,7 +80,8 @@ class SpeciesTorsion : public SpeciesIntra
         Cos4Form,
         CosNForm,
         CosNCForm,
-        UFFCosineForm
+        UFFCosineForm,
+        FourierNForm
     };
     // Return enum options for TorsionFunction
     static EnumOptions<TorsionFunction> torsionFunctions();
@@ -115,8 +93,12 @@ class SpeciesTorsion : public SpeciesIntra
     double fundamentalFrequency(double reducedMass) const;
     // Return type of this interaction
     SpeciesIntra::InteractionType type() const;
+    // Return energy for specified angle and functional form, given supplied parameters
+    static double energy(double angleInDegrees, int form, const std::vector<double> &params);
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
+    // Return force multiplier for specified angle and functional form, given supplied parameters
+    static double force(double angleInDegrees, int form, const std::vector<double> &params);
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 };

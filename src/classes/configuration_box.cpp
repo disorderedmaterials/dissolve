@@ -1,23 +1,5 @@
-/*
-    *** Configuration - Periodic Box Functions
-    *** src/classes/configuration_box.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/processpool.h"
@@ -62,10 +44,10 @@ void Configuration::scaleBox(double factor)
 void Configuration::setRequestedSizeFactor(double factor) { requestedSizeFactor_ = factor; }
 
 // Return requested size factor for Box
-double Configuration::requestedSizeFactor() { return requestedSizeFactor_; }
+double Configuration::requestedSizeFactor() const { return requestedSizeFactor_; }
 
 // Return last size factor applied to Box / Cells
-double Configuration::appliedSizeFactor() { return appliedSizeFactor_; }
+double Configuration::appliedSizeFactor() const { return appliedSizeFactor_; }
 
 // Set requested side length for individual Cell
 void Configuration::setRequestedCellDivisionLength(double a) { requestedCellDivisionLength_ = a; }
@@ -76,8 +58,7 @@ double Configuration::requestedCellDivisionLength() const { return requestedCell
 // Return cell array
 CellArray &Configuration::cells() { return cells_; }
 
-// Return cell array
-const CellArray &Configuration::constCells() const { return cells_; }
+const CellArray &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
 void Configuration::applySizeFactor(const PotentialMap &potentialMap)

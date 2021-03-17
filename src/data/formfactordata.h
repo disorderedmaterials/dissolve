@@ -1,44 +1,28 @@
-/*
-    *** Form Factor Data Base Class
-    *** src/data/formfactordata.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
+
+#include "data/elements.h"
 
 // Form Factor Base Class
 class FormFactorData
 {
     public:
-    FormFactorData(int Z = 0, int formalCharge = 0);
+    FormFactorData(Elements::Element Z = Elements::Unknown, int formalCharge = 0);
 
     /*
      * Element State
      */
     protected:
     // Element to which the data relates
-    int Z_;
+    Elements::Element Z_;
     // Formal charge of element to which the data relates
     int formalCharge_;
 
     public:
     // Return element to which the data relates
-    int Z() const;
+    Elements::Element Z() const;
     // Return formal charge of element to which the data relates
     int formalCharge() const;
 

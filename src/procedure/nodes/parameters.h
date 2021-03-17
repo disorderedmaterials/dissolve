@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Parameters
-    *** src/procedure/nodes/parameters.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -48,20 +30,17 @@ class ParametersProcedureNode : public ProcedureNode
      * Parameters
      */
     private:
-    // List of defined integer parameters (as base ExpressionNode type)
-    List<ExpressionNode> integerParameters_;
-    // List of defined double parameters (as base ExpressionNode type)
-    List<ExpressionNode> doubleParameters_;
+    // Defined parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
 
     public:
-    // Add new integer parameter
-    bool addParameter(std::string_view name, int initialValue = 0);
-    // Add new double parameter
-    bool addParameter(std::string_view name, double initialValue = 0.0);
+    // Add new parameter
+    void addParameter(std::string_view name, ExpressionValue initialValue);
     // Return whether this node has the named parameter specified
-    ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter);
-    // Return list of all parameters for this node
-    RefList<ExpressionVariable> parameterReferences() const;
+    std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter);
+    // Return vector of all parameters for this node
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const;
 
     /*
      * Execute

@@ -1,28 +1,11 @@
-/*
-    *** Plottable Data
-    *** src/math/plottable.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "math/sampleddouble.h"
 #include "templates/array.h"
+#include <vector>
 
 // Forward Declarations
 template <class T> class Array3D;
@@ -62,11 +45,11 @@ class PlottableData
      */
     public:
     // Return x axis Array
-    virtual const Array<double> &constXAxis() const = 0;
+    virtual const std::vector<double> &xAxis() const = 0;
     // Return y axis Array
-    virtual const Array<double> &constYAxis() const;
+    virtual const std::vector<double> &yAxis() const;
     // Return z axis Array
-    virtual const Array<double> &constZAxis() const;
+    virtual const std::vector<double> &zAxis() const;
 
     /*
      * Values / Errors
@@ -75,11 +58,11 @@ class PlottableData
     // Return data version
     virtual int version() const = 0;
     // Return values Array
-    virtual const Array<double> &constValues() const;
-    // Return values Array
-    virtual const Array2D<double> &constValues2D() const;
+    virtual const std::vector<double> &values() const;
+    // Return two-dimensional values Array
+    virtual const Array2D<double> &values2D() const;
     // Return three-dimensional values Array
-    virtual const Array3D<double> &constValues3D() const;
+    virtual const Array3D<double> &values3D() const;
     // Return number of values present in the whole dataset
     virtual int nValues() const = 0;
     // Return minimum value over all data points
@@ -89,9 +72,9 @@ class PlottableData
     // Return whether the values have associated errors
     virtual bool valuesHaveErrors() const;
     // Return errors Array
-    virtual const Array<double> &constErrors() const;
-    // Return errors Array
-    virtual const Array2D<double> &constErrors2D() const;
+    virtual const std::vector<double> &errors() const;
+    // Return two-dimensional errors Array
+    virtual const Array2D<double> &errors2D() const;
     // Return three-dimensional errors Array
-    virtual const Array3D<double> &constErrors3D() const;
+    virtual const Array3D<double> &errors3D() const;
 };

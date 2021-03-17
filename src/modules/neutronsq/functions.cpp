@@ -1,33 +1,16 @@
-/*
-    *** Neutron SQ Module - Functions
-    *** src/modules/neutronsq/functions.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
 #include "modules/neutronsq/neutronsq.h"
+#include "modules/rdf/rdf.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
-bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
-                                          NeutronSQModule::NormalisationType normalisation)
+bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
+                                          StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedgr.nAtomTypes(); ++typeI)
@@ -39,12 +22,12 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedgr.boundPartial(typeI, typeJ).copyArrays(unweightedgr.boundPartial(typeI, typeJ));
-            weightedgr.boundPartial(typeI, typeJ).values() *= intraWeight;
+            weightedgr.boundPartial(typeI, typeJ) *= intraWeight;
 
             // Unbound partial (multiplied by the full weight)
             weightedgr.unboundPartial(typeI, typeJ).copyArrays(unweightedgr.unboundPartial(typeI, typeJ));
-            weightedgr.unboundPartial(typeI, typeJ).values() -= 1.0;
-            weightedgr.unboundPartial(typeI, typeJ).values() *= weight;
+            weightedgr.unboundPartial(typeI, typeJ) -= 1.0;
+            weightedgr.unboundPartial(typeI, typeJ) *= weight;
 
             // Full partial, summing bound and unbound terms
             weightedgr.partial(typeI, typeJ).copyArrays(weightedgr.unboundPartial(typeI, typeJ));
@@ -54,17 +37,17 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &
 
     // Calculate and normalise total to form factor if requested
     weightedgr.formTotal(false);
-    if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
-        weightedgr.total().values() /= weights.boundCoherentAverageOfSquares();
-    else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
-        weightedgr.total().values() /= weights.boundCoherentSquareOfAverage();
+    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
+        weightedgr.total() /= weights.boundCoherentAverageOfSquares();
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
+        weightedgr.total() /= weights.boundCoherentSquareOfAverage();
 
     return true;
 }
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
-bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
-                                          NeutronSQModule::NormalisationType normalisation)
+bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
+                                          StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
@@ -77,11 +60,11 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedsq.boundPartial(typeI, typeJ).copyArrays(unweightedsq.boundPartial(typeI, typeJ));
-            weightedsq.boundPartial(typeI, typeJ).values() *= boundWeight;
+            weightedsq.boundPartial(typeI, typeJ) *= boundWeight;
 
             // Unbound partial (multiplied by the full weight)
             weightedsq.unboundPartial(typeI, typeJ).copyArrays(unweightedsq.unboundPartial(typeI, typeJ));
-            weightedsq.unboundPartial(typeI, typeJ).values() *= weight;
+            weightedsq.unboundPartial(typeI, typeJ) *= weight;
 
             // Full partial (sum of bound and unbound terms)
             weightedsq.partial(typeI, typeJ).copyArrays(weightedsq.unboundPartial(typeI, typeJ));
@@ -91,54 +74,32 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &
 
     // Calculate and normalise total to form factor if requested
     weightedsq.formTotal(false);
-    if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
-        weightedsq.total().values() /= weights.boundCoherentAverageOfSquares();
-    else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
-        weightedsq.total().values() /= weights.boundCoherentSquareOfAverage();
+    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
+        weightedsq.total() /= weights.boundCoherentAverageOfSquares();
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
+        weightedsq.total() /= weights.boundCoherentSquareOfAverage();
 
     return true;
 }
 
-// Calculate nwutron weights summed over target Configurations
-bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) const
+// Calculate neutron weights for relevant Configuration targets
+void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
 {
-    summedWeights.clear();
+    // Clear weights and get species populations from RDFModule
+    weights.clear();
+    auto populations = rdfModule->speciesPopulations();
 
-    // Loop over Configurations
-    for (Configuration *cfg : targetConfigurations_)
+    for (auto speciesPop : populations)
     {
-        // Loop over Species used in this Configuration and find its entry in the defined Isotopologues for the Module
-        ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-        while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
+        // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
+        auto isoRef = isotopologues_.getIsotopologues(speciesPop.first);
+        if (isoRef)
         {
-            // Find the Isotopologues for the Configuration/Species, if they have been defined
-            auto data = isotopologues_.getIsotopologues(cfg, spInfo->species());
-
-            // Use the natural isotopologue if a species in the Configuration is not covered by at least one
-            // explicit Isotopologue definition
-            if (!data)
-            {
-                Messenger::print("Isotopologue specification for Species '{}' in Configuration '{}' is "
-                                 "missing, so the natural isotopologue will be used.\n",
-                                 spInfo->species()->name(), cfg->name());
-
-                Species *sp = spInfo->species();
-                summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
-            }
-            else
-            {
-                const Isotopologues &topes = *data;
-
-                // Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-                for (auto isoWeight : topes.constMix())
-                    summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight.isotopologue(),
-                                                  isoWeight.weight());
-            }
+            const Isotopologues &topes = *isoRef;
+            for (const auto &isoWeight : topes.mix())
+                weights.addIsotopologue(speciesPop.first, speciesPop.second, isoWeight.isotopologue(), isoWeight.weight());
         }
+        else
+            weights.addIsotopologue(speciesPop.first, speciesPop.second, speciesPop.first->naturalIsotopologue(), 1.0);
     }
-
-    // Finalise the Weights
-    summedWeights.createFromIsotopologues(exchangeableTypes_);
-
-    return true;
 }

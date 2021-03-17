@@ -1,23 +1,5 @@
-/*
-    *** Keyword Parsing - Configuration Block
-    *** src/main/keywords_configuration.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -29,18 +11,14 @@
 // Return enum option info for ConfigurationKeyword
 EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywords()
 {
-    static EnumOptionsList ConfigurationKeywords =
-        EnumOptionsList() << EnumOption(ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1)
-                          << EnumOption(ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration")
-                          << EnumOption(ConfigurationBlock::GeneratorKeyword, "Generator")
-                          << EnumOption(ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2)
-                          << EnumOption(ConfigurationBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument)
-                          << EnumOption(ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1)
-                          << EnumOption(ConfigurationBlock::TemperatureKeyword, "Temperature", 1);
-
-    static EnumOptions<ConfigurationBlock::ConfigurationKeyword> options("ConfigurationKeyword", ConfigurationKeywords);
-
-    return options;
+    return EnumOptions<ConfigurationBlock::ConfigurationKeyword>(
+        "ConfigurationKeyword", {{ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1},
+                                 {ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration"},
+                                 {ConfigurationBlock::GeneratorKeyword, "Generator"},
+                                 {ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2},
+                                 {ConfigurationBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond},
+                                 {ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1},
+                                 {ConfigurationBlock::TemperatureKeyword, "Temperature", 1}});
 }
 
 // Parse Configuration block
@@ -49,7 +27,6 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
     Messenger::print("\nParsing {} block '{}'...\n",
                      BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
-    Species *sp;
     Module *module;
     std::string niceName;
     auto blockDone = false, error = false;

@@ -1,23 +1,5 @@
-/*
-    *** Number Format
-    *** src/gui/render/numberformat.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/numberformat.h"
 #include <QString>
@@ -36,25 +18,21 @@ NumberFormat::NumberFormat()
 NumberFormat::~NumberFormat() {}
 
 // Return enum options for FormatType
-EnumOptions<NumberFormat::FormatType> &NumberFormat::formatTypes()
+EnumOptions<NumberFormat::FormatType> NumberFormat::formatTypes()
 {
-    static EnumOptionsList FormatTypeOptions = EnumOptionsList() << EnumOption(NumberFormat::DecimalFormat, "Decimal")
-                                                                 << EnumOption(NumberFormat::IntegerFormat, "Integer")
-                                                                 << EnumOption(NumberFormat::ScientificFormat, "Scientific");
-
-    static EnumOptions<NumberFormat::FormatType> options("FormatType", FormatTypeOptions);
-
-    return options;
+    return EnumOptions<NumberFormat::FormatType>("FormatType", {{NumberFormat::DecimalFormat, "Decimal"},
+                                                                {NumberFormat::IntegerFormat, "Integer"},
+                                                                {NumberFormat::ScientificFormat, "Scientific"}});
 }
 
 /*
  * Definition
  */
 
-// Set ndex type
+// Set format type
 void NumberFormat::setType(NumberFormat::FormatType type) { type_ = type; }
 
-// Return X index type
+// Return format type
 NumberFormat::FormatType NumberFormat::type() { return type_; }
 
 // Set number of decimals to use

@@ -1,23 +1,5 @@
-/*
-    *** SpeciesIntra Definition
-    *** src/classes/speciesintra.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -30,43 +12,30 @@ class SpeciesAtom;
 class Species;
 class MasterIntra;
 
-/*
- * SpeciesIntra Definition
- */
+// Base class for intramolecular interactions within Species
 class SpeciesIntra
 {
     public:
     SpeciesIntra();
     virtual ~SpeciesIntra() = default;
-    SpeciesIntra(SpeciesIntra &source);
+    SpeciesIntra(const SpeciesIntra &source);
     SpeciesIntra(SpeciesIntra &&source) = delete;
     SpeciesIntra &operator=(const SpeciesIntra &source);
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
-    // Interaction Type
-    enum InteractionType
-    {
-        BondInteraction,    /* Interaction is a bond between two atoms in the same molecule */
-        AngleInteraction,   /* Interaction is an angle between three atoms in the same molecule */
-        TorsionInteraction, /* Interaction is a torsion between four atoms in the same molecule */
-        ImproperInteraction /* Interaction is an improper torsion between four atoms in the same molecule */
-    };
-
-    /*
-     * Basic Data
-     */
-    protected:
-    // Parent Species
-    Species *parent_;
-
-    public:
-    // Set parent Species
-    void setParent(Species *parent);
-    // Return parent Species
-    Species *parent() const;
 
     /*
      * Interaction Parameters
      */
+    public:
+    // Interaction Type
+    enum class InteractionType
+    {
+        Bond,    /* Interaction is a bond between two atoms  */
+        Angle,   /* Interaction is an angle between three atoms */
+        Torsion, /* Interaction is a torsion between four atoms */
+        Improper /* Interaction is an improper torsion between four atoms */
+    };
+
     protected:
     // Linked master from which parameters should be taken (if relevant)
     MasterIntra *masterParameters_;
@@ -82,8 +51,6 @@ class SpeciesIntra
     const MasterIntra *masterParameters() const;
     // Detach from MasterIntra, if we are currently referencing one
     void detachFromMasterIntra();
-    // Return parameter source
-    const SpeciesIntra *parameterSource() const;
     // Set functional form index of interaction
     void setForm(int form);
     // Return functional form index of interaction

@@ -1,23 +1,5 @@
-/*
-    *** AtomTypeData Definition
-    *** src/classes/atomtypedata.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -40,11 +22,7 @@ class AtomTypeData
     AtomTypeData(std::shared_ptr<AtomType> type, double population = 0, double fraction = 0, double boundCoherent = 0,
                  int nIso = 0);
     AtomTypeData(const AtomTypeData &source);
-    // Read data through specified LineParser
-    AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex);
-    // Old Initialise
     AtomTypeData(int listIndex, std::shared_ptr<AtomType> atomType, double population);
-    // Assignment Operator
     void operator=(const AtomTypeData &source);
 
     /*
@@ -85,6 +63,8 @@ class AtomTypeData
     void finalise(double nWorldAtoms);
     // Remove any existing isotopes, and add only the natural isotope
     void naturalise();
+    // Return the number of defined Isotopes
+    int nIsotopes() const;
     // Return if specified Isotope is already in the list
     bool hasIsotope(Isotope *tope);
     // Set this AtomType to have only the single Isotope provided

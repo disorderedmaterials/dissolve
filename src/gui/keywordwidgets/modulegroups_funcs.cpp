@@ -1,26 +1,7 @@
-/*
-    *** Keyword Widget - Module Groups
-    *** src/gui/keywordwidgets/modulegroups_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/coredata.h"
-#include "genericitems/listhelper.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/modulegroups.h"
@@ -57,7 +38,7 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBas
  */
 
 // Selection table update function
-void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module *module, bool create)
+void ModuleGroupsKeywordWidget::updateSelectionRow(int row, const Module *module, bool create)
 {
     // Grab the target groups
     auto &groups = keyword_->data();
@@ -148,8 +129,8 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData &coreData)
     RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
     // Update the list widget
-    TableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
-                                                                       &ModuleGroupsKeywordWidget::updateSelectionRow);
+    ConstTableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
+                                                                            &ModuleGroupsKeywordWidget::updateSelectionRow);
 
     ui_.SelectionTable->resizeColumnToContents(0);
 

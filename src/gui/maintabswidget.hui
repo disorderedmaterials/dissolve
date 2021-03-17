@@ -1,30 +1,11 @@
-/*
-    *** Main Tabs Widget
-    *** src/gui/maintabswidget.hui
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
 #include "gui/layertab.h"
-#include "gui/moduletab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "templates/list.h"
@@ -42,7 +23,6 @@ class MainTabsWidget : public QTabWidget
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     MainTabsWidget(QWidget *parent);
     ~MainTabsWidget();
 
@@ -67,8 +47,6 @@ class MainTabsWidget : public QTabWidget
     List<ConfigurationTab> configurationTabs_;
     // List of processing layer tabs
     List<LayerTab> processingLayerTabs_;
-    // List of Module tabs
-    List<ModuleTab> moduleTabs_;
     // List of Workspace tabs
     List<WorkspaceTab> workspaceTabs_;
 
@@ -87,10 +65,6 @@ class MainTabsWidget : public QTabWidget
     ConfigurationTab *configurationTab(QWidget *page);
     // Find LayerTab containing specified page widget
     LayerTab *processingLayerTab(QWidget *page);
-    // Find ModuleTab containing specified page widget
-    ModuleTab *moduleTab(QWidget *page);
-    // Find ModuleTab containing specified Module
-    ModuleTab *moduleTab(Module *module);
     // Find WorkspaceTab containing specified page widget
     WorkspaceTab *workspaceTab(QWidget *page);
     // Find tab with title specified
@@ -112,10 +86,6 @@ class MainTabsWidget : public QTabWidget
     void reconcileTabs(DissolveWindow *dissolveWindow);
     // Remove tab containing the specified page widget
     void removeByPage(QWidget *page);
-    // Add tab for specified Module target
-    MainTab *addModuleTab(DissolveWindow *dissolveWindow, Module *module);
-    // Remove the ModuleTab for the specified Module, if it exists
-    void removeModuleTab(Module *module);
     // Add on a new workspace tab
     MainTab *addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title);
 

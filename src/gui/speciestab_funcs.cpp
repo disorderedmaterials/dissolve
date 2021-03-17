@@ -1,26 +1,9 @@
-/*
-    *** SpeciesTab Functions
-    *** src/gui/speciestab_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "gui/delegates/combolist.hui"
+#include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/integerspin.hui"
 #include "gui/delegates/intraformcombo.hui"
@@ -42,13 +25,27 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     species_ = species;
 
-    // Set item delegates in tables
+    // Set item delegates
     // -- SpeciesAtomTable
-    ui_.AtomTable->setItemDelegateForColumn(
-        1, new ComboListDelegate(this, new ComboSharedNameListItems<AtomType>(dissolve_.atomTypes())));
-    for (int n = 2; n < 6; ++n)
+    ui_.AtomTable->setItemDelegateForColumn(1, new CustomComboDelegate<SpeciesTab>(this, &SpeciesTab::validAtomTypeNames));
+    for (auto n = 2; n < 6; ++n)
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-    ui_.AtomTable->horizontalHeader()->setFont(font());
+    // -- Geometry tables
+    ui_.BondTable->setItemDelegateForColumn(
+        2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions()),
+                                      dissolve.masterBonds()));
+    ui_.AngleTable->setItemDelegateForColumn(
+        3,
+        new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions()),
+                                   dissolve.masterAngles()));
+    ui_.TorsionTable->setItemDelegateForColumn(
+        4, new IntraFormComboDelegate(
+               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()),
+               dissolve.masterTorsions()));
+    ui_.ImproperTable->setItemDelegateForColumn(
+        4, new IntraFormComboDelegate(
+               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()),
+               dissolve.masterImpropers()));
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
     ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
@@ -78,7 +75,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     // Connect signals / slots
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
-    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomSelectionChanged()), this, SLOT(updateAtomTableSelection()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), this, SLOT(updateAtomTableSelection()));
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
     connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
@@ -170,13 +167,3 @@ bool SpeciesTab::canClose() const
 
 // Return displayed Species
 Species *SpeciesTab::species() const { return species_; }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool SpeciesTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
-
-// Write widget state through specified LineParser
-bool SpeciesTab::writeState(LineParser &parser) const { return true; }

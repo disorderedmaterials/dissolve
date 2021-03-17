@@ -1,26 +1,9 @@
-/*
-    *** Column-Major 3x3 Matrix class
-    *** src/math/matrix3.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more detailAs.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/matrix3.h"
 #include "base/messenger.h"
+#include <array>
 
 Matrix3::Matrix3() { setIdentity(); }
 
@@ -52,7 +35,7 @@ Matrix3 Matrix3::operator*(const Matrix3 &B) const
 Matrix3 Matrix3::operator*(const double a) const
 {
     Matrix3 AB;
-    for (int n = 0; n < 9; ++n)
+    for (auto n = 0; n < 9; ++n)
         AB.matrix_[n] = matrix_[n] * a;
     return AB;
 }
@@ -60,7 +43,7 @@ Matrix3 Matrix3::operator*(const double a) const
 Matrix3 Matrix3::operator+(const Matrix3 &B) const
 {
     Matrix3 A;
-    for (int n = 0; n < 9; ++n)
+    for (auto n = 0; n < 9; ++n)
         A[n] = matrix_[n] + B.matrix_[n];
     return A;
 }
@@ -68,7 +51,7 @@ Matrix3 Matrix3::operator+(const Matrix3 &B) const
 Matrix3 Matrix3::operator-(const Matrix3 &B) const
 {
     Matrix3 A;
-    for (int n = 0; n < 9; ++n)
+    for (auto n = 0; n < 9; ++n)
         A[n] = matrix_[n] - B.matrix_[n];
     return A;
 }
@@ -196,18 +179,14 @@ void Matrix3::invert()
 {
     // Gauss-Jordan Inversion
     // Invert the supplied matrix using Gauss-Jordan elimination
-    int pivotrows[3], pivotcols[3], pivotrow = 0, pivotcol = 0;
-    bool pivoted[3];
-    int row, col, n, m;
+    std::array<int, 3> pivotcols{0}, pivotrows{0};
+    std::array<bool, 3> pivoted{false};
+    int pivotrow = 0, pivotcol = 0;
+    int row, col, m;
     double large, element;
-    for (n = 0; n < 3; ++n)
-    {
-        pivotrows[n] = 0;
-        pivotcols[n] = 0;
-        pivoted[n] = false;
-    }
+
     // Loop over columns to be reduced
-    for (n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         // Locate suitable pivot element - find largest value in the matrix A
         large = 0.0;
@@ -266,14 +245,14 @@ void Matrix3::invert()
         }
     }
     // Rearrange columns to undo row exchanges performed earlier
-    for (n = 2; n >= 0; --n)
+    for (auto i = 2; i >= 0; --i)
     {
-        if (pivotrows[n] != pivotcols[n])
+        if (pivotrows[i] != pivotcols[i])
             for (m = 0; m < 3; ++m)
             {
-                element = matrix_[m * 3 + pivotrows[n]];
-                matrix_[m * 3 + pivotrows[n]] = matrix_[m * 3 + pivotcols[n]];
-                matrix_[m * 3 + pivotcols[n]] = element;
+                element = matrix_[m * 3 + pivotrows[i]];
+                matrix_[m * 3 + pivotrows[i]] = matrix_[m * 3 + pivotcols[i]];
+                matrix_[m * 3 + pivotcols[i]] = element;
             }
     }
 }
@@ -285,7 +264,7 @@ double Matrix3::value(int n) const { return matrix_[n]; }
 double Matrix3::max() const
 {
     auto maxId = 0;
-    for (int n = 1; n < 9; ++n)
+    for (auto n = 1; n < 9; ++n)
         if (matrix_[n] > matrix_[maxId])
             maxId = n;
     return matrix_[maxId];
@@ -346,7 +325,7 @@ void Matrix3::adjustColumn(int col, const Vec3<double> vec)
 double Matrix3::columnMagnitude(int column) const
 {
     double mag = 0.0;
-    for (int n = column * 3; n < column * 3 + 3; ++n)
+    for (auto n = column * 3; n < column * 3 + 3; ++n)
         mag += (matrix_[n] * matrix_[n]);
     return sqrt(mag);
 }
@@ -370,8 +349,8 @@ void Matrix3::columnMultiply(Vec3<double> vec)
 // Normalise specified column to 1
 void Matrix3::columnNormalise(int col)
 {
-    double mag = 1.0 / sqrt(matrix_[col * 3] * matrix_[col * 3] + matrix_[col * 3 + 1] * matrix_[col * 3 + 1] +
-                            matrix_[col * 3 + 2] * matrix_[col * 3 + 2]);
+    auto mag = 1.0 / sqrt(matrix_[col * 3] * matrix_[col * 3] + matrix_[col * 3 + 1] * matrix_[col * 3 + 1] +
+                          matrix_[col * 3 + 2] * matrix_[col * 3 + 2]);
     matrix_[col * 3] *= mag;
     matrix_[col * 3 + 1] *= mag;
     matrix_[col * 3 + 2] *= mag;

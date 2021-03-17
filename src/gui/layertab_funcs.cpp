@@ -1,28 +1,11 @@
-/*
-    *** Layer Tab Functions
-    *** src/gui/layertab_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "gui/getmodulelayernamedialog.h"
 #include "gui/gui.h"
 #include "gui/layertab.h"
+#include "gui/maintabswidget.hui"
 #include "main/dissolve.h"
 #include <QMessageBox>
 
@@ -89,11 +72,6 @@ bool LayerTab::canClose() const
     if (ret != QMessageBox::Yes)
         return false;
 
-    // Before closing, we must close any tabs that are displaying our associated Modules
-    ListIterator<Module> moduleIterator(moduleLayer_->modules());
-    while (Module *module = moduleIterator.iterate())
-        dissolveWindow_->removeModuleTab(QString::fromStdString(std::string(module->uniqueName())));
-
     return true;
 }
 
@@ -123,6 +101,10 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
         return;
 
     moduleLayer_->setEnabled(checked);
+    if (checked)
+        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+    else
+        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
 
     dissolveWindow_->setModified();
 }
@@ -169,26 +151,4 @@ void LayerTab::enableSensitiveControls()
     ui_.EnabledButton->setEnabled(true);
     ui_.FrequencySpin->setEnabled(true);
     ui_.ModuleListPanel->enableSensitiveControls();
-}
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool LayerTab::readState(LineParser &parser, const CoreData &coreData)
-{
-    if (!ui_.ModuleListPanel->readState(parser))
-        return false;
-
-    return true;
-}
-
-// Write widget state through specified LineParser
-bool LayerTab::writeState(LineParser &parser) const
-{
-    if (!ui_.ModuleListPanel->writeState(parser))
-        return false;
-
-    return true;
 }

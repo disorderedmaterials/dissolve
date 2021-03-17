@@ -1,32 +1,15 @@
-/*
-    *** Fourier Transforms
-    *** src/math/ft.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/ft.h"
-#include "base/sysfunc.h"
 #include "math/data1d.h"
 
+namespace Fourier
+{
 // Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening
 // function, modification function, and window applied (if requested)
-bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction,
-                     BroadeningFunction broadening)
+bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction,
+            BroadeningFunction broadening)
 {
     /*
      * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms -
@@ -50,16 +33,15 @@ bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep,
     windowFunction.setUp(data);
 
     // Grab x and y arrays
-    const auto &x = data.constXAxis();
-    const auto &y = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &y = data.values();
 
     int m;
-    const auto nX = x.nItems();
+    const auto nX = x.size();
     double window, broaden;
 
     // Create working arrays
-    Array<double> newX;
-    Array<double> newY;
+    std::vector<double> newX, newY;
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
     double ft, deltaX;
@@ -71,15 +53,15 @@ bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep,
         {
             for (m = 0; m < nX - 1; ++m)
             {
-                deltaX = x.constAt(m + 1) - x.constAt(m);
+                deltaX = x[m + 1] - x[m];
 
                 // Get window value at this position in the function
-                window = windowFunction.y(x.constAt(m), omega);
+                window = windowFunction.y(x[m], omega);
 
                 // Calculate broadening
-                broaden = broadening.yFT(x.constAt(m), omega);
+                broaden = broadening.yFT(x[m], omega);
 
-                ft += sin(x.constAt(m) * omega) * x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
+                ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
             }
 
             // Normalise w.r.t. omega
@@ -90,27 +72,27 @@ bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep,
         {
             for (m = 0; m < nX - 1; ++m)
             {
-                deltaX = x.constAt(m + 1) - x.constAt(m);
+                deltaX = x[m + 1] - x[m];
 
                 // Get window value at this position in the function
-                window = windowFunction.y(x.constAt(m), omega);
+                window = windowFunction.y(x[m], omega);
 
                 // Calculate broadening
-                broaden = broadening.yFT(x.constAt(m), omega);
+                broaden = broadening.yFT(x[m], omega);
 
-                ft += x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
+                ft += x[m] * broaden * window * y[m] * deltaX;
             }
         }
 
         // Add point
-        newX.add(omega);
-        newY.add(ft);
+        newX.push_back(omega);
+        newY.push_back(ft);
 
         omega += wStep;
     }
 
     // Apply normalisation factor
-    newY *= normFactor;
+    std::transform(newY.begin(), newY.end(), newY.begin(), [normFactor](auto value) { return value * normFactor; });
 
     // Transfer working arrays to this object
     data.xAxis() = newX;
@@ -118,72 +100,4 @@ bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep,
 
     return true;
 }
-
-// // Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
-// bool Data1D::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
-// {
-// 	/*
-// 	 * Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
-// 	 * XXX TODO.
-// 	 * XXX TODO Only valid when input x_[] values are bin boundaries, not centre-bin values.
-// 	 */
-//
-// 	// Okay to continue with transform?
-// 	if (!checkBeforeTransform()) return false;
-//
-// 	double deltaIn = x_[1] - x_[0];
-// 	double deltar, width, r, factor, norm, ftx, qr, j1qr, j2qr;
-// 	int n, m, nPts = x_.nItems();
-//
-// 	// Create working arrays
-// 	Array<double> result;
-// 	r = step * 0.5;
-//
-// 	// Set up correct factor, depending on whether we are going from Q -> r or r -> Q
-// 	if (qToR) factor = 1.0 / (2.0 * PI * PI * atomicDensity);
-// 	else factor = 4.0 * PI * atomicDensity;
-//
-// 	// Perform Fourier sine transform
-// 	while (r <= rMax)
-// 	{
-// 		// Reset sum, and calculate r-dependent values
-// 		ftx = 0.0;
-// 		norm = factor / (r*r*r);
-// 		deltar = delta0 * (1.0 + pow(r, beta));
-//
-// 		// Calculate first argument at left-hand bin boundary
-// 		qr = r * x_[0];
-// 		j1qr = sin(qr) - qr * cos(qr);
-//
-// 		for (m=0; m<nPts-1; ++m)
-// 		{
-// 			// Calculate second argument at right-hand bin boundary
-// 			qr = r * x_[m+1];
-// 			j2qr = sin(qr) - qr * cos(qr);
-//
-// 			// Calculate 'width' at centre of bin
-// 			width = 0.5 * (x_[m]+x_[m+1]) * deltar;
-//
-// 			// Form integral of (Q sin Qr)/r from r1 to r2 (as detailed in equation 3.86 in reference above)
-// 			// Modified Lorch function is constructed and applied if the width is non-zero and positive
-// 			if (width < 0.0) ftx += y_[m] * (j2qr - j1qr);
-// 			else ftx += y_[m] * (j2qr - j1qr) * (3.0/(width*width*width)) * (sin(width) - width*cos(width));
-//
-// 			// Overwrite first Lorch argument
-// 			j1qr = j2qr;
-// 		}
-//
-// 		// Sum
-// 		result.add(ftx * norm);
-//
-// 		r += step;
-// 	}
-//
-// 	// Copy transform data over initial data
-// 	y_ = result;
-// 	x_.forgetData();
-// 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*step);
-// 	interpolationInterval_ = -1;
-//
-// 	return true;
-// }
+} // namespace Fourier

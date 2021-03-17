@@ -1,30 +1,24 @@
-add_library(base
-  enumoption.cpp
-  enumoptionsbase.cpp
-  enumoptionslist.cpp
+add_library(
+  base
   geometry.cpp
   lineparser.cpp
   lock.cpp
   messenger.cpp
   outputhandler.cpp
-  parameters.cpp
   processgroup.cpp
   processpool.cpp
   sysfunc.cpp
   timer.cpp
   units.cpp
   version.cpp
-  
   enumoption.h
   enumoptionsbase.h
   enumoptions.h
-  enumoptionslist.h
   geometry.h
   lineparser.h
   lock.h
   messenger.h
   outputhandler.h
-  parameters.h
   processgroup.h
   processpool.h
   sysfunc.h
@@ -33,9 +27,4 @@ add_library(base
   version.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(base PRIVATE ${PROJECT_SOURCE_DIR}/src)

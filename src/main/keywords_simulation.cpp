@@ -1,23 +1,5 @@
-/*
-    *** Keyword Parsing - Simulation Block
-    *** src/main/keywords_simulation.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -27,15 +9,11 @@
 // Return enum option info for SimulationKeyword
 EnumOptions<SimulationBlock::SimulationKeyword> SimulationBlock::keywords()
 {
-    static EnumOptionsList SimulationKeywords =
-        EnumOptionsList() << EnumOption(SimulationBlock::EndSimulationKeyword, "EndSimulation")
-                          << EnumOption(SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1)
-                          << EnumOption(SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1)
-                          << EnumOption(SimulationBlock::SeedKeyword, "Seed", 1);
-
-    static EnumOptions<SimulationBlock::SimulationKeyword> options("SimulationKeyword", SimulationKeywords);
-
-    return options;
+    return EnumOptions<SimulationBlock::SimulationKeyword>(
+        "SimulationKeyword", {{SimulationBlock::EndSimulationKeyword, "EndSimulation"},
+                              {SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1},
+                              {SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1},
+                              {SimulationBlock::SeedKeyword, "Seed", 1}});
 }
 
 // Parse Simulation block

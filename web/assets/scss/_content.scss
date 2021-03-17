@@ -1,3 +1,4 @@
+// Navbar
 .td-navbar .navbar-brand {
     svg {
         margin: 5px 10px;
@@ -5,6 +6,11 @@
     }
 }
 
+.navbar {
+  background-color: #17132a;
+}
+
+// Labels
 .label {
     border-radius: 5px;
     display: inline-block;
@@ -25,6 +31,23 @@
 .label.label-yellow {
     background-color: #fff12c;
     color: black;
+}
+
+.label.label-since {
+    background-color: #44e;
+    color: white;
+}
+
+.label.label-deprecated {
+    background-color: #e91;
+    color: white;
+}
+
+.label.label-small {
+    font-size: 10px;
+    font-weight: bold;
+    margin: 2px auto 2px 0;
+    padding: 1px 10px 1px 10px;
 }
 
 // Left-aligned button
@@ -209,4 +232,44 @@ blockquote.action-settings {
 }
 blockquote.action-settings::before {
   background-image: url(/img/action-settings.svg);
+}
+
+// Tables
+tr {
+  border-bottom: 2px solid #ccd;
+}
+
+td {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+th {
+  background-color: #2193af;
+  color: #fff;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+table {
+  margin-bottom: 25px;
+}
+
+.horizontal-headers tr th:empty {
+  display: none;
+}
+
+.horizontal-headers td:first-child {
+  background-color: $primary;
+  color: #fff;
+  font-weight: bold;
+}
+
+.horizontal-headers tr {
+  border: 2px solid #ccd;
+}
+
+// Links
+a {
+	color: #454a8a;
 }

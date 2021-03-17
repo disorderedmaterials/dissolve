@@ -1,23 +1,5 @@
-/*
-    *** Keyword - Geometry List
-    *** src/keywords/geometrylist.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/geometrylist.h"
 #include "base/lineparser.h"
@@ -56,7 +38,7 @@ int GeometryListKeyword::maxArguments() const
 bool GeometryListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     Geometry *g = data_.add();
-    for (int i = startArg; i <= (startArg + maxArguments() - 1); i++)
+    for (auto i = startArg; i <= (startArg + maxArguments() - 1); i++)
     {
         if (parser.argi(i) < 1)
             return Messenger::error("Index value, {}, not appropriate", parser.argi(i));
@@ -85,7 +67,7 @@ bool GeometryListKeyword::write(LineParser &parser, std::string_view keywordName
     while (Geometry *ref = GeoIterator.iterate())
     {
         index.clear();
-        for (int n = 0; n < maxArguments() - 1; ++n)
+        for (auto n = 0; n < maxArguments() - 1; ++n)
             index += fmt::format("  {}", ref->indices(n) + 1);
         if (!parser.writeLineF("{}{}{}  {:12.4e}\n", prefix, keywordName, index, ref->value()))
             return false;

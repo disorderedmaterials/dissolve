@@ -1,38 +1,22 @@
-/*
-    *** Extrema
-    *** src/math/extrema.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/extrema.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 
+namespace Extrema
+{
 // Return minimum from 1D array provided
-double Extrema::min(const Array<double> &A)
+double min(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double min = A.constAt(0);
-        for (int i = 0; i < A.nItems(); ++i)
+        double min = A.at(0);
+        for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (A.constAt(i) < min)
-                min = A.constAt(i);
+            if (A.at(i) < min)
+                min = A.at(i);
         }
         return min;
     }
@@ -41,15 +25,15 @@ double Extrema::min(const Array<double> &A)
 }
 
 // Return maximum from 1D array provided
-double Extrema::max(const Array<double> &A)
+double max(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double max = A.constAt(0);
-        for (int i = 0; i < A.nItems(); ++i)
+        double max = A.at(0);
+        for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (A.constAt(i) > max)
-                max = A.constAt(i);
+            if (A.at(i) > max)
+                max = A.at(i);
         }
         return max;
     }
@@ -58,49 +42,31 @@ double Extrema::max(const Array<double> &A)
 }
 
 // Return minimum from 2D array provided
-double Extrema::min(const Array2D<double> &A)
+double min(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double min = A.constLinearValue(0);
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (A.constLinearValue(i) < min)
-                min = A.constLinearValue(i);
-        }
-        return min;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::min_element(A.begin(), A.end());
 }
 
 // Return maximum from 2D array provided
-double Extrema::max(const Array2D<double> &A)
+double max(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double max = A.constLinearValue(0);
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (A.constLinearValue(i) > max)
-                max = A.constLinearValue(i);
-        }
-        return max;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::max_element(A.begin(), A.end());
 }
 
 // Return absolute minimum from array provided
-double Extrema::absMin(const Array<double> &A)
+double absMin(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMin = abs(A.constAt(0));
-        for (int i = 0; i < A.nItems(); ++i)
+        auto absMin = fabs(A.at(0));
+        for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (abs(A.constAt(i)) < absMin)
-                absMin = abs(A.constAt(i));
+            if (fabs(A.at(i)) < absMin)
+                absMin = fabs(A.at(i));
         }
         return absMin;
     }
@@ -109,15 +75,15 @@ double Extrema::absMin(const Array<double> &A)
 }
 
 // Return absolute maximum from array provided
-double Extrema::absMax(const Array<double> &A)
+double absMax(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMax = abs(A.constAt(0));
-        for (int i = 0; i < A.nItems(); ++i)
+        auto absMax = fabs(A.at(0));
+        for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (abs(A.constAt(i)) > absMax)
-                absMax = abs(A.constAt(i));
+            if (fabs(A.at(i)) > absMax)
+                absMax = fabs(A.at(i));
         }
         return absMax;
     }
@@ -126,35 +92,18 @@ double Extrema::absMax(const Array<double> &A)
 }
 
 // Return absolute minimum from 2D array provided
-double Extrema::absMin(const Array2D<double> &A)
+double absMin(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double absMin = abs(A.constLinearValue(0));
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (abs(A.constLinearValue(i)) < absMin)
-                absMin = abs(A.constLinearValue(i));
-        }
-        return absMin;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::min_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
 }
 
 // Return absolute maximum from 2D array provided
-double Extrema::absMax(const Array2D<double> &A)
+double absMax(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double absMax = abs(A.constLinearValue(0));
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (abs(A.constLinearValue(i)) < absMax)
-                absMax = abs(A.constLinearValue(i));
-        }
-        return absMax;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::max_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
 }
+} // namespace Extrema

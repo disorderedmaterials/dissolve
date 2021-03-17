@@ -1,23 +1,5 @@
-/*
-    *** Keyword - NodeValue Triplet
-    *** src/keywords/vec3nodevalue.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/vec3nodevalue.h"
 #include "base/lineparser.h"
@@ -57,11 +39,14 @@ bool Vec3NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &core
 
     if (parser.hasArg(startArg + 2))
     {
-        if (!data_.x.set(parser.argsv(startArg), parentNode_->parametersInScope()))
+        // Get any variables currently in scope
+        auto vars = parentNode_->parametersInScope();
+
+        if (!data_.x.set(parser.argsv(startArg), vars))
             return false;
-        if (!data_.y.set(parser.argsv(startArg + 1), parentNode_->parametersInScope()))
+        if (!data_.y.set(parser.argsv(startArg + 1), vars))
             return false;
-        if (!data_.z.set(parser.argsv(startArg + 2), parentNode_->parametersInScope()))
+        if (!data_.z.set(parser.argsv(startArg + 2), vars))
             return false;
 
         hasBeenSet();
@@ -86,10 +71,12 @@ bool Vec3NodeValueKeyword::write(LineParser &parser, std::string_view keywordNam
 // Set the value from supplied expression text
 bool Vec3NodeValueKeyword::setValue(int index, std::string_view expressionText)
 {
-    if ((index < 0) || (index > 2))
-        return Messenger::error("Index {} out of range in Vec3NodeValueKeyword::setValue().\n", index);
+    assert(index >= 0 && index < 3);
 
-    if (!data_[index].set(expressionText, parentNode_->parametersInScope()))
+    // Get any variables currently in scope
+    auto vars = parentNode_->parametersInScope();
+
+    if (!data_[index].set(expressionText, vars))
         return false;
 
     set_ = true;

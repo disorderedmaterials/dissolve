@@ -1,23 +1,5 @@
-/*
-    *** Rendering View
-    *** src/gui/render/view.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/view.h"
 #include "gui/render/fontinstance.h"
@@ -29,7 +11,7 @@
 // Static Members
 const double View::defaultZTranslation_ = -10.0;
 
-View::View(const List<Renderable> &renderables, FontInstance &fontInstance)
+View::View(const std::vector<std::shared_ptr<Renderable>> &renderables, FontInstance &fontInstance)
     : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
 {
     clear();
@@ -130,28 +112,20 @@ const GLuint *View::viewportMatrix() const { return viewportMatrix_; }
  */
 
 // Return enum options for FormatType
-EnumOptions<View::ViewType> &View::viewTypes()
+EnumOptions<View::ViewType> View::viewTypes()
 {
-    static EnumOptionsList ViewTypeOptions =
-        EnumOptionsList() << EnumOption(View::NormalView, "Normal") << EnumOption(View::AutoStretchedView, "AutoStretched")
-                          << EnumOption(View::FlatXYView, "FlatXY") << EnumOption(View::FlatXZView, "FlatXZ")
-                          << EnumOption(View::FlatZYView, "FlatZY");
-
-    static EnumOptions<View::ViewType> options("ViewType", ViewTypeOptions);
-
-    return options;
+    return EnumOptions<View::ViewType>("ViewType", {{View::NormalView, "Normal"},
+                                                    {View::AutoStretchedView, "AutoStretched"},
+                                                    {View::FlatXYView, "FlatXY"},
+                                                    {View::FlatXZView, "FlatXZ"},
+                                                    {View::FlatZYView, "FlatZY"}});
 }
 
 // Return enum options for FormatType
-EnumOptions<View::AutoFollowType> &View::autoFollowTypes()
+EnumOptions<View::AutoFollowType> View::autoFollowTypes()
 {
-    static EnumOptionsList AutoFollowTypeOptions = EnumOptionsList() << EnumOption(View::NoAutoFollow, "None")
-                                                                     << EnumOption(View::AllAutoFollow, "All")
-                                                                     << EnumOption(View::XAutoFollow, "X");
-
-    static EnumOptions<View::AutoFollowType> options("AutoFollowType", AutoFollowTypeOptions);
-
-    return options;
+    return EnumOptions<View::AutoFollowType>(
+        "AutoFollowType", {{View::NoAutoFollow, "None"}, {View::AllAutoFollow, "All"}, {View::XAutoFollow, "X"}});
 }
 
 // Return calculated projection matrix
@@ -174,13 +148,6 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
         result.setColumn(2, (right + left) / (right - left), (top + bottom) / (top - bottom),
                          -(farClip + nearClip) / (farClip - nearClip), -1.0);
         result.setColumn(3, 0.0, 0.0, -(2.0 * nearClip * farClip) / (farClip - nearClip), 0.0);
-        // Equivalent to the following code:
-        // glMatrixMode(GL_PROJECTION);
-        // glLoadIdentity();
-        // top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-        // bottom = -top;
-        // glFrustum(aspect*bottom, aspect*top, bottom, top, prefs.clipNear(), prefs.clipFar());
-        // glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
     }
     else
     {
@@ -193,13 +160,6 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
         result.setColumn(1, 0.0, 2.0 / (top - bottom), 0.0, (top + bottom) / (top - bottom));
         result.setColumn(2, 0.0, 0.0, -1.0 / farClip, 0.0);
         result.setColumn(3, 0.0, 0.0, 0.0, 1.0);
-        // Equivalent to the following code:
-        // glMatrixMode(GL_PROJECTION);
-        // glLoadIdentity();
-        // top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-        // bottom = -top;
-        // glOrtho(aspect*top, aspect*bottom, top, bottom, -prefs.clipFar(), prefs.clipFar());
-        // glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
     }
 
     return result;
@@ -522,7 +482,7 @@ Vec3<double> View::screenToData(int x, int y, double z) const
     newx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5;
     newy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5;
 
-    for (int n = 0; n < 10; ++n)
+    for (auto n = 0; n < 10; ++n)
     {
         // Determine new (better) coordinate from a yardstick centred at current world coordinates
         temp = projectionMatrix_ * Vec4<double>(worldr.x + 1.0, worldr.y + 1.0, worldr.z, worldr.w);
@@ -551,8 +511,6 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     // Project axis coordinates to get a screen-based yardstick
     auto axmin = dataToScreen(axes_.coordMin(axis));
     auto axmax = dataToScreen(axes_.coordMax(axis));
-    // 	axmin.print();
-    // 	axmax.print();
 
     // Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
     Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
@@ -662,7 +620,7 @@ void View::recalculateView(bool force)
     Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
 
     // Iterate for a few cycles
-    for (int cycle = 0; cycle < 5; ++cycle)
+    for (auto cycle = 0; cycle < 5; ++cycle)
     {
         // We will now calculate more accurate stretch factors to apply to the X and Y axes.
         // Project the axis limits on to the screen using the relevant viewmatrix + coordinate centre translation
@@ -695,7 +653,7 @@ void View::recalculateView(bool force)
             coordMax[axis].set(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
 
             // Update global min/max
-            for (int n = 0; n < 3; ++n)
+            for (auto n = 0; n < 3; ++n)
             {
                 if (coordMin[axis][n] < globalMin[n])
                     globalMin[n] = coordMin[axis][n];
@@ -713,7 +671,7 @@ void View::recalculateView(bool force)
             b = dataToScreen(cuboid.maxima(), tempProjection, viewMat);
 
             // Update global and label min/max
-            for (int n = 0; n < 3; ++n)
+            for (auto n = 0; n < 3; ++n)
             {
                 tempMin = std::min(a[n], b[n]);
                 tempMax = std::max(a[n], b[n]);
@@ -734,8 +692,6 @@ void View::recalculateView(bool force)
         double globalHeight = globalMax.y - globalMin.y;
         axisPixelLength_[axisX] = coordMax[axisX].x - coordMin[axisX].x;
         axisPixelLength_[axisY] = coordMax[axisY].y - coordMin[axisY].y;
-        // 		double labelWidth = labelMax.x - labelMin.x;
-        // 		double labelHeight = labelMax.y - labelMin.y;
 
         // Now, we know the width and height of the axis on its own, and the extra 'added' by the labels, so work out
         // how much we need to shrink the axis by
@@ -786,14 +742,6 @@ void View::resetViewMatrix()
         viewRotation_.setIdentity();
         viewTranslation_.set(0.0, 0.0, 0.0);
 
-        // If a Normal view, reset the stretch factors
-        // 		if (viewType_ == View::NormalView)
-        // 		{
-        // 			axes_.setStretch(0, 1.0);
-        // 			axes_.setStretch(1, 1.0);
-        // 			axes_.setStretch(2, 1.0);
-        // 		}
-
         // Calculate zoom to show all data
         viewTranslation_.z = calculateRequiredZoom(axes_.realRange(0) * 0.5 * axes_.stretch(0),
                                                    axes_.realRange(1) * 0.5 * axes_.stretch(1), 0.9);
@@ -820,7 +768,7 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
     updateAxisLimits(xFrac, yFrac, zFrac);
 
     // Set axes limits to the extreme data values, making sure we have a sensible (i.e. non-zero range)
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Grab axis limits and make sure the limits are sensible, expanding only if the range is zero
         double limitMin = axes_.limitMin(axis);
@@ -828,8 +776,6 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
         Axes::ensureSensibleRange(limitMin, limitMax);
 
         axes_.setRange(axis, limitMin, limitMax);
-        // 		axes_.setToLimit(axis, true);
-        // 		axes_.setToLimit(axis, false);
     }
 }
 
@@ -854,7 +800,7 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
     else
     {
         // 3D view, so set all three axes
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
         {
             axes_.setMin(axis, newMin.get(axis));
             axes_.setMax(axis, newMax.get(axis));
@@ -875,7 +821,7 @@ void View::scaleRange(double factor)
         skipAxis = 0;
 
     // Loop over axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         if (axis == skipAxis)
             continue;
@@ -935,16 +881,21 @@ void View::autoFollowData()
     // Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive
     // regeneration further down the line
     auto updateRequired = false;
-    ListIterator<Renderable> renderableIterator(renderables_);
-    while (Renderable *rend = renderableIterator.iterate())
+    for (const auto &rend : renderables_)
     {
         // If the renderable isn't in the list, or our stored version is different, we need to update
-        RefDataItem<Renderable, int> *ri = autoFollowTransformVersions_.contains(rend);
-        if ((!ri) || (ri->data() != rend->dataVersion()))
-        {
-            updateRequired = true;
-            break;
-        }
+        auto it = std::find_if(autoFollowTransformVersions_.begin(), autoFollowTransformVersions_.end(),
+                               [rend](auto data) { return data.first == rend; });
+        if (it != autoFollowTransformVersions_.end() && (it->second == rend->dataVersion()))
+            continue;
+
+        // Update stored transformedData versions
+        if (it == autoFollowTransformVersions_.end())
+            autoFollowTransformVersions_.emplace_back(rend, rend->valuesTransformDataVersion());
+        else
+            it->second = rend->valuesTransformDataVersion();
+
+        updateRequired = true;
     }
 
     if (!updateRequired)
@@ -963,7 +914,7 @@ void View::autoFollowData()
         // Get y range over the horizontal range we've established
         auto first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-        for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+        for (const auto &rend : renderables_)
         {
             // Skip this Renderable if it is not currently visible
             if (!rend->isVisible())
@@ -1009,11 +960,6 @@ void View::autoFollowData()
         axes_.setRange(0, xMin, xMax);
         axes_.setRange(1, yMin, yMax);
     }
-
-    // Update stored transformedData versions
-    renderableIterator.restart();
-    while (Renderable *rend = renderableIterator.iterate())
-        autoFollowTransformVersions_.addUnique(rend, rend->valuesTransformDataVersion());
 }
 
 /*
@@ -1024,12 +970,12 @@ void View::autoFollowData()
 Vec3<double> View::dataMinima()
 {
     // If there are no Renderables, just return the current limits
-    if (renderables_.nItems() == 0)
+    if (renderables_.empty())
         return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
 
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1057,12 +1003,12 @@ Vec3<double> View::dataMinima()
 Vec3<double> View::dataMaxima()
 {
     // If there are no Renderables, just return the current limits
-    if (renderables_.nItems() == 0)
+    if (renderables_.empty())
         return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
 
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1091,7 +1037,7 @@ Vec3<double> View::positiveDataMinima()
 {
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1124,7 +1070,7 @@ Vec3<double> View::positiveDataMaxima()
 {
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1169,7 +1115,7 @@ void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
     Vec3<double> fractions(xFrac, yFrac, zFrac);
 
     // Loop over axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Adjust limits
         if (fractions[axis] > 0.0)
@@ -1222,7 +1168,7 @@ void View::shiftFlatAxisLimits(double deltaH, double deltaV)
     double deltas[2];
     deltas[0] = deltaH;
     deltas[1] = deltaV;
-    for (int n = 0; n < 2; ++n)
+    for (auto n = 0; n < 2; ++n)
     {
         double range = axes_.realRange(axes[n]);
         auto logarithmic = axes_.logarithmic(axes[n]);
@@ -1275,8 +1221,7 @@ void View::shiftFlatAxisLimitsFractional(double fracH, double fracV)
 // Return axes for the view
 Axes &View::axes() { return axes_; }
 
-// Return axes for the view (const)
-const Axes &View::constAxes() const { return axes_; }
+const Axes &View::axes() const { return axes_; }
 
 /*
  * Style

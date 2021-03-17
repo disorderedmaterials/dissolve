@@ -1,28 +1,9 @@
-/*
-    *** Keyword Widget - SpeciesSite RefList
-    *** src/gui/keywordwidgets/speciessite_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "classes/speciessite.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "gui/keywordwidgets/speciessite.h"
 #include "templates/variantpointer.h"
 #include <QButtonGroup>
@@ -92,8 +73,7 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
     auto *buttonGroup = new QButtonGroup(this);
 
     // Add new tabs in, one for each defined Species, and each containing checkboxes for each available site
-    ListIterator<Species> speciesIterator(coreData_.constSpecies());
-    while (auto *sp = speciesIterator.iterate())
+    for (const auto &sp : coreData_.species())
     {
         // Create the widget to hold our checkboxes for this Species
         auto *widget = new QWidget();
@@ -111,19 +91,18 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
         else
         {
             // Loop over sites defined in this Species
-            ListIterator<SpeciesSite> siteIterator(sp->sites());
-            while (auto *site = siteIterator.iterate())
+            for (auto &site : sp->sites())
             {
-                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site->name())));
-                if (keyword_->data() == site)
+                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site.name())));
+                if (keyword_->data() == &site)
                     radioButton->setChecked(true);
                 connect(radioButton, SIGNAL(clicked(bool)), this, SLOT(siteRadioButton_clicked(bool)));
-                radioButton->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(site));
+                radioButton->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(&site));
                 layout->addWidget(radioButton);
                 buttonGroup->addButton(radioButton);
 
                 // If this keyword demands oriented sites, disable the radio button if the site has no axes
-                if (keyword_->axesRequired() && (!site->hasAxes()))
+                if (keyword_->axesRequired() && (!site.hasAxes()))
                     radioButton->setDisabled(true);
             }
 

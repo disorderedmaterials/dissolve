@@ -7,7 +7,7 @@ steps:
       set -ex
       # -- General
       sudo apt-get update -q
-      sudo apt-get install bison ninja-build libopenmpi-dev openmpi-bin openmpi-common python3-setuptools
+      sudo apt-get install antlr4 ninja-build libopenmpi-dev openmpi-bin openmpi-common python3-setuptools uuid uuid-dev
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
@@ -16,9 +16,9 @@ steps:
     displayName: 'Install Conan'
   - bash: |
       set -ex
-      mkdir build-parallel
-      cd build-parallel
-      conan install --remote=conan-center ../ 
-      cmake -G "Ninja" -DPARALLEL:bool=true ${{ parameters.extraflags }} ../
+      mkdir build
+      cd build
+      conan install --remote=conan-center -s compiler.libcxx=libstdc++11 ../
+      cmake -G "Ninja" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

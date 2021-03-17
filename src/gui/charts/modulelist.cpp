@@ -1,23 +1,5 @@
-/*
-    *** ModuleList Chart
-    *** src/gui/charts/modulelist.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/charts/modulelist.h"
 #include "gui/charts/moduleblock.h"
@@ -65,12 +47,11 @@ ModuleListChart::~ModuleListChart() {}
 // Paint event
 void ModuleListChart::paintEvent(QPaintEvent *event)
 {
-    // Draw suitable connecting lines between widgets, illustrating the execution path of the code
     QPainter painter(this);
 
     // Draw the background before we do anything else
-    QBrush backgroundBrush = QBrush(Qt::black, QPixmap(":/images/images/squares.jpg"));
-    painter.fillRect(QRect(0, 0, width(), height()), backgroundBrush);
+    painter.fillRect(QRect(0, 0, width(), height()), Qt::white);
+    painter.drawPixmap(0, 0, QPixmap(":/images/images/cornerhexagons.png"));
 
     // Set up some QPens
     QPen solidPen(Qt::black);
@@ -83,7 +64,6 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
     painter.setPen(solidPen);
     QPoint p1, p2;
     auto top = 0;
-    ModuleBlock *lastBlock = nullptr;
     for (ModuleBlock *block : moduleBlockWidgets_)
     {
         // If this block is not visible, continue
@@ -299,9 +279,7 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         // Create a new instance of the specified module type
         Module *newModule = dissolve_.createModuleInstance(strings->data(MimeString::ModuleType));
 
-        // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
-        auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
-        Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : nullptr);
+        // Cast necessary blocks around the current hotspot up to ModuleBlocks, and get their Modules
         auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 
@@ -379,7 +357,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
     {
         modules.cut(module);
 
-        // If the Module is currently displayed in its own ModuleTab, remove that first
+        // Notify that we are removing this Module/block
         emit(blockRemoved(blockIdentifier));
 
         // If the module to delete is the currently-displayed one, unset it now
@@ -390,6 +368,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
         dissolve_.deleteModuleInstance(module);
 
         emit(dataModified());
+        emit(fullUpdate());
 
         updateControls();
     }
@@ -429,7 +408,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     ModuleListChartMetrics metrics;
 
     // Left edge of next widget, and maximum height
-    auto top = metrics.chartMargin();
+    auto top = metrics.chartMargin() - metrics.verticalModuleSpacing();
     auto hotSpotTop = 0;
     auto maxWidth = 0;
 
@@ -449,6 +428,9 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
             block->setVisible(false);
             continue;
         }
+
+        // Add vertical spacing
+        top += metrics.verticalModuleSpacing();
 
         // If our hotspot is the current one, increase the size.
         if (hotSpot == currentHotSpot_)
@@ -495,8 +477,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     hotSpot = hotSpot->next();
 
     // Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero
-    // height 	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next())
-    // spot->setWidth(maxWidth);
+    // height
     for (auto *spot = hotSpot; spot != nullptr; spot = spot->next())
         spot->setHeight(0);
 
@@ -513,13 +494,3 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     // Return required size
     return requiredSize;
 }
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ModuleListChart::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool ModuleListChart::readState(LineParser &parser) { return true; }

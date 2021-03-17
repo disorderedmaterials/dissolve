@@ -17,13 +17,13 @@ Contributions to Dissolve are welcome, and can come in many forms - the ability 
 
 - Fix typos, grammar, or inconsistencies in the documentation, or add to sections that are missing content or could be improved.
 - Test it by attempting to reproduce results obtained previously with EPSR.
-- Break it somehow, and [submit a bug report](https://www.github.com/projectdissolve/dissolve/issues) describing the problem and how you created it.
+- Break it somehow, and [submit a bug report](https://www.github.com/disorderedmaterials/dissolve/issues) describing the problem and how you created it.
 - Document an example use-case (most likely a system you're interested in) and submit it for inclusion.
-- Fix something in the code, or add a missing feature (see the current list of [issues](https://www.github.com/projectdissolve/dissolve/issues)).
-- Open a new [feature request issue](https://www.github.com/projectdissolve/dissolve/issues) describing something you'd like to see added, and why.
-- Create a new [module](../modules) with new functionality.
+- Fix something in the code, or add a missing feature (see the current list of [issues](https://www.github.com/disorderedmaterials/dissolve/issues)).
+- Open a new [feature request issue](https://www.github.com/disorderedmaterials/dissolve/issues) describing something you'd like to see added, and why.
+- Create a new [module]({{}< ref "modules" >}}) to extend Dissolve's functionality.
 
-Most of these require at least an account on [GitHub](https://www.github.com), so if you want to contribute the first step is to register and go to the [Dissolve repository](https://www.github.com/projectdissolve/dissolve).
+Most of these require at least an account on [GitHub](https://www.github.com), so if you want to contribute the first step is to register and go to the [Dissolve repository](https://www.github.com/disorderedmaterials/dissolve).
 
 ## Contributing to Documentation
 
@@ -33,7 +33,7 @@ More details can be found in this [GitHub guide](https://help.github.com/en/arti
 
 ## Contributing to the Codebase
 
-Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with git, and is available from [https://www.github.com/projectdissolve/dissolve](). Dissolve adopts a simple branching model for development, with `develop` being the main branch of the repository, and versioned releases branching off from that. Any additions or fixes to the code should be made through a suitable pull request from your own forked repository.
+Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with git, and is available from [https://www.github.com/disorderedmaterials/dissolve](). Dissolve adopts a simple branching model for development, with `develop` being the main branch of the repository, and versioned releases branching off from that. Any additions or fixes to the code should be made through a suitable pull request from your own forked repository.
 
 ### 1) Register on GitHub
 
@@ -41,11 +41,11 @@ Register an account on [GitHub](https://www.github.com) if you don't already hav
 
 ### 2) Fork Dissolve
 
-Go to the [Dissolve repository](https://www.github.com/projectdissolve/dissolve) and hit the **Fork** button at the top-right. This will give you your own copy of the Dissolve code as it currently stands. GitHub will take you to your own copy of Dissolve once the fork is completed, which you can should then clone / download on to your own machine.
+Go to the [Dissolve repository](https://www.github.com/disorderedmaterials/dissolve) and hit the **Fork** button at the top-right. This will give you your own copy of the Dissolve code as it currently stands. GitHub will take you to your own copy of Dissolve once the fork is completed, which you can should then clone / download on to your own machine.
 
 ### 3) Experiment / Fix / Break / Play
 
-You can freely experiment with the source code without fear of breaking the actual version, as all the changes you make are isolated to your repository until such time as you choose to submit a pull request and 
+You can freely experiment with the source code without fear of breaking the actual version, as all the changes you make are isolated to your repository until such time as you choose to submit a pull request and
 
 ### 4) Contribution Primer for a Small Fix
 

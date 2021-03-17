@@ -1,23 +1,5 @@
-/*
-    *** Reference List
-    *** src/templates/reflist.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -138,22 +120,15 @@ template <class T> class RefList
     }
     RefListItem<T> *operator[](int index)
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            Messenger::error("Array index ({}) out of bounds ({} items in RefList)\n", index, nItems_);
-            return nullptr;
-        }
-#endif
-        // Use array() function to return item
+        assert(index >= 0 && index < nItems_);
+
         return array()[index];
     }
     RefListItem<T> begin() const
     {
         if (listHead_ == nullptr)
-        {
             return end();
-        }
+
         return *listHead_;
     }
     const RefListItem<T> end() const

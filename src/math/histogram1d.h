@@ -1,37 +1,17 @@
-/*
-    *** 1-Dimensional Histogram
-    *** src/math/histogram1d.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "genericitems/base.h"
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
-#include "templates/array.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
+class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
 {
     public:
     Histogram1D();
@@ -53,11 +33,11 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
     // Number of bins
     int nBins_;
     // Histogram bins
-    Array<long int> bins_;
+    std::vector<long int> bins_;
     // Array of bin centres
-    Array<double> binCentres_;
+    std::vector<double> binCentres_;
     // Accumulated averages
-    Array<SampledDouble> averages_;
+    std::vector<SampledDouble> averages_;
     // Number of values binned over all bins
     long int nBinned_;
     // Number of points missed (out of bin range)
@@ -75,7 +55,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
     // Zero histogram bins
     void zeroBins();
     // Set up supplied axis
-    static void setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, Array<double> &binCentres);
+    static void setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, std::vector<double> &binCentres);
     // Return minimum value for data (hard left-edge of first bin)
     double minimum() const;
     // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -91,9 +71,9 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return Array of x centre-bin values
-    const Array<double> &binCentres() const;
+    const std::vector<double> &binCentres() const;
     // Return histogram data
-    Array<long int> &bins();
+    std::vector<long int> &bins();
     // Add source histogram data into local array
     void add(Histogram1D &other, int factor = 1);
     // Return accumulated (averaged) data

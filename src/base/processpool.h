@@ -1,23 +1,5 @@
-/*
-    *** Process Pool
-    *** src/base/processpool.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -26,6 +8,7 @@
 
 #include "base/processgroup.h"
 #include "base/timer.h"
+#include "math/data1d.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 #include "templates/vector3.h"
@@ -188,7 +171,7 @@ class ProcessPool
     // Return number of processes in specified group
     int nProcessesInGroup(int groupId) const;
     // Return array of pool ranks in the specified group
-    int *poolRanksInGroup(int groupId) const;
+    const Array<int> &poolRanksInGroup(int groupId) const;
     // Return whether group data is modifiable
     bool groupsModifiable() const;
     // Prevent group data from being modified
@@ -285,6 +268,9 @@ class ProcessPool
     // Broadcast integers
     bool broadcast(int *source, int count, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast chars
+    bool broadcast(char *source, int count, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast single long integer
     bool broadcast(long int &source, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
@@ -309,8 +295,23 @@ class ProcessPool
     // Broadcast Array<long int>
     bool broadcast(Array<long int> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<long int>
+    bool broadcast(std::vector<long int> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<int>
+    bool broadcast(std::vector<int> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast Array<double>
     bool broadcast(Array<double> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<char>
+    bool broadcast(std::vector<char> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<double>
+    bool broadcast(std::vector<double> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast Data1D
+    bool broadcast(Data1D &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast Array< Vec3<int> >
     bool broadcast(Array<Vec3<int>> &array, int rootRank = 0,
@@ -321,9 +322,49 @@ class ProcessPool
     // Broadcast Array2D<double>
     bool broadcast(Array2D<double> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Broadcast Array2D<bool>
-    bool broadcast(Array2D<bool> &array, int rootRank = 0,
+    // Broadcast Array2D<char>
+    bool broadcast(Array2D<char> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast Array2D fallback
+    template <typename T>
+    bool broadcast(Array2D<T> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator)
+    {
+        int nRows, nColumns;
+        bool half;
+        if (poolRank_ == rootRank)
+        {
+            nRows = array.nRows();
+            nColumns = array.nColumns();
+            half = array.halved();
+        }
+        if (!broadcast(nRows, rootRank, commType))
+        {
+            Messenger::print("Failed to broadcast Array2D<T> nRows from root rank {}.\n", rootRank);
+            return false;
+        }
+        if (!broadcast(nColumns, rootRank, commType))
+        {
+            Messenger::print("Failed to broadcast Array2D<T> nRows from root rank {}.\n", rootRank);
+            return false;
+        }
+        if (!broadcast(half, rootRank, commType))
+        {
+            Messenger::print("Failed to broadcast Array2D<T> nRows from root rank {}.\n", rootRank);
+            return false;
+        }
+        if (poolRank_ != rootRank)
+            array.initialise(nRows, nColumns, half);
+        for (auto &value : array)
+        {
+            if (!broadcast(value, rootRank, commType))
+            {
+                Messenger::print("Failed to broadcast arbitrary data from root rank {}.\n", rootRank);
+                return false;
+            }
+        }
+        return true;
+    }
 
     /*
      * Special Array Functions
@@ -396,13 +437,19 @@ class ProcessPool
     bool equality(const Array<int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array<double> across involved processes
     bool equality(const Array<double> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of std::vector<double> across involved processes
+    bool equality(const std::vector<double> &array,
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of std::vector<long int> across involved processes
+    bool equality(const std::vector<long int> &array,
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array2D<int> across involved processes
     bool equality(const Array2D<int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array2D<double> across involved processes
     bool equality(const Array2D<double> &array,
                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Check equality of Array2D<bool> across involved processes
-    bool equality(const Array2D<bool> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of Array2D<char> across involved processes
+    bool equality(const Array2D<char> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
     /*
      * Buffered Random Numbers

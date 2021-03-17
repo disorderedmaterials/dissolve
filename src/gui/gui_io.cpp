@@ -1,23 +1,5 @@
-/*
-    *** Dissolve GUI - I/O
-    *** src/gui/gui_io.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "gui/gui.h"
@@ -38,19 +20,6 @@ bool DissolveWindow::saveState()
     while (ReferencePoint *refPoint = referencePointIterator.iterate())
     {
         if (!stateParser.writeLineF("ReferencePoint  '{}'  '{}'\n", refPoint->suffix(), refPoint->restartFile()))
-            return false;
-    }
-
-    // Write tab state
-    RefList<const MainTab> tabs = ui_.MainTabs->allTabs();
-    for (const MainTab *tab : tabs)
-    {
-        // Write tab type and title
-        if (!stateParser.writeLineF("Tab  '{}'  {}\n", qPrintable(tab->title()), MainTab::tabTypes().keyword(tab->type())))
-            return false;
-
-        // Write tab state
-        if (!tab->writeState(stateParser))
             return false;
     }
 
@@ -82,42 +51,6 @@ bool DissolveWindow::loadState()
         {
             // Set current tab index
             ui_.MainTabs->setCurrentIndex(stateParser.argi(1));
-        }
-        else if (DissolveSys::sameString(stateParser.argsv(0), "Tab"))
-        {
-            // If any of our current tabs match the title, call it's readState() function
-            MainTab *tab = ui_.MainTabs->findTab(QString::fromStdString(std::string(stateParser.argsv(1))));
-            if (tab)
-            {
-                if (!tab->readState(stateParser, dissolve_.coreData()))
-                    return false;
-            }
-            else
-            {
-                // Must first create the tab first.
-                if (DissolveSys::sameString(stateParser.argsv(2), "ModuleTab"))
-                {
-                    // The title represents the unique name of the Module, so find it now
-                    Module *module = dissolve_.findModuleInstance(stateParser.argsv(1));
-                    if (!module)
-                        return Messenger::error("Failed to find Module instance '{}' for display in a ModuleTab.\n",
-                                                stateParser.argsv(1));
-
-                    tab = ui_.MainTabs->addModuleTab(this, module);
-                }
-                else if (DissolveSys::sameString(stateParser.argsv(2), "WorkspaceTab"))
-                {
-                    // Create a new workspace with the desired name
-                    tab = ui_.MainTabs->addWorkspaceTab(this, QString::fromStdString(std::string(stateParser.argsv(1))));
-                }
-                else
-                    return Messenger::error("Unrecognised tab ('{}') or tab type ('{}') found in state file.\n",
-                                            stateParser.argsv(1), stateParser.argsv(2));
-
-                // Now read state information
-                if (!tab->readState(stateParser, dissolve_.coreData()))
-                    return false;
-            }
         }
         else if (DissolveSys::sameString(stateParser.argsv(0), "ReferencePoint"))
         {

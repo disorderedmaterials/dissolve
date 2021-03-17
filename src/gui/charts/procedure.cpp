@@ -1,23 +1,5 @@
-/*
-    *** Procedure Chart
-    *** src/gui/charts/procedure.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/charts/procedure.h"
 #include "gui/charts/proceduremetrics.h"
@@ -45,10 +27,6 @@ ProcedureChart::ProcedureChart(Procedure *procedure, const CoreData &coreData) :
     updateContentBlocks();
 
     recalculateLayout();
-
-    // Create the insertion widget if we don't already have one
-    // 	insertionWidget_ = new ProcedureChartInsertionBlock(this, dissolveWindow_);
-    // 	insertionWidget_->setVisible(false);
 
     updateControls();
 }
@@ -115,7 +93,6 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence,
             block = new ProcedureChartNodeBlock(this, node, coreData_);
             connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
             connect(block, SIGNAL(keywordsToggled()), this, SLOT(recalculateLayout()));
-            // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
             newSequenceWidgets.append(block);
             chartBlocks_.append(block);
         }
@@ -250,13 +227,3 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
 
     return requiredSize;
 }
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ProcedureChart::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool ProcedureChart::readState(LineParser &parser) { return true; }

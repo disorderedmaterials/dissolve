@@ -1,23 +1,5 @@
-/*
-    *** Keyword - Species RefList
-    *** src/keywords/speciesreflist.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/speciesreflist.h"
 #include "base/lineparser.h"
@@ -36,7 +18,7 @@ SpeciesRefListKeyword::~SpeciesRefListKeyword() {}
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool SpeciesRefListKeyword::isDataEmpty() const { return data_.nItems() > 0; }
+bool SpeciesRefListKeyword::isDataEmpty() const { return data_.nItems() == 0; }
 
 /*
  * Arguments
@@ -52,7 +34,7 @@ int SpeciesRefListKeyword::maxArguments() const { return 99; }
 bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Each argument is the name of a Species that we will add to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         Species *sp = coreData.findSpecies(parser.argsv(n));
         if (!sp)

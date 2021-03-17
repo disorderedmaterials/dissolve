@@ -1,23 +1,5 @@
-/*
-    *** Graph Axes
-    *** src/gui/render/axes.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/axes.h"
 #include "base/sysfunc.h"
@@ -93,7 +75,7 @@ Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), font
     autoPositionTitles_ = true;
 
     // GL
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         axisPrimitives_[n].initialise(GL_LINES, false);
         axisPrimitives_[n].setNoInstances();
@@ -120,22 +102,18 @@ Axes::~Axes() {}
  */
 
 // Return enum options for AutoScaleMethod
-EnumOptions<Axes::AutoScaleMethod> &Axes::autoScaleMethods()
+EnumOptions<Axes::AutoScaleMethod> Axes::autoScaleMethods()
 {
-    static EnumOptionsList AutoScaleOptions = EnumOptionsList() << EnumOption(Axes::NoAutoScale, "None")
-                                                                << EnumOption(Axes::ExpandingAutoScale, "Expanding")
-                                                                << EnumOption(Axes::FullAutoScale, "Full");
-
-    static EnumOptions<Axes::AutoScaleMethod> options("AutoScaleMethod", AutoScaleOptions);
-
-    return options;
+    return EnumOptions<Axes::AutoScaleMethod>(
+        "AutoScaleMethod",
+        {{Axes::NoAutoScale, "None"}, {Axes::ExpandingAutoScale, "Expanding"}, {Axes::FullAutoScale, "Full"}});
 }
 
 // Recalculate minimum, maximum, and centre coordinates of axes
 void Axes::updateCoordinates()
 {
     // Loop over axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Determine central coordinate component
         if (logarithmic_[axis])
@@ -145,7 +123,7 @@ void Axes::updateCoordinates()
             coordCentre_[axis] = (max_[axis] + min_[axis]) * 0.5 * stretch_[axis];
 
         // Set axis position along other directions
-        for (int n = 0; n < 3; ++n)
+        for (auto n = 0; n < 3; ++n)
         {
             // Get axis position
             double position = (positionIsFractional_[axis] ? positionFractional_[axis][n] * (max_[n] - min_[n]) + min_[n]
@@ -180,26 +158,7 @@ void Axes::clamp(int axis)
     {
         if (min_[axis] <= 0.0)
             setToLimit(axis, true);
-        // 		if (min_[axis] < limitMin_[axis]) setToLimit(axis, true);
-        // 		if (max_[axis] > limitMax_[axis]) setToLimit(axis, false);
     }
-
-    // 	// Clamp axis position point values if necessary
-    // 	for (int axis=0; axis < 3; ++axis)
-    // 	{
-    // 		if (positionReal_[axis][(axis+1)%3] < limitMin_[(axis+1)%3])
-    // 		{
-    // 			positionReal_[axis].set((axis+1)%3, limitMin_[(axis+1)%3]);
-    // 			primitivesValid_ = false;
-    // 			parentView_.paneChanged();
-    // 		}
-    // 		if (positionReal_[axis][(axis+2)%3] < limitMin_[(axis+2)%3])
-    // 		{
-    // 			positionReal_[axis].set((axis+2)%3, limitMin_[(axis+2)%3]);
-    // 			primitivesValid_ = false;
-    // 			parentView_.paneChanged();
-    // 		}
-    // 	}
 }
 
 // Set minimum value for specified axis
@@ -340,7 +299,7 @@ double Axes::limitMax(int axis) const { return limitMax_.get(axis); }
 // Set all axis limits at once
 void Axes::expandLimits(bool noShrink)
 {
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         if ((min_[axis] > limitMin_[axis]) || (!noShrink))
             setToLimit(axis, true);
@@ -490,19 +449,19 @@ double Axes::transformX(double x) const
 }
 
 // Transform entire array of values into local axes coordinates
-void Axes::transformX(Array<double> &xArray) const
+void Axes::transformX(std::vector<double> &xArray) const
 {
     if (inverted_.x && logarithmic_.x)
-        for (int n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = log10(max_.x / xArray[n]) * stretch_.x;
     else if (inverted_.x)
-        for (int n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = ((max_.x - xArray[n]) + min_.x) * stretch_.x;
     else if (logarithmic_.x)
-        for (int n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = log10(xArray[n]) * stretch_.x;
     else
-        xArray *= stretch_.x;
+        std::transform(xArray.begin(), xArray.end(), xArray.begin(), [=](auto value) { return value * stretch_.x; });
 }
 
 // Return supplied data y value in local axes coordinates
@@ -519,27 +478,23 @@ double Axes::transformY(double y) const
 }
 
 // Transform entire array of values into local axes coordinates
-void Axes::transformY(Array<double> &yArray) const
+void Axes::transformY(std::vector<double> &yArray) const
 {
     if (inverted_.y && logarithmic_.y)
-        for (int n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.size(); ++n)
         {
-            // 		if (max_.y / yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
-            // 		else
             yArray[n] = log10(max_.y / yArray[n]) * stretch_.y;
         }
     else if (inverted_.y)
-        for (int n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.size(); ++n)
             yArray[n] = ((max_.y - yArray[n]) + min_.y) * stretch_.y;
     else if (logarithmic_.y)
-        for (int n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.size(); ++n)
         {
-            // 		if (yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
-            // 		else
             yArray[n] = log10(yArray[n]) * stretch_.y;
         }
     else
-        yArray *= stretch_.y;
+        std::transform(yArray.begin(), yArray.end(), yArray.begin(), [=](auto value) { return value * stretch_.y; });
 }
 
 // Return supplied data z value in local axes coordinates
@@ -556,60 +511,41 @@ double Axes::transformZ(double z) const
 }
 
 // Transform entire array of values into local axes coordinates
-void Axes::transformZ(Array<double> &zArray) const
+void Axes::transformZ(std::vector<double> &zArray) const
 {
     if (inverted_.z && logarithmic_.z)
-        for (int n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.size(); ++n)
         {
-            // 		if (max_.z / zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
-            // 		else
             zArray[n] = log10(max_.z / zArray[n]) * stretch_.z;
         }
     else if (inverted_.z)
-        for (int n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.size(); ++n)
             zArray[n] = ((max_.z - zArray[n]) + min_.z) * stretch_.z;
     else if (logarithmic_.z)
-        for (int n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.size(); ++n)
         {
-            // 		if (zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
-            // 		else
             zArray[n] = log10(zArray[n]) * stretch_.z;
         }
     else
-        zArray *= stretch_.z;
+        std::transform(zArray.begin(), zArray.end(), zArray.begin(), [=](auto value) { return value * stretch_.z; });
 }
 
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformX(Array2D<double> &xArray) const
 {
-    auto n = 0;
-    while (n < xArray.linearArraySize())
-    {
-        xArray.linearValue(n) = transformX(xArray.linearValue(n));
-        n++;
-    }
+    std::transform(xArray.begin(), xArray.end(), xArray.begin(), [this](auto x) { return transformX(x); });
 }
 
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformY(Array2D<double> &yArray) const
 {
-    auto n = 0;
-    while (n < yArray.linearArraySize())
-    {
-        yArray.linearValue(n) = transformY(yArray.linearValue(n));
-        n++;
-    }
+    std::transform(yArray.begin(), yArray.end(), yArray.begin(), [this](auto y) { return transformY(y); });
 }
 
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformZ(Array2D<double> &zArray) const
 {
-    auto n = 0;
-    while (n < zArray.linearArraySize())
-    {
-        zArray.linearValue(n) = transformZ(zArray.linearValue(n));
-        n++;
-    }
+    std::transform(zArray.begin(), zArray.end(), zArray.begin(), [this](auto z) { return transformZ(z); });
 }
 
 /*
@@ -791,7 +727,7 @@ void Axes::determineLabelFormat(int axis)
             QString tickLabel, oldLabel;
             auto nTicks = (max_[axis] - min_[axis]) / tickDelta_[axis];
             double axisValue = tickFirst_[axis];
-            for (int n = 0; n < nTicks; ++n)
+            for (auto n = 0; n < nTicks; ++n)
             {
                 // Print the current label value
                 tickLabel = numberFormat_[axis].format(axisValue);
@@ -1072,8 +1008,8 @@ void Axes::updateAxisPrimitives()
     double delta, value, clipPlaneDelta = 0.0001;
     Vec3<double> u, v1, v2, tickDir, adjustment;
     Matrix4 labelTransform, titleTransform;
-    Array<double> tickPositions[3];
-    Array<bool> tickIsMajor[3];
+    std::vector<double> tickPositions[3];
+    std::vector<bool> tickIsMajor[3];
 
     // Make sure coordinates are up-to-date
     updateCoordinates();
@@ -1089,7 +1025,7 @@ void Axes::updateAxisPrimitives()
         inPlaneAxis = 0;
 
     // Set clip coordinates
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         if (logarithmic_[axis])
         {
@@ -1105,7 +1041,7 @@ void Axes::updateAxisPrimitives()
     }
 
     // Construct axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Clear old axis primitives
         axisPrimitives_[axis].forgetAll();
@@ -1133,15 +1069,6 @@ void Axes::updateAxisPrimitives()
 
         // Create axis title transformation matrix
         titleTransform.setIdentity();
-        // 		// -- 1) Apply axial rotation along label left-to-right direction
-        // 		if (parentView_.viewType() == View::FlatZYView)
-        // titleTransform.applyPreRotationY(titleOrientation(axis).x); 		else
-        // titleTransform.applyPreRotationX(titleOrientation(axis).x);
-        // 		// -- 2) Perform in-plane rotation
-        // 		if (parentView_.viewType() == View::FlatZYView)
-        // titleTransform.applyPreRotationX(titleOrientation(axis).y); 		else if (inPlaneAxis == 1)
-        // titleTransform.applyPreRotationY(titleOrientation(axis).y); 		else
-        // titleTransform.applyPreRotationZ(titleOrientation(axis).y);
         titleTransform.applyPreRotationX(titleOrientation(axis).x);
         titleTransform.applyPreRotationY(titleOrientation(axis).y);
         titleTransform.applyPreRotationZ(titleOrientation(axis).z);
@@ -1171,17 +1098,14 @@ void Axes::updateAxisPrimitives()
             auto u = coordMin_[axis];
             while (value <= max_[axis])
             {
-                // Check break condition
-                // 				if (value > max_[axis]) break;
-
                 // If the current value is in range, plot a tick
                 u[axis] = (inverted_[axis] ? log10(max_[axis] / value) : log10(value)) * stretch_[axis];
                 if (log10(value) >= min)
                 {
                     // Tick mark
                     axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * (count == 0 ? 1.0 : 0.5));
-                    tickPositions[axis].add(u[axis]);
-                    tickIsMajor[axis].add(count == 0);
+                    tickPositions[axis].push_back(u[axis]);
+                    tickIsMajor[axis].push_back(count == 0);
 
                     // Tick label
                     if (count == 0)
@@ -1189,7 +1113,7 @@ void Axes::updateAxisPrimitives()
                         // Get formatted value text
                         s = numberFormat_[axis].format(value);
 
-                        labelPrimitives_[axis].add(fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
+                        labelPrimitives_[axis].add(&fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
                                                    tickDir * labelOrientation(axis).z, labelTransform,
                                                    parentView_.labelPointSize(),
                                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
@@ -1236,7 +1160,7 @@ void Axes::updateAxisPrimitives()
                 // Draw tick here, only if value >= min_
                 if (value >= min_[axis])
                 {
-                    tickPositions[axis].add(u[axis]);
+                    tickPositions[axis].push_back(u[axis]);
 
                     if (count % (minorTicks_[axis] + 1) == 0)
                     {
@@ -1245,19 +1169,19 @@ void Axes::updateAxisPrimitives()
                         // Get formatted label text
                         s = numberFormat_[axis].format(value);
 
-                        labelPrimitives_[axis].add(fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
+                        labelPrimitives_[axis].add(&fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
                                                    tickDir * labelOrientation(axis).z, labelTransform,
                                                    parentView_.labelPointSize(),
                                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
 
-                        tickIsMajor[axis].add(true);
+                        tickIsMajor[axis].push_back(true);
 
                         count = 0;
                     }
                     else
                     {
                         axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * 0.5);
-                        tickIsMajor[axis].add(false);
+                        tickIsMajor[axis].push_back(false);
                     }
                 }
                 u.add(axis, delta * (inverted_[axis] ? -stretch_[axis] : stretch_[axis]));
@@ -1305,7 +1229,7 @@ void Axes::updateAxisPrimitives()
             adjustment = tickDir * titleDistances_[axis];
 
         // -- Add primitive
-        titlePrimitives_[axis].add(fontInstance_, QString::fromStdString(title_[axis]), u, titleAnchor(axis), adjustment,
+        titlePrimitives_[axis].add(&fontInstance_, QString::fromStdString(title_[axis]), u, titleAnchor(axis), adjustment,
                                    titleTransform, parentView_.titlePointSize(),
                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
     }
@@ -1319,7 +1243,7 @@ void Axes::updateAxisPrimitives()
     gridLineMajorPrimitives_[2].initialise(GL_LINES, false);
 
     // The 'axis' variable indicates the vector we are drawing lines along, and the relevant primitive store them in
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Check to see if there is anything to draw for this direction
         if ((!gridLinesMajor_[axis]) && (!gridLinesMinor_[axis]))
@@ -1330,9 +1254,9 @@ void Axes::updateAxisPrimitives()
         int ortho2 = (axis + 2) % 3;
 
         // Double loop now, over the two sets of tickmarks that are orthogonal to 'axis'
-        for (int i1 = 0; i1 < tickPositions[ortho1].nItems(); ++i1)
+        for (auto i1 = 0; i1 < tickPositions[ortho1].size(); ++i1)
         {
-            for (int i2 = 0; i2 < tickPositions[ortho2].nItems(); ++i2)
+            for (auto i2 = 0; i2 < tickPositions[ortho2].size(); ++i2)
             {
                 // Set basic vector info
                 // The 'axis' will define its own component, with the other two coming from the tickmark
@@ -1343,9 +1267,6 @@ void Axes::updateAxisPrimitives()
                 v2[axis] = coordMax_[axis][axis];
                 v2[ortho1] = tickPositions[ortho1][i1];
                 v2[ortho2] = tickPositions[ortho2][i2];
-                // 				v1.set(coordMin_[0][0], tickPositions[1][j],
-                // tickPositions[2][k]); 				v2.set(coordMax_[0][0],
-                // tickPositions[1][j], tickPositions[2][k]);
 
                 // If we are only drawing lines in the planes orthogonal to the axis, break if we have moved
                 // away from it... Otherwise, we change either the i1 or i2 components of v1 and v2 to position

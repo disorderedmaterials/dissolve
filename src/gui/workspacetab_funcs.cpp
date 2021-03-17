@@ -1,23 +1,5 @@
-/*
-    *** WorkspaceTab Functions
-    *** src/gui/workspacetab_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -206,80 +188,4 @@ void WorkspaceTab::contextMenuAddGizmo(bool checked)
 
     // The text of the sender QAction is the type of the Gizmo we need to create
     createGizmo(qPrintable(action->text()));
-}
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool WorkspaceTab::readState(LineParser &parser, const CoreData &coreData)
-{
-    // Read tab state information:   nGizmos
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    const auto nGizmos = parser.argi(0);
-
-    // Read in widgets
-    for (int n = 0; n < nGizmos; ++n)
-    {
-        // Read line from the file, which should contain the gizmo type
-        if (parser.getArgsDelim() != LineParser::Success)
-            return false;
-        Gizmo *gizmo = createGizmo(QString::fromStdString(std::string(parser.argsv(0))));
-        if (gizmo == nullptr)
-            return Messenger::error("Unrecognised gizmo type '{}' in workspace '{}'.\n", parser.argsv(0), qPrintable(title()));
-
-        // Set the unique name
-        gizmo->setUniqueName(Gizmo::uniqueName(QString::fromStdString(std::string(parser.argsv(1)))));
-
-        // Read in the widget's geometry / state / flags
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        gizmo->window()->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
-        // -- Is the window maximised, or shaded?
-        if (parser.argb(4))
-            gizmo->window()->showMaximized();
-        else if (parser.argb(5))
-            gizmo->window()->showShaded();
-
-        // Now call the widget's local readState()
-        if (!gizmo->readState(parser))
-            return false;
-    }
-
-    // Ensure workspace 'rename' menu item is set correctly
-    dissolveWindow_->currentWorkspaceGizmoChanged(mdiArea_->currentSubWindow());
-
-    return true;
-}
-
-// Write widget state through specified LineParser
-bool WorkspaceTab::writeState(LineParser &parser) const
-{
-    // Write tab state information:   nGizmos
-    if (!parser.writeLineF("{}      # NGizmos\n", gizmos_.nItems()))
-        return false;
-
-    // Loop over our subwindow list
-    ListIterator<Gizmo> gizmoIterator(gizmos_);
-    while (Gizmo *gizmo = gizmoIterator.iterate())
-    {
-        // Write Gizmo type
-        if (!parser.writeLineF("{}  '{}'\n", qPrintable(gizmo->type()), qPrintable(gizmo->uniqueName())))
-            return false;
-
-        // Write window geometry / state
-        QRect geometry = gizmo->window()->geometry();
-        if (!parser.writeLineF("{} {} {} {} {} {}\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(),
-                               DissolveSys::btoa(gizmo->window()->isMaximized()),
-                               DissolveSys::btoa(gizmo->window()->isShaded())))
-            return false;
-
-        // Write gizmo-specific state information
-        if (!gizmo->writeState(parser))
-            return false;
-    }
-
-    return true;
 }

@@ -1,23 +1,5 @@
-/*
-    *** Neutron Weights Container
-    *** src/classes/neutronweights.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/neutronweights.h"
 #include "base/lineparser.h"
@@ -72,7 +54,7 @@ void NeutronWeights::clear()
 }
 
 // Add Isotopologue for Species
-void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
+void NeutronWeights::addIsotopologue(const Species *sp, int speciesPopulation, const Isotopologue *iso,
                                      double isotopologueRelativePopulation)
 {
     // Does an Isotopologues definition already exist for the supplied Species?
@@ -89,7 +71,7 @@ void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const I
 }
 
 // Return whether an Isotopologues definition exists for the provided Species
-bool NeutronWeights::containsIsotopologues(Species *sp) const
+bool NeutronWeights::containsIsotopologues(const Species *sp) const
 {
     return std::any_of(isotopologueMixtures_.cbegin(), isotopologueMixtures_.cend(),
                        [sp](const Isotopologues &mix) { return mix.species() == sp; });
@@ -102,9 +84,9 @@ void NeutronWeights::print() const
     Messenger::print("  ------------------------------------------------------\n");
     for (auto &topes : isotopologueMixtures_)
     {
-        for (auto it = topes.constMix().begin(); it != topes.constMix().end(); ++it)
+        for (auto it = topes.mix().begin(); it != topes.mix().end(); ++it)
         {
-            if (it == topes.constMix().begin())
+            if (it == topes.mix().begin())
                 Messenger::print("  {:<15}  {:<15}  {:<10d}  {}\n", topes.species()->name(), it->isotopologue()->name(),
                                  topes.speciesPopulation(), it->weight());
             else
@@ -154,9 +136,9 @@ void NeutronWeights::calculateWeightingMatrices()
                       cj = atd2.fraction();
                       bj = atd2.boundCoherent() * 0.1;
 
-                      concentrationProducts_.at(typeI, typeJ) = ci * cj;
-                      boundCoherentProducts_.at(typeI, typeJ) = bi * bj;
-                      weights_.at(typeI, typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
+                      concentrationProducts_[{typeI, typeJ}] = ci * cj;
+                      boundCoherentProducts_[{typeI, typeJ}] = bi * bj;
+                      weights_[{typeI, typeJ}] = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
                   });
 
     // Finalise <b>**2
@@ -166,8 +148,8 @@ void NeutronWeights::calculateWeightingMatrices()
     // Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
     intramolecularWeights_ = 0.0;
     Array2D<double> intraNorm(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    Array2D<bool> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    Array2D<char> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    Array2D<char> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
     intraNorm = 0.0;
     globalFlag = false;
     for (auto &topes : isotopologueMixtures_)
@@ -176,9 +158,8 @@ void NeutronWeights::calculateWeightingMatrices()
         auto speciesWeight = double(topes.speciesPopulation());
 
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
-        Species *sp = topes.species();
+        const Species *sp = topes.species();
         const AtomTypeList &speciesAtomTypes = sp->usedAtomTypes();
-        const auto nAtoms = sp->nAtoms();
         intraFlag = false;
         for_each_pair(atomTypes_.begin(), atomTypes_.end(),
                       [&](int i_, const AtomTypeData &atd1, int j_, const AtomTypeData &atd2) {
@@ -192,7 +173,7 @@ void NeutronWeights::calculateWeightingMatrices()
                           if (typeJ == -1)
                               Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd2.atomTypeName());
 
-                          intraFlag.at(typeI, typeJ) = true;
+                          intraFlag[{typeI, typeJ}] = true;
                       });
 
         // Loop over Isotopologues defined for this mixture
@@ -230,7 +211,7 @@ void NeutronWeights::calculateWeightingMatrices()
                     auto &localJ = atomTypes_[typeJ];
 
                     // Check to see if this interaction is present in the current Species
-                    if (!intraFlag.at(typeI, typeJ))
+                    if (!intraFlag[{typeI, typeJ}])
                         continue;
 
                     // If this AtomType is exchangeable, add the averaged scattering length from the local
@@ -245,9 +226,9 @@ void NeutronWeights::calculateWeightingMatrices()
                     }
                     bj *= 0.1;
 
-                    intramolecularWeights_.at(typeI, typeJ) += weight * bi * bj;
-                    intraNorm.at(typeI, typeJ) += weight;
-                    globalFlag.at(typeI, typeJ) = true;
+                    intramolecularWeights_[{typeI, typeJ}] += weight * bi * bj;
+                    intraNorm[{typeI, typeJ}] += weight;
+                    globalFlag[{typeI, typeJ}] = true;
                 }
             }
         }
@@ -257,14 +238,14 @@ void NeutronWeights::calculateWeightingMatrices()
     for_each_pair(atomTypes_.begin(), atomTypes_.end(),
                   [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
                       // Skip this pair if there are no such intramolecular interactions
-                      if (!globalFlag.at(typeI, typeJ))
+                      if (!globalFlag[{typeI, typeJ}])
                           return;
 
                       ci = atd1.fraction();
                       cj = atd2.fraction();
 
-                      intramolecularWeights_.at(typeI, typeJ) /= intraNorm.at(typeI, typeJ);
-                      intramolecularWeights_.at(typeI, typeJ) *= ci * cj * (typeI == typeJ ? 1 : 2);
+                      intramolecularWeights_[{typeI, typeJ}] /= intraNorm[{typeI, typeJ}];
+                      intramolecularWeights_[{typeI, typeJ}] *= ci * cj * (typeI == typeJ ? 1 : 2);
                   });
 }
 
@@ -287,10 +268,10 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
 
             // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
             // Isotopologue
-            for (auto *i = topes.species()->firstAtom(); i != nullptr; i = i->next())
+            for (const auto &i : topes.species()->atoms())
             {
-                Isotope *iso = tope->atomTypeIsotope(i->atomType());
-                atomTypes_.addIsotope(i->atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
+                Isotope *iso = tope->atomTypeIsotope(i.atomType());
+                atomTypes_.addIsotope(i.atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
             }
         }
     }
@@ -312,22 +293,22 @@ void NeutronWeights::naturalise()
 }
 
 // Return AtomTypeList
-AtomTypeList &NeutronWeights::atomTypes() { return atomTypes_; }
+const AtomTypeList &NeutronWeights::atomTypes() const { return atomTypes_; }
 
 // Return number of used AtomTypes
 int NeutronWeights::nUsedTypes() const { return atomTypes_.nItems(); }
 
 // Return concentration product for types i and j
-double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_.constAt(i, j); }
+double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_[{i, j}]; }
 
 // Return bound coherent scattering product for types i
-double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_.constAt(i, j); }
+double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_[{i, j}]; }
 
 // Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
-double NeutronWeights::weight(int i, int j) const { return weights_.constAt(i, j); }
+double NeutronWeights::weight(int i, int j) const { return weights_[{i, j}]; }
 
 // Return full intramolecular weighting for types i and j
-double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_.constAt(i, j); }
+double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_[{i, j}]; }
 
 // Return full weights matrix
 const Array2D<double> &NeutronWeights::weights() const { return weights_; }
@@ -365,7 +346,7 @@ bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nItems = parser.argi(0);
-    for (int n = 0; n < nItems; ++n)
+    for (auto n = 0; n < nItems; ++n)
     {
         isotopologueMixtures_.emplace_back();
         if (!isotopologueMixtures_.back().read(parser, coreData))

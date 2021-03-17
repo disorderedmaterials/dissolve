@@ -1,23 +1,5 @@
-/*
-    *** Molecule
-    *** src/classes/molecule.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -53,7 +35,7 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Species that this Molecule represents
     const Species *species_;
     // Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
-    std::vector<Atom *> atoms_;
+    std::vector<std::shared_ptr<Atom>> atoms_;
 
     public:
     // Set Species that this Molecule represents
@@ -61,15 +43,15 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Return Species that this Molecule represents
     const Species *species() const;
     // Add Atom to Molecule
-    void addAtom(Atom *i);
+    void addAtom(std::shared_ptr<Atom> i);
     // Return size of Atom array
     int nAtoms() const;
     // Return Atoms array
-    std::vector<Atom *> &atoms();
+    std::vector<std::shared_ptr<Atom>> &atoms();
     // Return Atoms array
-    const std::vector<Atom *> &atoms() const;
+    const std::vector<std::shared_ptr<Atom>> &atoms() const;
     // Return nth Atom pointer
-    Atom *atom(int n) const;
+    std::shared_ptr<Atom> atom(int n) const;
 
     /*
      * Manipulations

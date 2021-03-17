@@ -1,23 +1,5 @@
-/*
-    *** Import - Data1D
-    *** src/io/import/data1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "io/import/data1d.h"
 #include "base/lineparser.h"
@@ -48,6 +30,10 @@ void Data1DImportFileFormat::setUpKeywords()
     keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
     keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage",
                   "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
+    keywords_.add("Manipulations", new RangeKeyword(Range(0.0, 0.0), Vec3Labels::MinMaxDeltaLabels), "Trim",
+                  "Trim the range of the loaded data to be within the specified boundaries");
+    keywords_.add("Manipulations", new IntegerKeyword(0, 0), "RemovePoints",
+                  "Remove a number of points from the start of the data");
 }
 
 /*
@@ -55,17 +41,13 @@ void Data1DImportFileFormat::setUpKeywords()
  */
 
 // Return enum options for Data1DImportFormat
-EnumOptions<Data1DImportFileFormat::Data1DImportFormat> &Data1DImportFileFormat::data1DImportFormats()
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormats()
 {
-    static EnumOptionsList Data1DImportFormats =
-        EnumOptionsList() << EnumOption(Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)")
-                          << EnumOption(Data1DImportFileFormat::HistogramData1D, "histogram",
-                                        "Histogrammed Data (x = bin left-boundaries)")
-                          << EnumOption(Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)");
-
-    static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> options("Data1DImportFileFormat", Data1DImportFormats);
-
-    return options;
+    return EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
+        "Data1DImportFileFormat",
+        {{Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"},
+         {Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
+         {Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)"}});
 }
 
 // Return number of available formats
@@ -131,7 +113,16 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
         return false;
 
     // Handle any additional options
-    // --Subtract average level from data?
+    // -- Remove points from the start of the data?
+    for (auto n = 0; n < keywords_.asInt("RemovePoints"); ++n)
+        data.removeFirstPoint();
+    // -- Trim range?
+    if (keywords_.isSet("Trim"))
+    {
+        const auto range = keywords_.retrieve<Range>("Trim");
+        Filters::trim(data, range.minimum(), range.maximum());
+    }
+    // -- Subtract average level from data?
     const auto removeAverage = keywords_.asDouble("RemoveAverage");
     if (removeAverage > 0.0)
     {

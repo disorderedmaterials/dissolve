@@ -1,23 +1,5 @@
-/*
-    *** Species Viewer - Input
-    *** src/gui/siteviewer_input.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "gui/render/renderablespecies.h"
@@ -32,17 +14,24 @@ void SiteViewer::mouseMoved(int dx, int dy)
         return;
 
     auto refresh = false;
-    SpeciesAtom *currentAtom = nullptr;
 
     // What we do here depends on the current mode
-    switch (interactionMode())
+    switch (transientInteractionMode_)
     {
-        case (SiteViewer::SelectAreaInteraction):
-            // No action to take - the selection box will be drawn from the clicked and current positions (already
-            // stored)
-            refresh = true;
+        case (TransientInteractionMode::None):
+            // End primary interaction
+            switch (interactionMode_)
+            {
+                case (SiteViewer::InteractionMode::SelectArea):
+                    // No action to take - the selection box will be drawn from the clicked and current positions (already
+                    // stored)
+                    refresh = true;
+                    break;
+                default:
+                    break;
+            }
             break;
-        case (SiteViewer::RotateViewInteraction):
+        case (SiteViewer::TransientInteractionMode::RotateView):
             // Rotate view
             if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
             {
@@ -56,7 +45,7 @@ void SiteViewer::mouseMoved(int dx, int dy)
                 refresh = true;
             }
             break;
-        case (SiteViewer::TranslateViewInteraction):
+        case (SiteViewer::TransientInteractionMode::TranslateView):
             // If this is a flat view, shift the axis limits rather than translating the view
             if (view_.isFlatView())
                 view_.shiftFlatAxisLimits(dx, dy);

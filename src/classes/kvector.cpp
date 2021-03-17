@@ -1,23 +1,5 @@
-/*
-    *** KVector
-    *** src/classes/kvector.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/kvector.h"
 #include "base/processpool.h"
@@ -87,43 +69,16 @@ void KVector::zeroCosSinTerms()
 }
 
 // Add value to cosTerm index specified
-void KVector::addCosTerm(int atomTypeIndex, double value)
-{
-#ifdef CHECKS
-    if (atomTypeIndex >= cosTerms_.nItems())
-    {
-        Messenger::print("BAD_USAGE - KVector::cosTerms_ index supplied ({}) is greated than the size of the array ({}).\n",
-                         atomTypeIndex, cosTerms_.nItems());
-        return;
-    }
-#endif
-    cosTerms_[atomTypeIndex] += value;
-}
+void KVector::addCosTerm(int atomTypeIndex, double value) { cosTerms_[atomTypeIndex] += value; }
 
 // Add value to sinTerm index specified
-void KVector::addSinTerm(int atomTypeIndex, double value)
-{
-#ifdef CHECKS
-    if (atomTypeIndex >= sinTerms_.nItems())
-    {
-        Messenger::print("BAD_USAGE - KVector::sinTerms_ index supplied ({}) is greated than the size of the array ({}).\n",
-                         atomTypeIndex, sinTerms_.nItems());
-        return;
-    }
-#endif
-    sinTerms_[atomTypeIndex] += value;
-}
+void KVector::addSinTerm(int atomTypeIndex, double value) { sinTerms_[atomTypeIndex] += value; }
 
 // Calculate intensities from stored cos and sin term arrays
 void KVector::calculateIntensities(BraggReflection *reflectionArray)
 {
-#ifdef CHECKS
-    if (reflectionArray == nullptr)
-    {
-        Messenger::print("NULL_POINTER - NULL BraggReflection array found in KVector::calculateIntensities().\n");
-        return;
-    }
-#endif
+    assert(reflectionArray);
+
     // Calculate final intensities from stored cos/sin terms
     // Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
     // Do *not* multiply cross-terms (i != j) by 2 - we want to generate the unmultiplied intensity for consistency with

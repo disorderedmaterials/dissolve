@@ -1,23 +1,5 @@
-/*
-    *** Dissolve - Modules
-    *** src/main/modules.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
@@ -48,10 +30,10 @@
 #include "modules/molshake/molshake.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"
-#include "modules/refine/refine.h"
 #include "modules/sanitycheck/sanitycheck.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
+#include "modules/xraysq/xraysq.h"
 
 /*
  * Module Registration
@@ -141,13 +123,13 @@ bool Dissolve::registerMasterModules()
         return false;
     if (!registerMasterModule(new RDFModule))
         return false;
-    if (!registerMasterModule(new RefineModule))
-        return false;
     if (!registerMasterModule(new SanityCheckModule))
         return false;
     if (!registerMasterModule(new SQModule))
         return false;
     if (!registerMasterModule(new TestModule))
+        return false;
+    if (!registerMasterModule(new XRaySQModule))
         return false;
 
     Messenger::print("Module Information ({} available):\n", masterModules_.nItems());
@@ -229,13 +211,13 @@ Module *Dissolve::findModuleInstance(std::string_view uniqueName)
 }
 
 // Search for any instance of any Module with the specified Module type
-RefList<Module> Dissolve::findModuleInstances(std::string_view moduleType)
+std::vector<Module *> Dissolve::findModuleInstances(std::string_view moduleType)
 {
-    RefList<Module> instances;
+    std::vector<Module *> instances;
 
     for (auto *module : moduleInstances_)
         if (DissolveSys::sameString(module->type(), moduleType))
-            instances.append(module);
+            instances.emplace_back(module);
 
     return instances;
 }
@@ -269,6 +251,9 @@ bool Dissolve::deleteModuleInstance(Module *instance)
 
     // Remove the reference from our list
     moduleInstances_.remove(instance);
+
+    // Invalidate any references to the module in keywords
+    KeywordBase::objectNoLongerValid(instance);
 
     // Delete the actual Module - we assume that it has been removed from any ModuleList
     delete instance;

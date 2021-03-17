@@ -1,29 +1,10 @@
-/*
-    *** EnergyKernel
-    *** src/classes/energykernel.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/processpool.h"
 #include "classes/kernelflags.h"
-#include "templates/orderedpointerlist.h"
 #include <memory>
 
 // Forward Declarations
@@ -68,31 +49,32 @@ class EnergyKernel
      */
     private:
     // Return PairPotential energy between atoms provided as pointers, at the distance specified
-    virtual double pairPotentialEnergy(const Atom *i, const Atom *j, double r);
+    virtual double pairPotentialEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r);
     // Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
-    double energyWithoutMim(const Atom *i, const Atom *j);
+    double energyWithoutMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j);
     // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
-    double energyWithMim(const Atom *i, const Atom *j);
+    double energyWithMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j);
 
     /*
      * PairPotential Terms
      */
     public:
     // Return PairPotential energy between atoms provided (as pointers)
-    double energy(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ);
+    double energy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ);
     // Return PairPotential energy between two cells
     double energy(Cell *cell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular,
                   ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return PairPotential energy between Cell and its neighbours
     double energy(Cell *cell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return PairPotential energy between Atom and Cell
-    double energy(const Atom *i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
+    double energy(const std::shared_ptr<Atom> i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy,
+                  bool performSum);
     // Return PairPotential energy of atom with world
-    double energy(const Atom *i, ProcessPool::DivisionStrategy strategy, bool performSum);
+    double energy(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return PairPotential energy of Molecule with world
     double energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return molecular correction energy related to intramolecular terms involving supplied atom
-    double correct(const Atom *i);
+    double correct(const std::shared_ptr<Atom> i);
     // Return total interatomic PairPotential energy of the system
     double energy(const CellArray &cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
 
@@ -101,21 +83,26 @@ class EnergyKernel
      */
     public:
     // Return SpeciesBond energy at Atoms specified
-    double energy(const SpeciesBond &b, const Atom *i, const Atom *j);
+    double energy(const SpeciesBond &b, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j);
     // Return SpeciesBond energy
     static double energy(const SpeciesBond &b);
     // Return SpeciesAngle energy at Atoms specified
-    double energy(const SpeciesAngle &a, const Atom *i, const Atom *j, const Atom *k);
+    double energy(const SpeciesAngle &a, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                  const std::shared_ptr<Atom> k);
     // Return SpeciesAngle energy
     static double energy(const SpeciesAngle &a);
     // Return SpeciesTorsion energy at Atoms specified
-    double energy(const SpeciesTorsion &t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    double energy(const SpeciesTorsion &t, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                  const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
     // Return SpeciesTorsion energy
     static double energy(const SpeciesTorsion &t);
+    // Return SpeciesImproper energy at Atoms specified
+    double energy(const SpeciesImproper &imp, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                  const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
     // Return SpeciesImproper energy
-    double energy(const SpeciesImproper &imp, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    static double energy(const SpeciesImproper &imp);
     // Return intramolecular energy for the supplied Atom
-    double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom *i);
+    double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const std::shared_ptr<Atom> i);
     // Return intramolecular energy for the supplied Molecule
     double intramolecularEnergy(std::shared_ptr<const Molecule> mol);
 

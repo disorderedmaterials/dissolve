@@ -1,27 +1,9 @@
-/*
-    *** RDF Module Widget - Functions
-    *** src/modules/rdf/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/bragg/bragg.h"
@@ -84,34 +66,6 @@ void BraggModuleWidget::disableSensitiveControls() {}
 
 // Enable sensitive controls within widget
 void BraggModuleWidget::enableSensitiveControls() {}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool BraggModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!reflectionsGraph_->writeSession(parser))
-        return false;
-    if (!totalsGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool BraggModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!reflectionsGraph_->readSession(parser))
-        return false;
-    if (!totalsGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
 
 /*
  * Widgets / Functions

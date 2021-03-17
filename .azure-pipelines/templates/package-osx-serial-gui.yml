@@ -1,17 +1,28 @@
 steps:
-  - script: |
-      pip install dmgbuild
+  - bash: |
+      pip3 install dmgbuild biplist
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
-      wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-dmg.sh -O build-dmg.sh
-      chmod u+x build-dmg.sh
-      QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
-      Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
+      # Set Qt dir - assume that it is somewhere in /usr/local/Cellar
+      QT_INSTALL_DIR=/usr/local/Cellar/qt@5
+      QTVER=`ls -d ${QT_INSTALL_DIR}/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+      Qt5_ROOT=${QT_INSTALL_DIR}/${QTVER}
+      # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-      ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx/dissolve-gui.dmginfo
+      ci/scripts/prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt5_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
+    displayName: 'Prepare DMG Dirs'
+  - bash: |
+      set -ex
+      # Get program version
+      DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+      # Fix icon link
       sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Info.plist
+      # Create DMG
       dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app -D icon=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${DISSOLVE_VERSION}.dmg
-      mkdir packages
-      mv *dmg packages
     displayName: 'Create Disk Images'
+  - bash: |
+      set -ex
+      mkdir packages
+      mv Dissolve*.dmg packages
+    displayName: 'Move Artifacts'

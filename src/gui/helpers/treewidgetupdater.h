@@ -1,23 +1,5 @@
-/*
-    *** TreeWidgetUpdater
-    *** src/gui/helpers/treewidgetupdater.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "templates/list.h"
 #include "templates/optionalref.h"
@@ -34,9 +16,15 @@
 template <class T, class I> class TreeWidgetUpdater
 {
     // Typedefs for passed functions
-    typedef void (T::*TreeWidgetTopLevelUpdateFunction)(QTreeWidget *treeWidget, int topLevelItemIndex, I *data,
+    typedef void (T::*TreeWidgetTopLevelUpdateFunction)(QTreeWidget *treeWidget, int topLevelItemIndex, const I *data,
                                                         bool createItem);
-    typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *data, bool createItem);
+    typedef void (T::*TreeWidgetTopLevelUpdateRefFunction)(QTreeWidget *treeWidget, int topLevelItemIndex, I &data,
+                                                           bool createItem);
+    typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, const I *data,
+                                                     bool createItem);
+    typedef void (T::*TreeWidgetChildUpdateRefFunction)(QTreeWidgetItem *parentItem, int childIndex, I &data, bool createItem);
+    typedef void (T::*TreeWidgetChildUpdateSharedFunction)(QTreeWidgetItem *parentItem, int childIndex,
+                                                           std::shared_ptr<I> &data, bool createItem);
 
     private:
     // To update a tree, we need four helper functions and two values
@@ -51,7 +39,7 @@ template <class T, class I> class TreeWidgetUpdater
 
     void genericTreeUpdater(std::function<QTreeWidgetItem *(int)> accessor, std::function<int()> counter,
                             std::function<void(int index, QTreeWidgetItem *)> remover,
-                            std::function<void(int, I *, bool)> updater, int count, I *dataItem)
+                            std::function<void(int, const I *, bool)> updater, int count, const I *dataItem)
     {
         // Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
@@ -85,16 +73,111 @@ template <class T, class I> class TreeWidgetUpdater
 
         ++count;
     }
+    void genericTreeUpdater(std::function<QTreeWidgetItem *(int)> accessor, std::function<int()> counter,
+                            std::function<void(int index, QTreeWidgetItem *)> remover,
+                            std::function<void(int, I &, bool)> updater, int count, I &dataItem)
+    {
+        // Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
+
+        // If there is an item already at this child position, check it
+        // If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
+        // again
+        while (count < counter())
+        {
+            QTreeWidgetItem *treeItem = accessor(count);
+            I *rowData = (treeItem ? treeItem->data(0, Qt::UserRole).value<I *>() : nullptr);
+            if (rowData == &dataItem)
+            {
+                // Update the current row and quit the loop
+                updater(count, dataItem, false);
+
+                break;
+            }
+            else
+            {
+                remover(count, treeItem);
+                delete treeItem;
+            }
+        }
+
+        // If the current child index is (now) out of range, add a new item to the parent
+        if (count == counter())
+        {
+            // Create new item
+            updater(count, dataItem, true);
+        }
+
+        ++count;
+    }
+    void genericTreeSharedUpdater(std::function<QTreeWidgetItem *(int)> accessor, std::function<int()> counter,
+                                  std::function<void(int index, QTreeWidgetItem *)> remover,
+                                  std::function<void(int, std::shared_ptr<I> &, bool)> updater, int count,
+                                  std::shared_ptr<I> &dataItem)
+    {
+        // Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
+
+        // If there is an item already at this child position, check it
+        // If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
+        // again
+        while (count < counter())
+        {
+            QTreeWidgetItem *treeItem = accessor(count);
+            std::shared_ptr<I> rowData = (treeItem ? treeItem->data(0, Qt::UserRole).value<std::shared_ptr<I>>() : nullptr);
+            if (rowData == dataItem)
+            {
+                // Update the current row and quit the loop
+                updater(count, dataItem, false);
+
+                break;
+            }
+            else
+            {
+                remover(count, treeItem);
+                delete treeItem;
+            }
+        }
+
+        // If the current child index is (now) out of range, add a new item to the parent
+        if (count == counter())
+        {
+            // Create new item
+            updater(count, dataItem, true);
+        }
+
+        ++count;
+    }
     void updateTreeChildren(QTreeWidgetItem *parentItem, int count, I *dataItem, T *functionParent,
                             TreeWidgetChildUpdateFunction updateChildFunction)
     {
         genericTreeUpdater([parentItem](int index) { return parentItem->child(index); },
                            [parentItem]() { return parentItem->childCount(); },
                            [parentItem](int unused, auto child) { parentItem->removeChild(child); },
-                           [parentItem, functionParent, updateChildFunction](int index, I *item, bool something) {
+                           [parentItem, functionParent, updateChildFunction](int index, const I *item, bool something) {
                                return (functionParent->*updateChildFunction)(parentItem, index, item, something);
                            },
                            count, dataItem);
+    }
+    void updateTreeChildren(QTreeWidgetItem *parentItem, int count, const I &dataItem, T *functionParent,
+                            TreeWidgetChildUpdateFunction updateChildFunction)
+    {
+        genericTreeUpdater([parentItem](int index) { return parentItem->child(index); },
+                           [parentItem]() { return parentItem->childCount(); },
+                           [parentItem](int unused, auto child) { parentItem->removeChild(child); },
+                           [parentItem, functionParent, updateChildFunction](int index, const I *item, bool something) {
+                               return (functionParent->*updateChildFunction)(parentItem, index, item, something);
+                           },
+                           count, &dataItem);
+    }
+    void updateTreeChildrenShared(QTreeWidgetItem *parentItem, int count, std::shared_ptr<I> &dataItem, T *functionParent,
+                                  TreeWidgetChildUpdateSharedFunction updateChildFunction)
+    {
+        genericTreeSharedUpdater(
+            [parentItem](int index) { return parentItem->child(index); }, [parentItem]() { return parentItem->childCount(); },
+            [parentItem](int unused, auto child) { parentItem->removeChild(child); },
+            [parentItem, functionParent, updateChildFunction](int index, std::shared_ptr<I> &item, bool something) {
+                return (functionParent->*updateChildFunction)(parentItem, index, item, something);
+            },
+            count, dataItem);
     }
     void updateTreeTopLevel(QTreeWidget *treeWidget, int count, I *dataItem, T *functionParent,
                             TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
@@ -102,7 +185,18 @@ template <class T, class I> class TreeWidgetUpdater
         genericTreeUpdater([treeWidget](int index) { return treeWidget->topLevelItem(index); },
                            [treeWidget]() { return treeWidget->topLevelItemCount(); },
                            [treeWidget](int index, auto unused) { treeWidget->takeTopLevelItem(index); },
-                           [treeWidget, functionParent, updateTopLevelFunction](int index, I *item, bool something) {
+                           [treeWidget, functionParent, updateTopLevelFunction](int index, const I *item, bool something) {
+                               return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something);
+                           },
+                           count, dataItem);
+    }
+    void updateTreeTopLevel(QTreeWidget *treeWidget, int count, I &dataItem, T *functionParent,
+                            TreeWidgetTopLevelUpdateRefFunction updateTopLevelFunction)
+    {
+        genericTreeUpdater([treeWidget](int index) { return treeWidget->topLevelItem(index); },
+                           [treeWidget]() { return treeWidget->topLevelItemCount(); },
+                           [treeWidget](int index, auto unused) { treeWidget->takeTopLevelItem(index); },
+                           [treeWidget, functionParent, updateTopLevelFunction](int index, I &item, bool something) {
                                return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something);
                            },
                            count, dataItem);
@@ -160,8 +254,8 @@ template <class T, class I> class TreeWidgetUpdater
     }
 
     // Update the top-level items of the specified parent QTreeWidget
-    TreeWidgetUpdater(QTreeWidget *treeWidget, const std::vector<I> &data, T *functionParent,
-                      TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
+    TreeWidgetUpdater(QTreeWidget *treeWidget, std::vector<I> &data, T *functionParent,
+                      TreeWidgetTopLevelUpdateRefFunction updateTopLevelFunction)
     {
         int count = 0;
 
@@ -184,6 +278,19 @@ template <class T, class I> class TreeWidgetUpdater
 
         for (auto &dataItem : data)
             updateTreeChildren(parentItem, count++, dataItem, functionParent, updateChildFunction);
+
+        // If there are still items remaining in the widget, delete them now
+        while (count < parentItem->childCount())
+            parentItem->removeChild(parentItem->child(count));
+    }
+    // Update the children of the specified parent QTreeWidgetItem
+    TreeWidgetUpdater(QTreeWidgetItem *parentItem, std::vector<std::shared_ptr<I>> &data, T *functionParent,
+                      TreeWidgetChildUpdateSharedFunction updateChildFunction)
+    {
+        int count = 0;
+
+        for (auto &dataItem : data)
+            updateTreeChildrenShared(parentItem, count++, dataItem, functionParent, updateChildFunction);
 
         // If there are still items remaining in the widget, delete them now
         while (count < parentItem->childCount())

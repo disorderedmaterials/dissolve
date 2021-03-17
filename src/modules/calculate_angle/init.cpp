@@ -1,23 +1,5 @@
-/*
-    *** Calculate Angle Module - Initialisation
-    *** src/modules/calculate_angle/init.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
 #include "modules/calculate_angle/angle.h"
@@ -278,32 +260,30 @@ void CalculateAngleModule::initialise()
      * Keywords (including those exposed from the ProcedureNodes)
      */
 
-    // Calculation
+    // Control
     keywords_.add(
-        "Calculation",
+        "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
         "RangeAB", "Range (min, max, binwidth) of A-B distance axis", "<min> <max> <binwidth> (Angstroms)");
     keywords_.add(
-        "Calculation",
+        "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
         "RangeBC", "Range (min, max, binwidth) of B-C distance axis", "<min> <max> <binwidth> (Angstroms)");
     keywords_.add(
-        "Calculation",
+        "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
         "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
-
-    // Sites
-    keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA",
+    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
                    "Add site(s) which represent 'A' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB",
+    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
                    "Add site(s) which represent 'B' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Sites", selectC_->keywords().find("Site"), "SiteC",
+    keywords_.link("Control", selectC_->keywords().find("Site"), "SiteC",
                    "Add site(s) which represent 'C' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeAB",
+    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeAB",
                   "Whether to exclude correlations between A and B sites on the same molecule", "<True|False>");
-    keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeBC",
+    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeBC",
                   "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
-    keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameSiteAC",
+    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameSiteAC",
                   "Whether to exclude correlations between A and C sites on the same molecule", "<True|False>");
 
     // Export

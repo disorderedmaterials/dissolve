@@ -1,23 +1,5 @@
-/*
-    *** Neutron Weights Container
-    *** src/classes/neutronweights.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -50,9 +32,10 @@ class NeutronWeights : public GenericItemBase
     // Clear contents
     void clear();
     // Add Species Isotopologue to the relevant mixture
-    void addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso, double isotopologueRelativePopulation);
+    void addIsotopologue(const Species *sp, int speciesPopulation, const Isotopologue *iso,
+                         double isotopologueRelativePopulation);
     // Return whether an Isotopologues definition exists for the provided Species
-    bool containsIsotopologues(Species *sp) const;
+    bool containsIsotopologues(const Species *sp) const;
     // Print atomtype / weights information
     void print() const;
 
@@ -87,7 +70,7 @@ class NeutronWeights : public GenericItemBase
     // Reduce data to be naturally-weighted
     void naturalise();
     // Return AtomTypeList
-    AtomTypeList &atomTypes();
+    const AtomTypeList &atomTypes() const;
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Return concentration product for types i and j

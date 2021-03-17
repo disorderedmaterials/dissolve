@@ -1,29 +1,9 @@
-/*
-    *** ChangeStore
-    *** src/classes/changestore.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/changedata.h"
-#include "templates/array.h"
-#include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
 
@@ -39,18 +19,18 @@ class ChangeStore
 {
     public:
     ChangeStore(ProcessPool &procPool);
-    ~ChangeStore();
+    ~ChangeStore() = default;
 
     /*
      * Watch Targets
      */
     private:
     // List of target atoms (and modification data)
-    List<ChangeData> targetAtoms_;
+    std::vector<ChangeData> targetAtoms_;
 
     public:
     // Add atom to watch
-    void add(Atom *i);
+    void add(std::shared_ptr<Atom> i);
     // Add molecule to watch
     void add(std::shared_ptr<Molecule> mol);
     // Add cell to watch
@@ -61,11 +41,11 @@ class ChangeStore
      */
     private:
     // List of local changes
-    List<ChangeData> changes_;
+    std::vector<ChangeData> changes_;
     // Coordinate broadcast arrays
-    Array<double> x_, y_, z_;
+    std::vector<double> x_, y_, z_;
     // Index broadcast array
-    Array<int> indices_;
+    std::vector<int> indices_;
 
     public:
     // Reset ChangeStore, forgetting all changes
@@ -74,8 +54,6 @@ class ChangeStore
     void updateAll();
     // Update single atom position
     void updateAtom(int id);
-    // Update Atom positions using list indices
-    void updateAtomsLocal(int nAtoms, int *indices);
     // Revert all atoms to stored positions
     void revertAll();
     // Revert specified index to stored position

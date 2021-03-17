@@ -1,28 +1,11 @@
-/*
-    *** Module List Editor Functions
-    *** src/gui/modulelisteditor_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "gui/charts/moduleblock.h"
 #include "gui/charts/modulelist.h"
 #include "gui/gui.h"
+#include "gui/modulecontrolwidget.h"
 #include "gui/modulelisteditor.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
@@ -57,11 +40,11 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
     ui_.ChartScrollArea->setWidgetResizable(true);
     ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+    connect(chartWidget_, SIGNAL(fullUpdate()), dissolveWindow_, SLOT(fullUpdate()));
     connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
     connect(chartWidget_, SIGNAL(requiredSizeChanged()), this, SLOT(chartWidgetSizeChanged()));
-    connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString &)), dissolveWindow_, SLOT(showModuleTab(const QString &)));
-    connect(chartWidget_, SIGNAL(blockRemoved(const QString &)), dissolveWindow_, SLOT(removeModuleTab(const QString &)));
-    connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString &)), this, SLOT(blockSelectionChanged(const QString &)));
+    connect(chartWidget_, SIGNAL(blockRemoved(const QString &)), this, SLOT(moduleDeleted(const QString &)));
+    connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString &)), this, SLOT(moduleSelectionChanged(const QString &)));
 
     // Add MimeTreeWidgetItems for each Module, adding them to a parent category item
     moduleCategories_.clear();
@@ -76,7 +59,7 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
         MimeTreeWidgetItem *categoryItem = nullptr;
         RefDataListIterator<MimeTreeWidgetItem, QString> categoryIterator(moduleCategories_);
         while ((categoryItem = categoryIterator.iterate()))
-            if (categoryIterator.currentData() == QString::fromStdString(std::string(module->category())))
+            if (DissolveSys::sameString(module->category(), qPrintable(categoryIterator.currentData())))
                 break;
         if (categoryItem == nullptr)
         {
@@ -106,12 +89,6 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
     ui_.AvailableModulesTree->resizeColumnToContents(0);
     ui_.AvailableModulesTree->resizeColumnToContents(1);
 
-    // Set up the ControlsWidget, and hide it initially
-    ui_.ControlsWidget->setUp(dissolveWindow_);
-    ui_.ControlsWidget->setVisible(false);
-    connect(ui_.ControlsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
-    connect(ui_.ControlsWidget, SIGNAL(dataModified()), this, SLOT(controlsWidgetDataModified()));
-
     // Hide available modules group initially
     ui_.ModulePaletteGroup->setVisible(false);
 
@@ -136,7 +113,9 @@ void ModuleListEditor::updateControls()
     refreshing_ = true;
 
     chartWidget_->updateControls();
-    ui_.ControlsWidget->updateControls();
+    ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
+    if (mcw)
+        mcw->updateControls();
 
     refreshing_ = false;
 }
@@ -146,7 +125,12 @@ void ModuleListEditor::disableSensitiveControls()
 {
     ui_.AvailableModulesTree->setEnabled(false);
     chartWidget_->disableSensitiveControls();
-    ui_.ControlsWidget->disableSensitiveControls();
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (mcw)
+            mcw->disableSensitiveControls();
+    }
 }
 
 // Enable sensitive controls within tab
@@ -154,7 +138,12 @@ void ModuleListEditor::enableSensitiveControls()
 {
     ui_.AvailableModulesTree->setEnabled(true);
     chartWidget_->enableSensitiveControls();
-    ui_.ControlsWidget->enableSensitiveControls();
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (mcw)
+            mcw->enableSensitiveControls();
+    }
 }
 
 // Show / hide module palette
@@ -164,12 +153,58 @@ void ModuleListEditor::setModulePaletteVisible(bool visible) { ui_.ModulePalette
  * Widget Functions
  */
 
-void ModuleListEditor::blockSelectionChanged(const QString &blockIdentifier)
+// Find the ModuleControlWidget for this Module in the stack, if it exists
+ModuleControlWidget *ModuleListEditor::controlWidgetForModule(Module *module) const
 {
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (mcw && (mcw->module() == module))
+            return mcw;
+    }
+
+    return nullptr;
+}
+
+// Return the index of the ModuleControlWidget for this Module in the stack, if it exists
+int ModuleListEditor::widgetIndexForModule(Module *module) const
+{
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (mcw && (mcw->module() == module))
+            return n;
+    }
+
+    return -1;
+}
+
+void ModuleListEditor::moduleDeleted(const QString &blockIdentifier)
+{
+    // Check for empty block identifier
+    if (blockIdentifier.isEmpty())
+        return;
+
+    // Get Module by unique name
+    Module *module = dissolveWindow_->dissolve().findModuleInstance(qPrintable(blockIdentifier));
+    if (!module)
+        return;
+
+    // Find the ModuleControlWidget for this Module in the stack, if it exists
+    auto mcw = controlWidgetForModule(module);
+    if (mcw)
+    {
+        ui_.ModuleControlsStack->removeWidget(mcw);
+        mcw->deleteLater();
+    }
+}
+
+void ModuleListEditor::moduleSelectionChanged(const QString &blockIdentifier)
+{
+    // Check for empty block identifier
     if (blockIdentifier.isEmpty())
     {
-        ui_.ControlsWidget->setModule(nullptr, nullptr);
-        ui_.ControlsWidget->setVisible(false);
+        ui_.ModuleControlsStack->setCurrentIndex(0);
         return;
     }
 
@@ -177,13 +212,22 @@ void ModuleListEditor::blockSelectionChanged(const QString &blockIdentifier)
     Module *module = dissolveWindow_->dissolve().findModuleInstance(qPrintable(blockIdentifier));
     if (!module)
     {
-        ui_.ControlsWidget->setModule(nullptr, nullptr);
-        ui_.ControlsWidget->setVisible(false);
+        ui_.ModuleControlsStack->setCurrentIndex(0);
         return;
     }
 
-    ui_.ControlsWidget->setModule(module, &dissolveWindow_->dissolve());
-    ui_.ControlsWidget->setVisible(true);
+    // Find the ModuleControlWidget for this Module in the stack, if it exists
+    auto widgetIndex = widgetIndexForModule(module);
+    if (widgetIndex == -1)
+    {
+        // Create a new widget to display this Module
+        ModuleControlWidget *mcw = new ModuleControlWidget;
+        mcw->setModule(module, &dissolveWindow_->dissolve());
+        connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+        widgetIndex = ui_.ModuleControlsStack->addWidget(mcw);
+    }
+
+    ui_.ModuleControlsStack->setCurrentIndex(widgetIndex);
 }
 
 void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem *item)
@@ -228,8 +272,10 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 
 void ModuleListEditor::chartWidgetDataModified()
 {
-    // We don't know which ModuleBlock sent the signal, so just update the controls widget
-    ui_.ControlsWidget->updateControls();
+    // We don't know which ModuleBlock sent the signal, so just update the visible controls widget
+    ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
+    if (mcw)
+        mcw->updateControls();
 }
 
 // Required size of the chart widget has changed
@@ -244,26 +290,4 @@ void ModuleListEditor::controlsWidgetDataModified()
     // The controls widget must correspond to the selected module in the chart, so update it
     if (chartWidget_->selectedBlock())
         chartWidget_->selectedBlock()->updateControls();
-}
-
-/*
- * State
- */
-
-// Write widget state through specified LineParser
-bool ModuleListEditor::writeState(LineParser &parser) const
-{
-    if ((!chartWidget_) || (!chartWidget_->writeState(parser)))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool ModuleListEditor::readState(LineParser &parser)
-{
-    if ((!chartWidget_) || (!chartWidget_->readState(parser)))
-        return false;
-
-    return true;
 }

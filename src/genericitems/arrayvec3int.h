@@ -1,23 +1,5 @@
-/*
-    *** Generic Item Container - Array< Vec3<int> >
-    *** src/genericitems/arrayvec3int.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -39,6 +21,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
     public:
     // Return data item
     Array<Vec3<int>> &data() { return data_; }
+    const Array<Vec3<int>> &data() const { return data_; }
 
     /*
      * Item Class
@@ -65,7 +48,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
     {
         parser.writeLineF("{}\n", data_.nItems());
         Vec3<int> *array = data_.array();
-        for (int n = 0; n < data_.nItems(); ++n)
+        for (auto n = 0; n < data_.nItems(); ++n)
         {
             if (!parser.writeLineF("{} {} {}\n", array[n].x, array[n].y, array[n].z))
                 return false;
@@ -79,7 +62,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
             return false;
         int nItems = parser.argi(0);
         data_.createEmpty(nItems);
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
@@ -101,8 +84,8 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
         if (!procPool.equality(data_.nItems()))
             return false;
         // Keep it simple (and slow) and check/send one value at a time
-        for (int n = 0; n < data_.nItems(); ++n)
-            if (!procPool.equality(data_.constAt(n)))
+        for (auto n = 0; n < data_.nItems(); ++n)
+            if (!procPool.equality(data_.at(n)))
                 return false;
         return true;
     }

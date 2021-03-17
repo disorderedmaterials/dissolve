@@ -1,44 +1,24 @@
-/*
-       *** NETA Node
-       *** src/neta/node.h
-       Copyright T. Youngs 2019-2020
-
-       This file is part of Dissolve.
-
-       Dissolve is free software: you can redistribute it and/or modify
-       it under the terms of the GNU General Public License as published by
-       the Free Software Foundation, either version 3 of the License, or
-       (at your option) any later version.
-
-       Dissolve is distributed in the hope that it will be useful,
-       but WITHOUT ANY WARRANTY; without even the implied warranty of
-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-       GNU General Public License for more details.
-
-       You should have received a copy of the GNU General Public License
-       along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/enumoptions.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include "data/elements.h"
 #include <memory>
 #include <vector>
 
 // Forward Declarations
-class Element;
 class ForcefieldAtomType;
-class NETADefinition;
-class NETAPresenceNode;
 class NETAConnectionNode;
+class NETADefinition;
+class NETAOrNode;
+class NETAPresenceNode;
 class NETARingNode;
 class SpeciesAtom;
 
 // NETA Node
-class NETANode : public ListItem<NETANode>
+class NETANode
 {
     public:
     // Node types
@@ -46,12 +26,14 @@ class NETANode : public ListItem<NETANode>
     {
         BasicNode,
         ConnectionNode,
-        LogicNode,
+        OrNode,
         PresenceNode,
         RingNode,
         RootNode,
         nNETANodeTypes
     };
+    // Return enum options for Node Types
+    static EnumOptions<NETANode::NodeType> nodeTypes();
     // Value Comparison Operators
     enum ComparisonOperator
     {
@@ -89,27 +71,36 @@ class NETANode : public ListItem<NETANode>
     NETADefinition *parent() const;
 
     /*
+     * Atom Targets
+     */
+    public:
+    // Add element target to node
+    virtual bool addElementTarget(Elements::Element Z);
+    // Add forcefield type target to node
+    virtual bool addFFTypeTarget(const ForcefieldAtomType &ffType);
+
+    /*
      * Branching and Node Generation
      */
     protected:
     // Branch of nodes
-    List<NETANode> branch_;
+    std::vector<std::shared_ptr<NETANode>> branch_;
 
     public:
     // Clear all nodes
     void clear();
-    // Return last node of branch
-    NETANode *lastBranchNode();
-    // Return number of nodes defined in branch
-    int nBranchNodes() const;
+    // Create logical 'or' node in the branch
+    std::shared_ptr<NETAOrNode> createOrNode();
     // Create connectivity node in the branch
-    NETAConnectionNode *createConnectionNode(std::vector<Element *> targetElements,
-                                             std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
+    std::shared_ptr<NETAConnectionNode>
+    createConnectionNode(std::vector<Elements::Element> targetElements = {},
+                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create presence node in the branch
-    NETAPresenceNode *createPresenceNode(std::vector<Element *> targetElements,
-                                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
+    std::shared_ptr<NETAPresenceNode>
+    createPresenceNode(std::vector<Elements::Element> targetElements = {},
+                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create ring node in the branch
-    NETARingNode *createRingNode();
+    std::shared_ptr<NETARingNode> createRingNode();
 
     /*
      * Modifiers
@@ -147,5 +138,5 @@ class NETANode : public ListItem<NETANode>
     // Set node to use reverse logic
     void setReverseLogic();
     // Evaluate the node and return its score
-    virtual int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const;
+    virtual int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const;
 };

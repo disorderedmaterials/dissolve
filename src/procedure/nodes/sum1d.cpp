@@ -1,30 +1,11 @@
-/*
-    *** Procedure Node - Sum1D
-    *** src/procedure/nodes/sum1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/sum1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "keywords/types.h"
 #include "math/integrator.h"
@@ -35,15 +16,15 @@
 
 Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::Sum1DNode)
 {
-    keywords_.add("Target", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
+    keywords_.add("Control", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
                   "SourceData", "Process1D node containing the data to sum");
-    keywords_.add("Ranges", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
+    keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first summation region");
-    keywords_.add("Ranges", new BoolKeyword(false), "RangeBEnabled", "Whether the second summation region is enabled");
-    keywords_.add("Ranges", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
+    keywords_.add("Control", new BoolKeyword(false), "RangeBEnabled", "Whether the second summation region is enabled");
+    keywords_.add("Control", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
                   "X range for second summation region");
-    keywords_.add("Ranges", new BoolKeyword(false), "RangeCEnabled", "Whether the second summation region is enabled");
-    keywords_.add("Ranges", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
+    keywords_.add("Control", new BoolKeyword(false), "RangeCEnabled", "Whether the second summation region is enabled");
+    keywords_.add("Control", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
                   "X range for third summation region");
 }
 
@@ -106,13 +87,13 @@ ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &proc
         sum_[2] += Integrator::sum(processNode_->processedData(), rangeC_);
 
     // Print info
-    Messenger::print("Sum1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[0].mean(), sum_[0].stDev(),
+    Messenger::print("Sum1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[0].value(), sum_[0].stDev(),
                      rangeA_.minimum(), rangeA_.maximum());
     if (rangeBEnabled_)
-        Messenger::print("Sum1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[1].mean(), sum_[1].stDev(),
+        Messenger::print("Sum1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[1].value(), sum_[1].stDev(),
                          rangeB_.minimum(), rangeB_.maximum());
     if (rangeCEnabled_)
-        Messenger::print("Sum1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[2].mean(), sum_[2].stDev(),
+        Messenger::print("Sum1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[2].value(), sum_[2].stDev(),
                          rangeC_.minimum(), rangeC_.maximum());
 
     return ProcedureNode::Success;

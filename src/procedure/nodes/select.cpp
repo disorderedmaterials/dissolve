@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Select
-    *** src/procedure/nodes/select.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/select.h"
 #include "base/lineparser.h"
@@ -39,24 +21,24 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) :
     axesRequired_ = axesRequired;
     inclusiveDistanceRange_.set(0.0, 5.0);
 
-    keywords_.add("Target", new SpeciesSiteRefListKeyword(speciesSites_, axesRequired_), "Site",
+    keywords_.add("Control", new SpeciesSiteRefListKeyword(speciesSites_, axesRequired_), "Site",
                   "Add target site(s) to the selection");
-    keywords_.add("Target", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite",
+    keywords_.add("Control", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite",
                   "Add a new dynamic site to the selection");
-    keywords_.add("Target", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "SameMoleculeAsSite",
+    keywords_.add("Control", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "SameMoleculeAsSite",
                   "Request that the selected site comes from the molecule containing the current site in the specified "
                   "SelectNode");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameMoleculeExclusions_),
                   "ExcludeSameMolecule",
                   "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
                   "SelectNode(s)");
     keywords_.add(
-        "Target", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameSiteExclusions_),
+        "Control", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameSiteExclusions_),
         "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)");
-    keywords_.add("Target", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "ReferenceSite",
+    keywords_.add("Control", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "ReferenceSite",
                   "Site to use as reference point when determining inclusions / exclusions");
-    keywords_.add("Target", new RangeKeyword(inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels), "InclusiveRange",
+    keywords_.add("Control", new RangeKeyword(inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels), "InclusiveRange",
                   "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &forEachBranch_, ProcedureNode::AnalysisContext), "ForEach",
                   "Branch to run on each site selected");
@@ -96,7 +78,7 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  */
 
 // Return list of Molecules currently excluded from selection
-const OrderedVector<std::shared_ptr<const Molecule>> &SelectProcedureNode::excludedMolecules() const
+const std::vector<std::shared_ptr<const Molecule>> &SelectProcedureNode::excludedMolecules() const
 {
     return excludedMolecules_;
 }
@@ -136,7 +118,7 @@ int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
 // Return current site
 const Site *SelectProcedureNode::currentSite() const
 {
-    return (currentSiteIndex_ == -1 ? nullptr : sites_.constAt(currentSiteIndex_));
+    return (currentSiteIndex_ == -1 ? nullptr : sites_.at(currentSiteIndex_));
 }
 
 /*
@@ -200,7 +182,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
     excludedMolecules_.clear();
     for (SelectProcedureNode *node : sameMoleculeExclusions_)
         if (node->currentSite())
-            excludedMolecules_.insert(node->currentSite()->molecule());
+            excludedMolecules_.emplace_back(node->currentSite()->molecule());
 
     excludedSites_.clear();
     for (SelectProcedureNode *node : sameSiteExclusions_)
@@ -223,7 +205,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
         if (siteStack == nullptr)
             return ProcedureNode::Failure;
 
-        for (int n = 0; n < siteStack->nSites(); ++n)
+        for (auto n = 0; n < siteStack->nSites(); ++n)
         {
             const Site *site = &siteStack->site(n);
 
@@ -264,8 +246,8 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
             return ProcedureNode::Failure;
 
         const Array<Site> &generatedSites = dynamicNode->generatedSites();
-        for (int n = 0; n < generatedSites.nItems(); ++n)
-            sites_.add(&generatedSites.constAt(n));
+        for (auto n = 0; n < generatedSites.nItems(); ++n)
+            sites_.add(&generatedSites.at(n));
     }
 
     // Set first site index and increase selections counter

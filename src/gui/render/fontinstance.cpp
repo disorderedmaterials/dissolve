@@ -1,23 +1,5 @@
-/*
-    *** Font Instance
-    *** src/gui/render/fontinstance.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/fontinstance.h"
 #include "base/messenger.h"
@@ -77,8 +59,6 @@ bool FontInstance::setUp(QString fontFileName)
             Messenger::print("Failed to set unicode character mapping for font - special characters may not render "
                              "correctly.\n");
 
-        // 		font_->Depth(3.0);
-        // 		font_->Outset(-.5, 1.5);
         font_->FaceSize(1);
         FTBBox boundingBox = font_->BBox("0123456789");
         fontBaseHeight_ = boundingBox.Upper().Y() - boundingBox.Lower().Y();
@@ -109,8 +89,6 @@ FTBBox FontInstance::boundingBox(std::string_view text) const
     // Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with
     // trailing spaces..
     FTBBox box = font_->BBox(fmt::format(".{}.", text).c_str());
-    // 	double newWidth = box.Upper().X() - dotWidth_;
-    // 	box.Upper().X(newWidth);
     return FTBBox(box.Lower(), FTPoint(box.Upper().X() - dotWidth_, box.Upper().Y()));
 }
 

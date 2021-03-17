@@ -1,23 +1,5 @@
-/*
-    *** Base Viewer - Object Querying
-    *** src/gui/viewer_query.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "gui/dataviewer.hui"
@@ -67,11 +49,6 @@ void BaseViewer::generateQueryImage()
     setupGL();
     renderGL();
 
-    // TEST Save offscreen image
-    // 	QImage fboImage(offscreenBuffer_->toImage());
-    // 	QImage tile(fboImage.constBits(), fboImage.width(), fboImage.height(), QImage::Format_ARGB32);
-    // 	tile.save("query.png", "png");
-
     // Reset pixel scaling
     setPixelScaling(1.0);
 
@@ -107,9 +84,9 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, std::string_vi
     // Compare the stored colours in the region with those in the current buffer
     auto index = 0;
     double delta = 0.0;
-    for (int dx = 0; dx < queryRegionWidth_; ++dx)
+    for (auto dx = 0; dx < queryRegionWidth_; ++dx)
     {
-        for (int dy = 0; dy < queryRegionHeight_; ++dy)
+        for (auto dy = 0; dy < queryRegionHeight_; ++dy)
         {
             // Accumulate difference between stored and current colour
             QColor pixelColour = tile.pixelColor(queryRegionLeft_ + dx, queryImageHeight_ - queryRegionBottom_ - dy);

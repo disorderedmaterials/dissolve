@@ -1,23 +1,5 @@
-/*
-    *** Species Viewer - Functions
-    *** src/gui/siteviewer_funcs.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "data/elements.h"
@@ -33,7 +15,8 @@ SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
     siteRenderable_ = nullptr;
 
     // Interaction
-    setInteractionMode(SiteViewer::DefaultInteraction);
+    setInteractionMode(SiteViewer::InteractionMode::Select);
+    transientInteractionMode_ = TransientInteractionMode::None;
     clickedAtom_ = nullptr;
 
     // Set up the view
@@ -64,15 +47,15 @@ void SiteViewer::setSpecies(Species *sp)
     // Create a new Renderable for the supplied Species
     if (species_)
     {
-        speciesRenderable_ = new RenderableSpecies(species_, species_->objectTag());
+        speciesRenderable_ = std::make_shared<RenderableSpecies>(species_);
         speciesRenderable_->setName("Species");
         speciesRenderable_->setDisplayStyle(RenderableSpecies::LinesStyle);
-        ownRenderable(speciesRenderable_);
+
         view_.showAllData();
     }
 
     // Send relevant signals
-    emit(atomSelectionChanged());
+    emit(atomsChanged());
 }
 
 // Return target Species
@@ -89,9 +72,8 @@ void SiteViewer::setSite(SpeciesSite *site)
     // Create a new Renderable for the parent Species
     if (site_)
     {
-        siteRenderable_ = new RenderableSpeciesSite(species_, site_);
+        siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
         siteRenderable_->setName("Site");
-        ownRenderable(siteRenderable_);
     }
 }
 
@@ -107,7 +89,6 @@ void SiteViewer::setSpeciesRenderableDrawStyle(RenderableSpecies::SpeciesDisplay
 {
     if (speciesRenderable_)
         speciesRenderable_->setDisplayStyle(ds);
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
 }
 
 // Return current renderable draw style
@@ -115,7 +96,6 @@ RenderableSpecies::SpeciesDisplayStyle SiteViewer::speciesRenderableDrawStyle() 
 {
     if (speciesRenderable_)
         return speciesRenderable_->displayStyle();
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
 
     return RenderableSpecies::LinesStyle;
 }

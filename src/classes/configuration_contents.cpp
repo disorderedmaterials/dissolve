@@ -1,23 +1,5 @@
-/*
-    *** Configuration - Contents
-    *** src/classes/configuration_contents.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/processpool.h"
 #include "classes/atomtype.h"
@@ -38,18 +20,11 @@ void Configuration::empty()
         delete box_;
     box_ = new CubicBox(1.0);
     cells_.clear();
-
-    // Clear used species
+    appliedSizeFactor_ = 1.0;
+    requestedSizeFactor_ = 1.0;
     usedSpecies_.clear();
 
     ++contentsVersion_;
-}
-
-// Initialise content arrays
-void Configuration::initialiseArrays(int nMolecules)
-{
-    // Clear current contents
-    empty();
 }
 
 // Return specified used type
@@ -71,37 +46,38 @@ int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 {
     // Check if we have an existing info for this Species
-    SpeciesInfo *spInfo = usedSpeciesInfo(sp);
+    auto spInfo = usedSpeciesInfo(sp);
     if (!spInfo)
     {
-        spInfo = usedSpecies_.add();
-        spInfo->setSpecies(sp);
+        auto &spIn = usedSpecies_.emplace_back();
+        spIn.setSpecies(sp);
+        spInfo = spIn;
     }
 
     // Increase the population
-    spInfo->addPopulation(population);
+    spInfo->get().addPopulation(population);
 
-    return spInfo;
+    return &spInfo->get();
 }
 
 // Return SpeciesInfo for specified Species
-SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
+OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
-        if (spInfo->species() == sp)
+    for (auto &spInfo : usedSpecies_)
+        if (spInfo.species() == sp)
             return spInfo;
 
-    return nullptr;
+    return std::nullopt;
 }
 
 // Return list of SpeciesInfo for the Configuration
-List<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
+std::vector<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 
 // Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
-        if (spInfo->species() == sp)
+    for (auto &spInfo : usedSpecies_)
+        if (spInfo.species() == sp)
             return true;
 
     return false;
@@ -113,9 +89,8 @@ double Configuration::atomicMass() const
     double mass = 0.0;
 
     // Get total molar mass in configuration
-    ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
-    while (SpeciesInfo *spInfo = speciesIterator.iterate())
-        mass += spInfo->species()->mass() * spInfo->population();
+    for (auto spInfo : usedSpecies_)
+        mass += spInfo.species()->mass() * spInfo.population();
 
     // Convert to absolute mass
     return mass / AVOGADRO;
@@ -146,14 +121,18 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet 
     addUsedSpecies(sp, 1);
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
-    SpeciesAtom *spi = sp->firstAtom();
     if (sourceCoordinates)
-        for (int n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
-            addAtom(spi, newMolecule, sourceCoordinates->r(n));
+        for (auto n = 0; n < sp->nAtoms(); ++n)
+        {
+            addAtom(&sp->atom(n), newMolecule, sourceCoordinates->r(n));
+        }
     else
-        for (int n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
-            addAtom(spi, newMolecule, spi->r());
-
+    {
+        for (auto n = 0; n < sp->nAtoms(); ++n)
+        {
+            addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
+        }
+    }
     return newMolecule;
 }
 
@@ -167,10 +146,12 @@ std::deque<std::shared_ptr<Molecule>> &Configuration::molecules() { return molec
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom *Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
+std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
-    Atom *newAtom = atoms_.add();
+    auto newAtom = std::make_shared<Atom>();
+    newAtom->setArrayIndex(atoms_.size());
+    atoms_.push_back(newAtom);
     newAtom->setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
@@ -188,25 +169,17 @@ Atom *Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Mole
 }
 
 // Return number of Atoms in Configuration
-int Configuration::nAtoms() const { return atoms_.nItems(); }
+int Configuration::nAtoms() const { return atoms_.size(); }
 
 // Return Atom array
-DynamicArray<Atom> &Configuration::atoms() { return atoms_; }
+std::vector<std::shared_ptr<Atom>> &Configuration::atoms() { return atoms_; }
 
-// Return Atom array (const)
-const DynamicArray<Atom> &Configuration::constAtoms() const { return atoms_; }
+const std::vector<std::shared_ptr<Atom>> &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
-Atom *Configuration::atom(int n)
+std::shared_ptr<Atom> Configuration::atom(int n)
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Atom index {} passed to Configuration::atom() is out of range (nAtoms = {}).\n", n,
-                         atoms_.nItems());
-        return nullptr;
-    }
-#endif
+    assert(n >= 0 && n < atoms_.size());
     return atoms_[n];
 }
 
@@ -223,10 +196,10 @@ void Configuration::scaleMoleculeCentres(double factor)
         newCog = oldCog * factor;
 
         // Loop over Atoms in Molecule, setting new coordinates as we go
-        for (int m = 0; m < mol->nAtoms(); ++m)
+        for (auto m = 0; m < mol->nAtoms(); ++m)
         {
             // Get Atom pointer
-            Atom *i = mol->atom(m);
+            auto i = mol->atom(m);
 
             // Calculate and set new position
             newPos = newCog + box()->minimumVector(i->r(), oldCog);

@@ -1,23 +1,5 @@
-/*
-    *** SpeciesAtom Definition
-    *** src/classes/speciesatom.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesatom.h"
 #include "base/processpool.h"
@@ -27,17 +9,10 @@
 #include "data/elements.h"
 #include <algorithm>
 
-SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
+SpeciesAtom::SpeciesAtom() : Z_(Elements::Unknown), charge_(0.0), atomType_(nullptr), index_(-1), selected_(false)
 {
-    element_ = nullptr;
-    charge_ = 0.0;
-    atomType_ = nullptr;
     r_.zero();
-    index_ = -1;
-    selected_ = false;
 }
-
-SpeciesAtom::~SpeciesAtom() {}
 
 // Set Species parent
 void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
@@ -46,26 +21,26 @@ void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
 const Species *SpeciesAtom::species() const { return parent_; }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element *element, double rx, double ry, double rz, double q)
+void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q)
 {
-    element_ = element;
+    Z_ = Z;
     r_.set(rx, ry, rz);
     charge_ = q;
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element *element, const Vec3<double> r, double q)
+void SpeciesAtom::set(Elements::Element Z, const Vec3<double> r, double q)
 {
-    element_ = element;
+    Z_ = Z;
     r_ = r;
     charge_ = q;
 }
 
 // Set atomic element
-void SpeciesAtom::setElement(Element *el) { element_ = el; }
+void SpeciesAtom::setZ(Elements::Element Z) { Z_ = Z; }
 
 // Return atomic element
-Element *SpeciesAtom::element() const { return element_; }
+Elements::Element SpeciesAtom::Z() const { return Z_; }
 
 // Return coordinates
 const Vec3<double> &SpeciesAtom::r() const { return r_; }
@@ -80,16 +55,16 @@ double SpeciesAtom::charge() const { return charge_; }
 void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
 {
     // Check elements
-    if (at && (at->element() != element_))
+    if (at && (at->Z() != Z_))
     {
         Messenger::warn("Refused to assign AtomType '{}' to an atom of element {}, since the element of the AtomType is {}.\n",
-                        at->name(), element_->symbol(), at->element()->symbol());
+                        at->name(), Elements::symbol(Z_), Elements::symbol(at->Z()));
         return;
     }
 
     atomType_ = at;
     if (parent_)
-        parent_->bumpAtomTypesVersion();
+        parent_->updateUsedAtomTypes();
 }
 
 // Return SpeciesAtomType of SpeciesAtom
@@ -155,11 +130,11 @@ void SpeciesAtom::addAngle(SpeciesAngle &angle)
 
     // Insert the pointers to the other Atoms into the exclusions_ list
     if (angle.i() != this)
-        exclusions_.add(angle.i());
+        exclusions_.emplace_back(angle.i(), 0.0);
     if (angle.j() != this)
-        exclusions_.add(angle.j());
+        exclusions_.emplace_back(angle.j(), 0.0);
     if (angle.k() != this)
-        exclusions_.add(angle.k());
+        exclusions_.emplace_back(angle.k(), 0.0);
 }
 
 // Remove angle reference
@@ -185,24 +160,24 @@ void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double scaling14)
     // Insert the pointers to the other Atoms into the exclusions_ list
     if (torsion.i() == this)
     {
-        exclusions_.add(torsion.j());
-        exclusions_.add(torsion.k());
-        exclusions_.add(torsion.l(), scaling14);
+        exclusions_.emplace_back(torsion.j(), 0.0);
+        exclusions_.emplace_back(torsion.k(), 0.0);
+        exclusions_.emplace_back(torsion.l(), scaling14);
     }
     else if (torsion.l() == this)
     {
-        exclusions_.add(torsion.i(), scaling14);
-        exclusions_.add(torsion.j());
-        exclusions_.add(torsion.k());
+        exclusions_.emplace_back(torsion.i(), scaling14);
+        exclusions_.emplace_back(torsion.j(), 0.0);
+        exclusions_.emplace_back(torsion.k(), 0.0);
     }
     else
     {
-        exclusions_.add(torsion.i());
-        exclusions_.add(torsion.l());
+        exclusions_.emplace_back(torsion.i(), 0.0);
+        exclusions_.emplace_back(torsion.l(), 0.0);
         if (torsion.j() != this)
-            exclusions_.add(torsion.j());
+            exclusions_.emplace_back(torsion.j(), 0.0);
         if (torsion.k() != this)
-            exclusions_.add(torsion.k());
+            exclusions_.emplace_back(torsion.k(), 0.0);
     }
 }
 
@@ -244,20 +219,15 @@ const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::imprope
 // Return scaling factor to employ with specified Atom
 double SpeciesAtom::scaling(const SpeciesAtom *j) const
 {
-    // Look through our ordered list of excluded Atom interactions
-    for (int n = 0; n < exclusions_.nItems(); ++n)
+    auto it = std::find_if(exclusions_.begin(), exclusions_.end(), [j](const auto &p) { return p.first == j; });
+    if (it != exclusions_.end())
     {
-        // If the current item matches our Atom 'j', we have found a match
-        if (exclusions_.pointer(n) == j)
-            return exclusions_.data(n);
-
-        // If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the
-        // list
-        if (exclusions_.pointer(n) > j)
-            return 1.0;
+        return it->second;
     }
-
-    return 1.0;
+    else
+    {
+        return 1.0;
+    }
 }
 
 /*

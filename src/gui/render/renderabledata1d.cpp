@@ -1,23 +1,5 @@
-/*
-    *** Renderable - Data1D
-    *** src/gui/render/renderabledata1d.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/renderabledata1d.h"
 #include "base/lineparser.h"
@@ -93,35 +75,35 @@ void RenderableData1D::transformValues()
     {
         valuesMin_ = transformedData_.minValue();
         valuesMax_ = transformedData_.maxValue();
-        limitsMin_.set(transformedData_.constXAxis().firstValue(), valuesMin_, 0.0);
-        limitsMax_.set(transformedData_.constXAxis().lastValue(), valuesMax_, 0.0);
+        limitsMin_.set(transformedData_.xAxis().front(), valuesMin_, 0.0);
+        limitsMax_.set(transformedData_.xAxis().back(), valuesMax_, 0.0);
     }
 
     // Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
-    for (int n = 0; n < transformedData_.nValues(); ++n)
+    for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
         // X
-        if (transformedData_.constXAxis(n) > 0.0)
+        if (transformedData_.xAxis(n) > 0.0)
         {
             if (positiveLimitsMin_.x < 0.0)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
-            else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
+            else if (transformedData_.xAxis(n) < positiveLimitsMin_.x)
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
 
-            if (transformedData_.constXAxis(n) > positiveLimitsMax_.x)
-                positiveLimitsMax_.x = transformedData_.constXAxis(n);
+            if (transformedData_.xAxis(n) > positiveLimitsMax_.x)
+                positiveLimitsMax_.x = transformedData_.xAxis(n);
         }
 
         // Value
-        if (transformedData_.constValue(n) > 0.0)
+        if (transformedData_.value(n) > 0.0)
         {
             if (positiveValuesMin_ < 0.0)
-                positiveValuesMin_ = transformedData_.constValue(n);
-            else if (transformedData_.constValue(n) < positiveValuesMin_)
-                positiveValuesMin_ = transformedData_.constValue(n);
+                positiveValuesMin_ = transformedData_.value(n);
+            else if (transformedData_.value(n) < positiveValuesMin_)
+                positiveValuesMin_ = transformedData_.value(n);
 
-            if (transformedData_.constValue(n) > positiveValuesMax_)
-                positiveValuesMax_ = transformedData_.constValue(n);
+            if (transformedData_.value(n) > positiveValuesMax_)
+                positiveValuesMax_ = transformedData_.value(n);
         }
     }
 
@@ -154,10 +136,10 @@ const Data1D &RenderableData1D::transformedData()
 
     // If the value transform is not enabled, just return the original data
     if (!valuesTransform_.enabled())
-        return *source_;
-
-    // Make sure the transformed data is up-to-date
-    transformValues();
+        transformedData_ = *source_;
+    else
+        // Make sure the transformed data is up-to-date
+        transformValues();
 
     return transformedData_;
 }
@@ -169,25 +151,25 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double &yMin, doubl
     const auto &data = transformedData();
 
     auto first = true;
-    for (int n = 0; n < data.nValues(); ++n)
+    for (auto n = 0; n < data.nValues(); ++n)
     {
-        if (data.constXAxis(n) < xMin)
+        if (data.xAxis(n) < xMin)
             continue;
-        else if (data.constXAxis(n) > xMax)
+        else if (data.xAxis(n) > xMax)
             break;
 
         if (first)
         {
-            yMin = data.constValue(n);
+            yMin = data.value(n);
             yMax = yMin;
             first = false;
         }
         else
         {
-            if (data.constValue(n) < yMin)
-                yMin = data.constValue(n);
-            else if (data.constValue(n) > yMax)
-                yMax = data.constValue(n);
+            if (data.value(n) < yMin)
+                yMin = data.value(n);
+            else if (data.value(n) > yMax)
+                yMax = data.value(n);
         }
     }
 
@@ -203,8 +185,7 @@ void RenderableData1D::recreatePrimitives(const View &view, const ColourDefiniti
 {
     dataPrimitive_->initialise(GL_LINE_STRIP, true, 4096);
 
-    constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(),
-                    colourDefinition);
+    constructLineXY(transformedData().xAxis(), transformedData().values(), dataPrimitive_, view.axes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -223,14 +204,14 @@ const void RenderableData1D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, const Array<double> &displayValues,
+void RenderableData1D::constructLineXY(const std::vector<double> &displayAbscissa, const std::vector<double> &displayValues,
                                        Primitive *primitive, const Axes &axes, const ColourDefinition &colourDefinition,
                                        double zCoordinate)
 {
     // Copy and transform abscissa values (still in data space) into axes coordinates
-    Array<double> x = displayAbscissa;
+    std::vector<double> x = displayAbscissa;
     axes.transformX(x);
-    auto nX = x.nItems();
+    auto nX = x.size();
     if (nX < 2)
         return;
 
@@ -245,7 +226,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
     // Create lines for slices
     int vertexA, vertexB;
     // Grab y and z values
-    Array<double> y = displayValues;
+    std::vector<double> y = displayValues;
     axes.transformY(y);
     double z = axes.transformZ(zCoordinate);
 
@@ -259,9 +240,9 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
         colourDefinition.colour(0.0, colour);
 
         // Loop over x values
-        for (int n = 0; n < nX; ++n)
+        for (auto n = 0; n < nX; ++n)
         {
-            vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+            vertexB = primitive->defineVertex(x[n], y[n], z, nrm, colour);
 
             // If both vertices are valid, plot a line
             if (vertexA != -1)
@@ -273,10 +254,10 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
     else
     {
         // Loop over x values
-        for (int n = 0; n < nX; ++n)
+        for (auto n = 0; n < nX; ++n)
         {
-            colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
-            vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+            colourDefinition.colour(yLogarithmic ? pow(10.0, y[n] / yStretch) : y[n] / yStretch, colour);
+            vertexB = primitive->defineVertex(x[n], y[n], z, nrm, colour);
 
             // If both vertices are valid, plot a line
             if (vertexA != -1)
@@ -294,11 +275,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
 // Return EnumOptions for Data1DDisplayStyle
 EnumOptions<RenderableData1D::Data1DDisplayStyle> RenderableData1D::data1DDisplayStyles()
 {
-    static EnumOptionsList Style1DOptions = EnumOptionsList() << EnumOption(RenderableData1D::LinesStyle, "Lines");
-
-    static EnumOptions<RenderableData1D::Data1DDisplayStyle> options("Data1DDisplayStyle", Style1DOptions);
-
-    return options;
+    return EnumOptions<RenderableData1D::Data1DDisplayStyle>("Data1DDisplayStyle", {{RenderableData1D::LinesStyle, "Lines"}});
 }
 
 // Set display style for renderable
@@ -319,12 +296,9 @@ RenderableData1D::Data1DDisplayStyle RenderableData1D::displayStyle() const { re
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData1D::Data1DStyleKeyword> RenderableData1D::data1DStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableData1D::DisplayKeyword, "Display", 1)
-                                                             << EnumOption(RenderableData1D::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableData1D::Data1DStyleKeyword> options("Data1DStyleKeyword", StyleKeywords);
-
-    return options;
+    return EnumOptions<RenderableData1D::Data1DStyleKeyword>(
+        "Data1DStyleKeyword",
+        {{RenderableData1D::DisplayKeyword, "Display", 1}, {RenderableData1D::EndStyleKeyword, "EndStyle"}});
 }
 
 // Write style information
@@ -332,7 +306,7 @@ bool RenderableData1D::writeStyleBlock(LineParser &parser, int indentLevel) cons
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

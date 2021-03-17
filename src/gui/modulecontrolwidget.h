@@ -1,30 +1,15 @@
-/*
-    *** Module Control Widget
-    *** src/gui/modulecontrolwidget.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
+#include "base/lock.h"
 #include "gui/ui_modulecontrolwidget.h"
 #include "templates/variantpointer.h"
 
 // Forward Declarations
+class ConfigurationRefListKeyword;
+class ConfigurationRefListKeywordWidget;
 class Dissolve;
 class DissolveWindow;
 class Module;
@@ -38,19 +23,12 @@ class ModuleControlWidget : public QWidget
     Q_OBJECT
 
     public:
-    ModuleControlWidget(QWidget *parent);
+    ModuleControlWidget(QWidget *parent = nullptr);
     ~ModuleControlWidget();
 
     private:
-    // Whether the widget is currently refreshing
-    bool refreshing_;
-
-    /*
-     * Setup
-     */
-    public:
-    // Set up links to main window
-    void setUp(DissolveWindow *dissolveWindow);
+    // Lock for widget refresh
+    Lock refreshLock_;
 
     /*
      * Module Target
@@ -68,9 +46,8 @@ class ModuleControlWidget : public QWidget
     public:
     // Set target Module to display
     void setModule(Module *module, Dissolve *dissolve);
-
-    signals:
-    void updateModuleWidget(int flags);
+    // Return target Module for the widget
+    Module *module() const;
 
     /*
      * Update
@@ -89,17 +66,16 @@ class ModuleControlWidget : public QWidget
     private:
     // Main form declaration
     Ui::ModuleControlWidget ui_;
+    // Keyword widget for Configuration editing
+    ConfigurationRefListKeywordWidget *configurationsWidget_;
+    // Additional controls widget for the Module (if any)
+    ModuleWidget *moduleWidget_;
 
     private slots:
+    void on_ModuleControlsButton_clicked(bool checked);
+    void on_ModuleOutputButton_clicked(bool checked);
     // Keyword data for Module has been modified
     void keywordDataModified();
-
-    public slots:
-    void on_NameEdit_editingFinished();
-    void on_NameEdit_returnPressed();
-    void on_EnabledButton_clicked(bool checked);
-    void on_FrequencySpin_valueChanged(int value);
-    void on_ConfigurationTargetList_itemChanged(QListWidgetItem *item);
 
     signals:
     // Notify that the Module's data has been modified in some way

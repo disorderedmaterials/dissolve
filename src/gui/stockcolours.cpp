@@ -1,23 +1,5 @@
-/*
-    *** Stock Colours
-    *** src/gui/stockcolours.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/stockcolours.h"
 
@@ -41,24 +23,19 @@ QColor StockQColors[] = {
 // Return enum options for RenderableGroupKeyword
 EnumOptions<StockColours::StockColour> StockColours::stockColours()
 {
-    static EnumOptionsList StockColoursOptions = EnumOptionsList()
-                                                 << EnumOption(StockColours::BlackStockColour, "Black")
-                                                 << EnumOption(StockColours::RedStockColour, "Red")
-                                                 << EnumOption(StockColours::GreenStockColour, "Green")
-                                                 << EnumOption(StockColours::BlueStockColour, "Blue")
-                                                 << EnumOption(StockColours::PurpleStockColour, "Purple")
-                                                 << EnumOption(StockColours::CyanStockColour, "Cyan")
-                                                 << EnumOption(StockColours::OrangeStockColour, "Orange")
-                                                 << EnumOption(StockColours::PinkStockColour, "Pink")
-                                                 << EnumOption(StockColours::LightRedStockColour, "LightRed")
-                                                 << EnumOption(StockColours::LightGreenStockColour, "LightGreen")
-                                                 << EnumOption(StockColours::LightBlueStockColour, "LightBlue")
-                                                 << EnumOption(StockColours::SilverStockColour, "Silver")
-                                                 << EnumOption(StockColours::GoldStockColour, "Gold");
-
-    static EnumOptions<StockColours::StockColour> options("StockColour", StockColoursOptions);
-
-    return options;
+    return EnumOptions<StockColours::StockColour>("StockColour", {{StockColours::BlackStockColour, "Black"},
+                                                                  {StockColours::RedStockColour, "Red"},
+                                                                  {StockColours::GreenStockColour, "Green"},
+                                                                  {StockColours::BlueStockColour, "Blue"},
+                                                                  {StockColours::PurpleStockColour, "Purple"},
+                                                                  {StockColours::CyanStockColour, "Cyan"},
+                                                                  {StockColours::OrangeStockColour, "Orange"},
+                                                                  {StockColours::PinkStockColour, "Pink"},
+                                                                  {StockColours::LightRedStockColour, "LightRed"},
+                                                                  {StockColours::LightGreenStockColour, "LightGreen"},
+                                                                  {StockColours::LightBlueStockColour, "LightBlue"},
+                                                                  {StockColours::SilverStockColour, "Silver"},
+                                                                  {StockColours::GoldStockColour, "Gold"}});
 }
 
 // Return stock colour (as QColor)

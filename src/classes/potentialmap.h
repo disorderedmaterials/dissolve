@@ -1,23 +1,5 @@
-/*
-    *** PotentialMap Definition
-    *** src/classes/potentialmap.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -62,15 +44,15 @@ class PotentialMap
      */
     public:
     // Return energy between Atoms at distance specified
-    double energy(const Atom *i, const Atom *j, double r) const;
+    double energy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const;
     // Return energy between SpeciesAtoms at distance specified
     double energy(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
     // Return analytic energy between Atom types at distance specified
-    double analyticEnergy(const Atom *i, const Atom *j, double r) const;
+    double analyticEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const;
     // Return force between Atoms at distance specified
-    double force(const Atom *i, const Atom *j, double r) const;
+    double force(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const;
     // Return force between SpeciesAtoms at distance specified
     double force(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
     // Return analytic force between Atom types at distance specified
-    double analyticForce(const Atom *i, const Atom *j, double r) const;
+    double analyticForce(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const;
 };

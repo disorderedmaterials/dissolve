@@ -1,23 +1,5 @@
-/*
-    *** EPSR Module - Initialisation
-    *** src/modules/epsr/init.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
 #include "modules/epsr/epsr.h"
@@ -25,37 +7,30 @@
 // Return enum option info for ExpansionFunctionType
 EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionTypes()
 {
-    static EnumOptionsList ExpansionFunctionTypeOptions = EnumOptionsList()
-                                                          << EnumOption(EPSRModule::PoissonExpansionFunction, "Poisson")
-                                                          << EnumOption(EPSRModule::GaussianExpansionFunction, "Gaussian");
-
-    static EnumOptions<EPSRModule::ExpansionFunctionType> options("ExpansionFunctionType", ExpansionFunctionTypeOptions,
-                                                                  EPSRModule::PoissonExpansionFunction);
-
-    return options;
+    return EnumOptions<EPSRModule::ExpansionFunctionType>(
+        "ExpansionFunctionType",
+        {{EPSRModule::PoissonExpansionFunction, "Poisson"}, {EPSRModule::GaussianExpansionFunction, "Gaussian"}});
 }
 
 // Perform any necessary initialisation for the Module
 void EPSRModule::initialise()
 {
-    groupedTargets_.addAllowedModuleType("NeutronSQ");
-
-    // Calculation
-    keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable",
+    // Control
+    keywords_.add("Control", new BoolKeyword(true), "OnlyWhenEnergyStable",
                   "Assesses the energy of all involved Configurations, refining the potential only when all their total "
                   "energies are stable");
-    keywords_.add("Calculation", new DoubleKeyword(3.0, -1.0), "EReq",
+    keywords_.add("Control", new DoubleKeyword(3.0, -1.0), "EReq",
                   "Limit of magnitude of additional potential for any one pair potential");
-    keywords_.add("Calculation", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
-    keywords_.add("Calculation", new BoolKeyword(true), "ModifyPotential",
+    keywords_.add("Control", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
+    keywords_.add("Control", new BoolKeyword(true), "ModifyPotential",
                   "Whether to apply generated perturbations to interatomic potentials");
-    keywords_.add("Calculation", new ModuleGroupsKeyword(groupedTargets_), "Target",
-                  "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
-    keywords_.add("Calculation", new DoubleKeyword(30.0, -1.0), "QMax",
+    keywords_.add("Control", new ModuleVectorKeyword({"NeutronSQ", "XRaySQ"}), "Target",
+                  "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName>");
+    keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax",
                   "Maximum Q value over which to generate potentials from total scattering data");
-    keywords_.add("Calculation", new DoubleKeyword(0.5, -1.0), "QMin",
+    keywords_.add("Control", new DoubleKeyword(0.5, -1.0), "QMin",
                   "Minimum Q value over which to generate potentials from total scattering data");
-    keywords_.add("Calculation", new DoubleKeyword(1.0, 0.0, 10.0), "Weighting",
+    keywords_.add("Control", new DoubleKeyword(1.0, 0.0, 10.0), "Weighting",
                   "Factor used when adding fluctuation coefficients to pair potentials");
 
     // Expansion Function
@@ -98,4 +73,6 @@ void EPSRModule::initialise()
     keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials",
                   "<True|False>");
     keywords_.add("Export", new BoolKeyword(false), "SavePCof", "Whether to save potential coefficients", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveSimulatedFR",
+                  "Whether to save simulated F(r) (Fourier transform of calculated F(Q))", "<True|False>");
 }

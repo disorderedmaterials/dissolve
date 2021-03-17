@@ -1,23 +1,5 @@
-/*
-    *** Keywords Widget - Functions
-    *** src/gui/keywordwidgets/widget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "gui/keywordwidgets/widget.hui"
@@ -74,6 +56,14 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = broadeningFunctionWidget;
         base = broadeningFunctionWidget;
     }
+    else if (type == KeywordBase::ConfigurationRefListData)
+    {
+        ConfigurationRefListKeywordWidget *configurationRefListWidget =
+            new ConfigurationRefListKeywordWidget(nullptr, keywordBase, coreData);
+        connect(configurationRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = configurationRefListWidget;
+        base = configurationRefListWidget;
+    }
     else if (type == KeywordBase::DoubleData)
     {
         DoubleKeywordWidget *doubleWidget = new DoubleKeywordWidget(nullptr, keywordBase, coreData);
@@ -88,13 +78,13 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = enumOptionsWidget;
         base = enumOptionsWidget;
     }
-    else if (type == KeywordBase::ExpressionVariableListData)
+    else if (type == KeywordBase::ExpressionVariableVectorData)
     {
-        ExpressionVariableListKeywordWidget *expressionVariableListWidget =
-            new ExpressionVariableListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(expressionVariableListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = expressionVariableListWidget;
-        base = expressionVariableListWidget;
+        ExpressionVariableVectorKeywordWidget *expressionVariableVectorWidget =
+            new ExpressionVariableVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(expressionVariableVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = expressionVariableVectorWidget;
+        base = expressionVariableVectorWidget;
     }
     else if (type == KeywordBase::FileAndFormatData)
     {
@@ -110,13 +100,12 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = intWidget;
         base = intWidget;
     }
-    else if (type == KeywordBase::IsotopologueCollectionData)
+    else if (type == KeywordBase::IsotopologueSetData)
     {
-        IsotopologueCollectionKeywordWidget *isotopologueCollectionWidget =
-            new IsotopologueCollectionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(isotopologueCollectionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = isotopologueCollectionWidget;
-        base = isotopologueCollectionWidget;
+        IsotopologueSetKeywordWidget *isotopologueSetWidget = new IsotopologueSetKeywordWidget(nullptr, keywordBase, coreData);
+        connect(isotopologueSetWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = isotopologueSetWidget;
+        base = isotopologueSetWidget;
     }
     else if (type == KeywordBase::ModuleData)
     {
@@ -134,10 +123,10 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     }
     else if (type == KeywordBase::ModuleRefListData)
     {
-        ModuleRefListKeywordWidget *moduleRefListWidget = new ModuleRefListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(moduleRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = moduleRefListWidget;
-        base = moduleRefListWidget;
+        ModuleVectorKeywordWidget *ModuleVectorWidget = new ModuleVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(ModuleVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = ModuleVectorWidget;
+        base = ModuleVectorWidget;
     }
     else if (type == KeywordBase::NodeData)
     {
@@ -225,13 +214,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         connect(charWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = charWidget;
         base = charWidget;
-    }
-    else if (type == KeywordBase::WindowFunctionData)
-    {
-        WindowFunctionKeywordWidget *windowFunctionWidget = new WindowFunctionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(windowFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = windowFunctionWidget;
-        base = windowFunctionWidget;
     }
     else if (type == KeywordBase::Vec3DoubleData)
     {

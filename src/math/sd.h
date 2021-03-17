@@ -1,23 +1,5 @@
-/*
-    *** Steepest-Descent Minmiser
-    *** src/math/sd.h
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -45,7 +27,7 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
         const double deltaFrac = 0.05;
         double delta;
         Array<double> gradient;
-        for (int n = 0; n < alpha.nItems(); ++n)
+        for (auto n = 0; n < alpha.nItems(); ++n)
         {
             Array<double> tempAlpha = alpha;
             tempAlpha[n] = alpha.value(n) * (1.0 - deltaFrac);
@@ -61,7 +43,7 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
     Array<double> gradientMove(const Array<double> &alpha, const Array<double> grad, double stepSize)
     {
         Array<double> newAlpha(alpha.nItems());
-        for (int n = 0; n < alpha.nItems(); ++n)
+        for (auto n = 0; n < alpha.nItems(); ++n)
             newAlpha[n] = alpha.value(n) * grad.value(n) * stepSize;
         return newAlpha;
     }
@@ -113,19 +95,9 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 
             currentError = trialError;
 
-            // Complex method begins here
-            // 			else currentError = lineMinimise(sourceModel);
-
             // Copy alpha and calculate gradient ready for next cycle
             values_ = trialAlpha;
             grad = gradient(values_);
-
-            // Check convergence criteria
-            // 			if (fabs(deltaEnergy) < eConverge)
-            // 			{
-            // 				converged = true;
-            // 				break;
-            // 			}
 
             if (lineDone || converged)
                 break;
@@ -137,7 +109,7 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
             Messenger::print("Steepest descent did not converge within {} steps.", maxIterations);
 
         // Set minimised values back into their original variables
-        for (int n = 0; n < targets_.nItems(); ++n)
+        for (auto n = 0; n < targets_.nItems(); ++n)
             (*targets_[n]) = values_[n];
 
         return currentError;

@@ -1,23 +1,5 @@
-/*
-    *** Base Chart
-    *** src/gui/charts/chart_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/charts/chart.hui"
 #include "gui/widgets/mimestrings.h"
@@ -139,9 +121,7 @@ void ChartBase::mouseMoveEvent(QMouseEvent *event)
     repaint();
 
     // Begin the drag event
-    Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
-    // 	if (dropAction
-    // 	...
+    drag->exec(Qt::MoveAction);
 
     // Nullify the dragged block
     draggedBlock_ = nullptr;
@@ -257,10 +237,6 @@ void ChartBase::dropEvent(QDropEvent *event)
     // Widgets are almost in the right place, so don't animate anything
     currentHotSpot_ = nullptr;
     draggedBlock_ = nullptr;
-
-    // 	layOutWidgets(animate);
-
-    // 	repaint();
 }
 
 /*

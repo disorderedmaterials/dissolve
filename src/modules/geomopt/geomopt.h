@@ -1,23 +1,5 @@
-/*
-    *** Geometry Optimisiation Module
-    *** src/modules/geomopt/geomopt.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -34,41 +16,41 @@ class GeometryOptimisationModule : public Module
 {
     public:
     GeometryOptimisationModule();
-    ~GeometryOptimisationModule();
+    ~GeometryOptimisationModule() override = default;
 
     /*
      * Instances
      */
     public:
     // Create instance of this module
-    Module *createInstance() const;
+    Module *createInstance() const override;
 
     /*
      * Definition
      */
     public:
     // Return type of module
-    std::string_view type() const;
+    std::string_view type() const override;
     // Return category for module
-    std::string_view category() const;
+    std::string_view category() const override;
     // Return brief description of module
-    std::string_view brief() const;
+    std::string_view brief() const override;
     // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const;
+    int nRequiredTargets() const override;
 
     /*
      * Initialisation
      */
     protected:
     // Perform any necessary initialisation for the Module
-    void initialise();
+    void initialise() override;
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool);
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * Functions
@@ -129,7 +111,7 @@ class GeometryOptimisationModule : public Module
         Vec3<int> order(1, xyLargest ? 0 : 2, xyLargest ? 2 : 0);
 
         // Check each energy to see if our new energy is lower. If it is, overwrite it and recurse
-        for (int n = 0; n < 3; ++n)
+        for (auto n = 0; n < 3; ++n)
         {
             if (eNew < energies[order[n]])
             {
@@ -230,12 +212,7 @@ class GeometryOptimisationModule : public Module
                 if (nPointsAccepted == 0)
                     break;
             }
-            // 		printf("DIFF = {}, 2tol = {}\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance);
-            // 		++count;
-            // 		if (count > 10) break;
         } while (fabs(bounds[0] - bounds[2]) > (2.0 * tolerance));
-        // 	printf("Final bounding values are {:12.5e} {:12.5e} {:12.5e}\n",bounds[0],bounds[1],bounds[2]);
-        // 	printf("             energies are {:12.5e} {:12.5e} {:12.5e}\n",energies[0],energies[1],energies[2]);
 
         // Sort w.r.t. energy so that the minimum is in the central point
         sortBoundsAndEnergies(bounds, energies);
@@ -264,7 +241,7 @@ class GeometryOptimisationModule : public Module
                          stepSize);
 
         auto nStepSizeResets = 0;
-        for (int cycle = 1; cycle <= nCycles_; ++cycle)
+        for (auto cycle = 1; cycle <= nCycles_; ++cycle)
         {
             // Copy current target coordinates as our reference (they will be modified by lineMinimise())
             setReferenceCoordinates(target);
@@ -282,7 +259,7 @@ class GeometryOptimisationModule : public Module
             double dF = newRMSForce - oldRMSForce;
 
             // Print summary
-            Messenger::print("{:5i}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", cycle, newEnergy, dE, newRMSForce, dF,
+            Messenger::print("{:5d}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", cycle, newEnergy, dE, newRMSForce, dF,
                              stepSize);
 
             // Check convergence
@@ -316,5 +293,5 @@ class GeometryOptimisationModule : public Module
      */
     public:
     // Return a new widget controlling this Module
-    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
+    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve) override;
 };

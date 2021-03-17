@@ -1,29 +1,11 @@
-/*
-    *** OPLSAA (2005) Intramolecular Terms
-    *** src/data/ff/oplsaa2005/intramolecular.cpp
-    Copyright T. Youngs 2019-2020
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+#include "data/ff/angleterm.h"
+#include "data/ff/bondterm.h"
+#include "data/ff/improperterm.h"
 #include "data/ff/oplsaa2005/base.h"
-#include "data/ffangleterm.h"
-#include "data/ffbondterm.h"
-#include "data/ffimproperterm.h"
-#include "data/fftorsionterm.h"
+#include "data/ff/torsionterm.h"
 #include <algorithm>
 #include <functional>
 #include <optional>

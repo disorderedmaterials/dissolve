@@ -1,23 +1,5 @@
-/*
-    *** Export - Coordinates
-    *** src/io/export/coordinates.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "io/export/coordinates.h"
 #include "base/lineparser.h"
@@ -26,7 +8,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/speciesatom.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 
 CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename, CoordinateExportFormat format)
     : FileAndFormat(filename, format)
@@ -40,14 +22,9 @@ CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename
 // Return enum options for CoordinateExportFormat
 EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> CoordinateExportFileFormat::coordinateExportFormats()
 {
-    static EnumOptionsList CoordinateExportFormats =
-        EnumOptionsList() << EnumOption(CoordinateExportFileFormat::XYZCoordinates, "xyz", "Simple XYZ Coordinates")
-                          << EnumOption(CoordinateExportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG File");
-
-    static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> options("CoordinateExportFileFormat",
-                                                                                   CoordinateExportFormats);
-
-    return options;
+    return EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat>(
+        "CoordinateExportFileFormat", {{CoordinateExportFileFormat::XYZCoordinates, "xyz", "Simple XYZ Coordinates"},
+                                       {CoordinateExportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG File"}});
 }
 
 // Return number of available formats
@@ -85,13 +62,10 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
         return false;
 
     // Export Atoms
-    for (int n = 0; n < cfg->nAtoms(); ++n)
-    {
-        Atom *i = cfg->atom(n);
-        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", i->speciesAtom()->element()->symbol(), i->r().x,
+    for (auto i : cfg->atoms())
+        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i->speciesAtom()->Z()), i->r().x,
                                i->r().y, i->r().z))
             return false;
-    }
 
     return true;
 }
@@ -135,14 +109,12 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     }
 
     // Export Atoms
-    for (int n = 0; n < cfg->nAtoms(); ++n)
-    {
-        Atom *i = cfg->atom(n);
+    auto n = 0;
+    for (auto i : cfg->atoms())
         if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n",
-                               cfg->usedAtomType(i->localTypeIndex())->name(), n + 1,
-                               AtomicMass::mass(i->speciesAtom()->element()), i->r().x, i->r().y, i->r().z))
+                               cfg->usedAtomType(i->localTypeIndex())->name(), n++ + 1, AtomicMass::mass(i->speciesAtom()->Z()),
+                               i->r().x, i->r().y, i->r().z))
             return false;
-    }
 
     return true;
 }

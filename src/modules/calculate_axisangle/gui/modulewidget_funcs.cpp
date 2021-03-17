@@ -1,25 +1,9 @@
-/*
-    *** CalculateDAngle Module Widget - Functions
-    *** src/modules/calculate_axisangle/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
 #include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_axisangle/gui/modulewidget.h"
 
@@ -89,30 +73,6 @@ void CalculateAxisAngleModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateAxisAngleModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateAxisAngleModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -126,13 +86,13 @@ void CalculateAxisAngleModuleWidget::setGraphDataTargets(CalculateAxisAngleModul
     for (const auto *cfg : module_->targetConfigurations())
     {
         // Calculated A...B RDF
-        auto *rdf = rdfGraph_->createRenderable(
+        auto rdf = rdfGraph_->createRenderable(
             Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(AB)", module_->uniqueName(), cfg->niceName()),
             "A...B g(r)");
         rdf->setColour(StockColours::BlueStockColour);
 
         // Calculated angle histogram
-        auto *angle = angleGraph_->createRenderable(
+        auto angle = angleGraph_->createRenderable(
             Renderable::Data1DRenderable,
             fmt::format("{}//Process1D//{}//AxisAngle(AB)", module_->uniqueName(), cfg->niceName()), "Axis Angle");
         angle->setColour(StockColours::RedStockColour);

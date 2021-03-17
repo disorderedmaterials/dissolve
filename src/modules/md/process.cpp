@@ -1,23 +1,5 @@
-/*
-    *** Molecular Dynamics Module - Processing
-    *** src/modules/md/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/timer.h"
@@ -25,8 +7,7 @@
 #include "classes/cell.h"
 #include "classes/forcekernel.h"
 #include "classes/species.h"
-#include "data/atomicmass.h"
-#include "genericitems/listhelper.h"
+#include "data/atomicmasses.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
@@ -49,19 +30,19 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
     // Get control parameters
-    const bool capForce = keywords_.asBool("CapForces");
+    const auto capForce = keywords_.asBool("CapForces");
     const auto maxForce = keywords_.asDouble("CapForcesAt") * 100.0; // To convert from kJ/mol to 10 J/mol
-    double cutoffDistance = keywords_.asDouble("CutoffDistance");
+    auto cutoffDistance = keywords_.asDouble("CutoffDistance");
     if (cutoffDistance < 0.0)
         cutoffDistance = dissolve.pairPotentialRange();
-    double deltaT = keywords_.asDouble("DeltaT");
+    auto deltaT = keywords_.asDouble("DeltaT");
     const auto energyFrequency = keywords_.asInt("EnergyFrequency");
     const auto nSteps = keywords_.asInt("NSteps");
     const auto outputFrequency = keywords_.asInt("OutputFrequency");
     auto randomVelocities = keywords_.asBool("RandomVelocities");
-    const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
+    const auto onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const auto trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
-    const bool variableTimestep = keywords_.asBool("VariableTimestep");
+    const auto variableTimestep = keywords_.asBool("VariableTimestep");
     auto writeTraj = trajectoryFrequency > 0;
 
     // Print argument/parameter summary
@@ -117,7 +98,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Array<std::shared_ptr<Molecule>> targetMolecules;
         if (restrictToSpecies_.nItems() > 0)
         {
-            for (int n = 0; n < cfg->nMolecules(); ++n)
+            for (auto n = 0; n < cfg->nMolecules(); ++n)
             {
                 std::shared_ptr<Molecule> mol = cfg->molecule(n);
                 if (restrictToSpecies_.contains(mol->species()))
@@ -134,7 +115,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Variables
         int n, nCapped = 0;
-        Atom **atoms = cfg->atoms().array();
+        auto &atoms = cfg->atoms();
         double tInstant, ke, tScale, peInter, peIntra;
         double deltaTSq = deltaT * deltaT;
 
@@ -145,8 +126,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Read in or assign random velocities
         // Realise the velocity array from the moduleData
         bool created;
-        auto &v = GenericListHelper<Array<Vec3<double>>>::realise(moduleData, "Velocities", uniqueName(), GenericItem::NoFlag,
-                                                                  &created);
+        auto &v = moduleData.realise<Array<Vec3<double>>>("Velocities", uniqueName(), GenericItem::NoFlag, &created);
         if (created)
         {
             randomVelocities = true;
@@ -172,7 +152,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Grab atom mass for future use
-            mass[n] = AtomicMass::mass(atoms[n]->speciesAtom()->element());
+            mass[n] = AtomicMass::mass(atoms[n]->speciesAtom()->Z());
 
             // Calculate total velocity and mass over all atoms
             vCom += v[n] * mass[n];
@@ -244,7 +224,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Ready to do MD propagation of system
-        for (int step = 1; step <= nSteps; ++step)
+        for (auto step = 1; step <= nSteps; ++step)
         {
             // Variable timestep?
             if (variableTimestep)
@@ -350,11 +330,10 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Write Atoms
-                    for (int n = 0; n < cfg->nAtoms(); ++n)
+                    for (auto i : atoms)
                     {
-                        Atom *i = atoms[n];
                         if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n",
-                                                   i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z))
+                                                   Elements::symbol(i->speciesAtom()->Z()), i->r().x, i->r().y, i->r().z))
                         {
                             procPool.decideFalse();
                             return false;

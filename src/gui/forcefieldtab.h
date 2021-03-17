@@ -1,23 +1,5 @@
-/*
-    *** Forcefield Tab
-    *** src/gui/forcefieldtab.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -27,9 +9,9 @@
 #include "gui/maintab.h"
 #include "gui/ui_forcefieldtab.h"
 
-Q_DECLARE_METATYPE(MasterIntra *)
-Q_DECLARE_METATYPE(AtomType *)
-Q_DECLARE_METATYPE(PairPotential *)
+Q_DECLARE_METATYPE(const MasterIntra *)
+Q_DECLARE_METATYPE(const AtomType *)
+Q_DECLARE_METATYPE(const PairPotential *)
 
 // Forcefield Tab
 class ForcefieldTab : public QWidget, public MainTab
@@ -62,17 +44,17 @@ class ForcefieldTab : public QWidget, public MainTab
      */
     private:
     // Row update function for BondsTable
-    void updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems);
+    void updateBondsTableRow(int row, const MasterIntra *masterBond, bool createItems);
     // Row update function for AnglesTable
-    void updateAnglesTableRow(int row, MasterIntra *masterAngle, bool createItems);
+    void updateAnglesTableRow(int row, const MasterIntra *masterAngle, bool createItems);
     // Row update function for TorsionsTable
-    void updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems);
+    void updateTorsionsTableRow(int row, const MasterIntra *masterTorsion, bool createItems);
     // Row update function for ImpropersTable
-    void updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems);
+    void updateImpropersTableRow(int row, const MasterIntra *masterImproper, bool createItems);
     // Row update function for AtomTypesTable
     void updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems);
     // Row update function for PairPotentialsTable
-    void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
+    void updatePairPotentialsTableRow(int row, const PairPotential *pairPotential, bool createItems);
 
     protected:
     // Update controls in tab
@@ -119,13 +101,4 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_MasterTermAddImproperButton_clicked(bool checked);
     void on_MasterTermRemoveImproperButton_clicked(bool checked);
     void on_MasterImpropersTable_itemChanged(QTableWidgetItem *w);
-
-    /*
-     * State
-     */
-    public:
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser, const CoreData &coreData);
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
 };

@@ -1,23 +1,5 @@
-/*
-    *** Linked List Class
-    *** src/templates/list.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -128,7 +110,7 @@ template <class T> class List
     void createEmpty(int size)
     {
         clear();
-        for (int n = 0; n < size; ++n)
+        for (auto n = 0; n < size; ++n)
             add();
         regenerate_ = true;
     }
@@ -637,7 +619,7 @@ template <class T> class List
         }
         // Get pointer to item that we're moving and shift it
         T *olditem = array()[target];
-        for (int n = 0; n < abs(delta); n++)
+        for (auto n = 0; n < abs(delta); n++)
             (delta < 0 ? shiftUp(olditem) : shiftDown(olditem));
         // Flag for regeneration
         regenerate_ = true;

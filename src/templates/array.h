@@ -1,23 +1,5 @@
-/*
-    *** Array Classes
-    *** src/templates/array.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -59,7 +41,7 @@ template <class A> class Array : public ListItem<Array<A>>
         nItems_ = 0;
         initialise(source.size_);
         nItems_ = source.nItems_;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = source.array_[n];
     }
     void operator=(const Array<A> &source)
@@ -68,7 +50,7 @@ template <class A> class Array : public ListItem<Array<A>>
         clear();
         resize(source.size_);
         nItems_ = source.nItems_;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = source.array_[n];
     }
     operator A *() { return array_; }
@@ -99,7 +81,7 @@ template <class A> class Array : public ListItem<Array<A>>
         if (nItems_ > 0)
         {
             oldItems = new A[nItems_];
-            for (int n = 0; n < nItems_; ++n)
+            for (auto n = 0; n < nItems_; ++n)
                 oldItems[n] = array_[n];
         }
 
@@ -119,7 +101,7 @@ template <class A> class Array : public ListItem<Array<A>>
         }
 
         // Copy old data into new array
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = oldItems[n];
         delete[] oldItems;
     }
@@ -143,7 +125,7 @@ template <class A> class Array : public ListItem<Array<A>>
         nItems_ = size;
 
         // ...and finally set all elements to default value
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = A();
     }
     // Create empty array of specified size
@@ -167,7 +149,7 @@ template <class A> class Array : public ListItem<Array<A>>
         {
             resize(nItemsToCopy);
             nItems_ = nItemsToCopy;
-            for (int n = 0; n < nItems_; ++n)
+            for (auto n = 0; n < nItems_; ++n)
                 array_[n] = source.array_[n + firstIndex];
         }
     }
@@ -189,21 +171,14 @@ template <class A> class Array : public ListItem<Array<A>>
     // Insert new element in array
     void insert(A data, const int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Position index {} is out of range in Array::insert() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
+        assert(position >= 0 && position < nItems_);
 
         // Is current array large enough?
         if (nItems_ == size_)
             resize(size_ + chunkSize_);
 
         // Working from the top of the array, shift all items after or at 'position' up one place
-        for (int n = nItems_; n > position; --n)
+        for (auto n = nItems_; n > position; --n)
             array_[n] = array_[n - 1];
 
         array_[position] = data;
@@ -229,7 +204,7 @@ template <class A> class Array : public ListItem<Array<A>>
             return;
         }
 
-        for (int n = 0; n < nItems_ - 1; ++n)
+        for (auto n = 0; n < nItems_ - 1; ++n)
             array_[n] = array_[n + 1];
 
         --nItems_;
@@ -247,15 +222,9 @@ template <class A> class Array : public ListItem<Array<A>>
     // Remove the specified index
     void remove(const int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::remove() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
-        for (int n = position; n < nItems_ - 1; ++n)
+        assert(position >= 0 && position < nItems_);
+
+        for (auto n = position; n < nItems_ - 1; ++n)
             array_[n] = array_[n + 1];
 
         --nItems_;
@@ -268,82 +237,50 @@ template <class A> class Array : public ListItem<Array<A>>
     // Return reference to nth item in array
     A &operator[](int n)
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::operator[] (nItems = {}).\n", n, nItems_);
-            return dummy;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         return array_[n];
     }
     // Return single value
     A &at(int n)
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::at() (nItems = {}).\n", n, nItems_);
-            return dummy;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         return array_[n];
     }
     // Return nth item as const reference
-    A &constAt(int n) const
+    const A &at(int n) const
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::constAt() (nItems = {}).\n", n, nItems_);
-            return dummy;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         return array_[n];
     }
     // Return first value in array
     A firstValue() const
     {
-        if (nItems_ == 0)
-        {
-            Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
-            return A();
-        }
+        assert(nItems_ > 0);
+
         return array_[0];
     }
     // Return last value in array
     A lastValue() const
     {
-        if (nItems_ == 0)
-        {
-            Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
-            return A();
-        }
+        assert(nItems_ > 0);
+
         return array_[nItems_ - 1];
     }
     // Return first item in array
     A &first()
     {
-        if (nItems_ == 0)
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
-            return dummy;
-        }
+        assert(nItems_ > 0);
+
         return array_[0];
     }
     // Return last item in array
     A &last()
     {
-        if (nItems_ == 0)
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
-            return dummy;
-        }
+        assert(nItems_ > 0);
+
         return array_[nItems_ - 1];
     }
 
@@ -354,14 +291,8 @@ template <class A> class Array : public ListItem<Array<A>>
     // Shift item up in the array (towards higher indices)
     void shiftUp(int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::shiftUp() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
+        assert(position >= 0 && position < nItems_);
+
         // If this item is already last in the list, return now
         if (position == (nItems_ - 1))
             return;
@@ -373,14 +304,8 @@ template <class A> class Array : public ListItem<Array<A>>
     // Shift item down in the array (towards lower indices)
     void shiftDown(int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::shiftDown() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
+        assert(position >= 0 && position < nItems_);
+
         // If this item is already first in the list, return now
         if (position == 0)
             return;
@@ -397,36 +322,36 @@ template <class A> class Array : public ListItem<Array<A>>
     // Operator= (set all)
     void operator=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = value;
     }
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] += value;
     }
     void operator+=(const Array<A> array)
     {
-        for (int n = 0; n < nItems_; ++n)
-            array_[n] += array.constAt(n);
+        for (auto n = 0; n < nItems_; ++n)
+            array_[n] += array.at(n);
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] -= value;
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] *= value;
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] /= value;
     }
     // Operator- (subtraction)
@@ -439,8 +364,8 @@ template <class A> class Array : public ListItem<Array<A>>
     Array<A> operator-(const Array<A> array)
     {
         Array<A> result(nItems_);
-        for (int n = 0; n < nItems_; ++n)
-            result[n] = array_[n] - array.constAt(n);
+        for (auto n = 0; n < nItems_; ++n)
+            result[n] = array_[n] - array.at(n);
         return result;
     }
     // Operator+ (addition)
@@ -453,8 +378,8 @@ template <class A> class Array : public ListItem<Array<A>>
     Array<A> operator+(const Array<A> array)
     {
         Array<A> result(nItems_);
-        for (int n = 0; n < nItems_; ++n)
-            result[n] = array_[n] + array.constAt(n);
+        for (auto n = 0; n < nItems_; ++n)
+            result[n] = array_[n] + array.at(n);
         return result;
     }
     // Operator* (multiply all and return new)
@@ -480,7 +405,7 @@ template <class A> class Array : public ListItem<Array<A>>
     A sum()
     {
         A result = 0.0;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             result += array_[n];
         return result;
     }
@@ -489,7 +414,7 @@ template <class A> class Array : public ListItem<Array<A>>
     {
         A result = 0.0;
         A temp;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
         {
             temp = array_[n];
             if (temp < 0)

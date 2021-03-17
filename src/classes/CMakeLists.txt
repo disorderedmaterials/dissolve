@@ -1,4 +1,5 @@
-add_library(classes
+add_library(
+  classes
   atom.cpp
   atomtype.cpp
   atomtypedata.cpp
@@ -13,7 +14,6 @@ add_library(classes
   cell.cpp
   cellarray.cpp
   celldistributor.cpp
-  cellneighbour.cpp
   changedata.cpp
   changestore.cpp
   configuration.cpp
@@ -33,7 +33,6 @@ add_library(classes
   forcekernel.cpp
   isotopedata.cpp
   isotopologue.cpp
-  isotopologuecollection.cpp
   isotopologues.cpp
   isotopologueset.cpp
   isotopologueweight.cpp
@@ -69,7 +68,6 @@ add_library(classes
   speciessite.cpp
   speciestorsion.cpp
   xrayweights.cpp
-  
   atom.h
   atomtypedata.h
   atomtype.h
@@ -79,7 +77,6 @@ add_library(classes
   cell.h
   cellarray.h
   celldistributor.h
-  cellneighbour.h
   changedata.h
   changestore.h
   configuration.h
@@ -94,7 +91,6 @@ add_library(classes
   forcekernel.h
   isotopedata.h
   isotopologue.h
-  isotopologuecollection.h
   isotopologues.h
   isotopologueset.h
   isotopologueweight.h
@@ -126,9 +122,4 @@ add_library(classes
   xrayweights.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)

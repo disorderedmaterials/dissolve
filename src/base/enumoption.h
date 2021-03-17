@@ -1,87 +1,55 @@
-/*
-    *** Enum Option
-    *** src/base/enumoption.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
+#include "base/arguments.h"
+#include <optional>
 #include <string>
 
 // Enum Option
-class EnumOption
+template <class E> class EnumOption
 {
     public:
     EnumOption();
-    EnumOption(const int enumeration, std::string_view keyword, int minArgs = 0, int maxArgs = 0);
-    EnumOption(const int enumeration, std::string_view keyword, std::string_view description, int minArgs = 0, int maxArgs = 0);
+    EnumOption(const E enumeration, std::string_view keyword, std::optional<int> minArgs = std::nullopt,
+               std::optional<int> maxArgs = std::nullopt)
+        : enumeration_(enumeration), keyword_(keyword), minArgs_(minArgs), maxArgs_(maxArgs)
+    {
+    }
+    EnumOption(const E enumeration, std::string_view keyword, std::string_view description,
+               std::optional<int> minArgs = std::nullopt, std::optional<int> maxArgs = std::nullopt)
+        : enumeration_(enumeration), keyword_(keyword), description_(description), minArgs_(minArgs), maxArgs_(maxArgs)
+    {
+    }
     virtual ~EnumOption() = default;
 
     /*
      * Definition
      */
-    public:
-    // Argument Numbers
-    enum ArgumentNumber
-    {
-        NoArguments = 0,
-        OneOrMoreArguments = -1,
-        OptionalSecondArgument = -2
-    };
-
     private:
     // Option enumeration (i.e. from enum value)
-    int enumeration_;
+    E enumeration_;
     // Option keyword
     std::string keyword_;
     // Option description / long text
     std::string description_;
-    // Whether the option has any associated arguments
-    bool hasArguments_;
     // Minimum number of arguments the option takes
-    int minArgs_;
+    std::optional<int> minArgs_;
     // Maximum number of arguments the option takes
-    int maxArgs_;
+    std::optional<int> maxArgs_;
 
     public:
     // Return if the option is valid (true except in derived classes)
-    virtual bool isValid() const;
+    virtual bool isValid() const { return true; }
     // Return option enumeration (i.e. from enum value)
-    int enumeration() const;
+    E enumeration() const { return enumeration_; }
     // Return option keyword
-    std::string_view keyword() const;
+    std::string_view keyword() const { return keyword_; }
     // Return option description
-    std::string_view description() const;
-    // Return whether the option has any associated arguments
-    bool hasArguments() const;
+    std::string_view description() const { return description_; }
     // Return minimum number of arguments the option takes
-    int minArgs() const;
+    std::optional<int> minArgs() const { return minArgs_; }
     // Return maximum number of arguments the option takes
-    int maxArgs() const;
-};
-
-// Unrecognised Enum Option
-class UnrecognisedEnumOption : public EnumOption
-{
-    public:
-    UnrecognisedEnumOption() : EnumOption(0, "UNRECOGNISED_KEYWORD") {}
-
-    public:
-    // Return if the option is valid (true except in derived classes)
-    bool isValid() const { return false; }
+    std::optional<int> maxArgs() const { return maxArgs_; }
 };

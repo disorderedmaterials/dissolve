@@ -1,0 +1,6 @@
+dissolve_system_test(broadening argon_qdep0.1 1)
+dissolve_system_test(broadening argon_qdep0.2 1)
+dissolve_system_test(broadening argon_qindep0.1 1)
+dissolve_system_test(broadening argon_qindep0.2 1)
+dissolve_system_test(broadening argon_dep0.2indep0.1 1)
+dissolve_system_test(broadening argon_dep0.1indep0.2 1)

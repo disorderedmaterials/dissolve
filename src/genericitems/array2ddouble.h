@@ -1,23 +1,5 @@
-/*
-    *** Generic Item Container - Array2D<double>
-    *** src/genericitems/array2ddouble.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -39,6 +21,7 @@ template <> class GenericItemContainer<Array2D<double>> : public GenericItem
     public:
     // Return data item
     Array2D<double> &data() { return data_; }
+    const Array2D<double> &data() const { return data_; }
 
     /*
      * Item Class
@@ -68,8 +51,8 @@ template <> class GenericItemContainer<Array2D<double>> : public GenericItem
     static bool write(const Array2D<double> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (int n = 0; n < thisData.linearArraySize(); ++n)
-            if (!parser.writeLineF("{:16.9e}\n", thisData.constLinearValue(n)))
+        for (auto n : thisData)
+            if (!parser.writeLineF("{:16.9e}\n", n))
                 return false;
         return true;
     }
@@ -81,11 +64,11 @@ template <> class GenericItemContainer<Array2D<double>> : public GenericItem
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
-        for (int n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto &n : thisData)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            thisData.linearArray()[n] = parser.argd(0);
+            n = parser.argd(0);
         }
         return true;
     }

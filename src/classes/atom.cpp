@@ -1,23 +1,5 @@
-/*
-    *** Atom Definition
-    *** src/classes/atom.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "base/processpool.h"
@@ -73,22 +55,10 @@ void Atom::setLocalTypeIndex(int id) { localTypeIndex_ = id; }
 int Atom::localTypeIndex() const { return localTypeIndex_; }
 
 // Set master AtomType index
-void Atom::setMasterTypeIndex(int id)
-{
-    if (masterTypeIndex_ != -1)
-        Messenger::warn("Warning: Overwriting master AtomType index for atom...\n");
-    masterTypeIndex_ = id;
-}
+void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }
 
 // Return master AtomType index
-int Atom::masterTypeIndex() const
-{
-#ifdef CHECKS
-    if (masterTypeIndex_ == -1)
-        Messenger::warn("Global AtomType index has not yet been set for atom...\n");
-#endif
-    return masterTypeIndex_;
-}
+int Atom::masterTypeIndex() const { return masterTypeIndex_; }
 
 /*
  * Location
@@ -133,25 +103,11 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
  */
 
 // Return scaling factor to employ with specified Atom
-double Atom::scaling(Atom *j) const
+double Atom::scaling(std::shared_ptr<Atom> j) const
 {
-#ifdef CHECKS
-    if (!speciesAtom_)
-    {
-        Messenger::error("Source SpeciesAtom pointer has not been set in Atom {}, so can't return scaling().\n", arrayIndex());
-        return 0.0;
-    }
-    if (!j)
-    {
-        Messenger::error("Partner Atom 'j' not passed, so can't return scaling().\n");
-        return 0.0;
-    }
-    if (!j->speciesAtom())
-    {
-        Messenger::error("SpeciesAtom pointer has not been set in partner Atom {}, so can't return scaling().\n",
-                         j->arrayIndex());
-        return 0.0;
-    }
-#endif
+    assert(speciesAtom_ != nullptr);
+    assert(j != nullptr);
+    assert(j->speciesAtom() != nullptr);
+
     return speciesAtom_->scaling(j->speciesAtom());
 }

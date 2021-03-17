@@ -10,6 +10,7 @@ stages:
         steps:
           - bash: |
               set -ex
+              wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
               sudo add-apt-repository --yes 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main'
               sudo apt-get update
               sudo apt-get install --yes clang-format-7
@@ -37,5 +38,22 @@ stages:
           - bash: |
               set -ex
               cmake-format --version
-              find . -type f \( -name CMakeLists.txt -or -name '*.cmake' \) -exec cmake-format --check '{}' \;
+              find . -type f -name CMakeLists.txt -exec cmake-format -i '{}' \;
+              git diff
+              git diff --quiet
             displayName: 'Run cmake-format'
+
+      - job: 'copyright_year'
+        displayName: 'Copyright Year'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - bash: |
+              set -ex
+              # Find all occurances of "YYYY Team Dissolve and contributors" and replace YYYY with the current year
+              find . -type f -not -path '.git/*' -exec sed -ri "s/[0-9]{4} (Team Dissolve and contributors)/$(date +%Y) \1/g" {} +
+              # Show the diff to give an indication of the issues in the CI log
+              git diff
+              # Run quiet diff to fail the job if any changes were made (see man git-diff)
+              git diff --quiet
+            displayName: 'Check Copyright years are up to date'

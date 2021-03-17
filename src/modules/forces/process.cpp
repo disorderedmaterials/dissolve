@@ -1,30 +1,11 @@
-/*
-    *** Forces Module - Processing
-    *** src/modules/forces/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/forcekernel.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/forces/forces.h"
 #include "modules/import/import.h"
@@ -37,9 +18,9 @@ bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Reading test reference forces.\n");
 
         // Realise some arrays to store the forces in
-        auto &fx = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFX", uniqueName());
-        auto &fy = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFY", uniqueName());
-        auto &fz = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFZ", uniqueName());
+        auto &fx = dissolve.processingModuleData().realise<Array<double>>("ReferenceFX", uniqueName());
+        auto &fy = dissolve.processingModuleData().realise<Array<double>>("ReferenceFY", uniqueName());
+        auto &fz = dissolve.processingModuleData().realise<Array<double>>("ReferenceFZ", uniqueName());
 
         // Read in the forces
         if (!referenceForces_.importData(fx, fy, fz, &procPool))
@@ -101,7 +82,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
             double magjisq, magji, magjk, dp, force, r;
-            Atom *i, *j, *k, *l;
+            std::shared_ptr<Atom> i, j, k, l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
             Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
             Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
@@ -215,7 +196,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (testIntra)
                 {
                     // Bond forces
-                    for (const auto &bond : molN->species()->constBonds())
+                    for (const auto &bond : molN->species()->bonds())
                     {
                         // Grab pointers to atoms involved in bond
                         i = molN->atom(bond.indexI());
@@ -234,7 +215,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Angle forces
-                    for (const auto &angle : molN->species()->constAngles())
+                    for (const auto &angle : molN->species()->angles())
                     {
                         // Grab pointers to atoms involved in angle
                         i = molN->atom(angle.indexI());
@@ -267,7 +248,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Torsion forces
-                    for (const auto &torsion : molN->species()->constTorsions())
+                    for (const auto &torsion : molN->species()->torsions())
                     {
                         // Grab pointers to atoms involved in angle
                         i = molN->atom(torsion.indexI());
@@ -276,9 +257,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         l = molN->atom(torsion.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(j, i);
-                        vecjk = box->minimumVector(j, k);
-                        veckl = box->minimumVector(k, l);
+                        vecji = box->minimumVector(i, j);
+                        vecjk = box->minimumVector(k, j);
+                        veckl = box->minimumVector(l, k);
 
                         // Calculate torsion force parameters
                         ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
@@ -314,7 +295,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Improper forces
-                    for (const auto &imp : molN->species()->constImpropers())
+                    for (const auto &imp : molN->species()->impropers())
                     {
                         // Grab pointers to atoms involved in angle
                         i = molN->atom(imp.indexI());
@@ -323,9 +304,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         l = molN->atom(imp.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(j, i);
-                        vecjk = box->minimumVector(j, k);
-                        veckl = box->minimumVector(k, l);
+                        vecji = box->minimumVector(i, j);
+                        vecjk = box->minimumVector(k, j);
+                        veckl = box->minimumVector(l, k);
 
                         // Calculate improper force parameters
                         ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
@@ -503,17 +484,17 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 moduleData.contains("ReferenceFZ", uniqueName()))
             {
                 // Grab reference force arrays and check sizes
-                const auto &referenceFx = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
+                const auto &referenceFx = moduleData.value<Array<double>>("ReferenceFX", uniqueName());
                 if (referenceFx.nItems() != cfg->nAtoms())
                     return Messenger::error("Number of force components in ReferenceFX is {}, but the "
                                             "Configuration '{}' contains {} atoms.\n",
                                             referenceFx.nItems(), cfg->name(), cfg->nAtoms());
-                const auto &referenceFy = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
+                const auto &referenceFy = moduleData.value<Array<double>>("ReferenceFY", uniqueName());
                 if (referenceFy.nItems() != cfg->nAtoms())
                     return Messenger::error("Number of force components in ReferenceFY is {}, but the "
                                             "Configuration '{}' contains {} atoms.\n",
                                             referenceFy.nItems(), cfg->name(), cfg->nAtoms());
-                const auto &referenceFz = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
+                const auto &referenceFz = moduleData.value<Array<double>>("ReferenceFZ", uniqueName());
                 if (referenceFz.nItems() != cfg->nAtoms())
                     return Messenger::error("Number of force components in ReferenceFZ is {}, but the "
                                             "Configuration '{}' contains {} atoms.\n",
@@ -524,9 +505,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 sumError = 0.0;
                 for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
-                    totalRatio.x = referenceFx.constAt(n) - (interFx[n] + intraFx[n]);
-                    totalRatio.y = referenceFy.constAt(n) - (interFy[n] + intraFy[n]);
-                    totalRatio.z = referenceFz.constAt(n) - (interFz[n] + intraFz[n]);
+                    totalRatio.x = referenceFx.at(n) - (interFx[n] + intraFx[n]);
+                    totalRatio.y = referenceFy.at(n) - (interFy[n] + intraFy[n]);
+                    totalRatio.z = referenceFz.at(n) - (interFz[n] + intraFz[n]);
                     if (fabs(interFx[n] + intraFx[n]) > 1.0e-6)
                         totalRatio.x *= 100.0 / (interFx[n] + intraFx[n]);
                     if (fabs(interFy[n] + intraFy[n]) > 1.0e-6)
@@ -534,11 +515,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(interFz[n] + intraFz[n]) > 1.0e-6)
                         totalRatio.z *= 100.0 / (interFz[n] + intraFz[n]);
 
-                    if (fabs(totalRatio.x) > testThreshold)
+                    if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.y) > testThreshold)
+                    else if (isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.z) > testThreshold)
+                    else if (isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
                         failed = true;
                     else
                         failed = false;
@@ -550,9 +531,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     {
                         Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                          "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                         n + 1, referenceFx.constAt(n) - (interFx[n] + intraFx[n]), totalRatio.x,
-                                         referenceFy.constAt(n) - (interFy[n] + intraFy[n]), totalRatio.y,
-                                         referenceFz.constAt(n) - (interFz[n] + intraFz[n]), totalRatio.z);
+                                         n + 1, referenceFx.at(n) - (interFx[n] + intraFx[n]), totalRatio.x,
+                                         referenceFy.at(n) - (interFy[n] + intraFy[n]), totalRatio.y,
+                                         referenceFz.at(n) - (interFz[n] + intraFz[n]), totalRatio.z);
                         ++nFailed2;
                     }
                 }
@@ -566,9 +547,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 sumError = 0.0;
                 for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
-                    totalRatio.x = referenceFx.constAt(n) - (checkInterFx[n] + checkIntraFx[n]);
-                    totalRatio.y = referenceFy.constAt(n) - (checkInterFy[n] + checkIntraFy[n]);
-                    totalRatio.z = referenceFz.constAt(n) - (checkInterFz[n] + checkIntraFz[n]);
+                    totalRatio.x = referenceFx.at(n) - (checkInterFx[n] + checkIntraFx[n]);
+                    totalRatio.y = referenceFy.at(n) - (checkInterFy[n] + checkIntraFy[n]);
+                    totalRatio.z = referenceFz.at(n) - (checkInterFz[n] + checkIntraFz[n]);
                     if (fabs(checkInterFx[n] + checkIntraFx[n]) > 1.0e-6)
                         totalRatio.x *= 100.0 / (checkInterFx[n] + checkIntraFx[n]);
                     if (fabs(checkInterFy[n] + checkIntraFy[n]) > 1.0e-6)
@@ -576,11 +557,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(checkInterFz[n] + checkIntraFz[n]) > 1.0e-6)
                         totalRatio.z *= 100.0 / (checkInterFz[n] + checkIntraFz[n]);
 
-                    if (fabs(totalRatio.x) > testThreshold)
+                    if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.y) > testThreshold)
+                    else if (isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.z) > testThreshold)
+                    else if (isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
                         failed = true;
                     else
                         failed = false;
@@ -592,9 +573,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     {
                         Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                          "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                         n + 1, referenceFx.constAt(n) - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x,
-                                         referenceFy.constAt(n) - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y,
-                                         referenceFz.constAt(n) - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
+                                         n + 1, referenceFx.at(n) - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x,
+                                         referenceFy.at(n) - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y,
+                                         referenceFz.at(n) - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
                         ++nFailed3;
                     }
                 }
@@ -617,9 +598,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("Calculating total forces for Configuration '{}'...\n", cfg->name());
 
             // Realise the force arrays
-            auto &fx = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FX", uniqueName());
-            auto &fy = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FY", uniqueName());
-            auto &fz = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FZ", uniqueName());
+            auto &fx = cfg->moduleData().realise<Array<double>>("FX", uniqueName());
+            auto &fy = cfg->moduleData().realise<Array<double>>("FY", uniqueName());
+            auto &fz = cfg->moduleData().realise<Array<double>>("FZ", uniqueName());
             fx.initialise(cfg->nAtoms());
             fy.initialise(cfg->nAtoms());
             fz.initialise(cfg->nAtoms());

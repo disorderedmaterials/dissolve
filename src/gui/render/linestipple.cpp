@@ -1,23 +1,5 @@
-/*
-    *** Line Stipple
-    *** src/gui/render/linestipple.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/linestipple.h"
 #include "base/sysfunc.h"
@@ -35,7 +17,7 @@ LineStipple LineStipple::stipple[] = {{1, 0xffff, "Solid"},       {1, 0xaaaa, "D
 // Convert text string to StippleType
 LineStipple::StippleType LineStipple::stippleType(std::string_view s)
 {
-    for (int n = 0; n < LineStipple::nStippleTypes; ++n)
+    for (auto n = 0; n < LineStipple::nStippleTypes; ++n)
         if (DissolveSys::sameString(s, LineStipple::stipple[n].name))
             return (LineStipple::StippleType)n;
     return LineStipple::nStippleTypes;
@@ -80,14 +62,11 @@ QVector<qreal> &LineStipple::dashPattern()
     pattern.clear();
 
     // Look at each of the first 16 bits of the stipple in turn...
-    // 	char test[17];
-    // 	test[16] = '\0';
     auto consecutive = 0, last = -1, nEntries = 0;
     int bit;
-    for (int n = 15; n >= 0; --n)
+    for (auto n = 15; n >= 0; --n)
     {
         bit = (stipplePattern & (1 << n) ? 1 : 0);
-        // 		test[15-n] = (bit ? '1' : '0');
 
         // If this bit is the same as the last, then increase the 'run'
         if (bit == last)

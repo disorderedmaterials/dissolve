@@ -1,23 +1,5 @@
-/*
-    *** Keyword Parsing - PairPotentials Block
-    *** src/main/keywords_pairpotentials.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -28,22 +10,15 @@
 // Return enum option info for PairPotentialsKeyword
 EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::keywords()
 {
-    static EnumOptionsList PairPotentialsKeywords =
-        EnumOptionsList() << EnumOption(PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1)
-                          << EnumOption(PairPotentialsBlock::DeltaKeyword, "Delta", 1)
-                          << EnumOption(PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials") <<
-        // 		EnumOption(PairPotentialsBlock::GenerateKeyword, 			"Generate",
-        // 3,9)
-        // <<
-        EnumOption(PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1)
-                          << EnumOption(PairPotentialsBlock::ParametersKeyword, "Parameters", 3, 8)
-                          << EnumOption(PairPotentialsBlock::RangeKeyword, "Range", 1)
-                          << EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1)
-                          << EnumOption(PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1);
-
-    static EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> options("PairPotentialsKeyword", PairPotentialsKeywords);
-
-    return options;
+    return EnumOptions<PairPotentialsBlock::PairPotentialsKeyword>(
+        "PairPotentialsKeyword", {{PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1},
+                                  {PairPotentialsBlock::DeltaKeyword, "Delta", 1},
+                                  {PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials"},
+                                  {PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1},
+                                  {PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber},
+                                  {PairPotentialsBlock::RangeKeyword, "Range", 1},
+                                  {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
+                                  {PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1}});
 }
 
 // Parse PairPotentials block
@@ -52,9 +27,9 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     Messenger::print("\nParsing {} block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
     std::shared_ptr<AtomType> at1;
-    std::optional<decltype(at1)> opt_at;
-    PairPotential::ShortRangeTruncationScheme srTrunc;
     auto blockDone = false, error = false;
+    Elements::Element Z;
+    std::vector<double> parameters;
 
     while (!parser.eofOrBlank())
     {
@@ -95,7 +70,8 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 break;
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element
-                if (Elements::element(parser.argsv(2)).isUnknown())
+                Z = Elements::element(parser.argsv(2));
+                if (Z == Elements::Unknown)
                 {
                     Messenger::error("Unknown element '{}' given for atom type '{}' in PairPotentials block.\n",
                                      parser.argsv(2), parser.argsv(1));
@@ -104,29 +80,26 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
 
                 // Find / create AtomType and check element...
-                opt_at = dissolve->findAtomType(parser.argsv(1));
-                if (!opt_at)
+                at1 = dissolve->findAtomType(parser.argsv(1));
+                if (!at1)
                 {
                     Messenger::warn("Unknown atom type '{}' referenced in PairPotentials block - creating "
                                     "it now...\n",
                                     parser.argsv(1));
-                    at1 = dissolve->addAtomType(&Elements::element(parser.argsv(2)));
+                    at1 = dissolve->addAtomType(Z);
                     at1->setName(parser.argsv(1));
                 }
-                else if (&Elements::element(parser.argsv(2)) != (*opt_at)->element())
+                else if (Z != at1->Z())
                 {
-                    at1 = *opt_at;
                     Messenger::error("Element '{}' does not match that for the existing atom type '{}' in "
                                      "PairPotentials block.\n",
                                      parser.argsv(2), parser.argsv(1));
                     error = true;
                     break;
                 }
-                else
-                    at1 = *opt_at;
 
                 // Set charge value
-                at1->parameters().setCharge(parser.argd(3));
+                at1->setCharge(parser.argd(3));
 
                 // Get short-range type
                 if (!Forcefield::shortRangeTypes().isValid(parser.argsv(4)))
@@ -137,9 +110,11 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argsv(4)));
 
-                // Set interaction parameters
+                // Get interaction parameters
+                parameters.clear();
                 for (int n = 5; n < parser.nArgs(); ++n)
-                    at1->parameters().setParameter(n - 5, parser.argd(n));
+                    parameters.push_back(parser.argd(n));
+                at1->setShortRangeParameters(parameters);
                 break;
             case (PairPotentialsBlock::RangeKeyword):
                 dissolve->setPairPotentialRange(parser.argd(1));

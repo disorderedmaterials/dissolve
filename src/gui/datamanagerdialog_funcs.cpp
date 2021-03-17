@@ -1,23 +1,5 @@
-/*
-    *** Data Manager Dialog
-    *** src/gui/datamanagerdialog_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "genericitems/item.h"
 #include "gui/datamanagerdialog.h"
@@ -86,7 +68,7 @@ void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &
 void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, QString filter)
 {
     // Loop over rows in the table
-    for (int n = 0; n < table->rowCount(); ++n)
+    for (auto n = 0; n < table->rowCount(); ++n)
     {
         QTableWidgetItem *item = table->item(n, 0);
         if (!item)
@@ -120,7 +102,7 @@ void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, Q
 }
 
 // Update ReferencePoint table row
-void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint *refPoint, bool createItems)
+void DataManagerDialog::referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -171,8 +153,8 @@ void DataManagerDialog::updateControls()
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table
-    TableWidgetUpdater<DataManagerDialog, ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this,
-                                                                          &DataManagerDialog::referencePointRowUpdate);
+    ConstTableWidgetUpdater<DataManagerDialog, ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this,
+                                                                               &DataManagerDialog::referencePointRowUpdate);
     ui_.ReferencePointsTable->resizeColumnsToContents();
 }
 

@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Operate Expression
-    *** src/procedure/nodes/operateexpression.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/operateexpression.h"
 #include "base/lineparser.h"
@@ -30,14 +12,19 @@
 OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view expressionText)
     : OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
 {
-    // Set up persistent variables and initial expression value
-    x_ = expression_.createDoubleVariable("x", true);
-    y_ = expression_.createDoubleVariable("y", true);
-    z_ = expression_.createDoubleVariable("z", true);
-    value_ = expression_.createDoubleVariable("value", true);
-    expression_.set(expressionText);
+    // Create variables, and add them to the vector
+    x_ = std::make_shared<ExpressionVariable>("x");
+    variables_.emplace_back(x_);
+    y_ = std::make_shared<ExpressionVariable>("y");
+    variables_.emplace_back(y_);
+    z_ = std::make_shared<ExpressionVariable>("z");
+    variables_.emplace_back(z_);
+    value_ = std::make_shared<ExpressionVariable>("value");
+    variables_.emplace_back(value_);
 
-    keywords_.add("Expression", new ExpressionKeyword(expression_), "Expression", "Expression to apply to values");
+    expression_.create(expressionText, variables_);
+
+    keywords_.add("Control", new ExpressionKeyword(expression_, variables_), "Expression", "Expression to apply to values");
 }
 
 OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}
@@ -49,18 +36,18 @@ OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}
 // Operate on Data1D target
 bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    const auto &x = targetData1D_->constXAxis();
-    Array<double> &values = targetData1D_->values();
+    const auto &x = targetData1D_->xAxis();
+    auto &values = targetData1D_->values();
 
-    y_->set(0.0);
-    z_->set(0.0);
+    y_->setValue(0.0);
+    z_->setValue(0.0);
 
     // Evaluate the expression over all values
-    for (int i = 0; i < x.nItems(); ++i)
+    for (auto i = 0; i < x.size(); ++i)
     {
         // Set variables in expression
-        x_->set(x.constAt(i));
-        value_->set(values.at(i));
+        x_->setValue(x[i]);
+        value_->setValue(values.at(i));
 
         // Evaluate and store new value
         values.at(i) = expression_.asDouble();
@@ -72,26 +59,26 @@ bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Config
 // Operate on Data2D target
 bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    const auto &x = targetData2D_->constXAxis();
-    const auto &y = targetData2D_->constYAxis();
-    Array2D<double> &values = targetData2D_->values();
+    const auto &x = targetData2D_->xAxis();
+    const auto &y = targetData2D_->yAxis();
+    auto &values = targetData2D_->values2D();
 
-    z_->set(0.0);
+    z_->setValue(0.0);
 
     // Evaluate the expression over all values
-    for (int i = 0; i < x.nItems(); ++i)
+    for (auto i = 0; i < x.size(); ++i)
     {
         // Set x value in expression
-        x_->set(x.constAt(i));
+        x_->setValue(x[i]);
 
-        for (int j = 0; j < y.nItems(); ++j)
+        for (auto j = 0; j < y.size(); ++j)
         {
             // Set y and value in expression
-            y_->set(y.constAt(j));
-            value_->set(values.at(i, j));
+            y_->setValue(y[j]);
+            value_->setValue(values[{i, j}]);
 
             // Evaluate and store new value
-            values.at(i, j) = expression_.asDouble();
+            values[{i, j}] = expression_.asDouble();
         }
     }
 
@@ -101,32 +88,34 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
 // Operate on Data3D target
 bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    const auto &x = targetData3D_->constXAxis();
-    const auto &y = targetData3D_->constYAxis();
-    const auto &z = targetData3D_->constZAxis();
-    Array3D<double> &values = targetData3D_->values();
+    const auto &x = targetData3D_->xAxis();
+    const auto &y = targetData3D_->yAxis();
+    const auto &z = targetData3D_->zAxis();
+    auto &values = targetData3D_->values3D();
 
-    z_->set(0.0);
+    z_->setValue(0.0);
 
     // Evaluate the expression over all values
-    for (int i = 0; i < x.nItems(); ++i)
+    for (auto i = 0; i < x.size(); ++i)
     {
         // Set x value in expression
-        x_->set(x.constAt(i));
+        x_->setValue(x[i]);
 
-        for (int j = 0; j < y.nItems(); ++j)
+        for (auto j = 0; j < y.size(); ++j)
         {
             // Set y value in expression
-            y_->set(y.constAt(j));
+            y_->setValue(y[j]);
 
-            for (int k = 0; k < z.nItems(); ++k)
+            for (auto k = 0; k < z.size(); ++k)
             {
                 // Set z and  value in expression
-                z_->set(z.constAt(k));
-                value_->set(values.at(i, j, k));
+                z_->setValue(z[k]);
+                // TODO: Convert to a single loop when we have the
+                // iterator combiner
+                value_->setValue(values[{i, j, k}]);
 
                 // Evaluate and store new value
-                values.at(i, j, k) = expression_.asDouble();
+                values[{i, j, k}] = expression_.asDouble();
             }
         }
     }

@@ -1,23 +1,5 @@
-/*
-    *** Simplex Minimiser
-    *** src/base/simplex.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -228,7 +210,7 @@ template <class T> class Simplex
     {
         // Shrink vertices of current simplex, leaving only the first (x(1)) as-is: x(n) = x(1) + sigma(x(n) - x(1)),
         // n=2,nalpha+1
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
         {
             if (n == vBest_)
                 continue;
@@ -277,13 +259,13 @@ template <class T> class Simplex
     {
         // Get average cost of all vertices
         double average = 0.0;
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
             average += costs_[n];
         average /= nVertices_;
 
         // Now calculate SD of individual costs with mean value
         double serror = 0.0;
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
             serror += (costs_[n] - average) * (costs_[n] - average);
         return sqrt(serror / nVertices_);
     }
@@ -294,7 +276,7 @@ template <class T> class Simplex
     // Print vertex information
     void printVertexInformation()
     {
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
             Messenger::print("[SMPLX]\t\tVertex {} has cold cost value = {:12.6e}\n", n, costs_[n]);
     }
 

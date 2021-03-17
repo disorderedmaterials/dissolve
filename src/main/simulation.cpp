@@ -1,30 +1,11 @@
-/*
-    *** Dissolve - Simulation
-    *** src/main/simulation.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include <cstdio>
 #include <numeric>
@@ -53,7 +34,7 @@ bool Dissolve::prepare()
         srand(seed_);
 
     // Check Species
-    for (auto *sp = species().first(); sp != nullptr; sp = sp->next())
+    for (const auto &sp : species())
         if (!sp->checkSetUp())
             return false;
 
@@ -75,20 +56,10 @@ bool Dissolve::prepare()
         }
 
         // Check total charge of Configuration
-        auto totalQ = 0.0;
-        if (pairPotentialsIncludeCoulomb_)
-        {
-            auto &types = cfg->usedAtomTypesList();
-            totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](auto acc, const auto &atd) {
-                return acc + atd.population() * atd.atomType()->parameters().charge();
+        auto totalQ =
+            std::accumulate(cfg->usedSpecies().begin(), cfg->usedSpecies().end(), 0.0, [&](const auto &acc, auto &spInfo) {
+                return acc + spInfo.species()->totalCharge(pairPotentialsIncludeCoulomb_) * spInfo.population();
             });
-        }
-        else
-        {
-            ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-            while (auto *spInfo = spInfoIterator.iterate())
-                totalQ += spInfo->species()->totalChargeOnAtoms() * spInfo->population();
-        }
         if (fabs(totalQ) > 1.0e-5)
             return Messenger::error("Total charge for Configuration '{}' is non-zero ({:e}). Refusing to proceed!\n",
                                     cfg->name(), totalQ);
@@ -136,7 +107,7 @@ bool Dissolve::iterate(int nIterations)
     iterationTimer_.zero();
     iterationTimer_.start();
 
-    for (int iter = 0; iter < nIterations; ++iter)
+    for (auto iter = 0; iter < nIterations; ++iter)
     {
         // Increase iteration counters
         ++iteration_;
@@ -330,14 +301,13 @@ bool Dissolve::iterate(int nIterations)
              */
 
             // Iteration number
-            GenericListHelper<int>::realise(processingModuleData_, "Iteration", "Dissolve", GenericItem::InRestartFileFlag) =
-                iteration_;
+            processingModuleData_.realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
 
             // Pair Potentials
             for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
             {
-                GenericListHelper<Data1D>::realise(
-                    processingModuleData_,
+
+                processingModuleData_.realise<Data1D>(
                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
                     GenericItem::InRestartFileFlag) = pot->uAdditional();
             }

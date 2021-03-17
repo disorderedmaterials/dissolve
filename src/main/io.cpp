@@ -1,30 +1,11 @@
-/*
-    *** I/O
-    *** src/main/io.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
@@ -196,49 +177,49 @@ bool Dissolve::saveInput(std::string_view filename)
         return false;
 
     // Write master terms
-    if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions())
+    if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions() || coreData_.nMasterImpropers())
     {
         if (!parser.writeBannerComment("Master Terms"))
             return false;
         if (!parser.writeLineF("\n{}\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword)))
             return false;
 
-        for (auto *b = coreData_.masterBonds().first(); b != nullptr; b = b->next())
+        for (auto &b : coreData_.masterBonds())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::BondKeyword),
-                                           b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-            for (auto n = 0; n < b->nParameters(); ++n)
-                line += fmt::format("  {:8.3f}", b->parameter(n));
+                                           b.name(), SpeciesBond::bondFunctions().keywordFromInt(b.form()));
+            for (auto p : b.parameters())
+                line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;
         }
 
-        for (auto *a = coreData_.masterAngles().first(); a != nullptr; a = a->next())
+        for (auto &a : coreData_.masterAngles())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
-                                           a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-            for (auto n = 0; n < a->nParameters(); ++n)
-                line += fmt::format("  {:8.3f}", a->parameter(n));
+                                           a.name(), SpeciesAngle::angleFunctions().keywordFromInt(a.form()));
+            for (auto p : a.parameters())
+                line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;
         }
 
-        for (auto *t = coreData_.masterTorsions().first(); t != nullptr; t = t->next())
+        for (auto &t : coreData_.masterTorsions())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
-                                           t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-            for (auto n = 0; n < t->nParameters(); ++n)
-                line += fmt::format("  {:8.3f}", t->parameter(n));
+                                           t.name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t.form()));
+            for (auto p : t.parameters())
+                line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;
         }
 
-        for (auto *imp = coreData_.masterImpropers().first(); imp != nullptr; imp = imp->next())
+        for (auto &imp : coreData_.masterImpropers())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                           imp->name(), SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-            for (auto n = 0; n < imp->nParameters(); ++n)
-                line += fmt::format("  {:8.3f}", imp->parameter(n));
+                                           imp.name(), SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
+            for (auto p : imp.parameters())
+                line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;
         }
@@ -250,7 +231,7 @@ bool Dissolve::saveInput(std::string_view filename)
 
     // Write Species data
     parser.writeBannerComment("Species");
-    for (auto *sp = species().first(); sp != nullptr; sp = sp->next())
+    for (auto &sp : species())
     {
         if (!parser.writeLineF("\n"))
             return false;
@@ -271,10 +252,10 @@ bool Dissolve::saveInput(std::string_view filename)
     {
         std::string line = fmt::format("  {}  {}  {}  {:12.6e}  {}",
                                        PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
-                                       atomType->name(), atomType->element()->symbol(), atomType->parameters().charge(),
+                                       atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
                                        Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
-        for (int n = 0; n < MAXSRPARAMETERS; ++n)
-            line += fmt::format("  {:12.6e}", atomType->parameters().parameter(n));
+        for (auto x : atomType->shortRangeParameters())
+            line += fmt::format("  {:12.6e}", x);
         if (!parser.writeLine(line))
             return false;
     }
@@ -337,6 +318,12 @@ bool Dissolve::saveInput(std::string_view filename)
                                cfg->temperature()))
             return false;
 
+        if (!parser.writeLineF("\n"))
+            return false;
+        if (!parser.writeLineF("  {}  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::SizeFactorKeyword),
+                               cfg->requestedSizeFactor()))
+            return false;
+
         // Modules
         if (!parser.writeLineF("\n  # Modules\n"))
             return false;
@@ -396,18 +383,6 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
             if (module->isDisabled() && (!parser.writeLineF("    Disabled\n")))
                 return false;
-
-            // Write Configuration target(s)
-            auto first = true;
-            for (Configuration *cfg : module->targetConfigurations())
-            {
-                if (first && (!parser.writeLineF("\n")))
-                    return false;
-                first = false;
-                if (!parser.writeLineF("    {}  '{}'\n", ModuleBlock::keywords().keyword(ModuleBlock::ConfigurationKeyword),
-                                       cfg->name()))
-                    return false;
-            }
 
             // Write keyword options
             if (!module->keywords().write(parser, "    ", true))
@@ -585,7 +560,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::print("Finished reading restart file.\n");
 
     // Set current iteration number
-    iteration_ = GenericListHelper<int>::value(processingModuleData_, "Iteration", "Dissolve", 0);
+    iteration_ = processingModuleData_.value<int>("Iteration", "Dissolve", 0);
 
     // Error encountered?
     if (error)

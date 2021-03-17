@@ -1,40 +1,18 @@
-/*
-    *** 1-Dimensional Data
-    *** src/math/data1d.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/version.h"
 #include "math/plottable.h"
-#include "templates/array.h"
 #include "templates/objectstore.h"
-
-// Forward Declarations
-class Histogram1D;
 
 // One-Dimensional Data
 class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
 {
     public:
     Data1D();
-    ~Data1D();
+    virtual ~Data1D();
     Data1D(const Data1D &source);
     // Clear data
     void clear();
@@ -44,13 +22,13 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
      */
     private:
     // X array
-    Array<double> x_;
+    std::vector<double> x_;
     // Values at each x
-    Array<double> values_;
+    std::vector<double> values_;
     // Whether data has associated errors
     bool hasError_;
     // Errors of values, if present
-    Array<double> errors_;
+    std::vector<double> errors_;
     // Data version
     VersionCounter version_;
 
@@ -75,20 +53,16 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     void removeLastPoint();
     // Return x axis value specified
     double &xAxis(int index);
-    // Return x axis value specified (const)
-    double constXAxis(int index) const;
+    const double &xAxis(int index) const;
     // Return x axis Array
-    Array<double> &xAxis();
-    // Return x axis Array (const)
-    const Array<double> &constXAxis() const;
+    std::vector<double> &xAxis();
+    const std::vector<double> &xAxis() const;
     // Return value specified
     double &value(int index);
-    // Return value value specified (const)
-    double constValue(int index) const;
+    const double &value(int index) const;
     // Return value Array
-    Array<double> &values();
-    // Return values Array
-    const Array<double> &constValues() const;
+    std::vector<double> &values();
+    const std::vector<double> &values() const;
     // Return number of values present in whole dataset
     int nValues() const;
     // Return minimum value over all data points
@@ -101,12 +75,11 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     bool valuesHaveErrors() const;
     // Return error value specified
     double &error(int index);
-    // Return error value specified (const)
-    double constError(int index) const;
+    const double &error(int index) const;
     // Return error Array
-    Array<double> &errors();
+    std::vector<double> &errors();
     // Return errors Array
-    const Array<double> &constErrors() const;
+    const std::vector<double> &errors() const;
 
     /*
      * Operators
@@ -118,6 +91,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     void operator-=(const Data1D &source);
     void operator-=(const double delta);
     void operator*=(const double factor);
+    void operator*=(const std::vector<double> &factors);
     void operator/=(const double factor);
 
     /*

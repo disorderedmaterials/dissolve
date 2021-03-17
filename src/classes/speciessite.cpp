@@ -1,31 +1,13 @@
-/*
-    *** SpeciesSite Definition
-    *** src/classes/speciessite.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciessite.h"
 #include "base/lineparser.h"
 #include "classes/site.h"
 #include "classes/species.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 
-SpeciesSite::SpeciesSite() : ListItem<SpeciesSite>()
+SpeciesSite::SpeciesSite()
 {
     parent_ = nullptr;
     originMassWeighted_ = false;
@@ -89,11 +71,8 @@ void SpeciesSite::removeOriginAtom(SpeciesAtom *originAtom)
 // Add origin atom from index
 bool SpeciesSite::addOriginAtom(int atomIndex)
 {
-#ifdef CHECKS
-    if (!parent_)
-        return Messenger::error("Tried to add an origin atom by index to a SpeciesSite, but no parent Species is set.\n");
-#endif
-    return addOriginAtom(parent_->atom(atomIndex));
+    assert(parent_);
+    return addOriginAtom(&parent_->atom(atomIndex));
 }
 
 // Set origin atoms
@@ -157,11 +136,8 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom *xAxisAtom)
 // Add x-axis atom from index
 bool SpeciesSite::addXAxisAtom(int atomIndex)
 {
-#ifdef CHECKS
-    if (!parent_)
-        return Messenger::error("Tried to add an x-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
-#endif
-    return addXAxisAtom(parent_->atom(atomIndex));
+    assert(parent_);
+    return addXAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Remove x-axis atom
@@ -227,11 +203,8 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom *yAxisAtom)
 // Add y-axis atom from index
 bool SpeciesSite::addYAxisAtom(int atomIndex)
 {
-#ifdef CHECKS
-    if (!parent_)
-        return Messenger::error("Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
-#endif
-    return addYAxisAtom(parent_->atom(atomIndex));
+    assert(parent_);
+    return addYAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Remove y-axis atom
@@ -305,18 +278,18 @@ Site *SpeciesSite::createFromParent() const
     if (originMassWeighted_)
     {
         double massNorm = 0.0;
-        for (int m = 0; m < originIndices.nItems(); ++m)
+        for (auto m = 0; m < originIndices.nItems(); ++m)
         {
-            mass = AtomicMass::mass(parent_->atom(originIndices[m])->element());
-            origin += parent_->atom(originIndices[m])->r() * mass;
+            mass = AtomicMass::mass(parent_->atom(originIndices[m]).Z());
+            origin += parent_->atom(originIndices[m]).r() * mass;
             massNorm += mass;
         }
         origin /= massNorm;
     }
     else
     {
-        for (int m = 0; m < originIndices.nItems(); ++m)
-            origin += parent_->atom(originIndices[m])->r();
+        for (auto m = 0; m < originIndices.nItems(); ++m)
+            origin += parent_->atom(originIndices[m]).r();
         origin /= originIndices.nItems();
     }
 
@@ -334,8 +307,8 @@ Site *SpeciesSite::createFromParent() const
         Vec3<double> v;
 
         // Get average position of supplied x-axis atoms
-        for (int m = 0; m < xAxisIndices.nItems(); ++m)
-            v += parent_->atom(xAxisIndices[m])->r();
+        for (auto m = 0; m < xAxisIndices.nItems(); ++m)
+            v += parent_->atom(xAxisIndices[m]).r();
         v /= xAxisIndices.nItems();
 
         // Get vector from site origin and normalise it
@@ -344,8 +317,8 @@ Site *SpeciesSite::createFromParent() const
 
         // Get average position of supplied y-axis atoms
         v.zero();
-        for (int m = 0; m < yAxisIndices.nItems(); ++m)
-            v += parent_->atom(yAxisIndices[m])->r();
+        for (auto m = 0; m < yAxisIndices.nItems(); ++m)
+            v += parent_->atom(yAxisIndices[m]).r();
         v /= yAxisIndices.nItems();
 
         // Get vector from site origin, normalise it, and orthogonalise
@@ -372,16 +345,12 @@ Site *SpeciesSite::createFromParent() const
 // Return enum option info for SiteKeyword
 EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 {
-    static EnumOptionsList SiteKeywords = EnumOptionsList()
-                                          << EnumOption(SpeciesSite::EndSiteKeyword, "EndSite")
-                                          << EnumOption(SpeciesSite::OriginKeyword, "Origin", EnumOption::OneOrMoreArguments)
-                                          << EnumOption(SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1)
-                                          << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", EnumOption::OneOrMoreArguments)
-                                          << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", EnumOption::OneOrMoreArguments);
-
-    static EnumOptions<SpeciesSite::SiteKeyword> options("SiteKeyword", SiteKeywords);
-
-    return options;
+    return EnumOptions<SpeciesSite::SiteKeyword>("SiteKeyword",
+                                                 {{SpeciesSite::EndSiteKeyword, "EndSite"},
+                                                  {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1},
+                                                  {SpeciesSite::XAxisKeyword, "XAxis", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::YAxisKeyword, "YAxis", OptionArguments::OneOrMore}});
 }
 
 // Read site definition from specified LineParser
@@ -412,7 +381,7 @@ bool SpeciesSite::read(LineParser &parser)
                 blockDone = true;
                 break;
             case (SpeciesSite::OriginKeyword):
-                for (int n = 1; n < parser.nArgs(); ++n)
+                for (auto n = 1; n < parser.nArgs(); ++n)
                 {
                     if (!addOriginAtom(parser.argi(n) - 1))
                     {
@@ -485,7 +454,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         Array<int> indices = originAtomIndices();
 
         std::string atomIndices;
-        for (int n = 0; n < indices.nItems(); ++n)
+        for (auto n = 0; n < indices.nItems(); ++n)
             atomIndices += fmt::format("  {}", indices[n] + 1);
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(OriginKeyword), atomIndices))
@@ -502,7 +471,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         Array<int> indices = xAxisAtomIndices();
 
         std::string atomIndices;
-        for (int n = 0; n < indices.nItems(); ++n)
+        for (auto n = 0; n < indices.nItems(); ++n)
             atomIndices += fmt::format("  {}", indices[n] + 1);
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(XAxisKeyword), atomIndices))
@@ -515,7 +484,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         Array<int> indices = yAxisAtomIndices();
 
         std::string atomIndices;
-        for (int n = 0; n < indices.nItems(); ++n)
+        for (auto n = 0; n < indices.nItems(); ++n)
             atomIndices += fmt::format("  {}", indices[n] + 1);
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(YAxisKeyword), atomIndices))

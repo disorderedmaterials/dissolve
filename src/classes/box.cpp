@@ -1,34 +1,17 @@
-/*
-    *** Box Definition
-    *** src/classes/box.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "base/processpool.h"
 #include "classes/cell.h"
 #include "math/data1d.h"
 #include "math/interpolator.h"
+#include <algorithm>
 #include <string.h>
 
 Box::Box()
 {
-    type_ = Box::nBoxTypes;
+    type_ = Box::CubicBoxType;
     periodic_.set(true, true, true);
     volume_ = 0.0;
 }
@@ -61,14 +44,11 @@ void Box::operator=(const Box &source)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    static EnumOptionsList BoxTypeOptions =
-        EnumOptionsList() << EnumOption(Box::NonPeriodicBoxType, "NonPeriodic") << EnumOption(Box::CubicBoxType, "Cubic")
-                          << EnumOption(Box::OrthorhombicBoxType, "Orthorhombic")
-                          << EnumOption(Box::MonoclinicBoxType, "Monoclinic") << EnumOption(Box::TriclinicBoxType, "Triclinic");
-
-    static EnumOptions<Box::BoxType> options("BoxType", BoxTypeOptions);
-
-    return options;
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::NonPeriodicBoxType, "NonPeriodic"},
+                                                 {Box::CubicBoxType, "Cubic"},
+                                                 {Box::OrthorhombicBoxType, "Orthorhombic"},
+                                                 {Box::MonoclinicBoxType, "Monoclinic"},
+                                                 {Box::TriclinicBoxType, "Triclinic"}});
 }
 
 // Return Box type
@@ -109,13 +89,8 @@ Vec3<double> Box::axisLengths() const
 // Return axis length specified
 double Box::axisLength(int n) const
 {
-#ifdef CHECKS
-    if ((n < 0) || (n > 2))
-    {
-        Messenger::print("OUT_OF_RANGE - Requested length for a bad axis ({}) in Box::axisLength().\n", n);
-        return 0.0;
-    }
-#endif
+    assert(n >= 0 && n < 3);
+
     return axes_.columnMagnitude(n);
 }
 
@@ -125,13 +100,8 @@ Vec3<double> Box::axisAngles() const { return Vec3<double>(axisAngle(0), axisAng
 // Return axis angle specified
 double Box::axisAngle(int n) const
 {
-#ifdef CHECKS
-    if ((n < 0) || (n > 2))
-    {
-        Messenger::print("OUT_OF_RANGE - Requested angle for a bad axis ({}) in Box::axisAngle().\n", n);
-        return 0.0;
-    }
-#endif
+    assert(n >= 0 && n < 3);
+
     Vec3<double> u, v;
     u = axes_.columnAsVec3((n + 1) % 3);
     v = axes_.columnAsVec3((n + 2) % 3);
@@ -261,8 +231,8 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
     int bin, nBins = rdfRange / binWidth;
     Data1D normData;
     normData.initialise(nBins);
-    Array<double> &y = normData.values();
-    for (int n = 0; n < nBins; ++n)
+    auto &y = normData.values();
+    for (auto n = 0; n < nBins; ++n)
         normData.xAxis(n) = (n + 0.5) * binWidth;
 
     auto centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
@@ -273,27 +243,28 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
                      nPointsPerProcess * procPool.nProcesses());
 
     // Pre-waste random numbers so that the random number generators in all processes line up
-    for (int n = 0; n < nPointsPerProcess * procPool.poolRank(); ++n)
+    for (auto n = 0; n < nPointsPerProcess * procPool.poolRank(); ++n)
         randomCoordinate();
 
     // Calculate the function
-    y = 0.0;
-    for (int n = 0; n < nPointsPerProcess; ++n)
+    std::fill(y.begin(), y.end(), 0);
+    for (auto n = 0; n < nPointsPerProcess; ++n)
     {
         bin = (randomCoordinate() - centre).magnitude() * rBinWidth;
         if (bin < nBins)
             y[bin] += 1.0;
     }
-    if (!procPool.allSum(y.array(), nBins))
+    if (!procPool.allSum(y.data(), nBins))
         return false;
 
     // Post-waste random numbers so that the random number generators in all processes line up
-    for (int n = 0; n < nPointsPerProcess * (procPool.nProcesses() - 1 - procPool.poolRank()); ++n)
+    for (auto n = 0; n < nPointsPerProcess * (procPool.nProcesses() - 1 - procPool.poolRank()); ++n)
         randomCoordinate();
 
     // Normalise histogram data, and scale by volume and binWidth ratio
-    y /= double(nPointsPerProcess * procPool.nProcesses());
-    y *= volume_ * (rdfBinWidth / binWidth);
+    std::transform(y.begin(), y.end(), y.begin(), [&](auto &value) {
+        return value * (volume_ * (rdfBinWidth / binWidth) / double(nPointsPerProcess * procPool.nProcesses()));
+    });
 
     // Interpolate the normalisation data, and create the final function
     nBins = rdfRange / rdfBinWidth;
@@ -302,7 +273,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
 
     // Rescale against expected volume for spherical shells
     double shellVolume, r = 0.0, maxHalf = inscribedSphereRadius(), x = 0.5 * rdfBinWidth;
-    for (int n = 0; n < nBins; ++n)
+    for (auto n = 0; n < nBins; ++n)
     {
         // We know that up to the maximum (orthogonal) half-cell width the normalisation should be exactly 1.0...
         if (x < maxHalf)
@@ -324,7 +295,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
  */
 
 // Return angle (in degrees) between Atoms
-double Box::angleInDegrees(const Atom *i, const Atom *j, const Atom *k) const
+double Box::angleInDegrees(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k) const
 {
     Vec3<double> vecji, vecjk;
 

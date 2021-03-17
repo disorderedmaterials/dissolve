@@ -1,23 +1,5 @@
-/*
-    *** Base Viewer Widget (subclassing QOpenGLWidget)
-    *** src/gui/viewer.hui
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -48,7 +30,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     BaseViewer(QWidget *parent);
     ~BaseViewer();
 
@@ -72,8 +53,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     public:
     // Return the View definition
     View &view();
-    // Return the View definition (const)
-    const View &constView() const;
+    const View &view() const;
     // Link this viewer to the one specified
     void linkView(BaseViewer *viewToLinkTo);
     // Unlink this viewer from the one specified
@@ -83,33 +63,25 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
      * Renderable Data
      */
     protected:
-    // List of renderables to display
-    List<Renderable> renderables_;
+    // Vector of renderables to display
+    std::vector<std::shared_ptr<Renderable>> renderables_;
 
     public:
     // Clear existing data
     void clear();
-    // Own supplied Renderable and display it
-    void ownRenderable(Renderable *newRenderable);
     // Create Renderable by type and object identifier
-    Renderable *createRenderable(Renderable::RenderableType type, std::string_view objectTag, std::string_view name,
-                                 std::string_view groupName = "");
+    std::shared_ptr<Renderable> createRenderable(Renderable::RenderableType type, std::string_view objectTag,
+                                                 std::string_view name, std::string_view groupName = "");
+    // Add an existing Renderable
+    void addRenderable(const std::shared_ptr<Renderable> &renderable);
     // Remove existing Renderable
-    void removeRenderable(Renderable *data);
+    void removeRenderable(const std::shared_ptr<Renderable> &renderable);
     // Clear all Renderables
     void clearRenderables();
-    // Return number of Renderables
-    int nRenderables() const;
     // Return list of Renderables
-    const List<Renderable> &renderables() const;
-    // Return named Renderable
-    Renderable *renderable(std::string_view name) const;
+    const std::vector<std::shared_ptr<Renderable>> &renderables() const;
     // Return Renderable with specified objectTag (if it exists)
-    Renderable *renderableWithTag(std::string_view objectTag) const;
-    // Set visibility of named Renderable
-    void setRenderableVisible(std::string_view name, bool visible);
-    // Return visibility of named Renderable
-    bool isRenderableVisible(std::string_view name) const;
+    std::shared_ptr<Renderable> renderableWithTag(std::string_view objectTag) const;
     // Emit the signal to notify that the viewing style of data represented in the Viewer has changed
     void notifyStyleModified();
     // Emit the signal to notify that the data has changed
@@ -138,7 +110,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return the group manager for Renderables
     RenderableGroupManager &groupManager();
     // Add Renderable to specified group
-    void addRenderableToGroup(Renderable *rend, std::string_view group);
+    void addRenderableToGroup(std::shared_ptr<Renderable> &renderable, std::string_view group);
 
     /*
      * Options
@@ -163,7 +135,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
      * Rendering
      */
     protected:
-    // Width, height, and aspect ratio of the context
+    // Width and height of the context
     GLsizei contextWidth_, contextHeight_;
     // Flag to indicate whether we may draw to the context
     bool valid_;
@@ -283,8 +255,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     Vec3<double> current2DAxesCoordinates_;
     // Whether the viewer is currently being interacted with
     bool interacting_;
-    // Current interaction mode
-    int interactionMode_;
 
     protected:
     // Start interaction
@@ -295,10 +265,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     virtual void cancelInteraction();
 
     public:
-    // Set current interaction mode
-    void setInteractionMode(int mode);
-    // Return current interaction mode
-    int interactionMode() const;
     // Return whether the viewer is currently being interacted with
     bool interacting() const;
     // Return text describing current interaction mode
@@ -370,149 +336,4 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     std::string_view queryObjectInfo() const;
     // Return sub-info for object at query coordinates
     std::string_view queryObjectSubInfo() const;
-
-    /*
-     * I/O
-     */
-    private:
-    // Input File Block Keyword Enum
-    enum InputBlock
-    {
-        EndSessionBlock,
-        RenderableBlock,
-        RenderableGroupBlock,
-        ViewBlock,
-        nInputBlocks
-    };
-    // Return enum option info for InputBlock
-    static EnumOptions<BaseViewer::InputBlock> inputBlockKeywords();
-    // Parse main input blocks through specified parser
-    bool parseInputBlocks(LineParser &parser);
-
-    // Axis Block Keyword Enum
-    enum AxisKeyword
-    {
-        AutoScaleKeyword,
-        AutoTicksKeyword,
-        EndAxisKeyword,
-        FirstTickKeyword,
-        FractionalPositioningKeyword,
-        GridLinesKeyword,
-        GridLineMajorStyleKeyword,
-        GridLineMinorStyleKeyword,
-        InvertKeyword,
-        LabelAnchorKeyword,
-        LabelOrientationKeyword,
-        LimitsKeyword,
-        LogarithmicKeyword,
-        MinorTicksKeyword,
-        NumberFormatKeyword,
-        PositionFractionalKeyword,
-        PositionRealKeyword,
-        StretchKeyword,
-        TickDeltaKeyword,
-        TickDirectionKeyword,
-        TitleKeyword,
-        TitleAnchorKeyword,
-        TitleOrientationKeyword,
-        VisibleAxisKeyword,
-        nAxisKeywords
-    };
-    // Return enum option info for AxisKeyword
-    static EnumOptions<BaseViewer::AxisKeyword> axisKeywords();
-    // Read AxisBlock keywords
-    bool readAxisBlock(LineParser &parser, Axes &axes, int axis, bool strictBlockEnd = true);
-    // Write AxisBlock keywords
-    bool writeAxisBlock(LineParser &parser, const Axes &axes, int axis) const;
-
-    // Renderable Block Keyword Enum
-    enum RenderableKeyword
-    {
-        ColourAlphaIsGlobalKeyword,
-        ColourCustomGradientKeyword,
-        ColourGlobalAlphaKeyword,
-        ColourHSVGradientEndKeyword,
-        ColourHSVGradientStartKeyword,
-        ColourRGBGradientEndKeyword,
-        ColourRGBGradientStartKeyword,
-        ColourSingleKeyword,
-        ColourStyleKeyword,
-        EndRenderableKeyword,
-        EndStyleKeyword,
-        GroupKeyword,
-        LineStyleKeyword,
-        StyleKeyword,
-        TransformValuesKeyword,
-        VisibleKeyword,
-        nRenderableKeywords
-    };
-    // Return enum option info for RenderableKeyword
-    static EnumOptions<BaseViewer::RenderableKeyword> renderableKeywords();
-    // Read RenderableBlock keywords
-    bool readRenderableBlock(LineParser &parser, Renderable *renderable, bool strictBlockEnd = true);
-    // Write RenderableBlock keywords
-    bool writeRenderableBlock(LineParser &parser, Renderable *renderable, int indentLevel = 0) const;
-
-    // RenderableGroup Block Keyword Enum
-    enum RenderableGroupKeyword
-    {
-
-        ColouringStyleKeyword,
-        EndRenderableGroupKeyword,
-        FixedStockColourKeyword,
-        GroupVisibleKeyword,
-        StippleKeyword,
-        VerticalShiftingKeyword,
-        nRenderableGroupKeywords
-    };
-    // Return enum options for RenderableGroupKeyword
-    static EnumOptions<BaseViewer::RenderableGroupKeyword> renderableGroupKeywords();
-    // Read RenderableGroup block keywords
-    bool readRenderableGroupBlock(LineParser &parser, RenderableGroup *group, bool strictBlockEnd = true);
-    // Write RenderableGroup block keywords
-    bool writeRenderableGroupBlock(LineParser &parser, RenderableGroup *group, int indentLevel = 0) const;
-
-    // View Block Keyword Enum
-    enum ViewKeyword
-    {
-        AutoFollowTypeKeyword,
-        AutoPositionTitlesKeyword,
-        AxisBlockKeyword,
-        BoundingBoxKeyword,
-        BoundingBoxPlaneYKeyword,
-        EndViewKeyword,
-        FlatLabelsKeyword,
-        LabelPointSizeKeyword,
-        PerspectiveKeyword,
-        RotationXKeyword,
-        RotationYKeyword,
-        RotationZKeyword,
-        TitlePointSizeKeyword,
-        TranslationKeyword,
-        UseBestFlatViewKeyword,
-        VerticalShiftKeyword,
-        ViewTypeKeyword,
-        nViewKeywords
-    };
-    // Return enum options for ViewKeyword
-    static EnumOptions<BaseViewer::ViewKeyword> viewKeywords();
-    // Read ViewBlock keywords
-    bool readViewBlock(LineParser &parser, bool strictBlockEnd = true);
-    // Write ViewBlock keywords
-    bool writeViewBlock(LineParser &parser) const;
-
-    /*
-     * Session I/O
-     */
-    protected:
-    // Read custom input block through specified LineParser
-    virtual bool readCustomInputBlock(LineParser &parser);
-    // Write custom input blocks through specified LineParser
-    virtual bool writeCustomInputBlocks(LineParser &parser) const;
-
-    public:
-    // Read session through parser specified
-    bool readSession(LineParser &parser);
-    // Write session through parser specified
-    bool writeSession(LineParser &parser) const;
 };

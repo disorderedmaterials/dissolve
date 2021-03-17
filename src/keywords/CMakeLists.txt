@@ -1,9 +1,11 @@
-add_library(keywords
+add_library(
+  keywords
   atomtypereflist.cpp
   atomtypeselection.cpp
   base.cpp
   bool.cpp
   broadeningfunction.cpp
+  configurationreflist.cpp
   data1dstore.cpp
   data2dstore.cpp
   data3dstore.cpp
@@ -11,17 +13,17 @@ add_library(keywords
   dynamicsitenodes.cpp
   elementreflist.cpp
   expression.cpp
-  expressionvariablelist.cpp
+  expressionvariablevector.cpp
   fileandformat.cpp
   geometrylist.cpp
   group.cpp
   integer.cpp
-  isotopologuecollection.cpp
+  isotopologueset.cpp
   linkto.cpp
   list.cpp
   module.cpp
   modulegroups.cpp
-  modulereflist.cpp
+  modulevector.cpp
   node.cpp
   nodeandinteger.cpp
   nodearray.cpp
@@ -41,13 +43,12 @@ add_library(keywords
   vec3nodevalue.cpp
   vector_intdouble.cpp
   vector_intstring.cpp
-  windowfunction.cpp
-
   atomtypereflist.h
   atomtypeselection.h
   base.h
   bool.h
   broadeningfunction.h
+  configurationreflist.h
   data.h
   data1dstore.h
   data2dstore.h
@@ -57,17 +58,17 @@ add_library(keywords
   elementreflist.h
   enumoptions.h
   expression.h
-  expressionvariablelist.h
+  expressionvariablevector.h
   fileandformat.h
   geometrylist.h
   group.h
   integer.h
-  isotopologuecollection.h
+  isotopologueset.h
   linkto.h
   list.h
   module.h
   modulegroups.h
-  modulereflist.h
+  modulevector.h
   node.h
   nodeandinteger.h
   nodearray.h
@@ -89,13 +90,6 @@ add_library(keywords
   vec3nodevalue.h
   vector_intdouble.h
   vector_intstring.h
-  windowfunction.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
-
+include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)

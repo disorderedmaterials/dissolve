@@ -1,28 +1,11 @@
-/*
-    *** SpeciesImproper Definition
-    *** src/classes/speciesimproper.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
+#include "classes/speciestorsion.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -33,17 +16,12 @@ class ProcessPool;
 class SpeciesImproper : public SpeciesIntra
 {
     public:
-    SpeciesImproper();
-    SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    ~SpeciesImproper() = default;
+    SpeciesImproper(SpeciesImproper &source);
     SpeciesImproper(SpeciesImproper &&source);
-
-    /*
-     * DynamicArrayObject Virtuals
-     */
-    public:
-    // Clear object, ready for re-use
-    void clear();
+    SpeciesImproper(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
+    ~SpeciesImproper();
+    SpeciesImproper &operator=(const SpeciesImproper &source);
+    SpeciesImproper &operator=(SpeciesImproper &&source);
 
     /*
      * Atom Information
@@ -58,9 +36,13 @@ class SpeciesImproper : public SpeciesIntra
     // Fourth SpeciesAtom in interaction
     SpeciesAtom *l_;
 
-    public:
+    private:
     // Set Atoms involved in Improper
     void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    // Detach from current atoms
+    void detach();
+
+    public:
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
@@ -89,16 +71,6 @@ class SpeciesImproper : public SpeciesIntra
     /*
      * Interaction Parameters
      */
-    public:
-    // Improper functional forms
-    enum ImproperFunction
-    {
-        NoForm,
-        CosineForm
-    };
-    // Return enum options for ImproperFunction
-    static EnumOptions<ImproperFunction> improperFunctions();
-
     public:
     // Set up any necessary parameters
     void setUp();

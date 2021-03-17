@@ -1,23 +1,5 @@
-/*
-    *** Select Configuration Widget
-    *** src/gui/selectconfigurationwidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -80,7 +62,7 @@ void SelectConfigurationWidget::updateConfigurationList()
     }
 
     ListWidgetUpdater<SelectConfigurationWidget, Configuration> speciesUpdater(ui_.ConfigurationList,
-                                                                               coreData_->constConfigurations());
+                                                                               coreData_->configurations());
 }
 
 void SelectConfigurationWidget::on_SelectNoneButton_clicked(bool checked) { ui_.ConfigurationList->clearSelection(); }
@@ -117,7 +99,7 @@ bool SelectConfigurationWidget::isSelectionValid() const
 int SelectConfigurationWidget::nSelected() const
 {
     auto count = 0;
-    for (int n = 0; n < ui_.ConfigurationList->count(); ++n)
+    for (auto n = 0; n < ui_.ConfigurationList->count(); ++n)
     {
         QListWidgetItem *item = ui_.ConfigurationList->item(n);
 
@@ -134,7 +116,7 @@ RefList<Configuration> SelectConfigurationWidget::currentConfiguration() const
     RefList<Configuration> selection;
 
     // Loop over items in the list and construct the selection RefList
-    for (int n = 0; n < ui_.ConfigurationList->count(); ++n)
+    for (auto n = 0; n < ui_.ConfigurationList->count(); ++n)
     {
         QListWidgetItem *item = ui_.ConfigurationList->item(n);
 

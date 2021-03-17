@@ -1,23 +1,5 @@
-/*
-    *** Species Viewer
-    *** src/gui/siteviewer.uih
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -36,7 +18,6 @@ class SiteViewer : public BaseViewer
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     SiteViewer(QWidget *parent);
     ~SiteViewer();
 
@@ -63,16 +44,25 @@ class SiteViewer : public BaseViewer
      */
     public:
     // Interaction Mode enum
-    enum InteractionMode
+    enum class InteractionMode
     {
-        DefaultInteraction,
-        SelectAreaInteraction,
-        TranslateViewInteraction,
-        RotateViewInteraction,
+        Select,
+        SelectArea,
         nInteractionModes
+    };
+    // Secondary Interaction Mode enum
+    enum class TransientInteractionMode
+    {
+        None,
+        TranslateView,
+        RotateView
     };
 
     private:
+    // Primary interaction mode (left mouse button)
+    InteractionMode interactionMode_;
+    // Transient interaction mode (i.e. one not invoked by primary button)
+    TransientInteractionMode transientInteractionMode_;
     // Clicked atom at the start of the interaction (if any)
     SpeciesAtom *clickedAtom_;
 
@@ -89,6 +79,10 @@ class SiteViewer : public BaseViewer
     void cancelInteraction();
 
     public:
+    // Set current interaction mode
+    void setInteractionMode(InteractionMode mode);
+    // Return current interaction mode
+    InteractionMode interactionMode() const;
     // Return text describing current interaction mode
     const QString interactionModeText() const;
 
@@ -116,9 +110,9 @@ class SiteViewer : public BaseViewer
      */
     private:
     // Renderable for parent Species of Site
-    RenderableSpecies *speciesRenderable_;
+    std::shared_ptr<RenderableSpecies> speciesRenderable_;
     // Renderable for displayed site
-    RenderableSpeciesSite *siteRenderable_;
+    std::shared_ptr<RenderableSpeciesSite> siteRenderable_;
 
     public:
     // Set Species renderable draw style
@@ -133,5 +127,5 @@ class SiteViewer : public BaseViewer
      */
     signals:
     // Atom selection changed
-    void atomSelectionChanged();
+    void atomsChanged();
 };

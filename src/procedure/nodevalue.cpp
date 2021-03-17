@@ -1,27 +1,8 @@
-/*
-    *** Node Value
-    *** src/procedure/nodevalue.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodevalue.h"
 #include "base/sysfunc.h"
-#include "expression/generator.h"
 #include <string>
 
 NodeValue::NodeValue()
@@ -42,7 +23,8 @@ NodeValue::NodeValue(const double d)
     valueD_ = d;
     type_ = DoubleNodeValue;
 }
-NodeValue::NodeValue(std::string_view expressionText, RefList<ExpressionVariable> parameters)
+NodeValue::NodeValue(std::string_view expressionText,
+                     OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
 {
     valueI_ = 0;
     valueD_ = 0.0;
@@ -83,7 +65,8 @@ bool NodeValue::set(double value)
 }
 
 // Set from expression text
-bool NodeValue::set(std::string_view expressionText, RefList<ExpressionVariable> parameters)
+bool NodeValue::set(std::string_view expressionText,
+                    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
 {
     // Is this just a plain number, rather than an equation.
     bool isFloatingPoint;
@@ -91,7 +74,7 @@ bool NodeValue::set(std::string_view expressionText, RefList<ExpressionVariable>
     {
         type_ = isFloatingPoint ? DoubleNodeValue : IntegerNodeValue;
         if (isFloatingPoint)
-            valueD_ = std::stof(std::string(expressionText));
+            valueD_ = std::stod(std::string(expressionText));
         else
             valueI_ = std::stoi(std::string(expressionText));
     }
@@ -99,7 +82,7 @@ bool NodeValue::set(std::string_view expressionText, RefList<ExpressionVariable>
     {
         // Parse the supplied expression
         type_ = ExpressionNodeValue;
-        return expression_.set(expressionText, parameters);
+        return expression_.create(expressionText, parameters);
     }
 
     return true;

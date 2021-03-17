@@ -1,25 +1,8 @@
-/*
-    *** Integrator1D Gizmo
-    *** src/gui/integrator1dgizmo_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/integrator1dgizmo.h"
+#include "gui/render/renderabledata1d.h"
 #include "gui/selectgenericitemdialog.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
@@ -73,8 +56,8 @@ void Integrator1DGizmo::updateControls()
     ui_.PlotWidget->postRedisplay();
 
     // Get limits from data
-    double xMin = integrationTarget_ ? integrationTarget_->xAxis().first() : 0.0;
-    double xMax = integrationTarget_ ? integrationTarget_->xAxis().last() : 1.0;
+    double xMin = integrationTarget_ ? integrationTarget_->xAxis().front() : 0.0;
+    double xMax = integrationTarget_ ? integrationTarget_->xAxis().back() : 1.0;
     ui_.Region1MinSpin->setRange(xMin, xMax);
     ui_.Region1MaxSpin->setRange(xMin, xMax);
 
@@ -111,33 +94,7 @@ void Integrator1DGizmo::setGraphDataTargets()
     if (!integrationTarget_)
         return;
 
-    Renderable *data = ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(),
-                                                        integrationTarget_->name());
-}
-
-/*
- * State
- */
-
-// Write widget state through specified LineParser
-bool Integrator1DGizmo::writeState(LineParser &parser) const
-{
-
-    // Write DataViewer state
-    if (!ui_.PlotWidget->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool Integrator1DGizmo::readState(LineParser &parser)
-{
-    // Read the DataViewer session info
-    if (!ui_.PlotWidget->readSession(parser))
-        return false;
-
-    return true;
+    ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(), integrationTarget_->name());
 }
 
 /*

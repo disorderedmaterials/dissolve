@@ -1,23 +1,5 @@
-/*
-    *** Element Selector Widget
-    *** src/gui/widgets/elementselector_funcs.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/elements.h"
 #include "gui/widgets/elementselector.hui"
@@ -31,7 +13,7 @@
 
 ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 {
-    currentElement_ = nullptr;
+    currentElement_ = Elements::Unknown;
 
     // Create grid layout for widget
     auto *gl = new QGridLayout;
@@ -41,24 +23,22 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     // Create periodic table buttons
     QLabel *label;
     int n, m, z;
-    double *colour;
 
     // Create element button array (and buttons)
     QToolButton *button;
     QPalette palette = this->palette();
     QColor background, foreground;
-    for (n = 0; n < Elements::nElements(); ++n)
+    for (n = 0; n < Elements::nElements; ++n)
     {
         button = new QToolButton(this);
         button->setAutoRaise(true);
         button->setCheckable(true);
         button->setAutoExclusive(true);
-        elementButtons_.append(button, &Elements::element(n));
-        button->setText(QString::fromStdString(std::string(Elements::symbol(n))));
+        buttons_.push_back(button);
+        button->setText(QString::fromStdString(std::string(Elements::symbol(Elements::element(n)))));
         button->setMinimumSize(24, 24);
-        // 		button->setMaximumSize(24,24);
-        button->setToolTip(QString("%1 (%2)").arg(QString::fromStdString(std::string(Elements::name(n))),
-                                                  QString::fromStdString(std::string(Elements::symbol(n)))));
+        button->setToolTip(QString("%1 (%2)").arg(QString::fromStdString(std::string(Elements::name(Elements::element(n)))),
+                                                  QString::fromStdString(std::string(Elements::symbol(Elements::element(n))))));
 
         QObject::connect(button, SIGNAL(clicked(bool)), this, SLOT(elementButtonClicked(bool)));
     }
@@ -81,15 +61,15 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     }
 
     // H, He
-    gl->addWidget(elementButtons_.item(1), 1, 1);
-    gl->addWidget(elementButtons_.item(2), 1, 18);
+    gl->addWidget(buttons_[1], 1, 1);
+    gl->addWidget(buttons_[2], 1, 18);
 
     // Groups 1-2 (periods 1-6) [s]
     z = 3;
     for (n = 0; n < 6; n++)
     {
-        gl->addWidget(elementButtons_.item(z), n + 2, 1);
-        gl->addWidget(elementButtons_.item(z + 1), n + 2, 2);
+        gl->addWidget(buttons_[z], n + 2, 1);
+        gl->addWidget(buttons_[z + 1], n + 2, 2);
         z += 8;
         if (n > 1)
             z += 10;
@@ -102,7 +82,7 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     for (n = 0; n < 6; n++)
     {
         for (m = 0; m < 6; m++)
-            gl->addWidget(elementButtons_.item(z + m), n + 2, 13 + m);
+            gl->addWidget(buttons_[z + m], n + 2, 13 + m);
         z += 8;
         if (n > 0)
             z += 10;
@@ -115,7 +95,7 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     for (n = 0; n < 4; n++)
     {
         for (m = 0; m < 10; m++)
-            gl->addWidget(elementButtons_.item(z + m), n + 4, 3 + m);
+            gl->addWidget(buttons_[z + m], n + 4, 3 + m);
         if (n == 1)
             z += 14;
         z += 18;
@@ -134,13 +114,13 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     z = 57;
     for (n = 0; n < 14; n++)
     {
-        gl->addWidget(elementButtons_.item(z + n), 9, 3 + n);
-        gl->addWidget(elementButtons_.item(z + n + 32), 10, 3 + n);
+        gl->addWidget(buttons_[z + n], 9, 3 + n);
+        gl->addWidget(buttons_[z + n + 32], 10, 3 + n);
     }
 
     // Special elements
-    gl->addWidget(elementButtons_.item(0), 1, 19);
-    elementButtons_.item(0)->setVisible(false);
+    gl->addWidget(buttons_[0], 1, 19);
+    buttons_[0]->setVisible(false);
 
     setLayout(gl);
 
@@ -161,10 +141,9 @@ void ElementSelector::elementButtonClicked(bool checked)
     // Cast sender
     auto *button = qobject_cast<QToolButton *>(sender());
     if (!button)
-        currentElement_ = nullptr;
+        currentElement_ = Elements::Unknown;
 
-    RefDataItem<QToolButton, Element *> *ri = elementButtons_.contains(button);
-    currentElement_ = ri ? ri->data() : nullptr;
+    currentElement_ = Elements::element(qPrintable(button->text()));
 
     // Was this a double-click? Check the timer
     if (doubleClickTimer_.isActive())
@@ -182,37 +161,37 @@ void ElementSelector::elementButtonClicked(bool checked)
  */
 
 // Set current element
-void ElementSelector::setCurrentElement(Element *element)
+void ElementSelector::setCurrentElement(Elements::Element Z)
 {
     // Uncheck any current element button before we change
     if (currentElement_)
     {
-        QToolButton *button = elementButtons_.itemWithData(currentElement_);
+        auto *button = buttons_[currentElement_];
         if (button)
             button->setChecked(false);
     }
 
-    currentElement_ = element;
+    currentElement_ = Z;
 
     // Find and check the related button
-    if (currentElement_ != nullptr)
+    if (currentElement_ != Elements::Unknown)
     {
-        QToolButton *button = elementButtons_.itemWithData(currentElement_);
+        QToolButton *button = buttons_[currentElement_];
         if (button)
             button->setChecked(true);
     }
 }
 
 // Return current element
-Element *ElementSelector::currentElement() const { return currentElement_; }
+Elements::Element ElementSelector::currentElement() const { return currentElement_; }
 
 /*
  * Static Functions
  */
 
 // Get Element from user via input dialog
-Element *ElementSelector::getElement(QWidget *parent, QString title, QString labelText, Element *element, bool *ok,
-                                     Qt::WindowFlags flags)
+Elements::Element ElementSelector::getElement(QWidget *parent, QString title, QString labelText, Elements::Element Z, bool *ok,
+                                              Qt::WindowFlags flags)
 {
     // Create a QDialog for use
     QDialog inputDialog(parent, flags);
@@ -224,7 +203,7 @@ Element *ElementSelector::getElement(QWidget *parent, QString title, QString lab
 
     // Create ElementSelector widget
     auto *elementSelector = new ElementSelector(&inputDialog);
-    elementSelector->setCurrentElement(element);
+    elementSelector->setCurrentElement(Z);
     QObject::connect(elementSelector, SIGNAL(elementDoubleClicked()), &inputDialog, SLOT(accept()));
 
     // Create button box
@@ -232,7 +211,7 @@ Element *ElementSelector::getElement(QWidget *parent, QString title, QString lab
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &inputDialog);
     QObject::connect(buttonBox, SIGNAL(accepted()), &inputDialog, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), &inputDialog, SLOT(reject()));
-    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(element != nullptr);
+    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(Z != Elements::Unknown);
     QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok),
                      SLOT(setEnabled(bool)));
 
@@ -245,5 +224,5 @@ Element *ElementSelector::getElement(QWidget *parent, QString title, QString lab
     const auto ret = inputDialog.exec();
     if (ok)
         *ok = (ret == QDialog::Accepted);
-    return (ret == QDialog::Accepted ? elementSelector->currentElement() : element);
+    return (ret == QDialog::Accepted ? elementSelector->currentElement() : Z);
 }

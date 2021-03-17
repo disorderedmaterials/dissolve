@@ -1,23 +1,5 @@
-/*
-    *** Dissolve Main Structure
-    *** src/main/dissolve.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,7 +17,6 @@ class Box;
 class Cell;
 class Isotopologue;
 class Molecule;
-class ChangeStore;
 
 // Dissolve Main Class
 class Dissolve
@@ -54,8 +35,7 @@ class Dissolve
     public:
     // Return reference to CoreData
     CoreData &coreData();
-    // Return const reference to CoreData
-    const CoreData &constCoreData() const;
+    const CoreData &coreData() const;
     // Clear all data
     void clear();
     // Register GenericItems
@@ -67,7 +47,7 @@ class Dissolve
      */
     public:
     // Add AtomType with specified Element
-    std::shared_ptr<AtomType> addAtomType(Element *el);
+    std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return AtomTypes list
@@ -85,11 +65,13 @@ class Dissolve
      */
     public:
     // Return list of master Bond parameters
-    const List<MasterIntra> &masterBonds() const;
+    const std::vector<MasterIntra> &masterBonds() const;
     // Return list of master Angle parameters
-    const List<MasterIntra> &masterAngles() const;
+    const std::vector<MasterIntra> &masterAngles() const;
     // Return list of master Torsion parameters
-    const List<MasterIntra> &masterTorsions() const;
+    const std::vector<MasterIntra> &masterTorsions() const;
+    // Return list of master Improper parameters
+    const std::vector<MasterIntra> &masterImpropers() const;
     // Check and print MasterTerm usage
     void checkMasterTermUsage() const;
 
@@ -105,9 +87,7 @@ class Dissolve
     // Return number of defined Species
     int nSpecies() const;
     // Return Species list
-    List<Species> &species();
-    // Return nth Species in the list
-    Species *species(int n);
+    std::vector<std::unique_ptr<Species>> &species();
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
     // Copy AtomType, creating a new one if necessary
@@ -187,8 +167,7 @@ class Dissolve
     int nConfigurations() const;
     // Return Configuration list
     List<Configuration> &configurations();
-    // Return Configuration list (const)
-    const List<Configuration> &constConfigurations() const;
+    const List<Configuration> &configurations() const;
     // Find configuration by name
     Configuration *findConfiguration(std::string_view name) const;
     // Find configuration by 'nice' name
@@ -221,7 +200,7 @@ class Dissolve
     // Search for any instance of any Module with the specified unique name
     Module *findModuleInstance(std::string_view uniqueName);
     // Search for any instance of any Module with the specified Module type
-    RefList<Module> findModuleInstances(std::string_view moduleType);
+    std::vector<Module *> findModuleInstances(std::string_view moduleType);
     // Generate unique Module name with base name provided
     std::string uniqueModuleName(std::string_view name, Module *excludeThis = nullptr);
     // Delete specified Module instance

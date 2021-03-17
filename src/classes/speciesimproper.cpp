@@ -1,64 +1,61 @@
-/*
-    *** SpeciesImproper Definition
-    *** src/classes/speciesimproper.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesimproper.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "templates/enumhelpers.h"
+#include "classes/speciestorsion.h"
 
-SpeciesImproper::SpeciesImproper() : SpeciesIntra() { clear(); }
-
-SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(), i_(i), j_(j), k_(k), l_(l)
+SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
+    assign(i, j, k, l);
+    form_ = SpeciesTorsion::NoForm;
 }
+
+SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
 
 SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source)
 {
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
+    // Detach source torsion referred to by the species atoms
+    if (source.i_ && source.j_ && source.k_ && source.l_)
+    {
+        source.i_->removeImproper(source);
+        source.j_->removeImproper(source);
+        source.k_->removeImproper(source);
+        source.l_->removeImproper(source);
+    }
+
+    // Copy data
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
 
+    // Reset source data
     source.i_ = nullptr;
     source.j_ = nullptr;
     source.k_ = nullptr;
     source.l_ = nullptr;
 }
 
-/*
- * DynamicArrayObject Virtuals
- */
+SpeciesImproper::~SpeciesImproper() { detach(); }
 
-// Clear object, ready for re-use
-void SpeciesImproper::clear()
+SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
-    parent_ = nullptr;
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
-    form_ = SpeciesImproper::NoForm;
+    assign(source.i_, source.j_, source.k_, source.l_);
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source)
+{
+    if (i_ && j_ && k_ && l_)
+        detach();
+
+    assign(source.i_, source.j_, source.k_, source.l_);
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
 }
 
 /*
@@ -72,25 +69,29 @@ void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
     j_ = j;
     k_ = k;
     l_ = l;
-#ifdef CHECKS
-    if (i_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesImproper::set().\n");
-    if (j_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesImproper::set().\n");
-    if (k_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesImproper::set().\n");
-    if (l_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesImproper::set().\n");
-#endif
 
-    if (i_)
-        i_->addImproper(*this);
-    if (j_)
-        j_->addImproper(*this);
-    if (k_)
-        k_->addImproper(*this);
-    if (l_)
-        l_->addImproper(*this);
+    assert(i_ && j_ && k_ && l_);
+
+    i_->addImproper(*this);
+    j_->addImproper(*this);
+    k_->addImproper(*this);
+    l_->addImproper(*this);
+}
+
+// Detach from current atoms
+void SpeciesImproper::detach()
+{
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->removeImproper(*this);
+        j_->removeImproper(*this);
+        k_->removeImproper(*this);
+        l_->removeImproper(*this);
+    }
+    i_ = nullptr;
+    j_ = nullptr;
+    k_ = nullptr;
+    l_ = nullptr;
 }
 
 // Return first SpeciesAtom
@@ -114,52 +115,28 @@ bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesImproper::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesImproper::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second (central) SpeciesAtom
 int SpeciesImproper::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesImproper::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
 // Return index (in parent Species) of third SpeciesAtom
 int SpeciesImproper::indexK() const
 {
-#ifdef CHECKS
-    if (k_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesImproper::indexK(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(k_);
     return k_->index();
 }
 
 // Return index (in parent Species) of fourth SpeciesAtom
 int SpeciesImproper::indexL() const
 {
-#ifdef CHECKS
-    if (l_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesImproper::indexL(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(l_);
     return l_->index();
 }
 
@@ -207,30 +184,13 @@ bool SpeciesImproper::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Sp
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesImproper::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr || k_ == nullptr || l_ == nullptr)
-    {
-        Messenger::error(
-            "NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesImproper::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_ && k_ && l_);
     return (i_->isSelected() && j_->isSelected() && k_->isSelected() && l_->isSelected());
 }
 
 /*
  * Interaction Parameters
  */
-
-// Return enum options for ImproperFunction
-EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
-{
-    static EnumOptionsList ImproperFunctionOptions = EnumOptionsList() << EnumOption(SpeciesImproper::CosineForm, "Cos", 4, 4);
-
-    static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
-
-    return options;
-}
 
 // Set up any necessary parameters
 void SpeciesImproper::setUp() {}
@@ -243,63 +203,16 @@ double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::ImproperInteraction; }
+SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::InteractionType::Improper; }
 
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const
 {
-    // Get pointer to relevant parameters array
-    const auto &params = parameters();
-
-    // Convert torsion angle from degrees to radians
-    double phi = angleInDegrees / DEGRAD;
-
-    if (form() == SpeciesImproper::NoForm)
-        return 0.0;
-    else if (form() == SpeciesImproper::CosineForm)
-    {
-        /*
-         * U(phi) = k * (1 + s*cos(n*phi - eq))
-         *
-         * Parameters:
-         * 0 : force constant k
-         * 1 : Period 'n'
-         * 2 : equilibrium angle (degrees)
-         * 3 : Sign 's'
-         */
-        return params[0] * (1.0 + params[3] * cos(params[1] * phi - (params[2] / DEGRAD)));
-    }
-
-    Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate energy.\n");
-    return 0.0;
+    return SpeciesTorsion::energy(angleInDegrees, form(), parameters());
 }
 
 // Return force multiplier for specified angle
 double SpeciesImproper::force(double angleInDegrees) const
 {
-    // Get pointer to relevant parameters array
-    const auto &params = parameters();
-
-    // Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle
-    double phi = angleInDegrees / DEGRAD;
-    double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
-
-    if (form() == SpeciesImproper::NoForm)
-        return 0.0;
-    else if (form() == SpeciesImproper::CosineForm)
-    {
-        /*
-         * dU/dphi = k * n * s * -sin(n*phi - eq)
-         *
-         * Parameters:
-         * 0 : Force constant 'k'
-         * 1 : Period 'n'
-         * 2 : Equilibrium angle (degrees)
-         * 3 : Sign 's'
-         */
-        return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1] * phi - (params[2] / DEGRAD));
-    }
-
-    Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate force.\n");
-    return 0.0;
+    return SpeciesTorsion::force(angleInDegrees, form(), parameters());
 }

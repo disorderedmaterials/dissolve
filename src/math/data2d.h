@@ -1,23 +1,5 @@
-/*
-    *** 2-Dimensional Data
-    *** src/math/data2d.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,7 +17,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 {
     public:
     Data2D();
-    ~Data2D();
+    virtual ~Data2D();
     Data2D(const Data2D &source);
     // Clear data
     void clear();
@@ -45,9 +27,9 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
      */
     private:
     // X axis array
-    Array<double> x_;
+    std::vector<double> x_;
     // Y axis array
-    Array<double> y_;
+    std::vector<double> y_;
     // Values at each xy
     Array2D<double> values_;
     // Whether data has associated errors
@@ -72,30 +54,22 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     int version() const;
     // Return x axis value specified
     double &xAxis(int index);
-    // Return x axis value specified (const)
-    double constXAxis(int index) const;
+    const double &xAxis(int index) const;
     // Return x axis Array
-    Array<double> &xAxis();
-    // Return x axis Array (const)
-    const Array<double> &constXAxis() const;
+    std::vector<double> &xAxis();
+    const std::vector<double> &xAxis() const;
     // Return y axis value specified
     double &yAxis(int index);
-    // Return y axis value specified (const)
-    double constYAxis(int index) const;
+    const double &yAxis(int index) const;
     // Return y axis Array
-    Array<double> &yAxis();
-    // Return y axis Array (const)
-    const Array<double> &constYAxis() const;
+    std::vector<double> &yAxis();
+    const std::vector<double> &yAxis() const;
     // Return value specified
     double &value(int xIndex, int yIndex);
-    // Return value value specified (const)
-    double constValue(int xIndex, int yIndex) const;
-    // Return value Array
-    Array2D<double> &values();
-    // Return values Array
-    const Array2D<double> &constValues2D() const;
-    // Return values Array in linear format
-    double *values2DLinear();
+    const double &value(int xIndex, int yIndex) const;
+    // Return two-dimensional values Array
+    Array2D<double> &values2D();
+    const Array2D<double> &values2D() const;
     // Return value specified from linear array
     double value(int index);
     // Return number of values present in whole dataset
@@ -110,12 +84,10 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     bool valuesHaveErrors() const;
     // Return error value specified
     double &error(int xIndex, int yIndex);
-    // Return error value specified (const)
-    double constError(int xIndex, int yIndex) const;
-    // Return error Array
-    Array2D<double> &errors();
-    // Return errors Array
-    const Array2D<double> &constErrors2D() const;
+    const double &error(int xIndex, int yIndex) const;
+    // Return two-dimensional errors Array
+    Array2D<double> &errors2D();
+    const Array2D<double> &errors2D() const;
 
     /*
      * Operators

@@ -1,23 +1,5 @@
-/*
-    *** Keyword - AtomType Selection
-    *** src/keywords/atomtypeselection.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/atomtypeselection.h"
 #include "base/lineparser.h"
@@ -92,14 +74,13 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &
     checkSelection();
 
     // Loop over arguments (which are AtomType names) and add them to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        auto it =
-            std::find_if(coreData.constAtomTypes().begin(), coreData.constAtomTypes().end(), [&parser, n](const auto atomType) {
-                return DissolveSys::sameString(atomType->name(), parser.argsv(n));
-            });
-        if (it == coreData.constAtomTypes().end())
+        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&parser, n](const auto atomType) {
+            return DissolveSys::sameString(atomType->name(), parser.argsv(n));
+        });
+        if (it == coreData.atomTypes().end())
             return Messenger::error("Unrecognised AtomType '{}' found in list.\n", parser.argsv(n));
         auto atomType = *it;
 

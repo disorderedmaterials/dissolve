@@ -1,23 +1,5 @@
-/*
-    *** PairBroadening Function
-    *** src/math/pairbroadeningfunction.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/pairbroadeningfunction.h"
 #include "base/lineparser.h"
@@ -25,8 +7,9 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesintra.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 #include "genericitems/array2ddouble.h"
+#include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 
 PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionType function)
@@ -36,13 +19,10 @@ PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionT
     gaussianFWHM_ = 0.18;
 
     // Create element broadening array
-    elementPairGaussianFWHM_.initialise(Elements::nElements(), Elements::nElements(), true);
-    elementPairGaussianFlags_.initialise(Elements::nElements(), Elements::nElements(), true);
+    elementPairGaussianFWHM_.initialise(Elements::nElements, Elements::nElements, true);
+    elementPairGaussianFlags_.initialise(Elements::nElements, Elements::nElements, true);
     elementPairGaussianFWHM_ = 0.13;
     elementPairGaussianFlags_ = false;
-
-    frequencyBondConstant_ = 1.0e-3;
-    frequencyAngleConstant_ = 1.0e-3;
 }
 
 PairBroadeningFunction::~PairBroadeningFunction() {}
@@ -57,9 +37,6 @@ void PairBroadeningFunction::operator=(const PairBroadeningFunction &source)
 
     elementPairGaussianFWHM_ = source.elementPairGaussianFWHM_;
     elementPairGaussianFlags_ = source.elementPairGaussianFlags_;
-
-    frequencyBondConstant_ = source.frequencyBondConstant_;
-    frequencyAngleConstant_ = source.frequencyAngleConstant_;
 }
 
 std::string_view PairBroadeningFunctionKeywords[] = {"None", "Gaussian", "GaussianElements", "BROKEN_Frequency"};
@@ -68,7 +45,7 @@ int PairBroadeningFunctionNParameters[] = {0, 1, 0, 2};
 // Return FunctionType from supplied string
 PairBroadeningFunction::FunctionType PairBroadeningFunction::functionType(std::string_view s)
 {
-    for (int n = 0; n < nFunctionTypes; ++n)
+    for (auto n = 0; n < nFunctionTypes; ++n)
         if (DissolveSys::sameString(s, PairBroadeningFunctionKeywords[n]))
             return (FunctionType)n;
     return PairBroadeningFunction::nFunctionTypes;
@@ -122,10 +99,6 @@ bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, Cor
         case (PairBroadeningFunction::GaussianElementPairFunction):
             Messenger::print("Gaussian element-pair broadening requested - default starting values will be used.\n");
             break;
-        case (PairBroadeningFunction::FrequencyFunction):
-            frequencyBondConstant_ = parser.argd(startArg + 1);
-            frequencyAngleConstant_ = parser.argd(startArg + 2);
-            break;
         default:
             Messenger::error("Function form '{}' not accounted for in PairBroadeningFunction::set(LineParser&,int).\n",
                              PairBroadeningFunction::functionType(funcType));
@@ -164,30 +137,23 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view
                 return false;
 
             // Count number of pairs/values to expect and write to file
-            for (int n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
-                if (elementPairGaussianFlags_.constLinearValue(n))
-                    ++count;
+            count += std::count(elementPairGaussianFlags_.begin(), elementPairGaussianFlags_.end(), true);
             if (!parser.writeLineF("{}{}\n", prefix, count))
                 return false;
 
             // Loop again and write the data proper
-            for (int i = 0; i < elementPairGaussianFlags_.nRows(); ++i)
+            for (auto i = 0; i < elementPairGaussianFlags_.nRows(); ++i)
             {
-                for (int j = i; j < elementPairGaussianFlags_.nColumns(); ++j)
+                for (auto j = i; j < elementPairGaussianFlags_.nColumns(); ++j)
                 {
-                    if (elementPairGaussianFlags_.constAt(i, j))
+                    if (elementPairGaussianFlags_[{i, j}])
                     {
-                        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, Elements::element(i).symbol(),
-                                               Elements::element(j).symbol(), elementPairGaussianFWHM_.constAt(i, j)))
+                        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, Elements::symbol(Elements::element(i)),
+                                               Elements::symbol(Elements::element(j)), elementPairGaussianFWHM_[{i, j}]))
                             return false;
                     }
                 }
             }
-            break;
-        case (PairBroadeningFunction::FrequencyFunction):
-            if (!parser.writeLineF("{}{}  {:e}  {:e}\n", prefix, functionType(function_), frequencyBondConstant_,
-                                   frequencyAngleConstant_))
-                return false;
             break;
         default:
             break;
@@ -207,40 +173,22 @@ void PairBroadeningFunction::setGaussianFWHM(double fwhm) { gaussianFWHM_ = fwhm
 // Return Gaussian FWHM parameter
 double PairBroadeningFunction::gaussianFWHM() const { return gaussianFWHM_; }
 
-// Set frequency bond constant
-void PairBroadeningFunction::setFrequencyBondConstant(double k) { frequencyBondConstant_ = k; }
-
-// Return frequency bond constant
-double PairBroadeningFunction::frequencyBondConstant() const { return frequencyBondConstant_; }
-
-// Set frequency angle constant
-void PairBroadeningFunction::setFrequencyAngleConstant(double k) { frequencyAngleConstant_ = k; }
-
-// Return frequency angle constant
-double PairBroadeningFunction::frequencyAngleConstant() const { return frequencyAngleConstant_; }
-
 // Return array of pointers to all adjustable parameters
-Array<double *> PairBroadeningFunction::parameters()
+std::vector<double *> PairBroadeningFunction::parameters()
 {
-    Array<double *> params;
+    std::vector<double *> params;
 
     switch (function_)
     {
         case (PairBroadeningFunction::NoFunction):
             break;
         case (PairBroadeningFunction::GaussianFunction):
-            params.add(&gaussianFWHM_);
+            params.push_back(&gaussianFWHM_);
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
-            for (int n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
-            {
-                if (elementPairGaussianFlags_.constLinearValue(n))
-                    params.add(&elementPairGaussianFWHM_.linearValue(n));
-            }
-            break;
-        case (PairBroadeningFunction::FrequencyFunction):
-            params.add(&frequencyBondConstant_);
-            params.add(&frequencyAngleConstant_);
+            for (auto &&[flags, fwhm] : zip(elementPairGaussianFlags_, elementPairGaussianFWHM_))
+                if (flags)
+                    params.push_back(&fwhm);
             break;
         default:
             break;
@@ -262,9 +210,6 @@ std::string PairBroadeningFunction::summary() const
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
             return "Gaussian [Z1-Z2]";
-            break;
-        case (PairBroadeningFunction::FrequencyFunction):
-            return "Frequency";
             break;
         default:
             break;
@@ -289,51 +234,10 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
             // If this matrix value has never been used/read, set the flag now
-            if (!elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()))
-                elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()) = true;
-            result.set(BroadeningFunction::GaussianFunction,
-                       elementPairGaussianFWHM_.at(at1->element()->Z(), at2->element()->Z()));
+            if (!elementPairGaussianFlags_[{at1->Z(), at2->Z()}])
+                elementPairGaussianFlags_[{at1->Z(), at2->Z()}] = true;
+            result.set(BroadeningFunction::GaussianFunction, elementPairGaussianFWHM_[{at1->Z(), at2->Z()}]);
             break;
-        case (PairBroadeningFunction::FrequencyFunction):
-            // Broadening based on fundamental frequency of interaction - requires SpeciesIntra
-            if (!intra)
-                Messenger::error("Broadening type is '{}', but a valid SpeciesIntra reference has not been provided.\n",
-                                 PairBroadeningFunction::functionType(function_));
-            else
-            {
-                // If this interaction is a torsion, treat it as a special case
-                if ((intra->type() == SpeciesIntra::TorsionInteraction) || (intra->type() == SpeciesIntra::ImproperInteraction))
-                {
-                    // TODO This will kill all torsion and improper interactions!
-                    result.set(BroadeningFunction::NoFunction);
-                }
-                else
-                {
-                    // Bond or an angle, so calculate the fundamental frequency
-                    double v = intra->fundamentalFrequency(AtomicMass::reducedMass(at1->element(), at2->element()));
-
-                    // Convert to cm-1?
-                    double wno = v / (SPEEDOFLIGHT * 100.0);
-
-                    if (intra->type() == SpeciesIntra::BondInteraction)
-                        result.set(BroadeningFunction::GaussianFunction, frequencyBondConstant_ * wno);
-                    else if (intra->type() == SpeciesIntra::AngleInteraction)
-                        result.set(BroadeningFunction::GaussianFunction, frequencyAngleConstant_ * wno);
-                }
-            }
-            break;
-            // POSSIBLE USE AS FUNCTION FOR ELEMENT/ATOMTYPE-DEPENDENT BROADENING?
-            // 		case (PairBroadeningFunction::GaussianElementFunction):
-            // 			// Calculate reduced mass (store in parameters_[1])
-            // 			parameters_[1] = sqrt((AtomicMass::mass(at1->element()) *
-            // AtomicMass::mass(at2->element())) / (AtomicMass::mass(at1->element()) +
-            // AtomicMass::mass(at2->element())));
-            //
-            // 			// Calculate final broadening
-            // 			parameters_[0] = 1.0 / (2.0 * sqrt(2.0) * parameters_[1]);
-            //
-            // 			result.set(BroadeningFunction::GaussianFunction, parameters_[0]);
-            // 			break;
         default:
             Messenger::error("Function form '{}' not accounted for in setUpDependentParameters().\n",
                              PairBroadeningFunction::functionType(function_));
@@ -378,24 +282,24 @@ bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
                 elementPairGaussianFlags_ = false;
 
                 auto nPairs = parser.argi(0);
-                for (int n = 0; n < nPairs; ++n)
+                for (auto n = 0; n < nPairs; ++n)
                 {
                     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                         return false;
 
                     // Line format is:  Element1  Element2  FWHM
-                    Element &el1 = Elements::element(parser.argsv(0));
-                    if (el1.isUnknown())
+                    auto Z1 = Elements::element(parser.argsv(0));
+                    if (Z1 == Elements::Unknown)
                         return Messenger::error("Unrecognised element '{}' found in pair broadening parameters.\n",
                                                 parser.argsv(0));
-                    Element &el2 = Elements::element(parser.argsv(1));
-                    if (el2.isUnknown())
+                    auto Z2 = Elements::element(parser.argsv(1));
+                    if (Z2 == Elements::Unknown)
                         return Messenger::error("Unrecognised element '{}' found in pair broadening parameters.\n",
                                                 parser.argsv(1));
 
                     // Set the value
-                    elementPairGaussianFlags_.at(el1.Z(), el2.Z()) = parser.argd(2);
-                    elementPairGaussianFlags_.at(el1.Z(), el2.Z()) = true;
+                    elementPairGaussianFlags_[{Z1, Z2}] = parser.argd(2);
+                    elementPairGaussianFlags_[{Z1, Z2}] = true;
                 }
             }
             break;

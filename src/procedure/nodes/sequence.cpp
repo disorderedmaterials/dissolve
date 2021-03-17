@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Sequence
-    *** src/procedure/nodes/sequence.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/sequence.h"
 #include "base/lineparser.h"
@@ -53,11 +35,7 @@ bool SequenceProcedureNode::isContextRelevant(ProcedureNode::NodeContext context
 // Return enum option info for SequenceNodeKeyword
 EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::sequenceNodeKeywords()
 {
-    static EnumOptionsList SequenceNodeTypeKeywords;
-
-    static EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> options("SequenceNodeKeyword", SequenceNodeTypeKeywords);
-
-    return options;
+    return EnumOptions<SequenceProcedureNode::SequenceNodeKeyword>("SequenceNodeKeyword", {});
 }
 
 /*
@@ -123,13 +101,14 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
 }
 
 // Search through the Procedure for the named parameter
-ExpressionVariable *SequenceProcedureNode::searchParameters(std::string_view name, ExpressionVariable *excludeParameter) const
+std::shared_ptr<ExpressionVariable>
+SequenceProcedureNode::searchParameters(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
     {
         // Does this node have a parameter by this name?
-        ExpressionVariable *result = node->hasParameter(name, excludeParameter);
+        auto result = node->hasParameter(name, excludeParameter);
         if (result)
             return result;
 
@@ -278,9 +257,10 @@ ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, Procedur
     return searchNodes(name, excludeNode, nt);
 }
 
-// Return whether the named parameter is currently in scope
-ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
-                                                            ExpressionVariable *excludeParameter)
+// Return the named parameter if it is currently in scope
+std::shared_ptr<ExpressionVariable>
+SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
+                                        std::shared_ptr<ExpressionVariable> excludeParameter)
 {
     // Is this node present in our own sequence?
     if (queryingNode && (!sequence_.contains(queryingNode)))
@@ -293,7 +273,7 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
-        ExpressionVariable *param = node->hasParameter(name, excludeParameter);
+        auto param = node->hasParameter(name, excludeParameter);
         if (param)
             return param;
     }
@@ -307,7 +287,8 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
 }
 
 // Return whether the named parameter exists in this sequence or its children (branches)
-ExpressionVariable *SequenceProcedureNode::parameterExists(std::string_view name, ExpressionVariable *excludeParameter) const
+std::shared_ptr<ExpressionVariable>
+SequenceProcedureNode::parameterExists(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)
@@ -318,27 +299,39 @@ ExpressionVariable *SequenceProcedureNode::parameterExists(std::string_view name
 }
 
 // Create and return reference list of parameters in scope
-RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNode *queryingNode)
+std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(ProcedureNode *queryingNode)
 {
-    RefList<ExpressionVariable> parameters;
-
     // Is this node present in our own sequence?
     if (queryingNode && (!sequence_.contains(queryingNode)))
     {
         Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parametersInScope() is not a "
                          "member of this sequence.\n");
-        return parameters;
+        return {};
     }
+
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters;
 
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
-        parameters += node->parameterReferences();
+        auto optOtherParams = node->parameters();
+        if (optOtherParams)
+        {
+            const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
+            parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
+        }
     }
 
     // Recursively check our parent(s)
     if (parentNode_)
-        parameters += parentNode_->parametersInScope();
+    {
+        auto optOtherParams = parentNode_->parameters();
+        if (optOtherParams)
+        {
+            const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
+            parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
+        }
+    }
 
     return parameters;
 }

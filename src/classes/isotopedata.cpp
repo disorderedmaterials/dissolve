@@ -1,23 +1,5 @@
-/*
-    *** Isotope Data
-    *** src/classes/isotopedata.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/isotopedata.h"
 #include "base/lineparser.h"
@@ -25,6 +7,7 @@
 #include "base/processpool.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
+#include "templates/enumhelpers.h"
 
 IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 {
@@ -99,7 +82,7 @@ bool IsotopeData::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    isotope_ = Isotopes::isotope(parser.argi(0), parser.argi(1));
+    isotope_ = Isotopes::isotope(Elements::element(parser.argi(0)), parser.argi(1));
     population_ = parser.argi(2);
     fraction_ = parser.argd(3);
     return true;
@@ -114,13 +97,14 @@ bool IsotopeData::broadcast(ProcessPool &procPool, const int root, const CoreDat
 {
 #ifdef PARALLEL
     // For isotope_, need to broadcast element Z and isotope A
-    int Z, A;
+    Elements::Element Z;
+    int A;
     if (procPool.poolRank() == root)
     {
-        Z = isotope_->element().Z();
+        Z = isotope_->Z();
         A = isotope_->A();
     }
-    procPool.broadcast(Z, root);
+    procPool.broadcast(EnumCast<Elements::Element>(Z), root);
     procPool.broadcast(A, root);
     isotope_ = Isotopes::isotope(Z, A);
 
@@ -134,9 +118,9 @@ bool IsotopeData::broadcast(ProcessPool &procPool, const int root, const CoreDat
 bool IsotopeData::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    if (!procPool.equality(isotope_->element().Z()))
+    if (!procPool.equality(isotope_->Z()))
         return Messenger::error("IsotopeData element z is not equivalent (process {} has '{}').\n", procPool.poolRank(),
-                                isotope_->element().Z());
+                                isotope_->Z());
     if (!procPool.equality(isotope_->A()))
         return Messenger::error("IsotopeData isotope A is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 isotope_->A());

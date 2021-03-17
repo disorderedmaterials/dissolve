@@ -1,23 +1,5 @@
-/*
-    *** Renderable - SpeciesSite
-    *** src/gui/render/renderablespeciessite.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/renderablespeciessite.h"
 #include "base/lineparser.h"
@@ -88,8 +70,6 @@ void RenderableSpeciesSite::transformValues() { return; }
 void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
     Matrix4 A;
-    const GLfloat *colour;
-    const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
 
     // Clear existing data
     siteAssembly_.clear();
@@ -120,15 +100,6 @@ void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDef
             siteAssembly_.add(axesPrimitive_, A);
         }
     }
-    // 	else if (displayStyle_ == SolidStyle)
-    // 	{
-    // 		// Set basic styling for assemblies
-    // 		siteAssembly_.add(true, GL_FILL);
-    //
-    // 		// Plot origin
-    // 		A.setTranslation(site->origin());
-    // 		siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 0.5);
-    // 	}
 }
 
 // Send primitives for rendering
@@ -146,13 +117,8 @@ const void RenderableSpeciesSite::sendToGL(const double pixelScaling)
 // Return EnumOptions for SpeciesSiteDisplayStyle
 EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> RenderableSpeciesSite::speciesSiteDisplayStyles()
 {
-    static EnumOptionsList SpeciesSiteStyleOptions = EnumOptionsList()
-                                                     << EnumOption(RenderableSpeciesSite::LinesStyle, "Lines");
-
-    static EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> options("SpeciesSiteDisplayStyle",
-                                                                               SpeciesSiteStyleOptions);
-
-    return options;
+    return EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle>("SpeciesSiteDisplayStyle",
+                                                                       {{RenderableSpeciesSite::LinesStyle, "Lines"}});
 }
 
 // Set display style for renderable
@@ -173,12 +139,9 @@ RenderableSpeciesSite::SpeciesSiteDisplayStyle RenderableSpeciesSite::displaySty
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> RenderableSpeciesSite::speciesSiteStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableSpeciesSite::DisplayKeyword, "Display", 1)
-                                                             << EnumOption(RenderableSpeciesSite::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> options("SpeciesSiteStyleKeyword", StyleKeywords);
-
-    return options;
+    return EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword>(
+        "SpeciesSiteStyleKeyword",
+        {{RenderableSpeciesSite::DisplayKeyword, "Display", 1}, {RenderableSpeciesSite::EndStyleKeyword, "EndStyle"}});
 }
 
 // Write style information
@@ -186,7 +149,7 @@ bool RenderableSpeciesSite::writeStyleBlock(LineParser &parser, int indentLevel)
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

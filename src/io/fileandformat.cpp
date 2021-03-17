@@ -1,23 +1,5 @@
-/*
-    *** File/Format Base Class
-    *** src/io/fileandformat.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "io/fileandformat.h"
 #include "base/lineparser.h"
@@ -36,7 +18,7 @@ FileAndFormat::operator std::string_view() const { return filename_; }
 // Convert text string to format index
 int FileAndFormat::format(std::string_view fmtString) const
 {
-    for (int n = 0; n < nFormats(); ++n)
+    for (auto n = 0; n < nFormats(); ++n)
         if (DissolveSys::sameString(fmtString, formatKeyword(n)))
             return n;
 
@@ -70,7 +52,7 @@ std::string_view FileAndFormat::description() const
 // Print available formats
 void FileAndFormat::printAvailableFormats() const
 {
-    for (int n = 0; n < nFormats(); ++n)
+    for (auto n = 0; n < nFormats(); ++n)
         Messenger::print("  {:12}  {}\n", formatKeyword(n), formatDescription(n));
 }
 

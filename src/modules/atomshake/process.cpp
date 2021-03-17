@@ -1,23 +1,5 @@
-/*
-    *** AtomShake Module - Processing
-    *** src/modules/atomshake/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/processpool.h"
 #include "base/timer.h"
@@ -26,7 +8,6 @@
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
 #include "classes/regionaldistributor.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/atomshake/atomshake.h"
 
@@ -82,7 +63,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
-        int shake, n, m;
+        int shake, n;
         auto nAttempts = 0, nAccepted = 0;
         bool accept;
         double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
@@ -120,7 +101,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 n = 0;
                 // Loop over atoms in the Molecule
-                for (auto *i : mol->atoms())
+                for (auto i : mol->atoms())
                 {
                     // Calculate reference energy for the Atom
                     currentEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);

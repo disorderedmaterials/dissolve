@@ -1,23 +1,5 @@
-/*
-    *** Vertex Chunk
-    *** src/gui/render/vertexchunk.cpp
-    Copyright T. Youngs 2012-2013
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/vertexchunk.h"
 #include "base/messenger.h"
@@ -84,7 +66,7 @@ void VertexChunk::initialise(GLenum type, bool colourData)
     nDefinedTypes_ = 0;
     vertexData_ = new GLfloat[maxVertices_ * dataPerVertex_];
     centroids_ = new GLfloat[VERTEXCHUNKSIZE * 3];
-    for (int n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
+    for (auto n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
         centroids_[n] = 0.0f;
 }
 
@@ -195,7 +177,7 @@ void VertexChunk::forgetAll()
 {
     nDefinedTypes_ = 0;
     nDefinedVertices_ = 0;
-    for (int n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
+    for (auto n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
         centroids_[n] = 0.0f;
 }
 

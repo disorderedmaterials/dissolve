@@ -1,31 +1,11 @@
-/*
-    *** Procedure Node - Fit1D
-    *** src/procedure/nodes/fit1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/fit1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
-#include "expression/generator.h"
 #include "expression/variable.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "math/mc.h"
 #include "procedure/nodes/collect1d.h"
@@ -35,8 +15,9 @@ Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : Procedu
 {
     dataNode_.addAllowableNodeType(ProcedureNode::Process1DNode);
 
-    // Create persistent 'x' variable for Expression
-    xVariable_ = equation_.createDoubleVariable("x", true);
+    // Create variables, and add them to the vector
+    xVariable_ = std::make_shared<ExpressionVariable>("x");
+    variables_.emplace_back(xVariable_);
 
     dataNode_ = target;
     saveData_ = false;
@@ -61,27 +42,42 @@ bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 // Return enum option info for Fit1DNodeKeyword
 EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeKeywords()
 {
-    static EnumOptionsList Fit1DNodeTypeKeywords = EnumOptionsList()
-                                                   << EnumOption(Fit1DProcedureNode::ConstantKeyword, "Constant", 1)
-                                                   << EnumOption(Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D")
-                                                   << EnumOption(Fit1DProcedureNode::EquationKeyword, "Equation", 1)
-                                                   << EnumOption(Fit1DProcedureNode::FitKeyword, "Fit", 1)
-                                                   << EnumOption(Fit1DProcedureNode::MethodKeyword, "Method")
-                                                   << EnumOption(Fit1DProcedureNode::SaveKeyword, "Save", 1)
-                                                   << EnumOption(Fit1DProcedureNode::SourceDataKeyword, "SourceData",
-                                                                 EnumOption::OptionalSecondArgument);
-
-    static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options("Fit1DNodeKeyword", Fit1DNodeTypeKeywords);
-
-    return options;
+    return EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword>(
+        "Fit1DNodeKeyword", {{Fit1DProcedureNode::ConstantKeyword, "Constant", 1},
+                             {Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D"},
+                             {Fit1DProcedureNode::EquationKeyword, "Equation", 1},
+                             {Fit1DProcedureNode::FitKeyword, "Fit", 1},
+                             {Fit1DProcedureNode::MethodKeyword, "Method"},
+                             {Fit1DProcedureNode::SaveKeyword, "Save", 1},
+                             {Fit1DProcedureNode::SourceDataKeyword, "SourceData", OptionArguments::OptionalSecond}});
 }
 
 /*
  * Data
  */
 
+// Return the named fit target, if it exists
+std::shared_ptr<ExpressionVariable> Fit1DProcedureNode::getFitTarget(std::string_view name)
+{
+    for (auto var : fitTargets_)
+        if (DissolveSys::sameString(name, var->name()))
+            return var;
+
+    return nullptr;
+}
+
+// Return the named constant, if it exists
+std::shared_ptr<ExpressionVariable> Fit1DProcedureNode::getConstant(std::string_view name)
+{
+    for (auto var : constants_)
+        if (DissolveSys::sameString(name, var->name()))
+            return var;
+
+    return nullptr;
+}
+
 // Fitting cost function
-double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
+double Fit1DProcedureNode::equationCost(const std::vector<double> &alpha)
 {
     // We assume that the minimiser has 'pokeBeforeCost' set, so our Expression's variables are up-to-date with new test
     // values.
@@ -89,16 +85,16 @@ double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
     const auto &x = referenceData_.xAxis();
     const auto &y = referenceData_.values();
     double equationY;
-    for (int n = 0; n < referenceData_.nValues(); ++n)
+    for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
-        xVariable_->set(x.constAt(n));
+        xVariable_->setValue(x[n]);
 
         // Evaluate expression
         equationY = equation_.asDouble();
 
         // Sum squared error
-        cost += (equationY - y.constAt(n)) * (equationY - y.constAt(n));
+        cost += (equationY - y[n]) * (equationY - y[n]);
     }
 
     cost /= referenceData_.nValues();
@@ -153,54 +149,47 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
 
     // Print equation info
     Messenger::print("Expression to fit is: {}\n", equation_.expressionString());
-    for (ExpressionVariable *var : equation_.variables())
-    {
-        if (var == xVariable_)
-            Messenger::print("  {:10}                (axis variable)\n", var->name());
-        else if (fitTargets_.contains(var))
-            Messenger::print("  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble());
-        else
-            Messenger::print("  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble());
-    }
+    Messenger::print("  {:10}                (axis variable)\n", xVariable_->name());
+    for (auto var : fitTargets_)
+        Messenger::print("  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble());
+    for (auto var : constants_)
+        Messenger::print("  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble());
     Messenger::print("\n");
 
     // Check number of variable parameters
-    if (fitTargets_.nItems() > 0)
+    if (fitTargets_.size() > 0)
     {
         // Create a minimiser
         MonteCarloMinimiser<Fit1DProcedureNode> mcMinimiser(*this, &Fit1DProcedureNode::equationCost, true);
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
-        // 		mcMinimiser.setMinStepSize(0.001);
-        for (ExpressionVariable *var : fitTargets_)
+        for (auto var : fitTargets_)
             mcMinimiser.addTarget(var);
 
         mcMinimiser.minimise();
 
         Messenger::print("Optimised values:\n");
-        for (ExpressionVariable *var : fitTargets_)
+        for (auto var : fitTargets_)
             Messenger::print("  {:10} = {:e}\n", var->name(), var->value().asDouble());
     }
 
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
-    auto &data = GenericListHelper<Data1D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                                    GenericItem::InRestartFileFlag);
+    auto &data =
+        targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
 
     data.setName(name());
     data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));
     data.clear();
 
-    double cost = 0.0;
     const auto &x = referenceData_.xAxis();
-    bool success;
-    for (int n = 0; n < referenceData_.nValues(); ++n)
+    for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
-        xVariable_->set(x.constAt(n));
+        xVariable_->setValue(x[n]);
 
         // Add point
-        data.addPoint(x.constAt(n), equation_.asDouble());
+        data.addPoint(x[n], equation_.asDouble());
     }
 
     // Save data?
@@ -213,21 +202,14 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
                 return procPool.decideFalse();
             if (!parser.writeLineF("# Fit Equation : {}\n", equation_.expressionString()))
                 return procPool.decideFalse();
-            for (ExpressionVariable *var : equation_.variables())
-            {
-                if (var == xVariable_)
-                {
-                    if (!parser.writeLineF("#  {:10}                (axis variable)\n", var->name()))
-                        return procPool.decideFalse();
-                }
-                else if (fitTargets_.contains(var))
-                {
-                    if (!parser.writeLineF("#  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble()))
-                        return procPool.decideFalse();
-                }
-                else if (!parser.writeLineF("#  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble()))
+            if (!parser.writeLineF("#  {:10}                (axis variable)\n", xVariable_->name()))
+                return procPool.decideFalse();
+            for (auto var : fitTargets_)
+                if (!parser.writeLineF("#  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble()))
                     return procPool.decideFalse();
-            }
+            for (auto var : constants_)
+                if (!parser.writeLineF("#  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble()))
+                    return procPool.decideFalse();
 
             Data1DExportFileFormat exportFormat(name());
             if (exportFormat.exportData(data))
@@ -253,8 +235,6 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
     if (parser.nArgs() == 2)
         setName(parser.argsv(1));
 
-    ExpressionVariable *var;
-
     // Read until we encounter the EndFit1D keyword, or we fail for some reason
     while (!parser.eofOrBlank())
     {
@@ -273,22 +253,20 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
         switch (nk)
         {
             case (Fit1DProcedureNode::ConstantKeyword):
-                var = equation_.createVariableWithValue(parser.argsv(1), parser.argd(2), true);
-                if (!var)
-                    return Messenger::error("Failed to create constant.\n");
-                constants_.append(var);
+                if (getConstant(parser.argsv(1)) || getFitTarget(parser.argsv(1)))
+                    return Messenger::error("Failed to create constant, as a variable by this name already exists.\n");
+                constants_.emplace_back(std::make_shared<ExpressionVariable>(parser.argsv(1), parser.argd(2)));
                 break;
             case (Fit1DProcedureNode::EndFit1DKeyword):
                 return true;
             case (Fit1DProcedureNode::EquationKeyword):
-                if (!equation_.set(parser.argsv(1)))
+                if (!equation_.create(parser.argsv(1)))
                     return Messenger::error("Failed to create expression.\n");
                 break;
             case (Fit1DProcedureNode::FitKeyword):
-                var = equation_.createVariableWithValue(parser.argsv(1), parser.argd(2), true);
-                if (!var)
-                    return Messenger::error("Failed to create variable '{}'.\n", parser.argsv(1));
-                fitTargets_.append(var);
+                if (getConstant(parser.argsv(1)) || getFitTarget(parser.argsv(1)))
+                    return Messenger::error("Failed to create fit target, as a variable by this name already exists.\n");
+                fitTargets_.emplace_back(std::make_shared<ExpressionVariable>(parser.argsv(1), parser.argd(2)));
                 break;
             case (Fit1DProcedureNode::MethodKeyword):
                 return false;
@@ -320,14 +298,14 @@ bool Fit1DProcedureNode::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Constants
-    for (ExpressionVariable *var : constants_)
+    for (auto var : constants_)
         if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix,
                                fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(),
                                var->value().asDouble()))
             return false;
 
-    // Constants
-    for (ExpressionVariable *var : fitTargets_)
+    // Fitting targets
+    for (auto var : fitTargets_)
         if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword),
                                var->name(), var->value().asDouble()))
             return false;

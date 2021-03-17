@@ -95,7 +95,7 @@ Module  Import
   Configuration  'Bulk'
   ReadTrajectory  True
   # Trajectory file contains 95 frames
-  TrajectoryFile  xyz  '../_data/water267-dlpoly/water-267-298K.xyz'
+  TrajectoryFile  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
   EndTrajectoryFile
 EndModule
 

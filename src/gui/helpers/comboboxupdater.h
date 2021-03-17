@@ -1,29 +1,13 @@
-/*
-    *** QComboBox Updater
-    *** src/gui/helpers/comboboxupdater.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QComboBox>
+
+#include <memory>
 
 #pragma once
 
@@ -42,6 +26,25 @@ template <class I> class ComboBoxUpdater
         ListIterator<I> dataIterator(data);
         while (I *dataItem = dataIterator.iterate())
             updateItem(dataItem->name(), dataItem, dataItem == currentItem);
+
+        // If there are still rows remaining in the widget, delete them now
+        while (currentIndex_ < comboBox_->count())
+            comboBox_->removeItem(currentIndex_);
+
+        // If there is no valid current item, make sure this is reflected in the combobox
+        if (currentItem == nullptr)
+            comboBox->setCurrentIndex(indexIfNoCurrentItem);
+    }
+
+    // Update QComboBox from supplied vector assuming that class I implements a name() function for the item
+    ComboBoxUpdater(QComboBox *comboBox, const std::vector<std::unique_ptr<I>> &data, const I *currentItem, int startIndex = 0,
+                    int indexIfNoCurrentItem = -1)
+    {
+        comboBox_ = comboBox;
+        currentIndex_ = startIndex;
+
+        for (const auto &dataItem : data)
+            updateItem(dataItem->name(), dataItem.get(), dataItem.get() == currentItem);
 
         // If there are still rows remaining in the widget, delete them now
         while (currentIndex_ < comboBox_->count())

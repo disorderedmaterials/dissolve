@@ -1,23 +1,5 @@
-/*
-    *** Base Viewer - Renderable Data
-    *** src/gui/viewer_renderables.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -37,32 +19,18 @@ void BaseViewer::clear()
     view_.clear();
 }
 
-// Own supplied Renderable and display it
-void BaseViewer::ownRenderable(Renderable *newRenderable)
-{
-    // Warn if an existing Renderable has the same name as this one
-    if (renderable(newRenderable->name()))
-        fmt::print("A Renderable named '{}' already exists, and another with the same name is being added...\n",
-                   newRenderable->name());
-
-    // Own the new Renderable
-    renderables_.own(newRenderable);
-
-    emit(renderableAdded());
-}
-
 // Create Renderable by type and object identifier
-Renderable *BaseViewer::createRenderable(Renderable::RenderableType type, std::string_view objectTag, std::string_view name,
-                                         std::string_view groupName)
+std::shared_ptr<Renderable> BaseViewer::createRenderable(Renderable::RenderableType type, std::string_view objectTag,
+                                                         std::string_view name, std::string_view groupName)
 {
-    Renderable *renderable = RenderableFactory::create(type, objectTag);
+    auto renderable = RenderableFactory::create(type, objectTag);
     if (renderable)
     {
         // Set Renderable name
         renderable->setName(name);
 
         // Own the new Renderable
-        renderables_.own(renderable);
+        renderables_.emplace_back(renderable);
 
         // Set the group, if one was provided
         if (!groupName.empty())
@@ -74,14 +42,26 @@ Renderable *BaseViewer::createRenderable(Renderable::RenderableType type, std::s
     return renderable;
 }
 
-// Remove existing Renderable
-void BaseViewer::removeRenderable(Renderable *data)
+// Add an existing Renderable
+void BaseViewer::addRenderable(const std::shared_ptr<Renderable> &renderable)
 {
-    renderables_.remove(data);
+    renderables_.emplace_back(renderable);
 
-    postRedisplay();
+    emit(renderableAdded());
+}
 
-    emit(renderableRemoved());
+// Remove existing Renderable
+void BaseViewer::removeRenderable(const std::shared_ptr<Renderable> &renderable)
+{
+    auto it = std::remove_if(renderables_.begin(), renderables_.end(), [renderable](auto r) { return r == renderable; });
+    if (it != renderables_.end())
+    {
+        renderables_.erase(it);
+
+        postRedisplay();
+
+        emit(renderableRemoved());
+    }
 }
 
 // Clear all Renderables
@@ -95,60 +75,18 @@ void BaseViewer::clearRenderables()
     emit(renderableRemoved());
 }
 
-// Return number of Renderables
-int BaseViewer::nRenderables() const { return renderables_.nItems(); }
-
 // Return list of Renderables
-const List<Renderable> &BaseViewer::renderables() const { return renderables_; }
-
-// Return named Renderable
-Renderable *BaseViewer::renderable(std::string_view name) const
-{
-    ListIterator<Renderable> renderableIterator(renderables_);
-    while (Renderable *rend = renderableIterator.iterate())
-        if (name == rend->name())
-            return rend;
-
-    return nullptr;
-}
+const std::vector<std::shared_ptr<Renderable>> &BaseViewer::renderables() const { return renderables_; }
 
 // Return Renderable with specified objectTag (if it exists)
-Renderable *BaseViewer::renderableWithTag(std::string_view objectTag) const
+std::shared_ptr<Renderable> BaseViewer::renderableWithTag(std::string_view objectTag) const
 {
-    ListIterator<Renderable> renderableIterator(renderables_);
-    while (Renderable *rend = renderableIterator.iterate())
-        if (objectTag == rend->objectTag())
-            return rend;
+    auto it = std::find_if(renderables_.begin(), renderables_.end(),
+                           [objectTag](auto &data) { return objectTag == data->objectTag(); });
+    if (it != renderables_.end())
+        return *it;
 
     return nullptr;
-}
-
-// Set visibility of named Renderable
-void BaseViewer::setRenderableVisible(std::string_view name, bool visible)
-{
-    Renderable *rend = renderable(name);
-    if (!rend)
-    {
-        fmt::print("No Renderable named '{}' exists, so can't set its visibility.\n", name);
-        return;
-    }
-
-    rend->setVisible(visible);
-
-    postRedisplay();
-}
-
-// Return visibility of named Renderable
-bool BaseViewer::isRenderableVisible(std::string_view name) const
-{
-    Renderable *rend = renderable(name);
-    if (!rend)
-    {
-        fmt::print("No Renderable named '{}' exists, so can't get its visibility.\n", name);
-        return false;
-    }
-
-    return rend->isVisible();
 }
 
 /*
@@ -159,9 +97,9 @@ bool BaseViewer::isRenderableVisible(std::string_view name) const
 RenderableGroupManager &BaseViewer::groupManager() { return groupManager_; }
 
 // Add Renderable to specified group
-void BaseViewer::addRenderableToGroup(Renderable *rend, std::string_view group)
+void BaseViewer::addRenderableToGroup(std::shared_ptr<Renderable> &renderable, std::string_view group)
 {
-    groupManager_.addToGroup(rend, group);
+    groupManager_.addToGroup(renderable, group);
 
     emit(renderableChanged());
 }

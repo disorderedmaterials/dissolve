@@ -1,0 +1,69 @@
+parameters:
+  - name: continuous
+    default: false
+    type: boolean
+
+stages:
+  - stage: 'create_release'
+    condition: not(endsWith(variables['Build.SourceBranch'], 'pre'))
+    displayName: 'Create Release'
+    jobs:
+      - job: 'release_gh'
+        displayName: 'Create Versioned Release (GH)'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+            persistCredentials: true
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'linux-artifacts'
+            displayName: 'Download Linux Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'osx-artifacts'
+            displayName: 'Download OSX Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'windows-artifacts'
+            displayName: 'Download Windows Artifacts'
+          - bash: |
+              set -ex
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+              cd ./examples
+              ./package-examples -v ${VERSION}
+            displayName: 'Create Example Data Archives'
+          - bash: |
+              set -ex
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+              ./ci/scripts/update-release -r disorderedmaterials/dissolve -t ${VERSION} -n "${VERSION}" -f ReleaseNotes.md $(System.ArtifactsDirectory)/linux-artifacts/*AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+            condition: eq('${{ parameters.continuous }}', false)
+            env:
+              GITHUB_TOKEN: $(REPO_SECRET)
+            displayName: 'Create Versioned Release (GitHub)'
+          - bash: |
+              set -ex
+              SHORTHASH=`git rev-parse --short HEAD`
+              DATE=`date`
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+              ./ci/scripts/update-release -r disorderedmaterials/dissolve -t continuous -n "Continuous Build (${VERSION} @ ${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+            condition: eq('${{ parameters.continuous }}', true)
+            env:
+              GITHUB_TOKEN: $(REPO_SECRET)
+            displayName: 'Create Release (GitHub)'
+          - bash: |
+              set -ex
+              ./ci/scripts/list-releases -r disorderedmaterials/dissolve -u -v $(Build.SourceBranchName)
+            condition: eq('${{ parameters.continuous }}', false)
+            env:
+              GITHUB_TOKEN: $(REPO_SECRET)
+            displayName: 'Update Web Release Info'

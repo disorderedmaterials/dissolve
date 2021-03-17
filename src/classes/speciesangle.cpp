@@ -1,51 +1,20 @@
-/*
-    *** SpeciesAngle Definition
-    *** src/classes/speciesangle.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesangle.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "templates/enumhelpers.h"
 
 SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra()
 {
-    i_ = i;
-    j_ = j;
-    k_ = k;
+    assign(i, j, k);
     form_ = SpeciesAngle::NoForm;
-
-    // Add ourself to the list of bonds on each atom
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
 }
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->operator=(source); }
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
 {
-    // Detach source bond referred to by the species atoms
+    // Detach source angle referred to by the species atoms
     if (source.i_ && source.j_ && source.k_)
     {
         source.i_->removeAngle(source);
@@ -54,15 +23,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
     }
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
+    assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
 
     // Reset source data
@@ -74,15 +35,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
 SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &source)
 {
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
+    assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -96,15 +49,7 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
         detach();
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
+    assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -118,6 +63,19 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
  * Atom Information
  */
 
+// Assign the three atoms in the angle
+void SpeciesAngle::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
+{
+    i_ = i;
+    j_ = j;
+    k_ = k;
+    assert(i_ && j_ && k_);
+
+    i_->addAngle(*this);
+    j_->addAngle(*this);
+    k_->addAngle(*this);
+}
+
 // Return first SpeciesAtom
 SpeciesAtom *SpeciesAngle::i() const { return i_; }
 
@@ -130,39 +88,21 @@ SpeciesAtom *SpeciesAngle::k() const { return k_; }
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesAngle::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesAngle::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second (central) SpeciesAtom
 int SpeciesAngle::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesAngle::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
 // Return index (in parent Species) of third SpeciesAtom
 int SpeciesAngle::indexK() const
 {
-#ifdef CHECKS
-    if (k_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesAngle::indexK(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(k_);
     return k_->index();
 }
 
@@ -195,13 +135,7 @@ bool SpeciesAngle::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesAngle::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr || k_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesAngle::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_ && k_);
     return (i_->isSelected() && j_->isSelected() && k_->isSelected());
 }
 
@@ -226,14 +160,10 @@ void SpeciesAngle::detach()
 // Return enum options for AngleFunction
 EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
 {
-    static EnumOptionsList AngleFunctionOptions = EnumOptionsList() << EnumOption(SpeciesAngle::NoForm, "None", 0, 0)
-                                                                    << EnumOption(SpeciesAngle::HarmonicForm, "Harmonic", 2, 2)
-                                                                    << EnumOption(SpeciesAngle::CosineForm, "Cos", 4, 4)
-                                                                    << EnumOption(SpeciesAngle::Cos2Form, "Cos2", 4, 4);
-
-    static EnumOptions<SpeciesAngle::AngleFunction> options("AngleFunction", AngleFunctionOptions);
-
-    return options;
+    return EnumOptions<SpeciesAngle::AngleFunction>("AngleFunction", {{SpeciesAngle::NoForm, "None"},
+                                                                      {SpeciesAngle::HarmonicForm, "Harmonic", 2},
+                                                                      {SpeciesAngle::CosineForm, "Cos", 4},
+                                                                      {SpeciesAngle::Cos2Form, "Cos2", 4}});
 }
 
 // Set up any necessary parameters
@@ -268,7 +198,7 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::AngleInteraction; }
+SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::InteractionType::Angle; }
 
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
@@ -287,7 +217,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 0 : Force constant, k
          * 1 : Equilibrium angle, eq (degrees)
          */
-        double delta = (angleInDegrees - params[1]) / DEGRAD;
+        const auto delta = (angleInDegrees - params[1]) / DEGRAD;
         return 0.5 * params[0] * delta * delta;
     }
     else if (form() == SpeciesAngle::CosineForm)
@@ -301,7 +231,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 2 : Equilibrium angle, eq (degrees)
          * 3 : Sign, s
          */
-        return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2]));
+        return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2] / DEGRAD));
     }
     else if (form() == SpeciesAngle::Cos2Form)
     {
@@ -325,34 +255,42 @@ double SpeciesAngle::energy(double angleInDegrees) const
 // Return force multiplier for specified angle
 double SpeciesAngle::force(double angleInDegrees) const
 {
+    /*
+     * Force of any angle form is given via the chain rule:
+     *
+     *                    dU     dTheta
+     *     F(theta) = - ------ ----------
+     *                  dTheta cos(theta)
+     *
+     *                  dU       1
+     *              = ------ ---------
+     *                dTheta sin(theta)
+     */
+
     // Get pointer to relevant parameters array
     const auto &params = parameters();
 
     // Convert angle to radians
     const auto angleInRadians = angleInDegrees / DEGRAD;
 
-    // Set initial derivative of angle w.r.t. cos(angle) for chain rule
-    const auto dTheta_dCosTheta = -1.0 / sin(angleInDegrees / DEGRAD);
-
     if (form() == SpeciesAngle::NoForm)
         return 0.0;
     else if (form() == SpeciesAngle::HarmonicForm)
     {
         /*
-         * dU/d(theta) = k * (theta - eq)
+         * dU/dTheta = k * (theta - eq)
          *
          * Parameters:
          * 0 : Force constant, k
          * 1 : Equilibrium angle, eq (degrees)
          */
 
-        // Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
-        return dTheta_dCosTheta * -params[0] * ((angleInDegrees - params[1]) / DEGRAD);
+        return params[0] * ((angleInDegrees - params[1]) / DEGRAD) / sin(angleInRadians);
     }
     else if (form() == SpeciesAngle::CosineForm)
     {
         /*
-         * dU/d(theta) = -forcek * n * s * sin(n*theta - eq)
+         * dU/dTheta = -k * n * s * sin(n*theta - eq)
          *
          * Parameters:
          * 0 : Force constant, k
@@ -360,12 +298,13 @@ double SpeciesAngle::force(double angleInDegrees) const
          * 2 : Equilibrium angle, eq (degrees)
          * 3 : Sign, s
          */
-        return dTheta_dCosTheta * -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2] / DEGRAD);
+
+        return -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2] / DEGRAD) / sin(angleInRadians);
     }
     else if (form() == SpeciesAngle::Cos2Form)
     {
         /*
-         * dU/d(theta) = -forcek * (c1 * sin(theta) + 2 * c2 * sin(2*theta))
+         * dU/dTheta = -k * (c1 * sin(theta) + 2 * c2 * sin(2*theta))
          *
          * Parameters:
          * 0 : Force constant, k
@@ -373,7 +312,9 @@ double SpeciesAngle::force(double angleInDegrees) const
          * 2 : Constant C1
          * 3 : Constant C2
          */
-        return dTheta_dCosTheta * -params[0] * (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians));
+
+        return -params[0] * (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians)) /
+               sin(angleInRadians);
     }
 
     Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate force.\n");

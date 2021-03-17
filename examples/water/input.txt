@@ -70,7 +70,7 @@ Configuration  'Bulk'
   # Modules
   Generator
     Parameters
-      Real  rho  1.000000e-01
+      Parameter  rho  1.000000e-01
     EndParameters
     Box
       Lengths  1.000000e+00  1.000000e+00  1.000000e+00
@@ -130,12 +130,18 @@ Layer  'RDF / Neutron S(Q)'
     IntraBroadening    Gaussian  1.800000e-01
   EndModule
 
+  Module  SQ  'SQ01'
+    Frequency  1
+
+    SourceRDFs  'RDF01'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+  EndModule
+
   Module  NeutronSQ  'H2O'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
-    Isotopologue  'Bulk'  'Water'  'Natural'  1.000000
+    SourceSQs  'SQ01'
+    Isotopologue  'Water'  'Natural'  1.000000
     Reference  mint  'data/SLS18498-H2O.mint01'
     EndReference
   EndModule
@@ -143,9 +149,8 @@ Layer  'RDF / Neutron S(Q)'
   Module  NeutronSQ  'D2O'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
-    Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
+    SourceSQs  'SQ01'
+    Isotopologue  'Water'  'Deuterated'  1.000000
     Reference  mint  'data/SLS18502-D2O.mint01'
     EndReference
   EndModule
@@ -153,11 +158,10 @@ Layer  'RDF / Neutron S(Q)'
   Module  NeutronSQ  'HDO'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
+    SourceSQs  'SQ01'
     Exchangeable  HW
-    Isotopologue  'Bulk'  'Water'  'Natural'  1.000000
-    Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
+    Isotopologue  'Water'  'Natural'  1.000000
+    Isotopologue  'Water'  'Deuterated'  1.000000
     Reference  mint  'data/SLS18500-HDO5050.mint01'
     EndReference
   EndModule
@@ -169,9 +173,9 @@ Layer  'Refine (EPSR)'
   Module  EPSR  'EPSR01'
     Frequency  1
     EReq   6.00000e+00
-    Target  'H2O'  'Default'
-    Target  'D2O'  'Default'
-    Target  'HDO'  'Default'
+    Target  'H2O'
+    Target  'D2O'
+    Target  'HDO'
   EndModule
 EndLayer
 

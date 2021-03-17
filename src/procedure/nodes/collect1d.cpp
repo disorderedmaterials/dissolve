@@ -1,29 +1,10 @@
-/*
-    *** Procedure Node - Collect1D
-    *** src/procedure/nodes/collect1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/collect1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "keywords/types.h"
 #include "math/data1d.h"
 #include "procedure/nodes/calculatebase.h"
@@ -34,13 +15,13 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
     : ProcedureNode(ProcedureNode::Collect1DNode)
 {
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, observable, 0),
         "QuantityX", "Calculated observable to collect");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxBinwidthlabels),
-                  "RangeX", "Range of calculation for the specified observable");
+                  "RangeX", "Range and binwidth of the histogram for QuantityX");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantity was binned successfully");
 
@@ -115,8 +96,7 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
     bool created;
-    auto &target =
-        GenericListHelper<Histogram1D>::realise(targetList, dataName, prefix, GenericItem::InRestartFileFlag, &created);
+    auto &target = targetList.realise<Histogram1D>(dataName, prefix, GenericItem::InRestartFileFlag, &created);
     if (created)
     {
         Messenger::printVerbose("One-dimensional histogram data for '{}' was not in the target list, so it will now be "
@@ -147,13 +127,8 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                    std::string_view prefix, GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!xObservable_)
-    {
-        Messenger::error("No CalculateProcedureNodeBase pointer set in Collect1DProcedureNode '{}'.\n", name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(xObservable_);
+
     // Bin the current value of the observable, and execute sub-collection branch on success
     if (histogram_->bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
@@ -165,13 +140,8 @@ ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &
 bool Collect1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!histogram_)
-    {
-        Messenger::error("No Data1D pointer set in Collect1DProcedureNode '{}'.\n", name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(histogram_);
+
     // Accumulate the current binned data
     histogram_->accumulate();
 

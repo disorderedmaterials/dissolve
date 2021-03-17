@@ -1,23 +1,5 @@
-/*
-    *** Renderable - Configuration
-    *** src/gui/render/renderableconfiguration.h
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,7 +13,7 @@ class Axes;
 class RenderableConfiguration : public Renderable
 {
     public:
-    RenderableConfiguration(const Configuration *source, std::string_view objectTag);
+    RenderableConfiguration(const Configuration *source);
     ~RenderableConfiguration();
 
     /*
@@ -71,8 +53,8 @@ class RenderableConfiguration : public Renderable
 
     private:
     // Create cylinder bond between supplied atoms in specified assembly
-    void createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j, const Vec3<double> vij,
-                            bool drawFromAtoms, double radialScaling);
+    void createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                            const Vec3<double> vij, bool drawFromAtoms, double radialScaling);
 
     protected:
     // Recreate necessary primitives / primitive assemblies for the data

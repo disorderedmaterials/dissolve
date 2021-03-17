@@ -1,25 +1,9 @@
-/*
-    *** CalculateAngle Module Widget - Functions
-    *** src/modules/calculate_angle/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
 #include "modules/calculate_angle/angle.h"
 #include "modules/calculate_angle/gui/modulewidget.h"
 
@@ -118,46 +102,6 @@ void CalculateAngleModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateAngleModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfABGraph_->writeSession(parser))
-        return false;
-    if (!rdfBCGraph_->writeSession(parser))
-        return false;
-    if (!angleGraph_->writeSession(parser))
-        return false;
-    if (!dAngleABGraph_->writeSession(parser))
-        return false;
-    if (!dAngleBCGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateAngleModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfABGraph_->readSession(parser))
-        return false;
-    if (!rdfBCGraph_->readSession(parser))
-        return false;
-    if (!angleGraph_->readSession(parser))
-        return false;
-    if (!dAngleABGraph_->readSession(parser))
-        return false;
-    if (!dAngleBCGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -177,30 +121,30 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
         return;
 
     // Calculated A...B RDF
-    auto *rdfAB = rdfABGraph_->createRenderable(
+    auto rdfAB = rdfABGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(AB)", module_->uniqueName(), cfg->niceName()),
         "B...C g(r)");
     rdfAB->setColour(StockColours::BlueStockColour);
 
     // Calculated B...C RDF
-    auto *rdfBC = rdfBCGraph_->createRenderable(
+    auto rdfBC = rdfBCGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()),
         "B...C g(r)");
     rdfBC->setColour(StockColours::BlueStockColour);
 
     // Calculated angle histogram
-    auto *angle = angleGraph_->createRenderable(
+    auto angle = angleGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
         "A-B...C Angle");
     angle->setColour(StockColours::RedStockColour);
 
     // Calculated (A-B)-C distance-angle map
-    auto *dAngleAB = dAngleABGraph_->createRenderable(
-        Renderable::Data2DRenderable, fmt::format("{}//Process2D//{}//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()),
-        "A-B vs A-B-C");
+    dAngleABGraph_->createRenderable(Renderable::Data2DRenderable,
+                                     fmt::format("{}//Process2D//{}//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()),
+                                     "A-B vs A-B-C");
 
     // Calculated A-(B-C) distance-angle map
-    auto *dAngleBC = dAngleBCGraph_->createRenderable(
-        Renderable::Data2DRenderable, fmt::format("{}//Process2D//{}//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()),
-        "B-C vs A-B-C");
+    dAngleBCGraph_->createRenderable(Renderable::Data2DRenderable,
+                                     fmt::format("{}//Process2D//{}//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()),
+                                     "B-C vs A-B-C");
 }

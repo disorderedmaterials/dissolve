@@ -1,23 +1,5 @@
-/*
-    *** IntraFormComboDelegate Functions
-    *** src/gui/delegates/intraformcombo_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesbond.h"
 #include "gui/delegates/combolist.hui"
@@ -26,7 +8,8 @@
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms)
+IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items,
+                                               const std::vector<MasterIntra> &masterTerms)
     : QItemDelegate(parent), masterTerms_(masterTerms)
 {
     items_ = items;
@@ -47,7 +30,7 @@ QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptio
         editor->addItem(items_->currentItemText());
 
     // Now append any MasterBonds we have
-    if (masterTerms_.nItems() > 0)
+    if (!masterTerms_.empty())
         ComboNameListPopulator<MasterIntra>(editor, masterTerms_, "@", true);
 
     return editor;
@@ -62,7 +45,7 @@ void IntraFormComboDelegate::setEditorData(QWidget *editor, const QModelIndex &i
     // Get the current text and search for it in the combo
     QString value = index.model()->data(index, Qt::EditRole).toString();
 
-    for (int n = 0; n < comboBox->count(); ++n)
+    for (auto n = 0; n < comboBox->count(); ++n)
     {
         if (comboBox->itemText(n) == value)
         {

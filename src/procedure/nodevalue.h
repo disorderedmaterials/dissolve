@@ -1,32 +1,10 @@
-/*
-    *** Node Value
-    *** src/procedure/nodevalue.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "expression/expression.h"
-#include "templates/reflist.h"
-
-// Forward Declarations
-class Configuration;
-class LineParser;
+#include "templates/optionalref.h"
 
 // Node Value
 class NodeValue
@@ -35,7 +13,8 @@ class NodeValue
     NodeValue();
     NodeValue(const int i);
     NodeValue(const double d);
-    NodeValue(std::string_view expressionText, RefList<ExpressionVariable> parameters);
+    NodeValue(std::string_view expressionText,
+              OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters = std::nullopt);
     ~NodeValue();
     void operator=(const int value);
     void operator=(const double value);
@@ -67,7 +46,8 @@ class NodeValue
     // Set double value
     bool set(double value);
     // Set from expression text
-    bool set(std::string_view expressionText, RefList<ExpressionVariable> parameters);
+    bool set(std::string_view expressionText,
+             OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters = std::nullopt);
     // Return whether value is currently valid
     bool isValid() const;
 

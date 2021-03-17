@@ -1,23 +1,5 @@
-/*
-    *** Calculate Axis Angle Module - Initialisation
-    *** src/modules/calculate_axisangle/init.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
 #include "modules/calculate_axisangle/axisangle.h"
@@ -139,7 +121,6 @@ void CalculateAxisAngleModule::initialise()
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
     RefList<const SelectProcedureNode> sitePopulationNormalisers;
     sitePopulationNormalisers.append(selectA_);
-    // 	sitePopulationNormalisers.append(selectB_);
     rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));
     rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
     rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
@@ -170,24 +151,22 @@ void CalculateAxisAngleModule::initialise()
      * Keywords (including those exposed from the ProcedureNodes)
      */
 
-    // Calculation
+    // Control
     keywords_.add(
-        "Calculation",
+        "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
         "DistanceRange", "Range (min, max, binwidth) of distance axis", "<min> <max> <binwidth> (Angstroms)");
     keywords_.add(
-        "Calculation",
+        "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
         "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
-
-    // Sites
-    keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA",
+    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
                    "Add site(s) which represent 'A' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Sites", calcAngle->keywords().find("AxisI"), "AxisA", "Axis to use from site A");
-    keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB",
+    keywords_.link("Control", calcAngle->keywords().find("AxisI"), "AxisA", "Axis to use from site A");
+    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
                    "Add site(s) which represent 'B' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Sites", calcAngle->keywords().find("AxisJ"), "AxisB", "Axis to use from site B");
-    keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule",
+    keywords_.link("Control", calcAngle->keywords().find("AxisJ"), "AxisB", "Axis to use from site B");
+    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMolecule",
                   "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
 
     // Export

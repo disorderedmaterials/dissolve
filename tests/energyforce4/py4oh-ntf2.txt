@@ -334,7 +334,7 @@ Configuration  'Py4OH-NTf2'
       Positioning  Random
     EndAddSpecies
   EndGenerator
-    InputCoordinates  moscito  'py4oh/py4oh-ntf2-final.str'
+    InputCoordinates  moscito  '../_data/moscito/py4oh_impropers/py4oh-ntf2-final.str'
     EndInputCoordinates
 
   Temperature  298.150000
@@ -360,7 +360,7 @@ Layer  'Processing'
     Module Forces
     Test  On
     Configuration  'Py4OH-NTf2'
-    TestReference  moscito  'py4oh/py4oh-ntf2-final.str'
+    TestReference  moscito  '../_data/moscito/py4oh_impropers/py4oh-ntf2-final.str'
     EndTestReference
     TestThreshold  5.0e-3
     EndModule

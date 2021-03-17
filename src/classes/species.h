@@ -1,23 +1,5 @@
-/*
-    *** Species Definition
-    *** src/classes/species.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -32,6 +14,7 @@
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
 #include "templates/objectstore.h"
+#include <list>
 #include <memory>
 
 // Forward Declarations
@@ -39,7 +22,7 @@ class Box;
 class Forcefield;
 
 // Species Definition
-class Species : public ListItem<Species>, public ObjectStore<Species>
+class Species
 {
     public:
     Species();
@@ -73,37 +56,35 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
      */
     private:
     // List of Atoms in the Species
-    List<SpeciesAtom> atoms_;
-    // Version of the atom types
-    VersionCounter atomTypesVersion_;
+    std::list<SpeciesAtom> atoms_;
     // List of selected Atoms
     RefList<SpeciesAtom> selectedAtoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
     // List of AtomTypes, and their populations, used in the Species
     AtomTypeList usedAtomTypes_;
-    // Point at which the used atom types list was last update
-    int usedAtomTypesPoint_;
 
     public:
     // Add a new atom to the Species
-    SpeciesAtom *addAtom(Element *element, Vec3<double> r, double q = 0.0);
+    SpeciesAtom &addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
     // Remove the specified atom from the species
     void removeAtom(SpeciesAtom *i);
     // Return the number of atoms in the species
     int nAtoms() const;
     // Return the first atom in the Species
-    SpeciesAtom *firstAtom() const;
+    const SpeciesAtom &firstAtom() const;
     // Return the nth atom in the Species
-    SpeciesAtom *atom(int n);
-    // Return the list of atoms
-    const List<SpeciesAtom> &atoms() const;
+    SpeciesAtom &atom(int n);
+    const SpeciesAtom &atom(int n) const;
+    // Return a reference to the vector of atoms
+    const std::list<SpeciesAtom> &atoms() const;
+    std::list<SpeciesAtom> &atoms();
     // Set coordinates of specified atom
     void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
     // Set coordinates of specified atom (by index and individual coordinates)
     void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
-    void transmuteAtom(SpeciesAtom *i, Element *el);
+    void transmuteAtom(SpeciesAtom *i, Elements::Element newZ);
     // Clear current atom selection
     void clearAtomSelection();
     // Add atom to selection
@@ -126,14 +107,14 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     int atomSelectionVersion() const;
     // Return total atomic mass of Species
     double mass() const;
-    // Bump AtomTypes version
-    void bumpAtomTypesVersion();
-    // Update and return used AtomTypesList
-    const AtomTypeList &usedAtomTypes();
+    // Update used atom types
+    void updateUsedAtomTypes();
+    // Return used atom types list
+    const AtomTypeList &usedAtomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
-    // Return total charge of species from local atomic charges
-    double totalChargeOnAtoms();
+    // Return total charge of species from local/atomtype atomic charges
+    double totalCharge(bool useAtomTypes);
 
     /*
      * Intramolecular Data
@@ -165,16 +146,14 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     int nBonds() const;
     // Return array of SpeciesBond
     std::vector<SpeciesBond> &bonds();
-    // Return array of SpeciesBonds (const)
-    const std::vector<SpeciesBond> &constBonds() const;
+    const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
     bool hasBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
+    OptionalReferenceWrapper<const SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
-    // Return the SpeciesBond between the specified SpeciesAtoms (const)
-    OptionalReferenceWrapper<const SpeciesBond> getConstBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
     // Add new SpeciesAngle definition
@@ -185,8 +164,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     int nAngles() const;
     // Return array of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
-    // Return array of SpeciesAngle (const)
-    const std::vector<SpeciesAngle> &constAngles() const;
+    const std::vector<SpeciesAngle> &angles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
     bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
     // Return the SpeciesAngle between the specified SpeciesAtoms
@@ -201,8 +179,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     int nTorsions() const;
     // Return array of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
-    // Return array of SpeciesTorsion (const)
-    const std::vector<SpeciesTorsion> &constTorsions() const;
+    const std::vector<SpeciesTorsion> &torsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
     bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesTorsion between the specified SpeciesAtoms
@@ -217,8 +194,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     int nImpropers() const;
     // Return array of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
-    // Return array of SpeciesImproper (const)
-    const std::vector<SpeciesImproper> &constImpropers() const;
+    const std::vector<SpeciesImproper> &impropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists
     bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
@@ -259,16 +235,14 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     private:
     // Natural Isotopologue
     Isotopologue naturalIsotopologue_;
-    // Point at which natural Isotopologue was last updated
-    int naturalIsotopologuePoint_;
     // List of isotopic variants defined for this species
     List<Isotopologue> isotopologues_;
 
     public:
     // Update current Isotopologues
-    void updateIsotopologues();
-    // Update and return natural isotopologue
-    Isotopologue *naturalIsotopologue();
+    void updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes = std::nullopt);
+    // Return natural (empty) Isotopologue
+    const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species
     Isotopologue *addIsotopologue(std::string_view baseName);
     // Remove specified Isotopologue from this Species
@@ -284,7 +258,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Generate unique Isotopologue name with base name provided
     std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = nullptr);
     // Search for Isotopologue by name
-    Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr);
+    const Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr) const;
     // Return index of specified Isotopologue
     int indexOfIsotopologue(const Isotopologue *iso) const;
 
@@ -293,7 +267,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
      */
     private:
     // List of defined sites
-    List<SpeciesSite> sites_;
+    std::vector<SpeciesSite> sites_;
 
     public:
     // Add a new SpeciesSite to this Species
@@ -303,13 +277,16 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Return number of defined SpeciesSites
     int nSites() const;
     // Return SpeciesSite List
-    const List<SpeciesSite> &sites() const;
+    const std::vector<SpeciesSite> &sites() const;
+    std::vector<SpeciesSite> &sites();
+
     // Return nth SpeciesSite defined
-    SpeciesSite *site(int n);
+    SpeciesSite &site(int n);
     // Generate unique site name with base name provided
     std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = nullptr) const;
     // Search for SpeciesSite by name
-    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    OptionalReferenceWrapper<const SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    OptionalReferenceWrapper<SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
 
     /*
      * Transforms
@@ -368,8 +345,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
         ImproperKeyword,       /* 'Improper' - Define an Improper interaction between four atoms */
         IsotopologueKeyword,   /* 'Isotopologue' - Add an isotopologue to the Species */
         SiteKeyword,           /* 'Site' - Define an analysis site within the Species */
-        TorsionKeyword,        /* 'Torsion' - Define a Torsion interaction between four atoms */
-        nSpeciesKeywords       /* Number of keywords defined for this block */
+        TorsionKeyword         /* 'Torsion' - Define a Torsion interaction between four atoms */
     };
     // Return enum option info for SpeciesKeyword
     static EnumOptions<Species::SpeciesKeyword> keywords();

@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - AddSpecies
-    *** src/procedure/nodes/addspecies.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/addspecies.h"
 #include "base/lineparser.h"
@@ -33,17 +15,17 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue populati
     : ProcedureNode(ProcedureNode::AddSpeciesNode)
 {
     // Set up keywords
-    keywords_.add("Target", new SpeciesKeyword(sp), "Species", "Target species to add");
-    keywords_.add("Target", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
+    keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
+    keywords_.add("Control", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
     keywords_.add(
-        "Target",
+        "Control",
         new EnumOptionsKeyword<AddSpeciesProcedureNode::BoxActionStyle>(boxActionStyles() = AddSpeciesProcedureNode::AddVolume),
         "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
                   "Density", "Density at which to add the target species");
-    keywords_.add("Positioning", new BoolKeyword(true), "Rotate", "Whether to rotate molecules on insertion");
-    keywords_.add("Positioning",
+    keywords_.add("Control", new BoolKeyword(true), "Rotate", "Whether to randomly rotate molecules on insertion");
+    keywords_.add("Control",
                   new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(
                       positioningTypes() = AddSpeciesProcedureNode::RandomPositioning),
                   "Positioning", "Positioning type for individual molecules");
@@ -71,27 +53,19 @@ bool AddSpeciesProcedureNode::mustBeNamed() const { return false; }
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::boxActionStyles()
 {
-    static EnumOptionsList BoxActionStyleKeywords = EnumOptionsList()
-                                                    << EnumOption(AddSpeciesProcedureNode::None, "None")
-                                                    << EnumOption(AddSpeciesProcedureNode::AddVolume, "AddVolume")
-                                                    << EnumOption(AddSpeciesProcedureNode::ScaleVolume, "ScaleVolume");
-
-    static EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> options("BoxAction", BoxActionStyleKeywords);
-
-    return options;
+    return EnumOptions<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction",
+                                                                {{AddSpeciesProcedureNode::None, "None"},
+                                                                 {AddSpeciesProcedureNode::AddVolume, "AddVolume"},
+                                                                 {AddSpeciesProcedureNode::ScaleVolume, "ScaleVolume"}});
 }
 
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::positioningTypes()
 {
-    static EnumOptionsList PositioningTypeKeywords = EnumOptionsList()
-                                                     << EnumOption(AddSpeciesProcedureNode::CentralPositioning, "Central")
-                                                     << EnumOption(AddSpeciesProcedureNode::CurrentPositioning, "Current")
-                                                     << EnumOption(AddSpeciesProcedureNode::RandomPositioning, "Random");
-
-    static EnumOptions<AddSpeciesProcedureNode::PositioningType> options("PositioningType", PositioningTypeKeywords);
-
-    return options;
+    return EnumOptions<AddSpeciesProcedureNode::PositioningType>("PositioningType",
+                                                                 {{AddSpeciesProcedureNode::CentralPositioning, "Central"},
+                                                                  {AddSpeciesProcedureNode::CurrentPositioning, "Current"},
+                                                                  {AddSpeciesProcedureNode::RandomPositioning, "Random"}});
 }
 
 /*
@@ -215,8 +189,8 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     Vec3<double> r, cog, newCentre, fr;
     CoordinateSet *coordSet = sp->coordinateSets().first();
     Matrix3 transform;
-    const Box *box = cfg->box();
-    for (int n = 0; n < requestedPopulation; ++n)
+    const auto *box = cfg->box();
+    for (auto n = 0; n < requestedPopulation; ++n)
     {
         // Add the Molecule
         std::shared_ptr<Molecule> mol = cfg->addMolecule(sp, coordSet);

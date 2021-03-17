@@ -1,23 +1,5 @@
-/*
-    *** CalculateSDF Module - Initialisation
-    *** src/modules/calculate_sdf/init.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
 #include "modules/calculate_sdf/sdf.h"
@@ -113,27 +95,25 @@ void CalculateSDFModule::initialise()
      * Keywords (including those exposed from the ProcedureNodes)
      */
 
-    // Calculation
-    keywords_.add("Calculation",
+    // Control
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                         Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
                   "RangeX", "Range along X axis", "<min> <max> <delta> (Angstroms)");
-    keywords_.add("Calculation",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                         Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
                   "RangeY", "Range along Y axis", "<min> <max> <delta> (Angstroms)");
-    keywords_.add("Calculation",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                         Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range along Z axis", "<min> <max> <delta> (Angstroms)");
-
-    // Sites
-    keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA",
+    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
                    "Set the site(s) 'A' which are to represent the origin of the SDF", "<Species> <Site>");
-    keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB",
+    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
                    "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
                    "<Species> <Site>");
-    keywords_.add("Sites", new BoolKeyword(true), "ExcludeSameMolecule",
+    keywords_.add("Control", new BoolKeyword(true), "ExcludeSameMolecule",
                   "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 
     // Export

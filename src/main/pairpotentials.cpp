@@ -1,26 +1,7 @@
-/*
-    *** Dissolve - PairPotentials
-    *** src/main/pairpotentials.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 
 // Set maximum distance for tabulated PairPotentials
@@ -155,7 +136,7 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
             std::string itemName = fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
             if (!processingModuleData_.contains(itemName, "Dissolve"))
                 continue;
-            pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
+            pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve", Data1D()));
         }
     }
 

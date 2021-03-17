@@ -1,23 +1,5 @@
-/*
-    *** Isotopologues Definition
-    *** src/classes/isotopologues.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/isotopologues.h"
 #include "base/lineparser.h"
@@ -27,7 +9,8 @@
 #include "classes/species.h"
 #include <algorithm>
 
-Isotopologues::Isotopologues(Species *species, int speciesPopulation) : species_(species), speciesPopulation_(speciesPopulation)
+Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
+    : species_(species), speciesPopulation_(speciesPopulation)
 {
 }
 
@@ -38,14 +21,14 @@ Isotopologues::~Isotopologues() {}
  */
 
 // Set associated Species
-void Isotopologues::setSpecies(Species *sp, int population)
+void Isotopologues::setSpecies(const Species *sp, int population)
 {
     species_ = sp;
     speciesPopulation_ = population;
 }
 
 // Return associated Species
-Species *Isotopologues::species() const { return species_; }
+const Species *Isotopologues::species() const { return species_; }
 
 // Return associated Species population
 int Isotopologues::speciesPopulation() const { return speciesPopulation_; }
@@ -157,8 +140,7 @@ bool Isotopologues::contains(const Isotopologue *iso) const
 // Return Isotopologue/weight mix
 std::vector<IsotopologueWeight> &Isotopologues::mix() { return mix_; }
 
-// Return Isotopologue/weight mix (const)
-const std::vector<IsotopologueWeight> &Isotopologues::constMix() const { return mix_; }
+const std::vector<IsotopologueWeight> &Isotopologues::mix() const { return mix_; }
 
 // Return number of Isotopologues in list
 int Isotopologues::nIsotopologues() const { return mix_.size(); }
@@ -205,7 +187,7 @@ bool Isotopologues::read(LineParser &parser, CoreData &coreData)
     speciesPopulation_ = parser.argi(1);
     auto nIso = parser.argi(2);
     mix_.clear();
-    for (int n = 0; n < nIso; ++n)
+    for (auto n = 0; n < nIso; ++n)
     {
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
@@ -261,15 +243,15 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
     int nIso = mix_.size();
     if (!procPool.broadcast(nIso, root))
         return false;
-    int topIndex;
+    std::string topeName;
     double weight;
     if (procPool.poolRank() == root)
     {
-        for (int n = 0; n < nIso; ++n)
+        for (auto n = 0; n < nIso; ++n)
         {
-            // Broadcast Isotopologue index data
-            topIndex = species_->indexOfIsotopologue(mix_[n].isotopologue());
-            if (!procPool.broadcast(topIndex, root))
+            // Broadcast Isotopologue
+            topeName = mix_[n].isotopologue()->name();
+            if (!procPool.broadcast(topeName, root))
                 return false;
 
             // Broadcast relative population data
@@ -281,10 +263,10 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
     else
     {
         mix_.clear();
-        for (int n = 0; n < nIso; ++n)
+        for (auto n = 0; n < nIso; ++n)
         {
             // Broadcast Isotopologue index data
-            if (!procPool.broadcast(topIndex, root))
+            if (!procPool.broadcast(topeName, root))
                 return false;
 
             // Broadcast relative population data
@@ -292,7 +274,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
                 return false;
 
             // Add mix data
-            mix_.emplace_back(species_->isotopologue(topIndex), weight);
+            mix_.emplace_back(species_->findIsotopologue(topeName), weight);
         }
     }
 #endif

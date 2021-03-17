@@ -1,25 +1,8 @@
-/*
-    *** CalculateRDF Module Widget - Functions
-    *** src/modules/calculate_rdf/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 
@@ -57,30 +40,6 @@ void CalculateRDFModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateRDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateRDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -97,9 +56,9 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
     for (const auto *cfg : module_->targetConfigurations())
     {
         // Calculated RDF
-        auto *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
-                                                fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
+        auto rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
+                                               fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
+                                               fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
         rdf->setColour(StockColours::BlueStockColour);
     }
 }

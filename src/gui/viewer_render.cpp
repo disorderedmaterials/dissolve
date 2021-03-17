@@ -1,23 +1,5 @@
-/*
-    *** Base Viewer - Rendering
-    *** src/gui/viewer_render.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "base/sysfunc.h"
@@ -156,7 +138,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         if (fontInstance_.fontOK())
         {
             fontInstance_.setFaceSize(1);
-            for (int axis = 0; axis < 3; ++axis)
+            for (auto axis = 0; axis < 3; ++axis)
                 if (view_.axes().visible(axis) && (axis != skipAxis))
                 {
                     view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse,
@@ -172,14 +154,14 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         glLoadMatrixd(viewMatrix.matrix());
         glDisable(GL_LIGHTING);
         glEnable(GL_LINE_SMOOTH);
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
                 view_.axes().gridLineMinorPrimitive(axis).sendToGL();
                 updateQuery(BaseViewer::GridLineMinorObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
             }
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
@@ -189,7 +171,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 
         // -- Reset line style, ensure polygons are now filled, and render the axis lines
         LineStyle().sendToGL(pixelScaling_);
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().axisPrimitive(axis).sendToGL();
@@ -204,7 +186,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         enableClipping();
 
     // Draw all Renderables
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (auto &rend : renderables_)
     {
         // If the Renderable is hidden, don't draw it!
         if (!rend->isVisible())
@@ -307,21 +289,6 @@ void BaseViewer::setupGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-    // Configure fog effects
-    //	glFogi(GL_FOG_MODE, GL_LINEAR);
-    //	prefs.copyColour(Prefs::BackgroundColour, col);
-    //	glFogfv(GL_FOG_COLOR, col);
-    //	glFogf(GL_FOG_DENSITY, 0.35f);
-    //	glHint(GL_FOG_HINT, GL_NICEST);
-    //	glFogi(GL_FOG_START, prefs.depthNear());
-    //	glFogi(GL_FOG_END, prefs.depthFar());
-    //	glEnable(GL_FOG);
-    glDisable(GL_FOG);
-
-    // Configure face culling
-    // 	glCullFace(GL_BACK);
-    // 	glEnable(GL_CULL_FACE);
 }
 
 /*
@@ -411,7 +378,7 @@ void BaseViewer::enableClipping()
 
     // Loop over axes
     Vec3<double> translation;
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         translation.zero();
 
@@ -498,9 +465,9 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
     // Loop over tiles in x and y
     QProgressDialog progress("Generating tiled image", "Cancel", 0, nX * nY);
     progress.setWindowTitle("Dissolve");
-    for (int x = 0; x < nX; ++x)
+    for (auto x = 0; x < nX; ++x)
     {
-        for (int y = 0; y < nY; ++y)
+        for (auto y = 0; y < nY; ++y)
         {
             // Set progress value and check for cancellation
             if (progress.wasCanceled())
@@ -517,7 +484,6 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 
             // Paste this tile into the main image
             painter.drawImage(x * tileWidth, imageHeight - (y + 1) * tileHeight, tile);
-            // 			tile.save(QString("tile-%1x%2.png").arg(x).arg(y), "png");
         }
         if (progress.wasCanceled())
             break;

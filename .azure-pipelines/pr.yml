@@ -10,6 +10,8 @@ pr:
     - examples/*
     - web/*
     - README.md
+    - .azure-pipelines/continuous.yml
+    - .azure-pipelines/release.yml
 
 stages:
   - template: templates/code-quality-checks.yml
@@ -28,15 +30,12 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
             parameters:
-              extraflags: '-DCHECKS:bool=true'
+              extraflags: '-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug'
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
-          - bash: |
-              cp build/bin/dissolve tests/
-            displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "tests/"
+              PathtoPublish: "build/"
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
@@ -48,16 +47,16 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-parallel.yml
-          - bash: |
-              cp build-parallel/bin/dissolve-mpi tests/
-            displayName: 'Copy Executable'
+            parameters:
+              extraflags: '-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug'
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "tests/"
+              PathtoPublish: "build/"
               ArtifactName: 'linux-tests-parallel'
             displayName: 'Publish Parallel Test Artifacts'
       - job: 'osx_serialgui'
         displayName: 'Build OSX (Serial/GUI, macos-latest)'
+        timeoutInMinutes: 120
         pool:
           vmImage: 'macos-latest' 
         steps:
@@ -73,6 +72,7 @@ stages:
             displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
+        timeoutInMinutes: 120
         pool:
           vmImage: 'windows-latest' 
         steps:

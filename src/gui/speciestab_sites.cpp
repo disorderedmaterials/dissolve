@@ -1,23 +1,5 @@
-/*
-    *** SpeciesTab Functions - Sites
-    *** src/gui/speciestab_sites.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "gui/helpers/listwidgetupdater.h"
@@ -53,7 +35,8 @@ void SpeciesTab::setCurrentSiteFromViewer()
         return;
 
     // Sanity check that the displayed site actually exists in our species
-    if (!species_->sites().contains(displayedSite))
+    if (std::find_if(species_->sites().begin(), species_->sites().end(),
+                     [displayedSite](const auto &p) { return &p == displayedSite; }) == species_->sites().end())
         return;
 
     // Update the site list
@@ -175,24 +158,24 @@ void SpeciesTab::updateSitesTab()
 
     // Set origin atom indices
     Array<int> originAtoms = site->originAtomIndices();
-    QString originText = originAtoms.nItems() == 0 ? QString() : QString::number(originAtoms.constAt(0) + 1);
-    for (int n = 1; n < originAtoms.nItems(); ++n)
-        originText += QString(" %1").arg(originAtoms.constAt(n) + 1);
+    QString originText = originAtoms.nItems() == 0 ? QString() : QString::number(originAtoms.at(0) + 1);
+    for (auto n = 1; n < originAtoms.nItems(); ++n)
+        originText += QString(" %1").arg(originAtoms.at(n) + 1);
     ui_.SiteOriginAtomsEdit->setText(originText);
     ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
     // Set x axis atom indices
     Array<int> xAxisAtoms = site->xAxisAtomIndices();
-    QString xAxisText = xAxisAtoms.nItems() == 0 ? QString() : QString::number(xAxisAtoms.constAt(0) + 1);
-    for (int n = 1; n < xAxisAtoms.nItems(); ++n)
-        xAxisText += QString(" %1").arg(xAxisAtoms.constAt(n) + 1);
+    QString xAxisText = xAxisAtoms.nItems() == 0 ? QString() : QString::number(xAxisAtoms.at(0) + 1);
+    for (auto n = 1; n < xAxisAtoms.nItems(); ++n)
+        xAxisText += QString(" %1").arg(xAxisAtoms.at(n) + 1);
     ui_.SiteXAxisAtomsEdit->setText(xAxisText);
 
     // Set y axis atom indices
     Array<int> yAxisAtoms = site->yAxisAtomIndices();
-    QString yAxisText = yAxisAtoms.nItems() == 0 ? QString() : QString::number(yAxisAtoms.constAt(0) + 1);
-    for (int n = 1; n < yAxisAtoms.nItems(); ++n)
-        yAxisText += QString(" %1").arg(yAxisAtoms.constAt(n) + 1);
+    QString yAxisText = yAxisAtoms.nItems() == 0 ? QString() : QString::number(yAxisAtoms.at(0) + 1);
+    for (auto n = 1; n < yAxisAtoms.nItems(); ++n)
+        yAxisText += QString(" %1").arg(yAxisAtoms.at(n) + 1);
     ui_.SiteYAxisAtomsEdit->setText(yAxisText);
 
     // If the current site has changed, also regenerate the SpeciesSite renderable

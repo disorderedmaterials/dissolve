@@ -1,23 +1,5 @@
-/*
-    *** Renderable Data
-    *** src/gui/view/render/renderable.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/renderable.h"
 #include "base/lineparser.h"
@@ -34,17 +16,12 @@ RefList<Renderable> Renderable::instances_;
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
-    static EnumOptionsList RenderableTypeOptions = EnumOptionsList()
-                                                   << EnumOption(Renderable::ConfigurationRenderable, "Configuration")
-                                                   << EnumOption(Renderable::Data1DRenderable, "Data1D")
-                                                   << EnumOption(Renderable::Data2DRenderable, "Data2D")
-                                                   << EnumOption(Renderable::Data3DRenderable, "Data3D")
-                                                   << EnumOption(Renderable::SpeciesRenderable, "Species")
-                                                   << EnumOption(Renderable::SpeciesSiteRenderable, "SpeciesSite");
-
-    static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
-
-    return options;
+    return EnumOptions<Renderable::RenderableType>("ErrorType", {{Renderable::ConfigurationRenderable, "Configuration"},
+                                                                 {Renderable::Data1DRenderable, "Data1D"},
+                                                                 {Renderable::Data2DRenderable, "Data2D"},
+                                                                 {Renderable::Data3DRenderable, "Data3D"},
+                                                                 {Renderable::SpeciesRenderable, "Species"},
+                                                                 {Renderable::SpeciesSiteRenderable, "SpeciesSite"}});
 }
 
 Renderable::Renderable(Renderable::RenderableType type, std::string_view objectTag)
@@ -60,7 +37,7 @@ Renderable::Renderable(Renderable::RenderableType type, std::string_view objectT
     objectTag_ = objectTag;
 
     // Group
-    group_ = nullptr;
+    group_ = std::nullopt;
 
     // Transform
     valuesTransformDataVersion_ = -1;
@@ -95,7 +72,7 @@ Renderable::~Renderable() { instances_.remove(this); }
 void Renderable::setName(std::string_view name) { name_ = name; }
 
 // Return name of Renderable
-std::string_view Renderable::name() { return name_; }
+std::string_view Renderable::name() const { return name_; }
 
 // Return type of Renderable
 Renderable::RenderableType Renderable::type() const { return type_; }
@@ -251,10 +228,13 @@ bool Renderable::yRangeOverX(double xMin, double xMax, double &yMin, double &yMa
  */
 
 // Set group that this Renderable is associated to
-void Renderable::setGroup(RenderableGroup *group) { group_ = group; }
+void Renderable::setGroup(RenderableGroup &group) { group_ = group; }
+
+// Remove the renderagle's group association
+void Renderable::unSetGroup() { group_ = std::nullopt; }
 
 // Return group that this Renderable is associated to
-RenderableGroup *Renderable::group() const { return group_; }
+OptionalReferenceWrapper<RenderableGroup> Renderable::group() const { return group_; }
 
 /*
  * Style
@@ -267,7 +247,7 @@ void Renderable::setVisible(bool visible) { visible_ = visible; }
 bool Renderable::isVisible() const
 {
     // Group visibility overrides our own (*if* we are currently visible)...
-    return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
+    return visible_ && (group_ ? group_->get().isVisible() : visible_);
 }
 
 // Set basic colour
@@ -282,8 +262,7 @@ void Renderable::setColour(StockColours::StockColour stockColour)
 // Return local colour definition for display
 ColourDefinition &Renderable::colour() { return colour_; }
 
-// Return local colour definition for display (const)
-const ColourDefinition &Renderable::constColour() const { return colour_; }
+const ColourDefinition &Renderable::colour() const { return colour_; }
 
 // Return line style
 LineStyle &Renderable::lineStyle() { return lineStyle_; }
@@ -322,7 +301,7 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
         return;
 
     // Grab axes for the View
-    const Axes &axes = view.constAxes();
+    const Axes &axes = view.axes();
 
     // Grab copy of the relevant colour definition for this Renderable
     const ColourDefinition &colourDefinition = colour();
@@ -333,8 +312,9 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
         upToDate = false;
     else if (lastAxesVersion_ != axes.version())
         upToDate = false;
-    else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_,
-                                      fmt::format("{}@{}", fmt::ptr(group_), colourDefinition.version()), true))
+    else if (!DissolveSys::sameString(
+                 lastColourDefinitionFingerprint_,
+                 fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()), true))
         upToDate = false;
     else if (lastDataVersion_ != dataVersion())
         upToDate = false;
@@ -365,7 +345,8 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
 
     // Store version points for the up-to-date primitive
     lastAxesVersion_ = axes.version();
-    lastColourDefinitionFingerprint_ = fmt::format("{}@{}", fmt::ptr(group_), colourDefinition.version());
+    lastColourDefinitionFingerprint_ =
+        fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version());
     lastDataVersion_ = dataVersion();
     lastStyleVersion_ = styleVersion();
 }

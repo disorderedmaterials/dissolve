@@ -1,23 +1,5 @@
-/*
-    *** Isotopologues Definition
-    *** src/classes/isotopologues.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,7 +17,7 @@ class LineParser;
 class Isotopologues : public GenericItemBase
 {
     public:
-    Isotopologues(Species *species = nullptr, int speciesPopulation = 0);
+    Isotopologues(const Species *species = nullptr, int speciesPopulation = 0);
     ~Isotopologues();
 
     /*
@@ -43,7 +25,7 @@ class Isotopologues : public GenericItemBase
      */
     private:
     // Associated Species
-    Species *species_;
+    const Species *species_;
     // Integer population of associated Species
     int speciesPopulation_;
     // Weighted Isotopologue mixture
@@ -51,9 +33,9 @@ class Isotopologues : public GenericItemBase
 
     public:
     // Set associated Species and population
-    void setSpecies(Species *sp, int population);
+    void setSpecies(const Species *sp, int population);
     // Return associated Species
-    Species *species() const;
+    const Species *species() const;
     // Return associated Species population
     int speciesPopulation() const;
     /// Prune defunct Isotopologue entries
@@ -72,8 +54,7 @@ class Isotopologues : public GenericItemBase
     bool contains(const Isotopologue *iso) const;
     // Return Isotopologue/weight mix
     std::vector<IsotopologueWeight> &mix();
-    // Return Isotopologue/weight mix (const)
-    const std::vector<IsotopologueWeight> &constMix() const;
+    const std::vector<IsotopologueWeight> &mix() const;
     // Return number of Isotopologues in mix
     int nIsotopologues() const;
     // Return total relative population

@@ -1,23 +1,5 @@
-/*
-    *** RDF Module - Functions
-    *** src/modules/rdf/functions.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/atomtype.h"
@@ -28,7 +10,6 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -45,22 +26,12 @@
 bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
-    const Box *box = cfg->box();
-    Atom **atoms = cfg->atoms().array();
-    int ii, jj, typeI;
-    double distance;
-    Vec3<double> rI;
+    const auto *box = cfg->box();
 
-    for (ii = 0; ii < cfg->nAtoms() - 1; ++ii)
-    {
-        rI = atoms[ii]->r();
-        typeI = atoms[ii]->localTypeIndex();
-        for (jj = ii + 1; jj < cfg->nAtoms(); ++jj)
-        {
-            distance = box->minimumDistance(rI, atoms[jj]->r());
-            partialSet.fullHistogram(typeI, atoms[jj]->localTypeIndex()).bin(distance);
-        }
-    }
+    for_each_pair(cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
+        if (ii != jj)
+            partialSet.fullHistogram(ii->localTypeIndex(), jj->localTypeIndex()).bin(box->minimumDistance(ii->r(), jj->r()));
+    });
 
     return true;
 }
@@ -74,10 +45,11 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     // Construct local arrays of atom type positions
     nTypes = partialSet.nAtomTypes();
     Messenger::printVerbose("Constructing local partial working arrays for {} types.\n", nTypes);
-    const Box *box = cfg->box();
-    Vec3<double> *r[nTypes];
-    int maxr[nTypes], nr[nTypes];
-    int *binss[nTypes], *bins;
+    const auto *box = cfg->box();
+    std::vector<Vec3<double> *> r(nTypes);
+    std::vector<int> maxr(nTypes), nr(nTypes);
+    std::vector<int *> binss(nTypes);
+    int *bins;
 
     n = 0;
     for (auto &atd : cfg->usedAtomTypesList())
@@ -90,7 +62,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     }
 
     // Loop over Atoms and construct arrays
-    Atom **atoms = cfg->atoms().array();
+    auto &atoms = cfg->atoms();
     for (n = 0; n < cfg->nAtoms(); ++n)
     {
         m = atoms[n]->localTypeIndex();
@@ -101,12 +73,11 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 
     // Loop over assigned Atoms
     Vec3<double> centre, *ri, *rj, mim;
-    long int *histogram;
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     Messenger::printVerbose("Self terms..\n");
 
@@ -114,18 +85,17 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     for (typeI = 0; typeI < nTypes; ++typeI)
     {
         ri = r[typeI];
-        histogram = partialSet.fullHistogram(typeI, typeI).bins();
+        auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
-        for (i = start; i < maxr[typeI]; i += stride)
-        {
-            centre = ri[i];
-            for (j = i + 1; j < maxr[typeI]; ++j)
-                bins[j] = box->minimumDistance(centre, ri[j]) * rbin;
-            for (j = i + 1; j < maxr[typeI]; ++j)
-                if (bins[j] < nPoints)
-                    ++histogram[bins[j]];
-        }
+        for_each_pair(ri, ri + maxr[typeI], nChunks, offset,
+                      [box, bins, rbin, nPoints, &histogram](int i, auto centre, int j, auto other) {
+                          if (i == j)
+                              return;
+                          bins[j] = box->minimumDistance(centre, other) * rbin;
+                          if (bins[j] < nPoints)
+                              ++histogram[bins[j]];
+                      });
     }
 
     Messenger::printVerbose("Cross terms..\n");
@@ -146,10 +116,11 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
                 continue;
 
             rj = r[typeJ];
-            histogram = partialSet.fullHistogram(typeI, typeJ).bins();
+            auto &histogram = partialSet.fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
             nPoints = partialSet.fullHistogram(typeI, typeJ).nBins();
-            for (i = start; i < maxr[typeI]; i += stride)
+            auto [begin, end] = chop_range(0, maxr[typeI], nChunks, offset);
+            for (i = begin; i < end; ++i)
             {
                 centre = ri[i];
                 for (j = 0; j < maxr[typeJ]; ++j)
@@ -162,7 +133,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     }
 
     // Delete temporary arrays
-    for (int n = 0; n < nTypes; ++n)
+    for (auto n = 0; n < nTypes; ++n)
     {
         delete[] r[n];
         delete[] binss[n];
@@ -174,24 +145,25 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 // Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
-    Atom *i, *j;
-    int n, m, ii, jj, nI, nJ, typeI;
+    std::shared_ptr<Atom> i, j;
+    int n, m, typeI;
     Cell *cellI, *cellJ;
     double distance;
     Vec3<double> rI;
 
     // Grab the Box pointer and Cell array
-    const Box *box = cfg->box();
-    CellArray &cellArray = cfg->cells();
+    const auto *box = cfg->box();
+    auto &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
-    for (n = start; n < cellArray.nCells(); n += stride)
+    auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
+    for (n = begin; n < end; ++n)
     {
         cellI = cellArray.cell(n);
-        OrderedVector<Atom *> &atomsI = cellI->atoms();
+        auto &atomsI = cellI->atoms();
 
         // Add contributions between atoms in cellI
         for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
@@ -217,38 +189,21 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
             if (!cellArray.withinRange(cellI, cellJ, rdfRange))
                 continue;
 
-            OrderedVector<Atom *> &atomsJ = cellJ->atoms();
+            auto &atomsJ = cellJ->atoms();
 
             // Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the
             // absence of a 2D look-up array
-            for (auto *i : atomsI)
+            for (auto i : atomsI)
             {
                 typeI = i->localTypeIndex();
                 rI = i->r();
 
-                for (auto *j : atomsJ)
+                for (auto j : atomsJ)
                 {
                     distance = box->minimumDistance(j, rI);
                     partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
                 }
             }
-            // 			else
-            // 			{
-            // 				for (ii = 0; ii < nI; ++ii)
-            // 				{
-            // 					i = atomsI[ii];
-            // 					typeI = i->localTypeIndex();
-            // 					rI = i->r();
-            //
-            // 					for (jj = 0; jj < nJ; ++jj)
-            // 					{
-            // 						j = atomsJ[jj];
-            // 						distance = (rI - j->r()).magnitude();
-            // 						partialSet.fullHistogram(typeI,
-            // j->localTypeIndex()).bin(distance);
-            // 					}
-            // 				}
-            // 			}
         }
     }
 
@@ -259,14 +214,57 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
  * Public Functions
  */
 
+// Calculate and return effective density for based on the target Configurations
+double RDFModule::effectiveDensity() const
+{
+    auto rho0 = 0.0, totalWeight = 0.0;
+    for (auto *cfg : targetConfigurations())
+    {
+        // TODO Get weight for configuration
+        auto weight = 1.0;
+
+        totalWeight += weight;
+
+        rho0 += weight / cfg->atomicDensity();
+    }
+    rho0 /= totalWeight;
+    rho0 = 1.0 / rho0;
+
+    return rho0;
+}
+
+// Calculate and return used species populations based on target Configurations
+std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() const
+{
+    std::vector<std::pair<const Species *, double>> populations;
+
+    for (auto *cfg : targetConfigurations())
+    {
+        // TODO Get weight for configuration
+        auto weight = 1.0;
+
+        for (auto &spInfo : cfg->usedSpecies())
+        {
+            auto it = std::find_if(populations.begin(), populations.end(),
+                                   [&spInfo](auto &data) { return data.first == spInfo.species(); });
+            if (it != populations.end())
+                it->second += spInfo.population() * weight;
+            else
+                populations.emplace_back(spInfo.species(), spInfo.population() * weight);
+        }
+    }
+
+    return populations;
+}
+
 // Calculate unweighted partials for the specified Configuration
 bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange,
                             const double rdfBinWidth, bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
-    auto &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "",
-                                                              GenericItem::InRestartFileFlag, &wasCreated);
+    auto &originalgr =
+        cfg->moduleData().realise<PartialSet>("OriginalGR", uniqueName_, GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
@@ -316,37 +314,34 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
      * Calculate intramolecular partials
      */
 
-    double distance;
-    const Box *box = cfg->box();
-    CellArray &cellArray = cfg->cells();
+    const auto *box = cfg->box();
 
     // Set start/stride for parallel loop (pool solo)
-    auto start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    auto stride = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto offset = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto nChunks = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 
     // Loop over molecules...
-    Atom *i, *j, *k;
-    for (int m = start; m < cfg->nMolecules(); m += stride)
+    // NOTE: If you attempt to use chop_range for this loop, instead of stride, it will fail.
+    // The problem does not seem to be in chop_range, but rather in how the loops are merged.
+    // This is GitHub issue #562
+    for (auto it = cfg->molecules().begin() + offset; it < cfg->molecules().end(); it += nChunks)
     {
-        std::shared_ptr<Molecule> mol = cfg->molecule(m);
-        std::vector<Atom *> atoms = mol->atoms();
+        auto &atoms = (*it)->atoms();
 
-        for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
-        {
-            i = *ii;
-            for (auto jj = std::next(ii); jj < atoms.end(); ++jj)
-            {
-                j = *jj;
+        for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
+            // Ignore atom on itself
+            if (index == jndex)
+                return;
 
-                if (i->cell()->mimRequired(j->cell()))
-                    distance = box->minimumDistance(i, j);
-                else
-                    distance = (i->r() - j->r()).magnitude();
-                originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-            }
-        }
+            double distance;
+            if (i->cell()->mimRequired(j->cell()))
+                distance = box->minimumDistance(i, j);
+            else
+                distance = (i->r() - j->r()).magnitude();
+            originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+        });
     }
 
     timer.stop();
@@ -359,28 +354,23 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
      * knows that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
      */
 
-    int typeI, typeJ;
     procPool.resetAccumulatedTime();
     timer.start();
-    for (typeI = 0; typeI < originalgr.nAtomTypes(); ++typeI)
-    {
-        for (typeJ = typeI; typeJ < originalgr.nAtomTypes(); ++typeJ)
+    for_each_pair(0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) {
+        // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
+        // have all data already)
+        if (method != RDFModule::TestMethod)
         {
-            // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
-            // have all data already)
-            if (method != RDFModule::TestMethod)
-            {
-                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-            }
-
-            // Create unbound histogram from total and bound data
-            originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-            originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+            if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                return false;
+            if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                return false;
         }
-    }
+
+        // Create unbound histogram from total and bound data
+        originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+        originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+    });
 
     // Transform histogram data into radial distribution functions
     originalgr.formPartials(box->volume());
@@ -410,23 +400,23 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         unweightedgr = originalgr;
     else
     {
-        for (int i = 0; i < unweightedgr.nAtomTypes(); ++i)
+        for (auto i = 0; i < unweightedgr.nAtomTypes(); ++i)
         {
-            for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
+            for (auto j = i; j < unweightedgr.nAtomTypes(); ++j)
             {
-                unweightedgr.boundPartial(i, j).copyArrays(originalgr.constBoundPartial(i, j));
-                unweightedgr.unboundPartial(i, j).copyArrays(originalgr.constUnboundPartial(i, j));
-                unweightedgr.partial(i, j).copyArrays(originalgr.constPartial(i, j));
+                unweightedgr.boundPartial(i, j).copyArrays(originalgr.boundPartial(i, j));
+                unweightedgr.unboundPartial(i, j).copyArrays(originalgr.unboundPartial(i, j));
+                unweightedgr.partial(i, j).copyArrays(originalgr.partial(i, j));
             }
         }
-        unweightedgr.total().copyArrays(originalgr.constTotal());
+        unweightedgr.total().copyArrays(originalgr.total());
     }
 
     // Remove bound partial from full partial
-    for (int i = 0; i < unweightedgr.nAtomTypes(); ++i)
+    for (auto i = 0; i < unweightedgr.nAtomTypes(); ++i)
     {
-        for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
-            unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
+        for (auto j = i; j < unweightedgr.nAtomTypes(); ++j)
+            unweightedgr.partial(i, j) -= originalgr.boundPartial(i, j);
     }
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
@@ -442,204 +432,11 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
             Filters::convolve(unweightedgr.boundPartial(i, j), function);
         });
     }
-    else if (intraBroadening.function() == PairBroadeningFunction::FrequencyFunction)
-    {
-        /*
-         * Reassemble the bound partial as follows:
-         *
-         * 1) Recalculate individual bond / angle g(r), grouping by the original SpeciesIntra parameters (which contains
-         * our force constant) 2) Subtract this from its related bound partial in 'unweightedgr'. 3) Broaden it
-         * according to the PairBroadeningFunction 4) Sum the broadened version back into the bound partial in
-         * 'unweightedgr'
-         */
-
-        Atom *i, *j, *k;
-
-        double distance;
-        const Box *box = cfg->box();
-        CellArray &cellArray = cfg->cells();
-
-        // Set up working PartialSets to use when calculating our g(r)
-        PartialSet tempgr, broadgr = unweightedgr;
-        tempgr.setUp(cfg->usedAtomTypesList(), unweightedgr.rdfRange(), unweightedgr.rdfBinWidth(), "Working", "TemporaryGR",
-                     "Dummy", "r, Angstroms");
-        tempgr.setUpHistograms(unweightedgr.rdfRange(), unweightedgr.rdfBinWidth());
-
-        // Make sure bound g(r) are zeroed
-        auto &types = broadgr.atomTypes();
-        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-            broadgr.boundPartial(i, j).values() = 0.0;
-        });
-
-        // 		// Assemble lists of unique intramolecular terms (in respect of their parameters)
-        // 		RefDataList<const SpeciesIntra, const SpeciesBond*> bondIntra;
-        // 		RefDataList<const SpeciesIntra, const SpeciesAngle*> angleIntra;
-        // 		RefDataList<const SpeciesIntra, const SpeciesTorsion*> torsionIntra;
-        // 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-        // 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
-        // 		{
-        // 			Species* sp = spInfo->species();
-        // 			for (const SpeciesBond* b = sp->bonds().first(); b != nullptr; b = b->next())
-        // bondIntra.addUnique(b->parameterSource(), b); 			for (const SpeciesAngle* a =
-        // sp->angles().first(); a != nullptr; a
-        // = a->next()) angleIntra.addUnique(a->parameterSource(), a); 			for (const SpeciesTorsion* t =
-        // sp->torsions().first(); t != nullptr; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
-        // 		}
-
-        return Messenger::error("Frequency broadening not reimplemented yet.\n");
-
-        // 		/*
-        // 		 * Bonds
-        // 		 */
-        //
-        // 		// TODO Parallelise this
-        //
-        // 		RefDataListIterator<const SpeciesIntra, const SpeciesBond*> bondIterator(bondIntra);
-        // 		while (const SpeciesIntra* intra = bondIterator.iterate())
-        // 		{
-        // 			// Reset the dummy PartialSet
-        // 			tempgr.reset();
-        //
-        // 			// Add contributions from this SpeciesIntra only
-        // 			std::shared_ptr<const Molecule>* molecules = cfg->molecules().array();
-        // 			std::shared_ptr<const Molecule> mol;
-        // 			for (int n=0; n<molecules.nItems(); ++n, mol = molecules.at(n))
-        // 			{
-        // 				for (int n=bondPointers.nItems()-1; n>=0; --n)
-        // 				{
-        // 					Bond* b = bondPointers[n];
-        // 					if (b->speciesBond()->parameterSource() != intra) continue;
-        //
-        // 					i = b->i();
-        // 					j = b->j();
-        // 					if (i->mimRequired(j)) distance = box->minimumDistance(i, j);
-        // 					else distance = (i->r() - j->r()).magnitude();
-        // 					tempgr.boundHistogram(i->localTypeIndex(),
-        // j->localTypeIndex()).bin(distance);
-        //
-        // 					// Won't need this Bond pointer again, so remove it from our pointer
-        // array 					bondPointers.remove(n);
-        // 				}
-        // 			}
-        //
-        // 			// Normalise our bond's histogram data into the g(r)
-        // 			tempgr.formPartials(box->volume());
-        //
-        // 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into
-        // our
-        // broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int
-        // i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
-        // 			{
-        // 				typeJ = typeI;
-        // 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-        // 				{
-        // 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
-        //
-        // 					// Remove contribution from original full partial in unweightedgr
-        // 					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
-        //
-        // 					// Set up the broadening function for these AtomTypes
-        // 					BroadeningFunction function =
-        // intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
-        //
-        // 					// Convolute the bound partial with the broadening function
-        // 					Filters::convolve(tempgr.boundPartial(i, j), function);
-        //
-        // 					// Sum into our broadened g(r) partial set
-        // 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
-        // 				}
-        // 			}
-        // 		}
-        //
-        // 		/*
-        // 		 * Angles
-        // 		 */
-        //
-        // 		// Copy the dynamic Angle array from the Configuration
-        // 		PointerArray<Angle> anglePointers;
-        // 		anglePointers.initialise(cfg->nAngles());
-        // 		Angle** angles = cfg->angles().array();
-        // 		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
-        //
-        // 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by
-        // their associated SpeciesBond 		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra;
-        // for (int n=0; n<cfg->nAngles(); ++n)
-        // 		{
-        // 			SpeciesAngle* sa = angles[n]->speciesAngle();
-        // 			angleIntra.addUnique(sa->parameterSource(), sa);
-        // 		}
-        //
-        // 		// TODO Parallelise this
-        //
-        // 		RefDataListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
-        // 		while (SpeciesIntra* intra = angleIterator.iterate())
-        // 		{
-        // 			// Reset the dummy PartialSet
-        // 			tempgr.reset();
-        //
-        // 			// Add contributions from this SpeciesIntra only
-        // 			for (int n=anglePointers.nItems()-1; n>=0; --n)
-        // 			{
-        // 				Angle* a = anglePointers[n];
-        // 				if (a->speciesAngle()->parameterSource() != intra) continue;
-        //
-        // 				i = a->i();
-        // 				k = a->k();
-        //
-        // 				// Determine whether we need to apply minimum image between atoms 'i' and 'k'
-        // 				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i,
-        // k); 				else distance = (i->r() - k->r()).magnitude();
-        // tempgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
-        //
-        // 				// Won't need this Angle pointer again, so remove it from our pointer array
-        // 				anglePointers.remove(n);
-        // 			}
-        //
-        // 			// Normalise our bond's histogram data into the g(r)
-        // 			tempgr.formPartials(box->volume());
-        //
-        // 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into
-        // our
-        // broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int
-        // i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
-        // 			{
-        // 				typeJ = typeI;
-        // 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-        // 				{
-        // 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
-        //
-        // 					// Remove contribution from original full partial in unweightedgr
-        // 					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
-        //
-        // 					// Set up the broadening function for these AtomTypes
-        // 					BroadeningFunction function =
-        // intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
-        //
-        // 					// Convolute the bound partial with the broadening function
-        // 					Filters::convolve(tempgr.boundPartial(i, j), function);
-        //
-        // 					// Sum into our broadened g(r) partial set
-        // 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
-        // 				}
-        // 			}
-        // 		}
-
-        /*
-         * Copy Data
-         */
-
-        // TODO FIXME There is serious limitation for Frequency-broadening which means that it cannot be used with RDF
-        // averaging (as we are calculating the intramolecular RDFs afresh).
-
-        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-            unweightedgr.boundPartial(i, j) += broadgr.boundPartial(i, j);
-        });
-    }
 
     // Add broadened bound partials back in to full partials
     auto &types = unweightedgr.atomTypes();
     for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-        unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
+        unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
     });
 
     // Apply smoothing if requested
@@ -658,50 +455,32 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     return true;
 }
 
-// Return effective density for specified Module's target Configurations
-double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
-{
-    double rho0 = 0.0, totalWeight = 0.0;
-    for (Configuration *cfg : module->targetConfigurations())
-    {
-        auto weight = GenericListHelper<double>::value(
-            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
-        totalWeight += weight;
-
-        rho0 += weight / cfg->atomicDensity();
-    }
-    rho0 /= totalWeight;
-    rho0 = 1.0 / rho0;
-
-    return rho0;
-}
-
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericList &processingModuleData,
-                                PartialSet &summedUnweightedGR)
+bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, const RDFModule *rdfModule,
+                                GenericList &processingModuleData, PartialSet &summedUnweightedGR)
 {
-    // Create an AtomTypeList containing the sum of atom types over all target configurations
-    AtomTypeList combinedAtomTypes;
-    for (Configuration *cfg : module->targetConfigurations())
+    // Realise an AtomTypeList containing the sum of atom types over all target configurations
+    auto &combinedAtomTypes = processingModuleData.realise<AtomTypeList>("SummedAtomTypes", parentModule->uniqueName(),
+                                                                         GenericItem::InRestartFileFlag);
+    combinedAtomTypes.clear();
+    for (Configuration *cfg : parentModule->targetConfigurations())
         combinedAtomTypes.add(cfg->usedAtomTypesList());
 
-    // Finalise and print the combined AtomTypes matrix
+    // Finalise and save the combined AtomTypes matrix
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "gr", "r, Angstroms");
-    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR", module->uniqueName()));
+    summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
+    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR", parentModule->uniqueName()));
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // RefList for simplicity
     RefDataList<Configuration, double> configWeights;
     double totalWeight = 0.0;
-    for (Configuration *cfg : module->targetConfigurations())
+    for (Configuration *cfg : parentModule->targetConfigurations())
     {
-        // Get weighting factor for this Configuration to contribute to the summed partials
-        auto weight = GenericListHelper<double>::value(
-            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
-        Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
+        // TODO Assume weight of 1.0
+        auto weight = 1.0;
 
         // Add our Configuration target
         configWeights.append(cfg, weight);
@@ -728,16 +507,12 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
         double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
-        if (!cfg->moduleData().contains("UnweightedGR"))
+        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = cfg->moduleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
-
-    // Store the overall density of our partials
-    GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", module->uniqueName(),
-                                       GenericItem::InRestartFileFlag) = rho0;
 
     return true;
 }
@@ -754,10 +529,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         // Loop over Configurations defined in this target
         for (Configuration *cfg : module->targetConfigurations())
         {
-            // Get weighting factor for this Configuration to contribute to the summed partials
-            auto weight = GenericListHelper<double>::value(
-                processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
-            Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
+            // TODO Assume weight of 1.0
+            auto weight = 1.0;
 
             // Add our Configuration target
             configWeights.append(cfg, weight);
@@ -802,18 +575,14 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
 
         // *Copy* the partials for the Configuration, subtract 1.0, and add into our set
-        if (!cfg->moduleData().contains("UnweightedGR"))
+        if (!cfg->moduleData().contains("UnweightedGR", parentModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = cfg->moduleData().value<PartialSet>("UnweightedGR", parentModule->uniqueName());
         cfgPartialGR -= 1.0;
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
     summedUnweightedGR += 1.0;
-
-    // Store the overall density of our partials
-    // 	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(),
-    // GenericItem::InRestartFileFlag) = rho0;
 
     return true;
 }
@@ -825,34 +594,38 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
     AtomTypeList atomTypes = setA.atomTypes();
     double error;
 
-    for_each_pair(atomTypes.begin(), atomTypes.end(), [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) {
-        // Full partial
-        error = Error::percent(setA.partial(n, m), setB.partial(n, m));
-        Messenger::print("Test reference full partial '{}-{}' has error of {:7.3f}% with calculated data and is "
-                         "{} (threshold is {:6.3f}%)\n\n",
-                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                         testThreshold);
-        if (error > testThreshold)
-            return false;
+    for_each_pair_early(
+        atomTypes.begin(), atomTypes.end(),
+        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool> {
+            // Full partial
+            error = Error::percent(setA.partial(n, m), setB.partial(n, m));
+            Messenger::print("Test reference full partial '{}-{}' has error of {:7.3f}% with calculated data and is "
+                             "{} (threshold is {:6.3f}%)\n\n",
+                             typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                             testThreshold);
+            if (error > testThreshold)
+                return false;
 
-        // Bound partial
-        error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
-        Messenger::print("Test reference bound partial '{}-{}' has error of {:7.3f}% with calculated data and "
-                         "is {} (threshold is {:6.3f}%)\n\n",
-                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                         testThreshold);
-        if (error > testThreshold)
-            return false;
+            // Bound partial
+            error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
+            Messenger::print("Test reference bound partial '{}-{}' has error of {:7.3f}% with calculated data and "
+                             "is {} (threshold is {:6.3f}%)\n\n",
+                             typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                             testThreshold);
+            if (error > testThreshold)
+                return false;
 
-        // Unbound reference
-        error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
-        Messenger::print("Test reference unbound partial '{}-{}' has error of {:7.3f}% with calculated data and "
-                         "is {} (threshold is {:6.3f}%)\n\n",
-                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                         testThreshold);
-        if (error > testThreshold)
-            return false;
-    });
+            // Unbound reference
+            error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
+            Messenger::print("Test reference unbound partial '{}-{}' has error of {:7.3f}% with calculated data and "
+                             "is {} (threshold is {:6.3f}%)\n\n",
+                             typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                             testThreshold);
+            if (error > testThreshold)
+                return false;
+
+            return EarlyReturn<bool>::Continue;
+        });
 
     // Total reference data supplied?
     error = Error::percent(setA.total(), setB.total());
@@ -872,7 +645,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
     auto testResult = false;
     if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == nullptr) && (target == nullptr))
     {
-        double error = Error::percent(partials.constTotal(), testData);
+        double error = Error::percent(partials.total(), testData);
         testResult = (error <= testThreshold);
         Messenger::print("Test reference data '{}' has error of {:7.3f}% with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",
@@ -889,11 +662,11 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         // AtomTypes are valid, so check the 'target'
         double error = -1.0;
         if (DissolveSys::sameString(target, "bound"))
-            error = Error::percent(partials.constBoundPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.boundPartial(indexI, indexJ), testData);
         else if (DissolveSys::sameString(target, "unbound"))
-            error = Error::percent(partials.constUnboundPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.unboundPartial(indexI, indexJ), testData);
         else if (DissolveSys::sameString(target, "full"))
-            error = Error::percent(partials.constPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.partial(indexI, indexJ), testData);
         else
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.name());
 

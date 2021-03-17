@@ -1,23 +1,5 @@
-/*
-    *** Species Editor - Functions
-    *** src/gui/specieseditor_funcs.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
@@ -46,7 +28,7 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
     // Connect signals / slots
     connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SpeciesView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
-    connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
+    connect(ui_.SpeciesView, SIGNAL(atomsChanged()), this, SLOT(updateStatusBar()));
     connect(ui_.SpeciesView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
     // Make sure our controls are consistent with the underlying viewer / data
@@ -78,16 +60,23 @@ void SpeciesEditor::updateToolbar()
     // Set current interaction mode
     switch (speciesViewer()->interactionMode())
     {
-        case (SpeciesViewer::DefaultInteraction):
+        case (SpeciesViewer::InteractionMode::Select):
+        case (SpeciesViewer::InteractionMode::SelectArea):
             ui_.InteractionViewButton->setChecked(true);
             break;
-        case (SpeciesViewer::DrawInteraction):
+        case (SpeciesViewer::InteractionMode::Draw):
             ui_.InteractionDrawButton->setChecked(true);
+            break;
+        case (SpeciesViewer::InteractionMode::Delete):
+            ui_.InteractionDeleteButton->setChecked(true);
+            break;
+        default:
             break;
     }
 
     // Set drawing element symbol
-    ui_.InteractionDrawElementButton->setText(QString::fromStdString(std::string(speciesViewer()->drawElement()->symbol())));
+    ui_.InteractionDrawElementButton->setText(
+        QString::fromStdString(std::string(Elements::symbol(speciesViewer()->drawElement()))));
 
     // Set checkable buttons
     ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
@@ -132,21 +121,21 @@ SpeciesViewer *SpeciesEditor::speciesViewer() { return ui_.SpeciesView; }
 void SpeciesEditor::on_InteractionViewButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DefaultInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Select);
 }
 
 void SpeciesEditor::on_InteractionDrawButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Draw);
 }
 
 void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 {
     // Select a new element for drawing
     bool ok;
-    Element *newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
-                                                      speciesViewer()->drawElement(), &ok);
+    auto newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
+                                                  speciesViewer()->drawElement(), &ok);
     if (!ok)
         return;
 
@@ -158,7 +147,7 @@ void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 void SpeciesEditor::on_InteractionDeleteButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DeleteInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Delete);
 }
 
 void SpeciesEditor::on_ViewResetButton_clicked(bool checked)

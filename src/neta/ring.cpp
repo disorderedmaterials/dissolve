@@ -1,29 +1,9 @@
-/*
-    *** NETA Ring Node
-    *** src/neta/ring.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "neta/ring.h"
 #include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
-#include "templates/dynamicarray.h"
-#include "templates/refdatalist.h"
+#include "data/ff/atomtype.h"
 #include <algorithm>
 
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)
@@ -43,16 +23,11 @@ NETARingNode::~NETARingNode() {}
 // Return enum options for NETARingModifiers
 EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 {
-    static EnumOptionsList ModifierOptions = EnumOptionsList()
-                                             << EnumOption(SizeModifier, "size") << EnumOption(RepeatRingModifier, "n");
-
-    static EnumOptions<NETARingNode::NETARingModifier> options("RingModifier", ModifierOptions);
-
-    return options;
+    return EnumOptions<NETARingNode::NETARingModifier>("RingModifier", {{SizeModifier, "size"}, {RepeatRingModifier, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARingNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETARingNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
@@ -83,8 +58,8 @@ bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op,
  */
 
 // Locate rings in which the specified atom is involved
-void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path,
-                             const int minSize, const int maxSize) const
+void NETARingNode::findRings(const SpeciesAtom *currentAtom, std::vector<SpeciesRing> &rings,
+                             std::vector<const SpeciesAtom *> &path, const int minSize, const int maxSize) const
 {
     // Check whether the path is already at the maximum size - if so, return immediately.
     if (path.size() == maxSize)
@@ -95,7 +70,6 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 
     // Loop over bonds to the atom
     const SpeciesAtom *j;
-    SpeciesRing *ring;
     for (const SpeciesBond &bond : currentAtom->bonds())
     {
         /*
@@ -112,8 +86,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
                 continue;
 
             // Add new ring
-            ring = rings.add();
-            ring->setAtoms(path);
+            rings.emplace_back(path);
 
             // Continue with the next bond
             continue;
@@ -130,10 +103,10 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 }
 
 // Evaluate the node and return its score
-int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
     // Generate array of rings of specified size that the atom 'i' is present in
-    List<SpeciesRing> rings;
+    std::vector<SpeciesRing> rings;
     std::vector<const SpeciesAtom *> ringPath;
     if (sizeValue_ == -1)
         findRings(i, rings, ringPath, 3, 6);
@@ -151,72 +124,52 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
         findRings(i, rings, ringPath, 3, 99);
 
     // Prune rings for duplicates
-    ListIterator<SpeciesRing> ringIterator(rings);
-    while (SpeciesRing *ring = ringIterator.iterate())
-    {
-        // Check this ring against others in the list - if we find a duplicate, we can remove it and then move on with
-        // the next ring.
-        for (auto *other = ring->next(); other != nullptr; other = other->next())
-        {
-            if ((*ring) == (*other))
-            {
-                rings.remove(other);
-                break;
-            }
-        }
-    }
-    // 	ringIterator.restart();
-    // 	while (SpeciesRing* ring = ringIterator.iterate()) ring->print();
+    for (auto it = rings.begin(); it != rings.end(); ++it)
+        rings.erase(std::remove_if(it + 1, rings.end(), [&it](const auto &otherIt) { return *it == otherIt; }));
 
     // Loop over rings
     auto nMatches = 0, totalScore = 0;
-    int nodeScore;
-    ringIterator.restart();
-    while (SpeciesRing *ring = ringIterator.iterate())
+    int nodeScore = NETANode::NoMatch;
+    for (auto ring : rings)
     {
-        // Copy the atoms in the ring into an array we can modify
-        std::vector<const SpeciesAtom *> ringAtoms = ring->atoms();
-
         // Check through atoms in the ring - either in order or not - to see if the ring matches
-        if (false)
-        {
-            // Ordered search
-        }
-        else
-        {
-            // Disordered search - try to match the branch definition against this ring, in any order (provide all
-            // atoms in the ring at once)
-            RefList<const SpeciesAtom> ringAtoms;
-            for (int n = 0; n < ring->size(); ++n)
-                ringAtoms.append(ring->atom(n));
+        // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
+        // atoms in the ring at once)
 
-            const SpeciesAtom *matchedAtom;
-            ListIterator<NETANode> branchIterator(branch_);
-            while (NETANode *node = branchIterator.iterate())
+        auto ringScore = 0;
+        std::vector<const SpeciesAtom *> ringAtoms = ring.atoms();
+        for (auto node : branch_)
+        {
+            nodeScore = node->score(nullptr, ringAtoms);
+            if (nodeScore == NETANode::NoMatch)
             {
-                nodeScore = node->score(nullptr, ringAtoms);
-                if (nodeScore == NETANode::NoMatch)
-                    break;
-
-                // Match found
-                totalScore += nodeScore;
+                ringScore = NETANode::NoMatch;
+                break;
             }
 
-            // If we didn't find a match for the ring, exit the loop now
-            if (nodeScore == NETANode::NoMatch)
-                break;
-
-            ++nMatches;
-
-            // Don't match more than we need to - check the repeatCount
-            if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
-                break;
+            // Match found
+            ringScore += nodeScore;
         }
+
+        // If we didn't find a match for the ring, continue to the next one
+        if (ringScore == NETANode::NoMatch)
+            continue;
+
+        ++nMatches;
+
+        // Increase the total score - ringScore (contained atoms) + 1 (for the ring) + 1 (for the size, if specified)
+        totalScore += ringScore + 1;
+        if (sizeValue_ != -1)
+            ++totalScore;
+
+        // Don't match more than we need to - check the repeatCount
+        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
+            break;
     }
 
     // Did we find the required number of ring matches?
     if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
-        return NETANode::NoMatch;
+        return reverseLogic_ ? 1 : NETANode::NoMatch;
 
-    return totalScore;
+    return reverseLogic_ ? NETANode::NoMatch : totalScore;
 }

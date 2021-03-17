@@ -1,23 +1,5 @@
-/*
-    *** Species Viewer - Functions
-    *** src/gui/speciesviewer_funcs.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "data/elements.h"
@@ -31,9 +13,10 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
     speciesRenderable_ = nullptr;
 
     // Interaction
-    setInteractionMode(SpeciesViewer::DefaultInteraction);
+    setInteractionMode(SpeciesViewer::InteractionMode::Select);
+    transientInteractionMode_ = SpeciesViewer::TransientInteractionMode::None;
     clickedAtom_ = nullptr;
-    drawElement_ = &Elements::element(ELEMENT_C);
+    drawElement_ = Elements::H;
 
     // Set up the view
     view_.setViewType(View::NormalView);
@@ -63,13 +46,13 @@ void SpeciesViewer::setSpecies(Species *sp)
     // Create a new Renderable for the supplied Species
     if (species_)
     {
-        speciesRenderable_ = new RenderableSpecies(species_, species_->objectTag());
-        ownRenderable(speciesRenderable_);
+        speciesRenderable_ = std::make_shared<RenderableSpecies>(species_);
+
         view_.showAllData();
     }
 
     // Send relevant signals
-    emit(atomSelectionChanged());
+    emit(atomsChanged());
 }
 
 // Return target Species
@@ -84,7 +67,6 @@ void SpeciesViewer::setRenderableDrawStyle(RenderableSpecies::SpeciesDisplayStyl
 {
     if (speciesRenderable_)
         speciesRenderable_->setDisplayStyle(ds);
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
 }
 
 // Return current renderable draw style
@@ -92,7 +74,6 @@ RenderableSpecies::SpeciesDisplayStyle SpeciesViewer::renderableDrawStyle() cons
 {
     if (speciesRenderable_)
         return speciesRenderable_->displayStyle();
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
 
     return RenderableSpecies::LinesStyle;
 }

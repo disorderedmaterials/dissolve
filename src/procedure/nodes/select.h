@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Select
-    *** src/procedure/nodes/select.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -25,7 +7,6 @@
 #include "procedure/nodes/node.h"
 #include "templates/array.h"
 #include "templates/list.h"
-#include "templates/orderedvector.h"
 #include "templates/reflist.h"
 #include <memory>
 
@@ -70,7 +51,7 @@ class SelectProcedureNode : public ProcedureNode
     // List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
     RefList<SelectProcedureNode> sameMoleculeExclusions_;
     // List of Molecules currently excluded from selection
-    OrderedVector<std::shared_ptr<const Molecule>> excludedMolecules_;
+    std::vector<std::shared_ptr<const Molecule>> excludedMolecules_;
     // List of other sites (nodes) which will exclude one of our sites if it is the same site
     RefList<SelectProcedureNode> sameSiteExclusions_;
     // List of Sites currently excluded from selection
@@ -84,7 +65,7 @@ class SelectProcedureNode : public ProcedureNode
 
     public:
     // Return list of Molecules currently excluded from selection
-    const OrderedVector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
+    const std::vector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
     // List of Sites currently excluded from selection
     const RefList<const Site> &excludedSites() const;
     // Return Molecule (from site) in which the site must exist

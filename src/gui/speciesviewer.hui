@@ -1,23 +1,5 @@
-/*
-    *** Species Viewer
-    *** src/gui/speciesviewer.uih
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,7 +17,6 @@ class SpeciesViewer : public BaseViewer
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     SpeciesViewer(QWidget *parent);
     ~SpeciesViewer();
 
@@ -62,22 +43,31 @@ class SpeciesViewer : public BaseViewer
      */
     public:
     // Interaction Mode enum
-    enum InteractionMode
+    enum class InteractionMode
     {
-        DefaultInteraction,
-        SelectAreaInteraction,
-        TranslateViewInteraction,
-        RotateViewInteraction,
-        DrawInteraction,
-        DeleteInteraction,
+        Select,
+        SelectArea,
+        Draw,
+        Delete,
         nInteractionModes
+    };
+    // Secondary Interaction Mode enum
+    enum class TransientInteractionMode
+    {
+        None,
+        TranslateView,
+        RotateView
     };
 
     private:
+    // Primary interaction mode (left mouse button)
+    InteractionMode interactionMode_;
+    // Transient interaction mode (i.e. one not invoked by primary button)
+    TransientInteractionMode transientInteractionMode_;
     // Clicked atom at the start of the interaction (if any)
     SpeciesAtom *clickedAtom_;
     // Element for created atoms in DrawInteraction
-    Element *drawElement_;
+    Elements::Element drawElement_;
     // Species-space coordinates at clicked position for DrawInteraction
     Vec3<double> drawCoordinateStart_;
     // Species-space coordinates at current position for DrawInteraction
@@ -96,12 +86,16 @@ class SpeciesViewer : public BaseViewer
     void cancelInteraction();
 
     public:
+    // Set current interaction mode
+    void setInteractionMode(InteractionMode mode);
+    // Return current interaction mode
+    InteractionMode interactionMode() const;
     // Return text describing current interaction mode
     const QString interactionModeText() const;
     // Set current Element for DrawInteraction
-    void setDrawElement(Element *element);
+    void setDrawElement(Elements::Element Z);
     // Return current Element for DrawInteraction
-    Element *drawElement() const;
+    Elements::Element drawElement() const;
 
     /*
      * Source Species
@@ -121,7 +115,7 @@ class SpeciesViewer : public BaseViewer
      */
     private:
     // Renderable for source Species
-    RenderableSpecies *speciesRenderable_;
+    std::shared_ptr<RenderableSpecies> speciesRenderable_;
 
     public:
     // Set renderable draw style
@@ -136,5 +130,5 @@ class SpeciesViewer : public BaseViewer
      */
     signals:
     // Atom selection changed
-    void atomSelectionChanged();
+    void atomsChanged();
 };

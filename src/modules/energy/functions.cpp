@@ -1,30 +1,12 @@
-/*
-    *** Energy Module - Functions
-    *** src/modules/energy/functions.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "modules/energy/energy.h"
+#include "templates/algorithms.h"
 #include <numeric>
 
 // Return total interatomic energy of Configuration
@@ -44,7 +26,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    const CellArray &cellArray = cfg->cells();
+    const auto &cellArray = cfg->cells();
     double totalEnergy = kernel.energy(cellArray, false, strategy, false);
 
     // Print process-local energy
@@ -60,10 +42,8 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
 // Return total interatomic energy of Species
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
 {
-    double r, angle;
-    SpeciesAtom *i, *j;
     Vec3<double> rI;
-    double scale, energy = 0.0;
+    double r, scale, energy = 0.0;
     const auto cutoff = potentialMap.range();
 
     // Get start/end for loop
@@ -74,24 +54,24 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
     // NOTE PR #334 : use for_each_pair
     for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
     {
-        i = sp->atom(indexI);
-        rI = i->r();
+        auto &i = sp->atom(indexI);
+        rI = i.r();
 
-        for (int indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
-            j = sp->atom(indexJ);
+            auto &j = sp->atom(indexJ);
 
             // Get interatomic distance
-            r = (j->r() - rI).magnitude();
+            r = (j.r() - rI).magnitude();
             if (r > cutoff)
                 continue;
 
             // Get intramolecular scaling of atom pair
-            scale = i->scaling(j);
+            scale = i.scaling(&j);
             if (scale < 1.0e-3)
                 continue;
 
-            energy += potentialMap.energy(i, j, r) * scale;
+            energy += potentialMap.energy(&i, &j, r) * scale;
         }
     }
 
@@ -115,7 +95,7 @@ double EnergyModule::interMolecularEnergy(ProcessPool &procPool, Configuration *
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    const CellArray &cellArray = cfg->cells();
+    const auto &cellArray = cfg->cells();
     double totalEnergy = kernel.energy(cellArray, true, strategy, false);
 
     // Print process-local energy
@@ -164,33 +144,34 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    for (int m = start; m < cfg->nMolecules(); m += stride)
+    auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+    for (auto it = begin; it < end; ++it)
     {
         // Get Molecule pointer
-        mol = molecules[m];
+        mol = *it;
 
         // Loop over Bond
-        bondEnergy += std::accumulate(mol->species()->constBonds().cbegin(), mol->species()->constBonds().cend(), 0.0,
+        bondEnergy += std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
                                       [&mol, &kernel](auto const acc, const auto &t) {
                                           return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()));
                                       });
 
         // Loop over Angle
-        angleEnergy += std::accumulate(mol->species()->constAngles().cbegin(), mol->species()->constAngles().cend(), 0.0,
+        angleEnergy += std::accumulate(mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
                                        [&mol, &kernel](auto const acc, const auto &t) {
                                            return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
                                                                       mol->atom(t.indexK()));
                                        });
 
         // Loop over Torsions
-        torsionEnergy += std::accumulate(mol->species()->constTorsions().cbegin(), mol->species()->constTorsions().cend(), 0.0,
+        torsionEnergy += std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
                                          [&mol, &kernel](auto const acc, const auto &t) {
                                              return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
                                                                         mol->atom(t.indexK()), mol->atom(t.indexL()));
                                          });
 
-        improperEnergy += std::accumulate(mol->species()->constImpropers().cbegin(), mol->species()->constImpropers().cend(),
-                                          0.0, [&mol, &kernel](auto const acc, const auto &imp) {
+        improperEnergy += std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
+                                          [&mol, &kernel](auto const acc, const auto &imp) {
                                               return acc + kernel.energy(imp, mol->atom(imp.indexI()), mol->atom(imp.indexJ()),
                                                                          mol->atom(imp.indexK()), mol->atom(imp.indexL()));
                                           });
@@ -229,16 +210,20 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Species *sp)
     auto energy = 0.0;
 
     // Loop over bonds
-    for (const auto &bond : sp->constBonds())
+    for (const auto &bond : sp->bonds())
         energy += EnergyKernel::energy(bond);
 
     // Loop over angles
-    for (const auto &angle : sp->constAngles())
+    for (const auto &angle : sp->angles())
         energy += EnergyKernel::energy(angle);
 
     // Loop over torsions
-    for (const auto &torsion : sp->constTorsions())
+    for (const auto &torsion : sp->torsions())
         energy += EnergyKernel::energy(torsion);
+
+    // Loop over impropers
+    for (const auto &improper : sp->impropers())
+        energy += EnergyKernel::energy(improper);
 
     return energy;
 }
@@ -270,7 +255,7 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Species *sp, const Poten
 EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
 {
     // First, check if the Configuration is targetted by an EnergyModule
-    if (!GenericListHelper<bool>::value(cfg->moduleData(), "_IsEnergyModuleTarget", "", false))
+    if (!cfg->moduleData().value<bool>("_IsEnergyModuleTarget", "", false))
     {
         Messenger::error("Configuration '{}' is not targeted by any EnergyModule, so stability cannot be assessed. "
                          "Check your setup!\n",
@@ -281,7 +266,7 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
     // Retrieve the EnergyStable flag from the Configuration's module data
     if (cfg->moduleData().contains("EnergyStable"))
     {
-        auto stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
+        auto stable = cfg->moduleData().value<bool>("EnergyStable");
         if (!stable)
         {
             Messenger::print("Energy for Configuration '{}' is not yet stable.\n", cfg->name());

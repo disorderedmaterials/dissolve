@@ -1,27 +1,9 @@
-/*
-    *** Energy Module Widget - Functions
-    *** src/modules/energy/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
@@ -81,16 +63,16 @@ void EnergyModuleWidget::updateControls(int flags)
     if (currentConfiguration_)
     {
         const auto &totalEnergyArray =
-            GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
+            currentConfiguration_->moduleData().value<Data1D>("Total", module_->uniqueName(), Data1D());
         if (totalEnergyArray.nValues() < stabilityWindow)
             ui_.GradientValueLabel->setText("N/A");
         else
         {
-            auto grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
+            auto grad = currentConfiguration_->moduleData().value<double>("EnergyGradient", "", 0.0);
             ui_.GradientValueLabel->setText(QString::number(grad));
         }
 
-        auto stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
+        auto stable = currentConfiguration_->moduleData().value<bool>("EnergyStable", "", false);
 
         if (stable)
         {
@@ -114,30 +96,6 @@ void EnergyModuleWidget::updateControls(int flags)
     ui_.PlotWidget->updateToolbar();
 
     energyGraph_->postRedisplay();
-}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool EnergyModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!energyGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool EnergyModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!energyGraph_->readSession(parser))
-        return false;
-
-    return true;
 }
 
 /*
@@ -167,31 +125,34 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         return;
 
     // Add data targets
-    Renderable *rend;
     energyGraph_->createRenderable(Renderable::Data1DRenderable,
                                    fmt::format("{}//{}//Total", currentConfiguration_->niceName(), module_->uniqueName()),
                                    "Total", "Totals");
-    rend = energyGraph_->createRenderable(
+    auto inter = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Inter", currentConfiguration_->niceName(), module_->uniqueName()),
         "Inter", "Totals");
-    rend->setColour(StockColours::RedStockColour);
-    rend = energyGraph_->createRenderable(
+    inter->setColour(StockColours::RedStockColour);
+    auto intra = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Intra", currentConfiguration_->niceName(), module_->uniqueName()),
         "Intra", "Totals");
-    rend->setColour(StockColours::BlueStockColour);
+    intra->setColour(StockColours::BlueStockColour);
 
-    rend = energyGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()),
-                                          "Bond", "Intramolecular");
-    rend->setColour(StockColours::GreenStockColour);
-    rend = energyGraph_->createRenderable(
+    auto bond = energyGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Bond", "Intramolecular");
+    bond->setColour(StockColours::GreenStockColour);
+    auto angle = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Angle", currentConfiguration_->niceName(), module_->uniqueName()),
         "Angle", "Intramolecular");
-    rend->setColour(StockColours::PurpleStockColour);
-    rend = energyGraph_->createRenderable(
+    angle->setColour(StockColours::PurpleStockColour);
+    auto torsion = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Torsion", currentConfiguration_->niceName(), module_->uniqueName()),
         "Torsion", "Intramolecular");
-    rend->setColour(StockColours::OrangeStockColour);
+    torsion->setColour(StockColours::OrangeStockColour);
+    auto improper = energyGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Improper", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Improper", "Intramolecular");
+    improper->setColour(StockColours::CyanStockColour);
 
     updateControls();
 }

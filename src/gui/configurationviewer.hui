@@ -1,23 +1,5 @@
-/*
-    *** Configuration Viewer
-    *** src/gui/configurationviewer.uih
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -34,7 +16,6 @@ class ConfigurationViewer : public BaseViewer
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     ConfigurationViewer(QWidget *parent);
     ~ConfigurationViewer();
 
@@ -61,17 +42,28 @@ class ConfigurationViewer : public BaseViewer
      */
     public:
     // Interaction Mode enum
-    enum InteractionMode
+    enum class InteractionMode
     {
-        DefaultInteraction,
-        TranslateViewInteraction,
-        RotateViewInteraction,
+        Default,
         nInteractionModes
+    };
+    // Secondary Interaction Mode enum
+    enum class TransientInteractionMode
+    {
+        None,
+        TranslateView,
+        RotateView
     };
 
     private:
+    // Primary interaction mode (left mouse button)
+    InteractionMode interactionMode_;
+    // Transient interaction mode (i.e. one not invoked by primary button)
+    TransientInteractionMode transientInteractionMode_;
+
+    private:
     // Return atom at specified coordinates
-    const Atom *atomAt(int x, int y);
+    const std::shared_ptr<Atom> atomAt(int x, int y);
 
     protected:
     // Start interaction at the specified screen coordinates
@@ -82,6 +74,10 @@ class ConfigurationViewer : public BaseViewer
     void cancelInteraction();
 
     public:
+    // Set current interaction mode
+    void setInteractionMode(InteractionMode mode);
+    // Return current interaction mode
+    InteractionMode interactionMode() const;
     // Return text describing current interaction mode
     const QString interactionModeText() const;
 
@@ -94,7 +90,7 @@ class ConfigurationViewer : public BaseViewer
 
     public:
     // Set target Configuration
-    void setConfiguration(Configuration *sp);
+    void setConfiguration(Configuration *cfg);
     // Return target Configuration
     Configuration *configuration() const;
 
@@ -103,7 +99,7 @@ class ConfigurationViewer : public BaseViewer
      */
     private:
     // Renderable for source Configuration
-    RenderableConfiguration *configurationRenderable_;
+    std::shared_ptr<RenderableConfiguration> configurationRenderable_;
 
     public:
     // Set renderable draw style

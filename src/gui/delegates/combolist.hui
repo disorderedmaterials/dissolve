@@ -1,23 +1,5 @@
-/*
-    *** ComboList Delegate
-    *** src/gui/delegates/combolist.hui
-    Copyright T. Youngs 2012-2012
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -34,9 +16,7 @@
 class ComboListItems
 {
     public:
-    // Constructor
     ComboListItems();
-    // Destructor
     virtual ~ComboListItems();
 
     /*
@@ -57,7 +37,6 @@ class ComboListItems
 template <class T> class ComboNameListItems : public ComboListItems
 {
     public:
-    // Constructor
     ComboNameListItems(const List<T> &items) : items_(items), iterator_(items) {}
 
     private:
@@ -90,14 +69,13 @@ template <class T> class ComboNameListItems : public ComboListItems
 template <class T> class ComboSharedNameListItems : public ComboListItems
 {
     public:
-    // Constructor
-    ComboSharedNameListItems(const std::vector<std::shared_ptr<T>> &items) : items_(items), currentItem_(items.cbegin()) {}
+    ComboSharedNameListItems(const std::vector<std::shared_ptr<T>> &items) : items_(items), currentIndex_(-1) {}
 
     private:
     // Associated item list
     const std::vector<std::shared_ptr<T>> &items_;
-    // Current iteration item
-    typename std::vector<std::shared_ptr<T>>::const_iterator currentItem_;
+    // Current iteration item index
+    int currentIndex_;
 
     /*
      * Access
@@ -106,17 +84,19 @@ template <class T> class ComboSharedNameListItems : public ComboListItems
     // Return number of items in list
     int nItems() { return items_.size(); }
     // Restart list iteration
-    void restartIterator() { currentItem_ = items_.cbegin(); }
+    void restartIterator() { currentIndex_ = -1; }
     // Move to next item in list
     bool nextItem()
     {
-        ++currentItem_;
-        return currentItem_ < items_.cend();
+        ++currentIndex_;
+        return currentIndex_ < items_.size();
     }
     // Return text entry for nth item
     QString currentItemText()
     {
-        return (*currentItem_ ? QString::fromStdString(std::string((*currentItem_)->name())) : "NULL");
+        return ((currentIndex_ != -1) && (currentIndex_ < items_.size())
+                    ? QString::fromStdString(std::string((items_[currentIndex_])->name()))
+                    : "NULL");
     }
 };
 
@@ -124,7 +104,6 @@ template <class T> class ComboSharedNameListItems : public ComboListItems
 template <class E> class ComboEnumOptionsItems : public ComboListItems
 {
     public:
-    // Constructor
     ComboEnumOptionsItems(EnumOptions<E> enumOptions) : items_(enumOptions) { currentItemIndex_ = 0; }
 
     private:
@@ -161,9 +140,7 @@ class ComboListDelegate : public QItemDelegate
     Q_OBJECT
 
     public:
-    // Constructor
     ComboListDelegate(QObject *parent, ComboListItems *items, bool allowNewItems = false);
-    // Destructor
     virtual ~ComboListDelegate();
 
     /*

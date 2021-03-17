@@ -1,23 +1,5 @@
-/*
-    *** Cubic Box
-    *** src/classes/box_cubic.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/box.h"
@@ -47,7 +29,7 @@ CubicBox::~CubicBox() {}
  */
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> CubicBox::minimumImage(const Atom *i, const Atom *ref) const
+Vec3<double> CubicBox::minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const
 {
     /*
      * This, and all other routines, use a ternary if/else test and an int() cast in order to calculate minimum image
@@ -65,7 +47,7 @@ Vec3<double> CubicBox::minimumImage(const Atom *i, const Atom *ref) const
 }
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> CubicBox::minimumImage(const Atom *i, const Vec3<double> &ref) const
+Vec3<double> CubicBox::minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const
 {
     auto mimVec = i->r();
     mimVec -= ref;
@@ -93,7 +75,7 @@ Vec3<double> CubicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &r
 }
 
 // Return minimum image vector from 'i' to 'j'
-Vec3<double> CubicBox::minimumVector(const Atom *i, const Atom *j) const
+Vec3<double> CubicBox::minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
 {
     auto mimVec = j->r();
     mimVec -= i->r();
@@ -119,7 +101,7 @@ Vec3<double> CubicBox::minimumVector(const Atom &i, const Atom &j) const
 }
 
 // Return minimum image vector from 'i' to 'j'
-Vec3<double> CubicBox::minimumVector(const Atom *i, const Vec3<double> &j) const
+Vec3<double> CubicBox::minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
 {
     auto mimVec = j;
     mimVec -= i->r();
@@ -145,7 +127,7 @@ Vec3<double> CubicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &
 }
 
 // Return minimum image distance from 'i' to 'j'
-double CubicBox::minimumDistance(const Atom *i, const Atom *j) const
+double CubicBox::minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
 {
     auto mimVec = j->r();
     mimVec -= i->r();
@@ -171,7 +153,7 @@ double CubicBox::minimumDistance(const Atom &i, const Atom &j) const
 }
 
 // Return minimum image distance from 'i' to 'j'
-double CubicBox::minimumDistance(const Atom *i, const Vec3<double> &j) const
+double CubicBox::minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
 {
     auto mimVec = j;
     mimVec -= i->r();
@@ -197,7 +179,7 @@ double CubicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) c
 }
 
 // Return minimum image squared distance from 'i' to 'j' (pointers)
-double CubicBox::minimumDistanceSquared(const Atom *i, const Atom *j) const
+double CubicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
 {
     auto mimVec = j->r();
     mimVec -= i->r();
@@ -223,7 +205,7 @@ double CubicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
 }
 
 // Return minimum image squared distance from 'i' to 'j'
-double CubicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const
+double CubicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
 {
     auto mimVec = j;
     mimVec -= i->r();

@@ -1,23 +1,5 @@
-/*
-    *** Dissolve GUI - Simulation Menu Functions
-    *** src/gui/menu_simulation.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/datamanagerdialog.h"
 #include "gui/gui.h"
@@ -26,11 +8,18 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
+void DissolveWindow::setupIteration(int count)
 {
     // Prepare the simulation
     if (!dissolve_.prepare())
         return;
+
+    // Ensure that the simulation can run
+    if (dissolve_.inputFilename().empty())
+    {
+        QMessageBox::warning(this, "No Input File", "You must save the file before running the simulation");
+        return;
+    }
 
     // Prepare the GUI
     disableSensitiveControls();
@@ -40,8 +29,10 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
     // Update the controls
     updateControlsFrame();
 
-    emit iterate(-1);
+    emit iterate(count);
 }
+
+void DissolveWindow::on_SimulationRunAction_triggered(bool checked) { setupIteration(-1); }
 
 void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
 {
@@ -51,55 +42,12 @@ void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
         QInputDialog::getInt(this, "Iterate Simulation...", "Enter the number of iterations to run", 10, 1, 1000000, 10, &ok);
     if (!ok)
         return;
-
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
-
-    // Prepare the GUI
-    disableSensitiveControls();
-    Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
-
-    // Update the controls
-    updateControlsFrame();
-
-    emit iterate(nIterations);
+    setupIteration(nIterations);
 }
 
-void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
-{
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
+void DissolveWindow::on_SimulationStepAction_triggered(bool checked) { setupIteration(1); }
 
-    // Prepare the GUI
-    disableSensitiveControls();
-    Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
-
-    // Update the controls
-    updateControlsFrame();
-
-    emit iterate(1);
-}
-
-void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
-{
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
-
-    // Prepare the GUI
-    disableSensitiveControls();
-    Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
-
-    // Update the controls
-    updateControlsFrame();
-
-    emit iterate(5);
-}
+void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked) { setupIteration(5); }
 
 void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 {

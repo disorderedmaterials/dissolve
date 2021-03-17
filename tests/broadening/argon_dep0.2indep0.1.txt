@@ -21,28 +21,31 @@ Configuration 'liquid'
       BoxAction  None
     EndAddSpecies
   EndGenerator
-  InputCoordinates  epsr  'epsr_dep0.2indep0.1/argonbox.ato'
+  InputCoordinates  epsr  '../_data/epsr25/argon10000_dep0.2indep0.1/argonbox.ato'
   EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'
 
-Module  RDF
+Module  RDF  'RDF01'
   Configuration  'liquid'
   Frequency  1
 EndModule
 
-Module  NeutronSQ
-  Configuration  'liquid'
-  Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
+Module  SQ  'SQ01'
+  SourceRDFs  'RDF01'
   QBroadening  GaussianC2  0.1  0.2
   WindowFunction  None
+EndModule
+
+Module  NeutronSQ
+  Isotopologue  'Argon'  'Ar36'  1.0
+  SourceSQs  'SQ01'
   Frequency  1
 EndModule
 
 Module DataTest
-  Threshold  0.25
-  Data1D  'liquid//NeutronSQ01//WeightedSQ//Total'  xy  'epsr_dep0.2indep0.1/argon.EPSR.u01'
+  Data1D  'NeutronSQ01//WeightedSQ//Total'  xy  '../_data/epsr25/argon10000_dep0.2indep0.1/argon.EPSR.u01'
     Y  2
   EndData1D
 EndModule

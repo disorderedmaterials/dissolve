@@ -1,29 +1,13 @@
-/*
-    *** Gauss-Jordan Inversion
-    *** src/math/gj.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/gj.h"
 #include "templates/array2d.h"
 
+namespace GaussJordan
+{
 // Perform Gauss-Jordan inversion of the supplied Array2D<double>
-bool GaussJordan::invert(Array2D<double> &A)
+bool invert(Array2D<double> &A)
 {
     // Matrix must be square, and not stored as a half-matrix
     if (A.nRows() != A.nColumns())
@@ -38,11 +22,11 @@ bool GaussJordan::invert(Array2D<double> &A)
     }
 
     const auto rank = A.nRows();
-    double *array = A.linearArray();
+    auto &array = A.linearArray();
 
-    int pivotrows[rank], pivotcols[rank], pivotrow = 0, pivotcol = 0;
-    bool pivoted[rank];
-    int row, col, n, m;
+    std::vector<int> pivotrows(rank), pivotcols(rank);
+    std::vector<bool> pivoted(rank);
+    int row, col, n, m, pivotrow = 0, pivotcol = 0;
     double large, element;
     for (n = 0; n < rank; ++n)
     {
@@ -124,3 +108,4 @@ bool GaussJordan::invert(Array2D<double> &A)
 
     return true;
 }
+} // namespace GaussJordan

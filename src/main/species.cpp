@@ -1,23 +1,5 @@
-/*
-    *** Dissolve - Species Functions
-    *** src/main/species.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "base/sysfunc.h"
@@ -50,10 +32,7 @@ void Dissolve::removeSpecies(Species *sp)
 int Dissolve::nSpecies() const { return coreData_.nSpecies(); }
 
 // Return Species list
-List<Species> &Dissolve::species() { return coreData_.species(); }
-
-// Return nth Species in the list
-Species *Dissolve::species(int n) { return coreData_.species(n); }
+std::vector<std::unique_ptr<Species>> &Dissolve::species() { return coreData_.species(); }
 
 // Search for Species by name
 Species *Dissolve::findSpecies(std::string_view name) const { return coreData_.findSpecies(name); }
@@ -72,9 +51,9 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     auto at = findAtomType(sourceAtom->atomType()->name());
     if (!at)
     {
-        at = addAtomType(sourceAtom->element());
+        at = addAtomType(sourceAtom->Z());
         at->setName(sourceAtom->atomType()->name());
-        at->parameters() = sourceAtom->atomType()->parameters();
+        at->setShortRangeParameters(sourceAtom->atomType()->shortRangeParameters());
         at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
     }
 
@@ -93,49 +72,49 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
     if (sourceIntra.masterParameters())
     {
         // Search for MasterIntra by the same name in our main Dissolve instance
-        MasterIntra *master = nullptr;
-        if (sourceIntra.type() == SpeciesIntra::BondInteraction)
+        OptionalReferenceWrapper<MasterIntra> master = {};
+        if (sourceIntra.type() == SpeciesIntra::InteractionType::Bond)
         {
-            master = coreData_.hasMasterBond(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterBond(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterBond(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
-        else if (sourceIntra.type() == SpeciesIntra::AngleInteraction)
+        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Angle)
         {
-            master = coreData_.hasMasterAngle(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterAngle(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterAngle(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
-        else if (sourceIntra.type() == SpeciesIntra::TorsionInteraction)
+        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Torsion)
         {
-            master = coreData_.hasMasterTorsion(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterTorsion(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterTorsion(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
-        else if (sourceIntra.type() == SpeciesIntra::ImproperInteraction)
+        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Improper)
         {
-            master = coreData_.hasMasterImproper(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterImproper(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterImproper(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
 
         // Copy the form of the parameters
-        master->setForm(sourceIntra.masterParameters()->form());
+        master->get().setForm(sourceIntra.masterParameters()->form());
 
         // Set the master pointer in the interaction
-        destIntra.setMasterParameters(master);
+        destIntra.setMasterParameters(&master->get());
     }
     else
     {
@@ -156,20 +135,19 @@ Species *Dissolve::copySpecies(const Species *species)
     newSpecies->setAutoUpdateIntramolecularTerms(false);
 
     // Duplicate atoms
-    ListIterator<SpeciesAtom> atomIterator(species->atoms());
-    while (SpeciesAtom *i = atomIterator.iterate())
+    for (auto &i : species->atoms())
     {
         // Create the Atom in our new Species
-        SpeciesAtom *newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
-        if (i->isSelected())
-            newSpecies->selectAtom(newAtom);
+        SpeciesAtom &newAtom = newSpecies->addAtom(i.Z(), i.r(), i.charge());
+        if (i.isSelected())
+            newSpecies->selectAtom(&newAtom);
 
         // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-        copyAtomType(i, newAtom);
+        copyAtomType(&i, &newAtom);
     }
 
     // Duplicate bonds
-    for (const auto &bond : species->constBonds())
+    for (const auto &bond : species->bonds())
     {
         // Create the bond in the new Species
         auto &newBond = newSpecies->addBond(bond.indexI(), bond.indexJ());
@@ -179,7 +157,7 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate angles
-    for (const auto &angle : species->constAngles())
+    for (const auto &angle : species->angles())
     {
         // Create the angle in the new Species
         auto &newAngle = newSpecies->addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
@@ -189,7 +167,7 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate torsions
-    for (const auto &torsion : species->constTorsions())
+    for (const auto &torsion : species->torsions())
     {
         // Create the torsion in the new Species
         SpeciesTorsion &newTorsion =
@@ -200,7 +178,7 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate impropers
-    for (auto &t : species->constImpropers())
+    for (auto &t : species->impropers())
     {
         // Create the improper in the new Species
         auto &newImproper = newSpecies->addImproper(t.indexI(), t.indexJ(), t.indexK(), t.indexL());

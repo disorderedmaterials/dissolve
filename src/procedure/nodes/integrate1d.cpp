@@ -1,30 +1,11 @@
-/*
-    *** Procedure Node - Integrate1D
-    *** src/procedure/nodes/integrate1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/integrate1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "keywords/types.h"
 #include "math/integrator.h"
@@ -36,13 +17,13 @@
 Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode *target)
     : ProcedureNode(ProcedureNode::Integrate1DNode)
 {
-    keywords_.add("Target", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
+    keywords_.add("Control", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
                   "SourceData", "Process1D node containing the data to integrate");
-    keywords_.add("Ranges", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
+    keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first integration region");
-    keywords_.add("Ranges", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
+    keywords_.add("Control", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
                   "X range for second integration region");
-    keywords_.add("Ranges", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
+    keywords_.add("Control", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
                   "X range for third integration region");
 }
 
@@ -95,11 +76,11 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
     integral_[2] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeC"));
 
     // Print info
-    Messenger::print("Integrate1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[0].mean(), integral_[0].stDev(),
+    Messenger::print("Integrate1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[0].value(), integral_[0].stDev(),
                      rangeA.minimum(), rangeA.maximum());
-    Messenger::print("Integrate1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[1].mean(), integral_[1].stDev(),
+    Messenger::print("Integrate1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[1].value(), integral_[1].stDev(),
                      rangeB.minimum(), rangeB.maximum());
-    Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].mean(), integral_[2].stDev(),
+    Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].value(), integral_[2].stDev(),
                      rangeC.minimum(), rangeC.maximum());
 
     return ProcedureNode::Success;

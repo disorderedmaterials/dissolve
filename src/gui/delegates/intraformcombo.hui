@@ -1,28 +1,9 @@
-/*
-    *** IntraFormCombo Delegate
-    *** src/gui/delegates/intraformcombo.hui
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/masterintra.h"
-#include "templates/list.h"
 #include <QComboBox>
 #include <QModelIndex>
 #include <QObject>
@@ -40,12 +21,10 @@ class IntraFormComboDelegate : public QItemDelegate
     // Associated item list
     ComboListItems *items_;
     // List of master terms
-    const List<MasterIntra> &masterTerms_;
+    const std::vector<MasterIntra> &masterTerms_;
 
     public:
-    // Constructor
-    IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms);
-    // Destructor
+    IntraFormComboDelegate(QObject *parent, ComboListItems *items, const std::vector<MasterIntra> &masterTerms);
     virtual ~IntraFormComboDelegate();
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

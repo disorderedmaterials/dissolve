@@ -1,23 +1,5 @@
-/*
-    *** Dissolve - Communications
-    *** src/main/comms.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/processpool.h"
 #include "base/sysfunc.h"
@@ -31,7 +13,7 @@ std::string_view ParallelStrategyKeywords[] = {"Sequential", "Even"};
 // Convert string to ParallelStrategy
 Dissolve::ParallelStrategy Dissolve::parallelStrategy(std::string_view s)
 {
-    for (int n = 0; n < Dissolve::nParallelStrategies; ++n)
+    for (auto n = 0; n < Dissolve::nParallelStrategies; ++n)
         if (DissolveSys::sameString(ParallelStrategyKeywords[n], s))
             return (Dissolve::ParallelStrategy)n;
     return Dissolve::nParallelStrategies;
@@ -60,7 +42,7 @@ ProcessPool &Dissolve::worldPool()
     {
         // Assemble list of (world) process ranks for the pool
         Array<int> ranks;
-        for (int n = 0; n < ProcessPool::nWorldProcesses(); ++n)
+        for (auto n = 0; n < ProcessPool::nWorldProcesses(); ++n)
             ranks.add(n);
         world.setUp("World", ranks, ProcessPool::MinimumGroupPopulation);
         firstRun = false;
@@ -86,11 +68,10 @@ bool Dissolve::setUpMPIPools()
     Array<int> configSizes;
     for (auto *cfg = coreData_.configurations().first(); cfg != nullptr; cfg = cfg->next())
         configSizes.add(cfg->nAtoms());
-    // 	configSizes /= configSizes.min();
 
     // Default pool - all world ranks
     Array<int> allProcesses;
-    for (int n = 0; n < ProcessPool::nWorldProcesses(); ++n)
+    for (auto n = 0; n < ProcessPool::nWorldProcesses(); ++n)
         allProcesses.add(n);
 
     // Set up pool based on selected strategy
@@ -126,7 +107,7 @@ bool Dissolve::setUpMPIPools()
             // Create new pool
             auto procsPerConfig = ProcessPool::nWorldProcesses() / nConfigurations();
             Array<int> poolProcesses;
-            for (int n = 0; n < procsPerConfig; ++n)
+            for (auto n = 0; n < procsPerConfig; ++n)
                 poolProcesses.add(procsPerConfig * cfgIndex + n);
             if (!cfg->setUpProcessPool(poolProcesses, parallelGroupPopulation_))
                 return false;

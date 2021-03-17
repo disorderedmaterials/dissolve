@@ -1,35 +1,20 @@
-/*
-    *** Math functions
-    *** src/math/mathfunc.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/mathfunc.h"
 #include "math/constants.h"
 #include <cstdlib>
 #include <math.h>
 
+namespace DissolveMath
+{
+
 /*
  * Error Functions
  */
 
 // Error Function
-double DissolveMath::erfc(double x)
+double erfc(double x)
 {
     // Approximation to the complementary error function.
     // Ref: Abramowitz and Stegun, Handbook of Mathematical Functions,
@@ -43,14 +28,14 @@ double DissolveMath::erfc(double x)
 }
 
 // Complementary error function
-double DissolveMath::erf(double x) { return (1.0 - erfc(x)); }
+double erf(double x) { return (1.0 - erfc(x)); }
 
 /*
  * Random Number Generation
  */
 
 // Random Number Generator (0 - 1)
-double DissolveMath::random()
+double random()
 {
     // Simple random number generator from C++ stdlib.
     // Returns numbers from 0.0 to 1.0 inclusive.
@@ -59,17 +44,17 @@ double DissolveMath::random()
 }
 
 // Return random value between -1 and 1.0 inclusive
-double DissolveMath::randomPlusMinusOne() { return (random() - 0.5) * 2.0; }
+double randomPlusMinusOne() { return (random() - 0.5) * 2.0; }
 
 // Random number generator (0 - RAND_MAX)
-int DissolveMath::randomimax()
+int randomimax()
 {
     // Returns a random number from 0->(RAND_MAX-1) inclusive.
     return rand();
 }
 
 // Random number generator (0 - range-1)
-int DissolveMath::randomi(int range)
+int randomi(int range)
 {
     // Returns a random number from 0->(range-1) inclusive.
     return int(range * (double(rand() - 1) / RAND_MAX));
@@ -80,7 +65,7 @@ int DissolveMath::randomi(int range)
  */
 
 // Integer power function
-int DissolveMath::power(int i, int p)
+int power(int i, int p)
 {
     static int result, n;
     result = i;
@@ -93,13 +78,15 @@ int DissolveMath::power(int i, int p)
 }
 
 // Sign function
-int DissolveMath::sgn(int x) { return (x < 0 ? -1 : (x == 0 ? 0 : 1)); }
+int sgn(int x) { return (x < 0 ? -1 : (x == 0 ? 0 : 1)); }
 
 // Sign function
-int DissolveMath::sgn(double x) { return (x < 0.0 ? -1 : x > 0.0); }
+int sgn(double x) { return (x < 0.0 ? -1 : x > 0.0); }
 
 // Apply sign of second argument to first
-double DissolveMath::sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a); }
+double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a); }
 
 // Return the cyclic permutation of the integer 'i', span 3
-int DissolveMath::cp3(int i) { return (i % 3); }
+int cp3(int i) { return (i % 3); }
+
+} // namespace DissolveMath

@@ -1,23 +1,5 @@
-/*
-    *** ExponentialSpin Functions
-    *** src/gui/widgets/exponentialspin_funcs.cpp
-    Copyright T. Youngs 2016-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/widgets/exponentialspin.hui"
 #include "math/doubleexp.h"
@@ -88,27 +70,3 @@ QValidator::State ExponentialSpin::validate(QString &text, int &pos) const
 
 // Interpret text into value
 double ExponentialSpin::valueFromText(const QString &text) const { return text.toDouble(); }
-
-// Step value by specified amount
-// void ExponentialSpin::stepBy(int nSteps)
-// {
-// 	value_ = value_.value() + valueStep_*nSteps;
-//
-// 	// Check new value and update text
-// 	clamp();
-// 	updateTextFromValue();
-// 	emit(valueChanged(value_.value()));
-// 	textChanged_ = false;
-// }
-
-// // Return which steps should be enabled
-// QAbstractSpinBox::StepEnabled ExponentialSpin::stepEnabled() const
-// {
-// 	bool up = (value_.value() < valueMax_) || (!limitMaxValue_);
-// 	bool down = (value_.value() > valueMin_) || (!limitMinValue_);
-//
-// 	if (up && down) return (QAbstractSpinBox::StepUpEnabled | QAbstractSpinBox::StepDownEnabled);
-// 	else if (up) return QAbstractSpinBox::StepUpEnabled;
-// 	else if (down) return QAbstractSpinBox::StepDownEnabled;
-// 	else return QAbstractSpinBox::StepNone;
-// }

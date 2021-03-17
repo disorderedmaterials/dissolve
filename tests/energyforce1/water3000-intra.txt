@@ -26,7 +26,7 @@ Configuration  'Bulk'
     EndAddSpecies
   EndGenerator
 
-  InputCoordinates  dlpoly  'dlpoly_intra/CONFIG'
+  InputCoordinates  dlpoly  '../_data/dlpoly/water3000_intra/CONFIG'
   EndInputCoordinates
 
   # Test analytical energy against production and reference energy
@@ -39,7 +39,7 @@ Configuration  'Bulk'
   # Test production forces against reference forces
   Module Forces
     Test on
-    TestReference  dlpoly  'dlpoly_intra/REVCON'
+    TestReference  dlpoly  '../_data/dlpoly/water3000_intra/REVCON'
     EndTestReference
   EndModule
 EndConfiguration

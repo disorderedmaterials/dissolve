@@ -1,10 +1,10 @@
-add_library(module
+add_library(
+  module
   group.cpp
   groups.cpp
   layer.cpp
   list.cpp
   module.cpp
-
   group.h
   groups.h
   layer.h
@@ -12,9 +12,4 @@ add_library(module
   module.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(module PRIVATE ${PROJECT_SOURCE_DIR}/src)

@@ -1,23 +1,5 @@
-/*
-    *** EPSR Module
-    *** src/modules/epsr/epsr.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -41,27 +23,27 @@ class EPSRModule : public Module
 
     public:
     EPSRModule();
-    ~EPSRModule();
+    ~EPSRModule() override = default;
 
     /*
      * Instances
      */
     public:
     // Create instance of this module
-    Module *createInstance() const;
+    Module *createInstance() const override;
 
     /*
      * Definition
      */
     public:
     // Return type of module
-    std::string_view type() const;
+    std::string_view type() const override;
     // Return category for module
-    std::string_view category() const;
+    std::string_view category() const override;
     // Return brief description of module
-    std::string_view brief() const;
+    std::string_view brief() const override;
     // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const;
+    int nRequiredTargets() const override;
 
     /*
      * Initialisation
@@ -79,18 +61,18 @@ class EPSRModule : public Module
 
     protected:
     // Perform any necessary initialisation for the Module
-    void initialise();
+    void initialise() override;
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool);
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool);
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * Functions
@@ -98,20 +80,14 @@ class EPSRModule : public Module
     private:
     // Test datasets (if any)
     Data1DStore testData_;
-    // Target Modules, divided into groups
-    ModuleGroups groupedTargets_;
-    // Simulated data added as reference data
-    Array<Data1D> simulatedReferenceData_;
+    // Target Configuration (determined from target modules)
+    Configuration *targetConfiguration_;
 
     public:
-    // Return list of target Modules / data for refeinement
-    const RefDataList<Module, ModuleGroup *> &allTargets() const;
-    // Return grouped target Modules
-    const ModuleGroups &groupedTargets() const;
-    // Add target Modules
-    void addTargets(RefList<Module> targets, std::string_view groupName = "Default");
+    // Return list of target Modules / data for refinement
+    const std::vector<Module *> &targets() const;
     // Create / retrieve arrays for storage of empirical potential coefficients
-    Array2D<Array<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
+    Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
     // Generate empirical potentials from current coefficients
     bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho,
                                      int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
@@ -151,7 +127,7 @@ class EPSRModule : public Module
         nEPSRPCofKeywords
     };
     // Return enum options for EPSRPCofKeyword
-    static EnumOptions<EPSRModule::EPSRPCofKeyword> &epsrPCofKeywords();
+    static EnumOptions<EPSRModule::EPSRPCofKeyword> epsrPCofKeywords();
 
     public:
     // Read data from supplied pcof file
@@ -162,5 +138,5 @@ class EPSRModule : public Module
      */
     public:
     // Return a new widget controlling this Module
-    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
+    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve) override;
 };

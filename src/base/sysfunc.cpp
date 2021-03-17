@@ -1,23 +1,5 @@
-/*
-    *** System Functions
-    *** src/base/sysfunc.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "base/messenger.h"
@@ -26,6 +8,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <optional>
 #include <sstream>
 
 using namespace std;
@@ -245,12 +228,12 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
     // Assume integer to start with
     isFloatingPoint = false;
 
-    auto exponentIndex = -1;
+    std::optional<int> exponentIndex;
 
     const auto length = text.size();
-    for (int n = 0; n < length; ++n)
+    for (auto n = 0; n < length; ++n)
     {
-        char c = text[n];
+        auto c = text[n];
         switch (text[n])
         {
             // Decimal point
@@ -261,8 +244,11 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
             case ('-'):
             case ('+'):
                 // Only allow as first character or immediately following an exponent
-                if (n != (exponentIndex + 1))
+                if (n != (exponentIndex.value_or(-1) + 1))
                     return false;
+                // If the exponent power is negative, assume floating point
+                if ((c == '-') && exponentIndex && (exponentIndex.value() == (n - 1)))
+                    isFloatingPoint = true;
                 break;
             // Exponentiation
             case ('e'):
@@ -272,7 +258,7 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
                     return false;
 
                 // Can't have more than one
-                if (exponentIndex > 0)
+                if (exponentIndex.has_value())
                     return false;
 
                 // Store position
@@ -287,6 +273,21 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
     }
 
     return true;
+}
+
+// Replace all occurrences of search string with replace string
+std::string DissolveSys::replace(const std::string_view source, const std::string_view search, const std::string_view replace)
+{
+    std::string result{source};
+
+    size_t pos = result.find(search);
+    while (pos != std::string::npos)
+    {
+        result.replace(pos, search.size(), replace);
+        pos = result.find(search, pos + replace.size());
+    }
+
+    return result;
 }
 
 /*

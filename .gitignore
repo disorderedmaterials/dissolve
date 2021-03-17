@@ -26,6 +26,7 @@ src/dissolve-gui
 src/dissolve
 *.kdev4
 build/
+cmake-build-*/
 *.exe
 
 # Miscellaneous

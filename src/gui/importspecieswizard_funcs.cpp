@@ -1,23 +1,5 @@
-/*
-    *** Add Species Wizard Functions
-    *** src/gui/importspecieswizard_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -146,8 +128,6 @@ bool ImportSpeciesWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
 {
-    SpeciesAtom *atomicAtom;
-
     switch (currentIndex)
     {
         case (ImportSpeciesWizard::SelectFilePage):
@@ -158,16 +138,16 @@ bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
             }
             // Update the Species and AtomTypes lists
             ui_.SpeciesList->clear();
-            for (auto *sp = temporaryDissolve_.species().first(); sp != nullptr; sp = sp->next())
+            for (const auto &sp : temporaryDissolve_.species())
             {
                 QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(std::string(sp->name())));
-                item->setData(Qt::UserRole, VariantPointer<Species>(sp));
+                item->setData(Qt::UserRole, VariantPointer<Species>(sp.get()));
                 ui_.SpeciesList->addItem(item);
             }
             if (ui_.SpeciesList->count() > 0)
             {
                 ui_.SpeciesList->setCurrentRow(0);
-                importTarget_ = temporaryCoreData_.species().first();
+                importTarget_ = temporaryCoreData_.species().front().get();
             }
 
             updateAtomTypesPage();
@@ -228,7 +208,7 @@ void ImportSpeciesWizard::reset()
 
     // Set a new, unique name ready on the final page
     ui_.SpeciesNameEdit->setText(
-        QString::fromStdString(std::string(dissolveReference_->constCoreData().uniqueSpeciesName("NewSpecies"))));
+        QString::fromStdString(std::string(dissolveReference_->coreData().uniqueSpeciesName("NewSpecies"))));
 }
 
 /*
@@ -293,14 +273,14 @@ void ImportSpeciesWizard::updateAtomTypesListRow(int row, std::shared_ptr<AtomTy
 void ImportSpeciesWizard::updateAtomTypesPage()
 {
     // Update the list against the global AtomType list
-    ListWidgetUpdater<ImportSpeciesWizard, AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this,
+    ListWidgetUpdater<ImportSpeciesWizard, AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.atomTypes(), this,
                                                                  &ImportSpeciesWizard::updateAtomTypesListRow);
 
     // Determine whether we have any naming conflicts
     auto conflicts = false;
-    auto it = std::find_if(temporaryCoreData_.constAtomTypes().begin(), temporaryCoreData_.constAtomTypes().end(),
+    auto it = std::find_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
                            [this](const auto at) { return dissolveReference_->findAtomType(at->name()); });
-    if (it != temporaryCoreData_.constAtomTypes().end())
+    if (it != temporaryCoreData_.atomTypes().end())
         conflicts = true;
     ui_.AtomTypesIndicator->setNotOK(conflicts);
     if (conflicts)
@@ -321,7 +301,7 @@ void ImportSpeciesWizard::atomTypesListEdited(QWidget *lineEdit)
 {
     // Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before
     // updating the page
-    for (int n = 0; n < ui_.AtomTypesList->count(); ++n)
+    for (auto n = 0; n < ui_.AtomTypesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.AtomTypesList->item(n);
         std::shared_ptr<AtomType> at = item->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
@@ -377,7 +357,7 @@ void ImportSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
  */
 
 // Row update function for MasterTermsList
-void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra,
+void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra,
                                                      bool createItem)
 {
     QTreeWidgetItem *item;
@@ -393,7 +373,7 @@ void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, in
 
     // Set item data
     item->setText(0, QString::fromStdString(std::string(masterIntra->name())));
-    item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name())
+    item->setIcon(0, QIcon(dissolveReference_->coreData().findMasterTerm(masterIntra->name())
                                ? ":/general/icons/general_warn.svg"
                                : ":/general/icons/general_true.svg"));
 }
@@ -411,23 +391,26 @@ void ImportSpeciesWizard::updateMasterTermsPage()
 
     // Determine whether we have any naming conflicts
     auto conflicts = false;
-    ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
-    while (MasterIntra *intra = bondIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterBonds())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
         }
-    ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
-    while (MasterIntra *intra = angleIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterAngles())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
         }
-    ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
-    while (MasterIntra *intra = torsionIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterTorsions())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
+        {
+            conflicts = true;
+            break;
+        }
+    for (auto &intra : temporaryCoreData_.masterImpropers())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
@@ -451,7 +434,7 @@ void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 {
     // Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here
     // before updating the page
-    for (int n = 0; n < masterBondItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterBondItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterBondItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -460,7 +443,7 @@ void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterAngleItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterAngleItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterAngleItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -469,7 +452,7 @@ void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterTorsionItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterTorsionItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterTorsionItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));

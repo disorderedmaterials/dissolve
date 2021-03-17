@@ -1,23 +1,5 @@
-/*
-    *** AtomTypeData Definition
-    *** src/classes/atomtypedata.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/messenger.h"
@@ -35,39 +17,18 @@ AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, do
     : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.clear();
-    for (int n = 0; n < nIso; ++n)
-    {
+    for (auto n = 0; n < nIso; ++n)
         isotopes_.add();
-    }
 }
 
-AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomType_), listIndex_(source.listIndex())
+AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listIndex()), atomType_(source.atomType_)
 {
     (*this) = source;
 }
 
-// Read data through specified LineParser
-AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex)
-    : atomType_(coreData.findAtomType(parser.argsv(0))), listIndex_(listIndex)
-{
-    population_ = parser.argd(1);
-    fraction_ = parser.argd(2);
-    boundCoherent_ = parser.argd(3);
-    isotopes_.clear();
-    int nIso = parser.argi(4);
-    for (int n = 0; n < nIso; ++n)
-    {
-        IsotopeData *tope = isotopes_.add();
-    }
-}
-
-// Initialise Constructor
 AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
-    : atomType_(type), listIndex_(listIndex), population_(population)
+    : listIndex_(listIndex), atomType_(type), exchangeable_(false), population_(population), fraction_(0.0), boundCoherent_(0.0)
 {
-    exchangeable_ = false;
-    fraction_ = 0.0;
-    boundCoherent_ = 0.0;
 }
 
 void AtomTypeData::operator=(const AtomTypeData &source)
@@ -104,7 +65,7 @@ void AtomTypeData::add(Isotope *tope, double nAdd)
     // Increase Isotope population
     topeData->add(nAdd);
 
-    // Increase total integer population
+    // Increase total population
     population_ += nAdd;
 }
 
@@ -154,11 +115,14 @@ void AtomTypeData::naturalise()
     // Clear the isotopes list and add on the natural isotope, keeping the current population
     isotopes_.clear();
     IsotopeData *topeData = isotopes_.add();
-    topeData->initialise(Isotopes::naturalIsotope(atomType_->element()));
+    topeData->initialise(Isotopes::naturalIsotope(atomType_->Z()));
     topeData->add(population_);
     topeData->finalise(population_);
     boundCoherent_ = topeData->isotope()->boundCoherent();
 }
+
+// Return the number of defined Isotopes
+int AtomTypeData::nIsotopes() const { return isotopes_.nItems(); }
 
 // Return if specified Isotope is already in the list
 bool AtomTypeData::hasIsotope(Isotope *tope)
@@ -233,8 +197,6 @@ bool AtomTypeData::broadcast(ProcessPool &procPool, const int root, const CoreDa
 
     // Broadcast the IsotopeData list
     BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
-    // if (topeBroadcaster.failed())
-    //   Messenger("Broadcase of AtomTypeData failed");
 
     procPool.broadcast(population_, root);
     procPool.broadcast(fraction_, root);

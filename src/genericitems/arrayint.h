@@ -1,23 +1,5 @@
-/*
-    *** Generic Item Container - Array<int>
-    *** src/genericitems/arrayint.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -39,6 +21,7 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
     public:
     // Return data item
     Array<int> &data() { return data_; }
+    const Array<int> &data() const { return data_; }
 
     /*
      * Item Class
@@ -64,9 +47,9 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
     bool write(LineParser &parser)
     {
         parser.writeLineF("{}\n", data_.nItems());
-        for (int n = 0; n < data_.nItems(); ++n)
+        for (auto n = 0; n < data_.nItems(); ++n)
         {
-            if (!parser.writeLineF("{}\n", data_.constAt(n)))
+            if (!parser.writeLineF("{}\n", data_.at(n)))
                 return false;
         }
         return true;
@@ -78,7 +61,7 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
             return false;
         int nItems = parser.argi(0);
         data_.createEmpty(nItems);
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;

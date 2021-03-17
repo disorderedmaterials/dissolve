@@ -1,23 +1,5 @@
-/*
-    *** Site Stack
-    *** src/classes/sitestack.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/sitestack.h"
 #include "base/processpool.h"
@@ -25,7 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/speciesatom.h"
 #include "classes/speciessite.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 
 SiteStack::SiteStack() : ListItem<SiteStack>()
 {
@@ -56,10 +38,10 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
     sitesHaveOrientation_ = speciesSite->hasAxes();
 
     // Get origin atom indices from site, and grab the Configuration's Box
-    Array<int> originAtomIndices = speciesSite->originAtomIndices();
+    auto originAtomIndices = speciesSite->originAtomIndices();
     if (originAtomIndices.nItems() == 0)
         return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite->name());
-    const Box *box = configuration_->box();
+    const auto *box = configuration_->box();
 
     // If the site has axes, grab the atom indices involved
     Array<int> xAxisAtomIndices, yAxisAtomIndices;
@@ -76,29 +58,23 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
     // Get Molecule array from Configuration and search for the target Species
     std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
-    Species *targetSpecies = speciesSite->parent();
+    auto *targetSpecies = speciesSite->parent();
     Vec3<double> origin, v, x, y, z;
     Matrix3 axes;
-    for (auto molecule : molecules)
+    for (const auto &molecule : molecules)
     {
         if (molecule->species() != targetSpecies)
             continue;
 
-            // Calculate origin
-#ifdef CHECKS
-        for (int i = 0; i < originAtomIndices.nItems(); ++i)
-            if ((originAtomIndices[i] < 0) || (originAtomIndices[i] >= molecule->nAtoms()))
-                return Messenger::error("Origin atom index {} is out of range for molecule (contains {} atoms).\n",
-                                        originAtomIndices[i], molecule->nAtoms());
-#endif
+        // Calculate origin
         if (speciesSite->originMassWeighted())
         {
-            double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->element());
+            double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->Z());
             origin = molecule->atom(originAtomIndices.firstValue())->r() * mass;
             double massNorm = mass;
-            for (int m = 1; m < originAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
             {
-                mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->element());
+                mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->Z());
                 origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
                                             molecule->atom(originAtomIndices.firstValue())->r()) *
                           mass;
@@ -109,7 +85,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         else
         {
             origin = molecule->atom(originAtomIndices.firstValue())->r();
-            for (int m = 1; m < originAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
                 origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
                                             molecule->atom(originAtomIndices.firstValue())->r());
             origin /= originAtomIndices.nItems();
@@ -118,19 +94,9 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         // Calculate axes and store data
         if (sitesHaveOrientation_)
         {
-#ifdef CHECKS
-            for (int i = 0; i < xAxisAtomIndices.nItems(); ++i)
-                if ((xAxisAtomIndices[i] < 0) || (xAxisAtomIndices[i] >= molecule->nAtoms()))
-                    return Messenger::error("X-axis atom index {} is out of range for molecule (contains {} atoms).\n",
-                                            xAxisAtomIndices[i], molecule->nAtoms());
-            for (int i = 0; i < yAxisAtomIndices.nItems(); ++i)
-                if ((yAxisAtomIndices[i] < 0) || (yAxisAtomIndices[i] >= molecule->nAtoms()))
-                    return Messenger::error("Y-axis atom index {} is out of range for molecule (contains {} atoms).\n",
-                                            yAxisAtomIndices[i], molecule->nAtoms());
-#endif
             // Get average position of supplied x-axis atoms
             v = molecule->atom(xAxisAtomIndices.firstValue())->r();
-            for (int m = 1; m < xAxisAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < xAxisAtomIndices.nItems(); ++m)
                 v += box->minimumImage(molecule->atom(xAxisAtomIndices[m])->r(),
                                        molecule->atom(xAxisAtomIndices.firstValue())->r());
             v /= xAxisAtomIndices.nItems();
@@ -141,7 +107,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
             // Get average position of supplied y-axis atoms
             v = molecule->atom(yAxisAtomIndices.firstValue())->r();
-            for (int m = 1; m < yAxisAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < yAxisAtomIndices.nItems(); ++m)
                 v += box->minimumImage(molecule->atom(yAxisAtomIndices[m])->r(),
                                        molecule->atom(yAxisAtomIndices.firstValue())->r());
             v /= yAxisAtomIndices.nItems();
@@ -184,7 +150,4 @@ bool SiteStack::sitesInMolecules() const { return sitesInMolecules_; }
 bool SiteStack::sitesHaveOrientation() const { return sitesHaveOrientation_; }
 
 // Return site with index specified
-const Site &SiteStack::site(int index) const
-{
-    return (sitesHaveOrientation_ ? orientedSites_.constAt(index) : sites_.constAt(index));
-}
+const Site &SiteStack::site(int index) const { return (sitesHaveOrientation_ ? orientedSites_.at(index) : sites_.at(index)); }

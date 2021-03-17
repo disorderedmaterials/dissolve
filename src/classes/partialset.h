@@ -1,23 +1,5 @@
-/*
-    *** Set of Partials
-    *** src/classes/partialset.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -66,7 +48,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Bound matrix, containing atom-atom partial of bound pairs
     Array2D<Data1D> boundPartials_;
     // Bound flag matrix, specifying if bound partials are empty
-    Array2D<bool> emptyBoundPartials_;
+    Array2D<char> emptyBoundPartials_;
     // Total function
     Data1D total_;
     // Prefix applied to object names
@@ -103,30 +85,26 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     Histogram1D &unboundHistogram(int i, int j);
     // Return full atom-atom partial specified
     Data1D &partial(int i, int j);
-    // Return full atom-atom partial specified (const)
-    Data1D &constPartial(int i, int j) const;
+    const Data1D &partial(int i, int j) const;
     // Return atom-atom partial for unbound pairs
     Data1D &unboundPartial(int i, int j);
-    // Return atom-atom partial for unbound pairs (const)
-    Data1D &constUnboundPartial(int i, int j) const;
+    const Data1D &unboundPartial(int i, int j) const;
     // Return atom-atom partial for bound pairs
     Data1D &boundPartial(int i, int j);
-    // Return atom-atom partial for bound pairs (const)
-    Data1D &constBoundPartial(int i, int j) const;
+    const Data1D &boundPartial(int i, int j) const;
     // Return whether specified bound partial is empty
     bool isBoundPartialEmpty(int i, int j) const;
     // Sum partials into total
     void formTotal(bool applyConcentrationWeights);
     // Return total function
     Data1D &total();
-    // Return copy of total function
-    Data1D constTotal() const;
+    const Data1D &total() const;
     // Calculate and return total bound function
     Data1D boundTotal(bool applyConcentrationWeights) const;
     // Calculate and return total unbound function
     Data1D unboundTotal(bool applyConcentrationWeights) const;
     // Save all partials and total
-    bool save();
+    bool save() const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names

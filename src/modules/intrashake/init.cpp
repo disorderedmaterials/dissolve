@@ -1,23 +1,5 @@
-/*
-    *** IntraShake Module - Initialisation
-    *** src/modules/intrashake/init.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
 #include "modules/intrashake/intrashake.h"
@@ -25,13 +7,12 @@
 // Perform any necessary initialisation for the Module
 void IntraShakeModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ",
-                  "<distance>");
-    keywords_.add("Calculation", new IntegerKeyword(1), "ShakesPerTerm", "Number of shakes per term", "<n>");
-    keywords_.add("Calculation", new DoubleKeyword(0.33), "TargetAcceptanceRate",
-                  "Target acceptance rate for Monte Carlo moves", "<rate (0.0-1.0)>");
-    keywords_.add("Calculation", new BoolKeyword(false), "TermEnergyOnly",
+    // Control
+    keywords_.add("Control", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<distance>");
+    keywords_.add("Control", new IntegerKeyword(1), "ShakesPerTerm", "Number of shakes per term", "<n>");
+    keywords_.add("Control", new DoubleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves",
+                  "<rate (0.0-1.0)>");
+    keywords_.add("Control", new BoolKeyword(false), "TermEnergyOnly",
                   "Whether only the energy of the intramolecular term is calculated and assessed");
 
     // Bonds

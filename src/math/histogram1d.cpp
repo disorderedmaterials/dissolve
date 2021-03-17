@@ -1,35 +1,11 @@
-/*
-    *** 1-Dimensional Histogram
-    *** src/math/histogram1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/histogram1d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
 
-// Static Members (ObjectStore)
-template <class Histogram1D> RefDataList<Histogram1D, int> ObjectStore<Histogram1D>::objects_;
-template <class Histogram1D> int ObjectStore<Histogram1D>::objectCount_ = 0;
-template <class Histogram1D> int ObjectStore<Histogram1D>::objectType_ = ObjectInfo::Histogram1DObject;
-template <class Histogram1D> std::string_view ObjectStore<Histogram1D>::objectTypeName_ = "Histogram1D";
-
-Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(this)
+Histogram1D::Histogram1D() : ListItem<Histogram1D>()
 {
     accumulatedData_.addErrors();
 
@@ -38,7 +14,7 @@ Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(t
 
 Histogram1D::~Histogram1D() {}
 
-Histogram1D::Histogram1D(const Histogram1D &source) : ObjectStore<Histogram1D>(this) { (*this) = source; }
+Histogram1D::Histogram1D(const Histogram1D &source) { (*this) = source; }
 
 // Clear Data
 void Histogram1D::clear()
@@ -62,14 +38,14 @@ void Histogram1D::clear()
 void Histogram1D::updateAccumulatedData()
 {
     // Set up arrays
-    accumulatedData_.initialise(bins_.nItems(), true);
+    accumulatedData_.initialise(bins_.size(), true);
 
     // Store bin centres and accumulated averages in the object
-    for (int n = 0; n < bins_.nItems(); ++n)
+    for (auto n = 0; n < bins_.size(); ++n)
     {
         accumulatedData_.xAxis(n) = binCentres_[n];
-        accumulatedData_.value(n) = averages_.constAt(n);
-        accumulatedData_.error(n) = averages_.constAt(n).stDev();
+        accumulatedData_.value(n) = averages_[n];
+        accumulatedData_.error(n) = averages_[n].stDev();
     }
 }
 
@@ -85,25 +61,27 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
     setUpAxis(minimum_, maximum_, binWidth_, nBins_, binCentres_);
 
     // Create the arrays
-    bins_.initialise(nBins_);
-    averages_.initialise(nBins_);
+    bins_.clear();
+    bins_.resize(nBins_);
+    averages_.clear();
+    averages_.resize(nBins_);
 }
 
 // Zero histogram bins
 void Histogram1D::zeroBins()
 {
-    bins_ = 0;
+    std::fill(bins_.begin(), bins_.end(), 0);
     nBinned_ = 0;
     nMissed_ = 0;
 }
 
 // Set up supplied axis
-void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, Array<double> &binCentres)
+void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, std::vector<double> &binCentres)
 {
     // Min, max, and bin width should be set to requested values initially
     // We will clamp the maximum to the nearest bin boundary (not less than the supplied axisMax)
     double range = axisMax - axisMin;
-    nBins = range / binWidth;
+    nBins = int(range / binWidth);
     if ((axisMin + nBins * binWidth) < axisMax)
     {
         ++nBins;
@@ -111,9 +89,10 @@ void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, in
     }
 
     // Create centre-bin array
-    binCentres.initialise(nBins);
+    binCentres.clear();
+    binCentres.resize(nBins);
     double centre = axisMin + binWidth * 0.5;
-    for (int n = 0; n < nBins; ++n, centre += binWidth)
+    for (auto n = 0; n < nBins; ++n, centre += binWidth)
         binCentres[n] = centre;
 }
 
@@ -133,7 +112,7 @@ int Histogram1D::nBins() const { return nBins_; }
 bool Histogram1D::bin(double x)
 {
     // Calculate target bin
-    auto bin = (x - minimum_) / binWidth_;
+    auto bin = int((x - minimum_) / binWidth_);
 
     // Check bin range
     if ((bin < 0) || (bin >= nBins_))
@@ -154,7 +133,7 @@ long int Histogram1D::nBinned() const { return nBinned_; }
 // Accumulate current histogram bins into averages
 void Histogram1D::accumulate()
 {
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         averages_[n] += double(bins_[n]);
 
     // Update accumulated data
@@ -162,10 +141,10 @@ void Histogram1D::accumulate()
 }
 
 // Return Array of x centre-bin values
-const Array<double> &Histogram1D::binCentres() const { return binCentres_; }
+const std::vector<double> &Histogram1D::binCentres() const { return binCentres_; }
 
 // Return histogram data
-Array<long int> &Histogram1D::bins() { return bins_; }
+std::vector<long int> &Histogram1D::bins() { return bins_; }
 
 // Add source histogram data into local array
 void Histogram1D::add(Histogram1D &other, int factor)
@@ -176,7 +155,7 @@ void Histogram1D::add(Histogram1D &other, int factor)
                          other.nBins_);
         return;
     }
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         bins_[n] += other.bins_[n] * factor;
 }
 
@@ -212,10 +191,6 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     initialise(parser.argd(0), parser.argd(1), parser.argd(2));
@@ -225,7 +200,7 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         if (!averages_[n].read(parser, coreData))
             return false;
 
@@ -235,13 +210,11 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool Histogram1D::write(LineParser &parser)
 {
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
     if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, binWidth_))
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         if (!averages_[n].write(parser))
             return false;
 
@@ -256,7 +229,7 @@ bool Histogram1D::write(LineParser &parser)
 bool Histogram1D::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    if (!procPool.allSum(bins_, nBins_))
+    if (!procPool.allSum(bins_.data(), nBins_))
         return false;
 #endif
     return true;
@@ -285,8 +258,8 @@ bool Histogram1D::broadcast(ProcessPool &procPool, const int root, const CoreDat
         return false;
     if (!procPool.broadcast(bins_, root))
         return false;
-    for (int n = 0; n < averages_.nItems(); ++n)
-        if (!averages_[n].broadcast(procPool, root, coreData))
+    for (auto &n : averages_)
+        if (!n.broadcast(procPool, root, coreData))
             return false;
 #endif
     return true;
@@ -319,8 +292,8 @@ bool Histogram1D::equality(ProcessPool &procPool)
     if (!procPool.equality(nMissed_))
         return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
-    for (int n = 0; n < averages_.nItems(); ++n)
-        if (!averages_[n].equality(procPool))
+    for (auto n : averages_)
+        if (!n.equality(procPool))
             return Messenger::error("Histogram1D average values not equivalent.\n");
 #endif
     return true;

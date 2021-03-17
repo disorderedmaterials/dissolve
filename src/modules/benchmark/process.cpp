@@ -1,28 +1,9 @@
-/*
-    *** Benchmark Module - Processing
-    *** src/modules/benchmark/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/regionaldistributor.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "io/import/data1d.h"
 #include "main/dissolve.h"
@@ -58,7 +39,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestGenerator"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 srand(dissolve.seed());
 
@@ -78,7 +59,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestRDFCells"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 RDFModule rdfModule;
                 rdfModule.addTargetConfiguration(cfg);
@@ -104,7 +85,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestRDFSimple"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 RDFModule rdfModule;
                 rdfModule.addTargetConfiguration(cfg);
@@ -130,7 +111,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestIntraEnergy"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 Timer timer;
                 Messenger::mute();
@@ -148,7 +129,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestInterEnergy"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 Timer timer;
                 Messenger::mute();
@@ -166,7 +147,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestDistributors"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 // Create a Molecule distributor
                 auto &moleculeArray = cfg->molecules();
@@ -190,12 +171,9 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Loop over target Molecules
-                    for (int n = 0; n < targetMolecules.size(); ++n)
-                    {
+                    for (auto &molId : targetMolecules)
                         // Get Molecule index and pointer
-                        auto molId = targetMolecules[n];
                         auto mol = cfg->molecule(molId);
-                    }
                 }
                 Messenger::unMute();
                 timing += timer.split();
@@ -229,7 +207,7 @@ void BenchmarkModule::printTimingResult(std::string_view testFile, std::string_v
     // Print timing, comparing to last known value if available
     if (existingDataAvailable)
     {
-        SampledDouble lastTiming = existingTimings.values().last();
+        SampledDouble lastTiming = existingTimings.values().back();
         double deltaT = lastTiming.value() - timing.value();
         Messenger::print("  {:50}  {:8.4e} s (+/- {:8.4e} s) => {}{:0.3e} s ({}{:0.2f}%)\n", testDescription, timing.value(),
                          timing.stDev(), deltaT < timing.value() ? '+' : '-', fabs(deltaT), deltaT < timing.value() ? '+' : '-',

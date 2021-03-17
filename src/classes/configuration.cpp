@@ -1,23 +1,5 @@
-/*
-    *** Configuration
-    *** src/classes/configuration.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -30,14 +12,7 @@
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
-// Static Members (ObjectStore)
-template <class Configuration> RefDataList<Configuration, int> ObjectStore<Configuration>::objects_;
-template <class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
-template <class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
-template <class Configuration> std::string_view ObjectStore<Configuration>::objectTypeName_ = "Configuration";
-
-Configuration::Configuration()
-    : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
+Configuration::Configuration() : ListItem<Configuration>(), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
     box_ = nullptr;
 
@@ -137,13 +112,13 @@ bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileForm
         return false;
 
     // Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
-    if (atoms_.nItems() != r.nItems())
+    if (atoms_.size() != r.nItems())
         return Messenger::error(
             "Number of atoms read from initial coordinates file ({}) does not match that in Configuration ({}).\n", r.nItems(),
-            atoms_.nItems());
+            atoms_.size());
 
     // All good, so copy atom coordinates over into our array
-    for (auto n = 0; n < atoms_.nItems(); ++n)
+    for (auto n = 0; n < atoms_.size(); ++n)
         atoms_[n]->setCoordinates(r[n]);
 
     return true;
@@ -156,14 +131,13 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
     if (emptyCurrentContent)
         empty();
 
-    /*
-     * Content Initialisation
-     */
+    appliedSizeFactor_ = 1.0;
+    requestedSizeFactor_ = 1.0;
 
-    // If the Configuation is currently empty, run the generator Procedure and potentially load coordinates from file
+    // If the Configuration is currently empty, run the generator Procedure and potentially load coordinates from file
     if (nAtoms() == 0)
     {
-        // Run the generator procedure (we will need species / atom info to load any coordinates in to anyway)
+        // Run the generator procedure (we will need species / atom info to load any coordinates in)
         if (!generate(procPool, pairPotentialRange))
             return false;
 
@@ -247,38 +221,31 @@ ProcessPool &Configuration::processPool() { return processPool_; }
 bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
 {
 #ifdef PARALLEL
-    double *x, *y, *z;
-    x = new double[atoms_.nItems()];
-    y = new double[atoms_.nItems()];
-    z = new double[atoms_.nItems()];
+    std::vector<double> x, y, z;
+    x.resize(atoms_.size());
+    y.resize(atoms_.size());
+    z.resize(atoms_.size());
 
     // Master assembles Atom coordinate arrays...
     if (procPool.poolRank() == rootRank)
     {
         Messenger::printVerbose("Process rank {} is assembling coordinate data...\n", procPool.poolRank());
-        for (int n = 0; n < atoms_.nItems(); ++n)
-        {
-            x[n] = atoms_[n]->r().x;
-            y[n] = atoms_[n]->r().y;
-            z[n] = atoms_[n]->r().z;
-        }
+        std::transform(atoms_.begin(), atoms_.end(), x.begin(), [](const auto &atom) { return atom->r().x; });
+        std::transform(atoms_.begin(), atoms_.end(), y.begin(), [](const auto &atom) { return atom->r().y; });
+        std::transform(atoms_.begin(), atoms_.end(), z.begin(), [](const auto &atom) { return atom->r().z; });
     }
 
-    if (!procPool.broadcast(x, atoms_.nItems(), rootRank))
+    if (!procPool.broadcast(x, rootRank))
         return false;
-    if (!procPool.broadcast(y, atoms_.nItems(), rootRank))
+    if (!procPool.broadcast(y, rootRank))
         return false;
-    if (!procPool.broadcast(z, atoms_.nItems(), rootRank))
+    if (!procPool.broadcast(z, rootRank))
         return false;
 
     // Slaves then store values into Atoms, updating related info as we go
     if (procPool.isSlave())
-        for (int n = 0; n < atoms_.nItems(); ++n)
+        for (auto n = 0; n < atoms_.size(); ++n)
             atoms_[n]->setCoordinates(x[n], y[n], z[n]);
-
-    delete[] x;
-    delete[] y;
-    delete[] z;
 
     // Broadcast contents version
     if (!contentsVersion_.broadcast(procPool, rootRank))

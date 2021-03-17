@@ -1,23 +1,5 @@
-/*
-    *** Generic Item Container - Array<double>
-    *** src/genericitems/arraydouble.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -39,6 +21,7 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
     public:
     // Return data item
     Array<double> &data() { return data_; }
+    const Array<double> &data() const { return data_; }
 
     /*
      * Item Class
@@ -68,9 +51,9 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
     static bool write(const Array<double> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}\n", thisData.nItems());
-        for (int n = 0; n < thisData.nItems(); ++n)
+        for (auto n = 0; n < thisData.nItems(); ++n)
         {
-            if (!parser.writeLineF("{:16.9e}\n", thisData.constAt(n)))
+            if (!parser.writeLineF("{:16.9e}\n", thisData.at(n)))
                 return false;
         }
         return true;
@@ -82,7 +65,7 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
             return false;
         int nItems = parser.argi(0);
         thisData.createEmpty(nItems);
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;

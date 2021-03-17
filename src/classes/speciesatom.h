@@ -1,30 +1,12 @@
-/*
-    *** Species Atom Definition
-    *** src/classes/speciesatom.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
+#include "data/elements.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/optionalref.h"
-#include "templates/orderedpointerdataarray.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
@@ -32,7 +14,6 @@
 
 // Forward Declarations
 class AtomType;
-class Element;
 class Species;
 class SpeciesAngle;
 class SpeciesBond;
@@ -41,11 +22,11 @@ class SpeciesTorsion;
 class ProcessPool;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public ListItem<SpeciesAtom>
+class SpeciesAtom
 {
     public:
     SpeciesAtom();
-    ~SpeciesAtom();
+    ~SpeciesAtom() = default;
 
     /*
      * Properties
@@ -53,8 +34,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     private:
     // Parent Species
     Species *parent_;
-    // Atomic Element
-    Element *element_;
+    // Atomic element
+    Elements::Element Z_;
     // Coordinates
     Vec3<double> r_;
     // Charge (if contained in file)
@@ -72,13 +53,13 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     // Return species parent
     const Species *species() const;
     // Set basic atom properties
-    void set(Element *element, double rx, double ry, double rz, double q = 0.0);
+    void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
     // Set basic atom properties
-    void set(Element *element, const Vec3<double> r, double q = 0.0);
+    void set(Elements::Element Z, const Vec3<double> r, double q = 0.0);
     // Set atomic element
-    void setElement(Element *el);
+    void setZ(Elements::Element Z);
     // Return atomic element
-    Element *element() const;
+    Elements::Element Z() const;
     // Return coordinates (read-only)
     const Vec3<double> &r() const;
     // Set charge of Atom
@@ -114,8 +95,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
     // List of torsions which this atom participates in
     std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
-    // Ordered list of Atoms with scaled or excluded interactions
-    OrderedPointerDataArray<SpeciesAtom, double> exclusions_;
+    // Vector of Atoms with scaled or excluded interactions
+    std::vector<std::pair<SpeciesAtom *, double>> exclusions_;
 
     public:
     // Add bond reference

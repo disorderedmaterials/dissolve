@@ -1,23 +1,5 @@
-/*
-    *** 2-Dimensional Histogram
-    *** src/math/histogram2d.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -25,13 +7,12 @@
 #include "math/data2d.h"
 #include "math/sampleddouble.h"
 #include "templates/array2d.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D>, public GenericItemBase
+class Histogram2D : public ListItem<Histogram2D>, public GenericItemBase
 {
     public:
     Histogram2D();
@@ -63,9 +44,9 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
     // Histogram bins
     Array2D<long int> bins_;
     // Array of x bin centres
-    Array<double> xBinCentres_;
+    std::vector<double> xBinCentres_;
     // Array of y bin centres
-    Array<double> yBinCentres_;
+    std::vector<double> yBinCentres_;
     // Accumulated averages
     Array2D<SampledDouble> averages_;
     // Number of values binned over all bins
@@ -103,9 +84,9 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return Array of x centre-bin values
-    const Array<double> &xBinCentres() const;
+    const std::vector<double> &xBinCentres() const;
     // Return Array of y centre-bin values
-    const Array<double> &yBinCentres() const;
+    const std::vector<double> &yBinCentres() const;
     // Return histogram data
     Array2D<long int> &bins();
     // Add source histogram data into local array

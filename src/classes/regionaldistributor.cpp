@@ -1,30 +1,11 @@
-/*
-    *** Regional Distributor
-    *** src/classes/regionaldistributor.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/regionaldistributor.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
-#include "classes/cellneighbour.h"
 #include "classes/molecule.h"
 #include "templates/array3d.h"
 #include <algorithm>
@@ -60,7 +41,7 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
     nCycles_ = 0;
 
     // Cells
-    lockedCells_ = new OrderedPointerList<Cell>[nProcessesOrGroups_];
+    lockedCells_ = std::vector<std::set<Cell *>>(nProcessesOrGroups_);
     cellStatusFlags_.initialise(cellArray.nCells());
     cellStatusFlags_ = RegionalDistributor::UnusedFlag;
     cellLockOwners_.initialise(cellArray.nCells());
@@ -73,9 +54,6 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
     nMoleculesToDistribute_ = moleculeArray_.size();
     nMoleculesDistributed_ = 0;
 }
-
-RegionalDistributor::~RegionalDistributor() { delete[] lockedCells_; }
-
 /*
  * Core
  */
@@ -140,7 +118,7 @@ bool RegionalDistributor::cycle()
     // molecules sequentially to each
     if (nProcessesOrGroups_ == 1)
     {
-        for (int n = 0; n < nMoleculesToDistribute_; ++n)
+        for (auto n = 0; n < nMoleculesToDistribute_; ++n)
         {
             if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
             {
@@ -184,7 +162,7 @@ bool RegionalDistributor::cycle()
                         Messenger::print("Molecule {} assigned to process/group {} - nMoleculesDistributed is "
                                          "now {}. Process/group has {} locked Cells in total.\n",
                                          molecule->arrayIndex(), processOrGroup, nMoleculesDistributed_,
-                                         lockedCells_[processOrGroup].nItems());
+                                         lockedCells_[processOrGroup].size());
                 }
 
                 // Have all possible Molecules been assigned?
@@ -202,7 +180,7 @@ bool RegionalDistributor::cycle()
                 // Assign all remaining Molecules to group 0, and copy this group for distribution to all
                 // others.
                 assignedMolecules_[0].clear();
-                for (int n = 0; n < nMoleculesToDistribute_; ++n)
+                for (auto n = 0; n < nMoleculesToDistribute_; ++n)
                 {
                     if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
                     {
@@ -231,7 +209,7 @@ bool RegionalDistributor::cycle()
     {
         Messenger::printVerbose(
             "Distributor cycle {} : Process/Group {} has {} Molecules asigned to it over {} locked Cells.\n", nCycles_,
-            processOrGroup, assignedMolecules_[processOrGroup].size(), lockedCells_[processOrGroup].nItems());
+            processOrGroup, assignedMolecules_[processOrGroup].size(), lockedCells_[processOrGroup].size());
     }
 
     // 	XXX Check for balanced load (molecules/atoms)
@@ -248,11 +226,11 @@ ProcessPool::DivisionStrategy RegionalDistributor::currentStrategy() { return cu
 // Return whether the specified processOrGroup can lock the given Cell index
 bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellIndex)
 {
-    CellStatusFlag status = cellStatusFlags_.constAt(cellIndex);
+    CellStatusFlag status = cellStatusFlags_.at(cellIndex);
 
     if (DND)
         Messenger::print("  0-- Checking ability to lock Cell index {} for process/group {}: current status = {}\n", cellIndex,
-                         processOrGroup, cellStatusFlag(cellStatusFlags_.constAt(cellIndex)));
+                         processOrGroup, cellStatusFlag(cellStatusFlags_.at(cellIndex)));
 
     // If the Cell is flagged as unused, return true
     if (status == RegionalDistributor::UnusedFlag)
@@ -261,12 +239,12 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
     // If the Cell is flagged as 'LockedForEditing', and not by this processOrGroup, return false. If we have locked it,
     // return true.
     if (status == RegionalDistributor::LockedForEditingFlag)
-        return (cellLockOwners_.constAt(cellIndex) == processOrGroup);
+        return (cellLockOwners_.at(cellIndex) == processOrGroup);
 
     // If the Cell is flagged as 'ReadByOne', but not by this processOrGroup, return false (if we are the sole reader, we
     // can lock it)
     if (status == RegionalDistributor::ReadByOneFlag)
-        return (cellLockOwners_.constAt(cellIndex) == processOrGroup);
+        return (cellLockOwners_.at(cellIndex) == processOrGroup);
 
     // If the Cell is flagged as 'ReadByMany', there is no chance of locking it, so return false.
     if (status == RegionalDistributor::ReadByManyFlag)
@@ -285,7 +263,7 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
 // Assign Molecule to process/group if possible
 bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup)
 {
-    Cell *primaryCell;
+    Cell *primaryCell = nullptr;
     const Cell *readOnlyCell;
     int cellIndex;
 
@@ -301,7 +279,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
 
     // Go through the Atoms of the Molecule, assembling a list of primary Cells in which its Atoms are found.
     Array<Cell *> primaryCells;
-    for (int i = 0; i < mol->nAtoms(); ++i)
+    for (auto i = 0; i < mol->nAtoms(); ++i)
     {
         // Get Cell pointer and index
         primaryCell = mol->atom(i)->cell();
@@ -333,14 +311,13 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
 
     // We are able to lock all Cells that we need to edit, so now construct a list of those within the cutoff range of any
     // primaryCell that we must be able to read (but not modify)
-    OrderedPointerList<const Cell> readOnlyCells;
-    for (int c = 0; c < primaryCells.nItems(); ++c)
+    std::set<const Cell *> readOnlyCells;
+    for (auto c = 0; c < primaryCells.nItems(); ++c)
     {
         // Loop over all cell neighbours for this primary Cell
         for (const auto &neighbour : primaryCells[c]->allCellNeighbours())
         {
-            readOnlyCell = neighbour.cell();
-            cellIndex = readOnlyCell->index();
+            cellIndex = neighbour->index();
 
             // If we have locked this Cell already, continue
             if (cellStatusFlags_[cellIndex] == RegionalDistributor::LockedForEditingFlag)
@@ -358,21 +335,21 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
             }
 
             // All good - add to our list
-            readOnlyCells.addExclusive(readOnlyCell);
+            readOnlyCells.insert(readOnlyCell);
         }
     }
 
     // If we reach this point, we can lock all the necessary Cells for editing, and mark all those necessary for reading.
 
     // Add primary and secondary lock Cells to our list, sanity checking along the way
-    for (int c = 0; c < primaryCells.nItems(); ++c)
+    for (auto c = 0; c < primaryCells.nItems(); ++c)
     {
         cellIndex = primaryCells[c]->index();
 
         // Set lock index
         if ((cellLockOwners_[cellIndex] == processOrGroup) || (cellLockOwners_[cellIndex] == -1))
         {
-            lockedCells_[processOrGroup].addExclusive(primaryCell);
+            lockedCells_[processOrGroup].insert(primaryCell);
             cellLockOwners_[cellIndex] = processOrGroup;
             cellStatusFlags_[cellIndex] = RegionalDistributor::LockedForEditingFlag;
         }
@@ -381,8 +358,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
     }
 
     // For the read-only Cells, we just need to set relevant ownership in the cellLockOwners_ array
-    OrderedPointerListIterator<const Cell> readOnlyCellIterator(readOnlyCells);
-    while ((readOnlyCell = readOnlyCellIterator.iterate()))
+    for (const auto &readOnlyCell : readOnlyCells)
     {
         cellIndex = readOnlyCell->index();
 
@@ -427,11 +403,11 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
         Messenger::print("  Looking through molecules in Cell {} for process/group {}..\n", cell->index(), processOrGroup);
 
     // There will likely be multiple atoms from the same, so note each Molecule as we check it
-    OrderedVector<std::shared_ptr<Molecule>> checkedMolecules;
+    std::vector<std::shared_ptr<Molecule>> checkedMolecules;
 
     // Loop over Atoms in Cell
     std::shared_ptr<Molecule> mol;
-    for (auto *atom : cell->indexOrderedAtoms())
+    for (auto atom : cell->atoms())
     {
         // Get the Atom's Molecule pointer
         mol = atom->molecule();
@@ -451,7 +427,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
             return mol;
 
         // Not possible to assign the Molecule, so add it to our list of checked Molecules and move on
-        checkedMolecules.insert(mol);
+        checkedMolecules.emplace_back(mol);
     }
 
     return nullptr;
@@ -467,8 +443,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
      */
     std::shared_ptr<Molecule> molecule = nullptr;
 
-    OrderedPointerListIterator<Cell> lockedCellIterator(lockedCells_[processOrGroup]);
-    while (Cell *cell = lockedCellIterator.iterate())
+    for (auto &cell : lockedCells_[processOrGroup])
     {
         if (DND)
             Messenger::print("  Searching for suitable Molecule to assign to process/group {} from Cell index {} "
@@ -493,7 +468,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
      * along the Cell Array for this process/group.
      */
     int cellIndex;
-    if (lockedCells_[processOrGroup].nItems() > 0)
+    if (lockedCells_[processOrGroup].size() > 0)
     {
         // Loop over all Cells, searching for one which this process/group alone has marked read-only
         for (cellIndex = 0; cellIndex < cellArray_.nCells(); ++cellIndex)
@@ -517,7 +492,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
     }
 
     // No suitable Molecule yet, so start searching over all Cells from a suitable point along the array.
-    for (int n = 0; n < cellArray_.nCells(); ++n)
+    for (auto n = 0; n < cellArray_.nCells(); ++n)
     {
         // Determine Cell index
         cellIndex = n;

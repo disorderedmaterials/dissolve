@@ -1,23 +1,5 @@
-/*
-    *** Keyword - EnumOptions
-    *** src/keywords/enumoptions.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -65,11 +47,11 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 {
     public:
     EnumOptionsKeyword(EnumOptions<E> options)
-        : KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData, options),
-          EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_)
+        : EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_), KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData,
+                                                                                                  options)
     {
         // Set our array of valid values
-        for (int n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
+        for (auto n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
             validKeywords_.emplace_back(std::string(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n)));
     }
     ~EnumOptionsKeyword() {}
@@ -104,11 +86,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
             if (!KeywordData<EnumOptions<E>>::data_.isValid(parser.argsv(startArg)))
                 return KeywordData<EnumOptions<E>>::data_.errorAndPrintValid(parser.argsv(startArg));
 
-            // Keyword recognised...
-            EnumOptions<E> newOptions(KeywordData<EnumOptions<E>>::data_);
-            newOptions.setCurrentOption(parser.argsv(startArg));
-            if (!KeywordData<EnumOptions<E>>::setData(newOptions))
-                return Messenger::error("An odd thing happened....\n");
+            KeywordData<EnumOptions<E>>::data_.set(parser.argsv(startArg));
+            KeywordData<EnumOptions<E>>::hasBeenSet();
 
             return true;
         }
@@ -118,7 +97,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
-        return parser.writeLineF("{}{}  {}\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.currentOptionKeyword());
+        return parser.writeLineF("{}{}  {}\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.keyword());
     }
 
     /*
@@ -128,7 +107,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Set new option index, informing KeywordBase
     void setEnumerationByIndex(int optionIndex)
     {
-        KeywordData<EnumOptions<E>>::data_.setCurrentOptionIndex(optionIndex);
+        KeywordData<EnumOptions<E>>::data_.setIndex(optionIndex);
         KeywordData<EnumOptions<E>>::hasBeenSet();
     }
 
@@ -144,5 +123,5 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     public:
     // Return value (as string)
-    std::string asString() { return std::string(KeywordData<EnumOptions<E>>::data_.currentOptionKeyword()); }
+    std::string asString() { return std::string(KeywordData<EnumOptions<E>>::data_.keyword()); }
 };

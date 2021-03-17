@@ -1,30 +1,11 @@
-/*
-    *** Add Configuration Wizard Functions
-    *** src/gui/addconfigurationwizard_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "gui/addconfigurationwizard.h"
 #include "gui/helpers/combopopulator.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
@@ -44,12 +25,6 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
     registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template",
                  AddConfigurationWizard::NameAndTemperaturePage);
     registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature", WizardWidgetPageInfo::FinishHereFlag);
-
-    // Connect signals / slots
-    // 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this,
-    // SLOT(atomTypesListEdited(QWidget*))); 	connect(ui_.CreateAtomicElementSelector,
-    // SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
-
     lockedForRefresh_ = 0;
 }
 
@@ -128,8 +103,6 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 {
-    Species *sp;
-
     switch (currentIndex)
     {
         case (AddConfigurationWizard::SelectTemplatePage):
@@ -186,7 +159,7 @@ void AddConfigurationWizard::reset()
 
     // Set a new, unique name ready on the final page
     ui_.FinishNameEdit->setText(
-        QString::fromStdString(std::string(dissolveReference_->constCoreData().uniqueConfigurationName("NewConfiguration"))));
+        QString::fromStdString(std::string(dissolveReference_->coreData().uniqueConfigurationName("NewConfiguration"))));
 }
 
 /*

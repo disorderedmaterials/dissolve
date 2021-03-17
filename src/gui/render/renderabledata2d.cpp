@@ -1,23 +1,5 @@
-/*
-    *** Renderable - Data2D
-    *** src/gui/render/renderabledata1d.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/renderabledata2d.h"
 #include "base/lineparser.h"
@@ -94,43 +76,43 @@ void RenderableData2D::transformValues()
     {
         valuesMin_ = transformedData_.minValue();
         valuesMax_ = transformedData_.maxValue();
-        limitsMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), valuesMin_);
-        limitsMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), valuesMax_);
+        limitsMin_.set(transformedData_.xAxis().front(), transformedData_.yAxis().front(), valuesMin_);
+        limitsMax_.set(transformedData_.xAxis().back(), transformedData_.yAxis().back(), valuesMax_);
     }
 
     // Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
     // X
-    for (int n = 0; n < transformedData_.constXAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.xAxis().size(); ++n)
     {
-        if (transformedData_.constXAxis(n) > 0.0)
+        if (transformedData_.xAxis(n) > 0.0)
         {
             if (positiveLimitsMin_.x < 0.0)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
-            else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
+            else if (transformedData_.xAxis(n) < positiveLimitsMin_.x)
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
 
-            if (transformedData_.constXAxis(n) > positiveLimitsMax_.x)
-                positiveLimitsMax_.x = transformedData_.constXAxis(n);
+            if (transformedData_.xAxis(n) > positiveLimitsMax_.x)
+                positiveLimitsMax_.x = transformedData_.xAxis(n);
         }
     }
 
     // Y
-    for (int n = 0; n < transformedData_.constYAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.yAxis().size(); ++n)
     {
-        if (transformedData_.constYAxis(n) > 0.0)
+        if (transformedData_.yAxis(n) > 0.0)
         {
             if (positiveLimitsMin_.y < 0.0)
-                positiveLimitsMin_.y = transformedData_.constYAxis(n);
-            else if (transformedData_.constYAxis(n) < positiveLimitsMin_.y)
-                positiveLimitsMin_.y = transformedData_.constYAxis(n);
+                positiveLimitsMin_.y = transformedData_.yAxis(n);
+            else if (transformedData_.yAxis(n) < positiveLimitsMin_.y)
+                positiveLimitsMin_.y = transformedData_.yAxis(n);
 
-            if (transformedData_.constYAxis(n) > positiveLimitsMax_.y)
-                positiveLimitsMax_.y = transformedData_.constYAxis(n);
+            if (transformedData_.yAxis(n) > positiveLimitsMax_.y)
+                positiveLimitsMax_.y = transformedData_.yAxis(n);
         }
     }
 
     // Values
-    for (int n = 0; n < transformedData_.nValues(); ++n)
+    for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
         if (transformedData_.value(n) > 0.0)
         {
@@ -161,10 +143,10 @@ const Data2D &RenderableData2D::transformedData()
 
     // If the value transform is not enabled, just return the original data
     if (!valuesTransform_.enabled())
-        return *source_;
-
-    // Make sure the transformed data is up-to-date
-    transformValues();
+        transformedData_ = *source_;
+    else
+        // Make sure the transformed data is up-to-date
+        transformValues();
 
     return transformedData_;
 }
@@ -183,9 +165,9 @@ void RenderableData2D::recreatePrimitives(const View &view, const ColourDefiniti
         return;
     }
 
-    reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
-    constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(),
-                  view.constAxes(), colourDefinition);
+    reinitialisePrimitives(source_->yAxis().size(), GL_LINE_STRIP, true);
+    constructLine(transformedData().xAxis(), transformedData().yAxis(), transformedData().values2D(), view.axes(),
+                  colourDefinition);
 }
 
 // Send primitives for rendering
@@ -197,7 +179,7 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
     // Disable lighting
     glDisable(GL_LIGHTING);
 
-    for (int n = 0; n < nPrimitives(); ++n)
+    for (auto n = 0; n < nPrimitives(); ++n)
         primitive(n)->sendToGL();
 
     // Reset LineStyle back to defaults
@@ -205,27 +187,26 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa,
+void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa, const std::vector<double> &displayYAbscissa,
                                      const Array2D<double> &displayValues, const Axes &axes,
                                      const ColourDefinition &colourDefinition)
 {
     // Copy and transform abscissa values (still in data space) into axes coordinates
-    Array<double> x = displayXAbscissa;
+    auto x = displayXAbscissa;
     axes.transformX(x);
-    auto nX = x.nItems();
+    auto nX = x.size();
     if (nX < 2)
         return;
 
     // Copy and transform abscissa values (still in data space) into axes coordinates
-    Array<double> y = displayYAbscissa;
+    auto y = displayYAbscissa;
     axes.transformY(y);
-    auto nY = y.nItems();
+    auto nY = y.size();
     if (nY < 2)
         return;
 
     // Get some values from axes so we can calculate colours properly
     auto vLogarithmic = axes.logarithmic(2);
-    // double vStretch = axes.stretch(2);
 
     // Temporary variables
     GLfloat colour[4];
@@ -245,15 +226,15 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
         colourDefinition.colour(0.0, colour);
 
         // Loop over y
-        for (int n = 0; n < nY; ++n)
+        for (auto n = 0; n < nY; ++n)
         {
             // Set vertexA to -1 so we don't draw a line at n=0
             vertexA = -1;
             p = primitive(n);
             // Loop over x
-            for (int m = 0; m < nX; ++m)
+            for (auto m = 0; m < nX; ++m)
             {
-                vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m, n), nrm, colour);
+                vertexB = p->defineVertex(x[m], y[n], v[{m, n}], nrm, colour);
 
                 // If both vertices are valid, plot a line
                 if (vertexA != -1)
@@ -270,19 +251,19 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
         colourDef.setHSVGradientEndValue(positiveValuesMax_);
 
         // Loop over y
-        for (int n = 0; n < nY; ++n)
+        for (auto n = 0; n < nY; ++n)
         {
             // Set vertexA to -1 so we don't draw a line at n=0
             vertexA = -1;
             p = primitive(n);
 
             // Loop over x
-            for (int m = 0; m < nX; ++m)
+            for (auto m = 0; m < nX; ++m)
             {
                 // Assigning colour based on value
-                double c = (vLogarithmic ? pow(displayValues.constAt(m, n), 10.0) : displayValues.constAt(m, n));
+                double c = (vLogarithmic ? pow(displayValues[{m, n}], 10.0) : displayValues[{m, n}]);
                 colourDef.colour(c, colour);
-                vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m, n), nrm, colour);
+                vertexB = p->defineVertex(x[m], y[n], v[{m, n}], nrm, colour);
 
                 // If both vertices are valid, plot a line
                 if (vertexA != -1)
@@ -300,11 +281,7 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
 // Return EnumOptions for Data2DDisplayStyle
 EnumOptions<RenderableData2D::Data2DDisplayStyle> RenderableData2D::data2DDisplayStyles()
 {
-    static EnumOptionsList Style2DOptions = EnumOptionsList() << EnumOption(RenderableData2D::LinesStyle, "Lines");
-
-    static EnumOptions<RenderableData2D::Data2DDisplayStyle> options("Data2DDisplayStyle", Style2DOptions);
-
-    return options;
+    return EnumOptions<RenderableData2D::Data2DDisplayStyle>("Data2DDisplayStyle", {{RenderableData2D::LinesStyle, "Lines"}});
 }
 
 // Set display style for renderable
@@ -325,12 +302,9 @@ RenderableData2D::Data2DDisplayStyle RenderableData2D::displayStyle() const { re
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData2D::Data2DStyleKeyword> RenderableData2D::data2DStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableData2D::DisplayKeyword, "Display", 1)
-                                                             << EnumOption(RenderableData2D::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableData2D::Data2DStyleKeyword> options("Data2DStyleKeyword", StyleKeywords);
-
-    return options;
+    return EnumOptions<RenderableData2D::Data2DStyleKeyword>(
+        "Data2DStyleKeyword",
+        {{RenderableData2D::DisplayKeyword, "Display", 1}, {RenderableData2D::EndStyleKeyword, "EndStyle"}});
 }
 
 // Write style information
@@ -338,7 +312,7 @@ bool RenderableData2D::writeStyleBlock(LineParser &parser, int indentLevel) cons
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

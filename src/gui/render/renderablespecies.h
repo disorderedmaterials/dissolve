@@ -1,23 +1,5 @@
-/*
-    *** Renderable - Species
-    *** src/gui/render/renderablespecies.h
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,7 +13,7 @@ class Axes;
 class RenderableSpecies : public Renderable
 {
     public:
-    RenderableSpecies(const Species *source, std::string_view objectTag);
+    RenderableSpecies(const Species *source);
     ~RenderableSpecies();
 
     /*
@@ -63,7 +45,7 @@ class RenderableSpecies : public Renderable
      */
     private:
     // Basic primitives
-    Primitive *atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
+    Primitive *atomPrimitive_, *selectedAtomPrimitive_, *crossBoxPrimitive_, *bondPrimitive_;
     // Main primitives
     Primitive *lineSpeciesPrimitive_, *lineSelectionPrimitive_, *lineInteractionPrimitive_;
     // Main assemblies
@@ -89,10 +71,12 @@ class RenderableSpecies : public Renderable
     // Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
     void recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, SpeciesAtom *toAtom);
     // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-    void recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint, Element *toElement);
+    void recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint, Elements::Element toElement);
     // Recreate interaction Primitive to display drawing interaction (from point to point)
-    void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint,
-                                          Element *toElement);
+    void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Elements::Element fromElement, Vec3<double> toPoint,
+                                          Elements::Element toElement);
+    // Recreate interaction Primitive to display delete interaction (from existing atom to existing atom)
+    void recreateDeleteInteractionPrimitive(SpeciesAtom *fromAtom, SpeciesAtom *toAtom = nullptr);
 
     /*
      * Style

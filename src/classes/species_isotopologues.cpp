@@ -1,47 +1,24 @@
-/*
-    *** Species Definition - Isotopologues
-    *** src/classes/species_isotopologues.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/species.h"
 #include <string.h>
 
 // Update current Isotopologues
-void Species::updateIsotopologues()
+void Species::updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes)
 {
-    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
+    for (Isotopologue *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
+    {
+        if (atomTypes)
+            iso->checkAtomTypes(*atomTypes);
+
         iso->update();
+    }
 }
 
 // Update and return natural isotopologue
-Isotopologue *Species::naturalIsotopologue()
-{
-    if (naturalIsotopologuePoint_ != atomTypesVersion_)
-    {
-        naturalIsotopologue_.update();
-
-        naturalIsotopologuePoint_ = atomTypesVersion_;
-    }
-
-    return &naturalIsotopologue_;
-}
+const Isotopologue *Species::naturalIsotopologue() const { return &naturalIsotopologue_; }
 
 // Add a new Isotopologue to this species
 Isotopologue *Species::addIsotopologue(std::string_view baseName)
@@ -92,7 +69,7 @@ std::string Species::uniqueIsotopologueName(std::string_view base, const Isotopo
 }
 
 // Search for Isotopologue by name
-Isotopologue *Species::findIsotopologue(std::string_view name, const Isotopologue *exclude)
+const Isotopologue *Species::findIsotopologue(std::string_view name, const Isotopologue *exclude) const
 {
     // Check for the natural Isotopologue
     if (DissolveSys::sameString("Natural", name))

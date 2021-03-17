@@ -1,32 +1,14 @@
-/*
-    *** Element Selector Widget
-    *** src/gui/widgets/elementselector.hui
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
+#include "data/elements.h"
 #include "templates/refdatalist.h"
 #include <QTimer>
 #include <QWidget>
 
 // Forward Declarations
-class Element;
 class QToolButton;
 
 // Element Selector Widget
@@ -36,7 +18,6 @@ class ElementSelector : public QWidget
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     ElementSelector(QWidget *parent);
     ~ElementSelector();
 
@@ -60,21 +41,21 @@ class ElementSelector : public QWidget
      */
     private:
     // Current element
-    Element *currentElement_;
-    // Reference list of buttons and their associated Elements
-    RefDataList<QToolButton, Element *> elementButtons_;
+    Elements::Element currentElement_;
+    // Vector of toole buttons corresponding to elements
+    std::vector<QToolButton *> buttons_;
 
     public:
     // Set current element
-    void setCurrentElement(Element *element);
+    void setCurrentElement(Elements::Element Z);
     // Return current element
-    Element *currentElement() const;
+    Elements::Element currentElement() const;
 
     /*
      * Static Functions
      */
     public:
     // Get Element from user via input dialog
-    static Element *getElement(QWidget *parent, QString title, QString labelText, Element *element, bool *ok = nullptr,
-                               Qt::WindowFlags flags = Qt::Dialog);
+    static Elements::Element getElement(QWidget *parent, QString title, QString labelText, Elements::Element Z,
+                                        bool *ok = nullptr, Qt::WindowFlags flags = Qt::Dialog);
 };

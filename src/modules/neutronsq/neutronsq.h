@@ -1,33 +1,17 @@
-/*
-    *** Neutron SQ Module
-    *** src/modules/neutronsq/neutronsq.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
+#include "data/structurefactors.h"
 #include "io/import/data1d.h"
 #include "module/module.h"
 
 // Forward Declarations
 class PartialSet;
+class RDFModule;
 class Weights;
 
 // SQ Module
@@ -35,34 +19,34 @@ class NeutronSQModule : public Module
 {
     public:
     NeutronSQModule();
-    ~NeutronSQModule();
+    ~NeutronSQModule() override = default;
 
     /*
      * Instances
      */
     public:
     // Create instance of this module
-    Module *createInstance() const;
+    Module *createInstance() const override;
 
     /*
      * Definition
      */
     public:
     // Return type of module
-    std::string_view type() const;
+    std::string_view type() const override;
     // Return category for module
-    std::string_view category() const;
+    std::string_view category() const override;
     // Return brief description of module
-    std::string_view brief() const;
+    std::string_view brief() const override;
     // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const;
+    int nRequiredTargets() const override;
 
     /*
      * Initialisation
      */
     private:
     // Isotopologue information
-    IsotopologueCollection isotopologues_;
+    IsotopologueSet isotopologues_;
     // Exchangeable AtomTypes
     AtomTypeList exchangeableTypes_;
     // Reference F(Q) file and format
@@ -70,19 +54,9 @@ class NeutronSQModule : public Module
 
     protected:
     // Perform any necessary initialisation for the Module
-    void initialise();
+    void initialise() override;
 
     public:
-    // Normalisation Type enum
-    enum NormalisationType
-    {
-        NoNormalisation,
-        AverageOfSquaresNormalisation,
-        SquareOfAverageNormalisation,
-        nNormalisationTypes
-    };
-    // Return enum option info for NormalisationType
-    EnumOptions<NeutronSQModule::NormalisationType> normalisationTypes();
     // Return file and format for reference total F(Q)
     const Data1DImportFileFormat &referenceFQFileAndFormat();
 
@@ -91,11 +65,11 @@ class NeutronSQModule : public Module
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool);
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool);
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * Members / Functions
@@ -106,18 +80,18 @@ class NeutronSQModule : public Module
 
     public:
     // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
-    bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
-                             NeutronSQModule::NormalisationType normalisation);
+    bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
     // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
-    bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
-                             NeutronSQModule::NormalisationType normalisation);
-    // Calculate neutron weights summed over target Configurations
-    bool calculateSummedWeights(NeutronWeights &summedWeights) const;
+    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
+    // Calculate neutron weights for relevant Configuration targets
+    void calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const;
 
     /*
      * GUI Widget
      */
     public:
     // Return a new widget controlling this Module
-    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
+    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve) override;
 };

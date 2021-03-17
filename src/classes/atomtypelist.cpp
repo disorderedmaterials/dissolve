@@ -1,23 +1,5 @@
-/*
-    *** AtomTypeList Definition
-    *** src/classes/atomtypelist.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtypelist.h"
 #include "base/lineparser.h"
@@ -41,14 +23,10 @@ AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 void AtomTypeList::operator=(const AtomTypeList &source) { types_ = source.types_; }
 
 // Array access operator
-AtomTypeData &AtomTypeList::operator[](unsigned int n)
+AtomTypeData &AtomTypeList::operator[](int n)
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= types_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::operator[].\n", n);
-    }
-#endif
+    assert(n >= 0 && n < types_.size());
+
     return types_[n];
 }
 
@@ -89,13 +67,16 @@ AtomTypeData &AtomTypeList::add(std::shared_ptr<AtomType> atomType, double popul
 void AtomTypeList::add(const AtomTypeList &source)
 {
     // Loop over AtomTypes in the source list
-    for (auto &newType : source)
+    for (auto &otherType : source)
     {
-        AtomTypeData &atd = add(newType.atomType());
+        AtomTypeData &atd = add(otherType.atomType());
 
-        // Now add Isotope data
-        for (auto *topeData = newType.isotopeData(); topeData != nullptr; topeData = topeData->next())
-            atd.add(topeData->isotope(), topeData->population());
+        // If no Isotope data are present, add the population now. Otherwise, add it via the isotopes...
+        if (otherType.nIsotopes() == 0)
+            atd.add(otherType.population());
+        else
+            for (auto *topeData = otherType.isotopeData(); topeData != nullptr; topeData = topeData->next())
+                atd.add(topeData->isotope(), topeData->population());
     }
 }
 
@@ -109,7 +90,7 @@ void AtomTypeList::remove(std::shared_ptr<AtomType> atomType)
 // Add/increase this AtomType/Isotope pair
 void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope, double popAdd)
 {
-    auto &atd = add(atomType, 0);
+    auto &atd = add(atomType);
 
     // Add / increase isotope population
     if (tope != nullptr)
@@ -241,14 +222,10 @@ double AtomTypeList::totalPopulation() const
 }
 
 // Return nth referenced AtomType
-std::shared_ptr<AtomType> AtomTypeList::atomType(int n)
+const std::shared_ptr<AtomType> AtomTypeList::atomType(int n) const
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= types_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::atomType().\n");
-    }
-#endif
+    assert(n >= 0 && n < types_.size());
+
     return types_[n].atomType();
 }
 
@@ -274,7 +251,7 @@ void AtomTypeList::print() const
         if (atd.isotopeData())
         {
             Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
-                             atd.atomType()->element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
+                             Elements::symbol(atd.atomType()->Z()), atd.population(), atd.fraction(), atd.boundCoherent());
 
             for (const auto *topeData = atd.isotopeData(); topeData != nullptr; topeData = topeData->next())
             {
@@ -285,7 +262,7 @@ void AtomTypeList::print() const
         }
         else
             Messenger::print("{} {:<8}  {:<3}          {:<10d}  {:8.6f}     --- N/A ---\n", exch, atd.atomTypeName(),
-                             atd.atomType()->element()->symbol(), atd.population(), atd.fraction());
+                             Elements::symbol(atd.atomType()->Z()), atd.population(), atd.fraction());
 
         Messenger::print("  -----------------------------------------------------------------\n");
     }
@@ -306,7 +283,7 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nItems = parser.argi(0);
-    for (int n = 0; n < nItems; ++n)
+    for (auto n = 0; n < nItems; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -318,14 +295,14 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
         auto boundCoherent = parser.argd(3);
         auto nIsotopes = parser.argi(4);
 
-        // types_.emplace_back(types_.size(), atomType, population);
         types_.emplace_back(atomType, population, fraction, boundCoherent);
         auto &atd = types_.back();
-        for (int i = 0; i < nIsotopes; ++i)
+        for (auto i = 0; i < nIsotopes; ++i)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            auto isotope = Isotopes::isotope(parser.argi(0), parser.argi(1));
+            auto Z = Elements::element(parser.argi(0));
+            auto isotope = Isotopes::isotope(Z, parser.argi(1));
             atd.add(isotope, parser.argd(2));
         }
     }
@@ -377,7 +354,7 @@ bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreDa
 
         // Clear list and reconstruct
         types_.clear();
-        for (int n = 0; n < count; ++n)
+        for (auto n = 0; n < count; ++n)
         {
             // Slaves must create a suitable structure first, and then join the broadcast
             std::string typeName;

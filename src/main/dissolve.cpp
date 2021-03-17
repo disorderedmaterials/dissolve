@@ -1,23 +1,5 @@
-/*
-    *** Dissolve Main Structure
-    *** src/main/dissolve.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
@@ -73,8 +55,7 @@ Dissolve::~Dissolve()
 // Return reference to CoreData
 CoreData &Dissolve::coreData() { return coreData_; }
 
-// Return const reference to CoreData
-const CoreData &Dissolve::constCoreData() const { return coreData_; }
+const CoreData &Dissolve::coreData() const { return coreData_; }
 
 // Clear all data
 void Dissolve::clear()
@@ -88,7 +69,7 @@ void Dissolve::clear()
     pairPotentialDelta_ = 0.005;
     pairPotentialRange_ = 15.0;
     pairPotentialRangeSquared_ = pairPotentialRange_ * pairPotentialRange_;
-    pairPotentialsIncludeCoulomb_ = false;
+    pairPotentialsIncludeCoulomb_ = true;
     pairPotentials_.clear();
     potentialMap_.clear();
     pairPotentialAtomTypeVersion_ = -1;
@@ -119,20 +100,24 @@ void Dissolve::registerGenericItems()
     GenericItem::addItemClass(new GenericItemContainer<std::streampos>("streampos"));
     GenericItem::addItemClass(new GenericItemContainer<std::string>("string"));
 
+    GenericItem::addItemClass(new GenericItemContainer<std::vector<double>>("std::vector<double>"));
+
     GenericItem::addItemClass(new GenericItemContainer<Vec3<int>>("Vec3<int>"));
     GenericItem::addItemClass(new GenericItemContainer<Vec3<double>>("Vec3<double>"));
 
     GenericItem::addItemClass(new GenericItemContainer<Array2D<double>>("Array2D<double>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array2D<Array<double>>>("Array2D<Array<double>>"));
+    GenericItem::addItemClass(new GenericItemContainer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>"));
     GenericItem::addItemClass(new GenericItemContainer<Array2D<DummyClass>>("Array2D<DummyClass>"));
 
     GenericItem::addItemClass(new GenericItemContainer<Array<int>>("Array<int>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<double>>("Array<double>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<DummyClass>>("Array<DummyClass>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<BraggReflection>>("Array<BraggReflection>"));
+    GenericItem::addItemClass(new GenericItemContainer<Array<SampledDouble>>("Array<SampledDouble>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<int>>>("Array<Vec3<int>>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<double>>>("Array<Vec3<double>>"));
 
+    GenericItem::addItemClass(new GenericItemContainer<AtomTypeList>(AtomTypeList::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<Data2D>(Data2D::itemClassName()));

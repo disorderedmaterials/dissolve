@@ -1,23 +1,5 @@
-/*
-    *** SampledDouble
-    *** src/math/sampleddouble.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/sampleddouble.h"
 #include "base/lineparser.h"
@@ -50,9 +32,6 @@ double SampledDouble::value() const { return mean_; }
 // Return number of samples contributing to averages etc.
 int SampledDouble::count() const { return count_; }
 
-// Return mean (current) value
-double SampledDouble::mean() const { return mean_; }
-
 // Return variance of sampled data
 double SampledDouble::variance() const { return (count_ < 2 ? 0.0 : m2_ / (count_ - 1)); }
 
@@ -63,24 +42,27 @@ double SampledDouble::stDev() const { return (count_ < 2 ? 0.0 : sqrt(m2_ / (cou
  * Operators
  */
 
-// Conversion (double)
 SampledDouble::operator double &() { return mean_; }
 
-// Assigment
-void SampledDouble::operator=(double x)
+SampledDouble::operator const double &() const { return mean_; }
+
+SampledDouble &SampledDouble::operator=(double x)
 {
     // Clear any existing statistics and set new value
     count_ = 1;
     m2_ = 0.0;
     mean_ = x;
+
+    return *this;
 }
 
-// Assigment
-void SampledDouble::operator=(const SampledDouble &source)
+SampledDouble &SampledDouble::operator=(const SampledDouble &source)
 {
     count_ = source.count_;
     mean_ = source.mean_;
     m2_ = source.m2_;
+
+    return *this;
 }
 
 void SampledDouble::operator+=(double x)
@@ -174,7 +156,7 @@ bool SampledDouble::allSum(ProcessPool &procPool)
 #ifdef PARALLEL
     // All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the
     // final result
-    for (int n = 1; n < procPool.nProcesses(); ++n)
+    for (auto n = 1; n < procPool.nProcesses(); ++n)
     {
         if (procPool.poolRank() == 0)
         {

@@ -1,23 +1,5 @@
-/*
-    *** Species Tab
-    *** src/gui/speciestab.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -95,6 +77,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
      * Widget Functions - Geometry
      */
     private:
+    // Return valid AtomType names for specified model index in the SpeciesAtomTable
+    std::vector<std::string> validAtomTypeNames(const QModelIndex &index);
     // SpeciesAtomTable row update function
     void updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems);
     // SpeciesBondTable row update function
@@ -127,7 +111,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
      */
     private:
     // IsotopologuesTree top-level update function
-    void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data,
+    void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, const Isotopologue *data,
                                              bool createItem);
     // IsotopologuesTree item update function
     void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<AtomType> item,
@@ -165,13 +149,4 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     public slots:
     // Update sites tab
     void updateSitesTab();
-
-    /*
-     * State
-     */
-    public:
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser, const CoreData &coreData);
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
 };

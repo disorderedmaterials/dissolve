@@ -1,23 +1,5 @@
-/*
-    *** Export - PairPotential
-    *** src/io/export/pairpotential.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "io/export/pairpotential.h"
 #include "base/lineparser.h"
@@ -35,17 +17,13 @@ PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view fi
  */
 
 // Return enum options for PairPotentialExportFormat
-EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> &
+EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>
 PairPotentialExportFileFormat::pairPotentialExportFormats()
 {
-    static EnumOptionsList PairPotentialExportFormats =
-        EnumOptionsList() << EnumOption(PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data")
-                          << EnumOption(PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File");
-
-    static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> options("PairPotentialExportFileFormat",
-                                                                                         PairPotentialExportFormats);
-
-    return options;
+    return EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>(
+        "PairPotentialExportFileFormat",
+        {{PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data"},
+         {PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File"}});
 }
 
 // Return number of available formats
@@ -91,11 +69,10 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
                            "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
         return false;
 
-    for (int n = 0; n < nPoints; ++n)
-        if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n",
-                               uOriginal.constXAxis(n), uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n),
-                               uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)),
-                               pp->analyticForce(uOriginal.constXAxis(n))))
+    for (auto n = 0; n < nPoints; ++n)
+        if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n", uOriginal.xAxis(n),
+                               uFull.value(n), dUFull.value(n), uOriginal.value(n), uAdditional.value(n),
+                               pp->analyticEnergy(uOriginal.xAxis(n)), pp->analyticForce(uOriginal.xAxis(n))))
             return false;
 
     return true;
@@ -122,9 +99,9 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
         return false;
 
     // Write energy data
-    for (int n = 0; n < nPoints; ++n)
+    for (auto n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("{:17.12e} ", uFull.constValue(n)))
+        if (!parser.writeLineF("{:17.12e} ", uFull.value(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {
@@ -134,9 +111,9 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     }
 
     // Write force data
-    for (int n = 0; n < nPoints; ++n)
+    for (auto n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("{:17.12e} ", dUFull.constValue(n)))
+        if (!parser.writeLineF("{:17.12e} ", dUFull.value(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {

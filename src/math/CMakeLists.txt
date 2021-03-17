@@ -1,4 +1,5 @@
-add_library(math
+add_library(
+  math
   averaging.cpp
   broadeningfunction.cpp
   cuboid.cpp
@@ -26,10 +27,10 @@ add_library(math
   range.cpp
   regression.cpp
   sampleddouble.cpp
+  sampledvector.cpp
   svd.cpp
   transformer.cpp
   windowfunction.cpp
-
   averaging.h
   broadeningfunction.h
   constants.h
@@ -62,15 +63,11 @@ add_library(math
   range.h
   regression.h
   sampleddouble.h
+  sampledvector.h
   sd.h
   svd.h
   transformer.h
   windowfunction.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(math PRIVATE ${PROJECT_SOURCE_DIR}/src)

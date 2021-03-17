@@ -1,23 +1,5 @@
-/*
-    *** Data Viewer - Interaction
-    *** src/gui/dataviewer_interaction.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/dataviewer.hui"
 
@@ -31,14 +13,14 @@ void DataViewer::startInteraction()
     switch (interactionMode())
     {
         // Default Interaction Mode
-        case (DataViewer::DefaultInteraction):
+        case (DataViewer::InteractionMode::Default):
             // This is the standard mode, giving access to view manipulation
             if (buttonState_.testFlag(Qt::LeftButton))
-                setInteractionMode(DataViewer::ZoomToAreaInteraction);
+                setInteractionMode(DataViewer::InteractionMode::ZoomToArea);
             else if (buttonState_.testFlag(Qt::RightButton))
-                setInteractionMode(DataViewer::RotateViewInteraction);
+                transientInteractionMode_ = DataViewer::TransientInteractionMode::RotateView;
             else if (buttonState_.testFlag(Qt::MiddleButton))
-                setInteractionMode(DataViewer::TranslateViewInteraction);
+                transientInteractionMode_ = DataViewer::TransientInteractionMode::TranslateView;
             break;
         default:
             break;
@@ -53,9 +35,9 @@ void DataViewer::endInteraction()
     // Finalise interaction type
     switch (interactionMode())
     {
-        case (DataViewer::DefaultInteraction):
+        case (DataViewer::InteractionMode::Default):
             break;
-        case (DataViewer::ZoomToAreaInteraction):
+        case (DataViewer::InteractionMode::ZoomToArea):
             // Check the pixel area of the clicked region and determine whether this was actually a targeted click
             // rather than an area select
             if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
@@ -63,8 +45,6 @@ void DataViewer::endInteraction()
                 // Single, targetted click - get the clicked object
                 // TODO What action are we performing here? Would this be better as a right-click action,
                 // raising a context menu?
-                // ViewerObject obj = queryAt(rMouseLast_.x, rMouseLast_.y);
-                // Messenger::print("Object Type = {}, info = [{}]\n", BaseViewer::viewerObject(obj), queryObjectInfo());
             }
             else
             {
@@ -83,17 +63,9 @@ void DataViewer::endInteraction()
             }
 
             // Revert to default interaction mode
-            setInteractionMode(DataViewer::DefaultInteraction);
+            setInteractionMode(DataViewer::InteractionMode::Default);
             break;
-        case (DataViewer::RotateViewInteraction):
-            // Nothing more to do - rotation matrix has already been modified, so revert to default interaction mode
-            setInteractionMode(DataViewer::DefaultInteraction);
-            break;
-        case (DataViewer::TranslateViewInteraction):
-            // Nothing more to do - translation has already been applied, so revert to default interaction mode
-            setInteractionMode(DataViewer::DefaultInteraction);
-            break;
-        case (DataViewer::ZoomXRangeInteraction):
+        case (DataViewer::InteractionMode::ZoomXRange):
             // Zoom to defined X range
             rangeStart = view_.screenToAxis(0, rMouseDown_.x, rMouseDown_.y, true);
             rangeEnd = view_.screenToAxis(0, rMouseLast_.x, rMouseLast_.y, true);
@@ -107,6 +79,9 @@ void DataViewer::endInteraction()
             Messenger::error("Internal Error: Don't know how to complete interaction mode {}\n", interactionMode());
             break;
     }
+
+    // Reset any transient interaction
+    transientInteractionMode_ = TransientInteractionMode::None;
 }
 
 // Cancel current interaction
@@ -124,48 +99,34 @@ void DataViewer::cancelInteraction()
  * Public Functions
  */
 
+// Set current interaction mode
+void DataViewer::setInteractionMode(DataViewer::InteractionMode mode)
+{
+    // Cancel any current interaction
+    cancelInteraction();
+
+    interactionMode_ = mode;
+
+    emit(interactionModeChanged());
+}
+
+// Return current interaction mode
+DataViewer::InteractionMode DataViewer::interactionMode() const { return interactionMode_; }
+
 // Return text describing current interaction mode
 const QString DataViewer::interactionModeText() const
 {
     switch (interactionMode())
     {
-        case (DataViewer::DefaultInteraction):
-            if (constView().isFlatView())
+        case (DataViewer::InteractionMode::Default):
+            if (view().isFlatView())
                 return "2D View: <b>Left</b> Zoom to area; <b>Middle</b> Translate view";
             else
                 return "3D View: <b>Right</b> Rotate view; <b>Middle</b> Translate view; <b>Wheel</b> Zoom "
                        "in/out";
-        case (DataViewer::ZoomToAreaInteraction):
+        case (DataViewer::InteractionMode::ZoomToArea):
             return "Zoom to area";
-        case (DataViewer::RotateViewInteraction):
-            return "Rotate view";
-        case (DataViewer::TranslateViewInteraction):
-            return "Translate view";
         default:
             return "Unknown DataViewerInteraction";
     }
 }
-
-// // Return clicked interaction coordinate on axis
-// double DataViewer::clickedInteractionCoordinate()
-// {
-// 	// Check for valid interaction axis
-// 	if (interactionAxis_ == -1) return 0.0;
-//
-// 	Axes& axes = view_.axes();
-// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ?
-// log10(axes.max(interactionAxis_)/clickedInteractionValue_) : log10(clickedInteractionValue_)); 	else return
-// (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - clickedInteractionValue_ : clickedInteractionValue_);
-// }
-//
-// // Return current interaction coordinate on axis
-// double DataViewer::currentInteractionCoordinate()
-// {
-// 	// Check for valid interaction axis
-// 	if (interactionAxis_ == -1) return 0.0;
-//
-// 	Axes& axes = view_.axes();
-// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ?
-// log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_)); 	else return
-// (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
-// }

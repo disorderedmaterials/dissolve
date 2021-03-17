@@ -1,27 +1,8 @@
-/*
-    *** Interpolator
-    *** src/math/interpolator.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
-
-#include "templates/array.h"
+#include <vector>
 
 // Forward Declarations
 class Data1D;
@@ -39,7 +20,7 @@ class Interpolator
         LinearInterpolation,
         ThreePointInterpolation
     };
-    Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme = SplineInterpolation);
+    Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme = SplineInterpolation);
     Interpolator(const Data1D &source, InterpolationScheme scheme = SplineInterpolation);
     ~Interpolator();
 
@@ -48,13 +29,13 @@ class Interpolator
      */
     private:
     // Target x array
-    const Array<double> &x_;
+    const std::vector<double> &x_;
     // Target y array
-    const Array<double> &y_;
+    const std::vector<double> &y_;
     // Interpolation scheme currently employed
     InterpolationScheme scheme_;
     // Interpolation parameters
-    Array<double> a_, b_, c_, d_, h_;
+    std::vector<double> a_, b_, c_, d_, h_;
     // Interval of last returned interpolated point
     int lastInterval_;
 

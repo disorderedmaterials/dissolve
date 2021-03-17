@@ -1,27 +1,8 @@
-/*
-    *** Calibration Module - Processing
-    *** src/modules/calibration/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/partialset.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/praxis.h"
 #include "modules/calibration/calibration.h"
@@ -45,15 +26,16 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * IntraBroadening Calibration
      */
 
-    if (intraBroadeningModules_.nItems() > 0)
+    auto &intraBroadeningModules = keywords_.retrieve<std::vector<Module *>>("AdjustIntraBroadening");
+    if (!intraBroadeningModules.empty())
     {
         /*
          * Make a list of all Configurations related to all RDF module
          */
         RefList<Configuration> configs;
-        for (Module *module : intraBroadeningModules_)
+        for (auto *module : intraBroadeningModules)
         {
-            for (Configuration *cfg : module->targetConfigurations())
+            for (auto *cfg : module->targetConfigurations())
                 configs.addUnique(cfg);
         }
         Messenger::print("{} Configuration(s) are involved over all RDF Module targets.\n", configs.nItems());
@@ -79,10 +61,14 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
         RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> neutronReferences;
 
-        for (Module *module : intraBroadeningNeutronSQReferences_)
+        auto &intraBroadeningNeutronSQReferences =
+            keywords_.retrieve<std::vector<Module *>>("IntraBroadeningNeutronSQReference");
+        for (auto *module : intraBroadeningNeutronSQReferences)
             neutronReferences.addUnique(module, CalibrationModule::IntraBroadeningTargetSQ);
 
-        for (Module *module : intraBroadeningNeutronGRReferences_)
+        auto &intraBroadeningNeutronGRReferences =
+            keywords_.retrieve<std::vector<Module *>>("IntraBroadeningNeutronGRReference");
+        for (auto *module : intraBroadeningNeutronGRReferences)
         {
             // If the Module target is already in the list, just set its data to 'both'
             RefDataItem<Module, CalibrationModule::IntraBroadeningFitTarget> *oldItem = neutronReferences.contains(module);
@@ -96,7 +82,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * Assemble a list of fitting parameters from the associated RDF modules and their BroadeningFunctions
          */
 
-        CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules_, neutronReferences);
+        CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules, neutronReferences);
         PrAxisMinimiser<CalibrationModuleCostFunctions> broadeningMinimiser(
             costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
         broadeningMinimiser.setTolerance(0.001);
@@ -104,7 +90,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Array<bool> broadeningAdded(PairBroadeningFunction::nFunctionTypes);
         broadeningAdded = false;
 
-        for (Module *module : intraBroadeningModules_)
+        for (auto *module : intraBroadeningModules)
         {
             // Retrieve the PairBroadeningFunction
             auto &broadening = module->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
@@ -141,7 +127,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Make sure that we re-broaden the RDFs and NeutronSQ data by the correct (optimal) values before we leave
         // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
-        for (Module *rdfModule : intraBroadeningModules_)
+        for (auto *rdfModule : intraBroadeningModules)
         {
             // Retrieve the PairBroadeningFunction
             auto &broadening =
@@ -154,26 +140,26 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto smoothing = rdfModule->keywords().asInt("Smoothing");
             for (Configuration *cfg : rdfModule->targetConfigurations())
             {
-                const auto &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
-                auto &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+                const auto &originalGR = cfg->moduleData().value<PartialSet>("OriginalGR");
+                auto &unweightedGR = cfg->moduleData().realise<PartialSet>("UnweightedGR");
                 RDFModule::calculateUnweightedGR(procPool, cfg, originalGR, unweightedGR, broadening, smoothing);
             }
 
             // Store the new broadening parameters in the restart file for info only (they won't be read in and
             // used)
-            GenericListHelper<PairBroadeningFunction>::realise(dissolve.processingModuleData(),
-                                                               fmt::format("{}-IntraBroadening", rdfModule->uniqueName()),
-                                                               uniqueName(), GenericItem::InRestartFileFlag) = broadening;
+            dissolve.processingModuleData().realise<PairBroadeningFunction>(
+                fmt::format("{}-IntraBroadening", rdfModule->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag) =
+                broadening;
         }
 
         // Go over NeutronSQ Modules and run the processing
         RefDataListIterator<Module, CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(neutronReferences);
-        while (Module *module = neutronModuleIterator.iterate())
+        while (auto *module = neutronModuleIterator.iterate())
         {
             // Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target
             // Configurations
             for (Configuration *cfg : module->targetConfigurations())
-                GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
+                cfg->moduleData().realise<bool>("_ForceNeutronSQ") = true;
 
             // Run the NeutronSQModule (quietly)
             Messenger::mute();

@@ -1,23 +1,5 @@
-/*
-    *** Module List Editor
-    *** src/gui/modulelisteditor.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -29,6 +11,8 @@ class Configuration;
 class DissolveWindow;
 class LineParser;
 class MimeTreeWidgetItem;
+class Module;
+class ModuleControlWidget;
 class ModuleListChart;
 class ModuleLayer;
 class ModulePalette;
@@ -88,19 +72,17 @@ class ModuleListEditor : public QWidget
     // Chart widget being displayed
     ModuleListChart *chartWidget_;
 
+    private:
+    // Find the ModuleControlWidget for this Module in the stack, if it exists
+    ModuleControlWidget *controlWidgetForModule(Module *module) const;
+    // Return the index of the ModuleControlWidget for this Module in the stack, if it exists
+    int widgetIndexForModule(Module *module) const;
+
     private slots:
-    void blockSelectionChanged(const QString &blockIdentifier);
+    void moduleDeleted(const QString &blockIdentifier);
+    void moduleSelectionChanged(const QString &blockIdentifier);
     void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem *item);
     void chartWidgetDataModified();
     void chartWidgetSizeChanged();
     void controlsWidgetDataModified();
-
-    /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 };

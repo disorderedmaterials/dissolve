@@ -1,23 +1,5 @@
-/*
-    *** Geometry Optimisation Module - Functions
-    *** src/modules/geomopt/functions.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/configuration.h"
@@ -42,7 +24,7 @@ template <> void GeometryOptimisationModule::setReferenceCoordinates(Species *sp
 {
     for (auto n = 0; n < sp->nAtoms(); ++n)
     {
-        auto r = sp->atom(n)->r();
+        auto r = sp->atom(n).r();
         xRef_[n] = r.x;
         yRef_[n] = r.y;
         zRef_[n] = r.z;
@@ -68,8 +50,7 @@ double GeometryOptimisationModule::rmsForce() const
 {
     double rmsf = 0.0;
     for (auto n = 0; n < xForce_.nItems(); ++n)
-        rmsf += xForce_.constAt(n) * xForce_.constAt(n) + yForce_.constAt(n) * yForce_.constAt(n) +
-                zForce_.constAt(n) * zForce_.constAt(n);
+        rmsf += xForce_.at(n) * xForce_.at(n) + yForce_.at(n) * yForce_.at(n) + zForce_.at(n) * zForce_.at(n);
     rmsf /= xForce_.nItems();
 
     return sqrt(rmsf);
@@ -107,7 +88,7 @@ template <>
 double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg,
                                                          const PotentialMap &potentialMap, double delta)
 {
-    Atom **atoms = cfg->atoms().array();
+    auto &atoms = cfg->atoms();
     for (auto n = 0; n < cfg->nAtoms(); ++n)
         atoms[n]->setCoordinates(xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta, zRef_[n] + zForce_[n] * delta);
     cfg->updateCellContents();

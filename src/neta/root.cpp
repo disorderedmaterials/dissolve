@@ -1,29 +1,9 @@
-/*
-    *** NETA Root Node
-    *** src/neta/root.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "neta/root.h"
 #include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
-#include "templates/dynamicarray.h"
-#include "templates/refdatalist.h"
+#include "data/elements.h"
 
 NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::RootNode)
 {
@@ -42,16 +22,12 @@ NETARootNode::~NETARootNode() {}
 // Return enum options for NETARootModifiers
 EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 {
-    static EnumOptionsList ModifierOptions = EnumOptionsList()
-                                             << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh");
-
-    static EnumOptions<NETARootNode::NETARootModifier> options("RootModifier", ModifierOptions);
-
-    return options;
+    return EnumOptions<NETARootNode::NETARootModifier>("RootModifier",
+                                                       {{NBondsModifier, "nbonds"}, {NHydrogensModifier, "nh"}});
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARootNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETARootNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
@@ -82,7 +58,7 @@ bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op,
  */
 
 // Evaluate the node and return its score
-int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETARootNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
     auto totalScore = 0;
 
@@ -91,11 +67,12 @@ int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
         return NETANode::NoMatch;
     else
         ++totalScore;
+
     if (nHydrogensValue_ >= 0)
     {
         // Count number of hydrogens attached to this atom
         auto nH = std::count_if(i->bonds().begin(), i->bonds().end(),
-                                [i](const SpeciesBond &bond) { return bond.partner(i)->element()->Z() == ELEMENT_H; });
+                                [i](const SpeciesBond &bond) { return bond.partner(i)->Z() == Elements::H; });
         if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
             return NETANode::NoMatch;
 

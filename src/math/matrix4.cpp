@@ -1,27 +1,10 @@
-/*
-    *** Column-Major 4x4 Matrix4 class
-    *** src/math/matrix4.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more detailAs.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/matrix4.h"
 #include "base/messenger.h"
 #include "math/matrix3.h"
+#include <array>
 
 Matrix4::Matrix4() { setIdentity(); }
 
@@ -75,7 +58,7 @@ Matrix4 Matrix4::operator*(const Matrix4 &B) const
 Matrix4 Matrix4::operator*(const double a) const
 {
     Matrix4 AB;
-    for (int n = 0; n < 16; ++n)
+    for (auto n = 0; n < 16; ++n)
         AB.matrix_[n] = matrix_[n] * a;
     return AB;
 }
@@ -83,7 +66,7 @@ Matrix4 Matrix4::operator*(const double a) const
 Matrix4 Matrix4::operator+(const Matrix4 &B) const
 {
     Matrix4 A;
-    for (int n = 0; n < 16; ++n)
+    for (auto n = 0; n < 16; ++n)
         A[n] = matrix_[n] + B.matrix_[n];
     return A;
 }
@@ -91,7 +74,7 @@ Matrix4 Matrix4::operator+(const Matrix4 &B) const
 Matrix4 Matrix4::operator-(const Matrix4 &B) const
 {
     Matrix4 A;
-    for (int n = 0; n < 16; ++n)
+    for (auto n = 0; n < 16; ++n)
         A[n] = matrix_[n] - B.matrix_[n];
     return A;
 }
@@ -318,18 +301,14 @@ void Matrix4::invert()
 {
     // Gauss-Jordan Inversion
     // Invert the supplied matrix using Gauss-Jordan elimination
-    int pivotrows[4], pivotcols[4], pivotrow = 0, pivotcol = 0;
-    bool pivoted[4];
-    int row, col, n, m;
+    std::array<int, 4> pivotcols{0}, pivotrows{0};
+    std::array<bool, 4> pivoted{false};
+    int pivotrow = 0, pivotcol = 0;
+    int row, col, m;
     double large, element;
-    for (n = 0; n < 4; ++n)
-    {
-        pivotrows[n] = 0;
-        pivotcols[n] = 0;
-        pivoted[n] = false;
-    }
+
     // Loop over columns to be reduced
-    for (n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         // Locate suitable pivot element - find largest value in the matrix A
         large = 0.0;
@@ -388,14 +367,14 @@ void Matrix4::invert()
         }
     }
     // Rearrange columns to undo row exchanges performed earlier
-    for (n = 3; n >= 0; --n)
+    for (auto i = 3; i >= 0; --i)
     {
-        if (pivotrows[n] != pivotcols[n])
+        if (pivotrows[i] != pivotcols[i])
             for (m = 0; m < 4; ++m)
             {
-                element = matrix_[m * 4 + pivotrows[n]];
-                matrix_[m * 4 + pivotrows[n]] = matrix_[m * 4 + pivotcols[n]];
-                matrix_[m * 4 + pivotcols[n]] = element;
+                element = matrix_[m * 4 + pivotrows[i]];
+                matrix_[m * 4 + pivotrows[i]] = matrix_[m * 4 + pivotcols[i]];
+                matrix_[m * 4 + pivotcols[i]] = element;
             }
     }
 }
@@ -501,7 +480,7 @@ void Matrix4::adjustColumn(int col, Vec4<double> vec)
 double Matrix4::columnMagnitude(int column) const
 {
     double mag = 0.0;
-    for (int n = column * 4; n < column * 4 + 4; ++n)
+    for (auto n = column * 4; n < column * 4 + 4; ++n)
         mag += (matrix_[n] * matrix_[n]);
     return sqrt(mag);
 }
@@ -526,8 +505,8 @@ void Matrix4::columnMultiply(Vec3<double> vec)
 // Normalise specified column to 1
 void Matrix4::columnNormalise(int col)
 {
-    double mag = 1.0 / sqrt(matrix_[col * 4] * matrix_[col * 4] + matrix_[col * 4 + 1] * matrix_[col * 4 + 1] +
-                            matrix_[col * 4 + 2] * matrix_[col * 4 + 2] + matrix_[col * 4 + 3] * matrix_[col * 4 + 3]);
+    auto mag = 1.0 / sqrt(matrix_[col * 4] * matrix_[col * 4] + matrix_[col * 4 + 1] * matrix_[col * 4 + 1] +
+                          matrix_[col * 4 + 2] * matrix_[col * 4 + 2] + matrix_[col * 4 + 3] * matrix_[col * 4 + 3]);
     matrix_[col * 4] *= mag;
     matrix_[col * 4 + 1] *= mag;
     matrix_[col * 4 + 2] *= mag;
@@ -1270,32 +1249,8 @@ void Matrix4::copyTranslationAndScaling(Matrix4 &source)
 // Apply a shearing along X
 void Matrix4::applyShearX(double shearx)
 {
-    // 	A[0] = 1.0
-    // 	A[4] = 0.2;
-    // 	A[5] = 1.0;
-    // 	A[9] = 1.0;
-    // 	A[15] = 1.0;
-    // 	Matrix AB;
-    // 	AB.matrix_[0] = matrix_[0];
-    // 	AB.matrix_[1] = matrix_[1];
-    // 	AB.matrix_[2] = matrix_[2];
-    // 	AB.matrix_[3] = matrix_[3];
-
     matrix_[4] += shearx * matrix_[0];
     matrix_[5] += shearx * matrix_[1];
     matrix_[6] += shearx * matrix_[2];
     matrix_[7] += shearx * matrix_[3];
-
-    // 	AB.matrix_[8] = matrix_[8]*B.matrix_[0] + matrix_[9]*B.matrix_[4] + matrix_[10]*B.matrix_[8] +
-    // matrix_[11]*B.matrix_[12]; 	AB.matrix_[9] = matrix_[8]*B.matrix_[1] + matrix_[9]*B.matrix_[5] +
-    // matrix_[10]*B.matrix_[9] + matrix_[11]*B.matrix_[13]; 	AB.matrix_[10] = matrix_[8]*B.matrix_[2] +
-    // matrix_[9]*B.matrix_[6] + matrix_[10]*B.matrix_[10] + matrix_[11]*B.matrix_[14]; 	AB.matrix_[11] =
-    // matrix_[8]*B.matrix_[3] + matrix_[9]*B.matrix_[7] + matrix_[10]*B.matrix_[11] + matrix_[11]*B.matrix_[15];
-    //
-    // 	AB.matrix_[12] = matrix_[12]*B.matrix_[0] + matrix_[13]*B.matrix_[4] + matrix_[14]*B.matrix_[8] +
-    // matrix_[15]*B.matrix_[12]; 	AB.matrix_[13] = matrix_[12]*B.matrix_[1] + matrix_[13]*B.matrix_[5] +
-    // matrix_[14]*B.matrix_[9] + matrix_[15]*B.matrix_[13]; 	AB.matrix_[14] = matrix_[12]*B.matrix_[2] +
-    // matrix_[13]*B.matrix_[6] + matrix_[14]*B.matrix_[10] + matrix_[15]*B.matrix_[14]; 	AB.matrix_[15] =
-    // matrix_[12]*B.matrix_[3] + matrix_[13]*B.matrix_[7] + matrix_[14]*B.matrix_[11] + matrix_[15]*B.matrix_[15];
-    // return AB;
 }

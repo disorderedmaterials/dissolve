@@ -1,30 +1,11 @@
-/*
-    *** Procedure Node - Process3D
-    *** src/procedure/nodes/process3d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/process3d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "keywords/types.h"
 #include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/operatebase.h"
@@ -33,12 +14,12 @@
 Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *target)
     : ProcedureNode(ProcedureNode::Process3DNode)
 {
-    keywords_.add("Target", new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target),
-                  "SourceData", "Collect3D node containing the data to process");
-    keywords_.add("Target", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
-    keywords_.add("Target", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Target", new StringKeyword("Y"), "LabelY", "Label for the y axis");
-    keywords_.add("Target", new StringKeyword("Z"), "LabelZ", "Label for the z axis");
+    keywords_.add("Control", new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target),
+                  "SourceData", "Collect3D node containing the histogram data to process");
+    keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
+    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
+    keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
+    keywords_.add("Control", new StringKeyword("Z"), "LabelZ", "Label for the z axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save", "Save processed data to disk");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
@@ -134,8 +115,8 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    auto &data = GenericListHelper<Data3D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                                    GenericItem::InRestartFileFlag, &created);
+    auto &data = targetList.realise<Data3D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix,
+                                            GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());

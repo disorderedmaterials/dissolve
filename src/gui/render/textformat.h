@@ -1,38 +1,14 @@
-/*
-    *** Text Format
-    *** src/gui/render/textformat.h
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
-#include "templates/listitem.h"
-
-// Forward Declarations
-/* none */
-
-// Text Formatter
-class TextFormat : public ListItem<TextFormat>
+// Text Formatting
+class TextFormat
 {
     public:
-    // Constructor / Desctructor
     TextFormat();
-    ~TextFormat();
+    ~TextFormat() = default;
     TextFormat(const TextFormat &source);
     void operator=(const TextFormat &source);
 
@@ -45,11 +21,11 @@ class TextFormat : public ListItem<TextFormat>
     // Scale
     double scale_;
     // Whether text is italic
-    bool italic_;
+    bool isItalic_;
     // Whether text is bold
-    bool bold_;
+    bool isBold_;
     // Whether text is actually a symbol
-    bool symbol_;
+    bool isSymbol_;
 
     public:
     // Set vertical (bottom-edge) position
@@ -57,21 +33,21 @@ class TextFormat : public ListItem<TextFormat>
     // Adjust vertical (bottom-edge) position
     void adjustY(double delta);
     // Return vertical (bottom-edge) position
-    double y();
+    double y() const;
     // Set scale
     void setScale(double scale);
     // Return scale
-    double scale();
+    double scale() const;
     // Set whether text is italic
     void setItalic(bool italic);
     // Return whether text is italic
-    bool italic();
+    bool isItalic() const;
     // Set whether text is bold
     void setBold(bool bold);
     // Return whether text is bold
-    bool bold();
+    bool isBold() const;
     // Set whether text is actually a symbol
     void setSymbol(bool symbol);
     // Return whether text is actually a symbol
-    bool symbol();
+    bool isSymbol() const;
 };

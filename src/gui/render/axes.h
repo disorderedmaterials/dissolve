@@ -1,23 +1,5 @@
-/*
-    *** Graph Axes
-    *** src/gui/render/axes.h
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,6 +13,7 @@
 #include "templates/objectstore.h"
 #include "templates/vector3.h"
 #include "templates/vector4.h"
+#include <vector>
 
 // Forward Declarations
 class View;
@@ -61,7 +44,7 @@ class Axes
         nAutoScaleMethods
     };
     // Return enum options for AutoScaleMethod
-    static EnumOptions<Axes::AutoScaleMethod> &autoScaleMethods();
+    static EnumOptions<Axes::AutoScaleMethod> autoScaleMethods();
 
     private:
     // Data limits for surface generation
@@ -179,15 +162,15 @@ class Axes
     // Return supplied data x value in local axes coordinates
     double transformX(double x) const;
     // Transform entire array of values into local axes coordinates
-    void transformX(Array<double> &xArray) const;
+    void transformX(std::vector<double> &xArray) const;
     // Return supplied data y value in local axes coordinates
     double transformY(double y) const;
     // Transform entire array of values into local axes coordinates
-    void transformY(Array<double> &yArray) const;
+    void transformY(std::vector<double> &yArray) const;
     // Return supplied data z value in local axes coordinates
     double transformZ(double z) const;
     // Transform entire array of values into local axes coordinates
-    void transformZ(Array<double> &zArray) const;
+    void transformZ(std::vector<double> &zArray) const;
     // Transform a 2D array of values into local axes coordinates
     void transformX(Array2D<double> &xArray) const;
     // Transform a 2D array of values into local axes coordinates

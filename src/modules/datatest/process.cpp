@@ -1,26 +1,7 @@
-/*
-    *** DataTest Module - Processing
-    *** src/modules/datatest/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "modules/datatest/datatest.h"
@@ -34,8 +15,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Get options and target Module
     const auto testThreshold = keywords_.asDouble("Threshold");
-    Module *targetModule = targetModule_.firstItem();
     auto errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
+    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Target");
+    auto *targetModule = targets.size() == 1 ? targets.front() : nullptr;
 
     // Print summary
     if (!targetModule)
@@ -67,9 +49,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, *testData1D, true);
-        Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold is {:6.3e})\n\n",
-                         testData1D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-        if (error > testThreshold)
+        Messenger::print("Target data '{}' has error of {:7.3e} with calculated data and is {} (threshold is {:6.3e})\n\n",
+                         testData1D->name(), error, isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
+        if (isnan(error) || error > testThreshold)
             return false;
     }
 
@@ -95,8 +77,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         // 		double error = Error::error(errorType, data, *testData2D, true);
         // 		Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold
-        // is {:6.3e})\n\n", testData2D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold); if
-        // (error > testThreshold) return false;
+        // is {:6.3e})\n\n", testData2D->name(), error, isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
+        // if (isnan(error) || error > testThreshold) return false;
 
         return Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");
     }

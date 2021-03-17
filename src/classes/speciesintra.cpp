@@ -1,23 +1,5 @@
-/*
-    *** SpeciesIntra Definition
-    *** src/classes/speciesintra.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesintra.h"
 #include "base/messenger.h"
@@ -26,7 +8,6 @@
 
 SpeciesIntra::SpeciesIntra()
 {
-    parent_ = nullptr;
     masterParameters_ = nullptr;
 
     attached_[0] = {};
@@ -34,11 +15,10 @@ SpeciesIntra::SpeciesIntra()
     inCycle_ = false;
 }
 
-SpeciesIntra::SpeciesIntra(SpeciesIntra &source) { (*this) = source; }
+SpeciesIntra::SpeciesIntra(const SpeciesIntra &source) { (*this) = source; }
 
 SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 {
-    parent_ = source.parent_;
     masterParameters_ = source.masterParameters_;
     parameters_.clear();
     parameters_.resize(source.parameters_.size());
@@ -46,19 +26,10 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
     attached_[0] = source.attached_[0];
     attached_[1] = source.attached_[1];
     inCycle_ = source.inCycle_;
+    form_ = source.form_;
 
     return *this;
 }
-
-/*
- * Basic Data
- */
-
-// Set parent Species
-void SpeciesIntra::setParent(Species *parent) { parent_ = parent; }
-
-// Return parent Species
-Species *SpeciesIntra::parent() const { return parent_; }
 
 /*
  * Interaction Parameters
@@ -83,9 +54,6 @@ void SpeciesIntra::detachFromMasterIntra()
     masterParameters_ = nullptr;
 }
 
-// Return parameter source
-const SpeciesIntra *SpeciesIntra::parameterSource() const { return (masterParameters_ ? masterParameters_ : this); }
-
 // Set functional form index of interaction
 void SpeciesIntra::setForm(int form) { form_ = form; }
 
@@ -108,15 +76,6 @@ void SpeciesIntra::addParameter(double param)
 // Set existing parameter
 void SpeciesIntra::setParameter(int id, double value)
 {
-#ifdef CHECKS
-    if ((id < 0) || (id >= parameters_.size()))
-    {
-        Messenger::error("Tried to set a parameter in a SpeciesIntra definition, but the index is out of range ({} vs "
-                         "{} parameters current).\n",
-                         id, parameters_.size());
-        return;
-    }
-#endif
     // Does this intramolecular interaction reference a set of master parameters?
     if (masterParameters_)
     {
@@ -141,7 +100,7 @@ void SpeciesIntra::setParameters(const std::vector<double> &params)
 }
 
 // Return number of parameters defined
-int SpeciesIntra::nParameters() const { return parameters_.size(); }
+int SpeciesIntra::nParameters() const { return parameters().size(); }
 
 // Return nth parameter
 double SpeciesIntra::parameter(int id) const

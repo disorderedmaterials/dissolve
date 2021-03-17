@@ -1,23 +1,5 @@
-/*
-    *** Py5 cation Forcefield
-    *** src/data/ff/ludwig/py5.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/ludwig/py5.h"
 
@@ -40,35 +22,35 @@
 bool Forcefield_Ludwig_Py5::setUp()
 {
     // Short-Range Parameters
-    addParameters("nc", 0.711302, 3.250);
-    addParameters("ca", 0.292919, 3.550);
-    addParameters("ha", 0.125548, 2.420);
-    addParameters("ct", 0.276040, 3.50);
-    addParameters("hc", 0.125548, 2.50);
-    addParameters("cm", 0.276040, 3.50);
-    addParameters("hm", 0.125548, 2.50);
+    addParameters("nc", {0.711302, 3.250});
+    addParameters("ca", {0.292919, 3.550});
+    addParameters("ha", {0.125548, 2.420});
+    addParameters("ct", {0.276040, 3.50});
+    addParameters("hc", {0.125548, 2.50});
+    addParameters("cm", {0.276040, 3.50});
+    addParameters("hm", {0.125548, 2.50});
 
     // Atom Types
-    addAtomType(ELEMENT_N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.0749, "nc");
-    addAtomType(ELEMENT_C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0725,
+    addAtomType(Elements::N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.0749, "nc");
+    addAtomType(Elements::C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0725,
                 "ca");
-    addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C", "Carbon in aromatic ring, meta", -0.2245,
+    addAtomType(Elements::C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C", "Carbon in aromatic ring, meta", -0.2245,
                 "ca");
-    addAtomType(ELEMENT_C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N),n=2)", "Carbon in aromatic ring, para", 0.1706,
-                "ca");
-    addAtomType(ELEMENT_H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1751, "ha");
-    addAtomType(ELEMENT_H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1760, "ha");
-    addAtomType(ELEMENT_H, 7, "ha_p", "nbonds=1,-&4", "Hydrogen bound to carbon in aromatic ring, para", 0.1293, "ha");
-    addAtomType(ELEMENT_C, 8, "ct_1", "nbonds=4,nh=2,-C,-&1", "Alkane Carbon of Tail, adjacent to N", -0.1745, "ct");
-    addAtomType(ELEMENT_C, 9, "ct_2", "nbonds=4,nh=2,-C(-N)", "Alkane Carbon of Tail, 2nd", 0.1349, "ct");
-    addAtomType(ELEMENT_C, 10, "ct_3", "nbonds=4,nh=2,-C(-C(-N))", "Alkane Carbon of Tail, 3rd", 0.0170, "ct");
-    addAtomType(ELEMENT_C, 11, "ct_4", "nbonds=4,nh=2,-C(-C(-C(-N)))", "Alkane Carbon of Tail, 4th", 0.1023, "ct");
-    addAtomType(ELEMENT_H, 12, "hc_1", "nbonds=1,-&8", "Hydrogen of Tail, next to N", 0.1070, "hc");
-    addAtomType(ELEMENT_H, 13, "hc_2", "nbonds=1,-&9", "Hydrogen of Tail, 2nd", -0.0208, "hc");
-    addAtomType(ELEMENT_H, 14, "hc_3", "nbonds=1,-&10", "Hydrogen of Tail, 3rd", 0.0097, "hc");
-    addAtomType(ELEMENT_H, 15, "hc_4", "nbonds=1,-&11", "Hydrogen of Tail, 4th", -0.0107, "hc");
-    addAtomType(ELEMENT_C, 16, "cm", "nbonds=4,nh=3,-&11", "Carbon of Tail End", -0.1671, "cm");
-    addAtomType(ELEMENT_H, 17, "hm", "nbonds=1,-&16", "Hydrogen of Tail End", 0.0480, "hm");
+    addAtomType(Elements::C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N),n=2)", "Carbon in aromatic ring, para",
+                0.1706, "ca");
+    addAtomType(Elements::H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1751, "ha");
+    addAtomType(Elements::H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1760, "ha");
+    addAtomType(Elements::H, 7, "ha_p", "nbonds=1,-&4", "Hydrogen bound to carbon in aromatic ring, para", 0.1293, "ha");
+    addAtomType(Elements::C, 8, "ct_1", "nbonds=4,nh=2,-C,-&1", "Alkane Carbon of Tail, adjacent to N", -0.1745, "ct");
+    addAtomType(Elements::C, 9, "ct_2", "nbonds=4,nh=2,-C(-N)", "Alkane Carbon of Tail, 2nd", 0.1349, "ct");
+    addAtomType(Elements::C, 10, "ct_3", "nbonds=4,nh=2,-C(-C(-N))", "Alkane Carbon of Tail, 3rd", 0.0170, "ct");
+    addAtomType(Elements::C, 11, "ct_4", "nbonds=4,nh=2,-C(-C(-C(-N)))", "Alkane Carbon of Tail, 4th", 0.1023, "ct");
+    addAtomType(Elements::H, 12, "hc_1", "nbonds=1,-&8", "Hydrogen of Tail, next to N", 0.1070, "hc");
+    addAtomType(Elements::H, 13, "hc_2", "nbonds=1,-&9", "Hydrogen of Tail, 2nd", -0.0208, "hc");
+    addAtomType(Elements::H, 14, "hc_3", "nbonds=1,-&10", "Hydrogen of Tail, 3rd", 0.0097, "hc");
+    addAtomType(Elements::H, 15, "hc_4", "nbonds=1,-&11", "Hydrogen of Tail, 4th", -0.0107, "hc");
+    addAtomType(Elements::C, 16, "cm", "nbonds=4,nh=3,-&11", "Carbon of Tail End", -0.1671, "cm");
+    addAtomType(Elements::H, 17, "hm", "nbonds=1,-&16", "Hydrogen of Tail End", 0.0480, "hm");
 
     // Bond Terms
     addBondTerm("ha", "ca", SpeciesBond::HarmonicForm, {3071., 1.080});
@@ -113,9 +95,9 @@ bool Forcefield_Ludwig_Py5::setUp()
     addTorsionTerm("hc", "ct", "nc", "ca", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
 
     // Improper Terms
-    addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("nc", "ca", "ca", "ct", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("ca", "ca", "ca", "ha", SpeciesTorsion::CosineForm, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("ca", "nc", "ca", "ha", SpeciesTorsion::CosineForm, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("nc", "ca", "ca", "ct", SpeciesTorsion::CosineForm, {4.606, 2.0, 180.0, 1});
 
     return true;
 }
@@ -125,7 +107,7 @@ bool Forcefield_Ludwig_Py5::setUp()
  */
 
 // Return name of Forcefield
-std::string_view Forcefield_Ludwig_Py5::name() const { return "Ludwig Py5 Cation"; }
+std::string_view Forcefield_Ludwig_Py5::name() const { return "Ludwig/Py5"; }
 
 // Return description for Forcefield
 std::string_view Forcefield_Ludwig_Py5::description() const

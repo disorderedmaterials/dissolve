@@ -1,46 +1,37 @@
-/*
-    *** General Node for NETA
-    *** src/expression/node.cpp
-    Copyright T. Youngs 2015-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "neta/node.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "neta/connection.h"
+#include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
-#include "templates/reflist.h"
 
-// Return enum options for SymbolToken
-EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
+// Return enum options for NodeTypes
+EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 {
-    static EnumOptionsList ComparisonOperatorOptions =
-        EnumOptionsList() << EnumOption(EqualTo, "=") << EnumOption(NotEqualTo, "!=") << EnumOption(GreaterThan, ">")
-                          << EnumOption(LessThan, "<") << EnumOption(GreaterThanEqualTo, ">=")
-                          << EnumOption(LessThanEqualTo, "<=");
-
-    static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", ComparisonOperatorOptions);
-
-    return options;
+    return EnumOptions<NETANode::NodeType>("NodeTypes", {{BasicNode, "Basic"},
+                                                         {ConnectionNode, "Connection"},
+                                                         {OrNode, "Or"},
+                                                         {PresenceNode, "Presence"},
+                                                         {RingNode, "Ring"},
+                                                         {RootNode, "Root"}});
 }
 
-NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type) : ListItem<NETANode>()
+// Return enum options for ComparisonOperator
+EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
+{
+    return EnumOptions<NETANode::ComparisonOperator>("ComparisonOperator", {{EqualTo, "="},
+                                                                            {NotEqualTo, "!="},
+                                                                            {GreaterThan, ">"},
+                                                                            {LessThan, "<"},
+                                                                            {GreaterThanEqualTo, ">="},
+                                                                            {LessThanEqualTo, "<="}});
+}
+
+NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type)
 {
     reverseLogic_ = false;
     parent_ = parent;
@@ -60,47 +51,66 @@ NETANode::NodeType NETANode::nodeType() const { return nodeType_; }
 NETADefinition *NETANode::parent() const { return parent_; }
 
 /*
+ * Atom Targets
+ */
+
+// Add element target to node
+bool NETANode::addElementTarget(Elements::Element Z)
+{
+    return Messenger::error("NETA {} does not accept element targets.\n", nodeTypes().keyword(nodeType_));
+}
+
+// Add forcefield type target to node
+bool NETANode::addFFTypeTarget(const ForcefieldAtomType &ffType)
+{
+    return Messenger::error("NETA {} does not accept forcefield atomtype targets.\n", nodeTypes().keyword(nodeType_));
+}
+
+/*
  * Branching and Node Generation
  */
 
 // Clear all nodes
 void NETANode::clear() { branch_.clear(); }
 
-// Return last node of branch
-NETANode *NETANode::lastBranchNode() { return branch_.last(); }
-
-// Return number of nodes defined in branch
-int NETANode::nBranchNodes() const { return branch_.nItems(); }
-
-// Create connectivity node from current targets
-NETAConnectionNode *
-NETANode::createConnectionNode(std::vector<Element *> targetElements,
-                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
+// Create logical 'or' node in the branch
+std::shared_ptr<NETAOrNode> NETANode::createOrNode()
 {
     // Create the new node and own it
-    NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
-    branch_.own(node);
+    auto node = std::make_shared<NETAOrNode>(parent_);
+    branch_.push_back(node);
+
+    return node;
+}
+
+// Create connectivity node from current targets
+std::shared_ptr<NETAConnectionNode>
+NETANode::createConnectionNode(std::vector<Elements::Element> targetElements,
+                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
+{
+    auto node = std::make_shared<NETAConnectionNode>(parent_, targetElements, targetAtomTypes);
+    branch_.push_back(node);
 
     return node;
 }
 
 // Create presence node in the branch
-NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElements,
-                                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
+std::shared_ptr<NETAPresenceNode>
+NETANode::createPresenceNode(std::vector<Elements::Element> targetElements,
+                             std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
-    // Create the new node and own it
-    NETAPresenceNode *node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);
-    branch_.own(node);
+    auto node = std::make_shared<NETAPresenceNode>(parent_, targetElements, targetAtomTypes);
+    branch_.push_back(node);
 
     return node;
 }
 
 // Create ring node in the branch
-NETARingNode *NETANode::createRingNode()
+std::shared_ptr<NETARingNode> NETANode::createRingNode()
 {
     // Create the new node and own it
-    auto *node = new NETARingNode(parent_);
-    branch_.own(node);
+    auto node = std::make_shared<NETARingNode>(parent_);
+    branch_.push_back(node);
 
     return node;
 }
@@ -155,7 +165,7 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
             result = (lhsValue <= rhsValue);
             break;
         default:
-            Messenger::error("Unrecognised operator ({}) in NETANode::valueComparison.\n", op);
+            Messenger::error("Unrecognised operator (id = {}) in NETANode::valueComparison.\n", op);
             break;
     }
 
@@ -170,13 +180,12 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 void NETANode::setReverseLogic() { reverseLogic_ = true; }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const
+int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const
 {
     auto totalScore = 0;
 
-    // Loop over nodes in branch in sequence
-    ListIterator<NETANode> branchIterator(branch_);
-    while (NETANode *node = branchIterator.iterate())
+    // Loop over branch nodes in sequence
+    for (auto node : branch_)
     {
         // Get the score from the node, returning early if NoMatch is encountered
         auto nodeScore = node->score(i, atomData);

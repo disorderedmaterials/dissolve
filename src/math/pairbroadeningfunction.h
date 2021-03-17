@@ -1,23 +1,5 @@
-/*
-    *** Pair Broadening Function
-    *** src/math/pairbroadeningfunction.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -43,7 +25,6 @@ class PairBroadeningFunction : public GenericItemBase
         NoFunction,
         GaussianFunction,
         GaussianElementPairFunction,
-        FrequencyFunction,
         nFunctionTypes
     };
     // Return FunctionType from supplied string
@@ -70,11 +51,7 @@ class PairBroadeningFunction : public GenericItemBase
     // Elemental pair Gaussian FWHM parameters
     Array2D<double> elementPairGaussianFWHM_;
     // Elemental pair flags (whether a valid value exists)
-    Array2D<bool> elementPairGaussianFlags_;
-    // Frequency-based bond broadening constant
-    double frequencyBondConstant_;
-    // Frequency-based angle broadening constant
-    double frequencyAngleConstant_;
+    Array2D<char> elementPairGaussianFlags_;
 
     public:
     // Read function data from LineParser source
@@ -89,16 +66,8 @@ class PairBroadeningFunction : public GenericItemBase
     void setGaussianFWHM(double fwhm);
     // Return Gaussian FWHM parameter
     double gaussianFWHM() const;
-    // Set frequency bond constant
-    void setFrequencyBondConstant(double k);
-    // Return frequency bond constant
-    double frequencyBondConstant() const;
-    // Set frequency angle constant
-    void setFrequencyAngleConstant(double k);
-    // Return frequency angle constant
-    double frequencyAngleConstant() const;
     // Return array of pointers to all adjustable parameters
-    Array<double *> parameters();
+    std::vector<double *> parameters();
     // Return short summary of function and its parameters
     std::string summary() const;
     // Return a BroadeningFunction tailored to the specified AtomType pair

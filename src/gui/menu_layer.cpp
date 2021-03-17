@@ -1,23 +1,5 @@
-/*
-    *** Dissolve GUI - Layer Menu Functions
-    *** src/gui/menu_layer.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "gui/layertab.h"
@@ -27,6 +9,8 @@
 #include "modules/calculate_rdf/rdf.h"
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/epsr/epsr.h"
+#include "modules/rdf/rdf.h"
+#include "modules/sq/sq.h"
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 {
@@ -153,8 +137,7 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
     EPSRModule *epsr = dynamic_cast<EPSRModule *>(dissolve_.createModuleInstance("EPSR", newLayer));
 
     // Set any suitable module targets
-    RefList<Module> neutronSQ = dissolve_.findModuleInstances("NeutronSQ");
-    epsr->addTargets(neutronSQ);
+    epsr->keywords().set<std::vector<Module *>>("Target", dissolve_.findModuleInstances("NeutronSQ"));
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -170,10 +153,8 @@ void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF"));
     newLayer->setFrequency(5);
 
-    Module *module;
-
     // Add the RDF module
-    module = dissolve_.createModuleInstance("RDF", newLayer);
+    Module *module = dissolve_.createModuleInstance("RDF", newLayer);
     module->addTargetConfigurations(dissolve_.configurations());
 
     // Run set-up stages for modules
@@ -190,15 +171,13 @@ void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(b
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Unweighted S(Q)"));
     newLayer->setFrequency(5);
 
-    Module *module;
-
     // Add the RDF module
-    module = dissolve_.createModuleInstance("RDF", newLayer);
-    module->addTargetConfigurations(dissolve_.configurations());
+    RDFModule *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
+    rdfModule->addTargetConfigurations(dissolve_.configurations());
 
     // Add a plain structure factor module
-    module = dissolve_.createModuleInstance("SQ", newLayer);
-    module->addTargetConfigurations(dissolve_.configurations());
+    Module *module = dissolve_.createModuleInstance("SQ", newLayer);
+    module->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -214,15 +193,17 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q)"));
     newLayer->setFrequency(5);
 
-    Module *module;
-
     // Add the RDF module
-    module = dissolve_.createModuleInstance("RDF", newLayer);
-    module->addTargetConfigurations(dissolve_.configurations());
+    RDFModule *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
+    rdfModule->addTargetConfigurations(dissolve_.configurations());
+
+    // Add a plain structure factor module
+    SQModule *sqModule = dynamic_cast<SQModule *>(dissolve_.createModuleInstance("SQ", newLayer));
+    sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
-    module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
-    module->addTargetConfigurations(dissolve_.configurations());
+    Module *module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
+    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -238,19 +219,21 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q) / X-Ray S(Q)"));
     newLayer->setFrequency(5);
 
-    Module *module;
-
     // Add the RDF module
-    module = dissolve_.createModuleInstance("RDF", newLayer);
-    module->addTargetConfigurations(dissolve_.configurations());
+    RDFModule *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
+    rdfModule->addTargetConfigurations(dissolve_.configurations());
+
+    // Add a plain structure factor module
+    SQModule *sqModule = dynamic_cast<SQModule *>(dissolve_.createModuleInstance("SQ", newLayer));
+    sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
-    module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
-    module->addTargetConfigurations(dissolve_.configurations());
+    Module *module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
+    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Add an XRaySQ module
     module = dissolve_.createModuleInstance("XRaySQ", newLayer);
-    module->addTargetConfigurations(dissolve_.configurations());
+    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());

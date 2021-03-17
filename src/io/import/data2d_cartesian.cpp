@@ -1,23 +1,5 @@
-/*
-    *** Import - Cartesian Data2D
-    *** src/io/import/data2d_cartesian.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "io/import/data2d.h"
@@ -64,17 +46,17 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
         double x = parser.argd(0);
         double y = parser.argd(1);
         auto xBin = (x - xMin) / xDelta;
-        if ((xBin < 0) || (xBin >= data.constXAxis().nItems()))
+        if ((xBin < 0) || (xBin >= data.xAxis().size()))
         {
             Messenger::warn("Coordinates x={:e} y={:e} are out-of-range (xBin = {}, nBins = {}).\n", x, y, xBin,
-                            data.constXAxis().nItems());
+                            data.xAxis().size());
             continue;
         }
         auto yBin = (y - yMin) / yDelta;
-        if ((yBin < 0) || (yBin >= data.constYAxis().nItems()))
+        if ((yBin < 0) || (yBin >= data.yAxis().size()))
         {
             Messenger::warn("Coordinates x={:e} y={:e} are out-of-range (yBin = {}, nBins = {}).\n", x, y, yBin,
-                            data.constYAxis().nItems());
+                            data.yAxis().size());
             continue;
         }
 

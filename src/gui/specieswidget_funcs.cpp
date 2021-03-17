@@ -1,23 +1,5 @@
-/*
-    *** Species Widget - Functions
-    *** src/gui/specieswidget_funcs.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
@@ -40,7 +22,7 @@ SpeciesWidget::SpeciesWidget(QWidget *parent) : QWidget(parent)
     // Connect signals / slots
     connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SpeciesView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
-    connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
+    connect(ui_.SpeciesView, SIGNAL(atomsChanged()), this, SLOT(updateStatusBar()));
 
     // Make sure our controls are consistent with the underlying viewer / data
     updateToolbar();

@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Sequence
-    *** src/procedure/nodes/sequence.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -88,7 +70,8 @@ class SequenceProcedureNode : public ProcedureNode
     ProcedureNode *searchNodes(std::string_view name, ProcedureNode *excludeNode = nullptr,
                                ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Search through the Procedure for the named parameter
-    ExpressionVariable *searchParameters(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
+    std::shared_ptr<ExpressionVariable> searchParameters(std::string_view name,
+                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
 
     public:
     // Return parent Procedure to which this sequence belongs
@@ -107,13 +90,14 @@ class SequenceProcedureNode : public ProcedureNode
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
     ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
-    // Return whether the named parameter is currently in scope
-    ExpressionVariable *parameterInScope(ProcedureNode *queryingNode, std::string_view name,
-                                         ExpressionVariable *excludeParameter = nullptr);
+    // Return the named parameter if it is currently in scope
+    std::shared_ptr<ExpressionVariable> parameterInScope(ProcedureNode *queryingNode, std::string_view name,
+                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
     // Return whether the named parameter exists in this sequence or its children (branches)
-    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
+    std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
+                                                        std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
-    RefList<ExpressionVariable> parametersInScope(ProcedureNode *queryingNode);
+    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ProcedureNode *queryingNode);
 
     /*
      * Execute

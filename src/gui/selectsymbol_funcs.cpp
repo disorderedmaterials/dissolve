@@ -1,23 +1,5 @@
-/*
-    *** Select Symbol Functions
-    *** src/gui/selectsymbol_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/symbol.h"
 #include "gui/selectsymbol.h"
@@ -58,10 +40,7 @@ void SelectSymbolDialog::on_SearchEdit_textChanged(QString text)
         return;
 
     // See if a symbol description matches our search string
-    int symbol;
-    for (symbol = 0; symbol < SymbolData::nSymbols; ++symbol)
-        if (SymbolData::symbols[symbol].description.contains(text, Qt::CaseInsensitive))
-            break;
+    auto symbol = SymbolData::firstDescriptionMatch(qPrintable(text));
     if (symbol == SymbolData::nSymbols)
         return;
 
@@ -88,14 +67,8 @@ void SelectSymbolDialog::on_SymbolTable_itemSelectionChanged()
     if (!item)
         return;
 
-    // Get the Symbol pointer from the selected item
-    SymbolData *symbol = VariantPointer<SymbolData>(item->data(Qt::UserRole));
-    if (symbol)
-    {
-        selectedSymbol_ = symbol->character;
-        QString hexCode = QString("0x%1").arg(symbol->character.unicode(), 4, 16, QChar('0'));
-        ui.SymbolLabel->setText(hexCode + " : " + symbol->description);
-    }
+    // Copy the text of the widget item to the symbol label
+    ui.SymbolLabel->setText(item->text());
 
     ui.SelectButton->setEnabled(true);
 }
@@ -144,13 +117,13 @@ void SelectSymbolDialog::updateTable(bool force)
         // Populate the symbols list
         QTableWidgetItem *item;
         QSize itemSize(itemSize_, itemSize_);
-        for (int n = 0; n < SymbolData::nSymbols; ++n)
+        for (auto n = 0; n < SymbolData::nSymbols; ++n)
         {
             item = new QTableWidgetItem();
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            item->setText(SymbolData::symbols[n].character);
+            item->setText(QString::fromStdString(std::string(SymbolData::symbol((SymbolData::Symbol)n))));
             item->setTextAlignment(Qt::AlignCenter);
-            item->setData(Qt::UserRole, VariantPointer<SymbolData>(&SymbolData::symbols[n]));
+            item->setData(Qt::UserRole, QVariant::fromValue(n));
             item->setSizeHint(itemSize);
             ui.SymbolTable->setItem(n / nDisplayColumns, n % nDisplayColumns, item);
         }
@@ -162,7 +135,7 @@ void SelectSymbolDialog::updateTable(bool force)
         header->setStretchLastSection(true);
 
     // Set sizes of all columns except the last
-    for (int n = 0; n < nDisplayColumns; ++n)
+    for (auto n = 0; n < nDisplayColumns; ++n)
         ui.SymbolTable->setColumnWidth(n, itemSize_ + widthRemainder / nDisplayColumns);
 
     oldNColumns = nDisplayColumns;

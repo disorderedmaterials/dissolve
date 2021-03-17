@@ -1,38 +1,28 @@
-/*
-    *** Module Interface
-    *** src/module/module.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "module/module.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
+#include "keywords/configurationreflist.h"
 #include "main/dissolve.h"
 
-Module::Module()
+Module::Module(int nTargetConfiguration) : targetConfigurationsKeyword_(targetConfigurations_, nTargetConfiguration)
 {
     frequency_ = 1;
     enabled_ = true;
     configurationLocal_ = true;
+
+    // Set up basic keywords for the Module
+    keywords_.add("HIDDEN", &targetConfigurationsKeyword_, "Configuration", "Set target configuration(s) for the module");
 }
 
-Module::~Module() {}
+Module::~Module()
+{
+    // Need to remove our local keywords from the list before it gets destructed to avoid a double free
+    keywords_.cut(&targetConfigurationsKeyword_);
+}
 
 /*
  * Definition
@@ -50,6 +40,7 @@ std::string_view Module::uniqueName() const { return uniqueName_; }
 
 // Return list of recognised keywords
 KeywordList &Module::keywords() { return keywords_; }
+const KeywordList &Module::keywords() const { return keywords_; };
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 KeywordBase::ParseResult Module::parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList,
@@ -151,6 +142,7 @@ bool Module::addTargetConfiguration(Configuration *cfg)
     if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.nItems() < nRequiredTargets()))
     {
         targetConfigurations_.append(cfg);
+        keywords_.hasBeenSet("Configuration");
         return true;
     }
     else

@@ -1,32 +1,16 @@
-/*
-    *** EPSR Module Widget - Functions
-    *** src/modules/epsr/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "module/group.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsr/gui/modulewidget.h"
+#include "modules/rdf/rdf.h"
+#include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
@@ -74,6 +58,12 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     FQFitGraph_->view().axes().setMax(1, 1.0);
     FQFitGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
     FQFitGraph_->view().setAutoFollowType(View::AllAutoFollow);
+    // -- Set group styling
+    FQFitGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
+    FQFitGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
+    FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
+    FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
+    FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
 
     // Partial S(Q) Graph
     estimatedSQGraph_ = ui_.EstimatedSQPlotWidget->dataViewer();
@@ -157,7 +147,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     numberFormat.setType(NumberFormat::IntegerFormat);
     phiMagGraph_->view().axes().setNumberFormat(0, numberFormat);
     phiMagGraph_->view().axes().setMax(0, 10.0);
-    phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
+    phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sym{angstrom}\\sup{-1}");
     phiMagGraph_->view().axes().setMin(1, 0.0);
     phiMagGraph_->view().axes().setMax(1, 1.0);
     phiMagGraph_->view().setAutoFollowType(View::XAutoFollow);
@@ -178,8 +168,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     rFactorGraph_->view().axes().setMin(1, 0.0);
     rFactorGraph_->view().axes().setMax(1, 0.5);
     rFactorGraph_->view().setAutoFollowType(View::AllAutoFollow);
-
-    setGraphDataTargets(module_);
+    // -- Set group styling
+    rFactorGraph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
 
     // Debug Tab - EP Functions Graph
     DataViewer *epView = ui_.DebugEPFunctionsPlotWidget->dataViewer();
@@ -191,14 +181,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     epView->view().axes().setMin(1, -1.0);
     epView->view().axes().setMax(1, 1.0);
     epView->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-    // -- Set group styling
-    rFactorGraph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
-    // -- Set group styling
-    FQFitGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
-    FQFitGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
-    FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
-    FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
-    FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
+
+    setGraphDataTargets(module_);
 
     updateControls();
 
@@ -238,58 +222,6 @@ void EPSRModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool EPSRModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!FQGraph_->writeSession(parser))
-        return false;
-    if (!FQFitGraph_->writeSession(parser))
-        return false;
-    if (!estimatedSQGraph_->writeSession(parser))
-        return false;
-    if (!estimatedGRGraph_->writeSession(parser))
-        return false;
-    if (!totalGRGraph_->writeSession(parser))
-        return false;
-    if (!phiRGraph_->writeSession(parser))
-        return false;
-    if (!phiMagGraph_->writeSession(parser))
-        return false;
-    if (!rFactorGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool EPSRModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!FQGraph_->readSession(parser))
-        return false;
-    if (!FQFitGraph_->readSession(parser))
-        return false;
-    if (!estimatedSQGraph_->readSession(parser))
-        return false;
-    if (!estimatedGRGraph_->readSession(parser))
-        return false;
-    if (!totalGRGraph_->readSession(parser))
-        return false;
-    if (!phiRGraph_->readSession(parser))
-        return false;
-    if (!phiMagGraph_->readSession(parser))
-        return false;
-    if (!rFactorGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -299,16 +231,13 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
     if (!module)
         return;
 
-    int n, m;
-
     // Add total R-Factor before any dataset R-Factors
-    auto *rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                    fmt::format("{}//RFactor", module->uniqueName()), "Total", "Total");
+    auto rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                   fmt::format("{}//RFactor", module->uniqueName()), "Total", "Total");
     rFacTot->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
     // Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
-    RefDataListIterator<Module, ModuleGroup *> targetIterator(module->allTargets());
-    while (Module *targetModule = targetIterator.iterate())
+    for (auto *targetModule : module->targets())
     {
         // Reference data
         FQGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceData", targetModule->uniqueName()),
@@ -354,54 +283,62 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
                                       fmt::format("{} (Fit)", targetModule->uniqueName()), "Fit");
     }
 
-    // Loop over groups
-    ListIterator<ModuleGroup> groupIterator(module_->groupedTargets().groups());
-    while (ModuleGroup *group = groupIterator.iterate())
+    // Get (first) source RDF module for the partial data
+    // Retrieve source SQ module, and then the related RDF module
+    const RDFModule *rdfModule = nullptr;
+    const auto &targets = module->keywords().retrieve<std::vector<Module *>>("Targets");
+    if (!targets.empty())
     {
-        // Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the estimatedSQGraph_
-        for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
-            const std::string atomTypes = fmt::format("{}-{}", at1->name(), at2->name());
-            const std::string id = fmt::format("{} [{}]", atomTypes, group->name());
-
-            /*
-             * Partial Structure Factors
-             */
-
-            // Unweighted estimated partial
-            estimatedSQGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//EstimatedSQ//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Estimated)", id), "Estimated");
-
-            // Calculated / summed partial
-            estimatedSQGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//UnweightedSQ//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Calc)", id), "Calc");
-
-            // Deltas
-            estimatedSQGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//DeltaSQ//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Delta)", id), "Delta");
-
-            /*
-             * Partial RDFs
-             */
-
-            // Experimentally-determined unweighted partial
-            estimatedGRGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//EstimatedGR//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Estimated)", id), "Estimated");
-
-            // Calculated / summed partial
-            estimatedGRGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//UnweightedGR//{}//{}//Full", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Calc)", id), "Calc");
-        });
+        const SQModule *sqModule = targets[0]->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+        if (!sqModule)
+            Messenger::error(
+                "Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will be unavailable.",
+                module->uniqueName());
+        else
+            rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+        if (!rdfModule)
+            Messenger::error(
+                "First target's S(Q) module doesn't reference an RDFModule, so underlying partial g(r) will be unavailable.");
     }
+
+    // Add experimentally-determined partial S(Q) and g(r) to the estimatedSQGraph_ and estimatedGRGraph_
+    for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+
+        /*
+         * Partial Structure Factors
+         */
+
+        // Unweighted estimated partial
+        estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//EstimatedSQ//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Estimated)", id), "Estimated");
+
+        // Calculated / summed partial
+        estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//UnweightedSQ//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Calc)", id), "Calc");
+
+        // Deltas
+        estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//DeltaSQ//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Delta)", id), "Delta");
+
+        /*
+         * Partial RDFs
+         */
+
+        // Experimentally-determined unweighted partial
+        estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//EstimatedGR//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Estimated)", id), "Estimated");
+
+        // Calculated / summed partials, taken from the RDF module referenced by the first module target
+        if (rdfModule)
+            estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                fmt::format("{}//UnweightedGR//{}//Full", rdfModule->uniqueName(), id),
+                                                fmt::format("{} (Calc)", id), "Calc");
+    });
 
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
@@ -432,22 +369,20 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-        // Add generate potential to graph
-        Renderable *phi =
-            viewer->createRenderable(Renderable::Data1DRenderable, fmt::format("PairPotential//{}//Additional", id), id, id);
-        viewer->addRenderableToGroup(phi, id);
-
         // Generate data for function range specified
-        for (int n = from; n <= to; ++n)
+        for (auto n = from; n <= to; ++n)
         {
-            Data1D *data = debugFunctionData_.add();
+            auto *data = debugFunctionData_.add();
             (*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
             data->setObjectTag(fmt::format("PairPotential//{}//Function//{}", id, n));
-            Renderable *rend =
+            auto rend =
                 viewer->createRenderable(Renderable::Data1DRenderable, fmt::format("PairPotential//{}//Function//{}", id, n),
-                                         fmt::format("{}", n), fmt::format("{}/{}", id, n));
-            viewer->addRenderableToGroup(rend, id);
+                                         fmt::format("{}/{}", id, n), id);
+            rend->setColour(StockColours::RedStockColour);
         }
+
+        // Add generate potential to graph
+        viewer->createRenderable(Renderable::Data1DRenderable, fmt::format("PairPotential//{}//Additional", id), id, id);
     });
 }
 

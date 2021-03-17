@@ -1,23 +1,5 @@
-/*
-    *** CheckSpecies Module - Processing
-    *** src/modules/checkspecies/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
@@ -49,10 +31,11 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Get specified atom - tuple contains 'human-readable' indices from 1 - N...
             auto i = std::get<0>(indexName).at(0);
-            auto *spAtom = sp->atom(i - 1);
-            if (!spAtom)
+            if (i - 1 >= sp->nAtoms())
                 return Messenger::error("Atom index {} is out of range ({} atoms in species).\n", i, sp->nAtoms());
-            auto at = spAtom->atomType();
+
+            auto &spAtom = sp->atom(i - 1);
+            auto at = spAtom.atomType();
 
             // Get type name to validate against
             std::string_view typeName = std::get<1>(indexName).at(0);
@@ -70,6 +53,25 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("\nAll atom types validated successfully.");
         else
             Messenger::print("\n{} atoms have incorrect types.", nAtomTypesFailed);
+    }
+
+    // Check total charge
+    auto nChargesFailed = 0;
+    if (keywords_.isSet("TotalCharge"))
+    {
+        Messenger::print("\nChecking total charge...\n");
+
+        auto q = sp->totalCharge(dissolve.pairPotentialsIncludeCoulomb());
+        auto qDiff = fabs(q - keywords_.asDouble("TotalCharge"));
+        if (qDiff > keywords_.asDouble("ChargeTolerance"))
+        {
+            ++nChargesFailed;
+            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q,
+                             keywords_.asDouble("TotalCharge"));
+        }
+        else
+            Messenger::print("Total charge on species is {} e, which is within the tolerance ({:12.6e} e).\n", q,
+                             keywords_.asDouble("ChargeTolerance"));
     }
 
     // Check bond parameters
@@ -129,5 +131,5 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             });
     }
 
-    return (nAtomTypesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0;
+    return (nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0;
 }

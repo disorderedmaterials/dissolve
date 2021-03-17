@@ -1,23 +1,5 @@
-/*
-    *** Keyword - Node Array
-    *** src/keywords/nodearray.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -106,7 +88,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         if (nodeArray.nItems() != fixedArraySize)
         {
             nodeArray.initialise(fixedArraySize);
-            for (int n = 0; n < fixedArraySize; ++n)
+            for (auto n = 0; n < fixedArraySize; ++n)
                 nodeArray[n] = nullptr;
         }
     }
@@ -128,7 +110,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
                                     KeywordBase::name());
 
         // Loop over arguments
-        for (int n = startArg; n < parser.nArgs(); ++n)
+        for (auto n = startArg; n < parser.nArgs(); ++n)
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
             ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg))
@@ -150,7 +132,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
             return true;
 
         std::string nodes;
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
         {
             N *node = KeywordData<Array<N *> &>::data_[n];
             nodes += fmt::format("  '{}'", node ? node->name() : "???");
@@ -251,8 +233,8 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     // Return index of the specified node, if it is in the array
     int indexOfNode(ProcedureNode *node) const
     {
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
-            if (KeywordData<Array<N *> &>::data_.constAt(n) == node)
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+            if (KeywordData<Array<N *> &>::data_.at(n) == node)
                 return n;
 
         return -1;
@@ -262,8 +244,8 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     {
         Array<ProcedureNode *> nodes(KeywordData<Array<N *> &>::data_.nItems());
 
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
-            nodes[n] = KeywordData<Array<N *> &>::data_.constAt(n);
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+            nodes[n] = KeywordData<Array<N *> &>::data_.at(n);
 
         return nodes;
     }
@@ -289,7 +271,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
             return;
 
         // Loop over array items
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
             if (KeywordData<Array<N *> &>::data_[n] == castNode)
                 KeywordData<Array<N *> &>::data_[n] = nullptr;
     }

@@ -1,74 +1,105 @@
-/*
-    *** Expression Function Node
-    *** src/expression/functionnode.cpp
-    Copyright T. Youngs 2015-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "expression/function.h"
-#include "base/messenger.h"
-#include "base/sysfunc.h"
-#include <stdarg.h>
-#include <string.h>
+#include "math/constants.h"
 
-ExpressionFunction::ExpressionFunction(ExpressionFunctions::Function func) : ExpressionNode(), function_(func)
+// Return enum options for NodeTypes
+EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::internalFunctions()
 {
-    // Private variables
-    nodeType_ = ExpressionNode::FunctionNode;
+    return EnumOptions<ExpressionFunctionNode::InternalFunction>("InternalFunction", {{AbsFunction, "abs", 1},
+                                                                                      {ACosFunction, "acos", 1},
+                                                                                      {ASinFunction, "asin", 1},
+                                                                                      {ATanFunction, "atan", 1},
+                                                                                      {CosFunction, "cos", 1},
+                                                                                      {ExpFunction, "exp", 1},
+                                                                                      {LnFunction, "ln", 1},
+                                                                                      {LogFunction, "log", 1},
+                                                                                      {SinFunction, "sin", 1},
+                                                                                      {SqrtFunction, "sqrt", 1},
+                                                                                      {TanFunction, "tan", 1}});
 }
 
-ExpressionFunction::ExpressionFunction(ExpressionNode *source) { copy(source); }
+ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
 
-ExpressionFunction::~ExpressionFunction() {}
+/*
+ * Nodes
+ */
 
-// Get function
-ExpressionFunctions::Function ExpressionFunction::function() const { return function_; }
-
-// Execute command
-bool ExpressionFunction::execute(ExpressionValue &result) { return expressionFunctions.call(function_, this, result); }
-
-// Print node contents
-void ExpressionFunction::nodePrint(int offset, std::string_view prefix)
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionFunctionNode::duplicate()
 {
-    // Construct tabbed offset
-    std::string tab;
-    for (int n = 0; n < offset - 1; n++)
-        tab += '\t';
-    if (offset > 1)
-        tab += "   |--> ";
-    tab += prefix;
+    auto node = std::make_shared<ExpressionFunctionNode>(function_);
 
-    // Output node data
-    Messenger::print("[CN]{}{} (Function) ({} arguments)\n", tab, ExpressionFunctions::data[function_].keyword, args_.nItems());
-    // Output Argument data
-    for (RefListItem<ExpressionNode> *ri = args_.first(); ri != nullptr; ri = ri->next())
-        ri->item()->nodePrint(offset + 1);
+    for (auto child : children_)
+        node->addChild(child->duplicate());
+
+    return node;
 }
 
-// Set from ExpressionValue
-bool ExpressionFunction::set(ExpressionValue value)
-{
-    Messenger::error("Internal Error: Trying to 'set' a FunctionNode.\n");
-    return false;
-}
+/*
+ * Evaluation
+ */
 
-// Initialise node
-bool ExpressionFunction::initialise()
+// Evaluate node
+std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
 {
-    Messenger::error("Internal Error: A FunctionNode cannot be initialised.\n");
-    return false;
+    // Number of required child nodes depends on the function
+    const auto nArgs = internalFunctions().minArgs(function_);
+    if (children_.size() != nArgs)
+        return std::nullopt;
+
+    // Evaluate the arguments
+    std::vector<ExpressionValue> args;
+    for (auto n = 0; n < nArgs; ++n)
+    {
+        auto optArg = children_[n]->evaluate();
+        if (!optArg)
+            return std::nullopt;
+        args.emplace_back(*optArg);
+    }
+
+    // Evaluate the function
+    ExpressionValue result;
+    switch (function_)
+    {
+        case (AbsFunction):
+            if (args[0].isInteger())
+                result = abs(args[0].asInteger());
+            else
+                result = fabs(args[0].asDouble());
+            break;
+        case (ACosFunction):
+            result = acos(args[0].asDouble()) * DEGRAD;
+            break;
+        case (ASinFunction):
+            result = asin(args[0].asDouble()) * DEGRAD;
+            break;
+        case (ATanFunction):
+            result = atan(args[0].asDouble()) * DEGRAD;
+            break;
+        case (CosFunction):
+            result = cos(args[0].asDouble() / DEGRAD);
+            break;
+        case (ExpFunction):
+            result = exp(args[0].asDouble());
+            break;
+        case (LnFunction):
+            result = log(args[0].asDouble());
+            break;
+        case (LogFunction):
+            result = log10(args[0].asDouble());
+            break;
+        case (SinFunction):
+            result = sin(args[0].asDouble() / DEGRAD);
+            break;
+        case (SqrtFunction):
+            result = sqrt(args[0].asDouble());
+            break;
+        case (TanFunction):
+            result = tan(args[0].asDouble() / DEGRAD);
+            break;
+    }
+
+    return result;
 }

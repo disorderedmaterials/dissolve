@@ -1,30 +1,11 @@
-/*
-    *** Procedure Node - Process2D
-    *** src/procedure/nodes/process2d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/process2d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data2d.h"
 #include "keywords/types.h"
 #include "math/integrator.h"
@@ -35,11 +16,11 @@
 Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *target)
     : ProcedureNode(ProcedureNode::Process2DNode)
 {
-    keywords_.add("Target", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target),
-                  "SourceData", "Collect2D node containing the data to process");
-    keywords_.add("Target", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
-    keywords_.add("Target", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Target", new StringKeyword("Y"), "LabelY", "Label for the y axis");
+    keywords_.add("Control", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target),
+                  "SourceData", "Collect2D node containing the histogram data to process");
+    keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
+    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
+    keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
     keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
@@ -132,8 +113,8 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    auto &data = GenericListHelper<Data2D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                                    GenericItem::InRestartFileFlag, &created);
+    auto &data = targetList.realise<Data2D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix,
+                                            GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());

@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Fit1D
-    *** src/procedure/nodes/fit1d.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -77,18 +59,24 @@ class Fit1DProcedureNode : public ProcedureNode
     Expression equation_;
     // Data against which to fit
     Data1D referenceData_;
-    // X variable for equation
-    ExpressionVariable *xVariable_;
-    // List of variables that we use, but are not fitting
-    RefList<ExpressionVariable> constants_;
-    // List of variables which we are fitting
-    RefList<ExpressionVariable> fitTargets_;
+    // Vector of variables accessible by the fitting equation
+    std::vector<std::shared_ptr<ExpressionVariable>> variables_;
+    // Data variables accessible by the transform equation
+    std::shared_ptr<ExpressionVariable> xVariable_;
+    // Vector of variables that we use, but are not fitting
+    std::vector<std::shared_ptr<ExpressionVariable>> constants_;
+    // Vector of variables which we are fitting
+    std::vector<std::shared_ptr<ExpressionVariable>> fitTargets_;
     // Whether to save data after normalisation
     bool saveData_;
 
     private:
+    // Return the named fit target, if it exists
+    std::shared_ptr<ExpressionVariable> getFitTarget(std::string_view name);
+    // Return the named constant, if it exists
+    std::shared_ptr<ExpressionVariable> getConstant(std::string_view name);
     // Fitting cost function
-    double equationCost(const Array<double> &alpha);
+    double equationCost(const std::vector<double> &alpha);
 
     public:
     // Return fitted data

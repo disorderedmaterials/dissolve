@@ -1,23 +1,5 @@
-/*
-    *** Keyword - NodeValueEnum
-    *** src/keywords/nodevalueenum.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
@@ -61,7 +43,7 @@ class NodeValueEnumOptionsBaseKeyword
     // Set node value from expression text, informing KeywordBase
     virtual bool setValue(std::string_view expressionText) = 0;
     // Set new option index, informing KeywordBase
-    virtual bool setEnumerationByIndex(int optionIndex) = 0;
+    virtual void setEnumerationByIndex(int optionIndex) = 0;
 
     /*
      * Access to KeywordBase
@@ -77,9 +59,9 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
 {
     public:
     NodeValueEnumOptionsKeyword(ProcedureNode *parentNode, NodeValue value, EnumOptions<E> enumOptions)
-        : KeywordData<Venum<NodeValue, E>>(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue, E>(value, enumOptions)),
-          NodeValueEnumOptionsBaseKeyword(KeywordData<Venum<NodeValue, E>>::data_.value(),
-                                          KeywordData<Venum<NodeValue, E>>::data_.baseOptions())
+        : NodeValueEnumOptionsBaseKeyword(KeywordData<Venum<NodeValue, E>>::data_.value(),
+                                          KeywordData<Venum<NodeValue, E>>::data_.baseOptions()),
+          KeywordData<Venum<NodeValue, E>>(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue, E>(value, enumOptions))
     {
         parentNode_ = parentNode;
     }
@@ -111,8 +93,11 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
         // Need two args...
         if (parser.hasArg(startArg + 1))
         {
+            // Get any variables currently in scope
+            auto vars = parentNode_->parametersInScope();
+
             // Parse the value to start with...
-            if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argsv(startArg), parentNode_->parametersInScope()))
+            if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argsv(startArg), vars))
                 return false;
 
             // Now the enum option
@@ -145,20 +130,21 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
                                     KeywordBase::name());
 
-        bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, parentNode_->parametersInScope());
+        // Get any variables currently in scope
+        auto vars = parentNode_->parametersInScope();
+
+        bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, vars);
 
         KeywordData<Venum<NodeValue, E>>::hasBeenSet();
 
         return result;
     }
     // Set new option index, informing KeywordBase
-    bool setEnumerationByIndex(int optionIndex)
+    void setEnumerationByIndex(int optionIndex)
     {
-        bool result = KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
+        KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
 
         KeywordData<Venum<NodeValue, E>>::hasBeenSet();
-
-        return result;
     }
 
     /*

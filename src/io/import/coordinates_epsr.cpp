@@ -1,23 +1,5 @@
-/*
-    *** Import - EPSR Coordinates
-    *** src/io/import/coordinates_epsr.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -38,7 +20,6 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     {
         double boxSize = parser.argd(1);
         Messenger::print("File has a cubic cell (side length {} Angstroms)", boxSize);
-        // 		targetModel()->setCell(Vec3<double>(boxSize,boxSize,boxSize), Vec3<double>(90,90,90));
     }
     else
     {
@@ -50,11 +31,6 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
         angles = parser.arg3d(0);
-
-        // angles.x = phib = angle between a and b (== gamma)
-        // angles.y = thetac = angle deviation from cartesian z (== 90-beta)  ?? CHECK
-        // angles.z = phic = angle deviation from cartesian z (== 90-alpha)  ?? CHECK
-        // 		targetModel()->setCell(lengths, Vec3<double>(90-angles.z, 90-angles.y, angles.x));
     }
 
     // 2 : step sizes etc. **IGNORED**
@@ -73,7 +49,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     auto atomOffset = 0;
     int nAtoms, nRestraints, currentArg;
     Vec3<double> com, delta;
-    for (int m = 0; m < nMols; m++)
+    for (auto m = 0; m < nMols; m++)
     {
         Messenger::printVerbose("Importing molecule {} from EPSR ato file...\n", m + 1);
 
@@ -82,7 +58,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
         nAtoms = parser.argi(0);
         com = parser.arg3d(1);
 
-        for (int n = 0; n < nAtoms; n++)
+        for (auto n = 0; n < nAtoms; n++)
         {
             // Atom name
             if (parser.getArgsDelim() != LineParser::Success)
@@ -110,13 +86,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
                         return false;
                     currentArg = 0;
                 }
-                // partnerId = parser.argi(currentArg) - 1;
                 currentArg += 2;
-
-                // Create new bond between these atoms (only if the partnerId is less than the current atom
-                // index)  **IGNORED** 				if (partnerId < n)
-                // targetModel()->bondAtoms(atomOffset+n, atomOffset+partnerId, Bond::Single);
-
                 --nRestraints;
             }
         }

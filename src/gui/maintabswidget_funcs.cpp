@@ -1,23 +1,5 @@
-/*
-    *** Main Tabs Widget
-    *** src/gui/maintabswidget_funcs.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "gui/charts/moduleblock.h"
@@ -44,7 +26,6 @@ MainTabsWidget::~MainTabsWidget()
 {
     // Need to clear tabs in the right order, as data in one can depend on another
     workspaceTabs_.clear();
-    moduleTabs_.clear();
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
@@ -131,26 +112,6 @@ LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
     return nullptr;
 }
 
-// Find ModuleTab containing specified page widget
-ModuleTab *MainTabsWidget::moduleTab(QWidget *page)
-{
-    for (auto *tab = moduleTabs_.first(); tab != nullptr; tab = tab->next())
-        if (tab->page() == page)
-            return tab;
-
-    return nullptr;
-}
-
-// Find ModuleTab containing specified Module
-ModuleTab *MainTabsWidget::moduleTab(Module *module)
-{
-    for (auto *tab = moduleTabs_.first(); tab != nullptr; tab = tab->next())
-        if (tab->module() == module)
-            return tab;
-
-    return nullptr;
-}
-
 // Find WorkspaceTab containing specified page widget
 WorkspaceTab *MainTabsWidget::workspaceTab(QWidget *page)
 {
@@ -195,11 +156,7 @@ const QString MainTabsWidget::uniqueTabName(const QString base)
 
     // Find an unused name starting with the baseName provided
     while (findTab(uniqueName))
-    {
-        // Increase suffix value and regenerate uniqueName from baseName
-        ++suffix;
-        uniqueName = QStringLiteral("%1%2").arg(baseName, suffix);
-    }
+        uniqueName = QStringLiteral("%1%2").arg(baseName, ++suffix);
 
     return uniqueName;
 }
@@ -227,7 +184,6 @@ void MainTabsWidget::clearTabs()
 
     // Removal of the tab and widget will be handled by the class destructors
     workspaceTabs_.clear();
-    moduleTabs_.clear();
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
@@ -243,17 +199,16 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     auto &dissolve = dissolveWindow->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
-    ListIterator<Species> speciesIterator(dissolve.species());
     auto currentTabIndex = 0;
     auto baseIndex = 1;
-    while (Species *sp = speciesIterator.iterate())
+    for (const auto &sp : dissolve.species())
     {
         // Loop over existing tabs
         while (currentTabIndex < speciesTabs_.nItems())
         {
-            // If the existing tab is displaying the current Species already, then we can move on. Otherwise, delete
-            // it
-            if (speciesTabs_[currentTabIndex]->species() == sp)
+            // If the existing tab is displaying the current Species already, then we can move on.
+            // Otherwise, delete it.
+            if (speciesTabs_[currentTabIndex]->species() == sp.get())
                 break;
             else
             {
@@ -266,7 +221,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         if (currentTabIndex == speciesTabs_.nItems())
         {
             QString tabTitle = QString::fromStdString(std::string(sp->name()));
-            SpeciesTab *newTab = new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp);
+            SpeciesTab *newTab = new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp.get());
             speciesTabs_.own(newTab);
             allTabs_.append(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
@@ -345,7 +300,10 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
-            setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+            if (layer->enabled())
+                setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+            else
+                setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
         }
 
         ++currentTabIndex;
@@ -381,11 +339,6 @@ void MainTabsWidget::removeByPage(QWidget *page)
         processingLayerTabs_.remove(processingLayerTab(page));
         updateAll = true;
     }
-    else if (moduleTab(page))
-    {
-        allTabs_.remove(moduleTab(page));
-        moduleTabs_.remove(moduleTab(page));
-    }
     else if (workspaceTab(page))
     {
         allTabs_.remove(workspaceTab(page));
@@ -397,42 +350,6 @@ void MainTabsWidget::removeByPage(QWidget *page)
         emit(dataModified());
         updateAllTabs();
     }
-}
-
-// Create / go to Module tab for specified Module, provided it has a Module control widget
-MainTab *MainTabsWidget::addModuleTab(DissolveWindow *dissolveWindow, Module *module)
-{
-    // Does a tab for this Module already exist
-    ModuleTab *tab = moduleTab(module);
-    if (!tab)
-    {
-        // Need to create a new ModuleTab
-        QString tabTitle = QString::fromStdString(std::string(module->uniqueName()));
-        tab = new ModuleTab(dissolveWindow, dissolveWindow->dissolve(), this, tabTitle, module);
-        moduleTabs_.own(tab);
-        allTabs_.append(tab);
-        addTab(tab, tabTitle);
-        addTabCloseButton(tab);
-        setTabIcon(tab->page(), QIcon(ModuleBlock::modulePixmap(module)));
-
-        // If we are currently running, disable the necessary controls in widget
-        if (dissolveWindow->dissolveState() == DissolveWindow::RunningState)
-            tab->disableSensitiveControls();
-    }
-
-    setCurrentTab(tab);
-
-    return tab;
-}
-
-// Remove the ModuleTab for the specifeid Module, if it exists
-void MainTabsWidget::removeModuleTab(Module *module)
-{
-    ModuleTab *tab = moduleTab(module);
-    if (!tab)
-        return;
-
-    removeByPage(tab->page());
 }
 
 // Add on a new workspace tab
@@ -666,7 +583,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
         removeByPage(page);
 
         // Emit data modified signal dependent on tab type
-        if ((tabType != MainTab::ModuleTabType) && (tabType != MainTab::WorkspaceTabType))
+        if (tabType != MainTab::WorkspaceTabType)
             emit(dataModified());
     }
 }

@@ -1,26 +1,9 @@
-/*
-    *** Reference Data List
-    *** src/templates/refdatalist.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #pragma once
 
+#include <cassert>
 #include <fmt/core.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -110,14 +93,8 @@ template <class T, class D> class RefDataList
     }
     RefDataItem<T, D> *operator[](int index)
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            fmt::print("Array index ({}) out of bounds ({} items in RefDataList)\n", index, nItems_);
-            return nullptr;
-        }
-#endif
-        // Use array() function to return item
+        assert(index >= 0 && index < nItems_);
+
         return array()[index];
     }
 
@@ -443,13 +420,8 @@ template <class T, class D> class RefDataList
     // Return nth item in list
     T *item(int n)
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            fmt::print("Array index ({}) out of bounds ({} items in RefDataList)\n", n, nItems_);
-            return nullptr;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         // Use array() function to return item
         return array()[n]->item();
     }
@@ -502,7 +474,7 @@ template <class T, class D> class RefDataList
      */
     public:
     // Search references for item
-    RefDataItem<T, D> *contains(T *item) const
+    RefDataItem<T, D> *contains(const T *item) const
     {
         // Search references for specified item
         for (RefDataItem<T, D> *r = listHead_; r != nullptr; r = r->next_)
@@ -512,7 +484,7 @@ template <class T, class D> class RefDataList
         return nullptr;
     }
     // Search references for item and data
-    RefDataItem<T, D> *contains(T *item, D data) const
+    RefDataItem<T, D> *contains(const T *item, D data) const
     {
         // Search references for specified item
         for (RefDataItem<T, D> *r = listHead_; r != nullptr; r = r->next_)

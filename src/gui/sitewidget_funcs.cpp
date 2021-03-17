@@ -1,23 +1,5 @@
-/*
-    *** Species Widget - Functions
-    *** src/gui/sitewidget_funcs.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
@@ -34,16 +16,11 @@ SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
     // Set up our UI
     ui_.setupUi(this);
 
-    // 	// Create a button group for the interaction modes
-    // 	QButtonGroup* group = new QButtonGroup;
-    // 	group->addButton(ui_.InteractionViewButton);
-    // 	group->addButton(ui_.InteractionDrawButton);
-
     // Connect signals / slots
     connect(ui_.SiteView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SiteView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
-    connect(ui_.SiteView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
-    connect(ui_.SiteView, SIGNAL(atomSelectionChanged()), this, SLOT(updateToolbar()));
+    connect(ui_.SiteView, SIGNAL(atomsChanged()), this, SLOT(updateStatusBar()));
+    connect(ui_.SiteView, SIGNAL(atomsChanged()), this, SLOT(updateToolbar()));
     connect(ui_.SiteView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
     // Make sure our controls are consistent with the underlying viewer / data
@@ -75,8 +52,11 @@ void SiteWidget::updateToolbar()
     // Set current interaction mode
     switch (siteViewer()->interactionMode())
     {
-        case (SiteViewer::DefaultInteraction):
+        case (SiteViewer::InteractionMode::Select):
+        case (SiteViewer::InteractionMode::SelectArea):
             ui_.InteractionViewButton->setChecked(true);
+            break;
+        default:
             break;
     }
 
@@ -137,7 +117,7 @@ SiteViewer *SiteWidget::siteViewer() { return ui_.SiteView; }
 void SiteWidget::on_InteractionViewButton_clicked(bool checked)
 {
     if (checked)
-        siteViewer()->setInteractionMode(SiteViewer::DefaultInteraction);
+        siteViewer()->setInteractionMode(SiteViewer::InteractionMode::Select);
 }
 
 void SiteWidget::on_ViewResetButton_clicked(bool checked)

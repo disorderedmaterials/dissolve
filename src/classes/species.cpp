@@ -1,23 +1,5 @@
-/*
-    *** Species Definition
-    *** src/classes/species.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "base/lineparser.h"
@@ -26,23 +8,15 @@
 #include "classes/masterintra.h"
 #include "data/isotopes.h"
 
-// Static Members (ObjectStore)
-template <class Species> RefDataList<Species, int> ObjectStore<Species>::objects_;
-template <class Species> int ObjectStore<Species>::objectCount_ = 0;
-template <class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
-template <class Species> std::string_view ObjectStore<Species>::objectTypeName_ = "Species";
-
-Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
+Species::Species()
 {
     forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;
     attachedAtomListsGenerated_ = false;
-    usedAtomTypesPoint_ = -1;
 
     // Set up natural Isotopologue
     naturalIsotopologue_.setName("Natural");
     naturalIsotopologue_.setParent(this);
-    naturalIsotopologuePoint_ = -1;
 }
 
 Species::~Species() {}
@@ -74,7 +48,7 @@ bool Species::checkSetUp()
     auto nErrors = 0;
 
     // Must have at least one atom...
-    if (atoms_.nItems() == 0)
+    if (atoms_.size() == 0)
     {
         Messenger::error("Species contains no Atoms.\n");
         return false;
@@ -83,11 +57,12 @@ bool Species::checkSetUp()
     /*
      * AtomTypes
      */
-    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+    for (auto &i : atoms_)
     {
-        if (i->atomType() == nullptr)
+        if (i.atomType() == nullptr)
         {
-            Messenger::error("Atom {} ({}) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
+            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i.userIndex(),
+                             Elements::symbol(i.Z()), name_);
             ++nErrors;
         }
     }
@@ -97,23 +72,23 @@ bool Species::checkSetUp()
     /*
      * IntraMolecular Data
      */
-    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+    for (auto &i : atoms_)
     {
-        if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
+        if ((i.nBonds() == 0) && (atoms_.size() > 1))
         {
             Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n",
-                             i->userIndex(), i->element()->symbol());
+                             i.userIndex(), Elements::symbol(i.Z()));
             ++nErrors;
         }
 
         // Check each Bond for two-way consistency
-        for (const SpeciesBond &bond : i->bonds())
+        for (const SpeciesBond &bond : i.bonds())
         {
-            auto *partner = bond.partner(i);
-            if (!partner->hasBond(i))
+            auto *partner = bond.partner(&i);
+            if (!partner->hasBond(&i))
             {
                 Messenger::error("SpeciesAtom {} references a Bond to SpeciesAtom {}, but SpeciesAtom {} does not.\n",
-                                 i->userIndex(), partner->userIndex(), partner->userIndex());
+                                 i.userIndex(), partner->userIndex(), partner->userIndex());
                 ++nErrors;
             }
         }
@@ -134,7 +109,7 @@ bool Species::checkSetUp()
                                  atomType->name());
                 ++nErrors;
             }
-            else if (!Isotopes::isotope(atomType->element(), isotope->A()))
+            else if (!Isotopes::isotope(atomType->Z(), isotope->A()))
             {
                 Messenger::error("Isotopologue '{}' does not refer to a suitable Isotope for AtomType '{}'.\n", iso->name(),
                                  atomType->name());
@@ -152,12 +127,12 @@ void Species::print()
     Messenger::print("  Atoms:\n");
     Messenger::print("      ID   El  Type (ID)        X             Y             Z             Q\n");
     Messenger::print("    ----------------------------------------------------------------------------\n");
-    for (int n = 0; n < nAtoms(); ++n)
+    for (auto n = 0; n < nAtoms(); ++n)
     {
-        SpeciesAtom *i = atoms_[n];
+        auto &i = atom(n);
         Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,
-                         i->element()->symbol(), (i->atomType() ? i->atomType()->name() : "??"),
-                         (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
+                         Elements::symbol(i.Z()), (i.atomType() ? i.atomType()->name() : "??"),
+                         (i.atomType() ? i.atomType()->index() : -1), i.r().x, i.r().y, i.r().z, i.charge());
     }
 
     if (nBonds() > 0)
@@ -221,7 +196,7 @@ void Species::print()
             std::string line =
                 fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", improper.indexI() + 1, improper.indexJ() + 1,
                             improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
-                            SpeciesImproper::improperFunctions().keywordFromInt(improper.form()));
+                            SpeciesTorsion::torsionFunctions().keywordFromInt(improper.form()));
             for (const auto param : improper.parameters())
                 line += fmt::format("  {:12.4e}", param);
             Messenger::print(line);
@@ -243,7 +218,7 @@ void Species::clearCoordinateSets() { coordinateSets_.clear(); }
 CoordinateSet *Species::addCoordinateSet()
 {
     CoordinateSet *coordSet = coordinateSets_.add();
-    coordSet->initialise(atoms_.nItems());
+    coordSet->initialise(atoms_.size());
 
     return coordSet;
 }

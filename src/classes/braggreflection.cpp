@@ -1,23 +1,5 @@
-/*
-    *** Bragg Reflection
-    *** src/classes/braggreflection.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/braggreflection.h"
 #include "base/lineparser.h"
@@ -92,35 +74,22 @@ void BraggReflection::reset()
 }
 
 // Add intensity between specified atomtypes
-void BraggReflection::addIntensity(int typeI, int typeJ, double intensity) { intensities_.at(typeI, typeJ) += intensity; }
+void BraggReflection::addIntensity(int typeI, int typeJ, double intensity) { intensities_[{typeI, typeJ}] += intensity; }
 
 // Scale intensities between all atom types by factor provided
-void BraggReflection::scaleIntensities(double factor)
-{
-    for (int n = 0; n < intensities_.linearArraySize(); ++n)
-        intensities_.linearArray()[n] *= factor;
-}
+void BraggReflection::scaleIntensities(double factor) { intensities_ *= factor; }
 
 // Scale intensity between all specific atom types by factor provided
 void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 {
-#ifdef CHECKS
-    if ((typeI < 0) || (typeI > intensities_.nRows()))
-    {
-        Messenger::error("Type index i of {} is out of range for BraggReflection intensities.\n", typeI);
-        return;
-    }
-    if ((typeJ < 0) || (typeJ > intensities_.nColumns()))
-    {
-        Messenger::error("Type index j of {} is out of range for BraggReflection intensities.\n", typeJ);
-        return;
-    }
-#endif
-    intensities_.at(typeI, typeJ) *= factor;
+    assert(typeI >= 0 && typeI < intensities_.nRows());
+    assert(typeJ >= 0 && typeJ < intensities_.nColumns());
+
+    intensities_[{typeI, typeJ}] *= factor;
 }
 
 // Return intensity between specified atom types for this reflection
-double BraggReflection::intensity(int typeI, int typeJ) const { return intensities_.constAt(typeI, typeJ); }
+double BraggReflection::intensity(int typeI, int typeJ) const { return intensities_[{typeI, typeJ}]; }
 
 // Increment number of contributing k-vectors
 void BraggReflection::addKVectors(int count) { nKVectors_ += count; }
