@@ -7,6 +7,7 @@
 #include "base/sysfunc.h"
 #include "genericitems/item.h"
 #include "genericitems/producers.h"
+#include "templates/optionalref.h"
 #include <any>
 #include <map>
 #include <typeindex>
@@ -116,6 +117,22 @@ class GenericList
                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
         return std::any_cast<const T>(std::get<GenericItem::AnyObject>(it->second));
+    }
+    // Return named (const) item as templated type, if it exists
+    template <class T> OptionalReferenceWrapper<const T> valueIf(std::string_view name, std::string_view prefix = "") const
+    {
+        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name));
+        if (it == items_.end())
+            return {};
+
+        // Check type before we attempt to cast it
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+            throw(std::runtime_error(fmt::format(
+                "GenericList::valueIf() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
+                prefix.empty() ? name : fmt::format("{}_{}", prefix, name),
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
+
+        return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
     }
     // Retrieve named item as templated type, assuming that it is going to be modified
     template <class T> T &retrieve(std::string_view name, std::string_view prefix = "")
