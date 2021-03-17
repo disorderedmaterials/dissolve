@@ -29,21 +29,6 @@ bool GenericList::contains(std::string_view name, std::string_view prefix) const
 // Return item list
 const std::map<std::string, GenericList::GenericItem> &GenericList::items() const { return items_; }
 
-// Return the named item from the map, if it exists
-GenericList::GenericItem &GenericList::find(std::string_view name, std::string_view prefix)
-{
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name));
-    assert(it != items_.end());
-    return it->second;
-}
-
-const GenericList::GenericItem &GenericList::find(std::string_view name, std::string_view prefix) const
-{
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name));
-    assert(it != items_.end());
-    return it->second;
-}
-
 // Return the version of the named item from the list
 int GenericList::version(std::string_view name, std::string_view prefix) const
 {

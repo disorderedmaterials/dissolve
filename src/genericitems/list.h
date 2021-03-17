@@ -51,9 +51,6 @@ class GenericList
     bool contains(std::string_view name, std::string_view prefix = "") const;
     // Return item list
     const std::map<std::string, GenericItem> &items() const;
-    // Return the named item from the map, if it exists
-    GenericItem &find(std::string_view name, std::string_view prefix = "");
-    const GenericItem &find(std::string_view name, std::string_view prefix = "") const;
     // Return the version of the named item from the list
     int version(std::string_view name, std::string_view prefix = "") const;
     // Remove named item
