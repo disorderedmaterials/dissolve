@@ -13,7 +13,7 @@
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>
+class Data2D : public PlottableData, public ObjectStore<Data2D>
 {
     public:
     Data2D();

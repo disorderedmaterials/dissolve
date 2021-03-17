@@ -14,10 +14,7 @@ template <class Data2D> int ObjectStore<Data2D>::objectCount_ = 0;
 template <class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2DObject;
 template <class Data2D> std::string_view ObjectStore<Data2D>::objectTypeName_ = "Data2D";
 
-Data2D::Data2D()
-    : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data2D>(), ObjectStore<Data2D>(this), hasError_(false)
-{
-}
+Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this), hasError_(false) {}
 
 Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this)
 {

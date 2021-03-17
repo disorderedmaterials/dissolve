@@ -15,7 +15,7 @@ class Configuration;
 class Interpolator;
 
 // Set of Partials
-class PartialSet : public ListItem<PartialSet>
+class PartialSet
 {
     public:
     PartialSet();

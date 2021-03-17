@@ -12,7 +12,7 @@
 class Histogram3D;
 
 // One-Dimensional Data
-class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore<Data3D>
+class Data3D : public PlottableData, public ObjectStore<Data3D>
 {
     public:
     Data3D();

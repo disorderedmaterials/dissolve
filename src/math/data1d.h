@@ -8,7 +8,7 @@
 #include "templates/objectstore.h"
 
 // One-Dimensional Data
-class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore<Data1D>
+class Data1D : public PlottableData, public ObjectStore<Data1D>
 {
     public:
     Data1D();

@@ -11,7 +11,7 @@
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 
-PartialSet::PartialSet() : ListItem<PartialSet>() { fingerprint_ = "NO_FINGERPRINT"; }
+PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
 PartialSet::~PartialSet()
 {
