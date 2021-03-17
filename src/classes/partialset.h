@@ -103,6 +103,8 @@ class PartialSet
     Data1D boundTotal(bool applyConcentrationWeights) const;
     // Calculate and return total unbound function
     Data1D unboundTotal(bool applyConcentrationWeights) const;
+    // Return Data1D with specified tag, if it exists
+    OptionalReferenceWrapper<const Data1D> data1DWithTag(std::string_view tag) const;
     // Save all partials and total
     bool save(std::string_view prefix, std::string_view tag, std::string_view suffix) const;
     // Name all object based on the supplied prefix

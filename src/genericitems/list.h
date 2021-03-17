@@ -7,6 +7,7 @@
 #include "base/sysfunc.h"
 #include "genericitems/item.h"
 #include "genericitems/producers.h"
+#include "genericitems/searchers.h"
 #include "templates/optionalref.h"
 #include <any>
 #include <map>
@@ -176,4 +177,43 @@ class GenericList
     // Deserialise an object from the LineParser into our map
     bool deserialise(LineParser &parser, CoreData &coreData, std::string name, std::string itemClass, int version = 0,
                      int flags = 0);
+
+    /*
+     * Searchers
+     */
+    public:
+    // Search the object for a child object of the specified name
+    template <class T> OptionalReferenceWrapper<const T> search(std::string_view name, std::string_view prefix = "") const
+    {
+        auto varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
+        auto varNamePath = varName + "//";
+        for (auto &[key, value] : items_)
+        {
+            // Match name
+            if (varName == key)
+            {
+                // Check type before we attempt to cast it
+                if (std::get<GenericItem::AnyObject>(value).type() != typeid(T))
+                    throw(std::runtime_error(fmt::format("GenericList::search() - Item named '{}' exists, but has a different "
+                                                         "type to that requested ('{}' vs '{}').\n",
+                                                         prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                                                         std::get<GenericItem::AnyObject>(value).type().name(),
+                                                         typeid(T).name())));
+
+                return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(value));
+            }
+
+            // Subsearch in the item if its name plus "//" matches the beginning of the var name
+            if (DissolveSys::startsWith(varName, key + "//"))
+            {
+                auto dataName = varName;
+                dataName.erase(0, key.length() + 2);
+                auto optRef = GenericItemSearcher<T>::search(std::get<GenericItem::AnyObject>(value), dataName);
+                if (optRef)
+                    return optRef;
+            }
+        }
+
+        return {};
+    }
 };
