@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
@@ -124,31 +125,34 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         return;
 
     // Add data targets
-    Renderable *rend;
     energyGraph_->createRenderable(Renderable::Data1DRenderable,
                                    fmt::format("{}//{}//Total", currentConfiguration_->niceName(), module_->uniqueName()),
                                    "Total", "Totals");
-    rend = energyGraph_->createRenderable(
+    auto inter = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Inter", currentConfiguration_->niceName(), module_->uniqueName()),
         "Inter", "Totals");
-    rend->setColour(StockColours::RedStockColour);
-    rend = energyGraph_->createRenderable(
+    inter->setColour(StockColours::RedStockColour);
+    auto intra = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Intra", currentConfiguration_->niceName(), module_->uniqueName()),
         "Intra", "Totals");
-    rend->setColour(StockColours::BlueStockColour);
+    intra->setColour(StockColours::BlueStockColour);
 
-    rend = energyGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()),
-                                          "Bond", "Intramolecular");
-    rend->setColour(StockColours::GreenStockColour);
-    rend = energyGraph_->createRenderable(
+    auto bond = energyGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Bond", "Intramolecular");
+    bond->setColour(StockColours::GreenStockColour);
+    auto angle = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Angle", currentConfiguration_->niceName(), module_->uniqueName()),
         "Angle", "Intramolecular");
-    rend->setColour(StockColours::PurpleStockColour);
-    rend = energyGraph_->createRenderable(
+    angle->setColour(StockColours::PurpleStockColour);
+    auto torsion = energyGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//{}//Torsion", currentConfiguration_->niceName(), module_->uniqueName()),
         "Torsion", "Intramolecular");
-    rend->setColour(StockColours::OrangeStockColour);
+    torsion->setColour(StockColours::OrangeStockColour);
+    auto improper = energyGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Improper", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Improper", "Intramolecular");
+    improper->setColour(StockColours::CyanStockColour);
 
     updateControls();
 }

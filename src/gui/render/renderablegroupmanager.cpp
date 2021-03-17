@@ -28,105 +28,83 @@ void RenderableGroupManager::clear()
  */
 
 // Create named group, or return existing group by the same name
-RenderableGroup *RenderableGroupManager::createGroup(std::string_view name)
+RenderableGroup &RenderableGroupManager::createGroup(std::string_view name)
 {
     // Does a group with this name already exist?
-    RenderableGroup *renderableGroup = group(name);
-    if (!renderableGroup)
+    auto optGroup = group(name);
+    if (optGroup)
+        return *optGroup;
+
+    // No existing group, so must add a new one
+    // First, find the StockColour with the lowest usage count
+    auto lowestId = 0;
+    for (auto colourId = 0; colourId < StockColours::nStockColours; ++colourId)
     {
-        // No existing group, so must add a new one
-        // First, find the StockColour with the lowest usage count
-        auto lowestId = 0;
-        for (auto colourId = 0; colourId < StockColours::nStockColours; ++colourId)
-        {
-            if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId])
-                lowestId = colourId;
-        }
-
-        renderableGroup = new RenderableGroup(name, (StockColours::StockColour)lowestId);
-        groups_.own(renderableGroup);
-        ++stockColourUsageCount_[lowestId];
-
-        // Need to update vertical shifts
-        setRenderableGroupShifts();
+        if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId])
+            lowestId = colourId;
     }
 
-    return renderableGroup;
+    auto &newGroup = groups_.emplace_back(name, static_cast<StockColours::StockColour>(lowestId));
+    ++stockColourUsageCount_[lowestId];
+
+    // Need to update vertical shifts
+    setRenderableGroupShifts();
+
+    return newGroup;
 }
 
 // Add Renderable to its specified group, creating / associating as necessary
-RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, std::string_view groupName)
+RenderableGroup &RenderableGroupManager::addToGroup(const std::shared_ptr<Renderable> &renderable, std::string_view groupName)
 {
     // Check to see if the Renderable is already associated to a group...
     if (renderable->group())
     {
-        if (renderable->group()->name() == groupName)
+        auto &group = renderable->group()->get();
+        if (group.name() == groupName)
         {
-            fmt::print("Renderable '{}' already associated to group '{}'...\n", renderable->name(),
-                       renderable->group()->name());
-            return renderable->group();
+            fmt::print("Renderable '{}' already associated to group '{}'...\n", renderable->name(), group.name());
+            return group;
         }
 
         // Remove it from the current group
-        renderable->group()->removeRenderable(renderable);
+        group.removeRenderable(renderable.get());
     }
 
     // Create / retrieve the group
-    RenderableGroup *renderableGroup = createGroup(groupName);
+    auto &renderableGroup = createGroup(groupName);
 
     // Add unique Renderable reference to the group
-    renderableGroup->associateRenderable(renderable);
+    renderableGroup.addRenderable(renderable);
     renderable->setGroup(renderableGroup);
 
     return renderableGroup;
 }
 
 // Return named group, if it exists
-RenderableGroup *RenderableGroupManager::group(std::string_view name)
+OptionalReferenceWrapper<RenderableGroup> RenderableGroupManager::group(std::string_view name)
 {
-    for (auto *group = groups_.first(); group != nullptr; group = group->next())
-        if (group->name() == name)
-            return group;
-    return nullptr;
+    auto it = std::find_if(groups_.begin(), groups_.end(), [name](auto &group) { return group.name() == name; });
+    if (it != groups_.end())
+        return *it;
+
+    return {};
 }
 
 // Return group for specified Renderable, if one has been assigned
-RenderableGroup *RenderableGroupManager::group(Renderable *renderable)
+OptionalReferenceWrapper<RenderableGroup> RenderableGroupManager::group(const std::shared_ptr<Renderable> &renderable)
 {
-    for (auto *group = groups_.first(); group != nullptr; group = group->next())
-        if (group->usedByRenderable(renderable))
-            return group;
-    return nullptr;
+    return renderable->group();
 }
 
 // Return current RenderableGroups in use
-const List<RenderableGroup> &RenderableGroupManager::groups() const { return groups_; }
-
-// Remove Renderable from its specified group
-void RenderableGroupManager::removeFromGroup(Renderable *renderable)
-{
-    // If no group is currently set in the Renderable, nothing more to do here
-    RenderableGroup *renderableGroup = renderable->group();
-    if (!renderableGroup)
-        return;
-
-    // Remove the Renderable from the group and nullify its pointer
-    renderableGroup->removeRenderable(renderable);
-
-    // If the group is now empty, we can delete it
-    if (renderableGroup->isEmpty())
-    {
-        if (renderableGroup->colouringStyle() == RenderableGroup::FixedGroupColouring)
-            --stockColourUsageCount_[renderableGroup->fixedStockColour()];
-        groups_.remove(renderableGroup);
-    }
-}
+std::vector<RenderableGroup> &RenderableGroupManager::groups() { return groups_; }
+const std::vector<RenderableGroup> &RenderableGroupManager::groups() const { return groups_; }
 
 // Empty all groups of Renderables
 void RenderableGroupManager::emptyGroups()
 {
-    for (auto *group = groups_.first(); group != nullptr; group = group->next())
-        group->empty();
+    for (auto &group : groups_)
+        group.empty();
 }
 
 /*
@@ -136,21 +114,21 @@ void RenderableGroupManager::emptyGroups()
 // Set colouring style for named group
 void RenderableGroupManager::setGroupColouring(std::string_view groupName, RenderableGroup::GroupColouring colouringStyle)
 {
-    RenderableGroup *g = group(groupName);
+    auto g = group(groupName);
     if (!g)
         g = createGroup(groupName);
 
-    g->setColouringStyle(colouringStyle);
+    g->get().setColouringStyle(colouringStyle);
 }
 
 // Set fixed colour for named group
 void RenderableGroupManager::setGroupFixedColour(std::string_view groupName, StockColours::StockColour stockColour)
 {
-    RenderableGroup *g = group(groupName);
+    auto g = group(groupName);
     if (!g)
         g = createGroup(groupName);
 
-    g->setFixedStockColour(stockColour);
+    g->get().setFixedStockColour(stockColour);
 }
 
 /*
@@ -160,11 +138,11 @@ void RenderableGroupManager::setGroupFixedColour(std::string_view groupName, Sto
 // Line stipple to use for group
 void RenderableGroupManager::setGroupStipple(std::string_view groupName, LineStipple::StippleType stipple)
 {
-    RenderableGroup *g = group(groupName);
+    auto g = group(groupName);
     if (!g)
         g = createGroup(groupName);
 
-    g->setLineStipple(stipple);
+    g->get().setLineStipple(stipple);
 }
 
 /*
@@ -177,23 +155,20 @@ double VerticalShiftAmounts[] = {0.0, 0.5, 1.0, 2.0};
 // Set vertical shifts for current RenderableGroups
 void RenderableGroupManager::setRenderableGroupShifts()
 {
-    // Loop over RenderableGroups
     auto groupIndex = 0;
-    for (auto *group = groups_.first(); group != nullptr; group = group->next())
-    {
-        group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
-    }
+    for (auto &group : groups_)
+        group.applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
 }
 
 // Set vertical shifting style for named group
 void RenderableGroupManager::setGroupVerticalShifting(std::string_view groupName,
                                                       RenderableGroup::VerticalShiftStyle shiftStyle)
 {
-    RenderableGroup *g = group(groupName);
+    auto g = group(groupName);
     if (!g)
         g = createGroup(groupName);
 
-    g->setVerticalShiftStyle(shiftStyle);
+    g->get().setVerticalShiftStyle(shiftStyle);
 }
 
 // Cycle vertical shift amount applied to RenderableGroups

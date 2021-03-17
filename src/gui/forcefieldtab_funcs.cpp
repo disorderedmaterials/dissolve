@@ -13,6 +13,7 @@
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
 #include <QListWidgetItem>
@@ -719,20 +720,19 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *
     PairPotential *pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
     if (pp)
     {
-        Renderable *fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
+        auto fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
         fullPotential->setColour(StockColours::BlackStockColour);
 
-        Renderable *originalPotential =
-            graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
+        auto originalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
         originalPotential->setColour(StockColours::RedStockColour);
         originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
 
-        Renderable *additionalPotential =
+        auto additionalPotential =
             graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
         additionalPotential->setColour(StockColours::BlueStockColour);
         additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
 
-        Renderable *dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
+        auto dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
         dUFull->setColour(StockColours::GreenStockColour);
     }
 }

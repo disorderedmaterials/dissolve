@@ -37,7 +37,7 @@ Renderable::Renderable(Renderable::RenderableType type, std::string_view objectT
     objectTag_ = objectTag;
 
     // Group
-    group_ = nullptr;
+    group_ = std::nullopt;
 
     // Transform
     valuesTransformDataVersion_ = -1;
@@ -228,10 +228,13 @@ bool Renderable::yRangeOverX(double xMin, double xMax, double &yMin, double &yMa
  */
 
 // Set group that this Renderable is associated to
-void Renderable::setGroup(RenderableGroup *group) { group_ = group; }
+void Renderable::setGroup(RenderableGroup &group) { group_ = group; }
+
+// Remove the renderagle's group association
+void Renderable::unSetGroup() { group_ = std::nullopt; }
 
 // Return group that this Renderable is associated to
-RenderableGroup *Renderable::group() const { return group_; }
+OptionalReferenceWrapper<RenderableGroup> Renderable::group() const { return group_; }
 
 /*
  * Style
@@ -244,7 +247,7 @@ void Renderable::setVisible(bool visible) { visible_ = visible; }
 bool Renderable::isVisible() const
 {
     // Group visibility overrides our own (*if* we are currently visible)...
-    return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
+    return visible_ && (group_ ? group_->get().isVisible() : visible_);
 }
 
 // Set basic colour
@@ -309,8 +312,9 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
         upToDate = false;
     else if (lastAxesVersion_ != axes.version())
         upToDate = false;
-    else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_,
-                                      fmt::format("{}@{}", fmt::ptr(group_), colourDefinition.version()), true))
+    else if (!DissolveSys::sameString(
+                 lastColourDefinitionFingerprint_,
+                 fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()), true))
         upToDate = false;
     else if (lastDataVersion_ != dataVersion())
         upToDate = false;
@@ -341,7 +345,8 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
 
     // Store version points for the up-to-date primitive
     lastAxesVersion_ = axes.version();
-    lastColourDefinitionFingerprint_ = fmt::format("{}@{}", fmt::ptr(group_), colourDefinition.version());
+    lastColourDefinitionFingerprint_ =
+        fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version());
     lastDataVersion_ = dataVersion();
     lastStyleVersion_ = styleVersion();
 }

@@ -11,7 +11,7 @@
 // Static Members
 const double View::defaultZTranslation_ = -10.0;
 
-View::View(const List<Renderable> &renderables, FontInstance &fontInstance)
+View::View(const std::vector<std::shared_ptr<Renderable>> &renderables, FontInstance &fontInstance)
     : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
 {
     clear();
@@ -881,16 +881,21 @@ void View::autoFollowData()
     // Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive
     // regeneration further down the line
     auto updateRequired = false;
-    ListIterator<Renderable> renderableIterator(renderables_);
-    while (Renderable *rend = renderableIterator.iterate())
+    for (const auto &rend : renderables_)
     {
         // If the renderable isn't in the list, or our stored version is different, we need to update
-        RefDataItem<Renderable, int> *ri = autoFollowTransformVersions_.contains(rend);
-        if ((!ri) || (ri->data() != rend->dataVersion()))
-        {
-            updateRequired = true;
-            break;
-        }
+        auto it = std::find_if(autoFollowTransformVersions_.begin(), autoFollowTransformVersions_.end(),
+                               [rend](auto data) { return data.first == rend; });
+        if (it != autoFollowTransformVersions_.end() && (it->second == rend->dataVersion()))
+            continue;
+
+        // Update stored transformedData versions
+        if (it == autoFollowTransformVersions_.end())
+            autoFollowTransformVersions_.emplace_back(rend, rend->valuesTransformDataVersion());
+        else
+            it->second = rend->valuesTransformDataVersion();
+
+        updateRequired = true;
     }
 
     if (!updateRequired)
@@ -909,7 +914,7 @@ void View::autoFollowData()
         // Get y range over the horizontal range we've established
         auto first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-        for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+        for (const auto &rend : renderables_)
         {
             // Skip this Renderable if it is not currently visible
             if (!rend->isVisible())
@@ -955,11 +960,6 @@ void View::autoFollowData()
         axes_.setRange(0, xMin, xMax);
         axes_.setRange(1, yMin, yMax);
     }
-
-    // Update stored transformedData versions
-    renderableIterator.restart();
-    while (Renderable *rend = renderableIterator.iterate())
-        autoFollowTransformVersions_.addUnique(rend, rend->valuesTransformDataVersion());
 }
 
 /*
@@ -970,12 +970,12 @@ void View::autoFollowData()
 Vec3<double> View::dataMinima()
 {
     // If there are no Renderables, just return the current limits
-    if (renderables_.nItems() == 0)
+    if (renderables_.empty())
         return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
 
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1003,12 +1003,12 @@ Vec3<double> View::dataMinima()
 Vec3<double> View::dataMaxima()
 {
     // If there are no Renderables, just return the current limits
-    if (renderables_.nItems() == 0)
+    if (renderables_.empty())
         return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
 
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1037,7 +1037,7 @@ Vec3<double> View::positiveDataMinima()
 {
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1070,7 +1070,7 @@ Vec3<double> View::positiveDataMaxima()
 {
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())

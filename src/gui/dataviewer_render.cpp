@@ -47,17 +47,13 @@ void DataViewer::render2DOverlay()
      * Draw legend in top-right corner
      */
 
-    // Create RefList of legend entries
-    RefDataList<Renderable, double> legendEntries;
-
-    double maxTextWidth = -1.0;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    auto maxTextWidth = -1.0;
+    for (auto &rend : renderables_)
     {
         if (!rend->isVisible())
             continue;
 
-        double textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
-        legendEntries.append(rend, textWidth);
+        auto textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
         if (textWidth > maxTextWidth)
             maxTextWidth = textWidth;
     }
@@ -70,11 +66,13 @@ void DataViewer::render2DOverlay()
 
     // Loop over legend entries
     GLfloat colour[4];
-    RefDataListIterator<Renderable, double> legendEntryIterator(legendEntries);
-    while (Renderable *rend = legendEntryIterator.iterate())
+    for (auto &rend : renderables_)
     {
+        if (!rend->isVisible())
+            continue;
+
         // Grab copy of the relevant colour definition for this Renderable
-        const ColourDefinition &colourDefinition = rend->colour();
+        const auto &colourDefinition = rend->colour();
 
         // Draw line indicator
         glPushMatrix();

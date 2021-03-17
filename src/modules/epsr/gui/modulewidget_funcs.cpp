@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "module/group.h"
@@ -231,8 +232,8 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
         return;
 
     // Add total R-Factor before any dataset R-Factors
-    auto *rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                    fmt::format("{}//RFactor", module->uniqueName()), "Total", "Total");
+    auto rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                   fmt::format("{}//RFactor", module->uniqueName()), "Total", "Total");
     rFacTot->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
     // Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
@@ -374,7 +375,7 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
             auto *data = debugFunctionData_.add();
             (*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
             data->setObjectTag(fmt::format("PairPotential//{}//Function//{}", id, n));
-            auto *rend =
+            auto rend =
                 viewer->createRenderable(Renderable::Data1DRenderable, fmt::format("PairPotential//{}//Function//{}", id, n),
                                          fmt::format("{}/{}", id, n), id);
             rend->setColour(StockColours::RedStockColour);

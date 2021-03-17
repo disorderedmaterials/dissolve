@@ -44,8 +44,8 @@ void ConfigurationViewer::setConfiguration(Configuration *cfg)
     // Create a new Renderable for the supplied Configuration
     if (configuration_)
     {
-        configurationRenderable_ = new RenderableConfiguration(configuration_);
-        ownRenderable(configurationRenderable_);
+        configurationRenderable_ = std::make_shared<RenderableConfiguration>(configuration_);
+        addRenderable(configurationRenderable_);
         view_.showAllData();
     }
 }

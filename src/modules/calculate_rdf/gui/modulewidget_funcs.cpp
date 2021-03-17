@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 
@@ -55,9 +56,9 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
     for (const auto *cfg : module_->targetConfigurations())
     {
         // Calculated RDF
-        auto *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
-                                                fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
+        auto rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
+                                               fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
+                                               fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
         rdf->setColour(StockColours::BlueStockColour);
     }
 }

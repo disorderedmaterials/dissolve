@@ -2,6 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
 #include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_axisangle/gui/modulewidget.h"
 
@@ -84,13 +86,13 @@ void CalculateAxisAngleModuleWidget::setGraphDataTargets(CalculateAxisAngleModul
     for (const auto *cfg : module_->targetConfigurations())
     {
         // Calculated A...B RDF
-        auto *rdf = rdfGraph_->createRenderable(
+        auto rdf = rdfGraph_->createRenderable(
             Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(AB)", module_->uniqueName(), cfg->niceName()),
             "A...B g(r)");
         rdf->setColour(StockColours::BlueStockColour);
 
         // Calculated angle histogram
-        auto *angle = angleGraph_->createRenderable(
+        auto angle = angleGraph_->createRenderable(
             Renderable::Data1DRenderable,
             fmt::format("{}//Process1D//{}//AxisAngle(AB)", module_->uniqueName(), cfg->niceName()), "Axis Angle");
         angle->setColour(StockColours::RedStockColour);

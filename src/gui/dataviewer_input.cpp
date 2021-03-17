@@ -146,7 +146,7 @@ void DataViewer::contextMenuRequested(QPoint pos)
     if (objectType == BaseViewer::RenderableObject)
     {
         // Get Renderable pointer....
-        Renderable *rend = renderableWithTag(queryObjectInfo());
+        auto rend = renderableWithTag(queryObjectInfo());
         if (!rend)
         {
             fmt::print("Couldn't locate renderable with tag '{}' in the DataViewer...", queryObjectInfo());

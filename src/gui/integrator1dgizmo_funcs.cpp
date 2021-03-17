@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/integrator1dgizmo.h"
+#include "gui/render/renderabledata1d.h"
 #include "gui/selectgenericitemdialog.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"

@@ -8,16 +8,16 @@
 #include "gui/render/renderablespecies.h"
 
 // Create Renderable of specified type
-Renderable *RenderableFactory::create(Renderable::RenderableType renderableType, std::string_view objectTag)
+std::shared_ptr<Renderable> RenderableFactory::create(Renderable::RenderableType renderableType, std::string_view objectTag)
 {
-    Renderable *renderable = nullptr;
+    std::shared_ptr<Renderable> renderable = nullptr;
 
     if (renderableType == Renderable::Data1DRenderable)
-        renderable = new RenderableData1D(Data1D::findObject(objectTag), objectTag);
+        renderable = std::make_shared<RenderableData1D>(Data1D::findObject(objectTag), objectTag);
     else if (renderableType == Renderable::Data2DRenderable)
-        renderable = new RenderableData2D(Data2D::findObject(objectTag), objectTag);
+        renderable = std::make_shared<RenderableData2D>(Data2D::findObject(objectTag), objectTag);
     else if (renderableType == Renderable::Data3DRenderable)
-        renderable = new RenderableData3D(Data3D::findObject(objectTag), objectTag);
+        renderable = std::make_shared<RenderableData3D>(Data3D::findObject(objectTag), objectTag);
     else
         fmt::print("Don't know how to create a Renderable of type '{}' (object tag = '{}').\n",
                    Renderable::renderableTypes().keyword(renderableType), objectTag);

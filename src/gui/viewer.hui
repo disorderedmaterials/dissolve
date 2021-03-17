@@ -63,33 +63,25 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
      * Renderable Data
      */
     protected:
-    // List of renderables to display
-    List<Renderable> renderables_;
+    // Vector of renderables to display
+    std::vector<std::shared_ptr<Renderable>> renderables_;
 
     public:
     // Clear existing data
     void clear();
-    // Own supplied Renderable and display it
-    void ownRenderable(Renderable *newRenderable);
     // Create Renderable by type and object identifier
-    Renderable *createRenderable(Renderable::RenderableType type, std::string_view objectTag, std::string_view name,
-                                 std::string_view groupName = "");
+    std::shared_ptr<Renderable> createRenderable(Renderable::RenderableType type, std::string_view objectTag,
+                                                 std::string_view name, std::string_view groupName = "");
+    // Add an existing Renderable
+    void addRenderable(const std::shared_ptr<Renderable> &renderable);
     // Remove existing Renderable
-    void removeRenderable(Renderable *data);
+    void removeRenderable(const std::shared_ptr<Renderable> &renderable);
     // Clear all Renderables
     void clearRenderables();
-    // Return number of Renderables
-    int nRenderables() const;
     // Return list of Renderables
-    const List<Renderable> &renderables() const;
-    // Return named Renderable
-    Renderable *renderable(std::string_view name) const;
+    const std::vector<std::shared_ptr<Renderable>> &renderables() const;
     // Return Renderable with specified objectTag (if it exists)
-    Renderable *renderableWithTag(std::string_view objectTag) const;
-    // Set visibility of named Renderable
-    void setRenderableVisible(std::string_view name, bool visible);
-    // Return visibility of named Renderable
-    bool isRenderableVisible(std::string_view name) const;
+    std::shared_ptr<Renderable> renderableWithTag(std::string_view objectTag) const;
     // Emit the signal to notify that the viewing style of data represented in the Viewer has changed
     void notifyStyleModified();
     // Emit the signal to notify that the data has changed
@@ -118,7 +110,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return the group manager for Renderables
     RenderableGroupManager &groupManager();
     // Add Renderable to specified group
-    void addRenderableToGroup(Renderable *rend, std::string_view group);
+    void addRenderableToGroup(std::shared_ptr<Renderable> &renderable, std::string_view group);
 
     /*
      * Options

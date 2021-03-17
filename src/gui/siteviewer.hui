@@ -110,9 +110,9 @@ class SiteViewer : public BaseViewer
      */
     private:
     // Renderable for parent Species of Site
-    RenderableSpecies *speciesRenderable_;
+    std::shared_ptr<RenderableSpecies> speciesRenderable_;
     // Renderable for displayed site
-    RenderableSpeciesSite *siteRenderable_;
+    std::shared_ptr<RenderableSpeciesSite> siteRenderable_;
 
     public:
     // Set Species renderable draw style
