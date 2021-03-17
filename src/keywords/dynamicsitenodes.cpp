@@ -65,7 +65,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreD
 }
 
 // Write keyword data to specified LineParser
-bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of dynamic sites in the RefList
     for (auto dynamicSite : data_)

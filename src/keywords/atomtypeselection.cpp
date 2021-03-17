@@ -98,7 +98,7 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeSelectionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool AtomTypeSelectionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over the AtomType selection list
     std::string selection;

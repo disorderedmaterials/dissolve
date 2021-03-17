@@ -49,7 +49,7 @@ bool FileAndFormatKeyword::read(LineParser &parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool FileAndFormatKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool FileAndFormatKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
         return false;

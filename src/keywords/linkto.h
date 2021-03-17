@@ -27,11 +27,11 @@ class LinkToKeyword : public KeywordData<KeywordBase *>
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const;
+    int minArguments() const override;
     // Return maximum number of arguments accepted
-    int maxArguments() const;
+    int maxArguments() const override;
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData);
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix);
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
 };

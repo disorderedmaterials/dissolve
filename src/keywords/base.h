@@ -149,7 +149,7 @@ class KeywordBase : public ListItem<KeywordBase>
     // Parse arguments from supplied LineParser, starting at given argument offset
     virtual bool read(LineParser &parser, int startArg, const CoreData &coreData) = 0;
     // Write keyword data to specified LineParser
-    virtual bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") = 0;
+    virtual bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
 
     /*
      * Parse Result

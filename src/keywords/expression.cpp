@@ -29,7 +29,7 @@ bool ExpressionKeyword::read(LineParser &parser, int startArg, const CoreData &c
 }
 
 // Write keyword data to specified LineParser
-bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_.expressionString()))
         return false;

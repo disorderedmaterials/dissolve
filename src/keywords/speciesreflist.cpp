@@ -49,7 +49,7 @@ bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, const CoreDat
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool SpeciesRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of Species
     std::string speciesString;

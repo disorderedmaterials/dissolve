@@ -37,7 +37,7 @@ bool SpeciesKeyword::read(LineParser &parser, int startArg, const CoreData &core
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool SpeciesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (data_)
     {

@@ -58,7 +58,7 @@ bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, const Co
 }
 
 // Write keyword data to specified LineParser
-bool IntegerStringVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool IntegerStringVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (const auto &d : data_)
     {

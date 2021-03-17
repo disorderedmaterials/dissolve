@@ -71,9 +71,9 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const { return 1; }
+    int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
-    int maxArguments() const { return 1; }
+    int maxArguments() const override { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, const CoreData &coreData)
     {
@@ -91,7 +91,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
         return setNode(node);
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         // No need to write the keyword if the node pointer is null
         if (KeywordData<N *>::data_ == nullptr)

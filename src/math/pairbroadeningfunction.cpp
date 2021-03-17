@@ -110,7 +110,7 @@ bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, con
 }
 
 // Write function data to LineParser source
-bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker)
+bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker) const
 {
     // If the functional form requires a block rather than a single line, write an '&' and start a new line
     if (writeBlockMarker && (function_ == PairBroadeningFunction::GaussianElementPairFunction))

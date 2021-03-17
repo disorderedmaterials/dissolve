@@ -79,9 +79,9 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const { return 2; }
+    int minArguments() const override { return 2; }
     // Return maximum number of arguments accepted
-    int maxArguments() const { return 2; }
+    int maxArguments() const override { return 2; }
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, const CoreData &coreData)
     {
@@ -112,7 +112,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
         return false;
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(),
                                  KeywordData<Venum<NodeValue, E>>::data_.value().asString(),
