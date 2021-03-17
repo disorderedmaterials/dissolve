@@ -23,8 +23,6 @@ Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data
     clear();
 }
 
-Data1D::~Data1D() {}
-
 Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable), ObjectStore<Data1D>(this)
 {
     (*this) = source;

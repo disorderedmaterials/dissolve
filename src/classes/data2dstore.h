@@ -15,8 +15,8 @@
 class Data2DStore
 {
     public:
-    Data2DStore();
-    ~Data2DStore();
+    Data2DStore() = default;
+    ~Data2DStore() = default;
 
     /*
      * Data

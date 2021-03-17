@@ -12,14 +12,10 @@ template <class Data3D> int ObjectStore<Data3D>::objectCount_ = 0;
 template <class Data3D> int ObjectStore<Data3D>::objectType_ = ObjectInfo::Data3DObject;
 template <class Data3D> std::string_view ObjectStore<Data3D>::objectTypeName_ = "Data3D";
 
-Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data3D>(), ObjectStore<Data3D>(this)
+Data3D::Data3D()
+    : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data3D>(), ObjectStore<Data3D>(this), hasError_(false)
 {
-    hasError_ = false;
-
-    clear();
 }
-
-Data3D::~Data3D() {}
 
 Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this)
 {

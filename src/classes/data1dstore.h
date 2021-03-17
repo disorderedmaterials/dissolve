@@ -15,8 +15,8 @@
 class Data1DStore
 {
     public:
-    Data1DStore();
-    ~Data1DStore();
+    Data1DStore() = default;
+    ~Data1DStore() = default;
 
     /*
      * Data

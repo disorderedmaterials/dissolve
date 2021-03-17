@@ -5,10 +5,6 @@
 #include "base/lineparser.h"
 #include "io/import/data2d.h"
 
-Data2DStore::Data2DStore() {}
-
-Data2DStore::~Data2DStore() {}
-
 /*
  * Data
  */

@@ -16,7 +16,7 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 {
     public:
     Data3D();
-    virtual ~Data3D();
+    virtual ~Data3D() = default;
     Data3D(const Data3D &source);
     // Clear data
     void clear();

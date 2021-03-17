@@ -15,8 +15,8 @@
 class Data3DStore
 {
     public:
-    Data3DStore();
-    ~Data3DStore();
+    Data3DStore() = default;
+    ~Data3DStore() = default;
 
     /*
      * Data

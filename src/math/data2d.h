@@ -17,7 +17,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 {
     public:
     Data2D();
-    virtual ~Data2D();
+    virtual ~Data2D() = default;
     Data2D(const Data2D &source);
     // Clear data
     void clear();
