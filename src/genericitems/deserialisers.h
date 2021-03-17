@@ -3,14 +3,14 @@
 
 #pragma once
 
+#include "classes/coredata.h"
 #include <any>
 #include <fmt/core.h>
 #include <functional>
-#include <map>
 #include <typeindex>
+#include <unordered_map>
 
 // Forward Declarations
-class CoreData;
 class LineParser;
 
 // GenericItem Deserialiser
