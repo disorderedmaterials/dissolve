@@ -174,23 +174,4 @@ class GenericList
     // Deserialise an object from the LineParser into our map
     bool deserialise(LineParser &parser, CoreData &coreData, std::string name, std::string itemClass, int version = 0,
                      int flags = 0);
-
-    /*
-     * Parallel Comms
-     */
-    private:
-    // Broadcast function type
-    using BroadcastFunction = std::function<bool(std::any &a, ProcessPool &procPool, const int root, const CoreData &coreData)>;
-    // Broadcasters for all data types
-    std::unordered_map<std::type_index, BroadcastFunction> broadcasters_;
-
-    private:
-    // Register broadcaster for specific class
-    template <class T> void registerBroadcaster(BroadcastFunction func) { broadcasters_[typeid(T)] = std::move(func); }
-    // Register all broadcasters
-    void registerBroadcasters();
-
-    public:
-    // Broadcast all data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 };

@@ -127,25 +127,3 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, std::strin
 
     return true;
 }
-
-/*
- * Parallel Comms
- */
-
-// Broadcast all data
-bool GenericList::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-    for (auto &[key, value] : items_)
-    {
-        Messenger::printVerbose("Broadcasting item '{}'...\n", key);
-        auto &data = std::get<ItemData::AnyObject>(value);
-        auto it = broadcasters_.find(data.type());
-        if (it == broadcasters_.end())
-            throw(std::runtime_error(
-                fmt::format("Item '{}' cannot be broadcast as no suitable broadcaster has been registered for class '{}'.\n",
-                            key, data.type().name())));
-        if (!(it->second)(data, procPool, root, coreData))
-            return Messenger::error(fmt::format("Broadcast of item '{}' failed.\n", key));
-    }
-    return true;
-}

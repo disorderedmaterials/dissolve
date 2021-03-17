@@ -1,6 +1,5 @@
 add_library(
   genericitems
-  broadcasters.cpp
   deserialisers.cpp
   list.cpp
   producers.cpp
