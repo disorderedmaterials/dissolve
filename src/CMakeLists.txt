@@ -12,7 +12,6 @@ add_subdirectory(procedure)
 add_subdirectory(neta)
 
 if(GUI)
-  add_subdirectory(models)
   add_subdirectory(gui)
 endif(GUI)
 

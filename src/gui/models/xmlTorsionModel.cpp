@@ -1,4 +1,4 @@
-#include "models/xmlTorsionModel.h"
+#include "gui/models/xmlTorsionModel.h"
 #include <algorithm>
 #include <pugixml.hpp>
 

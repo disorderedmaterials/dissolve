@@ -1,4 +1,4 @@
-#include "models/xmlAtomModel.h"
+#include "gui/models/xmlAtomModel.h"
 #include "classes/atomtype.h"
 #include "data/elements.h"
 #include <QColor>

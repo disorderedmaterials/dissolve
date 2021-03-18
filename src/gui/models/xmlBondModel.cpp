@@ -1,4 +1,4 @@
-#include "models/xmlBondModel.h"
+#include "gui/models/xmlBondModel.h"
 
 XmlBondModel::XmlBondModel() {}
 

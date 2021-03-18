@@ -6,11 +6,11 @@
 #include "data/ff/library.h"
 #include "data/ff/xml/base.h"
 #include "main/dissolve.h"
-#include "models/xmlAngleModel.h"
-#include "models/xmlAtomModel.h"
-#include "models/xmlBondModel.h"
-#include "models/xmlImproperModel.h"
-#include "models/xmlTorsionModel.h"
+#include "gui/models/xmlAngleModel.h"
+#include "gui/models/xmlAtomModel.h"
+#include "gui/models/xmlBondModel.h"
+#include "gui/models/xmlImproperModel.h"
+#include "gui/models/xmlTorsionModel.h"
 #include <gtest/gtest.h>
 #include <memory>
 #include <tuple>

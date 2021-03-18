@@ -1,4 +1,4 @@
-#include "models/xmlImproperModel.h"
+#include "gui/models/xmlImproperModel.h"
 #include <pugixml.hpp>
 
 XmlImproperModel::XmlImproperModel() {}
