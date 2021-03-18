@@ -98,9 +98,7 @@ void ImportForcefieldWizard::xmlString(QString fileName)
         ui_.improperTable->resizeColumnsToContents();
     }
     else
-    {
         atoms_.clear();
-    }
     updateNavButtons();
     return;
 }
