@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "gui/ui_importforcefieldwizard.h"
 #include "gui/models/xmlAngleModel.h"
 #include "gui/models/xmlAtomModel.h"
 #include "gui/models/xmlBondModel.h"
 #include "gui/models/xmlImproperModel.h"
 #include "gui/models/xmlTorsionModel.h"
+#include "gui/ui_importforcefieldwizard.h"
 #include <QDialog>
 
 // Forward Declarations
