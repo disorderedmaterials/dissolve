@@ -351,15 +351,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 blockDone = true;
                 break;
             case (Species::ForcefieldKeyword):
-                switch (parser.nArgs())
-                {
-                    case 2:
-                        forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1));
-                        break;
-                    default:
-                        // forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1), parser.argsv(2));
-                        break;
-                }
+                forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1));
                 if (!forcefield_)
                 {
                     Messenger::error("No forcefield named '{}' exists.\n", parser.argsv(1));
