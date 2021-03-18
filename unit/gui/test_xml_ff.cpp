@@ -214,8 +214,8 @@ TEST_F(XmlFFTest, XmlAll)
     ASSERT_EQ(torsions.size(), 3);
     ASSERT_EQ(impropers.size(), 2);
 
-    // auto xmlFF = std::make_shared<Forcefield_XML>();
-    auto xmlFF = std::make_shared<Forcefield_XML>(atoms, bonds, angles, torsions, impropers);
+    auto xmlFF = std::make_shared<Forcefield_XML>(atomModel.toVector(), bondModel.toVector(map), angleModel.toVector(map),
+                                                  torsionModel.toVector(map), improperModel.toVector(map));
     ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
 }
 
