@@ -10,7 +10,7 @@
 // Forward Declarations
 /* none */
 
-// OPLS-AA (2005) Base Forcefield
+// Forcefield whose terms are supplied by a user supplied OpenMM xml file
 class Forcefield_XML : public Forcefield
 {
     public:
