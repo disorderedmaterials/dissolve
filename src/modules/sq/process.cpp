@@ -83,7 +83,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     auto &unweightedsq = uSQObject.first;
     if (uSQObject.second == GenericItem::ItemStatus::Created)
-        unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName_, "unweighted", "sq", "Q, 1/Angstroms");
+        unweightedsq.setUpPartials(unweightedgr.atomTypes());
 
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(unweightedsq.fingerprint(),
@@ -224,7 +224,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                             dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
                                             includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1));
     // Save data if requested
-    if (saveData && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "unweighted", "sq")))
+    if (saveData && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
         return false;
 
     return true;

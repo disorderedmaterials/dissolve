@@ -267,7 +267,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
+        originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -471,7 +471,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
+    summedUnweightedGR.setUpPartials(combinedAtomTypes);
     summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR", parentModule->uniqueName()));
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
@@ -561,7 +561,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
+    summedUnweightedGR.setUpPartials(combinedAtomTypes);
     summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR//{}", parentModule->uniqueName(), moduleGroup->name()));
 
     // Sum Configurations into the PartialSet

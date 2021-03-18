@@ -171,7 +171,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedSQ, wSQstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     if (wSQstatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "sq", "Q, 1/Angstroms");
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes());
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
@@ -180,7 +180,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
         return false;
 
     /*
@@ -196,7 +196,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.setUpPartials(unweightedGR.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
+        weightedGR.setUpPartials(unweightedGR.atomTypes());
 
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
@@ -205,7 +205,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
     // Save data if requested
-    if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "weighted", "gr"))))
+    if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "WeightedGR", "gr", "r, Angstroms"))))
         return false;
 
     // Calculate representative total g(r) from FT of calculated S(Q)

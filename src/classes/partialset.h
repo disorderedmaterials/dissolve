@@ -33,8 +33,6 @@ class PartialSet
     double rdfBinWidth_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
-    // Abscissa units for contained data
-    std::string abscissaUnits_;
     // Histograms used for calculating full atom-atom partials in r
     Array2D<Histogram1D> fullHistograms_;
     // Histograms used for calculating bound atom-atom partials in r
@@ -56,11 +54,9 @@ class PartialSet
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
-    bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, std::string_view prefix, std::string_view tag,
-               std::string_view suffix, std::string_view abscissaUnits);
+    bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth);
     // Set up PartialSet without initialising histogram arrays
-    bool setUpPartials(const AtomTypeList &atomTypes, std::string_view prefix, std::string_view tag, std::string_view suffix,
-                       std::string_view abscissaUnits);
+    bool setUpPartials(const AtomTypeList &atomTypes);
     // Set up histogram arrays for g(r) calculation
     void setUpHistograms(double rdfRange, double binWidth);
     // Reset partial arrays
@@ -106,7 +102,7 @@ class PartialSet
     // Return Data1D with specified tag, if it exists
     OptionalReferenceWrapper<const Data1D> data1DWithTag(std::string_view tag) const;
     // Save all partials and total
-    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix) const;
+    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names

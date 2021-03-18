@@ -138,7 +138,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         unweightedgr.setObjectTags(fmt::format("{}//{}//UnweightedGR", cfg->niceName(), uniqueName_));
 
         // Save data if requested
-        if (saveData && (!MPIRunMaster(procPool, unweightedgr.save(cfg->niceName(), "unweighted", "rdf"))))
+        if (saveData && (!MPIRunMaster(procPool, unweightedgr.save(uniqueName_, "UnweightedGR", "gr", "r, Angstroms"))))
             return false;
     }
 

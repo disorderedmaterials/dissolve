@@ -30,14 +30,13 @@ PartialSet::~PartialSet()
  */
 
 // Set up PartialSet
-bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, std::string_view prefix,
-                       std::string_view tag, std::string_view suffix, std::string_view abscissaUnits)
+bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth)
 {
     // Set up partial arrays
-    if (!setUpPartials(atomTypes, prefix, tag, suffix, abscissaUnits))
+    if (!setUpPartials(atomTypes))
         return false;
 
-    // Initialise histograms for g(r) calcultion
+    // Initialise histograms for g(r) calculation
     setUpHistograms(rdfRange, binWidth);
 
     fingerprint_ = "NO_FINGERPRINT";
@@ -46,11 +45,8 @@ bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double bi
 }
 
 // Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view prefix, std::string_view tag,
-                               std::string_view suffix, std::string_view abscissaUnits)
+bool PartialSet::setUpPartials(const AtomTypeList &atomTypes)
 {
-    abscissaUnits_ = abscissaUnits;
-
     // Copy type array
     atomTypes_ = atomTypes;
     auto nTypes = atomTypes_.nItems();
@@ -62,16 +58,14 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view p
     emptyBoundPartials_ = false;
 
     // Set up array matrices for partials
-    std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setTag(title);
-        boundPartials_[{n, m}].setTag(title);
-        unboundPartials_[{n, m}].setTag(title);
+        partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
+        boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
+        unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
     });
 
     // Set up array for total
-    total_.setTag(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    total_.setTag("Total");
     total_.clear();
 
     fingerprint_ = "NO_FINGERPRINT";
@@ -262,13 +256,15 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 // Return Data1D with specified tag, if it exists
 OptionalReferenceWrapper<const Data1D> PartialSet::data1DWithTag(std::string_view tag) const
 {
-    auto fullIt = std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { fmt::print("{} vs {}\n", data.tag(), tag); return data.tag() == tag; });
+    auto fullIt = std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.tag() == tag; });
     if (fullIt != partials_.end())
         return *fullIt;
-    auto boundIt = std::find_if(boundPartials_.begin(), boundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    auto boundIt =
+        std::find_if(boundPartials_.begin(), boundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
     if (boundIt != boundPartials_.end())
         return *boundIt;
-    auto unboundIt = std::find_if(unboundPartials_.begin(), unboundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    auto unboundIt =
+        std::find_if(unboundPartials_.begin(), unboundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
     if (unboundIt != unboundPartials_.end())
         return *unboundIt;
     if (total_.tag() == tag)
@@ -277,7 +273,8 @@ OptionalReferenceWrapper<const Data1D> PartialSet::data1DWithTag(std::string_vie
 }
 
 // Save all partials and total
-bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix) const
+bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
+                      std::string_view abscissaUnits) const
 {
     assert(!prefix.empty());
 
@@ -298,7 +295,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
                             auto &full = partials_[{typeI, typeJ}];
                             auto &bound = boundPartials_[{typeI, typeJ}];
                             auto &unbound = unboundPartials_[{typeI, typeJ}];
-                            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
+                            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
                             for (auto n = 0; n < full.nValues(); ++n)
                                 parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n),
                                                   bound.value(n), unbound.value(n));
@@ -516,8 +513,6 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
         return false;
-    if (parser.readNextLine(LineParser::Defaults, abscissaUnits_) != LineParser::Success)
-        return false;
     if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success)
         return false;
 
@@ -565,8 +560,6 @@ bool PartialSet::serialise(LineParser &parser) const
     // common scale
 
     if (!parser.writeLineF("{}\n", objectNamePrefix_))
-        return false;
-    if (!parser.writeLineF("{}\n", abscissaUnits_))
         return false;
     if (!parser.writeLineF("{}\n", fingerprint_))
         return false;

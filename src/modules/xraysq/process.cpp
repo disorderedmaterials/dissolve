@@ -173,7 +173,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedSQ, wSQtatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     if (wSQtatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "sq", "Q, 1/Angstroms");
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes());
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
@@ -182,7 +182,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
         return false;
     if (saveFormFactors)
     {
@@ -237,7 +237,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
+        weightedGR.setUpPartials(unweightedSQ.atomTypes());
+
     weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
     // Calculate weighted g(r)
@@ -254,7 +255,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedGR", "sq", "Q, 1/Angstroms"))))
         return false;
 
     return true;
