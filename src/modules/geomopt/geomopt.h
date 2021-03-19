@@ -94,17 +94,17 @@ class GeometryOptimisationModule : public Module
             return energies.y;
 
         // Calculate deltas between bound values
-        double dxy = bounds[0] - bounds[1];
-        double dyz = bounds[2] - bounds[1];
+        auto dxy = bounds[0] - bounds[1];
+        auto dyz = bounds[2] - bounds[1];
         Messenger::printVerbose("Trying Golden Search -  {}-{}-{}, dxy = {:12.5e}, dyz = {:12.5e}", bounds.x, bounds.y,
                                 bounds.z, dxy, dyz);
 
         // Select largest of two intervals to be the target of the search
         auto xyLargest = fabs(dxy) > fabs(dyz);
-        double newMinimum = bounds[1] + 0.3819660 * (xyLargest ? dxy : dyz);
+        auto newMinimum = bounds[1] + 0.3819660 * (xyLargest ? dxy : dyz);
 
         // Test energy at new trial minimum
-        double eNew = energyAtGradientPoint(procPool, target, potentialMap, newMinimum);
+        auto eNew = energyAtGradientPoint(procPool, target, potentialMap, newMinimum);
         Messenger::printVerbose("--> GOLD point is {:12.5e} [{:12.5e}] ", eNew, newMinimum);
 
         // Set order for checking of energy points
@@ -163,14 +163,14 @@ class GeometryOptimisationModule : public Module
                                     energies[0], bounds[0], energies[1], bounds[1], energies[2], bounds[2]);
 
             // Perform parabolic interpolation to find new minimium point
-            double b10 = bounds[1] - bounds[0];
-            double b12 = bounds[1] - bounds[2];
-            double a = (b10 * b10 * (energies[1] - energies[2])) - (b12 * b12 * (energies[1] - energies[0]));
-            double b = (b10 * (energies[1] - energies[2])) - (b12 * (energies[1] - energies[0]));
-            double newBound = bounds[1] - 0.5 * (a / b);
+            auto b10 = bounds[1] - bounds[0];
+            auto b12 = bounds[1] - bounds[2];
+            auto a = (b10 * b10 * (energies[1] - energies[2])) - (b12 * b12 * (energies[1] - energies[0]));
+            auto b = (b10 * (energies[1] - energies[2])) - (b12 * (energies[1] - energies[0]));
+            auto newBound = bounds[1] - 0.5 * (a / b);
 
             // Compute energy of new point and check that it went down...
-            double eNew = energyAtGradientPoint(procPool, target, potentialMap, newBound);
+            auto eNew = energyAtGradientPoint(procPool, target, potentialMap, newBound);
 
             Messenger::printVerbose("PARABOLIC point gives energy {:12.5e} @ {:12.5e}", eNew, newBound);
             if (eNew < energies[1])
@@ -228,12 +228,12 @@ class GeometryOptimisationModule : public Module
         const auto nStepSizeResetsAllowed = 5;
 
         // Get the initial energy and forces of the Configuration
-        double oldEnergy = EnergyModule::totalEnergy(procPool, target, dissolve.potentialMap());
+        auto oldEnergy = EnergyModule::totalEnergy(procPool, target, dissolve.potentialMap());
         ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), xForce_, yForce_, zForce_);
-        double oldRMSForce = rmsForce();
+        auto oldRMSForce = rmsForce();
 
         // Set initial step size - the line minimiser will modify this as we proceed
-        double stepSize = initialStepSize_;
+        auto stepSize = initialStepSize_;
 
         Messenger::print("Cycle  {:16s}  {:16s}  {:16s}  {:16s}  {:16s}\n", "E(total), kJ/mol", "dE, kJ/mol", "RMS(force)",
                          "dRMS", "Step Size");
@@ -247,16 +247,16 @@ class GeometryOptimisationModule : public Module
             setReferenceCoordinates(target);
 
             // Line minimise along the force gradient
-            double newEnergy = lineMinimise(procPool, target, dissolve.potentialMap(), tolerance_ * 0.01, stepSize);
+            auto newEnergy = lineMinimise(procPool, target, dissolve.potentialMap(), tolerance_ * 0.01, stepSize);
 
             // Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine
             // new step size
             ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), xForce_, yForce_, zForce_);
-            double newRMSForce = rmsForce();
+            auto newRMSForce = rmsForce();
 
             // Calculate deltas
-            double dE = newEnergy - oldEnergy;
-            double dF = newRMSForce - oldRMSForce;
+            auto dE = newEnergy - oldEnergy;
+            auto dF = newRMSForce - oldRMSForce;
 
             // Print summary
             Messenger::print("{:5d}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", cycle, newEnergy, dE, newRMSForce, dF,

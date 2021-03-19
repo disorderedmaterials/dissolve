@@ -48,7 +48,8 @@ template <> void GeometryOptimisationModule::revertToReferenceCoordinates(Specie
 // Return current RMS force
 double GeometryOptimisationModule::rmsForce() const
 {
-    double rmsf = 0.0;
+    auto rmsf = 0.0;
+
     for (auto n = 0; n < xForce_.nItems(); ++n)
         rmsf += xForce_.at(n) * xForce_.at(n) + yForce_.at(n) * yForce_.at(n) + zForce_.at(n) * zForce_.at(n);
     rmsf /= xForce_.nItems();
@@ -59,8 +60,8 @@ double GeometryOptimisationModule::rmsForce() const
 // Determine suitable step size from current forces
 double GeometryOptimisationModule::gradientStepSize()
 {
-    double fMax = xForce_.maxAbs();
-    double fTemp = yForce_.maxAbs();
+    auto fMax = xForce_.maxAbs();
+    auto fTemp = yForce_.maxAbs();
     if (fTemp > fMax)
         fMax = fTemp;
     fTemp = zForce_.maxAbs();
