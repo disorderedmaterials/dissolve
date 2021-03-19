@@ -27,13 +27,13 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, const Generi
 
     setGraphDataTargets();
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     refreshing_ = false;
 }
 
 // Update controls within widget
-void CalculateRDFModuleWidget::updateControls(int flags)
+void CalculateRDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.RDFPlotWidget->updateToolbar();
 

@@ -52,7 +52,7 @@ CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, 
 
     setGraphDataTargets(module_);
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     refreshing_ = false;
 }
@@ -62,7 +62,7 @@ CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, 
  */
 
 // Update controls within widget
-void CalculateAxisAngleModuleWidget::updateControls(int flags)
+void CalculateAxisAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.RDFPlotWidget->updateToolbar();
     ui_.AnglePlotWidget->updateToolbar();

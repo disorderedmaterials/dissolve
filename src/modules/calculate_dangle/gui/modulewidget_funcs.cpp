@@ -52,7 +52,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, const 
 
     setGraphDataTargets(module_);
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     refreshing_ = false;
 }
@@ -62,7 +62,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, const 
  */
 
 // Update controls within widget
-void CalculateDAngleModuleWidget::updateControls(int flags)
+void CalculateDAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.RDFPlotWidget->updateToolbar();
     ui_.AnglePlotWidget->updateToolbar();

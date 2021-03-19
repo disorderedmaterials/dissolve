@@ -184,7 +184,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, const GenericList &processin
 
     setGraphDataTargets(module_);
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     refreshing_ = false;
 }
@@ -196,7 +196,7 @@ EPSRModuleWidget::~EPSRModuleWidget() {}
  */
 
 // Update controls within widget
-void EPSRModuleWidget::updateControls(int flags)
+void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     refreshing_ = true;
 

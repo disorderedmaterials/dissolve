@@ -48,7 +48,7 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, const Generi
 
     refreshing_ = false;
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     setGraphDataTargets();
 }
@@ -58,7 +58,7 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, const Generi
  */
 
 // Update controls within widget
-void CalculateSDFModuleWidget::updateControls(int flags)
+void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     refreshing_ = true;
 

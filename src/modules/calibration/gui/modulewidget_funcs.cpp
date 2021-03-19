@@ -37,4 +37,4 @@ CalibrationModuleWidget::~CalibrationModuleWidget() {}
  */
 
 // Update controls within widget
-void CalibrationModuleWidget::updateControls(int flags) { dataView_->postRedisplay(); }
+void CalibrationModuleWidget::updateControls(ModuleWidget::UpdateType updateType) { dataView_->postRedisplay(); }

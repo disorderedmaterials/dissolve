@@ -42,7 +42,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, const GenericList &proce
 
     setGraphDataTargets(module_);
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     refreshing_ = false;
 }
@@ -54,7 +54,7 @@ EnergyModuleWidget::~EnergyModuleWidget() {}
  */
 
 // Update controls within widget
-void EnergyModuleWidget::updateControls(int flags)
+void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     // Set gradient and stability labels
     auto stabilityWindow = module_->keywords().asInt("StabilityWindow");
@@ -145,5 +145,5 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         "Intramolecular");
     improper->setColour(StockColours::CyanStockColour);
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 }

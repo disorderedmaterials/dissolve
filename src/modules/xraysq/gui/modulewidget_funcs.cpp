@@ -88,7 +88,7 @@ XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, const GenericList &proce
 
     setGraphDataTargets(module_);
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     refreshing_ = false;
 }
@@ -100,7 +100,7 @@ XRaySQModuleWidget::~XRaySQModuleWidget() {}
  */
 
 // Update controls within widget
-void XRaySQModuleWidget::updateControls(int flags)
+void XRaySQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.PartialGRPlotWidget->updateToolbar();
     ui_.PartialSQPlotWidget->updateToolbar();
@@ -108,7 +108,7 @@ void XRaySQModuleWidget::updateControls(int flags)
     ui_.TotalSQPlotWidget->updateToolbar();
 
     // Clear and recreate graph data targets?
-    if (flags & ModuleWidget::ResetGraphDataTargetsFlag)
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
         setGraphDataTargets(module_);
 
     partialGRGraph_->postRedisplay();

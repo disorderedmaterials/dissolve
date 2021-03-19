@@ -46,9 +46,9 @@ SQModuleWidget::SQModuleWidget(QWidget *parent, const GenericList &processingDat
 
     setGraphDataTargets(module_);
 
-    updateControls();
-
     refreshing_ = false;
+
+    updateControls(ModuleWidget::UpdateType::Normal);
 }
 
 SQModuleWidget::~SQModuleWidget() {}
@@ -58,7 +58,7 @@ SQModuleWidget::~SQModuleWidget() {}
  */
 
 // Update controls within widget
-void SQModuleWidget::updateControls(int flags)
+void SQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.PartialSQPlotWidget->updateToolbar();
     ui_.TotalFQPlotWidget->updateToolbar();

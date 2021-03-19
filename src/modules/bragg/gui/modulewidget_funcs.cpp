@@ -45,7 +45,7 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, const GenericList &process
 
     currentConfiguration_ = nullptr;
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     setGraphDataTargets();
 }
@@ -53,7 +53,7 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, const GenericList &process
 BraggModuleWidget::~BraggModuleWidget() {}
 
 // Update controls within widget
-void BraggModuleWidget::updateControls(int flags)
+void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.ReflectionsPlotWidget->updateToolbar();
     ui_.TotalsPlotWidget->updateToolbar();
@@ -61,12 +61,6 @@ void BraggModuleWidget::updateControls(int flags)
     reflectionsGraph_->postRedisplay();
     totalsGraph_->postRedisplay();
 }
-
-// Disable sensitive controls within widget
-void BraggModuleWidget::disableSensitiveControls() {}
-
-// Enable sensitive controls within widget
-void BraggModuleWidget::enableSensitiveControls() {}
 
 /*
  * Widgets / Functions

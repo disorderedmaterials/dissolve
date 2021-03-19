@@ -15,7 +15,7 @@ ModuleWidget::~ModuleWidget() {}
  */
 
 // Update controls within widget
-void ModuleWidget::updateControls(int flags) {}
+void ModuleWidget::updateControls(UpdateType updateType) {}
 
 // Disable sensitive controls within widget
 void ModuleWidget::disableSensitiveControls() {}

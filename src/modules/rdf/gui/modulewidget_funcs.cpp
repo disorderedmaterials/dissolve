@@ -56,7 +56,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget *parent, const GenericList &processingD
 
     currentConfiguration_ = nullptr;
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     setGraphDataTargets(module_);
 }
@@ -68,7 +68,7 @@ RDFModuleWidget::~RDFModuleWidget() {}
  */
 
 // Update controls within widget
-void RDFModuleWidget::updateControls(int flags)
+void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.PartialsPlotWidget->updateToolbar();
     ui_.TotalsPlotWidget->updateToolbar();

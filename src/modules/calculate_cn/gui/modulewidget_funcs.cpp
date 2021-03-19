@@ -34,7 +34,7 @@ CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, const GenericL
 }
 
 // Update controls within widget
-void CalculateCNModuleWidget::updateControls(int flags)
+void CalculateCNModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     // Update CN labels
     if (module_)
@@ -58,7 +58,7 @@ void CalculateCNModuleWidget::updateControls(int flags)
     }
 
     // Clear and recreate graph data targets?
-    if ((!rdfDataLocated_) || (flags & ModuleWidget::ResetGraphDataTargetsFlag))
+    if (!rdfDataLocated_ || updateType == ModuleWidget::UpdateType::RecreateRenderables)
         setGraphDataTargets();
 
     rdfGraph_->postRedisplay();
