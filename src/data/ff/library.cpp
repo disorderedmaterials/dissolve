@@ -18,6 +18,7 @@
 #include "data/ff/pcl2019/cations.h"
 #include "data/ff/spcfw/spcfw.h"
 #include "data/ff/uff/uff.h"
+#include "data/ff/uff/uff4mof.h"
 
 // Static Members
 std::vector<std::shared_ptr<Forcefield>> ForcefieldLibrary::forcefields_;
@@ -61,6 +62,7 @@ void ForcefieldLibrary::registerForcefields()
     registerForcefield(std::make_shared<Forcefield_PCL2019_Cations>());
     registerForcefield(std::make_shared<Forcefield_SPCFw>());
     registerForcefield(std::make_shared<Forcefield_UFF>());
+    registerForcefield(std::make_shared<Forcefield_UFF4MOF>());
 }
 
 /*
