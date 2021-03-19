@@ -281,7 +281,7 @@ bool Forcefield_UFF4MOF::setUp()
         auto success = atomType.createNETA(this);
         if (!success)
             Messenger::print("Failed to parse NETA definition '{}' for UFF4MOF atom type '{}'.",
-                              atomType.neta().definitionString(), atomType.name());
+                             atomType.neta().definitionString(), atomType.name());
         return !success;
     });
 
