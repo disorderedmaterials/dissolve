@@ -220,6 +220,8 @@ class GeometryOptimisationModule : public Module
         // Set an updated step size based on the current bounds
         stepSize = (bounds.x + bounds.y + bounds.z);
 
+        energyAtGradientPoint(procPool, target, potentialMap, bounds.y);
+
         return energies.y;
     }
     // Geometry optimise the target object
