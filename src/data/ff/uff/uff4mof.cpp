@@ -589,7 +589,7 @@ bool Forcefield_UFF4MOF::assignTorsionTermParameters(SpeciesTorsion &torsion, bo
 
 // Assign / generate improper term parameters
 bool Forcefield_UFF4MOF::assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j,
-                                                  SpeciesAtom *k, SpeciesAtom *l, bool determineTypes) const
+                                                      SpeciesAtom *k, SpeciesAtom *l, bool determineTypes) const
 {
     auto optTypeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
     auto optTypeJ = determineTypes ? determineUFFAtomType(j) : uffAtomTypeByName(j->atomType()->name());
