@@ -52,10 +52,6 @@ class CalculateSDFModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets();
-
     private slots:
     void on_LowerCutoffSpin_valueChanged(double value);
     void on_UpperCutoffSpin_valueChanged(double value);

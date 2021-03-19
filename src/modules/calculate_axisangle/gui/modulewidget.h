@@ -35,13 +35,4 @@ class CalculateAxisAngleModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(ModuleWidget::UpdateType updateType) override;
-
-    /*
-     * Widgets / Functions
-     */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets(CalculateAxisAngleModule *module);
-
-    private slots:
 };

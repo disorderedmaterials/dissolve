@@ -50,10 +50,6 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, const 
     dAngleView.axes().setRange(2, 0.0, 0.01);
     dAngleView.setAutoFollowType(View::AllAutoFollow);
 
-    setGraphDataTargets(module_);
-
-    updateControls(ModuleWidget::UpdateType::Normal);
-
     refreshing_ = false;
 }
 
@@ -64,6 +60,32 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, const 
 // Update controls within widget
 void CalculateDAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+        rdfGraph_->clearRenderables();
+
+    // Calculated B...C RDF
+    if (rdfGraph_->renderables().empty())
+        rdfGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(BC)", module_->uniqueName()), "B...C g(r)")
+            ->setColour(StockColours::BlueStockColour);
+
+    // Calculated angle histogram
+    if (angleGraph_->renderables().empty())
+        angleGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Angle(ABC)", module_->uniqueName()),
+                                                 "A-B...C Angle")
+            ->setColour(StockColours::RedStockColour);
+
+    // Calculated distance-angle map
+    if (dAngleGraph_->renderables().empty())
+        dAngleGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle(A-BC)", module_->uniqueName()),
+                                                         "B...C vs A-B...C");
+
+    // Validate renderables if they need it
+    rdfGraph_->validateRenderables(processingData_);
+    angleGraph_->validateRenderables(processingData_);
+    dAngleGraph_->validateRenderables(processingData_);
+
     ui_.RDFPlotWidget->updateToolbar();
     ui_.AnglePlotWidget->updateToolbar();
     ui_.DAnglePlotWidget->updateToolbar();
@@ -71,33 +93,4 @@ void CalculateDAngleModuleWidget::updateControls(ModuleWidget::UpdateType update
     rdfGraph_->postRedisplay();
     angleGraph_->postRedisplay();
     dAngleGraph_->postRedisplay();
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule *module)
-{
-    // Remove any current data
-    rdfGraph_->clearRenderables();
-
-    // Loop over Configuration targets in Module
-    for (Configuration *cfg : module_->targetConfigurations())
-    {
-        // Calculated B...C RDF
-        auto rdf = rdfGraph_->createRenderable<RenderableData2D>(
-            fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
-        rdf->setColour(StockColours::BlueStockColour);
-
-        // Calculated angle histogram
-        auto angle = angleGraph_->createRenderable<RenderableData2D>(
-            fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
-        angle->setColour(StockColours::RedStockColour);
-
-        // Calculated distance-angle map
-        dAngleGraph_->createRenderable<RenderableData2D>(
-            fmt::format("{}//Process2D//{}//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C");
-    }
 }

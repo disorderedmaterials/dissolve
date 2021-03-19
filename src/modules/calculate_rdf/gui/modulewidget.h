@@ -19,8 +19,6 @@ class CalculateRDFModuleWidget : public ModuleWidget
     private:
     // Associated Module
     CalculateRDFModule *module_;
-    // DataViewer contained within this widget
-    DataViewer *rdfGraph_;
 
     public:
     CalculateRDFModuleWidget(QWidget *parent, const GenericList &processingData, CalculateRDFModule *module);
@@ -31,17 +29,10 @@ class CalculateRDFModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::CalculateRDFModuleWidget ui_;
+    // DataViewer contained within this widget
+    DataViewer *rdfGraph_;
 
     public:
     // Update controls within widget
     void updateControls(ModuleWidget::UpdateType updateType) override;
-
-    /*
-     * Widgets / Functions
-     */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets();
-
-    private slots:
 };
