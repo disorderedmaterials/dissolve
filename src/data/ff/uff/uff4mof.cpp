@@ -258,7 +258,11 @@ bool Forcefield_UFF4MOF::setUp()
          3.325, 0.0, 0.7},
         {Elements::Mn, 212, "Mn4+2", "", "Mangansese (square planar, oxidation state = +2)", 1.26, 90.0, 2.961, 0.013, 12.0,
          3.325, 0.0, 0.7},
+<<<<<<< HEAD
         {Elements::Fe, 213, "Fe6+3", "", "Iron (octahedral, oxidation state = +3)", 1.32, 90.0, 2.912, 0.013, 12.0, 2.43, 3.76,
+=======
+        {Elements::Fe, 213, "Fe6+3", "", "Iron (octahedral, oxidation state = +3)", 1.32, 90.0, 2.912, 0.013, 12.0, 2.43,3.76,
+>>>>>>> 9464e372111ca00093cf3113330fae88fbada6eb
          0.0, 0.7},
         {Elements::Fe, 214, "Fe4+2", "", "Iron (square planar, oxidation state = +2)", 1.10, 90.0, 2.912, 0.013, 12.0, 2.43,
          3.76, 0.0, 0.7},
