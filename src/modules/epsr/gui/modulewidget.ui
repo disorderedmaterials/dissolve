@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>930</width>
+    <width>929</width>
     <height>669</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
   <property name="windowTitle">
    <string>EPSR Controls</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>4</number>
    </property>
@@ -41,593 +41,327 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="Tabs">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="currentIndex">
+    <layout class="QHBoxLayout" name="horizontalLayout_18">
+     <property name="spacing">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="FQTab">
-      <attribute name="title">
-       <string>F(Q)</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>4</number>
+     <item>
+      <widget class="QPushButton" name="TotalFQButton">
+       <property name="toolTip">
+        <string>Show the calculated vs experimental F(Q</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>F(Q)</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>true</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="FQPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="FQPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="FQFitTab">
-      <attribute name="title">
-       <string>F(Q) Delta/Fit</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="DeltaFQButton">
+       <property name="toolTip">
+        <string>Show the differences between calculated and experimental F(Q) and their fits</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>Delta F(Q)</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="FQFitPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="FQFitPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="EstimatedSQTab">
-      <attribute name="title">
-       <string>Estimated S(Q)</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="EstimatedSQButton">
+       <property name="toolTip">
+        <string>Show the estimated partial S(Q)</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>Estimated S(Q)</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="EstimatedSQPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="EstimatedSQPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="EstimatedGRTab">
-      <attribute name="title">
-       <string>Estimated g(r)</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="EstimatedGRButton">
+       <property name="toolTip">
+        <string>Show the estimated partial g(r)</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>Estimated g(r)</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="EstimatedGRPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="EstimatedGRPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="TotalGRTab">
-      <attribute name="title">
-       <string>G(r)</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_13">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="TotalGRButton">
+       <property name="toolTip">
+        <string/>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>G(r)</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="TotalGRPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="TotalGRPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="PhiRTab">
-      <attribute name="title">
-       <string>φ(r)</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PotentialsButton">
+       <property name="toolTip">
+        <string>Show the empirical potentials</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>Potentials</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="PhiRPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="PhiRPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="RFactorTab">
-      <attribute name="title">
-       <string>R-Factor</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="RFactorButton">
+       <property name="toolTip">
+        <string>Show the individual and total R factors</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>R Factors</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="PhiMagPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="PhiMagPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="RFactorPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="RFactorPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="DebugTab">
-      <attribute name="title">
-       <string>Debug</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_16">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="EReqButton">
+       <property name="toolTip">
+        <string>Show the magnitude of the empirical potential</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>EReq</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_15">
-           <property name="spacing">
-            <number>4</number>
-           </property>
-           <item>
-            <widget class="QSpinBox" name="DebugFromSpin">
-             <property name="maximum">
-              <number>400</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>to</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="DebugToSpin">
-             <property name="maximum">
-              <number>400</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QFrame" name="DebugEPFunctionsPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_14">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="DebugEPFunctionsPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="PlotFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_17">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="DataWidget" name="PlotWidget" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="InfoFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="EReqInfoLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Current EReq:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="EReqValueLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>--</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Total R Factor:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="RFactorValueLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>--</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="RFactorInfoLabel">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

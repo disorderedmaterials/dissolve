@@ -96,6 +96,9 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
     }
 
+    // Try to calculate the deltaSQ array
+    updateDeltaSQ(dissolve.processingModuleData());
+
     return true;
 }
 
@@ -206,15 +209,18 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     fluctuationCoefficients = 0.0;
 
     // Create storage for our summed UnweightedSQ
-    auto &combinedUnweightedSQ =
+    auto &calculatedUnweightedSQ =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-    combinedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
+    calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
+    for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+        calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+    });
 
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     ScatteringMatrix scatteringMatrix;
-    scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ, uniqueName_, "Default");
+    scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ);
 
     // Loop over target data
     auto rFacTot = 0.0;
@@ -252,7 +258,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get difference data container and form the difference between the reference and calculated data
         auto &differenceData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("DifferenceData//{}", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("Difference//{}", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
         differenceData = originalReferenceData;
         Interpolator::addInterpolated(differenceData, weightedSQ.total(), -1.0);
 
@@ -426,7 +432,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto globalJ = atd2.atomType()->index();
 
             const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
-            Interpolator::addInterpolated(combinedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets.size());
+            Interpolator::addInterpolated(calculatedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets.size());
         });
 
         /*
@@ -508,7 +514,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                             // Copy and rename the data for clarity
-                            auto data = combinedUnweightedSQ[{i, j}];
+                            auto data = calculatedUnweightedSQ[{i, j}];
                             data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
 
                             // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
@@ -534,6 +540,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     scatteringMatrix.generatePartials(estimatedSQ);
+    updateDeltaSQ(dissolve.processingModuleData(), calculatedUnweightedSQ, estimatedSQ);
 
     // Save data?
     if (saveEstimatedPartials)
@@ -582,6 +589,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         auto &expGR = estimatedGR[{i, j}];
+        expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
 
         // Copy experimental S(Q) and FT it
         expGR = estimatedSQ[{i, j}];

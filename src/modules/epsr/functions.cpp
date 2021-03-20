@@ -8,6 +8,38 @@
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 
+// Create / update delta S(Q) information
+void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ,
+                               OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ)
+{
+    // Find the relevant data if we were not provided them
+    if (!optCalculatedSQ)
+        optCalculatedSQ = processingData.valueIf<Array2D<Data1D>>("UnweightedSQ", uniqueName_);
+    if (!optCalculatedSQ)
+        return;
+    if (!optEstimatedSQ)
+        optEstimatedSQ = processingData.valueIf<Array2D<Data1D>>("EstimatedSQ", uniqueName_);
+    if (!optEstimatedSQ)
+        return;
+
+    const auto &calculatedSQ = optCalculatedSQ->get();
+    const auto &estimatedSQ = optEstimatedSQ->get();
+    assert(calculatedSQ.nRows() == estimatedSQ.nRows() && calculatedSQ.nColumns() == estimatedSQ.nColumns());
+
+    // Realise the DeltaSQ array
+    auto [deltaSQ, status] = processingData.realiseIf<Array2D<Data1D>>("DeltaSQ", uniqueName_, GenericItem::ItemFlag::NoFlags);
+    if (status == GenericItem::ItemStatus::Created)
+        deltaSQ.initialise(calculatedSQ.nRows(), calculatedSQ.nRows(), true);
+
+    // Copy the tags from the calculated data (so we avoid requiring the source AtomTypeList) and create the data
+    for (auto &&[delta, calc, est] : zip(deltaSQ, calculatedSQ, estimatedSQ))
+    {
+        delta.setTag(calc.tag());
+        delta = est;
+        Interpolator::addInterpolated(delta, calc, -1.0);
+    }
+}
+
 // Return list of target Modules / data for refinement
 const std::vector<Module *> &EPSRModule::targets() const { return keywords_.retrieve<std::vector<Module *>>("Target"); }
 

@@ -307,8 +307,7 @@ Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ,
-                                  std::string_view objectNamePrefix, std::string_view groupName)
+void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ)
 {
     // Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
     A_.clear();
@@ -322,10 +321,7 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     estimatedSQ.initialise(types.size(), types.size(), true);
     auto index = 0;
     for (auto [i, j] : typePairs_)
-    {
-        estimatedSQ[index].setTag(fmt::format("EstimatedSQ-{}-{}-{}.sq", i->name(), j->name(), groupName));
-        ++index;
-    }
+        estimatedSQ[index++].setTag(fmt::format("{}-{}", i->name(), j->name()));
 }
 
 // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
