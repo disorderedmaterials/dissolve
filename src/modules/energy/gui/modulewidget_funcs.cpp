@@ -33,7 +33,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, const GenericList &proce
     view.axes().setMin(1, -1.0);
     view.axes().setMax(1, 1.0);
     numberFormat = view.axes().numberFormat(1);
-    numberFormat.setType(NumberFormat::ScientificFormat);
+    numberFormat.setType(NumberFormat::FormatType::Scientific);
     numberFormat.setUseENotation(true);
     view.axes().setNumberFormat(1, numberFormat);
     view.setAutoFollowType(View::XAutoFollow);

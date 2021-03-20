@@ -707,7 +707,7 @@ void Axes::determineLabelFormat(int axis)
     auto logTick = int(log10(tickDelta_[axis]));
     if (abs(logTick) > 3)
     {
-        numberFormat_[axis].setType(NumberFormat::ScientificFormat);
+        numberFormat_[axis].setType(NumberFormat::FormatType::Scientific);
         numberFormat_[axis].setUseENotation(true);
         numberFormat_[axis].setNDecimals(3);
     }
@@ -715,7 +715,7 @@ void Axes::determineLabelFormat(int axis)
     {
         auto nDecimals = abs(logTick);
 
-        numberFormat_[axis].setType(NumberFormat::DecimalFormat);
+        numberFormat_[axis].setType(NumberFormat::FormatType::Decimal);
         numberFormat_[axis].setUseENotation(false);
         numberFormat_[axis].setNDecimals(nDecimals);
 
@@ -751,7 +751,7 @@ void Axes::determineLabelFormat(int axis)
             // If we're now at the threshold where we use exponential notation, set it and break now.
             if (nDecimals > 3)
             {
-                numberFormat_[axis].setType(NumberFormat::ScientificFormat);
+                numberFormat_[axis].setType(NumberFormat::FormatType::Scientific);
                 numberFormat_[axis].setUseENotation(true);
                 numberFormat_[axis].setNDecimals(3);
                 break;
@@ -762,7 +762,7 @@ void Axes::determineLabelFormat(int axis)
     }
     else
     {
-        numberFormat_[axis].setType(NumberFormat::IntegerFormat);
+        numberFormat_[axis].setType(NumberFormat::FormatType::Integer);
         numberFormat_[axis].setUseENotation(false);
         numberFormat_[axis].setNDecimals(0);
     }

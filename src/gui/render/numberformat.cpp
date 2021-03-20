@@ -4,25 +4,18 @@
 #include "gui/render/numberformat.h"
 #include <QString>
 #include <math/doubleexp.h>
-#include <stdio.h>
 
-NumberFormat::NumberFormat()
+NumberFormat::NumberFormat(FormatType type, int nDecimals)
+    : type_(type), nDecimals_(nDecimals), forcePrecedingPlus_(false), useUpperCaseExponent_(true), useENotation_(true)
 {
-    type_ = NumberFormat::DecimalFormat;
-    nDecimals_ = 1;
-    forcePrecedingPlus_ = false;
-    useUpperCaseExponent_ = true;
-    useENotation_ = true;
 }
-
-NumberFormat::~NumberFormat() {}
 
 // Return enum options for FormatType
 EnumOptions<NumberFormat::FormatType> NumberFormat::formatTypes()
 {
-    return EnumOptions<NumberFormat::FormatType>("FormatType", {{NumberFormat::DecimalFormat, "Decimal"},
-                                                                {NumberFormat::IntegerFormat, "Integer"},
-                                                                {NumberFormat::ScientificFormat, "Scientific"}});
+    return EnumOptions<NumberFormat::FormatType>("FormatType", {{NumberFormat::FormatType::Decimal, "Decimal"},
+                                                                {NumberFormat::FormatType::Integer, "Integer"},
+                                                                {NumberFormat::FormatType::Scientific, "Scientific"}});
 }
 
 /*
@@ -77,13 +70,13 @@ QString NumberFormat::format(double number)
     // Construct rest of string
     switch (type_)
     {
-        case (NumberFormat::IntegerFormat):
+        case (NumberFormat::FormatType::Integer):
             result += QString::number(int(number));
             break;
-        case (NumberFormat::DecimalFormat):
+        case (NumberFormat::FormatType::Decimal):
             result += QString::number(number, 'f', nDecimals_);
             break;
-        case (NumberFormat::ScientificFormat):
+        case (NumberFormat::FormatType::Scientific):
             if (!useENotation_)
                 result += QString::number(x.mantissa(), 'f', nDecimals_) + QChar(0x00D7) + "10\\sup{" +
                           QString::number(x.exponent()) + "}";
