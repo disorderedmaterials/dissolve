@@ -112,8 +112,7 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
                                                                    std::string_view prefix, GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
-    auto &data = targetList.realise<Data2D>(fmt::format("Process2D//{}//{}", cfg->niceName(), name()), prefix,
-                                            GenericItem::InRestartFileFlag);
+    auto &data = targetList.realise<Data2D>(fmt::format("Process2D//{}", name()), prefix, GenericItem::InRestartFileFlag);
     processedData_ = &data;
     data.setTag(name());
 
