@@ -49,6 +49,7 @@ void SiteViewer::setSpecies(Species *sp)
     {
         speciesRenderable_ = createRenderable<RenderableSpecies, Species>(species_, "Species");
         speciesRenderable_->setDisplayStyle(RenderableSpecies::LinesStyle);
+        addRenderable(speciesRenderable_);
 
         view_.showAllData();
     }
@@ -73,6 +74,7 @@ void SiteViewer::setSite(SpeciesSite *site)
     {
         siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
         siteRenderable_->setName("Site");
+        addRenderable(siteRenderable_);
     }
 }
 
