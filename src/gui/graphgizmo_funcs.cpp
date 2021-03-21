@@ -90,13 +90,13 @@ bool GraphGizmo::sendData(std::string_view dataType, std::string_view objectTag,
     switch (Renderable::renderableTypes().enumeration(dataType))
     {
         case (Renderable::Data1DRenderable):
-            dataViewer_->createRenderable(Renderable::Data1DRenderable, objectTag, name);
+            dataViewer_->createRenderable<RenderableData1D>(objectTag, name);
             break;
         case (Renderable::Data2DRenderable):
-            dataViewer_->createRenderable(Renderable::Data2DRenderable, objectTag, name);
+            dataViewer_->createRenderable<RenderableData2D>(objectTag, name);
             break;
         case (Renderable::Data3DRenderable):
-            dataViewer_->createRenderable(Renderable::Data3DRenderable, objectTag, name);
+            dataViewer_->createRenderable<RenderableData3D>(objectTag, name);
             break;
         default:
             return false;

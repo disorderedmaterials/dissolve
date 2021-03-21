@@ -46,8 +46,7 @@ void SpeciesViewer::setSpecies(Species *sp)
     // Create a new Renderable for the supplied Species
     if (species_)
     {
-        speciesRenderable_ = std::make_shared<RenderableSpecies>(species_);
-        addRenderable(speciesRenderable_);
+        speciesRenderable_ = createRenderable<RenderableSpecies, Species>(species_, species_->name());
 
         view_.showAllData();
     }

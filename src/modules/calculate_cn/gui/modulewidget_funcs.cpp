@@ -92,8 +92,8 @@ void CalculateCNModuleWidget::setGraphDataTargets()
     }
 
     // Set RDF data target
-    auto rdfRenderable = rdfGraph_->createRenderable(
-        Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->uniqueName());
+    auto rdfRenderable = rdfGraph_->createRenderable<RenderableData1D>(rdfModule->rdfResult()->processedData().objectTag(),
+                                                                       rdfModule->uniqueName());
     rdfRenderable->setColour(StockColours::BlueStockColour);
 
     rdfDataLocated_ = true;
