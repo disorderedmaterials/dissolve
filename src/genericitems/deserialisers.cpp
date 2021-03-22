@@ -184,11 +184,14 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<Histogram3D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         return std::any_cast<Histogram3D &>(a).deserialise(parser);
     });
+    registerDeserialiser<NeutronWeights>([](std::any &a, LineParser &parser, const CoreData &coreData) {
+        return std::any_cast<NeutronWeights &>(a).deserialise(parser, coreData);
+    });
     registerDeserialiser<PartialSet>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         return std::any_cast<PartialSet &>(a).deserialise(parser, coreData);
     });
-    registerDeserialiser<NeutronWeights>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<NeutronWeights &>(a).deserialise(parser, coreData);
+    registerDeserialiser<SampledDouble>([](std::any &a, LineParser &parser, const CoreData &coreData) {
+        return std::any_cast<SampledDouble &>(a).deserialise(parser);
     });
     registerDeserialiser<Vec3<int>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         auto &v = std::any_cast<Vec3<int> &>(a);

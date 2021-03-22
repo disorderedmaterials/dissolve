@@ -41,6 +41,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Histogram3D>("Histogram3D");
     registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
+    registerProducer<SampledDouble>("SampledDouble");
     registerProducer<Vec3<int>>("Vec3<int>");
     registerProducer<Vec3<double>>("Vec3<double>");
     registerProducer<XRayWeights>("XRayWeights");

@@ -143,6 +143,9 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<PartialSet>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
         return std::any_cast<const PartialSet &>(a).serialise(parser);
     });
+    registerSerialiser<SampledDouble>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+        return std::any_cast<const SampledDouble &>(a).serialise(parser);
+    });
     registerSerialiser<Vec3<int>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
         const auto &v = std::any_cast<const Vec3<int> &>(a);
         return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
