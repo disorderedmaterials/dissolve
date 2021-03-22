@@ -38,6 +38,14 @@ void Species::removeAtom(SpeciesAtom *i)
 // Return the number of Atoms in the Species
 int Species::nAtoms() const { return atoms_.size(); }
 
+// Renumber atoms so they are sequential in the list
+void Species::renumberAtoms()
+{
+    auto count = 0;
+    for (auto &i : atoms_)
+        i.setIndex(count++);
+}
+
 // Return the first Atom in the Species
 const SpeciesAtom &Species::firstAtom() const { return atoms_.front(); }
 
