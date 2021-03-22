@@ -297,7 +297,7 @@ bool Forcefield_UFF4MOF::setUp()
  */
 
 // Return name of Forcefield
-std::string_view Forcefield_UFF4MOF::name() const { return "UFF"; }
+std::string_view Forcefield_UFF4MOF::name() const { return "UFF4MOF"; }
 
 // Return description for Forcefield
 std::string_view Forcefield_UFF4MOF::description() const

@@ -1,2 +1,1 @@
 dissolve_add_forcefield(uff)
-dissolve_add_forcefield(uff4mof)
