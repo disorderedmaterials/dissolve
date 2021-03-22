@@ -160,29 +160,18 @@ bool Dissolve::iterate(int nIterations)
         }
 
         /*
-         *  1)	Loop over Configurations and run their modules in the sequence in which they are defined.
-         * 	If a process is not involved in the Configuration's ProcessPool, it can move on.
+         *  1)	Loop over Configurations and perform any upkeep tasks
          */
-        Messenger::banner("Configuration Processing");
+        Messenger::banner("Configuration Upkeep");
 
-        auto result = true;
         for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         {
-            // Check for failure of one or more processes / processing tasks
-            if (!worldPool().allTrue(result))
-            {
-                Messenger::error("One or more processes experienced failures. Exiting now.\n");
-                return false;
-            }
-
             Messenger::heading("'{}'", cfg->name());
 
             // Perform any necessary actions before we start processing this Configuration's Modules
             // -- Apply the current size factor
             cfg->applySizeFactor(potentialMap_);
         }
-        if (!result)
-            return false;
 
         // Sync up all processes
         Messenger::printVerbose("Waiting for other processes at end of Configuration processing...\n");
@@ -225,7 +214,7 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", module->type(), module->uniqueName());
 
-                result = module->executeProcessing(*this, worldPool());
+                auto result = module->executeProcessing(*this, worldPool());
 
                 if (!result)
                 {
