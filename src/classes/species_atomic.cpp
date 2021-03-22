@@ -44,12 +44,14 @@ const SpeciesAtom &Species::firstAtom() const { return atoms_.front(); }
 // Return the nth Atom in the Species
 SpeciesAtom &Species::atom(int n)
 {
+    assert(n >= 0 && n < atoms_.size());
     auto it = std::next(atoms_.begin(), n);
     return *it;
 }
 
 const SpeciesAtom &Species::atom(int n) const
 {
+    assert(n >= 0 && n < atoms_.size());
     const auto it = std::next(atoms_.begin(), n);
     return *it;
 }
