@@ -192,9 +192,9 @@ void Species::removeBond(SpeciesAtom *j, SpeciesAtom *k)
 int Species::nBonds() const { return bonds_.size(); }
 
 // Return array of SpeciesBond
-std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
+std::list<SpeciesBond> &Species::bonds() { return bonds_; }
 
-const std::vector<SpeciesBond> &Species::bonds() const { return bonds_; }
+const std::list<SpeciesBond> &Species::bonds() const { return bonds_; }
 
 // Return whether SpeciesBond between specified SpeciesAtoms exists
 bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
@@ -292,9 +292,9 @@ SpeciesAngle &Species::addAngle(int i, int j, int k) { return addAngle(&atom(i),
 int Species::nAngles() const { return angles_.size(); }
 
 // Return array of SpeciesAngle
-std::vector<SpeciesAngle> &Species::angles() { return angles_; }
+std::list<SpeciesAngle> &Species::angles() { return angles_; }
 
-const std::vector<SpeciesAngle> &Species::angles() const { return angles_; }
+const std::list<SpeciesAngle> &Species::angles() const { return angles_; }
 
 // Return whether SpeciesAngle between SpeciesAtoms exists
 bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
@@ -344,9 +344,9 @@ SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l) { return addTors
 int Species::nTorsions() const { return torsions_.size(); }
 
 // Return array of SpeciesTorsions
-std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
+std::list<SpeciesTorsion> &Species::torsions() { return torsions_; }
 
-const std::vector<SpeciesTorsion> &Species::torsions() const { return torsions_; }
+const std::list<SpeciesTorsion> &Species::torsions() const { return torsions_; }
 
 // Return whether SpeciesTorsion between SpeciesAtoms exists
 bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
@@ -402,9 +402,9 @@ SpeciesImproper &Species::addImproper(int i, int j, int k, int l)
 int Species::nImpropers() const { return impropers_.size(); }
 
 // Return array of SpeciesImproper
-std::vector<SpeciesImproper> &Species::impropers() { return impropers_; }
+std::list<SpeciesImproper> &Species::impropers() { return impropers_; }
 
-const std::vector<SpeciesImproper> &Species::impropers() const { return impropers_; }
+const std::list<SpeciesImproper> &Species::impropers() const { return impropers_; }
 
 // Return whether SpeciesImproper between SpeciesAtoms exists
 bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
