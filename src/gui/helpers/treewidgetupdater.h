@@ -270,8 +270,39 @@ template <class T, class I> class TreeWidgetUpdater
         }
     }
 
+    // Update the top-level items of the specified parent QTreeWidget
+    TreeWidgetUpdater(QTreeWidget *treeWidget, std::list<I> &data, T *functionParent,
+                      TreeWidgetTopLevelUpdateRefFunction updateTopLevelFunction)
+    {
+        int count = 0;
+
+        for (auto &dataItem : data)
+            updateTreeTopLevel(treeWidget, count++, dataItem, functionParent, updateTopLevelFunction);
+
+        // If there are still items remaining in the widget, delete them now
+        while (count < treeWidget->topLevelItemCount())
+        {
+            QTreeWidgetItem *item = treeWidget->takeTopLevelItem(count);
+            delete item;
+        }
+    }
+
     // Update the children of the specified parent QTreeWidgetItem
     TreeWidgetUpdater(QTreeWidgetItem *parentItem, const std::vector<I> &data, T *functionParent,
+                      TreeWidgetChildUpdateFunction updateChildFunction)
+    {
+        int count = 0;
+
+        for (auto &dataItem : data)
+            updateTreeChildren(parentItem, count++, dataItem, functionParent, updateChildFunction);
+
+        // If there are still items remaining in the widget, delete them now
+        while (count < parentItem->childCount())
+            parentItem->removeChild(parentItem->child(count));
+    }
+
+    // Update the children of the specified parent QTreeWidgetItem
+    TreeWidgetUpdater(QTreeWidgetItem *parentItem, const std::list<I> &data, T *functionParent,
                       TreeWidgetChildUpdateFunction updateChildFunction)
     {
         int count = 0;
