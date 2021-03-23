@@ -121,13 +121,13 @@ class Species
      */
     private:
     // Array of bonds between atoms in the Species
-    std::list<SpeciesBond> bonds_;
+    std::vector<SpeciesBond> bonds_;
     // Array of angles between atoms in the Species
-    std::list<SpeciesAngle> angles_;
+    std::vector<SpeciesAngle> angles_;
     // Array of torsions between atoms in the Species
-    std::list<SpeciesTorsion> torsions_;
+    std::vector<SpeciesTorsion> torsions_;
     // Array of impropers between atoms in the Species
-    std::list<SpeciesImproper> impropers_;
+    std::vector<SpeciesImproper> impropers_;
     // Whether the attached atoms lists have been created
     bool attachedAtomListsGenerated_;
 
@@ -145,8 +145,8 @@ class Species
     // Return number of SpeciesBonds defined
     int nBonds() const;
     // Return array of SpeciesBond
-    std::list<SpeciesBond> &bonds();
-    const std::list<SpeciesBond> &bonds() const;
+    std::vector<SpeciesBond> &bonds();
+    const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
     bool hasBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
@@ -163,8 +163,8 @@ class Species
     // Return number of SpeciesAngle defined
     int nAngles() const;
     // Return array of SpeciesAngle
-    std::list<SpeciesAngle> &angles();
-    const std::list<SpeciesAngle> &angles() const;
+    std::vector<SpeciesAngle> &angles();
+    const std::vector<SpeciesAngle> &angles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
     bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
     // Return the SpeciesAngle between the specified SpeciesAtoms
@@ -178,8 +178,8 @@ class Species
     // Return number of SpeciesTorsion defined
     int nTorsions() const;
     // Return array of SpeciesTorsion
-    std::list<SpeciesTorsion> &torsions();
-    const std::list<SpeciesTorsion> &torsions() const;
+    std::vector<SpeciesTorsion> &torsions();
+    const std::vector<SpeciesTorsion> &torsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
     bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesTorsion between the specified SpeciesAtoms
@@ -193,8 +193,8 @@ class Species
     // Return number of SpeciesImproper defined
     int nImpropers() const;
     // Return array of SpeciesImproper
-    std::list<SpeciesImproper> &impropers();
-    const std::list<SpeciesImproper> &impropers() const;
+    std::vector<SpeciesImproper> &impropers();
+    const std::vector<SpeciesImproper> &impropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists
     bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
