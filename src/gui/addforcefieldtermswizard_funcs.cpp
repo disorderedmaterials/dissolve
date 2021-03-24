@@ -126,7 +126,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         {
             original.atomType()->setShortRangeParameters(modified.atomType()->shortRangeParameters());
             original.atomType()->setShortRangeType(modified.atomType()->shortRangeType());
-            original.atomType()->setCharge(modified.charge());
+            original.atomType()->setCharge(modified.atomType()->charge());
             dissolve.coreData().bumpAtomTypesVersion();
         }
     }
