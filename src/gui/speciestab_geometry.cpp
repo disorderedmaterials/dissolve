@@ -319,7 +319,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target SpeciesAtom from the passed widget
-    SpeciesAtom *speciesAtom = w ? w->data(Qt::UserRole).value<SpeciesAtom *>() : nullptr;
+    SpeciesAtom *speciesAtom = w ? ui_.AtomTable->item(w->row(), 0)->data(Qt::UserRole).value<SpeciesAtom *>() : nullptr;
     if (!speciesAtom)
         return;
     Vec3<double> r = speciesAtom->r();
