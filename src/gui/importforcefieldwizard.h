@@ -7,6 +7,7 @@
 #include "gui/models/xmlAtomModel.h"
 #include "gui/models/xmlBondModel.h"
 #include "gui/models/xmlImproperModel.h"
+#include "gui/models/xmlTreeModel.h"
 #include "gui/models/xmlTorsionModel.h"
 #include "gui/ui_importforcefieldwizard.h"
 #include <QDialog>
@@ -27,11 +28,7 @@ class ImportForcefieldWizard : public QDialog
     private:
     // Main form declaration
     Ui::ImportForcefieldWizardDialog ui_;
-    XmlAtomModel atoms_;
-    XmlBondModel bonds_;
-    XmlAngleModel angles_;
-    XmlTorsionModel torsions_;
-    XmlImproperModel impropers_;
+    XmlTreeModel ff_;
 
     private slots:
     void updateNavButtons();

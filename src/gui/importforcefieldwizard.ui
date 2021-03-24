@@ -59,59 +59,8 @@
        <widget class="QWidget" name="page_2">
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Atom Types</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTableView" name="atomTable"/>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_temp">
-	    <item>
-	  <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Bonds</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTableView" name="bondTable"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_angle_table">
-           <property name="text">
-            <string>Angles</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTableView" name="angleTable"/>
-         </item>
-	  </layout>
+	  <widget class="QTreeView" name="xmlTree"/>
 	 </item>
-         <item>
-          <widget class="QLabel" name="label_torsion_table">
-           <property name="text">
-            <string>Torsions</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTableView" name="torsionTable"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_improper_table">
-           <property name="text">
-            <string>Impropers</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTableView" name="improperTable"/>
-         </item>
         </layout>
        </widget>
       </widget>
