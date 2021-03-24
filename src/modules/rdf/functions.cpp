@@ -258,13 +258,14 @@ std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() 
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange,
-                            const double rdfBinWidth, bool &alreadyUpToDate)
+bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, Configuration *cfg,
+                            RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth,
+                            bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
-    auto &originalgr =
-        cfg->moduleData().realise<PartialSet>("OriginalGR", uniqueName_, GenericItem::InRestartFileFlag, &wasCreated);
+    auto &originalgr = processingData.realise<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), uniqueName_,
+                                                          GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
@@ -456,12 +457,12 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, const RDFModule *rdfModule,
-                                GenericList &processingModuleData, PartialSet &summedUnweightedGR)
+bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, Module *parentModule,
+                                const RDFModule *rdfModule, PartialSet &summedUnweightedGR)
 {
     // Realise an AtomTypeList containing the sum of atom types over all target configurations
-    auto &combinedAtomTypes = processingModuleData.realise<AtomTypeList>("SummedAtomTypes", parentModule->uniqueName(),
-                                                                         GenericItem::InRestartFileFlag);
+    auto &combinedAtomTypes =
+        processingData.realise<AtomTypeList>("SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (Configuration *cfg : parentModule->targetConfigurations())
         combinedAtomTypes.add(cfg->usedAtomTypesList());
@@ -507,9 +508,10 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
         double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
-        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
+        if (!processingData.contains(fmt::format("{}//UnweightedGR", cfg->niceName()), rdfModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = cfg->moduleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
+        auto cfgPartialGR =
+            processingData.value<PartialSet>(fmt::format("{}//UnweightedGR", cfg->niceName()), rdfModule->uniqueName());
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
@@ -518,8 +520,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
 }
 
 // Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup
-bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, ModuleGroup *moduleGroup,
-                                GenericList &processingModuleData, PartialSet &summedUnweightedGR)
+bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, Module *parentModule,
+                                ModuleGroup *moduleGroup, PartialSet &summedUnweightedGR)
 {
     // Determine total weighting factor over all Configurations, and set up a Configuration/weight RefList for simplicity
     RefDataList<Configuration, double> configWeights;
@@ -575,9 +577,10 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
 
         // *Copy* the partials for the Configuration, subtract 1.0, and add into our set
-        if (!cfg->moduleData().contains("UnweightedGR", parentModule->uniqueName()))
+        if (!processingData.contains(fmt::format("{}//UnweightedGR", cfg->niceName()), parentModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = cfg->moduleData().value<PartialSet>("UnweightedGR", parentModule->uniqueName());
+        auto cfgPartialGR =
+            processingData.value<PartialSet>(fmt::format("{}//UnweightedGR", cfg->niceName()), parentModule->uniqueName());
         cfgPartialGR -= 1.0;
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }

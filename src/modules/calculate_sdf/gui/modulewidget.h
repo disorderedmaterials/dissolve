@@ -21,7 +21,8 @@ class CalculateSDFModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData);
+    CalculateSDFModuleWidget(QWidget *parent, const GenericList &processingData, CalculateSDFModule *module,
+                             const CoreData &coreData);
 
     private:
     // Associated Module

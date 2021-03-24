@@ -4,7 +4,8 @@
 #include "modules/datatest/datatest.h"
 #include "modules/datatest/gui/modulewidget.h"
 
-DataTestModuleWidget::DataTestModuleWidget(QWidget *parent, DataTestModule *module) : ModuleWidget(parent), module_(module)
+DataTestModuleWidget::DataTestModuleWidget(QWidget *parent, const GenericList &processingData, DataTestModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

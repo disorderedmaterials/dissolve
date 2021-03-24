@@ -14,8 +14,8 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), dissolve_(dissolve), module_(module)
+EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, const GenericList &processingData, EPSRModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), dissolve_(dissolve), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

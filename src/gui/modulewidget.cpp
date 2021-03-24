@@ -3,7 +3,10 @@
 
 #include "gui/modulewidget.h"
 
-ModuleWidget::ModuleWidget(QWidget *parent) : QWidget(parent) { refreshing_ = false; }
+ModuleWidget::ModuleWidget(QWidget *parent, const GenericList &processingData)
+    : QWidget(parent), processingData_(processingData), refreshing_(false)
+{
+}
 
 ModuleWidget::~ModuleWidget() {}
 

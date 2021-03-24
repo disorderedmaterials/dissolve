@@ -21,7 +21,7 @@ class EnergyModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    EnergyModuleWidget(QWidget *parent, EnergyModule *module);
+    EnergyModuleWidget(QWidget *parent, const GenericList &processingData, EnergyModule *module);
     ~EnergyModuleWidget();
 
     private:

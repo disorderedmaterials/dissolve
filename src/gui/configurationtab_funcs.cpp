@@ -37,9 +37,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     // Set target for ProcedureEditor, and connect signals
     ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
     connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
-
-    // Set up the ModuleEditor
-    ui_.LayerPanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()

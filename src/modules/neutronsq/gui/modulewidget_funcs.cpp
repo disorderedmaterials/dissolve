@@ -11,8 +11,9 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, const GenericList &processingData, NeutronSQModule *module,
+                                             Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);

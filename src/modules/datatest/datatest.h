@@ -77,43 +77,38 @@ class DataTestModule : public Module
         // If a target module was supplied, search there first
         if (targetModule)
         {
-            // Get target module data list
-            GenericList &moduleData = targetModule->configurationLocal()
-                                          ? targetModule->targetConfigurations().firstItem()->moduleData()
-                                          : processingModuleData;
-
             // The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in
             // the target list?
-            if (moduleData.contains(dataIdentifier, targetModule->uniqueName()))
+            if (processingModuleData.contains(dataIdentifier, targetModule->uniqueName()))
             {
                 // Try to retrieve the data as the current type
                 found = false;
-                const T &data = moduleData.retrieve<T>(dataIdentifier, targetModule->uniqueName(), T(), &found);
+                const T &data = processingModuleData.retrieve<T>(dataIdentifier, targetModule->uniqueName(), T(), &found);
 
                 if (!found)
                 {
                     Messenger::error("Data named '{}_{}' exists, but is not of the correct type (is {} rather than "
                                      "{}).\n",
                                      targetModule->uniqueName(), dataIdentifier,
-                                     moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
+                                     processingModuleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
                                      T::itemClassName());
                     return dummy;
                 }
                 else
                     return data;
             }
-            else if (moduleData.contains(dataIdentifier))
+            else if (processingModuleData.contains(dataIdentifier))
             {
                 // Try to retrieve the data as the current type
                 found = false;
-                const T &data = moduleData.value<T>(dataIdentifier, "", T(), &found);
+                const T &data = processingModuleData.value<T>(dataIdentifier, "", T(), &found);
 
                 if (!found)
                 {
                     Messenger::error("Data named '{}' exists, but is not of the correct type (is {} rather than "
                                      "{}).\n",
                                      dataIdentifier,
-                                     moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
+                                     processingModuleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
                                      T::itemClassName());
                     return dummy;
                 }

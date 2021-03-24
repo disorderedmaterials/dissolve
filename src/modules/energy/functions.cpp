@@ -252,10 +252,10 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Species *sp, const Poten
 }
 
 // Check energy stability of specified Configuration
-EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
+EnergyModule::EnergyStability EnergyModule::checkStability(GenericList &processingData, Configuration *cfg)
 {
     // First, check if the Configuration is targetted by an EnergyModule
-    if (!cfg->moduleData().value<bool>("_IsEnergyModuleTarget", "", false))
+    if (!processingData.value<bool>("IsEnergyModuleTarget", cfg->niceName(), false))
     {
         Messenger::error("Configuration '{}' is not targeted by any EnergyModule, so stability cannot be assessed. "
                          "Check your setup!\n",
@@ -264,9 +264,9 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
     }
 
     // Retrieve the EnergyStable flag from the Configuration's module data
-    if (cfg->moduleData().contains("EnergyStable"))
+    if (processingData.contains("EnergyStable", cfg->niceName()))
     {
-        auto stable = cfg->moduleData().value<bool>("EnergyStable");
+        auto stable = processingData.value<bool>("EnergyStable", cfg->niceName());
         if (!stable)
         {
             Messenger::print("Energy for Configuration '{}' is not yet stable.\n", cfg->name());
@@ -284,14 +284,14 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
 }
 
 // Check energy stability of specified Configurations, returning the number that failed
-int EnergyModule::nUnstable(const RefList<Configuration> &configurations)
+int EnergyModule::nUnstable(GenericList &processingData, const RefList<Configuration> &configurations)
 {
     auto nFailed = 0;
 
-    for (Configuration *cfg : configurations)
+    for (auto *cfg : configurations)
     {
         // Check the stability of this Configuration
-        auto result = checkStability(cfg);
+        auto result = checkStability(processingData, cfg);
 
         if (result == EnergyModule::EnergyStable)
             ++nFailed;

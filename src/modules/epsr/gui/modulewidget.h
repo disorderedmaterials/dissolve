@@ -20,7 +20,7 @@ class EPSRModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve &dissolve);
+    EPSRModuleWidget(QWidget *parent, const GenericList &processingData, EPSRModule *module, Dissolve &dissolve);
     ~EPSRModuleWidget();
 
     private:

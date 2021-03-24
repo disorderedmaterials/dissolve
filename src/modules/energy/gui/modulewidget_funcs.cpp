@@ -10,7 +10,8 @@
 #include "modules/energy/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module) : ModuleWidget(parent), module_(module)
+EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, const GenericList &processingData, EnergyModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -62,17 +63,19 @@ void EnergyModuleWidget::updateControls(int flags)
     QPalette labelPalette = ui_.StableLabel->palette();
     if (currentConfiguration_)
     {
-        const auto &totalEnergyArray =
-            currentConfiguration_->moduleData().value<Data1D>("Total", module_->uniqueName(), Data1D());
+        const auto &totalEnergyArray = processingData_.value<Data1D>(
+            fmt::format("{}//Total", currentConfiguration_->niceName()), module_->uniqueName(), Data1D());
         if (totalEnergyArray.nValues() < stabilityWindow)
             ui_.GradientValueLabel->setText("N/A");
         else
         {
-            auto grad = currentConfiguration_->moduleData().value<double>("EnergyGradient", "", 0.0);
+            auto grad = processingData_.value<double>(fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()),
+                                                      module_->uniqueName(), 0.0);
             ui_.GradientValueLabel->setText(QString::number(grad));
         }
 
-        auto stable = currentConfiguration_->moduleData().value<bool>("EnergyStable", "", false);
+        auto stable = processingData_.value<bool>(fmt::format("{}//EnergyStable", currentConfiguration_->niceName()),
+                                                  module_->uniqueName(), false);
 
         if (stable)
         {

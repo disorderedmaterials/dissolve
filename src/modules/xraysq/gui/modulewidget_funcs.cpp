@@ -11,8 +11,9 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, const GenericList &processingData, XRaySQModule *module,
+                                       Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);

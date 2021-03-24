@@ -7,8 +7,9 @@
 #include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/process1d.h"
 
-CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNModule *cnModule)
-    : ModuleWidget(parent), module_(cnModule)
+CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                 CalculateCNModule *cnModule)
+    : ModuleWidget(parent, processingData), module_(cnModule)
 {
     // Set up user interface
     ui_.setupUi(this);

@@ -324,33 +324,6 @@ bool Dissolve::saveInput(std::string_view filename)
                                cfg->requestedSizeFactor()))
             return false;
 
-        // Modules
-        if (!parser.writeLineF("\n  # Modules\n"))
-            return false;
-        if ((cfg->nModules() == 0) && (!parser.writeLineF("  # -- None\n")))
-            return false;
-        ListIterator<Module> moduleIterator(cfg->modules().modules());
-        while (Module *module = moduleIterator.iterate())
-        {
-            if (!parser.writeLineF("  {}  {}  '{}'\n",
-                                   ConfigurationBlock::keywords().keyword(ConfigurationBlock::ModuleKeyword), module->type(),
-                                   module->uniqueName()))
-                return false;
-
-            // Write frequency and disabled keywords
-            if (!parser.writeLineF("    Frequency  {}\n", module->frequency()))
-                return false;
-            if (module->isDisabled() && (!parser.writeLineF("    Disabled\n")))
-                return false;
-
-            // Write keyword options
-            if (!module->keywords().write(parser, "    ", true))
-                return false;
-
-            if (!parser.writeLineF("  {}\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword)))
-                return false;
-        }
-
         if (!parser.writeLineF("{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::EndConfigurationKeyword)))
             return false;
     }
@@ -462,36 +435,6 @@ bool Dissolve::loadRestart(std::string_view filename)
                 break;
             }
         }
-        else if (DissolveSys::sameString(parser.argsv(0), "Local"))
-        {
-            // Let the user know what we are doing
-            Messenger::print("Reading item '{}' ({}) into Configuration '{}'...\n", parser.argsv(2), parser.argsv(3),
-                             parser.argsv(1));
-
-            // Local processing data - find the parent Configuration...
-            cfg = findConfiguration(parser.argsv(1));
-            if (!cfg)
-            {
-                Messenger::error("No Configuration named '{}' exists.\n", parser.argsv(1));
-                error = true;
-                break;
-            }
-
-            // Realise the item in the list
-            GenericItem *item = cfg->moduleData().create(parser.argsv(2), parser.argsv(3), parser.argi(4),
-                                                         parser.hasArg(5) ? parser.argi(5) : 0);
-
-            // Read in the data
-            if ((!item) || (!item->read(parser, coreData_)))
-            {
-                Messenger::error("Failed to read item data '{}' from restart file.\n", item->name());
-                error = true;
-                break;
-            }
-
-            // Add the InRestartFileFlag for the item
-            item->addFlag(GenericItem::InRestartFileFlag);
-        }
         else if (DissolveSys::sameString(parser.argsv(0), "Processing"))
         {
             // Let the user know what we are doing
@@ -582,7 +525,6 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
         return false;
 
     // Variables
-    Configuration *cfg;
     std::string newName;
     auto error = false, skipCurrentItem = false;
 
@@ -602,43 +544,6 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
             Messenger::print("Ignoring entry for keyword '{}' (module '{}')...\n", parser.argsv(2), parser.argsv(1));
 
             skipCurrentItem = true;
-        }
-        else if (DissolveSys::sameString(parser.argsv(0), "Local"))
-        {
-            // Create new suffixed name
-            newName = fmt::format("{}@{}", parser.argsv(2), dataSuffix);
-
-            // Let the user know what we are doing
-            Messenger::print("Reading item '{}' => '{}' ({}) into Configuration '{}'...\n", parser.argsv(2), newName,
-                             parser.argsv(3), parser.argsv(1));
-
-            // Local processing data - find the parent Configuration...
-            cfg = findConfiguration(parser.argsv(1));
-            if (!cfg)
-            {
-                Messenger::error("No Configuration named '{}' exists, so skipping this data...\n", parser.argsv(1));
-                skipCurrentItem = true;
-            }
-            else
-            {
-                // Realise the item in the list
-                GenericItem *item =
-                    cfg->moduleData().create(newName, parser.argsv(3), parser.argi(4), parser.hasArg(5) ? parser.argi(5) : 0);
-
-                // Read in the data
-                if ((!item) || (!item->read(parser, coreData_)))
-                {
-                    Messenger::error("Failed to read item data '{}' from restart file.\n", item->name());
-                    error = true;
-                    break;
-                }
-
-                // Add the ReferencePointData flag for the item, and remove the InRestartFileFlag
-                item->addFlag(GenericItem::IsReferencePointDataFlag);
-                item->removeFlag(GenericItem::InRestartFileFlag);
-
-                skipCurrentItem = false;
-            }
         }
         else if (DissolveSys::sameString(parser.argsv(0), "Processing"))
         {
@@ -737,25 +642,6 @@ bool Dissolve::saveRestart(std::string_view filename)
                 continue;
 
             if (!keyword->write(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), keyword->name())))
-                return false;
-        }
-    }
-
-    // Configuration Module Data
-    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
-    {
-        // Cycle over data store in the Configuration
-        ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
-        while (GenericItem *item = itemIterator.iterate())
-        {
-            // If it is not flagged to be saved in the restart file, skip it
-            if (!(item->flags() & GenericItem::InRestartFileFlag))
-                continue;
-
-            if (!parser.writeLineF("Local  {}  {}  {}  {}  {}\n", cfg->name(), item->name(), item->itemClassName(),
-                                   item->version(), item->flags()))
-                return false;
-            if (!item->write(parser))
                 return false;
         }
     }

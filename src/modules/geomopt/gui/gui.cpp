@@ -7,5 +7,5 @@
 // Return a new widget controlling this Module
 ModuleWidget *GeometryOptimisationModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new GeometryOptimisationModuleWidget(parent, this);
+    return new GeometryOptimisationModuleWidget(parent, dissolve.processingModuleData(), this);
 }

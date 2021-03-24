@@ -7,8 +7,9 @@
 #include "modules/calculate_angle/angle.h"
 #include "modules/calculate_angle/gui/modulewidget.h"
 
-CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, CalculateAngleModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                       CalculateAngleModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

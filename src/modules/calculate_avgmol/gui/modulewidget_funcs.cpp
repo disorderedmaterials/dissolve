@@ -4,8 +4,9 @@
 #include "modules/calculate_avgmol/avgmol.h"
 #include "modules/calculate_avgmol/gui/modulewidget.h"
 
-CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget *parent, CalculateAvgMolModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                         CalculateAvgMolModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

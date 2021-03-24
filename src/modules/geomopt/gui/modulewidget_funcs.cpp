@@ -4,8 +4,9 @@
 #include "modules/geomopt/geomopt.h"
 #include "modules/geomopt/gui/modulewidget.h"
 
-GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module)
-    : ModuleWidget(parent), module_(module)
+GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                                   GeometryOptimisationModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
