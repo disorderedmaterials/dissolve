@@ -263,9 +263,10 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                             bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
-    auto [originalgr, status] = processingData.realiseIf<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()),
-                                                                     uniqueName_, GenericItem::InRestartFileFlag);
-    if (status == GenericItem::ItemStatus::Created)
+    auto originalGRObject = processingData.realiseIf<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), uniqueName_,
+                                                                 GenericItem::InRestartFileFlag);
+    auto &originalgr = originalGRObject.first;
+    if (originalGRObject.second == GenericItem::ItemStatus::Created)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
     // Is the PartialSet already up-to-date?

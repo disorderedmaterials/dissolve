@@ -79,9 +79,10 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto rho = rdfModule->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
-    auto [unweightedsq, uSQstatus] =
+    auto uSQObject =
         dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-    if (uSQstatus == GenericItem::ItemStatus::Created)
+    auto &unweightedsq = uSQObject.first;
+    if (uSQObject.second == GenericItem::ItemStatus::Created)
         unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName_, "unweighted", "sq", "Q, 1/Angstroms");
 
     // Is the PartialSet already up-to-date?
@@ -120,9 +121,10 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          braggModule->uniqueName(), nReflections, braggQMax);
 
         // Create a temporary array into which our broadened Bragg partials will be placed
-        auto [braggPartials, braggStatus] =
+        auto braggPartialsObject =
             dissolve.processingModuleData().realiseIf<Array2D<Data1D>>("BraggPartials", uniqueName_, GenericItem::NoFlags);
-        if (braggStatus == GenericItem::ItemStatus::Created)
+        auto &braggPartials = braggPartialsObject.first;
+        if (braggPartialsObject.second == GenericItem::ItemStatus::Created)
         {
             // Initialise the array
             braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
