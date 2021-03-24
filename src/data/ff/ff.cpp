@@ -276,7 +276,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
 }
 
 // Assign suitable AtomType to the supplied atom
-bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData) const
+bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const
 {
     auto optRef = determineAtomType(i);
     if (!optRef)
@@ -299,6 +299,10 @@ bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData) const
     at->setShortRangeType(shortRangeType());
     at->setCharge(assignedType.charge());
 
+    // Set the charge on the SpeciesAtom if requested
+    if (setSpeciesAtomCharges)
+        i.setCharge(assignedType.charge());
+
     // Set type in the SpeciesAtom
     i.setAtomType(at);
 
@@ -306,7 +310,8 @@ bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData) const
 }
 
 // Assign suitable atom types to the supplied Species, returning the number of failures
-int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy) const
+int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
+                                bool setSpeciesAtomCharges) const
 {
     Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
 
@@ -323,7 +328,7 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
         if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
             continue;
 
-        if (!assignAtomType(i, coreData))
+        if (!assignAtomType(i, coreData, setSpeciesAtomCharges))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
             ++nFailed;
