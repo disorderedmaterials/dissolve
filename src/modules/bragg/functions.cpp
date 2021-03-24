@@ -334,10 +334,9 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
     const auto nTypes = cfg->nUsedAtomTypes();
-    bool wasCreated;
-    auto &braggPartials = moduleData.realise<Array2D<Data1D>>(fmt::format("{}//OriginalBragg", cfg->niceName()), uniqueName(),
-                                                              GenericItem::InRestartFileFlag, &wasCreated);
-    if (wasCreated)
+    auto [braggPartials, partialStatus] = moduleData.realiseIf<Array2D<Data1D>>(
+        fmt::format("{}//OriginalBragg", cfg->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+    if (partialStatus == GenericItem::ItemStatus::Created)
     {
         // Create the triangular array
         braggPartials.initialise(nTypes, nTypes, true);
@@ -354,9 +353,9 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
         // Set up Data1D array with our empty data
         std::fill(braggPartials.begin(), braggPartials.end(), temp);
     }
-    auto &braggTotal = moduleData.realise<Data1D>(fmt::format("{}//OriginalBraggTotal", cfg->niceName()), uniqueName(),
-                                                  GenericItem::InRestartFileFlag, &wasCreated);
-    if (wasCreated)
+    auto [braggTotal, totalStatus] = moduleData.realiseIf<Data1D>(fmt::format("{}//OriginalBraggTotal", cfg->niceName()),
+                                                                  uniqueName(), GenericItem::InRestartFileFlag);
+    if (totalStatus == GenericItem::ItemStatus::Created)
         braggTotal.setObjectTag(fmt::format("{}//OriginalBragg//Total", cfg->niceName()));
     braggTotal.clear();
 

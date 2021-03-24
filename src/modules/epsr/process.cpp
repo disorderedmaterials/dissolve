@@ -289,8 +289,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         deltaFQ *= -1.0;
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
-        auto &fitCoefficients = dissolve.processingModuleData().realise<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+        auto [fitCoefficients, status] = dissolve.processingModuleData().realiseIf<std::vector<double>>(
+            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 
         auto fitError = 0.0;
         if (functionType == EPSRModule::GaussianExpansionFunction)
@@ -298,7 +298,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Construct our fitting object
             GaussFit coeffMinimiser(deltaFQ);
 
-            if (created)
+            if (status == GenericItem::ItemStatus::Created)
                 fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
             else
             {
@@ -324,7 +324,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Construct our fitting object
             PoissonFit coeffMinimiser(deltaFQ);
 
-            if (created)
+            if (status == GenericItem::ItemStatus::Created)
                 fitError =
                     coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 0, 3, 3, false);
             else

@@ -49,7 +49,14 @@ class GenericList
      */
     public:
     // Create or retrieve named item as templated type
-    template <class T> T &realise(std::string_view name, std::string_view prefix = "", int flags = -1, bool *created = nullptr)
+    template <class T> T &realise(std::string_view name, std::string_view prefix = "", int flags = GenericItem::NoFlags)
+    {
+        return realiseIf<T>(name, prefix, flags).first;
+    }
+    // Create or retrieve named item as templated type, also returning whether it was created
+    template <class T>
+    std::pair<T &, GenericItem::ItemStatus> realiseIf(std::string_view name, std::string_view prefix = "",
+                                                      int flags = GenericItem::NoFlags)
     {
         // Construct full name
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
@@ -67,18 +74,14 @@ class GenericList
 
             // Bump version of the item and return it
             ++std::get<GenericItem::Version>(it->second);
-            if (created)
-                *created = false;
-            return std::any_cast<T &>(std::get<GenericItem::AnyObject>(it->second));
+            return {std::any_cast<T &>(std::get<GenericItem::AnyObject>(it->second)), GenericItem::ItemStatus::Existing};
         }
 
         // Create and return new item
-        if (created)
-            *created = true;
         items_.emplace(varName,
                        GenericItem::Type(GenericItemProducer::create<T>(), GenericItemProducer::className<T>(), 0, flags));
         auto &item = items_[varName];
-        return std::any_cast<T &>(std::get<GenericItem::AnyObject>(item));
+        return {std::any_cast<T &>(std::get<GenericItem::AnyObject>(item)), GenericItem::ItemStatus::Created};
     }
 
     /*

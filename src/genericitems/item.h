@@ -26,4 +26,10 @@ enum ItemFlag
     IsReferencePointDataFlag = 2, /* The item was loaded as reference point data */
     ProtectedFlag = 4             /* The item will not be clear()'d unless forced */
 };
+// Retrieval Status
+enum class ItemStatus
+{
+    Existing,
+    Created
+};
 }; // namespace GenericItem
