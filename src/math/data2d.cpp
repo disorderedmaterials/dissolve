@@ -4,6 +4,7 @@
 #include "math/data2d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "math/data1d.h"
 #include "math/histogram2d.h"
 #include <algorithm>

@@ -7,7 +7,6 @@
 #include "math/data1d.h"
 #include "math/plottable.h"
 #include "templates/array2d.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class Histogram2D;
