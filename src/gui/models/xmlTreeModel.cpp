@@ -6,24 +6,32 @@
 
 XmlTreeIndex::XmlTreeIndex(int row, int column, pugi::xml_node node) : row_(row), column_(column), node_(node) {}
 
-XmlTreeModel::XmlTreeModel(Dissolve &dissolve) : QAbstractItemModel(), dissolve_(dissolve) {}
+XmlTreeModel::XmlTreeModel(Dissolve &dissolve) : QAbstractItemModel(), atoms_(dissolve) {}
 
 void XmlTreeModel::readFile(const pugi::xml_node &root)
 {
     beginResetModel();
     root_ = root;
+    atoms_.readFile(root);
     bonds_.readFile(root);
+    angles_.readFile(root);
     endResetModel();
 }
 
 int XmlTreeModel::rowCount(const QModelIndex &parent) const
 {
-    switch (parent.internalId())
+    if (!parent.isValid())
+        return 5;
+    switch (parent.row())
     {
-        case 11:
+        case 0:
+            return atoms_.rowCount();
+        case 1:
             return bonds_.rowCount();
+        case 2:
+            return angles_.rowCount();
         default:
-            return 5;
+            return 2;
     }
 }
 
@@ -78,39 +86,11 @@ QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
     switch (index.internalId())
     {
         case 10:
-            switch (index.column())
-            {
-                case 0:
-                    return "Name";
-                case 1:
-                    return "Class";
-                case 2:
-                    return "Mass";
-                case 3:
-                    return "Element";
-                default:
-                    return QVariant();
-            }
-            break;
+            return atoms_.data(atoms_.index(index.row(), index.column()), role);
         case 11:
             return bonds_.data(bonds_.index(index.row(), index.column()), role);
         case 12:
-            switch (index.column())
-            {
-                case 0:
-                    return "Atom I";
-                case 1:
-                    return "Atom J";
-                case 2:
-                    return "Atom K";
-                case 3:
-                    return "Angle";
-                case 4:
-                    return "k";
-                default:
-                    return QVariant();
-            }
-            break;
+            return angles_.data(angles_.index(index.row(), index.column()), role);
         case 13:
         case 14:
             switch (index.column())
