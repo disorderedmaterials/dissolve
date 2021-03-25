@@ -15,6 +15,8 @@ void XmlTreeModel::readFile(const pugi::xml_node &root)
     atoms_.readFile(root);
     bonds_.readFile(root);
     angles_.readFile(root);
+    torsions_.readFile(root);
+    impropers_.readFile(root);
     endResetModel();
 }
 
@@ -30,8 +32,12 @@ int XmlTreeModel::rowCount(const QModelIndex &parent) const
             return bonds_.rowCount();
         case 2:
             return angles_.rowCount();
+        case 3:
+            return torsions_.rowCount();
+        case 4:
+            return impropers_.rowCount();
         default:
-            return 2;
+            return 0;
     }
 }
 
@@ -92,49 +98,9 @@ QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
         case 12:
             return angles_.data(angles_.index(index.row(), index.column()), role);
         case 13:
+            return torsions_.data(torsions_.index(index.row(), index.column()), role);
         case 14:
-            switch (index.column())
-            {
-                case 0:
-                    return "AtomI";
-                case 1:
-                    return "AtomJ";
-                case 2:
-                    return "AtomK";
-                case 3:
-                    return "AtomL";
-
-                case 4:
-                    return "k 1";
-                case 5:
-                    return "k 2";
-                case 6:
-                    return "k 3";
-                case 7:
-                    return "k 4";
-
-                case 8:
-                    return "Periodicity 1";
-                case 9:
-                    return "Periodicity 2";
-                case 10:
-                    return "Periodicity 3";
-                case 11:
-                    return "Periodicity 4";
-
-                case 12:
-                    return "phase1";
-                case 13:
-                    return "phase2";
-                case 14:
-                    return "phase3";
-                case 15:
-                    return "phase4";
-
-                default:
-                    return QVariant();
-            }
-            break;
+            return impropers_.data(impropers_.index(index.row(), index.column()), role);
         default:
             return index.internalId();
     }

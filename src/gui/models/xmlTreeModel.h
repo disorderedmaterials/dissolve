@@ -7,6 +7,8 @@
 #include "gui/models/xmlAngleModel.h"
 #include "gui/models/xmlAtomModel.h"
 #include "gui/models/xmlBondModel.h"
+#include "gui/models/xmlImproperModel.h"
+#include "gui/models/xmlTorsionModel.h"
 #include "main/dissolve.h"
 
 #include <QAbstractTableModel>
@@ -37,6 +39,8 @@ class XmlTreeModel : public QAbstractItemModel
     XmlAtomModel atoms_;
     XmlBondModel bonds_;
     XmlAngleModel angles_;
+    XmlTorsionModel torsions_;
+    XmlImproperModel impropers_;
 
     public slots:
     // Read from an XML file
