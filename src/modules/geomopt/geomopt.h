@@ -153,6 +153,10 @@ class GeometryOptimisationModule : public Module
             "Initial bounding values/energies = {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e})", bounds[0],
             energies[0], bounds[1], energies[1], bounds[2], energies[2]);
 
+        // Initial check on bonding energies
+        if (fabs(energies[0] - energies[2]) <= (2.0 * tolerance))
+            return energies[0];
+
         // Perform linesearch along the gradient vector
         do
         {
