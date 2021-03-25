@@ -60,7 +60,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Calculate Bragg vectors and intensities for the current Configuration
         bool alreadyUpToDate;
-        if (!calculateBraggTerms(procPool, cfg, qMin, qDelta, qMax, multiplicity, alreadyUpToDate))
+        if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, cfg, qMin, qDelta, qMax, multiplicity,
+                                 alreadyUpToDate))
             return false;
 
         // If we are already up-to-date, then theres nothing more to do for this Configuration
@@ -73,20 +74,21 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Perform averaging of reflections data if requested
         if (averaging > 1)
         {
-            Averaging::arrayAverage<Array<BraggReflection>>(cfg->moduleData(), "BraggReflections", "", averaging,
-                                                            averagingScheme);
+            Averaging::arrayAverage<Array<BraggReflection>>(dissolve.processingModuleData(),
+                                                            fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName(),
+                                                            averaging, averagingScheme);
         }
 
         // Form partial and total reflection functions
-        formReflectionFunctions(procPool, cfg, qMin, qDelta, qMax);
+        formReflectionFunctions(dissolve.processingModuleData(), procPool, cfg, qMin, qDelta, qMax);
 
         // Save reflection data?
         if (saveReflections)
         {
             // Retrieve BraggReflection data from the Configuration's module data
             auto found = false;
-            const auto &braggReflections =
-                cfg->moduleData().value<Array<BraggReflection>>("BraggReflections", "", Array<BraggReflection>(), &found);
+            const auto &braggReflections = dissolve.processingModuleData().value<Array<BraggReflection>>(
+                fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName(), Array<BraggReflection>(), &found);
             if (!found)
                 return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n",
                                         cfg->name());

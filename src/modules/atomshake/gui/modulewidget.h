@@ -20,7 +20,7 @@ class AtomShakeModuleWidget : public ModuleWidget
     AtomShakeModule *module_;
 
     public:
-    AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module);
+    AtomShakeModuleWidget(QWidget *parent, const GenericList &processingData, AtomShakeModule *module);
     ~AtomShakeModuleWidget();
 
     /*

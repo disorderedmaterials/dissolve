@@ -20,7 +20,7 @@ class SkeletonModuleWidget : public ModuleWidget
     SkeletonModule *module_;
 
     public:
-    SkeletonModuleWidget(QWidget *parent, SkeletonModule *module);
+    SkeletonModuleWidget(QWidget *parent, const GenericList &processingData, SkeletonModule *module);
 
     /*
      * UI

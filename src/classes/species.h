@@ -71,6 +71,8 @@ class Species
     void removeAtom(SpeciesAtom *i);
     // Return the number of atoms in the species
     int nAtoms() const;
+    // Renumber atoms so they are sequential in the list
+    void renumberAtoms();
     // Return the first atom in the Species
     const SpeciesAtom &firstAtom() const;
     // Return the nth atom in the Species

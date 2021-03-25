@@ -21,7 +21,7 @@ class CalculateAxisAngleModuleWidget : public ModuleWidget
     CalculateAxisAngleModule *module_;
 
     public:
-    CalculateAxisAngleModuleWidget(QWidget *parent, CalculateAxisAngleModule *module);
+    CalculateAxisAngleModuleWidget(QWidget *parent, const GenericList &processingData, CalculateAxisAngleModule *module);
 
     /*
      * UI

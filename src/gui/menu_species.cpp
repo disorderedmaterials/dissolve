@@ -35,6 +35,9 @@ void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
     EditSpeciesDialog editSpeciesDialog(this, newSpecies);
     if (editSpeciesDialog.editSpecies())
     {
+        // Renumber the atoms so they are sequential
+        newSpecies->renumberAtoms();
+
         setModified();
         fullUpdate();
         ui_.MainTabs->setCurrentTab(newSpecies);

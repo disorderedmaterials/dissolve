@@ -65,13 +65,13 @@ class Dissolve
      */
     public:
     // Return list of master Bond parameters
-    const std::vector<MasterIntra> &masterBonds() const;
+    const std::list<MasterIntra> &masterBonds() const;
     // Return list of master Angle parameters
-    const std::vector<MasterIntra> &masterAngles() const;
+    const std::list<MasterIntra> &masterAngles() const;
     // Return list of master Torsion parameters
-    const std::vector<MasterIntra> &masterTorsions() const;
+    const std::list<MasterIntra> &masterTorsions() const;
     // Return list of master Improper parameters
-    const std::vector<MasterIntra> &masterImpropers() const;
+    const std::list<MasterIntra> &masterImpropers() const;
     // Check and print MasterTerm usage
     void checkMasterTermUsage() const;
 

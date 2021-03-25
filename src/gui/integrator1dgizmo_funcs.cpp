@@ -94,7 +94,7 @@ void Integrator1DGizmo::setGraphDataTargets()
     if (!integrationTarget_)
         return;
 
-    ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(), integrationTarget_->name());
+    ui_.PlotWidget->createRenderable<RenderableData1D>(integrationTarget_->objectTag(), integrationTarget_->name());
 }
 
 /*

@@ -11,8 +11,9 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, const GenericList &processingData, XRaySQModule *module,
+                                       Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -138,54 +139,47 @@ void XRaySQModuleWidget::setGraphDataTargets(XRaySQModule *module)
          */
 
         // Full partial
-        partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//WeightedGR//{}//Full", module_->uniqueName(), id),
-                                          fmt::format("{} (Full)", id), "Full");
+        partialGRGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedGR//{}//Full", module_->uniqueName(), id),
+                                                            fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//WeightedGR//{}//Bound", module_->uniqueName(), id),
-                                          fmt::format("{} (Bound)", id), "Bound");
+        partialGRGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedGR//{}//Bound", module_->uniqueName(), id),
+                                                            fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//WeightedGR//{}//Unbound", module_->uniqueName(), id),
-                                          fmt::format("{} (Unbound)", id), "Unbound");
+        partialGRGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//WeightedGR//{}//Unbound", module_->uniqueName(), id), fmt::format("{} (Unbound)", id), "Unbound");
 
         /*
          * Partial S(Q)
          */
 
         // Full partial
-        partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//WeightedSQ//{}//Full", module_->uniqueName(), id),
-                                          fmt::format("{} (Full)", id), "Full");
+        partialSQGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//{}//Full", module_->uniqueName(), id),
+                                                            fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//WeightedSQ//{}//Bound", module_->uniqueName(), id),
-                                          fmt::format("{} (Bound)", id), "Bound");
+        partialSQGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//{}//Bound", module_->uniqueName(), id),
+                                                            fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//WeightedSQ//{}//Unbound", module_->uniqueName(), id),
-                                          fmt::format("{} (Unbound)", id), "Unbound");
+        partialSQGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//WeightedSQ//{}//Unbound", module_->uniqueName(), id), fmt::format("{} (Unbound)", id), "Unbound");
     });
 
     // Add calculated total G(r)
-    totalGRGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//WeightedGR//Total", module_->uniqueName()),
-                                    "Calculated G(r) (Direct)", "Calculated");
+    totalGRGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedGR//Total", module_->uniqueName()),
+                                                      "Calculated G(r) (Direct)", "Calculated");
 
     // Add calculated total representative G(r) (from FT of S(Q))
-    auto repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                 fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()),
-                                                 "Calculated G(r) (via FT)", "Calculated");
+    auto repGR = totalGRGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()), "Calculated G(r) (via FT)", "Calculated");
     repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
     repGR->setColour(StockColours::RedStockColour);
 
     // Add calculate total F(Q)
-    totalFQGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
-                                    "Calculated F(Q)", "Calculated");
+    totalFQGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
+                                                      "Calculated F(Q)", "Calculated");
 
     // Add on reference data if present
     const Data1DImportFileFormat &referenceFileAndFormat = module->referenceFQFileAndFormat();
@@ -193,14 +187,14 @@ void XRaySQModuleWidget::setGraphDataTargets(XRaySQModule *module)
     {
         // Add FT of reference data total G(r)
         totalGRGraph_
-            ->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceDataFT", module_->uniqueName()),
-                               "Reference G(r) (via FT)", "Reference")
+            ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", module_->uniqueName()),
+                                                 "Reference G(r) (via FT)", "Reference")
             ->setColour(StockColours::RedStockColour);
 
         // Add calculate total F(Q)
         totalFQGraph_
-            ->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceData", module_->uniqueName()),
-                               "Reference F(Q)", "Reference")
+            ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", module_->uniqueName()), "Reference F(Q)",
+                                                 "Reference")
             ->setColour(StockColours::RedStockColour);
     }
 }

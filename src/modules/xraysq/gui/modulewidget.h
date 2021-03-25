@@ -19,7 +19,7 @@ class XRaySQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Dissolve &dissolve);
+    XRaySQModuleWidget(QWidget *parent, const GenericList &processingData, XRaySQModule *module, Dissolve &dissolve);
     ~XRaySQModuleWidget();
 
     private:

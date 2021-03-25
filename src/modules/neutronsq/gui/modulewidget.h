@@ -19,7 +19,7 @@ class NeutronSQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve);
+    NeutronSQModuleWidget(QWidget *parent, const GenericList &processingData, NeutronSQModule *module, Dissolve &dissolve);
     ~NeutronSQModuleWidget();
 
     private:

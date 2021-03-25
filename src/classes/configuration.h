@@ -196,27 +196,6 @@ class Configuration : public ListItem<Configuration>
     void updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset);
 
     /*
-     * Modules
-     */
-    private:
-    // Module layer associated to this Configuration
-    ModuleLayer moduleLayer_;
-    // Variables set by Modules
-    GenericList moduleData_;
-
-    public:
-    // Associate Module to the Configuration
-    bool ownModule(Module *module);
-    // Return number of Modules associated to this Configuration
-    int nModules() const;
-    // Return Module layer for this Configuration
-    ModuleLayer &moduleLayer();
-    // Return list of Modules associated to this Configuration
-    ModuleList &modules();
-    // Return list of variables set by Modules
-    GenericList &moduleData();
-
-    /*
      * Site Stacks
      */
     private:

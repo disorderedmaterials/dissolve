@@ -8,8 +8,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableSpecies::RenderableSpecies(const Species *source)
-    : Renderable(Renderable::SpeciesRenderable, "UNUSED"), source_(source)
+RenderableSpecies::RenderableSpecies(const Species *source, std::string_view name)
+    : Renderable(Renderable::SpeciesRenderable, name), source_(source)
 {
     // Set defaults
     displayStyle_ = SpheresStyle;

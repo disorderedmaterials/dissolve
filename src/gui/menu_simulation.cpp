@@ -100,11 +100,6 @@ void DissolveWindow::on_SimulationClearModuleDataAction_triggered(bool checked)
         // Clear main processing data
         dissolve_.processingModuleData().clear();
 
-        // Clear local processing data in configurations
-        ListIterator<Configuration> configIterator(dissolve_.configurations());
-        while (Configuration *cfg = configIterator.iterate())
-            cfg->moduleData().clear();
-
         // Set iteration counter to zero
         dissolve_.resetIterationCounter();
 

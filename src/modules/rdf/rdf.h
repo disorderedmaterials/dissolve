@@ -88,17 +88,17 @@ class RDFModule : public Module
     // Calculate and return used species populations based on target Configurations
     std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
-    bool calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange,
-                     const double rdfBinWidth, bool &alreadyUpToDate);
+    bool calculateGR(GenericList &processingData, ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method,
+                     const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     static bool calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
                                       PartialSet &weightedgr, PairBroadeningFunction &intraBroadening, int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
-    static bool sumUnweightedGR(ProcessPool &procPool, Module *parentModule, const RDFModule *rdfModule,
-                                GenericList &processingModuleData, PartialSet &summedUnweightedGR);
+    static bool sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, Module *parentModule,
+                                const RDFModule *rdfModule, PartialSet &summedUnweightedGR);
     // Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup
-    static bool sumUnweightedGR(ProcessPool &procPool, Module *parentModule, ModuleGroup *moduleGroup,
-                                GenericList &processingModuleData, PartialSet &summedUnweightedGR);
+    static bool sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, Module *parentModule,
+                                ModuleGroup *moduleGroup, PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
     static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data

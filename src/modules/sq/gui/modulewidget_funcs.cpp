@@ -10,8 +10,8 @@
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
-SQModuleWidget::SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+SQModuleWidget::SQModuleWidget(QWidget *parent, const GenericList &processingData, SQModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -78,12 +78,11 @@ void SQModuleWidget::setGraphDataTargets(SQModule *module)
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                         fmt::format("{}//UnweightedSQ//{}//Full", module_->uniqueName(), id), id,
-                                         "Partial S(Q)");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}//Full", module_->uniqueName(), id),
+                                                           id, "Partial S(Q)");
     });
 
     // Add calculated total F(Q)
-    totalGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedSQ//Total", module_->uniqueName()),
-                                  "Calculated", "Total F(Q)");
+    totalGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//Total", module_->uniqueName()), "Calculated",
+                                                    "Total F(Q)");
 }

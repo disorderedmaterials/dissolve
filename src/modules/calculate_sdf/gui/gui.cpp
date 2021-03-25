@@ -8,5 +8,5 @@
 // Return a new widget controlling this Module
 ModuleWidget *CalculateSDFModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new CalculateSDFModuleWidget(parent, this, dissolve.coreData());
+    return new CalculateSDFModuleWidget(parent, dissolve.processingModuleData(), this, dissolve.coreData());
 }

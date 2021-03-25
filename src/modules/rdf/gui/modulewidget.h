@@ -21,7 +21,7 @@ class RDFModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve);
+    RDFModuleWidget(QWidget *parent, const GenericList &processingData, RDFModule *module, Dissolve &dissolve);
     ~RDFModuleWidget();
 
     private:
