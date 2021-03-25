@@ -586,8 +586,6 @@ bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData
 
     if (!procPool.broadcast(emptyBoundPartials_))
         return Messenger::error("Failed to broadcast emptyBoundPartials_ array.\n");
-    if (!procPool.broadcast(objectNamePrefix_))
-        return false;
 #endif
     return true;
 }
