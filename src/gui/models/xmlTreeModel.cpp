@@ -65,6 +65,13 @@ QModelIndex XmlTreeModel::parent(const QModelIndex &index) const
     }
 }
 
+bool XmlTreeModel::hasChildren(const QModelIndex &parent) const
+{
+    if (!parent.isValid())
+        return true;
+    return !parent.parent().isValid();
+}
+
 QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
 {
 
@@ -112,8 +119,6 @@ QModelIndex XmlTreeModel::index(int row, int column, const QModelIndex &parent) 
     quintptr child;
     if (!parent.isValid())
         child = 0;
-    else if (parent.internalId() > 1000)
-        return QModelIndex();
     else if (parent.internalId() == 0)
         child = 10 + parent.row();
     else

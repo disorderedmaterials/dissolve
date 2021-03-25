@@ -53,6 +53,8 @@ class XmlTreeModel : public QAbstractItemModel
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
 
+    bool hasChildren(const QModelIndex &parent) const override;
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
