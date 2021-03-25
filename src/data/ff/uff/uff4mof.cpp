@@ -238,8 +238,8 @@ bool Forcefield_UFF4MOF::setUp()
          2.5438, 6.899, 0.0, 2.0},
         {Elements::O, 202, "O_3_f", "nbonds=4, -Zn", "Oxygen (tetrahedral) in framework materials", 0.634, 109.47, 3.5, 0.06,
          14.085, 2.3, 8.741, 0.018, 2.0},
-        {Elements::O, 203, "O_2_z", "nbonds=3, -[Al,Sc,V,Mn,Fe,Cr]", "Oxygen (trigonal planar) in SBU", 0.528, 120.0, 3.5, 0.06,
-         14.085, 2.3, 8.741, 0.0, 2.0},
+        {Elements::O, 203, "O_2_z", "nbonds=3, -[Al, Sc, V, Mn, Fe, Cr]", "Oxygen (trigonal planar) in SBU", 0.528, 120.0, 3.5,
+         0.06, 14.085, 2.3, 8.741, 0.0, 2.0},
         {Elements::Al, 204, "Al6+3", "nbonds=6, -O(nbonds=3)", "Aluminium (octahedral, oxidation state = +3)", 1.22, 90.0,
          4.499, 0.505, 11.278, 1.792, 11.278, 0.0, 1.25},
         {Elements::Sc, 205, "Sc6+3", "nbonds=6, -O(nbonds=3)", "Scandium (octahedral, oxidation state = +3)", 1.44, 90.0, 3.295,
@@ -264,14 +264,14 @@ bool Forcefield_UFF4MOF::setUp()
          0.013, 12.0, 2.43, 3.76, 0.0, 0.7},
         {Elements::Co, 215, "Co3+2", "nbonds=4", "Cobalt (tetrahedral, oxidation state = +2)", 1.24, 109.47, 2.872, 0.014, 12.0,
          1.308, 4.105, 0.0, 0.7},
-        {Elements::Co, 216, "Co4+2", "nbonds=4, -[O(-C(-O)),N(ring())]", "Cobalt (square planar, oxidation state = +3)", 1.16,
-         90.0, 2.872, 0.014, 12.0, 1.308, 4.105, 0.0, 0.7},
+        {Elements::Co, 216, "Co4+2", "nbonds=4, -[O(-C(-O)),N(ring(aromatic))]", "Cobalt (square planar, oxidation state = +3)",
+         1.16, 90.0, 2.872, 0.014, 12.0, 1.308, 4.105, 0.0, 0.7},
         {Elements::Cu, 217, "Cu4+2", "nbonds=4, -O(-C(-O))", "Copper (square planar, oxidation state = +2)", 1.28, 90.0, 3.495,
          0.005, 12.0, 2.43, 4.2, 0.0, 0.7},
-        {Elements::Zn, 218, "Zn4+2", "nbonds=4, -[O(-C(-O)),N(ring())]", "Zinc (square planar, oxidation state = +2)", 1.34,
-         90.0, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7},
-        {Elements::Zn, 219, "Zn3f2", "-[O(nbonds=4),N(ring())]", "Zinc (tetrahedral, oxidation state = +2)", 1.24, 109.47,
-         2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7}
+        {Elements::Zn, 218, "Zn4+2", "nbonds=4, -[O(-C(-O)),N(ring(aromatic))]", "Zinc (square planar, oxidation state = +2)",
+         1.34, 90.0, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7},
+        {Elements::Zn, 219, "Zn3f2", "-[O(nbonds=4),N(ring(aromatic))]", "Zinc (tetrahedral, oxidation state = +2)", 1.24,
+         109.47, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7}
 
     };
 
