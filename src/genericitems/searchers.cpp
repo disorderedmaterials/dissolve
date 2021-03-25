@@ -18,7 +18,7 @@
  * Data1D
  */
 
-template <> GenericItemSearcher<Data1D>::GenericItemSearcher()
+template <> GenericItemSearcher<const Data1D>::GenericItemSearcher()
 {
     // Custom Classes
     registerSearcher<Array2D<Data1D>>([](const std::any &a, std::string_view dataName) {
@@ -36,7 +36,7 @@ template <> GenericItemSearcher<Data1D>::GenericItemSearcher()
  * Data2D
  */
 
-template <> GenericItemSearcher<Data2D>::GenericItemSearcher()
+template <> GenericItemSearcher<const Data2D>::GenericItemSearcher()
 {
     // Custom Classes
 }
@@ -45,7 +45,7 @@ template <> GenericItemSearcher<Data2D>::GenericItemSearcher()
  * Data3D
  */
 
-template <> GenericItemSearcher<Data3D>::GenericItemSearcher()
+template <> GenericItemSearcher<const Data3D>::GenericItemSearcher()
 {
     // Custom Classes
 }

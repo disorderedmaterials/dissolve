@@ -39,7 +39,7 @@ void RenderableData2D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = sourceList.search<Data2D>(tag_);
+    source_ = sourceList.search<const Data2D>(tag_);
 }
 
 // Invalidate the current data source

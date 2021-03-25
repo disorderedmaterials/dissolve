@@ -42,7 +42,7 @@ void RenderableData3D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = sourceList.search<Data3D>(tag_);
+    source_ = sourceList.search<const Data3D>(tag_);
 }
 
 // Invalidate the current data source
