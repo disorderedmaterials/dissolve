@@ -46,10 +46,10 @@ int XmlTreeModel::columnCount(const QModelIndex &parent) const { return 16; }
 QModelIndex XmlTreeModel::parent(const QModelIndex &index) const
 {
     quintptr root = 0;
-    if (index.internalId() == 0)
-        return QModelIndex();
     switch (index.internalId())
     {
+        case 0:
+            return QModelIndex();
         case 10:
             return createIndex(0, 0, root);
         case 11:
@@ -60,8 +60,9 @@ QModelIndex XmlTreeModel::parent(const QModelIndex &index) const
             return createIndex(3, 0, root);
         case 14:
             return createIndex(4, 0, root);
+        default:
+            return QModelIndex();
     }
-    return createIndex(index.internalId(), 0, index.internalId() - 1);
 }
 
 QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
@@ -116,7 +117,7 @@ QModelIndex XmlTreeModel::index(int row, int column, const QModelIndex &parent) 
     else if (parent.internalId() == 0)
         child = 10 + parent.row();
     else
-        child = 100 + parent.internalId();
+        return QModelIndex();
 
     return createIndex(row, column, child);
 }
