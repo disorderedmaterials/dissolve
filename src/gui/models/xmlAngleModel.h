@@ -35,5 +35,5 @@ class XmlAngleModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    std::vector<ForcefieldAngleTerm> toVector(std::map<std::string, std::string> &);
+    std::vector<ForcefieldAngleTerm> toVector();
 };

@@ -47,9 +47,8 @@ void ImportForcefieldWizard::nextStack()
 
     if (index == 2)
     {
-        // auto map = atoms_.toMap();
-        // auto xmlFF = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(map), angles_.toVector(map),
-        //                                               torsions_.toVector(map), impropers_.toVector(map));
+        // auto xmlFF = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(), angles_.toVector(),
+        //                                               torsions_.toVector(), impropers_.toVector());
         // ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
         this->accept();
     }
@@ -83,16 +82,6 @@ void ImportForcefieldWizard::xmlString(QString fileName)
         auto root = doc.root();
 
 	ff_.readFile(root);
-        // atoms_.readFile(root);
-        // bonds_.readFile(root);
-        // angles_.readFile(root);
-        // torsions_.readFile(root);
-        // impropers_.readFile(root);
-        // ui_.atomTable->resizeColumnsToContents();
-        // ui_.bondTable->resizeColumnsToContents();
-        // ui_.angleTable->resizeColumnsToContents();
-        // ui_.torsionTable->resizeColumnsToContents();
-        // ui_.improperTable->resizeColumnsToContents();
     }
     updateNavButtons();
     return;

@@ -130,7 +130,7 @@ QVariant XmlImproperModel::headerData(int section, Qt::Orientation orientation, 
     }
 }
 
-std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector(std::map<std::string, std::string> &names)
+std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
 {
     std::vector<ForcefieldImproperTerm> result;
     for (auto &improper : impropers_)
@@ -153,8 +153,8 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector(std::map<std::str
             }
         }
 
-        result.emplace_back(names[std::get<0>(improper)], names[std::get<1>(improper)], names[std::get<2>(improper)],
-                            names[std::get<3>(improper)], SpeciesTorsion::CosNForm, params);
+        result.emplace_back(std::get<0>(improper), std::get<1>(improper), std::get<2>(improper),
+                            std::get<3>(improper), SpeciesTorsion::CosNForm, params);
     }
     return result;
 }

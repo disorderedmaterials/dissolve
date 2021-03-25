@@ -131,7 +131,7 @@ QVariant XmlTorsionModel::headerData(int section, Qt::Orientation orientation, i
     }
 }
 
-std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector(std::map<std::string, std::string> &names)
+std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
 {
     std::vector<ForcefieldTorsionTerm> result;
     for (auto &torsion : torsions_)
@@ -154,8 +154,8 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector(std::map<std::strin
             }
         }
 
-        result.emplace_back(names[std::get<0>(torsion)], names[std::get<1>(torsion)], names[std::get<2>(torsion)],
-                            names[std::get<3>(torsion)], SpeciesTorsion::CosNForm, params);
+        result.emplace_back(std::get<0>(torsion), std::get<1>(torsion), std::get<2>(torsion),
+                            std::get<3>(torsion), SpeciesTorsion::CosNForm, params);
     }
     return result;
 }

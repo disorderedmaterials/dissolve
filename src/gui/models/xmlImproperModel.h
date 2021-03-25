@@ -36,5 +36,5 @@ class XmlImproperModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    std::vector<ForcefieldImproperTerm> toVector(std::map<std::string, std::string> &);
+    std::vector<ForcefieldImproperTerm> toVector();
 };

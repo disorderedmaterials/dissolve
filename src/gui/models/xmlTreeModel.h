@@ -4,6 +4,7 @@
 #pragma once
 
 #include "data/ff/atomtype.h"
+#include "data/ff/xml/base.h"
 #include "gui/models/xmlAngleModel.h"
 #include "gui/models/xmlAtomModel.h"
 #include "gui/models/xmlBondModel.h"
@@ -60,4 +61,6 @@ class XmlTreeModel : public QAbstractItemModel
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    Forcefield_XML toForcefield();
 };

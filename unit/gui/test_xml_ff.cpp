@@ -153,12 +153,12 @@ TEST_F(XmlFFTest, XmlAtom)
 
     atoms.readFile(doc.root());
 
-    ASSERT_EQ(atoms.columnCount(), 5);
+    ASSERT_EQ(atoms.columnCount(), 4);
     ASSERT_EQ(atoms.rowCount(), 6);
 
-    std::vector<XmlAtomData> reference = {{"opls_802", "H802", "H", 1.008000, -1},  {"opls_804", "H804", "H", 1.008000, -1},
-                                          {"opls_801", "O801", "O", 15.999000, -1}, {"opls_803", "H803", "H", 1.008000, -1},
-                                          {"opls_800", "C800", "C", 12.011000, -1}, {"opls_805", "H805", "H", 1.008000, -1}};
+    std::vector<XmlAtomData> reference = {{"opls_802", "H802", "H", 1.008000},  {"opls_804", "H804", "H", 1.008000},
+                                          {"opls_801", "O801", "O", 15.999000}, {"opls_803", "H803", "H", 1.008000},
+                                          {"opls_800", "C800", "C", 12.011000}, {"opls_805", "H805", "H", 1.008000}};
 
     int row = 0;
     for (auto b : reference)
@@ -167,20 +167,8 @@ TEST_F(XmlFFTest, XmlAtom)
         ASSERT_EQ(atoms.data(atoms.index(row, 1)).toString().toStdString(), std::get<1>(b));
         ASSERT_EQ(atoms.data(atoms.index(row, 2)).toString().toStdString(), std::get<2>(b));
         ASSERT_EQ(atoms.data(atoms.index(row, 3)).toDouble(), std::get<3>(b));
-        ASSERT_EQ(atoms.data(atoms.index(row, 4)).toString().toStdString(), "Missing");
         ++row;
     }
-
-    // Cannot set atom type because we haven't defined this type yet.
-    ASSERT_FALSE(atoms.setData(atoms.index(0, 4), "H"));
-    ASSERT_EQ(atoms.data(atoms.index(0, 4)).toString().toStdString(), "Missing");
-
-    auto type = dissolve.addAtomType(Elements::H);
-    ASSERT_EQ(type->name(), "H");
-
-    // Now we can add the atom type because it exists;
-    ASSERT_TRUE(atoms.setData(atoms.index(0, 4), "H"));
-    ASSERT_EQ(atoms.data(atoms.index(0, 4)).toString().toStdString(), "H");
 }
 
 TEST_F(XmlFFTest, XmlAll)
@@ -202,20 +190,19 @@ TEST_F(XmlFFTest, XmlAll)
     angleModel.readFile(doc.root());
     torsionModel.readFile(doc.root());
     improperModel.readFile(doc.root());
-    auto map = atomModel.toMap();
     std::vector<ForcefieldAtomType> atoms = atomModel.toVector();
-    std::vector<ForcefieldBondTerm> bonds = bondModel.toVector(map);
-    std::vector<ForcefieldAngleTerm> angles = angleModel.toVector(map);
-    std::vector<ForcefieldTorsionTerm> torsions = torsionModel.toVector(map);
-    std::vector<ForcefieldImproperTerm> impropers = improperModel.toVector(map);
+    std::vector<ForcefieldBondTerm> bonds = bondModel.toVector();
+    std::vector<ForcefieldAngleTerm> angles = angleModel.toVector();
+    std::vector<ForcefieldTorsionTerm> torsions = torsionModel.toVector();
+    std::vector<ForcefieldImproperTerm> impropers = improperModel.toVector();
     ASSERT_EQ(atoms.size(), 6);
     ASSERT_EQ(bonds.size(), 5);
     ASSERT_EQ(angles.size(), 7);
     ASSERT_EQ(torsions.size(), 3);
     ASSERT_EQ(impropers.size(), 2);
 
-    auto xmlFF = std::make_shared<Forcefield_XML>(atomModel.toVector(), bondModel.toVector(map), angleModel.toVector(map),
-                                                  torsionModel.toVector(map), improperModel.toVector(map));
+    auto xmlFF = std::make_shared<Forcefield_XML>(atomModel.toVector(), bondModel.toVector(), angleModel.toVector(),
+                                                  torsionModel.toVector(), improperModel.toVector());
     ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
 }
 

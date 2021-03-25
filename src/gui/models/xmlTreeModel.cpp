@@ -1,6 +1,7 @@
 #include "gui/models/xmlTreeModel.h"
 #include "classes/atomtype.h"
 #include "data/elements.h"
+#include "data/ff/xml/base.h"
 #include <QColor>
 #include <pugixml.hpp>
 
@@ -125,4 +126,10 @@ QModelIndex XmlTreeModel::index(int row, int column, const QModelIndex &parent) 
         return QModelIndex();
 
     return createIndex(row, column, child);
+}
+
+Forcefield_XML XmlTreeModel::toForcefield()
+{
+    return Forcefield_XML(atoms_.toVector(), bonds_.toVector(), angles_.toVector(), torsions_.toVector(),
+                          impropers_.toVector());
 }
