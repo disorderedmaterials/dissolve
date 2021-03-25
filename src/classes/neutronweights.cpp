@@ -10,8 +10,6 @@
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 #include "templates/algorithms.h"
-#include "templates/broadcastlist.h"
-#include "templates/broadcastvector.h"
 
 NeutronWeights::NeutronWeights()
 {

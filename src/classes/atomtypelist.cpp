@@ -3,16 +3,12 @@
 
 #include "classes/atomtypelist.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/isotopedata.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
-#include "templates/broadcastlist.h"
-#include "templates/broadcastvector.h"
 #include <algorithm>
-#include <string.h>
 
 AtomTypeList::AtomTypeList() {}
 

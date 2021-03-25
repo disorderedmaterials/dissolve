@@ -3,15 +3,11 @@
 
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/atomtypelist.h"
-#include "classes/coredata.h"
 #include "classes/isotopedata.h"
 #include "data/isotopes.h"
-#include "templates/broadcastlist.h"
-#include <string.h>
 
 AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
     : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
