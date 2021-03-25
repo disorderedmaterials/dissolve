@@ -50,9 +50,6 @@ Module DataTest
   EndData1D
 EndModule
 
-Module SanityCheck
-EndModule
-
 EndLayer
 
 PairPotentials

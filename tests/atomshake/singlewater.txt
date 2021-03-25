@@ -41,9 +41,6 @@ Layer  'Processing'
     Angle  2  1  3  113.24
   EndModule
 
-  Module SanityCheck
-  EndModule
-
 EndLayer
 
 # Pair Potentials

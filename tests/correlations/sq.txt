@@ -157,9 +157,6 @@ Data1D  'HDO//WeightedSQ//Total'  xy  '../_data/epsr25/water1000-neutron/water.E
 EndData1D
 EndModule
 
-Module SanityCheck
-EndModule
-
 EndLayer
 
 # Pair Potentials
