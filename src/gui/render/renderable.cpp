@@ -206,12 +206,8 @@ void Renderable::setValuesTransformEquation(std::string_view transformEquation)
 {
     valuesTransform_.setEquation(transformEquation);
 
-    // Make sure transformed data is up to date
     if (valuesTransform_.enabled())
-    {
         valuesTransformDataVersion_ = -1;
-        transformValues();
-    }
 }
 
 // Return values transform equation
@@ -225,9 +221,7 @@ void Renderable::setValuesTransformEnabled(bool enabled)
 {
     valuesTransform_.setEnabled(enabled);
 
-    // Make sure transformed data is up to date
     valuesTransformDataVersion_ = -1;
-    transformValues();
 }
 
 // Return whether values transform is enabled
@@ -322,23 +316,12 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
     // Grab copy of the relevant colour definition for this Renderable
     const ColourDefinition &colourDefinition = colour();
 
-    // Check whether the primitive for this Renderable needs updating
-    auto upToDate = true;
-    if (forceUpdate)
-        upToDate = false;
-    else if (lastAxesVersion_ != axes.version())
-        upToDate = false;
-    else if (!DissolveSys::sameString(
-                 lastColourDefinitionFingerprint_,
-                 fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()), true))
-        upToDate = false;
-    else if (lastDataVersion_ != dataVersion())
-        upToDate = false;
-    else if (lastStyleVersion_ != styleVersion())
-        upToDate = false;
-
-    // If the primitive is out of date, recreate it's data.
-    if (!upToDate)
+    // If the primitive is out of date, recreate it
+    if (forceUpdate || lastAxesVersion_ != axes.version() || lastDataVersion_ != dataVersion() ||
+        valuesTransformDataVersion_ != dataVersion() || lastStyleVersion_ != styleVersion() ||
+        !DissolveSys::sameString(lastColourDefinitionFingerprint_,
+                                 fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()),
+                                 true))
     {
         // Recreate Primitives for the underlying data
         recreatePrimitives(view, colourDefinition);
