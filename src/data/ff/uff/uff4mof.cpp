@@ -264,14 +264,16 @@ bool Forcefield_UFF4MOF::setUp()
          0.013, 12.0, 2.43, 3.76, 0.0, 0.7},
         {Elements::Co, 215, "Co3+2", "nbonds=4", "Cobalt (tetrahedral, oxidation state = +2)", 1.24, 109.47, 2.872, 0.014, 12.0,
          1.308, 4.105, 0.0, 0.7},
-        {Elements::Co, 216, "Co4+2", "nbonds=4, -[O(-C(-O)),N(ring(aromatic))]", "Cobalt (square planar, oxidation state = +3)",
-         1.16, 90.0, 2.872, 0.014, 12.0, 1.308, 4.105, 0.0, 0.7},
+        // {Elements::Co, 216, "Co4+2", "nbonds=4, -[O(-C(-O)), N(ring(aromatic))]", "Cobalt (square planar, oxidation state =
+        // +3)",
+        //  1.16, 90.0, 2.872, 0.014, 12.0, 1.308, 4.105, 0.0, 0.7},
         {Elements::Cu, 217, "Cu4+2", "nbonds=4, -O(-C(-O))", "Copper (square planar, oxidation state = +2)", 1.28, 90.0, 3.495,
          0.005, 12.0, 2.43, 4.2, 0.0, 0.7},
-        {Elements::Zn, 218, "Zn4+2", "nbonds=4, -[O(-C(-O)),N(ring(aromatic))]", "Zinc (square planar, oxidation state = +2)",
-         1.34, 90.0, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7},
-        {Elements::Zn, 219, "Zn3f2", "-[O(nbonds=4),N(ring(aromatic))]", "Zinc (tetrahedral, oxidation state = +2)", 1.24,
-         109.47, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7}
+        // {Elements::Zn, 218, "Zn4+2", "nbonds=4, -[O(-C(-O)), N(ring(aromatic))]", "Zinc (square planar, oxidation state =
+        // +2)",
+        //  1.34, 90.0, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7},
+        // {Elements::Zn, 219, "Zn3f2", "-[O(nbonds=4), N(ring(aromatic))]", "Zinc (tetrahedral, oxidation state = +2)", 1.24,
+        //  109.47, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7}
 
     };
 
