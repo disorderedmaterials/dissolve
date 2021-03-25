@@ -624,7 +624,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Processing Module Data
-    if (!processingModuleData_.serialiseAll(parser, coreData_, "Processing"))
+    if (!processingModuleData_.serialiseAll(parser, "Processing"))
         return false;
 
     // Configurations

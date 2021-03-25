@@ -33,6 +33,14 @@ class GenericItemDeserialiser
     std::unordered_map<std::type_index, DeserialiseFunction> deserialisers_;
 
     private:
+    template <class T> static bool simpleDeserialise(std::any &a, LineParser &parser, const CoreData &coreData)
+    {
+        return std::any_cast<T &>(a).deserialise(parser);
+    }
+    template <class T> static bool simpleDeserialiseCore(std::any &a, LineParser &parser, const CoreData &coreData)
+    {
+        return std::any_cast<T &>(a).deserialise(parser, coreData);
+    }
     // Register deserialiser for specific class
     template <class T> void registerDeserialiser(DeserialiseFunction func) { deserialisers_[typeid(T)] = std::move(func); }
     // Deserialise object of specified type

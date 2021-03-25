@@ -77,7 +77,7 @@ void GenericList::pruneWithSuffix(std::string_view suffix)
  */
 
 // Serialise all objects via the specified LineParser
-bool GenericList::serialiseAll(LineParser &parser, const CoreData &coreData, std::string_view headerPrefix) const
+bool GenericList::serialiseAll(LineParser &parser, std::string_view headerPrefix) const
 {
     for (auto &[key, value] : items_)
     {
@@ -91,7 +91,7 @@ bool GenericList::serialiseAll(LineParser &parser, const CoreData &coreData, std
 
         // Find a suitable serialiser and call it
         auto &data = std::get<GenericItem::AnyObject>(value);
-        if (!GenericItemSerialiser::serialise(data, parser, coreData))
+        if (!GenericItemSerialiser::serialise(data, parser))
             return Messenger::error(fmt::format("Serialisation of item '{}' failed.\n", key));
     }
 

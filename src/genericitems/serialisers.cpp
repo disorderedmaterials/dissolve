@@ -16,24 +16,20 @@
 GenericItemSerialiser::GenericItemSerialiser()
 {
     // PODs
-    registerSerialiser<bool>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<bool>([](const std::any &a, LineParser &parser) {
         return parser.writeLineF("{}\n", DissolveSys::btoa(std::any_cast<bool>(a)));
     });
-    registerSerialiser<double>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return parser.writeLineF("{}\n", std::any_cast<double>(a));
-    });
-    registerSerialiser<int>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return parser.writeLineF("{}\n", std::any_cast<int>(a));
-    });
+    registerSerialiser<double>(
+        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<double>(a)); });
+    registerSerialiser<int>(
+        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<int>(a)); });
 
     // stdlib
-    registerSerialiser<std::string>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return parser.writeLineF("{}\n", std::any_cast<std::string>(a));
-    });
-    registerSerialiser<std::streampos>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return parser.writeLineF("{}\n", std::any_cast<std::streampos>(a));
-    });
-    registerSerialiser<std::vector<double>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<std::string>(
+        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<std::string>(a)); });
+    registerSerialiser<std::streampos>(
+        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<std::streampos>(a)); });
+    registerSerialiser<std::vector<double>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const std::vector<double> &>(a);
         if (!parser.writeLineF("{}\n", v.size()))
             return false;
@@ -44,7 +40,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     });
 
     // Custom Classes
-    registerSerialiser<Array<double>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<Array<double>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array<double> &>(a);
         if (!parser.writeLineF("{}\n", v.nItems()))
             return false;
@@ -53,7 +49,7 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<Array<SampledDouble>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<Array<SampledDouble>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array<SampledDouble> &>(a);
         if (!parser.writeLineF("{}\n", v.nItems()))
             return false;
@@ -62,7 +58,7 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<Array<Vec3<double>>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<Array<Vec3<double>>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array<Vec3<double>> &>(a);
         if (!parser.writeLineF("{}\n", v.nItems()))
             return false;
@@ -71,7 +67,7 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<Array2D<char>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<Array2D<char>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array2D<char> &>(a);
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
@@ -80,7 +76,7 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<Array2D<double>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<Array2D<double>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array2D<double> &>(a);
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
@@ -89,16 +85,16 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<Array2D<std::vector<double>>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<Array2D<std::vector<double>>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array2D<std::vector<double>> &>(a);
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
         for (auto &data : v)
-            if (!GenericItemSerialiser::serialise<std::vector<double>>(data, parser, coreData))
+            if (!GenericItemSerialiser::serialise<std::vector<double>>(data, parser))
                 return false;
         return true;
     });
-    registerSerialiser<Array2D<Data1D>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<Array2D<Data1D>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array2D<Data1D> &>(a);
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
@@ -107,43 +103,21 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<AtomTypeList>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const AtomTypeList &>(a).serialise(parser);
-    });
-    registerSerialiser<Data1D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Data1D &>(a).serialise(parser);
-    });
-    registerSerialiser<Data2D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Data2D &>(a).serialise(parser);
-    });
-    registerSerialiser<Data3D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Data3D &>(a).serialise(parser);
-    });
-    registerSerialiser<Histogram1D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Histogram1D &>(a).serialise(parser);
-    });
-    registerSerialiser<Histogram2D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Histogram2D &>(a).serialise(parser);
-    });
-    registerSerialiser<Histogram3D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Histogram3D &>(a).serialise(parser);
-    });
-    registerSerialiser<NeutronWeights>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const NeutronWeights &>(a).serialise(parser);
-    });
-    registerSerialiser<PartialSet>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const PartialSet &>(a).serialise(parser);
-    });
-    registerSerialiser<SampledDouble>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const SampledDouble &>(a).serialise(parser);
-    });
-    registerSerialiser<Vec3<int>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
+    registerSerialiser<AtomTypeList>(simpleSerialise<AtomTypeList>);
+    registerSerialiser<Data1D>(simpleSerialise<Data1D>);
+    registerSerialiser<Data2D>(simpleSerialise<Data2D>);
+    registerSerialiser<Data3D>(simpleSerialise<Data3D>);
+    registerSerialiser<Histogram1D>(simpleSerialise<Histogram1D>);
+    registerSerialiser<Histogram2D>(simpleSerialise<Histogram2D>);
+    registerSerialiser<Histogram3D>(simpleSerialise<Histogram3D>);
+    registerSerialiser<NeutronWeights>(simpleSerialise<NeutronWeights>);
+    registerSerialiser<PartialSet>(simpleSerialise<PartialSet>);
+    registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
+    registerSerialiser<Vec3<int>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Vec3<int> &>(a);
         return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
     });
-    registerSerialiser<XRayWeights>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const XRayWeights &>(a).serialise(parser);
-    });
+    registerSerialiser<XRayWeights>(simpleSerialise<XRayWeights>);
 }
 
 /*
@@ -163,7 +137,7 @@ const GenericItemSerialiser &GenericItemSerialiser::instance()
  */
 
 // Serialise object of specified type
-bool GenericItemSerialiser::serialiseObject(const std::any &a, LineParser &parser, const CoreData &coreData) const
+bool GenericItemSerialiser::serialiseObject(const std::any &a, LineParser &parser) const
 {
     // Find a suitable serialiser and call it
     auto it = serialisers_.find(a.type());
@@ -171,7 +145,7 @@ bool GenericItemSerialiser::serialiseObject(const std::any &a, LineParser &parse
         throw(std::runtime_error(fmt::format(
             "Item of type '{}' cannot be serialised as no suitable serialiser has been registered.\n", a.type().name())));
 
-    return (it->second)(a, parser, coreData);
+    return (it->second)(a, parser);
 }
 
 /*
@@ -179,12 +153,4 @@ bool GenericItemSerialiser::serialiseObject(const std::any &a, LineParser &parse
  */
 
 // Serialise supplied object
-bool GenericItemSerialiser::serialise(const std::any &a, LineParser &parser)
-{
-    static CoreData dummyCoreData;
-    return serialise(a, parser, dummyCoreData);
-}
-bool GenericItemSerialiser::serialise(const std::any &a, LineParser &parser, const CoreData &coreData)
-{
-    return instance().serialiseObject(a, parser, coreData);
-}
+bool GenericItemSerialiser::serialise(const std::any &a, LineParser &parser) { return instance().serialiseObject(a, parser); }
