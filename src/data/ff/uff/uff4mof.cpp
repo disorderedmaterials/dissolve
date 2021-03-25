@@ -274,6 +274,8 @@ bool Forcefield_UFF4MOF::setUp()
         //  1.34, 90.0, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7},
         // {Elements::Zn, 219, "Zn3f2", "-[O(nbonds=4), N(ring(aromatic))]", "Zinc (tetrahedral, oxidation state = +2)", 1.24,
         //  109.47, 2.763, 0.124, 12.0, 1.308, 5.106, 0.0, 0.7}
+        {Elements::Zn, 219, "Zn3f2", "-O(nbonds=4)", "Zinc (tetrahedral, oxidation state = +2)", 1.24, 109.47, 2.763, 0.124,
+         12.0, 1.308, 5.106, 0.0, 0.7}
 
     };
 
