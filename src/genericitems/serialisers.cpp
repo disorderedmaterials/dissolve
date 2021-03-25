@@ -34,7 +34,7 @@ GenericItemSerialiser::GenericItemSerialiser()
         if (!parser.writeLineF("{}\n", v.size()))
             return false;
         for (auto &n : v)
-            if (!parser.writeLineF("{:16.9e}\n", n))
+            if (!parser.writeLineF("{}\n", n))
                 return false;
         return true;
     });
@@ -45,7 +45,7 @@ GenericItemSerialiser::GenericItemSerialiser()
         if (!parser.writeLineF("{}\n", v.nItems()))
             return false;
         for (auto n = 0; n < v.nItems(); ++n)
-            if (!parser.writeLineF("{:16.9e}\n", v.at(n)))
+            if (!parser.writeLineF("{}\n", v.at(n)))
                 return false;
         return true;
     });
