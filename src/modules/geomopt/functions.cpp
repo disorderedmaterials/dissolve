@@ -73,14 +73,17 @@ double GeometryOptimisationModule::gradientStepSize()
 }
 
 // Sort bounds / energies so that minimum energy is in the central position
-void GeometryOptimisationModule::sortBoundsAndEnergies(Vec3<double> &bounds, Vec3<double> &energies)
+void GeometryOptimisationModule::sortBoundsAndEnergies(std::array<double, 3> &bounds, std::array<double, 3> &energies)
 {
-    // Ensure that the energy minimum is the midpoint
-    auto minVal = energies.minElement();
-    if (minVal != 1)
+    if (energies[0] < energies[1])
     {
-        energies.swap(1, minVal);
-        bounds.swap(1, minVal);
+        std::swap(energies[1], energies[0]);
+        std::swap(bounds[1], bounds[0]);
+    }
+    if (energies[2] < energies[1])
+    {
+        std::swap(energies[1], energies[2]);
+        std::swap(bounds[1], bounds[2]);
     }
 }
 

@@ -77,27 +77,27 @@ class GeometryOptimisationModule : public Module
     // Determine suitable step size from current forces
     double gradientStepSize();
     // Sort bounds / energies so that minimum energy is in the central position
-    void sortBoundsAndEnergies(Vec3<double> &bounds, Vec3<double> &energies);
+    void sortBoundsAndEnergies(std::array<double, 3> &bounds, std::array<double, 3> &energies);
     // Return energy of adjusted coordinates, following the force vectors by the supplied amount
     template <class T>
     double energyAtGradientPoint(ProcessPool &procPool, T *target, const PotentialMap &potentialMap, double delta);
     // Perform Golden Search within specified bounds
     template <class T>
     double goldenSearch(ProcessPool &procPool, T *target, const PotentialMap &potentialMap, const double tolerance,
-                        Vec3<double> &bounds, Vec3<double> &energies, int &nPointsAccepted)
+                        std::array<double, 3> &bounds, std::array<double, 3> &energies, int &nPointsAccepted)
     {
         // Ensure that the energy minimum is the midpoint
         sortBoundsAndEnergies(bounds, energies);
 
         // Check convergence, ready for early return
-        if (fabs(bounds.x - bounds.z) < tolerance)
-            return energies.y;
+        if (fabs(bounds[0] - bounds[2]) < tolerance)
+            return energies[1];
 
         // Calculate deltas between bound values
         auto dxy = bounds[0] - bounds[1];
         auto dyz = bounds[2] - bounds[1];
-        Messenger::printVerbose("Trying Golden Search -  {}-{}-{}, dxy = {:12.5e}, dyz = {:12.5e}", bounds.x, bounds.y,
-                                bounds.z, dxy, dyz);
+        Messenger::printVerbose("Trying Golden Search -  {}-{}-{}, dxy = {:12.5e}, dyz = {:12.5e}", bounds[0], bounds[1],
+                                bounds[2], dxy, dyz);
 
         // Select largest of two intervals to be the target of the search
         auto xyLargest = fabs(dxy) > fabs(dyz);
@@ -131,7 +131,7 @@ class GeometryOptimisationModule : public Module
         // Nothing better than the current central energy value, so revert to the stored reference coordinates
         revertToReferenceCoordinates(target);
 
-        return energies.y;
+        return energies[1];
     }
     // Line minimise supplied target from the reference coordinates along the stored force vectors
     template <class T>
@@ -141,13 +141,10 @@ class GeometryOptimisationModule : public Module
         // Brent-style line minimiser with parabolic interpolation and Golden Search backup
 
         // Set initial bounding values
-        Vec3<double> bounds, energies;
-        bounds.x = 0.0;
-        energies.x = EnergyModule::totalEnergy(procPool, target, potentialMap);
-        bounds.y = stepSize;
-        energies.y = energyAtGradientPoint(procPool, target, potentialMap, bounds.y);
-        bounds.z = 2.0 * stepSize;
-        energies.z = energyAtGradientPoint(procPool, target, potentialMap, bounds.z);
+        std::array<double, 3> bounds{0.0, stepSize, 2.0 * stepSize};
+        std::array<double, 3> energies{EnergyModule::totalEnergy(procPool, target, potentialMap),
+                                       energyAtGradientPoint(procPool, target, potentialMap, bounds[1]),
+                                       energyAtGradientPoint(procPool, target, potentialMap, bounds[2])};
 
         Messenger::printVerbose(
             "Initial bounding values/energies = {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e})", bounds[0],
@@ -184,8 +181,8 @@ class GeometryOptimisationModule : public Module
 
                 // Overwrite the largest of bounds[0] and bounds[2] with the old minimum
                 auto largest = energies[2] > energies[0] ? 2 : 0;
-                bounds.swap(1, largest);
-                energies.swap(1, largest);
+                std::swap(bounds[1], bounds[largest]);
+                std::swap(energies[1], energies[largest]);
 
                 // Set the new central values
                 bounds[1] = newBound;
@@ -222,16 +219,16 @@ class GeometryOptimisationModule : public Module
         sortBoundsAndEnergies(bounds, energies);
 
         // Set an updated step size based on the current bounds
-        stepSize = (bounds.x + bounds.y + bounds.z);
+        stepSize = bounds[0] + bounds[1] + bounds[2];
 
-        energyAtGradientPoint(procPool, target, potentialMap, bounds.y);
+        energyAtGradientPoint(procPool, target, potentialMap, bounds[1]);
 
-        return energies.y;
+        return energies[1];
     }
     // Geometry optimise the target object
     template <class T> void optimise(Dissolve &dissolve, ProcessPool &procPool, T *target)
     {
-        const auto nStepSizeResetsAllowed = 5;
+        const auto nStepSizeResetsAllowed = 0;
 
         // Get the initial energy and forces of the Configuration
         auto oldEnergy = EnergyModule::totalEnergy(procPool, target, dissolve.potentialMap());
