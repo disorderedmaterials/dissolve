@@ -60,13 +60,4 @@ class SampledVector
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check equality of all data
-    bool equality(ProcessPool &procPool);
 };

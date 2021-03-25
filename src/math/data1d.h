@@ -107,13 +107,4 @@ class Data1D : public PlottableData
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

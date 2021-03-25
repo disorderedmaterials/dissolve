@@ -33,11 +33,4 @@ class VersionCounter
     operator int() const;
     // Prefix increment
     int operator++();
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const int root);
 };

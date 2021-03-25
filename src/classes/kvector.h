@@ -58,17 +58,4 @@ class KVector
     void calculateIntensities(BraggReflection *reflectionArray);
     // Return specified intensity
     double intensity(int typeI, int typeJ);
-
-    /*
-     * Serialisation
-     */
-    public:
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from root to all other processes
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

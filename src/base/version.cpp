@@ -24,17 +24,3 @@ VersionCounter::operator int() const { return version_; }
 
 // Prefix increment
 int VersionCounter::operator++() { return (++version_); }
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool VersionCounter::broadcast(ProcessPool &procPool, const int root)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(version_, root))
-        return false;
-#endif
-    return true;
-}

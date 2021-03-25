@@ -183,10 +183,10 @@ double Configuration::temperature() const { return temperature_; }
  */
 
 // Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(Array<int> worldRanks, int groupPopulation)
+bool Configuration::setUpProcessPool(Array<int> worldRanks)
 {
     // Create pool
-    processPool_.setUp(name_, worldRanks, groupPopulation);
+    processPool_.setUp(name_, worldRanks);
 
     // Assign processes, and
     if (!processPool_.assignProcessesToGroups())
@@ -198,40 +198,3 @@ bool Configuration::setUpProcessPool(Array<int> worldRanks, int groupPopulation)
 
 // Return process pool for this Configuration
 ProcessPool &Configuration::processPool() { return processPool_; }
-
-// Broadcast coordinate from specified root process
-bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
-{
-#ifdef PARALLEL
-    std::vector<double> x, y, z;
-    x.resize(atoms_.size());
-    y.resize(atoms_.size());
-    z.resize(atoms_.size());
-
-    // Master assembles Atom coordinate arrays...
-    if (procPool.poolRank() == rootRank)
-    {
-        Messenger::printVerbose("Process rank {} is assembling coordinate data...\n", procPool.poolRank());
-        std::transform(atoms_.begin(), atoms_.end(), x.begin(), [](const auto &atom) { return atom->r().x; });
-        std::transform(atoms_.begin(), atoms_.end(), y.begin(), [](const auto &atom) { return atom->r().y; });
-        std::transform(atoms_.begin(), atoms_.end(), z.begin(), [](const auto &atom) { return atom->r().z; });
-    }
-
-    if (!procPool.broadcast(x, rootRank))
-        return false;
-    if (!procPool.broadcast(y, rootRank))
-        return false;
-    if (!procPool.broadcast(z, rootRank))
-        return false;
-
-    // Slaves then store values into Atoms, updating related info as we go
-    if (procPool.isSlave())
-        for (auto n = 0; n < atoms_.size(); ++n)
-            atoms_[n]->setCoordinates(x[n], y[n], z[n]);
-
-    // Broadcast contents version
-    if (!contentsVersion_.broadcast(procPool, rootRank))
-        return false;
-#endif
-    return true;
-}

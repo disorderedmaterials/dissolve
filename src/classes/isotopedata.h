@@ -56,13 +56,4 @@ class IsotopeData : public ListItem<IsotopeData>
     bool serialise(LineParser &parser) const;
     // Read data through specified LineParser
     bool deserialise(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

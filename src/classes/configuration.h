@@ -224,9 +224,7 @@ class Configuration : public ListItem<Configuration>
 
     public:
     // Set up process pool for this Configuration
-    bool setUpProcessPool(Array<int> worldRanks, int groupPopulation);
+    bool setUpProcessPool(Array<int> worldRanks);
     // Return process pool for this Configuration
     ProcessPool &processPool();
-    // Broadcast coordinate from specified root process
-    bool broadcastCoordinates(ProcessPool &procPool, int rootRank);
 };

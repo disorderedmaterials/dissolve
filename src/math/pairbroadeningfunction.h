@@ -81,13 +81,4 @@ class PairBroadeningFunction
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };
