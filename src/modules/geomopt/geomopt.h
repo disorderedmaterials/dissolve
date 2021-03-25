@@ -7,6 +7,7 @@
 #include "module/module.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
+#include <array>
 
 // Forward Declarations
 class PotentialMap;
