@@ -128,8 +128,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     void validateRenderables(const GenericList &source);
     // Return list of Renderables
     const std::vector<std::shared_ptr<Renderable>> &renderables() const;
-    // Return Renderable with specified objectTag (if it exists)
-    std::shared_ptr<Renderable> renderableWithTag(std::string_view objectTag) const;
+    // Return Renderable with specified tag (if it exists)
+    std::shared_ptr<Renderable> renderableWithTag(std::string_view tag) const;
     // Emit the signal to notify that the viewing style of data represented in the Viewer has changed
     void notifyStyleModified();
     // Emit the signal to notify that the data has changed

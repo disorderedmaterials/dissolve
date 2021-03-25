@@ -24,7 +24,7 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
                                                                  {Renderable::SpeciesSiteRenderable, "SpeciesSite"}});
 }
 
-Renderable::Renderable(Renderable::RenderableType type, std::string_view objectTag)
+Renderable::Renderable(Renderable::RenderableType type, std::string_view tag)
 {
     // Instance
     instances_.append(this);
@@ -34,7 +34,7 @@ Renderable::Renderable(Renderable::RenderableType type, std::string_view objectT
     name_ = "New Renderable";
 
     // Data tag
-    objectTag_ = objectTag;
+    tag_ = tag;
 
     // Group
     group_ = std::nullopt;
@@ -97,7 +97,7 @@ void Renderable::setSourceDataAccessEnabled(bool b) { sourceDataAccessEnabled_ =
 bool Renderable::sourceDataAccessEnabled() { return sourceDataAccessEnabled_; }
 
 // Return identifying tag for source data object
-std::string_view Renderable::objectTag() const { return objectTag_; }
+std::string_view Renderable::tag() const { return tag_; }
 
 // Validate all renderables
 void Renderable::validateAll(const GenericList &source)
@@ -107,12 +107,12 @@ void Renderable::validateAll(const GenericList &source)
 }
 
 // Invalidate renderable data for specified object tag
-int Renderable::invalidate(std::string_view objectTag)
+int Renderable::invalidate(std::string_view tag)
 {
     auto count = 0;
     for (Renderable *rend : instances_)
     {
-        if (objectTag != rend->objectTag_)
+        if (tag != rend->tag_)
             continue;
 
         rend->invalidateDataSource();

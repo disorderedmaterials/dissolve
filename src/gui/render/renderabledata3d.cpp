@@ -18,8 +18,8 @@ RenderableData3D::RenderableData3D(const Data3D &source)
     dataPrimitive_ = createPrimitive();
 }
 
-RenderableData3D::RenderableData3D(std::string_view objectTag)
-    : Renderable(Renderable::Data3DRenderable, objectTag), displayStyle_(SolidStyle), lowerCutoff_(0.0), upperCutoff_(1.0),
+RenderableData3D::RenderableData3D(std::string_view tag)
+    : Renderable(Renderable::Data3DRenderable, tag), displayStyle_(SolidStyle), lowerCutoff_(0.0), upperCutoff_(1.0),
       surfaceShininess_(128.0)
 {
     dataPrimitive_ = createPrimitive();
@@ -42,7 +42,7 @@ void RenderableData3D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = sourceList.value<Data3D>(objectTag_);
+    source_ = sourceList.search<Data3D>(tag_);
 }
 
 // Invalidate the current data source

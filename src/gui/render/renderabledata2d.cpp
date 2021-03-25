@@ -16,8 +16,8 @@ RenderableData2D::RenderableData2D(const Data2D &source)
     colour().setStyle(ColourDefinition::HSVGradientStyle);
 }
 
-RenderableData2D::RenderableData2D(std::string_view objectTag)
-    : Renderable(Renderable::Data2DRenderable, objectTag), displayStyle_(LinesStyle)
+RenderableData2D::RenderableData2D(std::string_view tag)
+    : Renderable(Renderable::Data2DRenderable, tag), displayStyle_(LinesStyle)
 {
     colour().setStyle(ColourDefinition::HSVGradientStyle);
 }
@@ -39,7 +39,7 @@ void RenderableData2D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = sourceList.search<Data2D>(objectTag_);
+    source_ = sourceList.search<Data2D>(tag_);
 }
 
 // Invalidate the current data source

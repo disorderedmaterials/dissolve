@@ -88,5 +88,5 @@ class Gizmo : public ListItem<Gizmo>
     // Return all Gizmos that accept data of the specified type
     static RefList<Gizmo> allThatAccept(const QString &ataType);
     // Send data (referenced by its object tag) to the Gizmo
-    virtual bool sendData(const QString &dataType, std::string_view objectTag, std::string_view name = "");
+    virtual bool sendData(const QString &dataType, std::string_view tag, std::string_view name = "");
 };

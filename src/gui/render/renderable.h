@@ -32,7 +32,7 @@ class Renderable
     };
     // Return enum options for RenderableType
     static EnumOptions<RenderableType> renderableTypes();
-    Renderable(RenderableType type, std::string_view objectTag);
+    Renderable(RenderableType type, std::string_view tag);
     virtual ~Renderable();
 
     /*
@@ -66,7 +66,7 @@ class Renderable
     // Whether access to source data is currently enabled
     static bool sourceDataAccessEnabled_;
     // Identifying tag for source data object
-    std::string objectTag_;
+    std::string tag_;
     // Equation transformer for values
     Transformer valuesTransform_;
     // Coordinate limits of all data (after value transform if enabled)
@@ -94,11 +94,11 @@ class Renderable
     // Return whether access to source data is currently enabled
     static bool sourceDataAccessEnabled();
     // Return identifying tag for source data object
-    std::string_view objectTag() const;
+    std::string_view tag() const;
     // Validate all renderables
     static void validateAll(const GenericList &source);
     // Invalidate renderable data for specified object tag
-    static int invalidate(std::string_view objectTag);
+    static int invalidate(std::string_view tag);
     // Invalidate all renderables
     static void invalidateAll();
     // Return version of data

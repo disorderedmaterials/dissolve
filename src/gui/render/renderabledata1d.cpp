@@ -13,8 +13,8 @@ RenderableData1D::RenderableData1D(const Data1D &source)
     dataPrimitive_ = createPrimitive();
 }
 
-RenderableData1D::RenderableData1D(std::string_view objectTag)
-    : Renderable(Renderable::Data1DRenderable, objectTag), displayStyle_(LinesStyle)
+RenderableData1D::RenderableData1D(std::string_view tag)
+    : Renderable(Renderable::Data1DRenderable, tag), displayStyle_(LinesStyle)
 {
     dataPrimitive_ = createPrimitive();
 }
@@ -35,8 +35,8 @@ void RenderableData1D::validateDataSource(const GenericList &sourceList)
 
     if (source_)
         return;
-    
-    source_ = sourceList.search<Data1D>(objectTag_);
+
+    source_ = sourceList.search<Data1D>(tag_);
 }
 
 // Invalidate the current data source

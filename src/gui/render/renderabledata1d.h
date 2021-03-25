@@ -14,7 +14,7 @@ class RenderableData1D : public Renderable
 {
     public:
     RenderableData1D(const Data1D &source);
-    RenderableData1D(std::string_view objectTag);
+    RenderableData1D(std::string_view tag);
     ~RenderableData1D() = default;
 
     /*

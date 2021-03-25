@@ -94,7 +94,7 @@ void DissolveWindow::on_SimulationClearModuleDataAction_triggered(bool checked)
 
     if (ret == QMessageBox::Yes)
     {
-        // Invalidate all renderables before we clear the data
+        // Invalidate all renderables before we clear the dataz
         Renderable::invalidateAll();
 
         // Clear main processing data

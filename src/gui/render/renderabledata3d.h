@@ -14,7 +14,7 @@ class RenderableData3D : public Renderable
 {
     public:
     RenderableData3D(const Data3D &source);
-    RenderableData3D(std::string_view objectTag);
+    RenderableData3D(std::string_view tag);
     ~RenderableData3D() = default;
 
     /*

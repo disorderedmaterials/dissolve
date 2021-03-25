@@ -14,7 +14,7 @@ class RenderableData2D : public Renderable
 {
     public:
     RenderableData2D(const Data2D &source);
-    RenderableData2D(std::string_view objectTag);
+    RenderableData2D(std::string_view tag);
     ~RenderableData2D() = default;
 
     /*

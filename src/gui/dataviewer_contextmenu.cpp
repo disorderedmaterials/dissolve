@@ -143,7 +143,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 return;
             destination->sendData(
                 QString::fromStdString(std::string(Renderable::renderableTypes().keyword(renderable->type()))),
-                renderable->objectTag(), renderable->name());
+                renderable->tag(), renderable->name());
         }
         else if (selectedAction == removeAction)
             removeRenderable(renderable);
