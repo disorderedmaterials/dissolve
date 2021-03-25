@@ -217,7 +217,7 @@ bool ProcessPool::groupLeader() const { return (groupRank_ == 0); }
  */
 
 // Set up pool with world ranks specified
-bool ProcessPool::setUp(std::string_view name, Array<int> worldRanks, int groupPopulation)
+bool ProcessPool::setUp(std::string_view name, Array<int> worldRanks)
 {
     clear();
 
@@ -240,20 +240,7 @@ bool ProcessPool::setUp(std::string_view name, Array<int> worldRanks, int groupP
     }
 
     // Set default maximum number of groups
-    switch (groupPopulation)
-    {
-        case (ProcessPool::MaximumGroupPopulation):
-            maxProcessGroups_ = worldRanks_.nItems();
-            break;
-        case (ProcessPool::MinimumGroupPopulation):
-            maxProcessGroups_ = 1;
-            break;
-        case (ProcessPool::HalfMaximumGroupPopulation):
-            maxProcessGroups_ = worldRanks_.nItems() / 2;
-            break;
-        default:
-            maxProcessGroups_ = groupPopulation;
-    }
+    maxProcessGroups_ = worldRanks_.nItems();
 
     Messenger::print("There are {} processes in pool '{}' (max groups = {}).\n", worldRanks_.nItems(), name_,
                      maxProcessGroups_);
@@ -447,7 +434,7 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool &groupsSource)
     processGroups_.clear();
 
     // Copy over the number of allowable groups from the source ProcessPool
-    maxProcessGroups_ = groupsSource.maxProcessGroups_;
+    maxProcessGroups_ = 1;
     if (!assignProcessesToGroups())
     {
         Messenger::error("Failed to re-assign processes to groups in this ProcessPool.\n");

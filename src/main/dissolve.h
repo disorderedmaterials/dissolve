@@ -342,31 +342,6 @@ class Dissolve
      * Parallel Comms
      */
     public:
-    // Parallel Strategy
-    enum ParallelStrategy
-    {
-        SequentialConfigStrategy,
-        EvenStrategy,
-        nParallelStrategies
-    };
-    // Convert string to ParallelStrategy
-    static ParallelStrategy parallelStrategy(std::string_view s);
-
-    private:
-    // Parallel strategy for Configuration work
-    ParallelStrategy parallelStrategy_;
-    // Default process group population (per Configuration)
-    int parallelGroupPopulation_;
-
-    public:
-    // Set parallel strategy for Configuration work
-    void setParallelStrategy(ParallelStrategy ps);
-    // Return parallel strategy for Configuration work
-    ParallelStrategy parallelStrategy() const;
-    // Set default process group population (per Configuration)
-    void setParallelGroupPopulation(int groupPopulation);
-    // Return default process group population (per Configuration)
-    int parallelGroupPopulation() const;
     // Return world process pool
     ProcessPool &worldPool();
     // Set up local MPI pools

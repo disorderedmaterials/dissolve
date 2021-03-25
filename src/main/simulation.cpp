@@ -94,16 +94,6 @@ bool Dissolve::prepare()
 // Iterate main simulation
 bool Dissolve::iterate(int nIterations)
 {
-    /*
-     * This is the main program loop. We perform the following steps:
-     *
-     *  1)	Run all Modules assigned to Configurations using individual parallel strategies for Configurations
-     *  2)	Reassemble Configuration data on all processes
-     *  3)	Run all processing Modules using all processes available (worldPool_)
-     *  4)	Run analysis processing Modules
-     *  5)	Write restart file (master process only)
-     */
-
     iterationTimer_.zero();
     iterationTimer_.start();
 
@@ -178,23 +168,7 @@ bool Dissolve::iterate(int nIterations)
         worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
-         *  2)	Reassemble data on all nodes.
-         */
-        Messenger::banner("Reassemble Data");
-        // Loop over Configurations
-        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
-        {
-            Messenger::printVerbose("Broadcasting data for Configuration '{}'...\n", cfg->name());
-            if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank()))
-                return false;
-        }
-
-        // Sync up all processes
-        Messenger::printVerbose("Waiting for other processes at end of data reassembly...\n");
-        worldPool().wait(ProcessPool::PoolProcessesCommunicator);
-
-        /*
-         *  3)	Run processing Modules (using the world pool).
+         *  2)	Run processing Modules (using the world pool).
          */
         processingLayerIterator.restart();
         while (ModuleLayer *layer = processingLayerIterator.iterate())
@@ -229,31 +203,22 @@ bool Dissolve::iterate(int nIterations)
         worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
-         *  5)	Write restart file.
+         *  4)	Write restart file.
          */
         if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0))
         {
             Messenger::banner("Write Restart File");
 
-            /*
-             * Flag other data for inclusion in restart file
-             */
-
-            // Iteration number
+            // Flag other data for inclusion in restart file
+            // -- Iteration number
             processingModuleData_.realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
-
-            // Pair Potentials
+            // -- Pair Potentials
             for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
             {
-
                 processingModuleData_.realise<Data1D>(
                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
                     GenericItem::InRestartFileFlag) = pot->uAdditional();
             }
-
-            /*
-             * Write Restart File
-             */
 
             // If a restart filename isn't currently set, generate one now.
             if (restartFilename_.empty())
