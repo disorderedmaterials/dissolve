@@ -22,8 +22,6 @@ stages:
           - template: templates/build-linux-serial-gui.yml
             parameters:
               extraflags: '-DBUILD_TESTS:bool=true'
-              ppa: 'beineri/opt-qt-5.13.2-bionic'
-              qtver: 513
           - template: templates/package-linux-serial-gui.yml
           - task: PublishBuildArtifacts@1
             inputs:
