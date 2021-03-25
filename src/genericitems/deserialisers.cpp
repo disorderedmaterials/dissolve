@@ -137,19 +137,8 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         auto nRows = parser.argi(0), nColumns = parser.argi(1);
         v.initialise(nRows, nColumns, parser.argb(2));
         for (auto &data : v)
-        {
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            auto nItems = parser.argi(0);
-            data.clear();
-            data.resize(nItems);
-            for (auto &n : data)
-            {
-                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                    return false;
-                n = parser.argd(0);
-            }
-        }
+          if (!deserializeObject<std::vector<double>>(data, parser, coreData))
+              return false;
         return true;
     });
     registerDeserialiser<Array2D<Data1D>>([](std::any &a, LineParser &parser, const CoreData &coreData) {

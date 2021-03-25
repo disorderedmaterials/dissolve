@@ -99,11 +99,8 @@ GenericItemSerialiser::GenericItemSerialiser()
             return false;
         for (auto &data : v)
         {
-            if (!parser.writeLineF("{}\n", data.size()))
+            if (!serialiseObject(data, parser, coreData))
                 return false;
-            for (auto &n : data)
-                if (!parser.writeLineF("{:16.9e}\n", n))
-                    return false;
         }
         return true;
     });
