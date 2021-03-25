@@ -13,17 +13,11 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * This is a serial routine.
      */
 
-    // Get options and target Module
+    // Get options
     const auto testThreshold = keywords_.asDouble("Threshold");
     auto errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
-    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Target");
-    auto *targetModule = targets.size() == 1 ? targets.front() : nullptr;
 
     // Print summary
-    if (!targetModule)
-        Messenger::print("DataTest: No target Module specified for data location - only tags will be searched.\n");
-    else
-        Messenger::print("DataTest: Target Module '{}' will be used as search prefix for data.\n", targetModule->uniqueName());
     Messenger::print("DataTest: Error calculation is '{}', threshold is {:e}.", Error::errorTypes().keyword(errorType),
                      testThreshold);
     Messenger::print("\n");
@@ -32,16 +26,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     for (auto &[referenceData, format] : test1DData_.data())
     {
         // Locate the target reference data
-        const auto optData =
-            findReferenceData<const Data1D>(referenceData.tag(), targetModule, dissolve.processingModuleData());
+        auto optData = dissolve.processingModuleData().search<const Data1D>(referenceData.tag());
         if (!optData)
-        {
-            if (targetModule)
-                return Messenger::error("No data named '{}_{}' or '{}', or tagged '{}', exists.\n", targetModule->uniqueName(),
-                                        referenceData.tag(), referenceData.tag(), referenceData.tag());
-            else
-                return Messenger::error("No data with name '{}' exists.\n", referenceData.tag());
-        }
+            return Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
         const Data1D &data = *optData;
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
@@ -57,16 +44,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     for (auto &[referenceData, format] : test2DData_.data())
     {
         // Locate the target reference data
-        const auto optData =
-            findReferenceData<const Data2D>(referenceData.tag(), targetModule, dissolve.processingModuleData());
+        auto optData = dissolve.processingModuleData().search<const Data2D>(referenceData.tag());
         if (!optData)
-        {
-            if (targetModule)
-                return Messenger::error("No data named '{}_{}' or '{}', or tagged '{}', exists.\n", targetModule->uniqueName(),
-                                        referenceData.tag(), referenceData.tag(), referenceData.tag());
-            else
-                return Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
-        }
+            return Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
         const Data2D &data = *optData;
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
