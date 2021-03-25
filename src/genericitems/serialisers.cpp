@@ -76,10 +76,8 @@ GenericItemSerialiser::GenericItemSerialiser()
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
         for (auto &n : v)
-        {
             if (!parser.writeLineF("{}\n", n ? 'T' : 'F'))
                 return false;
-        }
         return true;
     });
     registerSerialiser<Array2D<double>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
@@ -87,10 +85,8 @@ GenericItemSerialiser::GenericItemSerialiser()
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
         for (auto &n : v)
-        {
             if (!parser.writeLineF("{}\n", n))
                 return false;
-        }
         return true;
     });
     registerSerialiser<Array2D<std::vector<double>>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
@@ -98,10 +94,8 @@ GenericItemSerialiser::GenericItemSerialiser()
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
         for (auto &data : v)
-        {
-            if (!serialiseObject(data, parser, coreData))
+            if (!GenericItemSerialiser::serialise<std::vector<double>>(data, parser, coreData))
                 return false;
-        }
         return true;
     });
     registerSerialiser<Array2D<Data1D>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
