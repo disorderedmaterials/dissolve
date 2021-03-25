@@ -82,6 +82,7 @@ void ImportForcefieldWizard::xmlString(QString fileName)
     {
         auto root = doc.root();
 
+	ff_.readFile(root);
         // atoms_.readFile(root);
         // bonds_.readFile(root);
         // angles_.readFile(root);

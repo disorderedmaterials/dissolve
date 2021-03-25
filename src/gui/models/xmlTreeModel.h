@@ -4,6 +4,7 @@
 #pragma once
 
 #include "data/ff/atomtype.h"
+#include "gui/models/xmlBondModel.h"
 #include "main/dissolve.h"
 
 #include <QAbstractTableModel>
@@ -32,6 +33,7 @@ class XmlTreeModel : public QAbstractItemModel
     const Dissolve &dissolve_;
     pugi::xml_node root_;
     XmlTreeIndex rootIndex_;
+    XmlBondModel bonds_;
 
     public slots:
     // Read from an XML file

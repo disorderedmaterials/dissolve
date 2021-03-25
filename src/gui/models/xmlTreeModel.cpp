@@ -12,14 +12,19 @@ void XmlTreeModel::readFile(const pugi::xml_node &root)
 {
     beginResetModel();
     root_ = root;
+    bonds_.readFile(root);
     endResetModel();
 }
 
 int XmlTreeModel::rowCount(const QModelIndex &parent) const
 {
-    if (parent.isValid())
-        return 1;
-    return 5;
+    switch (parent.internalId())
+    {
+        case 11:
+            return bonds_.rowCount();
+        default:
+            return 5;
+    }
 }
 
 int XmlTreeModel::columnCount(const QModelIndex &parent) const { return 16; }
@@ -88,20 +93,7 @@ QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
             }
             break;
         case 11:
-            switch (index.column())
-            {
-                case 0:
-                    return "Atom I";
-                case 1:
-                    return "Atom J";
-                case 2:
-                    return "K";
-                case 3:
-                    return "Length";
-                default:
-                    return QVariant();
-            }
-            break;
+            return bonds_.data(bonds_.index(index.row(), index.column()), role);
         case 12:
             switch (index.column())
             {
