@@ -126,10 +126,12 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
             "Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
             paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
 
+    auto srI = atomTypeI_->shortRangeType(), srJ = atomTypeJ_->shortRangeType();
+
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
-    if (atomTypeI_->shortRangeType() == atomTypeJ_->shortRangeType())
+    if (srI == srJ)
     {
-        shortRangeType_ = atomTypeI_->shortRangeType();
+        shortRangeType_ = srI;
         switch (shortRangeType_)
         {
             case (Forcefield::UndefinedType):
@@ -162,13 +164,33 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
     }
     else
     {
-        // Can't mix parameters of different functional forms in general, so complain...
-        shortRangeType_ = Forcefield::UndefinedType;
-        return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
-                                "short-range types {} and {}.\nAdd a suitable potential manually.\n",
-                                atomTypeI_->name(), atomTypeJ_->name(),
-                                Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()),
-                                Forcefield::shortRangeTypes().keyword(atomTypeJ_->shortRangeType()));
+        // In the case of combining LJ and LJGeometric, default to standard Lorentz-Berthelot rules
+        auto ljI = srI == Forcefield::LennardJonesType || srI == Forcefield::LennardJonesGeometricType;
+        auto ljJ = srJ == Forcefield::LennardJonesType || srJ == Forcefield::LennardJonesGeometricType;
+        if (ljI && ljJ)
+        {
+            Messenger::warn("Defaulting to Lorentz-Berthelot rules to combine parameters between atom types '{}' and '{}.\n",
+                            atomTypeI_->name(), atomTypeJ_->name());
+
+            shortRangeType_ = Forcefield::LennardJonesType;
+            /*
+             * Combine parameters (Lorentz-Berthelot):
+             * Parameter 0 = Epsilon
+             * Parameter 1 = Sigma
+             */
+            parameters_.push_back(sqrt(paramsI[0] * paramsJ[0]));
+            parameters_.push_back((paramsI[1] + paramsJ[1]) * 0.5);
+        }
+        else
+        {
+            // Can't mix parameters of different functional forms in general, so complain...
+            shortRangeType_ = Forcefield::UndefinedType;
+            return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
+                                    "short-range types {} and {}.\n",
+                                    atomTypeI_->name(), atomTypeJ_->name(),
+                                    Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()),
+                                    Forcefield::shortRangeTypes().keyword(atomTypeJ_->shortRangeType()));
+        }
     }
 
     // Set charges

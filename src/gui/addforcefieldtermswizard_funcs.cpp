@@ -126,9 +126,12 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         {
             original.atomType()->setShortRangeParameters(modified.atomType()->shortRangeParameters());
             original.atomType()->setShortRangeType(modified.atomType()->shortRangeType());
-            original.atomType()->setCharge(modified.charge());
+            original.atomType()->setCharge(modified.atomType()->charge());
             dissolve.coreData().bumpAtomTypesVersion();
         }
+
+        // Copy charge on species atom
+        original.setCharge(modified.charge());
     }
 
     // Copy intramolecular terms
@@ -258,17 +261,20 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                 modifiedSpecies_->clearAtomTypes();
                 temporaryDissolve_.clearAtomTypes();
 
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll) != 0)
+                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
+                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
                     return false;
             }
             else if (ui_.AtomTypesAssignSelectionRadio->isChecked())
             {
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection) != 0)
+                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
+                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
                     return false;
             }
             else if (ui_.AtomTypesAssignMissingRadio->isChecked())
             {
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing) != 0)
+                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
+                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
                     return false;
             }
 
