@@ -10,6 +10,7 @@
 #include "gui/selectelementdialog.h"
 #include "gui/speciestab.h"
 #include <QFileDialog>
+#include <QMessageBox>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -141,6 +142,32 @@ void DissolveWindow::on_ImportForcefieldAction_triggered(bool checked)
         setModified();
         fullUpdate();
     }
+}
+
+void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto *species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    // Confirm with the user
+    QMessageBox queryBox;
+    queryBox.setText(
+        "This will delete and regenerate all angle and torsion terms, and any defined improper terms.\nThis cannot be undone!");
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+    auto ret = queryBox.exec();
+
+    if (ret != QMessageBox::Yes)
+        return;
+
+    species->updateIntramolecularTerms();
+
+    setModified();
+    updateWindowTitle();
+    ui_.MainTabs->currentTab()->updateControls();
 }
 
 void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)

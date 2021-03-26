@@ -319,6 +319,7 @@ void DissolveWindow::updateMenus()
     ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
     ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
     ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+    ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
 
     // Configuration Menu
     ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
