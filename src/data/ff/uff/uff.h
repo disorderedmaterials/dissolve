@@ -44,7 +44,7 @@ class Forcefield_UFF : public Forcefield
     /*
      * Atom Type Data
      */
-    private:
+    protected:
     // UFF atom types
     std::vector<UFFAtomType> uffAtomTypes_;
 
