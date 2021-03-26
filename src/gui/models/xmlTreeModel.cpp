@@ -151,5 +151,9 @@ void XmlTreeModel::resetXml()
 {
     beginResetModel();
     atoms_.clear();
+    bonds_.clear();
+    angles_.clear();
+    torsions_.clear();
+    impropers_.clear();
     endResetModel();
 }

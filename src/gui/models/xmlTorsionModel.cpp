@@ -159,3 +159,10 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
     }
     return result;
 }
+
+void XmlTorsionModel::clear()
+{
+    beginResetModel();
+    torsions_.clear();
+    endResetModel();
+}

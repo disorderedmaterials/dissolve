@@ -158,3 +158,11 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
     }
     return result;
 }
+
+
+void XmlImproperModel::clear()
+{
+    beginResetModel();
+    impropers_.clear();
+    endResetModel();
+}

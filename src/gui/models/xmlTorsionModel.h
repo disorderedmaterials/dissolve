@@ -36,5 +36,6 @@ class XmlTorsionModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+    void clear();
     std::vector<ForcefieldTorsionTerm> toVector();
 };

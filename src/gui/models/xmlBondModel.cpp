@@ -74,3 +74,10 @@ std::vector<ForcefieldBondTerm> XmlBondModel::toVector()
                             std::vector({std::get<3>(bond), std::get<2>(bond)}));
     return result;
 }
+
+void XmlBondModel::clear()
+{
+    beginResetModel();
+    bonds_.clear();
+    endResetModel();
+}

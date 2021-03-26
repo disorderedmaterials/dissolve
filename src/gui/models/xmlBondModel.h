@@ -37,4 +37,6 @@ class XmlBondModel : public QAbstractTableModel
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     std::vector<ForcefieldBondTerm> toVector();
+
+    void clear();
 };

@@ -81,3 +81,10 @@ std::vector<ForcefieldAngleTerm> XmlAngleModel::toVector()
                             SpeciesAngle::HarmonicForm, std::vector({std::get<4>(angle), std::get<3>(angle)}));
     return result;
 }
+
+void XmlAngleModel::clear()
+{
+    beginResetModel();
+    angles_.clear();
+    endResetModel();
+}
