@@ -34,11 +34,10 @@ class NETARootNode : public NETANode
 
     public:
     // Available modifiers
-    enum NETARootModifier
+    enum class NETARootModifier
     {
-        NBondsModifier,     /* 'nbonds' - Specifies number of bonds (default = -1) */
-        NHydrogensModifier, /* 'nh' - Specifies number of hydrogens (default = -1) */
-        nRootModifiers
+        NBonds,    /* 'nbonds' - Specifies number of bonds (default = -1) */
+        NHydrogens /* 'nh' - Specifies number of hydrogens (default = -1) */
     };
     // Return enum options for NETARootModifiers
     static EnumOptions<NETARootNode::NETARootModifier> modifiers();

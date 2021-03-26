@@ -57,12 +57,11 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Available modifiers
-    enum NETAConnectionModifier
+    enum class NETAConnectionModifier
     {
-        NBondsModifier,           /* 'nbonds' - Specifies number of bonds (default = -1) */
-        NHydrogensModifier,       /* 'nh' - Specifies number of hydrogens (default = -1) */
-        RepeatConnectionModifier, /* 'n' - Specifies the number of matches required (default = 1) */
-        nConnectionModifiers
+        NBonds,     /* 'nbonds' - Specifies number of bonds (default = -1) */
+        NHydrogens, /* 'nh' - Specifies number of hydrogens (default = -1) */
+        Repeat      /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETAConnectionModifiers
     static EnumOptions<NETAConnectionNode::NETAConnectionModifier> modifiers();
@@ -80,10 +79,9 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Available flags
-    enum NETAConnectionFlag
+    enum class NETAConnectionFlag
     {
-        RootFlag, /* 'root' - Specifies that the root atom of the current path may be re-matched */
-        nConnectionFlags
+        Root /* 'root' - Specifies that the root atom of the current path may be re-matched */
     };
     // Return enum options for NETAConnectionFlags
     static EnumOptions<NETAConnectionNode::NETAConnectionFlag> flags();

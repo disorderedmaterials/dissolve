@@ -35,11 +35,10 @@ class NETARingNode : public NETANode
 
     public:
     // Available modifiers
-    enum NETARingModifier
+    enum class NETARingModifier
     {
-        SizeModifier,       /* 'size' - Specifies size of ring (default = -1) */
-        RepeatRingModifier, /* 'n' - Specifies the number of matches required (default = 1) */
-        nRingModifiers
+        Size,  /* 'size' - Specifies size of ring (default = -1) */
+        Repeat /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETARingModifiers
     static EnumOptions<NETARingNode::NETARingModifier> modifiers();

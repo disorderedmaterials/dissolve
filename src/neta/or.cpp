@@ -4,7 +4,7 @@
 #include "neta/or.h"
 #include "neta/NETAErrorListeners.h"
 
-NETAOrNode::NETAOrNode(NETADefinition *parent) : NETANode(parent, NETANode::OrNode) {}
+NETAOrNode::NETAOrNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Or) {}
 
 /*
  * Scoring

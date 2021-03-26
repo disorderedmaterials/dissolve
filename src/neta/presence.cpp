@@ -8,17 +8,17 @@
 
 NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
                                    std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
-    : NETANode(parent, NETANode::PresenceNode)
+    : NETANode(parent, NETANode::NodeType::Presence)
 {
     allowedElements_ = targetElements;
     allowedAtomTypes_ = targetAtomTypes;
 
     repeatCount_ = 1;
-    repeatCountOperator_ = NETANode::EqualTo;
+    repeatCountOperator_ = NETANode::ComparisonOperator::EqualTo;
     nBondsValue_ = -1;
-    nBondsValueOperator_ = NETANode::EqualTo;
+    nBondsValueOperator_ = NETANode::ComparisonOperator::EqualTo;
     nHydrogensValue_ = -1;
-    nHydrogensValueOperator_ = NETANode::EqualTo;
+    nHydrogensValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 }
 
 /*
@@ -48,8 +48,9 @@ bool NETAPresenceNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Return enum options for NETACharacterModifiers
 EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers()
 {
-    return EnumOptions<NETAPresenceNode::NETACharacterModifier>(
-        "CharacterModifier", {{NBondsModifier, "nbonds"}, {NHydrogensModifier, "nh"}, {RepeatCharacterModifier, "n"}});
+    return EnumOptions<NETAPresenceNode::NETACharacterModifier>("CharacterModifier", {{NETACharacterModifier::NBonds, "nbonds"},
+                                                                                      {NETACharacterModifier::NHydrogens, "nh"},
+                                                                                      {NETACharacterModifier::Repeat, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -64,15 +65,15 @@ bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETAPresenceNode::NBondsModifier):
+        case (NETAPresenceNode::NETACharacterModifier::NBonds):
             nBondsValue_ = value;
             nBondsValueOperator_ = op;
             break;
-        case (NETAPresenceNode::NHydrogensModifier):
+        case (NETAPresenceNode::NETACharacterModifier::NHydrogens):
             nHydrogensValue_ = value;
             nHydrogensValueOperator_ = op;
             break;
-        case (NETAPresenceNode::RepeatCharacterModifier):
+        case (NETAPresenceNode::NETACharacterModifier::Repeat):
             repeatCount_ = value;
             repeatCountOperator_ = op;
             break;

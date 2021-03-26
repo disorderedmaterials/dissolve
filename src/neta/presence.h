@@ -55,12 +55,11 @@ class NETAPresenceNode : public NETANode
 
     public:
     // Available modifiers
-    enum NETACharacterModifier
+    enum class NETACharacterModifier
     {
-        NBondsModifier,          /* 'nbonds' - Specifies number of bonds (default = -1) */
-        NHydrogensModifier,      /* 'nh' - Specifies number of hydrogens (default = -1) */
-        RepeatCharacterModifier, /* 'n' - Specifies the number of matches required (default = 1) */
-        nCharacterModifiers
+        NBonds,     /* 'nbonds' - Specifies number of bonds (default = -1) */
+        NHydrogens, /* 'nh' - Specifies number of hydrogens (default = -1) */
+        Repeat      /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETACharacterModifiers
     static EnumOptions<NETAPresenceNode::NETACharacterModifier> modifiers();

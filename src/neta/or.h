@@ -13,11 +13,11 @@ class NETAOrNode : public NETANode
 {
     public:
     // Node logic types
-    enum LogicType
+    enum class LogicType
     {
-        AndLogic,
-        OrLogic,
-        AndNotLogic
+        And,
+        Or,
+        AndNot
     };
     NETAOrNode(NETADefinition *parent);
     ~NETAOrNode() = default;

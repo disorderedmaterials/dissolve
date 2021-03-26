@@ -6,12 +6,12 @@
 #include "data/ff/atomtype.h"
 #include <algorithm>
 
-NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)
+NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Ring)
 {
     repeatCount_ = 1;
-    repeatCountOperator_ = NETANode::GreaterThanEqualTo;
+    repeatCountOperator_ = NETANode::ComparisonOperator::GreaterThanEqualTo;
     sizeValue_ = -1;
-    sizeValueOperator_ = NETANode::EqualTo;
+    sizeValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 }
 
 /*
@@ -21,7 +21,8 @@ NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::
 // Return enum options for NETARingModifiers
 EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 {
-    return EnumOptions<NETARingNode::NETARingModifier>("RingModifier", {{SizeModifier, "size"}, {RepeatRingModifier, "n"}});
+    return EnumOptions<NETARingNode::NETARingModifier>("RingModifier",
+                                                       {{NETARingModifier::Size, "size"}, {NETARingModifier::Repeat, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -36,11 +37,11 @@ bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op,
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETARingNode::SizeModifier):
+        case (NETARingNode::NETARingModifier::Size):
             sizeValue_ = value;
             sizeValueOperator_ = op;
             break;
-        case (NETARingNode::RepeatRingModifier):
+        case (NETARingNode::NETARingModifier::Repeat):
             repeatCount_ = value;
             repeatCountOperator_ = op;
             break;
@@ -80,7 +81,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, std::vector<Species
         {
             // Special case - if NotEqualTo was specified as the comparison operator, check that against the maximum
             // size
-            if ((sizeValueOperator_ == NETANode::NotEqualTo) && (path.size() == maxSize))
+            if ((sizeValueOperator_ == NETANode::ComparisonOperator::NotEqualTo) && (path.size() == maxSize))
                 continue;
 
             // Add new ring
@@ -108,15 +109,15 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     std::vector<const SpeciesAtom *> ringPath;
     if (sizeValue_ == -1)
         findRings(i, rings, ringPath, 3, 6);
-    else if (sizeValueOperator_ == NETANode::EqualTo)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::EqualTo)
         findRings(i, rings, ringPath, sizeValue_, sizeValue_);
-    else if (sizeValueOperator_ == NETANode::LessThan)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThan)
         findRings(i, rings, ringPath, 3, sizeValue_ - 1);
-    else if (sizeValueOperator_ == NETANode::LessThanEqualTo)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThanEqualTo)
         findRings(i, rings, ringPath, 3, sizeValue_);
-    else if (sizeValueOperator_ == NETANode::GreaterThan)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThan)
         findRings(i, rings, ringPath, sizeValue_ + 1, 99);
-    else if (sizeValueOperator_ == NETANode::GreaterThanEqualTo)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThanEqualTo)
         findRings(i, rings, ringPath, sizeValue_, 99);
     else
         findRings(i, rings, ringPath, 3, 99);
