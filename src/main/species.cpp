@@ -131,9 +131,6 @@ Species *Dissolve::copySpecies(const Species *species)
     Species *newSpecies = addSpecies();
     newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
 
-    // Turn off autoupdate of intramolecular terms, since we want an exact copy of the Species contents
-    newSpecies->setAutoUpdateIntramolecularTerms(false);
-
     // Duplicate atoms
     for (auto &i : species->atoms())
     {

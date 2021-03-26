@@ -8,7 +8,6 @@
 Species::Species()
 {
     forcefield_ = nullptr;
-    autoUpdateIntramolecularTerms_ = true;
     attachedAtomListsGenerated_ = false;
 
     // Set up natural Isotopologue

@@ -132,10 +132,6 @@ class Species
     // Whether the attached atoms lists have been created
     bool attachedAtomListsGenerated_;
 
-    private:
-    // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-    void updateIntramolecularTerms();
-
     public:
     // Add new SpeciesBond definition (from SpeciesAtom*)
     SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
@@ -157,6 +153,8 @@ class Species
     OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
+    // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+    void updateIntramolecularTerms();
     // Add new SpeciesAngle definition
     SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Add new SpeciesAngle dedefinitionfinition
@@ -215,18 +213,12 @@ class Species
     private:
     // Forcefield to source terms from
     std::shared_ptr<Forcefield> forcefield_;
-    // Auto-generate missing intramolecular terms, and remove invalid ones
-    bool autoUpdateIntramolecularTerms_;
 
     public:
     // Set Forcefield to source terms from
     void setForcefield(std::shared_ptr<Forcefield> ff);
     // Return Forcefield to source terms from
     std::shared_ptr<Forcefield> forcefield() const;
-    // Set whether to auto-generate missing intramolecular terms, and remove invalid ones
-    void setAutoUpdateIntramolecularTerms(bool b);
-    // Return whether to auto-generate missing intramolecular terms, and remove invalid ones
-    bool autoUpdateIntramolecularTerms() const;
     // Apply terms from source Forcefield
     bool applyForcefieldTerms(CoreData &coreData);
 
