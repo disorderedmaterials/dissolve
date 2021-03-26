@@ -146,3 +146,10 @@ QVariant XmlTreeModel::headerData(int section, Qt::Orientation orientation, int 
 void XmlTreeModel::setName(std::string name) { name_ = name; }
 
 bool XmlTreeModel::isValid() const { return name_.length() > 0 && atoms_.rowCount() > 0; }
+
+void XmlTreeModel::resetXml()
+{
+    beginResetModel();
+    atoms_.clear();
+    endResetModel();
+}

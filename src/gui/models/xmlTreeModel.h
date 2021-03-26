@@ -70,4 +70,6 @@ class XmlTreeModel : public QAbstractItemModel
     void setName(std::string name);
 
     bool isValid() const;
+
+    void resetXml();
 };
