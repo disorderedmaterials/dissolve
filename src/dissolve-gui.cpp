@@ -77,6 +77,15 @@ int main(int args, char **argv)
             return 1;
         }
 
+        // Set restart file frequency and whether to write heartbeat file
+        if (options.writeNoFiles())
+        {
+            dissolve.setRestartFileFrequency(0);
+            dissolve.setWriteHeartBeat(false);
+        }
+        else
+            dissolve.setRestartFileFrequency(options.restartFileFrequency());
+
         // Iterate before launching the GUI?
         if (options.nIterations())
         {
