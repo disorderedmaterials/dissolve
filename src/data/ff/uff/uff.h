@@ -27,6 +27,8 @@ class Forcefield_UFF : public Forcefield
      * Set Up
      */
     protected:
+    // Create basic UFF atom types
+    void createAtomTypes();
     // Set up / create all forcefield terms
     bool setUp() override;
 

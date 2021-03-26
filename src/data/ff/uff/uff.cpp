@@ -24,8 +24,8 @@
  * Set Up
  */
 
-// Set up / create all forcefield terms
-bool Forcefield_UFF::setUp()
+// Create basic UFF atom types
+void Forcefield_UFF::createAtomTypes()
 {
     uffAtomTypes_ = {
         // 	El		FFID	Name		NETA	Description
@@ -235,9 +235,14 @@ bool Forcefield_UFF::setUp()
         {Elements::C, 200, "C_amR", "nbonds=3,-O(nbonds=1),-N", "Carbon (amide)", 0.7290, 120.00, 3.8510, 0.1050, 12.730,
          1.9120, 5.343, 0.0, 2.0},
         {Elements::N, 201, "N_amR", "nbonds=3,-C(-O(nbonds=1))", "Nitrogen (amide)", 0.6990, 120.00, 3.6600, 0.0690, 13.407,
-         2.5438, 6.899, 0.0, 2.0}
+         2.5438, 6.899, 0.0, 2.0}};
+}
 
-    };
+// Set up / create all forcefield terms
+bool Forcefield_UFF::setUp()
+{
+    // Create the UFF atom types
+    createAtomTypes();
 
     // Create NETA definitions for each atom type - this is normally handled automatically, but we have custom atom types so
     // must do it ourselves
