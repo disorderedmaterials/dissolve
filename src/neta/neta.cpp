@@ -77,6 +77,13 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     return true;
 }
 
+// Set definition string and create definition
+bool NETADefinition::create(std::string_view definition, const Forcefield *associatedFF)
+{
+    definitionString_ = definition;
+    return create(associatedFF);
+}
+
 // Set generating string
 void NETADefinition::setDefinitionString(std::string_view definition) { definitionString_ = definition; }
 
