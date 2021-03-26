@@ -123,8 +123,7 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
         findRings(i, rings, ringPath, 3, 99);
 
     // Prune rings for duplicates
-    for (auto it = rings.begin(); it != rings.end(); ++it)
-        rings.erase(std::remove_if(it + 1, rings.end(), [&it](const auto &otherIt) { return *it == otherIt; }));
+    rings.erase(std::unique(rings.begin(), rings.end()), rings.end());
 
     // Loop over rings
     auto nMatches = 0, totalScore = 0;

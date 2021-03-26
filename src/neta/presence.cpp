@@ -181,7 +181,8 @@ int NETAPresenceNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom 
     // Remove any matched atoms from the original list
     for (auto j : matches)
         availableAtoms.erase(std::remove_if(availableAtoms.begin(), availableAtoms.end(),
-                                            [&j](const auto &matchedAtom) { return matchedAtom == j; }));
+                                            [&j](const auto &matchedAtom) { return matchedAtom == j; }),
+                             availableAtoms.end());
 
     return reverseLogic_ ? NETANode::NoMatch : totalScore;
 }
