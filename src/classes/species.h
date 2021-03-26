@@ -25,7 +25,7 @@ class Species
 {
     public:
     Species();
-    ~Species();
+    ~Species() = default;
     // Clear Data
     void clear();
 

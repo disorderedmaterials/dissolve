@@ -15,12 +15,12 @@ Species::Species()
     naturalIsotopologue_.setParent(this);
 }
 
-Species::~Species() {}
-
 // Clear Data
 void Species::clear()
 {
     isotopologues_.clear();
+    impropers_.clear();
+    torsions_.clear();
     angles_.clear();
     bonds_.clear();
     atoms_.clear();
