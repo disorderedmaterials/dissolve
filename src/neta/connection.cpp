@@ -43,7 +43,7 @@ bool NETAConnectionNode::addElementTarget(Elements::Element Z)
 // Add forcefield type target to node
 bool NETAConnectionNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 {
-    allowedAtomTypes_.push_back(ffType);
+    allowedAtomTypes_.emplace_back(ffType);
 
     return true;
 }
