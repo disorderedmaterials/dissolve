@@ -128,8 +128,10 @@ QModelIndex XmlTreeModel::index(int row, int column, const QModelIndex &parent) 
     return createIndex(row, column, child);
 }
 
-Forcefield_XML XmlTreeModel::toForcefield()
+std::shared_ptr<Forcefield_XML> XmlTreeModel::toForcefield()
 {
-    return Forcefield_XML(atoms_.toVector(), bonds_.toVector(), angles_.toVector(), torsions_.toVector(),
-                          impropers_.toVector());
+    auto ff = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(), angles_.toVector(), torsions_.toVector(),
+					       impropers_.toVector());
+    ff->prepare();
+    return ff;
 }

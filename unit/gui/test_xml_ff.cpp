@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "data/elements.h"
+#include "data/ff/atomtype.h"
 #include "data/ff/library.h"
 #include "data/ff/xml/base.h"
 #include "gui/models/xmlAngleModel.h"
@@ -10,6 +11,7 @@
 #include "gui/models/xmlBondModel.h"
 #include "gui/models/xmlImproperModel.h"
 #include "gui/models/xmlTorsionModel.h"
+#include "gui/models/xmlTreeModel.h"
 #include "main/dissolve.h"
 #include <gtest/gtest.h>
 #include <memory>
@@ -171,39 +173,51 @@ TEST_F(XmlFFTest, XmlAtom)
     }
 }
 
-TEST_F(XmlFFTest, XmlAll)
+TEST_F(XmlFFTest, XmlTree)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
-    XmlAtomModel atomModel(dissolve);
-    XmlBondModel bondModel;
-    XmlAngleModel angleModel;
-    XmlTorsionModel torsionModel;
-    XmlImproperModel improperModel;
+    XmlTreeModel treeModel(dissolve);
 
-    dissolve.addAtomType(Elements::H);
-    dissolve.addAtomType(Elements::C);
-    dissolve.addAtomType(Elements::O);
+    treeModel.readFile(doc.root());
 
-    atomModel.readFile(doc.root());
-    bondModel.readFile(doc.root());
-    angleModel.readFile(doc.root());
-    torsionModel.readFile(doc.root());
-    improperModel.readFile(doc.root());
-    std::vector<ForcefieldAtomType> atoms = atomModel.toVector();
-    std::vector<ForcefieldBondTerm> bonds = bondModel.toVector();
-    std::vector<ForcefieldAngleTerm> angles = angleModel.toVector();
-    std::vector<ForcefieldTorsionTerm> torsions = torsionModel.toVector();
-    std::vector<ForcefieldImproperTerm> impropers = improperModel.toVector();
-    ASSERT_EQ(atoms.size(), 6);
-    ASSERT_EQ(bonds.size(), 5);
-    ASSERT_EQ(angles.size(), 7);
-    ASSERT_EQ(torsions.size(), 3);
-    ASSERT_EQ(impropers.size(), 2);
+    ForcefieldLibrary::registerForcefield(treeModel.toForcefield());
+    auto xmlFF = ForcefieldLibrary::forcefield("XML file");
+    ASSERT_TRUE(xmlFF);
+    ASSERT_EQ(xmlFF->name(), "XML file");
+    auto oxygen = xmlFF->atomTypeByName("O801");
+    ASSERT_TRUE(oxygen);
+    auto carbon = xmlFF->atomTypeByName("C800");
+    ASSERT_TRUE(carbon);
+    auto hydrogen2 = xmlFF->atomTypeByName("H802");
+    ASSERT_TRUE(hydrogen2);
+    auto hydrogen3 = xmlFF->atomTypeByName("H803");
+    ASSERT_TRUE(hydrogen3);
+    auto hydrogen4 = xmlFF->atomTypeByName("H804");
+    ASSERT_TRUE(hydrogen4);
+    auto hydrogen5 = xmlFF->atomTypeByName("H805");
+    ASSERT_TRUE(hydrogen5);
+    auto nonexistent = xmlFF->atomTypeByName("Q800");
+    ASSERT_FALSE(nonexistent);
 
-    auto xmlFF = std::make_shared<Forcefield_XML>(atomModel.toVector(), bondModel.toVector(), angleModel.toVector(),
-                                                  torsionModel.toVector(), improperModel.toVector());
-    ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
+    auto bond = xmlFF->getBondTerm((*oxygen).get(), (*carbon).get());
+    ASSERT_TRUE(bond);
+    ASSERT_EQ((*bond).get().parameters()[0], 267776.000000);
+    ASSERT_EQ((*bond).get().parameters()[1], 0.141000);
+
+    auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
+    ASSERT_TRUE(angle);
+    ASSERT_EQ((*angle).get().parameters()[0], 292.88000);
+    ASSERT_EQ((*angle).get().parameters()[1], 1.911136);
+
+    auto torsion = xmlFF->getTorsionTerm((*hydrogen5).get(), (*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
+    ASSERT_TRUE(torsion);
+    ASSERT_EQ((*torsion).get().parameters()[0], 0);
+    ASSERT_EQ((*torsion).get().parameters()[2], 0.736384);
+
+    auto improper = xmlFF->getImproperTerm((*carbon).get(), (*oxygen).get(), (*hydrogen2).get(), (*hydrogen3).get());
+    ASSERT_TRUE(improper);
+    ASSERT_EQ((*improper).get().parameters()[0], 0);
 }
 
 } // namespace UnitTest

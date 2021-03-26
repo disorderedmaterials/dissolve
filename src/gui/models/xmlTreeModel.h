@@ -62,5 +62,5 @@ class XmlTreeModel : public QAbstractItemModel
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    Forcefield_XML toForcefield();
+    std::shared_ptr<Forcefield_XML> toForcefield();
 };
