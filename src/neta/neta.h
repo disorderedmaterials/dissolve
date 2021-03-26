@@ -16,7 +16,7 @@ class NETADefinition
 {
     public:
     NETADefinition();
-    ~NETADefinition();
+    ~NETADefinition() = default;
 
     /*
      * Data
