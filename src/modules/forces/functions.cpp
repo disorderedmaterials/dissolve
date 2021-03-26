@@ -260,6 +260,11 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     // Create a Timer
     Timer timer;
 
+    // Zero force arrays
+    fx = 0.0;
+    fy = 0.0;
+    fz = 0.0;
+
     // Calculate interatomic forces
     timer.start();
     interAtomicForces(procPool, cfg, potentialMap, fx, fy, fz);
@@ -297,6 +302,11 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 
     // Create a Timer
     Timer timer;
+
+    // Zero force arrays
+    fx = 0.0;
+    fy = 0.0;
+    fz = 0.0;
 
     // Calculate interatomic forces
     timer.start();
