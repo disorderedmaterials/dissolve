@@ -47,8 +47,6 @@ void ImportForcefieldWizard::nextStack()
 
     if (index == 2)
     {
-        // auto xmlFF = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(), angles_.toVector(),
-        //                                               torsions_.toVector(), impropers_.toVector());
         auto xmlFF = ff_.toForcefield();
         ForcefieldLibrary::registerForcefield(xmlFF);
         this->accept();
