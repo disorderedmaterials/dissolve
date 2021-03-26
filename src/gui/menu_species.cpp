@@ -124,7 +124,7 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 void DissolveWindow::on_ImportForcefieldAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
-    static ImportForcefieldWizard importForcefieldWizardDialog(this, dissolve_);
+    ImportForcefieldWizard importForcefieldWizardDialog(this, dissolve_);
 
     importForcefieldWizardDialog.reset();
 
