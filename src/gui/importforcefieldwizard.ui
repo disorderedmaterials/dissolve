@@ -59,7 +59,11 @@
        <widget class="QWidget" name="page_2">
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-	  <widget class="QTreeView" name="xmlTree"/>
+	  <widget class="QTreeView" name="xmlTree">
+           <property name="headerHidden">
+            <bool>true</bool>
+           </property>
+	  </widget>
 	 </item>
         </layout>
        </widget>
