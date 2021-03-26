@@ -179,6 +179,8 @@ TEST_F(XmlFFTest, XmlTree)
     Dissolve dissolve(coreData);
     XmlTreeModel treeModel(dissolve);
 
+    treeModel.setName("TestFF");
+
     treeModel.readFile(doc.root());
 
     // Test the top level branches of the tree
@@ -231,9 +233,9 @@ TEST_F(XmlFFTest, XmlTree)
 
     // Construct the actual forcefield
     ForcefieldLibrary::registerForcefield(treeModel.toForcefield());
-    auto xmlFF = ForcefieldLibrary::forcefield("XML file");
+    auto xmlFF = ForcefieldLibrary::forcefield("TestFF");
     ASSERT_TRUE(xmlFF);
-    ASSERT_EQ(xmlFF->name(), "XML file");
+    ASSERT_EQ(xmlFF->name(), "TestFF");
 
     // Pull the atoms
     auto oxygen = xmlFF->atomTypeByName("O801");

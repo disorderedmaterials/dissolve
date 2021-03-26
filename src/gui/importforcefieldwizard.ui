@@ -54,6 +54,20 @@
            </item>
           </layout>
          </item>
+<item>
+          <layout class="QHBoxLayout" name="horizontalLayout_name">
+           <item>
+            <widget class="QLabel" name="label_name">
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="nameEdit"/>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="page_2">
@@ -186,6 +200,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>nameEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>nameString(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>151</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>xmlFileButton</sender>
    <signal>clicked()</signal>
    <receiver>ImportForcefieldWizardDialog</receiver>
@@ -206,6 +236,7 @@
   <slot>nextStack()</slot>
   <slot>prevStack()</slot>
   <slot>xmlString(QString)</slot>
+  <slot>nameString(QString)</slot>
   <slot>xmlFileDialog()</slot>
  </slots>
 </ui>

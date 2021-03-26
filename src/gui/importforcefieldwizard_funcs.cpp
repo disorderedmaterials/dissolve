@@ -25,7 +25,7 @@ void ImportForcefieldWizard::updateNavButtons()
     switch (index)
     {
         case 0:
-            ui_.continueButton->setEnabled(true);
+            ui_.continueButton->setEnabled(ff_.isValid());
             break;
         case 1:
             ui_.continueButton->setEnabled(true);
@@ -71,11 +71,19 @@ void ImportForcefieldWizard::xmlFileDialog()
     ui_.lineEdit->setText(fileName);
 }
 
+void ImportForcefieldWizard::nameString(QString ffName)
+{
+    ff_.setName(ffName.toStdString());
+    updateNavButtons();
+}
+
 void ImportForcefieldWizard::xmlString(QString fileName)
 {
     pugi::xml_document doc;
 
-    auto result = doc.load_file(fileName.toStdString().c_str());
+    ff_.clearXml()
+
+        auto result = doc.load_file(fileName.toStdString().c_str());
     if (result)
     {
         auto root = doc.root();
@@ -85,5 +93,4 @@ void ImportForcefieldWizard::xmlString(QString fileName)
             ui_.xmlTree->resizeColumnToContents(i);
     }
     updateNavButtons();
-    return;
 }

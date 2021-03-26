@@ -130,15 +130,19 @@ QModelIndex XmlTreeModel::index(int row, int column, const QModelIndex &parent) 
 
 std::shared_ptr<Forcefield_XML> XmlTreeModel::toForcefield()
 {
-    auto ff = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(), angles_.toVector(), torsions_.toVector(),
-					       impropers_.toVector());
+    auto ff = std::make_shared<Forcefield_XML>(name_, atoms_.toVector(), bonds_.toVector(), angles_.toVector(),
+                                               torsions_.toVector(), impropers_.toVector());
     ff->prepare();
     return ff;
 }
 
 QVariant XmlTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  if (role != Qt::DisplayRole)
-    return QVariant();
-  return "";
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    return "";
 }
+
+void XmlTreeModel::setName(std::string name) { name_ = name; }
+
+bool XmlTreeModel::isValid() const { return name_.length() > 0 && atoms_.rowCount() > 0; }

@@ -14,10 +14,13 @@
 class Forcefield_XML : public Forcefield
 {
     public:
-    Forcefield_XML(std::vector<ForcefieldAtomType> &&atoms, std::vector<ForcefieldBondTerm> &&bonds,
+    Forcefield_XML(std::string name, std::vector<ForcefieldAtomType> &&atoms, std::vector<ForcefieldBondTerm> &&bonds,
                    std::vector<ForcefieldAngleTerm> &&angles, std::vector<ForcefieldTorsionTerm> &&torsions,
                    std::vector<ForcefieldImproperTerm> &&impropers);
     ~Forcefield_XML() = default;
+
+    private:
+    std::string name_;
 
     /*
      * Definition

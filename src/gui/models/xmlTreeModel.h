@@ -42,6 +42,7 @@ class XmlTreeModel : public QAbstractItemModel
     XmlAngleModel angles_;
     XmlTorsionModel torsions_;
     XmlImproperModel impropers_;
+    std::string name_;
 
     public slots:
     // Read from an XML file
@@ -65,4 +66,8 @@ class XmlTreeModel : public QAbstractItemModel
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     std::shared_ptr<Forcefield_XML> toForcefield();
+
+    void setName(std::string name);
+
+    bool isValid() const;
 };
