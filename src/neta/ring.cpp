@@ -14,8 +14,6 @@ NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::
     sizeValueOperator_ = NETANode::EqualTo;
 }
 
-NETARingNode::~NETARingNode() {}
-
 /*
  * Modifiers
  */

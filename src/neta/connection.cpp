@@ -28,8 +28,6 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
     allowRootMatch_ = false;
 }
 
-NETAConnectionNode::~NETAConnectionNode() {}
-
 /*
  * Atom Targets
  */

@@ -19,7 +19,7 @@ class NETAConnectionNode : public NETANode
     NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {},
                        SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
-    ~NETAConnectionNode();
+    ~NETAConnectionNode() = default;
 
     /*
      * Atom Targets

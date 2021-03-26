@@ -21,8 +21,6 @@ NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Elements:
     nHydrogensValueOperator_ = NETANode::EqualTo;
 }
 
-NETAPresenceNode::~NETAPresenceNode() {}
-
 /*
  * Atom Targets
  */

@@ -20,7 +20,7 @@ class NETAOrNode : public NETANode
         AndNotLogic
     };
     NETAOrNode(NETADefinition *parent);
-    ~NETAOrNode();
+    ~NETAOrNode() = default;
 
     /*
      * Scoring

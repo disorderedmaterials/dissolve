@@ -13,8 +13,6 @@ NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::
     nHydrogensValueOperator_ = NETANode::EqualTo;
 }
 
-NETARootNode::~NETARootNode() {}
-
 /*
  * Modifiers
  */

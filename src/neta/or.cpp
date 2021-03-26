@@ -6,8 +6,6 @@
 
 NETAOrNode::NETAOrNode(NETADefinition *parent) : NETANode(parent, NETANode::OrNode) {}
 
-NETAOrNode::~NETAOrNode() {}
-
 /*
  * Scoring
  */
