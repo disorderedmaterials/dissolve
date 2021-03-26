@@ -62,5 +62,7 @@ class XmlTreeModel : public QAbstractItemModel
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
     std::shared_ptr<Forcefield_XML> toForcefield();
 };

@@ -81,7 +81,9 @@ void ImportForcefieldWizard::xmlString(QString fileName)
     {
         auto root = doc.root();
 
-	ff_.readFile(root);
+        ff_.readFile(root);
+        for (int i = 0; i < ff_.columnCount(QModelIndex()); i++)
+            ui_.xmlTree->resizeColumnToContents(i);
     }
     updateNavButtons();
     return;
