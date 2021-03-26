@@ -128,15 +128,15 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     // Loop over rings
     auto nMatches = 0, totalScore = 0;
     int nodeScore = NETANode::NoMatch;
-    for (auto ring : rings)
+    for (const auto &ring : rings)
     {
         // Check through atoms in the ring - either in order or not - to see if the ring matches
         // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
         // atoms in the ring at once)
 
         auto ringScore = 0;
-        std::vector<const SpeciesAtom *> ringAtoms = ring.atoms();
-        for (auto node : branch_)
+        auto ringAtoms = ring.atoms();
+        for (const auto &node : branch_)
         {
             nodeScore = node->score(nullptr, ringAtoms);
             if (nodeScore == NETANode::NoMatch)
