@@ -181,10 +181,61 @@ TEST_F(XmlFFTest, XmlTree)
 
     treeModel.readFile(doc.root());
 
+    // Test the top level branches of the tree
+    auto atomIndex = treeModel.index(0, 0);
+    EXPECT_EQ(treeModel.data(atomIndex).toString().toStdString(), "Atoms");
+    auto bondIndex = treeModel.index(1, 0);
+    EXPECT_EQ(treeModel.data(bondIndex).toString().toStdString(), "Bonds");
+    auto angleIndex = treeModel.index(2, 0);
+    EXPECT_EQ(treeModel.data(angleIndex).toString().toStdString(), "Angles");
+    auto torsionIndex = treeModel.index(3, 0);
+    EXPECT_EQ(treeModel.data(torsionIndex).toString().toStdString(), "Torsions");
+    auto improperIndex = treeModel.index(4, 0);
+    EXPECT_EQ(treeModel.data(improperIndex).toString().toStdString(), "Impropers");
+
+    // Test the atoms.  Since we're mostly repeating the underlying
+    // model, we're mostly just checking that the model passed through
+    // properly
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 0, atomIndex)).toString().toStdString(), "opls_802");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 1, atomIndex)).toString().toStdString(), "H802");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 2, atomIndex)).toString().toStdString(), "H");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, atomIndex)).toDouble(), 1.008000);
+
+    // Test the bonds
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 0, bondIndex)).toString().toStdString(), "O801");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 1, bondIndex)).toString().toStdString(), "C800");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 2, bondIndex)).toDouble(), 0.141);
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, bondIndex)).toDouble(), 267776);
+
+    // Test the angles
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 0, angleIndex)).toString().toStdString(), "O801");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 1, angleIndex)).toString().toStdString(), "C800");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 2, angleIndex)).toString().toStdString(), "H802");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, angleIndex)).toDouble(), 1.911136);
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 4, angleIndex)).toDouble(), 292.88);
+
+    // Test the torsions
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 0, torsionIndex)).toString().toStdString(), "H805");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 1, torsionIndex)).toString().toStdString(), "O801");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 2, torsionIndex)).toString().toStdString(), "C800");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, torsionIndex)).toString().toStdString(), "H802");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 4, torsionIndex)).toDouble(), 0);
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 6, torsionIndex)).toDouble(), 0.736384);
+
+    // Test the impropers
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 0, improperIndex)).toString().toStdString(), "C800");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 1, improperIndex)).toString().toStdString(), "O801");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 2, improperIndex)).toString().toStdString(), "H802");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, improperIndex)).toString().toStdString(), "H803");
+    EXPECT_EQ(treeModel.data(treeModel.index(0, 4, improperIndex)).toDouble(), 0);
+
+    // Construct the actual forcefield
     ForcefieldLibrary::registerForcefield(treeModel.toForcefield());
     auto xmlFF = ForcefieldLibrary::forcefield("XML file");
     ASSERT_TRUE(xmlFF);
     ASSERT_EQ(xmlFF->name(), "XML file");
+
+    // Pull the atoms
     auto oxygen = xmlFF->atomTypeByName("O801");
     ASSERT_TRUE(oxygen);
     auto carbon = xmlFF->atomTypeByName("C800");
@@ -200,21 +251,25 @@ TEST_F(XmlFFTest, XmlTree)
     auto nonexistent = xmlFF->atomTypeByName("Q800");
     ASSERT_FALSE(nonexistent);
 
+    // Test the bonds
     auto bond = xmlFF->getBondTerm((*oxygen).get(), (*carbon).get());
     ASSERT_TRUE(bond);
     ASSERT_EQ((*bond).get().parameters()[0], 267776.000000);
     ASSERT_EQ((*bond).get().parameters()[1], 0.141000);
 
+    // Test the angles
     auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
     ASSERT_TRUE(angle);
     ASSERT_EQ((*angle).get().parameters()[0], 292.88000);
     ASSERT_EQ((*angle).get().parameters()[1], 1.911136);
 
+    // Test the torsions
     auto torsion = xmlFF->getTorsionTerm((*hydrogen5).get(), (*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
     ASSERT_TRUE(torsion);
     ASSERT_EQ((*torsion).get().parameters()[0], 0);
     ASSERT_EQ((*torsion).get().parameters()[2], 0.736384);
 
+    // Test the impropers
     auto improper = xmlFF->getImproperTerm((*carbon).get(), (*oxygen).get(), (*hydrogen2).get(), (*hydrogen3).get());
     ASSERT_TRUE(improper);
     ASSERT_EQ((*improper).get().parameters()[0], 0);
