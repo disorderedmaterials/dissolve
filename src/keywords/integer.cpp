@@ -82,11 +82,11 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &core
         if (!setData(parser.argi(startArg)))
         {
             if (minimumLimit_ && maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", data_, min_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", parser.argi(startArg), min_, max_);
             else if (minimumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", data_, min_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", parser.argi(startArg), min_);
             else
-                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", data_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", parser.argi(startArg), max_);
 
             return false;
         }
