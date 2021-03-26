@@ -81,9 +81,7 @@ void ImportForcefieldWizard::xmlString(QString fileName)
 {
     pugi::xml_document doc;
 
-    ff_.clearXml()
-
-        auto result = doc.load_file(fileName.toStdString().c_str());
+    auto result = doc.load_file(fileName.toStdString().c_str());
     if (result)
     {
         auto root = doc.root();
