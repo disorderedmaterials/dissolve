@@ -16,7 +16,7 @@
 // Return the topmost context in the stack
 std::shared_ptr<NETANode> NETAVisitor::currentNETAContext() const
 {
-    // TODO Assert that we have a valid context?
+    assert(!contextStack_.empty());
     return contextStack_.back();
 }
 
@@ -139,7 +139,8 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
         return std::reference_wrapper(*at);
     }
 
-    return nullptr;
+    throw(NETAExceptions::NETASyntaxException(
+        fmt::format("'{]' is not an element symbol, type name, or type index.", context->getText())));
 }
 
 antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *context)
