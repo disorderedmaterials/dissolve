@@ -56,7 +56,7 @@ ConnectionKeyword: '-';
 RingKeyword: 'r' 'i' 'n' 'g';
 
 // Named Tokens
-Element: UCASELETTER LCASELETTER* { isElement(getText()) }?;
+Element: UCASELETTER LCASELETTER*;
 FFTypeName: TypeReference LETTER+;
 FFTypeIndex: TypeReference Integer;
 Keyword: LCASELETTER+;

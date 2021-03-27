@@ -98,7 +98,13 @@ antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
 antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *context)
 {
     if (context->Element())
-        return Elements::element(context->Element()->getText());
+    {
+        auto el = Elements::element(context->Element()->getText());
+        if (!el)
+            throw(NETAExceptions::NETASyntaxException(
+                fmt::format("'{}' is not a recognised element.\n", context->Element()->getText())));
+        return el;
+    }
     else if (context->FFTypeName())
     {
         // Is a forcefield available to search?
