@@ -28,6 +28,7 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
     associatedForcefield_ = associatedForcefield;
 
     // Add the definition's root node as the topmost context in the stack
+    contextStack_.clear();
     contextStack_.push_back(neta_->rootNode());
 
     // Traverse the AST
