@@ -75,11 +75,10 @@ bool XmlTreeModel::hasChildren(const QModelIndex &parent) const
 
 QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
 {
-
-    if (role != Qt::DisplayRole)
-        return QVariant();
     if (!index.parent().isValid())
     {
+        if (role != Qt::DisplayRole)
+            return QVariant();
         if (index.column() > 0)
             return QVariant();
         switch (index.row())
