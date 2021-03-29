@@ -42,14 +42,14 @@ class NETARootNode : public NETANode
     // Return enum options for NETARootModifiers
     static EnumOptions<NETARootNode::NETARootModifier> modifiers();
     // Return whether the specified modifier is valid for this node
-    bool isValidModifier(std::string_view s) const;
+    bool isValidModifier(std::string_view s) const override;
     // Set value and comparator for specified modifier
-    bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
+    bool setModifier(std::string_view modifier, ComparisonOperator op, int value) override;
 
     /*
      * Scoring
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const override;
 };

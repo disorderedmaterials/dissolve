@@ -34,9 +34,9 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Add element target to node
-    bool addElementTarget(Elements::Element Z);
+    bool addElementTarget(Elements::Element Z) override;
     // Add forcefield type target to node
-    bool addFFTypeTarget(const ForcefieldAtomType &ffType);
+    bool addFFTypeTarget(const ForcefieldAtomType &ffType) override;
 
     /*
      * Modifiers
@@ -66,9 +66,9 @@ class NETAConnectionNode : public NETANode
     // Return enum options for NETAConnectionModifiers
     static EnumOptions<NETAConnectionNode::NETAConnectionModifier> modifiers();
     // Return whether the specified modifier is valid for this node
-    bool isValidModifier(std::string_view s) const;
+    bool isValidModifier(std::string_view s) const override;
     // Set value and comparator for specified modifier
-    bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
+    bool setModifier(std::string_view modifier, ComparisonOperator op, int value) override;
 
     /*
      * Flags
@@ -86,14 +86,14 @@ class NETAConnectionNode : public NETANode
     // Return enum options for NETAConnectionFlags
     static EnumOptions<NETAConnectionNode::NETAConnectionFlag> flags();
     // Return whether the specified flag is valid for this node
-    bool isValidFlag(std::string_view s) const;
+    bool isValidFlag(std::string_view s) const override;
     // Set specified flag
-    bool setFlag(std::string_view flag, bool state);
+    bool setFlag(std::string_view flag, bool state) override;
 
     /*
      * Scoring
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const override;
 };
