@@ -152,8 +152,6 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
 
-    bool created;
-
     // Get unweighted S(Q) from the specified SQMOdule
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
         return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());

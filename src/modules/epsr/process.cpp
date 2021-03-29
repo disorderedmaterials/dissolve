@@ -224,7 +224,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Loop over target data
     auto rFacTot = 0.0;
-    bool created;
     for (auto *module : targets)
     {
         /*

@@ -112,7 +112,6 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 {
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
-    bool created;
     auto [target, status] = targetList.realiseIf<Histogram2D>(dataName, prefix, GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
