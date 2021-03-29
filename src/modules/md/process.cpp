@@ -122,10 +122,9 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Read in or assign random velocities
         // Realise the velocity array from the moduleData
-        bool created;
-        auto &v = dissolve.processingModuleData().realise<Array<Vec3<double>>>(fmt::format("{}//Velocities", cfg->niceName()),
-                                                                               uniqueName(), GenericItem::NoFlag, &created);
-        if (created)
+        auto [v, status] = dissolve.processingModuleData().realiseIf<Array<Vec3<double>>>(
+            fmt::format("{}//Velocities", cfg->niceName()), uniqueName(), GenericItem::NoFlags);
+        if (status == GenericItem::ItemStatus::Created)
         {
             randomVelocities = true;
             v.initialise(cfg->nAtoms());

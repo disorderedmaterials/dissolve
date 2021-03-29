@@ -192,7 +192,7 @@ double Data3D::minValue() const
     if (values_.empty())
         return 0.0;
 
-    return *std::min_element(values_.cbegin(), values_.cend());
+    return *std::min_element(values_.begin(), values_.end());
 }
 
 // Return maximum value over all data points
@@ -201,7 +201,7 @@ double Data3D::maxValue() const
     if (values_.empty())
         return 0.0;
 
-    return *std::max_element(values_.cbegin(), values_.cend());
+    return *std::max_element(values_.begin(), values_.end());
 }
 
 // Add / initialise errors array
@@ -322,14 +322,11 @@ void Data3D::operator/=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Data3D::itemClassName() { return "Data3D"; }
-
 // Read data through specified LineParser
-bool Data3D::read(LineParser &parser, CoreData &coreData)
+bool Data3D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -407,7 +404,7 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data3D::write(LineParser &parser)
+bool Data3D::serialise(LineParser &parser) const
 {
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))
@@ -451,7 +448,7 @@ bool Data3D::write(LineParser &parser)
     }
     else
     {
-        for (auto &value : values_)
+        for (const auto &value : values_)
             if (!parser.writeLineF("{:e}\n", value))
                 return false;
     }

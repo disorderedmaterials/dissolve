@@ -4,6 +4,7 @@
 #include "math/sampleddouble.h"
 #include "math/sampledvector.h"
 #include "templates/algorithms.h"
+#include <cmath>
 #include <gtest/gtest.h>
 #include <vector>
 

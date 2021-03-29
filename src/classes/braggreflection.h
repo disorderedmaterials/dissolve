@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/lineparser.h"
-#include "genericitems/base.h"
 #include "templates/array2d.h"
 #include "templates/listitem.h"
 
@@ -12,7 +11,7 @@
 /* none */
 
 // BraggReflection Class
-class BraggReflection : public GenericItemBase
+class BraggReflection
 {
     /*
      *  BraggReflection acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same
@@ -67,13 +66,11 @@ class BraggReflection : public GenericItemBase
     int nKVectors() const;
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified parser
     bool write(LineParser &parser);
 

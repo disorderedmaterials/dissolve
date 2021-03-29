@@ -42,7 +42,7 @@ int ExpressionVariableVectorKeyword::minArguments() const { return 2; }
 int ExpressionVariableVectorKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionVariableVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool ExpressionVariableVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableVector data.\n");

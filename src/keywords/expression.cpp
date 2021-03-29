@@ -23,7 +23,10 @@ int ExpressionKeyword::minArguments() const { return 1; }
 int ExpressionKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionKeyword::read(LineParser &parser, int startArg, CoreData &coreData) { return setValue(parser.argsv(startArg)); }
+bool ExpressionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+{
+    return setValue(parser.argsv(startArg));
+}
 
 // Write keyword data to specified LineParser
 bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)

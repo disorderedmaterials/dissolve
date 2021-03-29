@@ -269,14 +269,11 @@ void AtomTypeList::print() const
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view AtomTypeList::itemClassName() { return "AtomTypeList"; }
-
 // Read data through specified LineParser
-bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
+bool AtomTypeList::deserialise(LineParser &parser, const CoreData &coreData)
 {
     types_.clear();
 
@@ -311,12 +308,12 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool AtomTypeList::write(LineParser &parser)
+bool AtomTypeList::serialise(LineParser &parser) const
 {
     if (!parser.writeLineF("{}  # nItems\n", types_.size()))
         return false;
     for (auto &atd : types_)
-        if (!atd.write(parser))
+        if (!atd.serialise(parser))
             return false;
 
     return true;

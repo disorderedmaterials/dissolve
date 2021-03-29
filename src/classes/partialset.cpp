@@ -6,7 +6,8 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/array2dchar.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 
@@ -499,14 +500,11 @@ void PartialSet::operator*=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view PartialSet::itemClassName() { return "PartialSet"; }
-
 // Read data through specified LineParser
-bool PartialSet::read(LineParser &parser, CoreData &coreData)
+bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
         return false;
@@ -517,7 +515,7 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
 
     // Read atom types
     atomTypes_.clear();
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
     auto nTypes = atomTypes_.nItems();
 
@@ -532,28 +530,28 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
     {
         for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            if (!partials_[{typeI, typeJ}].read(parser, coreData))
+            if (!partials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!boundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!boundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!unboundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!unboundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
         }
     }
 
     // Read total
-    if (!total_.read(parser, coreData))
+    if (!total_.deserialise(parser))
         return false;
 
     // Read empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::read(emptyBoundPartials_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;
 }
 
 // Write data through specified LineParser
-bool PartialSet::write(LineParser &parser)
+bool PartialSet::serialise(LineParser &parser) const
 {
     // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
     // common scale
@@ -566,27 +564,27 @@ bool PartialSet::write(LineParser &parser)
         return false;
 
     // Write out AtomTypes first
-    atomTypes_.write(parser);
+    atomTypes_.serialise(parser);
     auto nTypes = atomTypes_.nItems();
 
     // Write individual Data1D
     for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_[{typeI, typeJ}].write(parser))
+        if (!partials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!boundPartials_[{typeI, typeJ}].write(parser))
+        if (!boundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!unboundPartials_[{typeI, typeJ}].write(parser))
+        if (!unboundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
 
         return EarlyReturn<bool>::Continue;
     });
 
     // Write total
-    if (!total_.write(parser))
+    if (!total_.serialise(parser))
         return false;
 
     // Write empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::write(emptyBoundPartials_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;

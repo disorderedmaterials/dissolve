@@ -15,7 +15,7 @@ Data3DStore::~Data3DStore() {}
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
 bool Data3DStore::addData(std::string_view dataName, LineParser &parser, int startArg, std::string_view endKeyword,
-                          CoreData &coreData)
+                          const CoreData &coreData)
 {
     // Create new data
     Data3D *data = data_.add();

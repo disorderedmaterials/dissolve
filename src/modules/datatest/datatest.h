@@ -67,68 +67,22 @@ class DataTestModule : public Module
     private:
     // Find reference Data
     template <class T>
-    const T &findReferenceData(std::string_view dataIdentifier, Module *targetModule, GenericList &processingModuleData,
-                               bool &found)
+    const OptionalReferenceWrapper<const T> findReferenceData(std::string_view dataIdentifier, Module *targetModule,
+                                                              GenericList &processingModuleData)
     {
-        static T dummy;
-
-        found = false;
-
-        // If a target module was supplied, search there first
-        if (targetModule)
-        {
-            // The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in
-            // the target list?
-            if (processingModuleData.contains(dataIdentifier, targetModule->uniqueName()))
-            {
-                // Try to retrieve the data as the current type
-                found = false;
-                const T &data = processingModuleData.retrieve<T>(dataIdentifier, targetModule->uniqueName(), T(), &found);
-
-                if (!found)
-                {
-                    Messenger::error("Data named '{}_{}' exists, but is not of the correct type (is {} rather than "
-                                     "{}).\n",
-                                     targetModule->uniqueName(), dataIdentifier,
-                                     processingModuleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
-                                     T::itemClassName());
-                    return dummy;
-                }
-                else
-                    return data;
-            }
-            else if (processingModuleData.contains(dataIdentifier))
-            {
-                // Try to retrieve the data as the current type
-                found = false;
-                const T &data = processingModuleData.value<T>(dataIdentifier, "", T(), &found);
-
-                if (!found)
-                {
-                    Messenger::error("Data named '{}' exists, but is not of the correct type (is {} rather than "
-                                     "{}).\n",
-                                     dataIdentifier,
-                                     processingModuleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
-                                     T::itemClassName());
-                    return dummy;
-                }
-                else
-                    return data;
-            }
-        }
+        // The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in
+        // the target list?
+        if (targetModule && processingModuleData.contains(dataIdentifier, targetModule->uniqueName()))
+            return processingModuleData.value<T>(dataIdentifier, targetModule->uniqueName());
+        else if (processingModuleData.contains(dataIdentifier))
+            return processingModuleData.value<T>(dataIdentifier);
 
         // If we haven't found it yet, try a search by object tag
-        if ((!found) && T::findObject(dataIdentifier))
-        {
-            // The tagged data exists...
-            const T &data = *T::findObject(dataIdentifier);
-            found = true;
-            return data;
-        }
+        if (T::findObject(dataIdentifier))
+            return *T::findObject(dataIdentifier);
 
         // Failed to find data
-        found = false;
-        return dummy;
+        return {};
     }
 
     /*

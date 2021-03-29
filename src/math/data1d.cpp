@@ -391,14 +391,11 @@ void Data1D::operator/=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Data1D::itemClassName() { return "Data1D"; }
-
 // Read data through specified LineParser
-bool Data1D::read(LineParser &parser, CoreData &coreData)
+bool Data1D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -434,7 +431,7 @@ bool Data1D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data1D::write(LineParser &parser)
+bool Data1D::serialise(LineParser &parser) const
 {
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))

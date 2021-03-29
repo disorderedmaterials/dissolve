@@ -34,7 +34,7 @@ int NodeBranchKeyword::minArguments() const { return 0; }
 int NodeBranchKeyword::maxArguments() const { return 0; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeBranchKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Check that a branch hasn't already been defined
     if (*data_)
@@ -44,7 +44,7 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, CoreData &coreDat
     // Create and parse a new branch
     (*data_) =
         new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, fmt::format("End{}", name()));
-    if (!(*data_)->read(parser, coreData))
+    if (!(*data_)->deserialise(parser, coreData))
         return false;
 
     return true;

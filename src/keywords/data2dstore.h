@@ -25,7 +25,7 @@ class Data2DStoreKeyword : public KeywordData<Data2DStore &>
     // Return maximum number of arguments accepted
     int maxArguments() const;
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, CoreData &coreData);
+    bool read(LineParser &parser, int startArg, const CoreData &coreData);
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix);
 };

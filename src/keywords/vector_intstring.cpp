@@ -21,7 +21,7 @@ int IntegerStringVectorKeyword::minArguments() const { return (nRequiredIntegers
 int IntegerStringVectorKeyword::maxArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(99)); }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     std::vector<int> i;
     std::vector<std::string> s;

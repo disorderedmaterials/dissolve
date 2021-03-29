@@ -7,7 +7,6 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
-#include "genericitems/array2ddouble.h"
 #include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 #include <functional>
@@ -265,14 +264,11 @@ std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector
 bool XRayWeights::isValid() const { return valid_; }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view XRayWeights::itemClassName() { return "XRayWeights"; }
-
 // Read data through specified LineParser
-bool XRayWeights::read(LineParser &parser, CoreData &coreData)
+bool XRayWeights::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
@@ -282,21 +278,21 @@ bool XRayWeights::read(LineParser &parser, CoreData &coreData)
     formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argsv(0));
 
     // Read AtomTypeList
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
 
     return finalise(formFactors_);
 }
 
 // Write data through specified LineParser
-bool XRayWeights::write(LineParser &parser)
+bool XRayWeights::serialise(LineParser &parser) const
 {
     // Write x-ray form factor dataset
     if (!parser.writeLineF("{}\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_)))
         return false;
 
     // Write AtomTypeList
-    if (!atomTypes_.write(parser))
+    if (!atomTypes_.serialise(parser))
         return false;
 
     return true;

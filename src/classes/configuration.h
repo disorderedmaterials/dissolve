@@ -211,7 +211,7 @@ class Configuration : public ListItem<Configuration>
      */
     public:
     // Write through specified LineParser
-    bool write(LineParser &parser) const;
+    bool serialise(LineParser &parser) const;
     // Read through specified LineParser
     bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
 

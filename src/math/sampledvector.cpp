@@ -148,14 +148,11 @@ void SampledVector::operator/=(double x)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view SampledVector::itemClassName() { return "SampledVector"; }
-
 // Read data through specified LineParser
-bool SampledVector::read(LineParser &parser, CoreData &coreData)
+bool SampledVector::deserialise(LineParser &parser)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

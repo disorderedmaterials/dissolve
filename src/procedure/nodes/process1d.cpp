@@ -112,9 +112,8 @@ ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &
                                                                    std::string_view prefix, GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
-    bool created;
-    auto &data = targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                            GenericItem::InRestartFileFlag, &created);
+    auto &data =
+        targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
     processedData_ = &data;
 
     data.setName(name());

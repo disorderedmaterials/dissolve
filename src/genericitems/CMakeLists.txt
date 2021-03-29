@@ -1,12 +1,13 @@
 add_library(
   genericitems
-  base.cpp
-  item.cpp
+  deserialisers.cpp
   list.cpp
-  base.h
-  item.h
-  items.h
+  producers.cpp
+  serialisers.cpp
+  deserialisers.h
   list.h
+  producers.h
+  serialisers.h
 )
 
 include_directories(genericitems PRIVATE ${PROJECT_SOURCE_DIR}/src)

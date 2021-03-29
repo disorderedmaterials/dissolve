@@ -14,52 +14,27 @@ SelectGenericItemDialog::SelectGenericItemDialog(QWidget *parent, Dissolve &diss
 
 SelectGenericItemDialog::~SelectGenericItemDialog() {}
 
-// Update the table of GenericItems, optionally filtering them by name and description
-void SelectGenericItemDialog::updateGenericItemTable(GenericItem *current, QString filter)
+// Update and (optionally) filter the list
+void SelectGenericItemDialog::filterItems(QString filterText)
 {
     // Loop over rows in the table
-    for (auto n = 0; n < ui_.ItemsTable->rowCount(); ++n)
+    for (auto n = 0; n < ui_.ItemsList->count(); ++n)
     {
-        QTableWidgetItem *item = ui_.ItemsTable->item(n, 0);
+        auto *item = ui_.ItemsList->item(n);
         if (!item)
             continue;
-        GenericItem *genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
-        if (genericItem == current)
-        {
-            ui_.ItemsTable->setCurrentItem(item);
-            emit(genericItemSelectionChanged(true));
-        }
 
         // Check filtering
-        if (filter.isEmpty())
-            ui_.ItemsTable->setRowHidden(n, false);
+        if (filterText.isEmpty())
+            item->setHidden(false);
         else
-        {
-            // Check name
-            QString name = QString::fromStdString(std::string(genericItem->name()));
-            auto inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
-
-            // Check object tag
-            QString objectTag = ui_.ItemsTable->item(n, 2)->text();
-            auto inObjectTag = objectTag.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
-
-            // Hide the item?
-            auto hide = (!inName) && (!inObjectTag);
-            ui_.ItemsTable->setRowHidden(n, hide);
-
-            // If the item was hidden, and it was selected, reset the current index
-            if (hide && item->isSelected())
-            {
-                ui_.ItemsTable->setCurrentItem(nullptr);
-                emit(genericItemSelectionChanged(false));
-            }
-        }
+            item->setHidden(!item->text().contains(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard)));
     }
 }
 
-void SelectGenericItemDialog::on_FilterEdit_textChanged(const QString &text) { updateGenericItemTable(nullptr, text); }
+void SelectGenericItemDialog::on_FilterEdit_textChanged(const QString &text) { filterItems(text); }
 
-void SelectGenericItemDialog::on_ItemsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem)
+void SelectGenericItemDialog::on_ItemsList_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem)
 {
     if (currentItem)
         emit(genericItemSelectionChanged(true));
@@ -67,7 +42,7 @@ void SelectGenericItemDialog::on_ItemsTable_currentItemChanged(QTableWidgetItem 
         emit(genericItemSelectionChanged(false));
 }
 
-void SelectGenericItemDialog::on_ItemsTable_itemDoubleClicked(QTableWidgetItem *w) { accept(); }
+void SelectGenericItemDialog::on_ItemsList_itemDoubleClicked(QTableWidgetItem *w) { accept(); }
 
 void SelectGenericItemDialog::on_SelectButton_clicked(bool checked) { accept(); }
 

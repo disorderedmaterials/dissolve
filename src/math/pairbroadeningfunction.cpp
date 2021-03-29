@@ -8,7 +8,6 @@
 #include "classes/atomtype.h"
 #include "classes/speciesintra.h"
 #include "data/atomicmasses.h"
-#include "genericitems/array2ddouble.h"
 #include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 
@@ -65,11 +64,11 @@ int PairBroadeningFunction::nFunctionParameters(FunctionType func) { return Pair
  */
 
 // Read function data from LineParser source
-bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, CoreData &coreData)
+bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // First argument is the form of the function, or a '&' to indicate that a full block-style definition of the data
     if (DissolveSys::sameString("&", parser.argsv(startArg)))
-        return read(parser, coreData);
+        return deserialise(parser);
 
     PairBroadeningFunction::FunctionType funcType = PairBroadeningFunction::functionType(parser.argsv(startArg));
     if (funcType == PairBroadeningFunction::nFunctionTypes)
@@ -247,14 +246,11 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view PairBroadeningFunction::itemClassName() { return "PairBroadeningFunction"; }
-
 // Read data through specified LineParser
-bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
+bool PairBroadeningFunction::deserialise(LineParser &parser)
 {
     // First line is function name
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

@@ -54,21 +54,30 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
         SelectGenericItemDialog genericItemDialog(this, *dissolve_);
         if (dimensionality == 1)
         {
-            Data1D *item = genericItemDialog.selectGenericItem<Data1D>();
-            if (item)
-                createRenderable<RenderableData1D>(item->objectTag(), item->name(), "Default");
+            auto itemName = genericItemDialog.selectGenericItem<Data1D>();
+            if (!itemName.isEmpty())
+            {
+                auto &item = dissolve_->processingModuleData().value<Data1D>(qPrintable(itemName));
+                createRenderable<RenderableData1D>(item.objectTag(), item.name(), "Default");
+            }
         }
         else if (dimensionality == 2)
         {
-            Data2D *item = genericItemDialog.selectGenericItem<Data2D>();
-            if (item)
-                createRenderable<RenderableData2D>(item->objectTag(), item->name(), "Default");
+            auto itemName = genericItemDialog.selectGenericItem<Data2D>();
+            if (!itemName.isEmpty())
+            {
+                auto &item = dissolve_->processingModuleData().value<Data2D>(qPrintable(itemName));
+                createRenderable<RenderableData2D>(item.objectTag(), item.name(), "Default");
+            }
         }
         else if (dimensionality == 3)
         {
-            Data3D *item = genericItemDialog.selectGenericItem<Data3D>();
-            if (item)
-                createRenderable<RenderableData3D>(item->objectTag(), item->name(), "Default");
+            auto itemName = genericItemDialog.selectGenericItem<Data3D>();
+            if (!itemName.isEmpty())
+            {
+                auto &item = dissolve_->processingModuleData().value<Data3D>(qPrintable(itemName));
+                createRenderable<RenderableData3D>(item.objectTag(), item.name(), "Default");
+            }
         }
     }
 }

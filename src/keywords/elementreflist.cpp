@@ -23,7 +23,7 @@ int ElementVectorKeyword::minArguments() const { return 1; }
 int ElementVectorKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ElementVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool ElementVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments (which are Element names) and add them to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)

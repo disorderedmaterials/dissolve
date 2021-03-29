@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "math/broadeningfunction.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
@@ -16,7 +15,7 @@ class ProcessPool;
 class SpeciesIntra;
 
 // Pair Broadening Function
-class PairBroadeningFunction : public GenericItemBase
+class PairBroadeningFunction
 {
     public:
     // Function Types
@@ -55,7 +54,7 @@ class PairBroadeningFunction : public GenericItemBase
 
     public:
     // Read function data from LineParser source
-    bool readAsKeyword(LineParser &parser, int startArg, CoreData &coreData);
+    bool readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData);
     // Write function data to LineParser source
     bool writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker = true);
     // Set function type
@@ -75,13 +74,11 @@ class PairBroadeningFunction : public GenericItemBase
                                           SpeciesIntra *intra = nullptr);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool write(LineParser &parser);
 

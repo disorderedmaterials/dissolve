@@ -152,8 +152,6 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
 
-    bool created;
-
     // Get unweighted S(Q) from the specified SQMOdule
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
         return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
@@ -170,9 +168,9 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weights.print();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
-    auto &weightedSQ = dissolve.processingModuleData().realise<PartialSet>("WeightedSQ", uniqueName_,
-                                                                           GenericItem::InRestartFileFlag, &created);
-    if (created)
+    auto [weightedSQ, wSQstatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+    if (wSQstatus == GenericItem::ItemStatus::Created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
     // Calculate weighted S(Q)
@@ -195,9 +193,9 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    auto &weightedGR = dissolve.processingModuleData().realise<PartialSet>("WeightedGR", uniqueName_,
-                                                                           GenericItem::InRestartFileFlag, &created);
-    if (created)
+    auto [weightedGR, wGRstatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+    if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedGR.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
 
     // Calculate weighted g(r)

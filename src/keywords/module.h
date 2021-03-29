@@ -57,7 +57,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
     // Return maximum number of arguments accepted
     int maxArguments() const { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData)
     {
         Module *module = coreData.findModule(parser.argsv(startArg));
         if (!module)

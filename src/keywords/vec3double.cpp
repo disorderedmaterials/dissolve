@@ -101,7 +101,7 @@ int Vec3DoubleKeyword::minArguments() const { return 3; }
 int Vec3DoubleKeyword::maxArguments() const { return 3; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg + 2))
     {

@@ -235,14 +235,11 @@ void Histogram3D::operator=(const Histogram3D &source)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Histogram3D::itemClassName() { return "Histogram3D"; }
-
 // Read data through specified LineParser
-bool Histogram3D::read(LineParser &parser, CoreData &coreData)
+bool Histogram3D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -257,14 +254,14 @@ bool Histogram3D::read(LineParser &parser, CoreData &coreData)
     nMissed_ = parser.argli(1);
 
     for (auto &average : averages_)
-        if (!average.read(parser, coreData))
+        if (!average.deserialise(parser))
             return false;
 
     return true;
 }
 
 // Write data through specified LineParser
-bool Histogram3D::write(LineParser &parser)
+bool Histogram3D::serialise(LineParser &parser) const
 {
     if (!parser.writeLineF("{} {} {} {} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_,
                            zMinimum_, zMaximum_, zBinWidth_))
@@ -272,7 +269,7 @@ bool Histogram3D::write(LineParser &parser)
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
     for (auto &average : averages_)
-        if (!average.write(parser))
+        if (!average.serialise(parser))
             return false;
 
     return true;

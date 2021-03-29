@@ -157,8 +157,6 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
 
-    bool created;
-
     // Get unweighted S(Q) from the specified SQMOdule
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
         return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
@@ -172,9 +170,9 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weights.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-    PartialSet &weightedSQ = dissolve.processingModuleData().realise<PartialSet>("WeightedSQ", uniqueName_,
-                                                                                 GenericItem::InRestartFileFlag, &created);
-    if (created)
+    auto [weightedSQ, wSQtatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+    if (wSQtatus == GenericItem::ItemStatus::Created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
     // Calculate weighted S(Q)
@@ -236,9 +234,9 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    auto &weightedGR = dissolve.processingModuleData().realise<PartialSet>("WeightedGR", uniqueName_,
-                                                                           GenericItem::InRestartFileFlag, &created);
-    if (created)
+    auto [weightedGR, wGRstatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+    if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
     weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 

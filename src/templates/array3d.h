@@ -130,9 +130,9 @@ template <class A> class Array3D
     // End of the underlying array
     typename std::vector<A>::iterator end() { return array_.end(); }
     // Beginning of the underlying array
-    typename std::vector<A>::const_iterator cbegin() const { return array_.cbegin(); }
+    typename std::vector<A>::const_iterator begin() const { return array_.cbegin(); }
     // End of the underlying array
-    typename std::vector<A>::const_iterator cend() const { return array_.cend(); }
+    typename std::vector<A>::const_iterator end() const { return array_.cend(); }
     bool empty() const { return array_.empty(); }
     // Return linear value
     A &linearValue(int index) { return array_[index]; }

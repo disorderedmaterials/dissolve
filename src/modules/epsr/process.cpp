@@ -224,7 +224,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Loop over target data
     auto rFacTot = 0.0;
-    bool found, created;
     for (auto *module : targets)
     {
         /*
@@ -232,11 +231,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Retrieve the weighted S(Q)/F(Q)
-        const auto &weightedSQ =
-            dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName(), PartialSet(), &found);
-        if (!found)
-            return Messenger::error("Could not locate associated weighted neutron PartialSet for target '{}'.\n",
-                                    module->uniqueName());
+        const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
         const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
@@ -246,16 +241,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 module->uniqueName());
 
         // Retrieve the unweighted S(Q)/F(Q)
-        const auto &unweightedSQ =
-            dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName(), PartialSet(), &found);
-        if (!found)
-            return Messenger::error("Could not locate UnweightedSQ for target '{}'.\n", module->uniqueName());
+        const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName());
 
         // Retrieve the ReferenceData
         const auto &originalReferenceData =
-            dissolve.processingModuleData().value<Data1D>("ReferenceData", module->uniqueName(), Data1D(), &found);
-        if (!found)
-            return Messenger::error("Could not locate ReferenceData for target '{}'.\n", module->uniqueName());
+            dissolve.processingModuleData().value<Data1D>("ReferenceData", module->uniqueName());
 
         // Realise the r-factor array and make sure its object name is set
         auto &errors = dissolve.processingModuleData().realise<Data1D>(fmt::format("RFactor_{}", module->uniqueName()),
@@ -298,8 +288,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         deltaFQ *= -1.0;
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
-        auto &fitCoefficients = dissolve.processingModuleData().realise<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+        auto [fitCoefficients, status] = dissolve.processingModuleData().realiseIf<std::vector<double>>(
+            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 
         auto fitError = 0.0;
         if (functionType == EPSRModule::GaussianExpansionFunction)
@@ -307,7 +297,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Construct our fitting object
             GaussFit coeffMinimiser(deltaFQ);
 
-            if (created)
+            if (status == GenericItem::ItemStatus::Created)
                 fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
             else
             {
@@ -333,7 +323,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Construct our fitting object
             PoissonFit coeffMinimiser(deltaFQ);
 
-            if (created)
+            if (status == GenericItem::ItemStatus::Created)
                 fitError =
                     coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 0, 3, 3, false);
             else
@@ -379,10 +369,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         if (module->type() == "NeutronSQ")
         {
-            const auto &weights = dissolve.processingModuleData().value<NeutronWeights>("FullWeights", module->uniqueName(),
-                                                                                        NeutronWeights(), &found);
-            if (!found)
-                return Messenger::error("Could not locate NeutronWeights for target '{}'.\n", module->uniqueName());
+            const auto &weights = dissolve.processingModuleData().value<NeutronWeights>("FullWeights", module->uniqueName());
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = originalReferenceData;
@@ -401,10 +388,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
         else if (module->type() == "XRaySQ")
         {
-            auto &weights = dissolve.processingModuleData().retrieve<XRayWeights>("FullWeights", module->uniqueName(),
-                                                                                  XRayWeights(), &found);
-            if (!found)
-                return Messenger::error("Could not locate XRayWeights for target '{}'.\n", module->uniqueName());
+            auto &weights = dissolve.processingModuleData().retrieve<XRayWeights>("FullWeights", module->uniqueName());
 
             // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency in
             // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to

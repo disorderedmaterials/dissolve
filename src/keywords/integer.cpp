@@ -75,7 +75,7 @@ int IntegerKeyword::minArguments() const { return 1; }
 int IntegerKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IntegerKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {

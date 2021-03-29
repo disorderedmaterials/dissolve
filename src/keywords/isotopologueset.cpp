@@ -24,7 +24,7 @@ int IsotopologueSetKeyword::minArguments() const { return 3; }
 int IsotopologueSetKeyword::maxArguments() const { return 3; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IsotopologueSetKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool IsotopologueSetKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Species (first argument)
     Species *sp = coreData.findSpecies(parser.argsv(startArg));

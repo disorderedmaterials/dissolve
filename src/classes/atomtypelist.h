@@ -5,7 +5,6 @@
 
 #include "classes/atomtypedata.h"
 #include "classes/coredata.h"
-#include "genericitems/base.h"
 #include "templates/optionalref.h"
 #include <tuple>
 #include <vector>
@@ -15,7 +14,7 @@ class AtomType;
 class Isotope;
 
 // AtomTypeList
-class AtomTypeList : public GenericItemBase
+class AtomTypeList
 {
     public:
     AtomTypeList();
@@ -76,15 +75,13 @@ class AtomTypeList : public GenericItemBase
     void print() const;
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
 
     /*
      * Parallel Comms
