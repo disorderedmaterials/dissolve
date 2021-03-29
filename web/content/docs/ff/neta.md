@@ -19,7 +19,7 @@ There is (at present) no use made of bond orders within the NETA implementation 
 
 Uniquely describing atoms based on connectivity can get quite laborious when trying to tackle larger molecules, since this often requires the repetition of NETA fragments to identify atoms that have already been described. In most situations, using _type references_ can dramatically reduce the amount of NETA required, as previously-defined atoms can be referenced by their unique integer index when describing other atoms. A good tactic to use is to describe the most unique, "central" atom in a molecule as completely as possible, and then reference it when describing other atoms.
 
-Type references are written as `&n` where `n` is the unique index of the type.
+Type references are written as `&X` where `X` is either the unique index of the type or the type name.
 
 ## Algorithm
 
@@ -35,8 +35,17 @@ The current atom being checked for a match to the description is the "root" atom
 
 |Keyword|Syntax|Description|
 |:------|------|-----------|
+|`geometry`|`geometry` `=`|`!=` [`type`](#geometry-types)|States that the root atom must (or must not) have the bond geometry specified.|
 |`nbonds`|`nbonds` [`operator`](#comparison-operators) `value`|States that the bond count on the root atom must satisfy the given criterion.|
 |`nh`|`nh` [`operator`](#comparison-operators) `value`|States that the total number of hydrogen atoms bound to the root atom must satisfy the given criterion.|
+
+#### Examples
+
+```
+geometry=tet    # ... the root atom must be tetrahedral
+nbonds>=2       # ... the root atom has at least two bonds
+nh=1            # ... the root atom has exactly one hydrogen bound to it
+```
 
 ### "Bound To" (`-`)
 
@@ -44,6 +53,7 @@ The `-` keyword specifies a connection to another atom that the current atom mus
 
 |Keyword|Syntax|Description|
 |:------|------|-----------|
+|`geometry`|`geometry` `=`|`!=` [`type`](#geometry-types)|States that the bound atom must (or must not) have the bond geometry specified.|
 |`n`|`n` [`operator`](#comparison-operators) `value`|Requests that there must be a certain number of unique matches of the bound atom.|
 |`nbonds`|`nbonds` [`operator`](#comparison-operators) `value`|States that the bond count on the bound atom root atom must satisfy the given criterion.|
 |`nh`|`nh` [`operator`](#comparison-operators) `value`|States that the total number of hydrogen atoms on the bound atom must satisfy the given criterion.|
@@ -52,16 +62,17 @@ The `-` keyword specifies a connection to another atom that the current atom mus
 #### Examples
 
 ```
--C            # ... is bound to a carbon atom
--[P,S]        # ... is bound to a phosphorous or sulphur atom
--[&6,&7,N]    # ... is bound to atom type with id 6 or 7, or a nitrogen
--C(-O)        # ... is bound to a carbon, which is bound to an oxygen
--Si(root)     # ... is bound to a silicon atom, which may also be the originating (root) atom
-!-[N,P]       # ... is *not* bound to a nitrogen or a phosphorus
--C(nh=3)      # ... is bound to a carbon with exactly three hydrogen atoms
--C(nh<=2)     # ... is bound to a carbon with zero, one, or two hydrogen atoms
--C(nh=3,n=3)  # ... is bound to three carbons, each having three bound hydrogen atoms
--O(nbonds=1)  # ... is bound to an oxygen atom with exactly one bond
+-C                 # ... is bound to a carbon atom
+-[P,S]             # ... is bound to a phosphorous or sulphur atom
+-[&6,&7,N]         # ... is bound to atom type with id 6 or 7, or a nitrogen
+-C(-O)             # ... is bound to a carbon, which is bound to an oxygen
+-Si(root)          # ... is bound to a silicon atom, which may also be the originating (root) atom
+!-[N,P]            # ... is *not* bound to a nitrogen or a phosphorus
+-C(nh=3)           # ... is bound to a carbon with exactly three hydrogen atoms
+-C(nh<=2)          # ... is bound to a carbon with zero, one, or two hydrogen atoms
+-C(nh=3,n=3)       # ... is bound to three carbons, each having three bound hydrogen atoms
+-O(nbonds=1)       # ... is bound to an oxygen atom with exactly one bond
+-Zn(geometry=sqp)  # ... is bound to a zinc atom which has a square-planar geometry
 ```
 
 ### Ring
@@ -92,3 +103,17 @@ ring(C,C,N,C,C)      # ... exists in a ring containing the elemental sequence `C
 |`<`|Less than|
 |`>=`|Greater than or equal to|
 |`<=`|Less than or equal to|
+
+### Geometry Types
+
+|Keyword|Description|
+|:------|----------|
+|`unbound`|Free atom (i.e. no bonds).|
+|`terminal`|Exactly one bond.|
+|`linear`|Two bonds forming a bond angle approaching 180&deg;.|
+|`ts`|Three bonds in a T-shape arrangement.|
+|`tp`|Three bonds forming a trigonal planar arrangement.|
+|`tet`|Three or four bonds in a tetrahedral arrangement.|
+|`sqp`|Four bonds in a square-planar arrangement.|
+|`tbp`|Five bonds in a trigonal bipyramidal arrangement.|
+|`oct`|Six bonds forming an octahedral arrangement.|
