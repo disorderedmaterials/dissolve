@@ -196,12 +196,11 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
             }
         }
 
-        result.emplace_back(std::get<0>(improper), std::get<1>(improper), std::get<2>(improper),
-                            std::get<3>(improper), SpeciesTorsion::CosNForm, params);
+        result.emplace_back(std::get<0>(improper), std::get<1>(improper), std::get<2>(improper), std::get<3>(improper),
+                            SpeciesTorsion::CosNForm, params);
     }
     return result;
 }
-
 
 void XmlImproperModel::clear()
 {
