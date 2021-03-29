@@ -57,3 +57,5 @@ target_include_directories(
   expression PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLRRUNTIME_INCLUDE_DIRS}
                      ${ANTLR_ExpressionGrammarLexer_OUTPUT_DIR} ${ANTLR_ExpressionGrammarParser_OUTPUT_DIR}
 )
+
+target_link_libraries(expression base)

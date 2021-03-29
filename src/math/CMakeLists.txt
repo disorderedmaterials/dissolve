@@ -71,3 +71,4 @@ add_library(
 )
 
 include_directories(math PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(math PRIVATE base)

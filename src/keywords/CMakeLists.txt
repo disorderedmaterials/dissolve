@@ -93,3 +93,4 @@ add_library(
 )
 
 include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(keywords PRIVATE base)

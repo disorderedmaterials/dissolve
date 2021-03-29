@@ -68,3 +68,4 @@ add_library(
 )
 
 include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(procedurenodes PRIVATE base)
