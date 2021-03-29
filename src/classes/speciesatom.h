@@ -158,4 +158,35 @@ class SpeciesAtom
     void setCoordinates(const Vec3<double> &newr);
     // Translate coordinates
     void translateCoordinates(const Vec3<double> &delta);
+
+    /*
+     * Atom Environment Helpers
+     */
+    public:
+    // Atom Geometry enum
+    enum class AtomGeometry
+    {
+        Unknown,
+        Unbound,
+        Terminal,
+        Linear,
+        TShape,
+        TrigonalPlanar,
+        Tetrahedral,
+        SquarePlanar,
+        TrigonalBipyramidal,
+        Octahedral
+    };
+
+    public:
+    // Calculate and return the geometry of this atom
+    AtomGeometry geometry() const;
+    // Return whether the geometry of this atom matches that specified
+    bool isGeometry(AtomGeometry geom) const;
+    // Calculate and return the geometry of the specified SpeciesAtom
+    static AtomGeometry geometry(const SpeciesAtom *i);
+    // Return whether the specified SpeciesAtom exists in the specified geometry
+    static bool isGeometry(const SpeciesAtom *i, AtomGeometry geom);
+    // Guess and return oxidation state for the specified SpeciesAtom
+    static int guessOxidationState(const SpeciesAtom *i);
 };

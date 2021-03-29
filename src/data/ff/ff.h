@@ -194,33 +194,6 @@ class Forcefield
     int assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy, bool setSpeciesAtomCharges) const;
     // Assign intramolecular parameters to the supplied Species
     bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
-
-    /*
-     * Atom Environment Helpers
-     */
-    public:
-    // Atom Geometry enum
-    enum AtomGeometry
-    {
-        UnboundGeometry,
-        TerminalGeometry,
-        LinearGeometry,
-        TShapeGeometry,
-        TrigonalPlanarGeometry,
-        TetrahedralGeometry,
-        SquarePlanarGeometry,
-        TrigonalBipyramidalGeometry,
-        OctahedralGeometry,
-        nAtomGeometries
-    };
-
-    protected:
-    // Calculate and return the geometry of the specified SpeciesAtom
-    AtomGeometry geometryOfAtom(SpeciesAtom *i) const;
-    // Return whether the specified SpeciesAtom exists in the specified geometry
-    bool isAtomGeometry(SpeciesAtom *i, AtomGeometry geom) const;
-    // Guess and return oxidation state for the specified SpeciesAtom
-    int guessOxidationState(const SpeciesAtom *i) const;
 };
 
 template <class T, typename... Args>
