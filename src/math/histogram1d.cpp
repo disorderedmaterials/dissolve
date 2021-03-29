@@ -157,6 +157,9 @@ void Histogram1D::add(Histogram1D &other, int factor)
     }
     for (auto n = 0; n < nBins_; ++n)
         bins_[n] += other.bins_[n] * factor;
+
+    nBinned_ += other.nBinned_;
+    nMissed_ += other.nMissed_;
 }
 
 // Return accumulated (averaged) data
@@ -177,6 +180,26 @@ void Histogram1D::operator=(const Histogram1D &source)
     bins_ = source.bins_;
     binCentres_ = source.binCentres_;
     averages_ = source.averages_;
+}
+
+Histogram1D Histogram1D::operator+(const Histogram1D &other) const
+{
+    if (nBins_ != other.nBins_)
+    {
+        Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size ({} vs {}).\n", nBins_,
+                         other.nBins_);
+        return {};
+    }
+    Histogram1D ret = *this;
+
+    for (auto n = 0; n < nBins_; ++n)
+        ret.bins_[n] += other.bins_[n];
+
+    ret.nBinned_ = this->nBinned_ + other.nBinned_;
+    ret.nMissed_ = this->nMissed_ + other.nMissed_;
+    ret.nBins_ = this->nBins_;
+
+    return ret;
 }
 
 /*

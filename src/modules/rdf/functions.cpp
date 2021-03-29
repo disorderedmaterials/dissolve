@@ -11,12 +11,16 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "main/dissolve.h"
+#include "math/combinations.h"
 #include "math/error.h"
 #include "math/filters.h"
 #include "module/group.h"
 #include "modules/rdf/rdf.h"
 #include "templates/algorithms.h"
 #include <iterator>
+#include <tbb/combinable.h>
+#include <tbb/parallel_for.h>
+#include <tuple>
 
 /*
  * Private Functions
@@ -39,6 +43,7 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
 // Calculate partial g(r) with optimised double-loop
 bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth)
 {
+
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
 
@@ -142,8 +147,111 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     return true;
 }
 
+struct TempHistogram
+// Currently having to create a temp histogram struct as the normal histogram sometimes throws an exception in the data object
+// store while in the parallel computations
+{
+    TempHistogram() = default;
+    void initialise(Histogram1D &histo)
+    {
+        this->nBinned_ = histo.nBinned();
+        this->nBins_ = histo.nBins();
+        this->binCentres_ = histo.binCentres();
+        this->bins_ = histo.bins();
+        this->binWidth_ = histo.binWidth();
+        this->minimum_ = histo.minimum();
+        this->maximum_ = histo.maximum();
+    }
+    // Bin specified value, returning success
+    bool bin(double x)
+    {
+        // Calculate target bin
+        auto bin = int((x - minimum_) / binWidth_);
+
+        // Check bin range
+        if ((bin < 0) || (bin >= nBins_))
+        {
+            ++nMissed_;
+            return false;
+        }
+
+        ++bins_[bin];
+        ++nBinned_;
+
+        return true;
+    }
+    TempHistogram operator+(const TempHistogram &other) const
+    {
+        TempHistogram ret = *this;
+        for (auto n = 0; n < nBins_; ++n)
+            ret.bins_[n] += other.bins_[n];
+
+        ret.nBinned_ = this->nBinned_ + other.nBinned_;
+        ret.nMissed_ = this->nMissed_ + other.nMissed_;
+        ret.nBins_ = this->nBins_;
+
+        return ret;
+    }
+
+    // Minimum value for data (hard left-edge of first bin)
+    double minimum_;
+    // Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
+    double maximum_;
+    // Bin width
+    double binWidth_;
+    // Number of bins
+    int nBins_;
+    // Histogram bins
+    std::vector<long int> bins_;
+    // Array of bin centres
+    std::vector<double> binCentres_;
+    // Number of values binned over all bins
+    long int nBinned_;
+    // Number of points missed (out of bin range)
+    long int nMissed_;
+    // Accumulated data
+};
+
+struct PartialHistograms
+{
+    PartialHistograms() = default;
+    PartialHistograms(PartialSet &partialSet)
+    {
+
+        histograms_.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes());
+        for (int i = 0; i < partialSet.nAtomTypes(); ++i)
+            for (int j = 0; j < partialSet.nAtomTypes(); ++j)
+                histograms_[{i, j}].initialise(partialSet.fullHistogram(i, j));
+        // histograms_[{i, j}] = partialSet.fullHistogram(i, j);
+    }
+    PartialHistograms operator+(const PartialHistograms &other) const
+    {
+        PartialHistograms ret;
+        ret.histograms_.initialise(this->histograms_.nRows(), this->histograms_.nColumns());
+        for (int i = 0; i < this->histograms_.nRows(); ++i)
+            for (int j = 0; j < this->histograms_.nColumns(); ++j)
+            {
+                ret.histograms_[{i, j}] = this->histograms_[{i, j}] + other.histograms_[{i, j}];
+            }
+        return ret;
+    }
+    Array2D<TempHistogram> histograms_;
+};
+
 // Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
+{
+    bool retVal;
+    constexpr bool PARALLEL = true;
+    if constexpr (PARALLEL)
+        retVal = calculateGRCellsParallelImpl(procPool, cfg, partialSet, rdfRange);
+    else
+        retVal = calculateGRCellsSingleImpl(procPool, cfg, partialSet, rdfRange);
+    return retVal;
+}
+
+bool RDFModule::calculateGRCellsSingleImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
+                                           const double rdfRange)
 {
     std::shared_ptr<Atom> i, j;
     int n, m, typeI;
@@ -207,6 +315,99 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         }
     }
 
+    return true;
+}
+
+bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
+                                             const double rdfRange)
+{
+    // Grab the Box pointer and Cell array
+    const auto *box = cfg->box();
+    auto &cellArray = cfg->cells();
+
+    // Loop context is to use all processes in Pool as one group
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto range = chop_range(0, cellArray.nCells(), nChunks, offset);
+    int start = std::get<0>(range);
+    int end = std::get<1>(range);
+
+    tbb::combinable<PartialHistograms> pHistograms([&partialSet]() { return PartialHistograms(partialSet); });
+    Combinations comb(end - start, 2);
+    tbb::parallel_for(tbb::blocked_range<int>(0, comb.getNumCombinations()),
+                      [&pHistograms, start, cfg, &comb, rdfRange](tbb::blocked_range<int> r) {
+                          for (int i = r.begin(); i < r.end(); ++i)
+                          {
+                              auto &histograms = pHistograms.local().histograms_;
+                              const auto *box = cfg->box();
+                              auto &cellArray = cfg->cells();
+                              auto [n, m] = comb.nthIndexPair(i);
+                              auto *cellI = cellArray.cell(n + start);
+                              auto *cellJ = cellArray.cell(m + start);
+
+                              if (!cellArray.withinRange(cellI, cellJ, rdfRange))
+                                  continue;
+
+                              // Add contributions between atoms in cellI and cellJ
+                              auto &atomsI = cellI->atoms();
+                              auto &atomsJ = cellJ->atoms();
+
+                              // Perform minimum image calculation on all atom pairs -
+                              // quicker than working out if we need to given the absence of a 2D look-up array
+                              for (auto &i : atomsI)
+                              {
+                                  auto typeI = i->localTypeIndex();
+                                  auto &rI = i->r();
+
+                                  for (auto &j : atomsJ)
+                                  {
+                                      auto &rJ = j->r();
+                                      auto distance = box->minimumDistance(rJ, rI);
+                                      histograms[{typeI, j->localTypeIndex()}].bin(distance);
+                                  }
+                              }
+                          }
+                      });
+    auto histograms = pHistograms.combine(std::plus<PartialHistograms>());
+    // Add all the histograms together, for the temp histogram this is a bit more manual
+    // if we were using the normal histogram we could simple use the .add method
+
+    // for (int k = 0; k < partialSet.nAtomTypes(); ++k)
+    //     for (int j = 0; j < partialSet.nAtomTypes(); ++j)
+    //         partialSet.fullHistogram(k, j).add(histograms.histograms_[{k, j}]);
+    for (int k = 0; k < partialSet.nAtomTypes(); ++k)
+        for (int j = 0; j < partialSet.nAtomTypes(); ++j)
+        {
+            auto &histo = partialSet.fullHistogram(k, j);
+            auto nBinned = histo.nBinned();
+            auto &bins = histo.bins();
+            for (auto n = 0; n < histo.nBins(); ++n)
+                bins[n] += histograms.histograms_[{k, j}].bins_[n];
+
+            nBinned += histograms.histograms_[{k, j}].nBinned_;
+        }
+
+    for (int n = start; n < end; ++n)
+    {
+        auto *cellI = cellArray.cell(n);
+        auto &atomsI = cellI->atoms();
+
+        // Add contributions between atoms in cellI
+        for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
+        {
+            auto &i = *iter;
+            auto typeI = i->localTypeIndex();
+
+            for (auto jter = std::next(iter, 1); jter != atomsI.end(); ++jter)
+            {
+                auto &j = *jter;
+
+                // No need to perform MIM since we're in the same cell
+                double distance = (i->r() - j->r()).magnitude();
+                partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
+            }
+        }
+    }
     return true;
 }
 

@@ -2,6 +2,7 @@ add_library(
   math
   averaging.cpp
   broadeningfunction.cpp
+  combinations.cpp
   cuboid.cpp
   data1d.cpp
   data2d.cpp
@@ -33,6 +34,7 @@ add_library(
   windowfunction.cpp
   averaging.h
   broadeningfunction.h
+  combinations.h
   constants.h
   cuboid.h
   data1d.h
