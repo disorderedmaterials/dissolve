@@ -10,7 +10,7 @@
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
                                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
                                        SpeciesBond::BondType bt)
-    : NETANode(parent, NETANode::ConnectionNode)
+    : NETANode(parent, NETANode::NodeType::Connection)
 {
     allowedElements_ = targetElements;
     allowedAtomTypes_ = targetAtomTypes;
@@ -18,17 +18,15 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
 
     // Modifiers
     repeatCount_ = 1;
-    repeatCountOperator_ = NETANode::GreaterThanEqualTo;
+    repeatCountOperator_ = NETANode::ComparisonOperator::GreaterThanEqualTo;
     nBondsValue_ = -1;
-    nBondsValueOperator_ = NETANode::EqualTo;
+    nBondsValueOperator_ = NETANode::ComparisonOperator::EqualTo;
     nHydrogensValue_ = -1;
-    nHydrogensValueOperator_ = NETANode::EqualTo;
+    nHydrogensValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 
     // Flags
     allowRootMatch_ = false;
 }
-
-NETAConnectionNode::~NETAConnectionNode() {}
 
 /*
  * Atom Targets
@@ -45,7 +43,7 @@ bool NETAConnectionNode::addElementTarget(Elements::Element Z)
 // Add forcefield type target to node
 bool NETAConnectionNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 {
-    allowedAtomTypes_.push_back(ffType);
+    allowedAtomTypes_.emplace_back(ffType);
 
     return true;
 }
@@ -57,8 +55,10 @@ bool NETAConnectionNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Return enum options for NETAConnectionModifiers
 EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modifiers()
 {
-    return EnumOptions<NETAConnectionNode::NETAConnectionModifier>(
-        "ConnectionModifier", {{NBondsModifier, "nbonds"}, {NHydrogensModifier, "nh"}, {RepeatConnectionModifier, "n"}});
+    return EnumOptions<NETAConnectionNode::NETAConnectionModifier>("ConnectionModifier",
+                                                                   {{NETAConnectionModifier::NBonds, "nbonds"},
+                                                                    {NETAConnectionModifier::NHydrogens, "nh"},
+                                                                    {NETAConnectionModifier::Repeat, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -73,15 +73,15 @@ bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperat
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETAConnectionNode::NBondsModifier):
+        case (NETAConnectionNode::NETAConnectionModifier::NBonds):
             nBondsValue_ = value;
             nBondsValueOperator_ = op;
             break;
-        case (NETAConnectionNode::NHydrogensModifier):
+        case (NETAConnectionNode::NETAConnectionModifier::NHydrogens):
             nHydrogensValue_ = value;
             nHydrogensValueOperator_ = op;
             break;
-        case (NETAConnectionNode::RepeatConnectionModifier):
+        case (NETAConnectionNode::NETAConnectionModifier::Repeat):
             repeatCount_ = value;
             repeatCountOperator_ = op;
             break;
@@ -99,7 +99,7 @@ bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperat
 // Return enum options for NETAConnectionFlags
 EnumOptions<NETAConnectionNode::NETAConnectionFlag> NETAConnectionNode::flags()
 {
-    return EnumOptions<NETAConnectionNode::NETAConnectionFlag>("ConnectionFlag", {{RootFlag, "root"}});
+    return EnumOptions<NETAConnectionNode::NETAConnectionFlag>("ConnectionFlag", {{NETAConnectionFlag::Root, "root"}});
 }
 
 // Return whether the specified flag is valid for this node
@@ -114,7 +114,7 @@ bool NETAConnectionNode::setFlag(std::string_view flag, bool state)
 
     switch (flags().enumeration(flag))
     {
-        case (NETAConnectionNode::RootFlag):
+        case (NETAConnectionNode::NETAConnectionFlag::Root):
             allowRootMatch_ = state;
             break;
         default:
@@ -232,7 +232,8 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         nbr.second = atomScore;
 
         // Exit early in the case of GreaterThan GreaterThanEqualTo logic
-        if ((repeatCountOperator_ == NETANode::GreaterThan || repeatCountOperator_ == NETANode::GreaterThanEqualTo) &&
+        if ((repeatCountOperator_ == NETANode::ComparisonOperator::GreaterThan ||
+             repeatCountOperator_ == NETANode::ComparisonOperator::GreaterThanEqualTo) &&
             compareValues(nMatches, repeatCountOperator_, repeatCount_))
             break;
     }

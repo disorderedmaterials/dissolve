@@ -22,20 +22,19 @@ class NETANode
 {
     public:
     // Node types
-    enum NodeType
+    enum class NodeType
     {
-        BasicNode,
-        ConnectionNode,
-        OrNode,
-        PresenceNode,
-        RingNode,
-        RootNode,
-        nNETANodeTypes
+        Basic,
+        Connection,
+        Or,
+        Presence,
+        Ring,
+        Root
     };
     // Return enum options for Node Types
     static EnumOptions<NETANode::NodeType> nodeTypes();
     // Value Comparison Operators
-    enum ComparisonOperator
+    enum class ComparisonOperator
     {
         EqualTo,
         NotEqualTo,

@@ -31,6 +31,7 @@ fragment DIGIT: [0-9];
 fragment LETTER: [a-zA-Z];
 fragment UCASELETTER: [A-Z];
 fragment LCASELETTER: [a-z];
+fragment SYMBOL: [_+-];
 
 // Comparison Operators
 ComparisonOperator: '<=' | '>=' | '<' | '>' | '=' | '!=';
@@ -44,7 +45,7 @@ Comma: ',';
 TypeReference: '&';
 
 // Whitespace
-WS : [ ]* -> skip;
+WS : [ ]+ -> skip;
 
 // Basic Tokens
 Integer: DIGIT+;
@@ -56,7 +57,7 @@ ConnectionKeyword: '-';
 RingKeyword: 'r' 'i' 'n' 'g';
 
 // Named Tokens
-Element: UCASELETTER LCASELETTER* { isElement(getText()) }?;
-FFTypeName: TypeReference LETTER+;
+Element: UCASELETTER LCASELETTER*;
+FFTypeName: TypeReference LETTER (LETTER | DIGIT | SYMBOL)*;
 FFTypeIndex: TypeReference Integer;
 Keyword: LCASELETTER+;

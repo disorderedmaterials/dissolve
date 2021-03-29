@@ -5,15 +5,13 @@
 #include "classes/speciesatom.h"
 #include "data/elements.h"
 
-NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::RootNode)
+NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Root)
 {
     nBondsValue_ = -1;
-    nBondsValueOperator_ = NETANode::EqualTo;
+    nBondsValueOperator_ = NETANode::ComparisonOperator::EqualTo;
     nHydrogensValue_ = -1;
-    nHydrogensValueOperator_ = NETANode::EqualTo;
+    nHydrogensValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 }
-
-NETARootNode::~NETARootNode() {}
 
 /*
  * Modifiers
@@ -22,8 +20,8 @@ NETARootNode::~NETARootNode() {}
 // Return enum options for NETARootModifiers
 EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 {
-    return EnumOptions<NETARootNode::NETARootModifier>("RootModifier",
-                                                       {{NBondsModifier, "nbonds"}, {NHydrogensModifier, "nh"}});
+    return EnumOptions<NETARootNode::NETARootModifier>(
+        "RootModifier", {{NETARootModifier::NBonds, "nbonds"}, {NETARootModifier::NHydrogens, "nh"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -38,11 +36,11 @@ bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op,
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETARootNode::NBondsModifier):
+        case (NETARootNode::NETARootModifier::NBonds):
             nBondsValue_ = value;
             nBondsValueOperator_ = op;
             break;
-        case (NETARootNode::NHydrogensModifier):
+        case (NETARootNode::NETARootModifier::NHydrogens):
             nHydrogensValue_ = value;
             nHydrogensValueOperator_ = op;
             break;
@@ -64,7 +62,7 @@ int NETARootNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
 
     // Check any specified modifier values
     if (nBondsValue_ >= 0 && (!compareValues(i->nBonds(), nBondsValueOperator_, nBondsValue_)))
-        return NETANode::NoMatch;
+        return NETANode::NETAResult::NoMatch;
     else
         ++totalScore;
 

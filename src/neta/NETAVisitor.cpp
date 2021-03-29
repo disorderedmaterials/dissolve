@@ -16,7 +16,7 @@
 // Return the topmost context in the stack
 std::shared_ptr<NETANode> NETAVisitor::currentNETAContext() const
 {
-    // TODO Assert that we have a valid context?
+    assert(!contextStack_.empty());
     return contextStack_.back();
 }
 
@@ -28,6 +28,7 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
     associatedForcefield_ = associatedForcefield;
 
     // Add the definition's root node as the topmost context in the stack
+    contextStack_.clear();
     contextStack_.push_back(neta_->rootNode());
 
     // Traverse the AST
@@ -98,7 +99,13 @@ antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
 antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *context)
 {
     if (context->Element())
-        return Elements::element(context->Element()->getText());
+    {
+        auto el = Elements::element(context->Element()->getText());
+        if (!el)
+            throw(NETAExceptions::NETASyntaxException(
+                fmt::format("'{}' is not a recognised element.\n", context->Element()->getText())));
+        return el;
+    }
     else if (context->FFTypeName())
     {
         // Is a forcefield available to search?
@@ -133,7 +140,8 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
         return std::reference_wrapper(*at);
     }
 
-    return nullptr;
+    throw(NETAExceptions::NETASyntaxException(
+        fmt::format("'{]' is not an element symbol, type name, or type index.", context->getText())));
 }
 
 antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *context)

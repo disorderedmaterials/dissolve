@@ -19,7 +19,7 @@ class NETAPresenceNode : public NETANode
     public:
     NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
                      std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
-    ~NETAPresenceNode();
+    ~NETAPresenceNode() = default;
 
     /*
      * Atom Targets
@@ -32,9 +32,9 @@ class NETAPresenceNode : public NETANode
 
     public:
     // Add element target to node
-    bool addElementTarget(Elements::Element Z);
+    bool addElementTarget(Elements::Element Z) override;
     // Add forcefield type target to node
-    bool addFFTypeTarget(const ForcefieldAtomType &ffType);
+    bool addFFTypeTarget(const ForcefieldAtomType &ffType) override;
 
     /*
      * Modifiers
@@ -46,28 +46,27 @@ class NETAPresenceNode : public NETANode
     NETANode::ComparisonOperator repeatCountOperator_;
     // Number of bonds value
     int nBondsValue_;
-    // Numbe of bonds value comparison operator
+    // Number of bonds value comparison operator
     NETANode::ComparisonOperator nBondsValueOperator_;
     // Number of hydrogens value
     int nHydrogensValue_;
-    // Numbe of hydrogens value comparison operator
+    // Number of hydrogens value comparison operator
     NETANode::ComparisonOperator nHydrogensValueOperator_;
 
     public:
     // Available modifiers
-    enum NETACharacterModifier
+    enum class NETACharacterModifier
     {
-        NBondsModifier,          /* 'nbonds' - Specifies number of bonds (default = -1) */
-        NHydrogensModifier,      /* 'nh' - Specifies number of hydrogens (default = -1) */
-        RepeatCharacterModifier, /* 'n' - Specifies the number of matches required (default = 1) */
-        nCharacterModifiers
+        NBonds,     /* 'nbonds' - Specifies number of bonds (default = -1) */
+        NHydrogens, /* 'nh' - Specifies number of hydrogens (default = -1) */
+        Repeat      /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETACharacterModifiers
     static EnumOptions<NETAPresenceNode::NETACharacterModifier> modifiers();
     // Return whether the specified modifier is valid for this node
-    bool isValidModifier(std::string_view s) const;
+    bool isValidModifier(std::string_view s) const override;
     // Set value and comparator for specified modifier
-    bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
+    bool setModifier(std::string_view modifier, ComparisonOperator op, int value) override;
 
     /*
      * Scoring
