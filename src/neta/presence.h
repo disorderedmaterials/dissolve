@@ -46,11 +46,11 @@ class NETAPresenceNode : public NETANode
     NETANode::ComparisonOperator repeatCountOperator_;
     // Number of bonds value
     int nBondsValue_;
-    // Numbe of bonds value comparison operator
+    // Number of bonds value comparison operator
     NETANode::ComparisonOperator nBondsValueOperator_;
     // Number of hydrogens value
     int nHydrogensValue_;
-    // Numbe of hydrogens value comparison operator
+    // Number of hydrogens value comparison operator
     NETANode::ComparisonOperator nHydrogensValueOperator_;
 
     public:
