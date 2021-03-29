@@ -94,9 +94,9 @@ std::string GenericItemProducer::className(const std::type_info &objectType) con
 // Return the producer instance
 const GenericItemProducer &GenericItemProducer::instance()
 {
-    static GenericItemProducer _instance;
+    static GenericItemProducer instance;
 
-    return _instance;
+    return instance;
 }
 
 /*

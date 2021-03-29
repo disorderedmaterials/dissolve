@@ -127,9 +127,9 @@ GenericItemSerialiser::GenericItemSerialiser()
 // Return the serialiser instance
 const GenericItemSerialiser &GenericItemSerialiser::instance()
 {
-    static GenericItemSerialiser _instance;
+    static GenericItemSerialiser instance;
 
-    return _instance;
+    return instance;
 }
 
 /*

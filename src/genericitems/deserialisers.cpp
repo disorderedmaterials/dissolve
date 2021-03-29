@@ -202,9 +202,9 @@ bool GenericItemDeserialiser::deserialiseObject(std::any &a, LineParser &parser,
 // Return the deserialiser instance
 const GenericItemDeserialiser &GenericItemDeserialiser::instance()
 {
-    static GenericItemDeserialiser _instance;
+    static GenericItemDeserialiser instance;
 
-    return _instance;
+    return instance;
 }
 
 // Deserialise supplied object
