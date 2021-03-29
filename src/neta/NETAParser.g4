@@ -49,6 +49,7 @@ commonNode: connectionNode
 
 // Contextuals
 contextual: modifier
+| option
 | flag;
 
 // Ring Node Sequence
@@ -57,6 +58,7 @@ ringNodeSequence: (ringOnlyNode (Comma ringOnlyNode)*)*;
 // Ring-Specific Nodes
 ringOnlyNode: presenceNode
 | modifier
+| option
 | flag;
 
 // Connection Node
@@ -79,6 +81,9 @@ targetList: targets+=elementOrType
 
 // Contextual Modifiers (kwd op value)
 modifier: Keyword ComparisonOperator value=Integer;
+
+// Option (kwd op kwd, only accepting '=' and '!=')
+option: opt=Keyword ComparisonOperator value=Keyword;
 
 // Context Flags (kwd)
 flag: Keyword;

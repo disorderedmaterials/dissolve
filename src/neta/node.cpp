@@ -126,6 +126,16 @@ bool NETANode::isValidModifier(std::string_view s) const { return false; }
 bool NETANode::setModifier(std::string_view modifier, ComparisonOperator op, int value) { return false; }
 
 /*
+ * Options
+ */
+
+// Return whether the specified option is valid for this node
+bool NETANode::isValidOption(std::string_view s) const { return false; }
+
+// Set value and comparator for specified modifier
+bool NETANode::setOption(std::string_view option, ComparisonOperator op, std::string_view value) { return false; }
+
+/*
  * Flags
  */
 
