@@ -256,6 +256,22 @@ void SpeciesAtom::translateCoordinates(const Vec3<double> &delta) { r_ += delta;
  * Atom Environment Helpers
  */
 
+EnumOptions<SpeciesAtom::AtomGeometry> SpeciesAtom::geometries()
+{
+    return EnumOptions<SpeciesAtom::AtomGeometry>("AtomGeometry", {
+                                                                      {AtomGeometry::Unknown, "Unknown"},
+                                                                      {AtomGeometry::Unbound, "Unbound"},
+                                                                      {AtomGeometry::Terminal, "Terminal"},
+                                                                      {AtomGeometry::Linear, "Linear"},
+                                                                      {AtomGeometry::TShape, "TS"},
+                                                                      {AtomGeometry::TrigonalPlanar, "TP"},
+                                                                      {AtomGeometry::Tetrahedral, "Tet"},
+                                                                      {AtomGeometry::SquarePlanar, "SqP"},
+                                                                      {AtomGeometry::TrigonalBipyramidal, "TBP"},
+                                                                      {AtomGeometry::Octahedral, "Oct"},
+                                                                  });
+}
+
 // Calculate and return the geometry of this atom
 SpeciesAtom::AtomGeometry SpeciesAtom::geometry() const { return geometry(this); }
 

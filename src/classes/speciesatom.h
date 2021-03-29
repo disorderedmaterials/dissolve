@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumoptions.h"
 #include "data/elements.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -177,8 +178,8 @@ class SpeciesAtom
         TrigonalBipyramidal,
         Octahedral
     };
-
-    public:
+    // Return EnumOptions for AtomGeometry
+    static EnumOptions<AtomGeometry> geometries();
     // Calculate and return the geometry of this atom
     AtomGeometry geometry() const;
     // Return whether the geometry of this atom matches that specified
