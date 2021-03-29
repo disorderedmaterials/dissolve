@@ -38,6 +38,49 @@ int XmlTorsionModel::columnCount(const QModelIndex &parent) const
 
 QVariant XmlTorsionModel::data(const QModelIndex &index, int role) const
 {
+    if (role == Qt::ToolTipRole)
+        switch (index.column())
+        {
+            case 0:
+                return "AtomI";
+            case 1:
+                return "AtomJ";
+            case 2:
+                return "AtomK";
+            case 3:
+                return "AtomL";
+
+            case 4:
+                return "k 1";
+            case 5:
+                return "k 2";
+            case 6:
+                return "k 3";
+            case 7:
+                return "k 4";
+
+            case 8:
+                return "Periodicity 1";
+            case 9:
+                return "Periodicity 2";
+            case 10:
+                return "Periodicity 3";
+            case 11:
+                return "Periodicity 4";
+
+            case 12:
+                return "phase1";
+            case 13:
+                return "phase2";
+            case 14:
+                return "phase3";
+            case 15:
+                return "phase4";
+
+            default:
+                return QVariant();
+        }
+
     if (role != Qt::DisplayRole)
         return QVariant();
 
@@ -154,8 +197,8 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
             }
         }
 
-        result.emplace_back(std::get<0>(torsion), std::get<1>(torsion), std::get<2>(torsion),
-                            std::get<3>(torsion), SpeciesTorsion::CosNForm, params);
+        result.emplace_back(std::get<0>(torsion), std::get<1>(torsion), std::get<2>(torsion), std::get<3>(torsion),
+                            SpeciesTorsion::CosNForm, params);
     }
     return result;
 }

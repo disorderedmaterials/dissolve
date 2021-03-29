@@ -32,6 +32,23 @@ int XmlAngleModel::columnCount(const QModelIndex &parent) const
 
 QVariant XmlAngleModel::data(const QModelIndex &index, int role) const
 {
+    if (role == Qt::ToolTipRole)
+        switch (index.column())
+        {
+            case 0:
+                return "AtomI";
+            case 1:
+                return "AtomJ";
+            case 2:
+                return "AtomK";
+            case 3:
+                return "Angle";
+            case 4:
+                return "k";
+            default:
+                return QVariant();
+        }
+
     if (role != Qt::DisplayRole)
         return QVariant();
 
@@ -77,8 +94,8 @@ std::vector<ForcefieldAngleTerm> XmlAngleModel::toVector()
 {
     std::vector<ForcefieldAngleTerm> result;
     for (auto &angle : angles_)
-        result.emplace_back(std::get<0>(angle), std::get<1>(angle), std::get<2>(angle),
-                            SpeciesAngle::HarmonicForm, std::vector({std::get<4>(angle), std::get<3>(angle)}));
+        result.emplace_back(std::get<0>(angle), std::get<1>(angle), std::get<2>(angle), SpeciesAngle::HarmonicForm,
+                            std::vector({std::get<4>(angle), std::get<3>(angle)}));
     return result;
 }
 

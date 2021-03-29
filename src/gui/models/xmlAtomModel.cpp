@@ -36,6 +36,21 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
 {
     int type;
 
+    if (role == Qt::ToolTipRole)
+        switch (index.column())
+        {
+            case 0:
+                return "Name";
+            case 1:
+                return "Class";
+            case 2:
+                return "Element";
+            case 3:
+                return "Mass";
+            default:
+                return QVariant();
+        }
+
     if (role != Qt::DisplayRole)
         return QVariant();
 

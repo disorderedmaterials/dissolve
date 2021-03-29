@@ -29,9 +29,23 @@ int XmlBondModel::columnCount(const QModelIndex &parent) const
 
 QVariant XmlBondModel::data(const QModelIndex &index, int role) const
 {
+    if (role == Qt::ToolTipRole)
+        switch (index.column())
+        {
+            case 0:
+                return "AtomI";
+            case 1:
+                return "AtomJ";
+            case 2:
+                return "Length";
+            case 3:
+                return "k";
+            default:
+                return QVariant();
+        }
+
     if (role != Qt::DisplayRole)
         return QVariant();
-
     switch (index.column())
     {
         case 0:
