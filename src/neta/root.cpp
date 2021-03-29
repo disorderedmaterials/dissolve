@@ -3,6 +3,7 @@
 
 #include "neta/root.h"
 #include "classes/speciesatom.h"
+#include "classes/speciesbond.h"
 #include "data/elements.h"
 
 NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Root)
