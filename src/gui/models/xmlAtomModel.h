@@ -14,7 +14,7 @@
 #include <tuple>
 #include <vector>
 
-using XmlAtomData = std::tuple<std::string, std::string, std::string, double>;
+using XmlAtomData = std::tuple<std::string, std::string, std::string, double, double, double, double>;
 
 class XmlAtomModel : public QAbstractTableModel
 {

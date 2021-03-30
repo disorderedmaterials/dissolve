@@ -155,12 +155,15 @@ TEST_F(XmlFFTest, XmlAtom)
 
     atoms.readFile(doc.root());
 
-    EXPECT_EQ(atoms.columnCount(), 4);
+    EXPECT_EQ(atoms.columnCount(), 7);
     EXPECT_EQ(atoms.rowCount(), 6);
 
-    std::vector<XmlAtomData> reference = {{"opls_802", "H802", "H", 1.008000},  {"opls_804", "H804", "H", 1.008000},
-                                          {"opls_801", "O801", "O", 15.999000}, {"opls_803", "H803", "H", 1.008000},
-                                          {"opls_800", "C800", "C", 12.011000}, {"opls_805", "H805", "H", 1.008000}};
+    std::vector<XmlAtomData> reference = {{"opls_802", "H802", "H", 1.008000, 0.0768, 2.5, 0.12552},
+                                          {"opls_804", "H804", "H", 1.008000, 0.0768, 2.5, 0.125520},
+                                          {"opls_801", "O801", "O", 15.999000, -0.5873, 3.12, 0.71128},
+                                          {"opls_803", "H803", "H", 1.008000, 0.0768, 2.5, 0.125520},
+                                          {"opls_800", "C800", "C", 12.011000, -0.0491, 3.5, 0.276144},
+                                          {"opls_805", "H805", "H", 1.008000, 0.4061, 0.0, 0.0}};
 
     int row = 0;
     for (auto b : reference)
@@ -169,6 +172,9 @@ TEST_F(XmlFFTest, XmlAtom)
         EXPECT_EQ(atoms.data(atoms.index(row, 1)).toString().toStdString(), std::get<1>(b));
         EXPECT_EQ(atoms.data(atoms.index(row, 2)).toString().toStdString(), std::get<2>(b));
         EXPECT_DOUBLE_EQ(atoms.data(atoms.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_DOUBLE_EQ(atoms.data(atoms.index(row, 4)).toDouble(), std::get<4>(b));
+        EXPECT_DOUBLE_EQ(atoms.data(atoms.index(row, 5)).toDouble(), std::get<5>(b));
+        EXPECT_DOUBLE_EQ(atoms.data(atoms.index(row, 6)).toDouble(), std::get<6>(b));
         ++row;
     }
 }

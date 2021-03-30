@@ -14,8 +14,17 @@ void XmlAtomModel::readFile(const pugi::xml_node &root)
     auto types = dissolve_.atomTypes();
 
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
+    {
+        auto nonbonded = root.select_node(
+            fmt::format("/ForceField/NonbondedForce/Atom[@type = '{}']", b.node().attribute("name").as_string()).c_str());
+
         atoms_.emplace_back(b.node().attribute("name").as_string(), b.node().attribute("class").as_string(),
-                            b.node().attribute("element").as_string(), b.node().attribute("mass").as_double());
+                            b.node().attribute("element").as_string(), b.node().attribute("mass").as_double(),
+                            nonbonded.node().attribute("charge").as_double(),
+                            // Convert sigma from nm to Å
+                            nonbonded.node().attribute("sigma").as_double() * 10,
+                            nonbonded.node().attribute("epsilon").as_double());
+    }
 
     endResetModel();
 }
@@ -29,7 +38,7 @@ int XmlAtomModel::rowCount(const QModelIndex &parent) const
 int XmlAtomModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 4;
+    return 7;
 }
 
 QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
@@ -47,6 +56,12 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
                 return "Element";
             case 3:
                 return "Mass";
+            case 4:
+                return "Charge";
+            case 5:
+                return "Sigma";
+            case 6:
+                return "Epsilon";
             default:
                 return QVariant();
         }
@@ -64,6 +79,12 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
             return std::get<2>(atoms_[index.row()]).c_str();
         case 3:
             return std::get<3>(atoms_[index.row()]);
+        case 4:
+            return std::get<4>(atoms_[index.row()]);
+        case 5:
+            return std::get<5>(atoms_[index.row()]);
+        case 6:
+            return std::get<6>(atoms_[index.row()]);
         default:
             return QVariant();
     }
@@ -83,6 +104,12 @@ QVariant XmlAtomModel::headerData(int section, Qt::Orientation orientation, int 
             return "Element";
         case 3:
             return "Mass";
+        case 4:
+            return "Charge";
+        case 5:
+            return "Sigma";
+        case 6:
+            return "Epsilon";
         default:
             return QVariant();
     }
@@ -98,11 +125,11 @@ void XmlAtomModel::clear()
 std::vector<ForcefieldAtomType> XmlAtomModel::toVector()
 {
     std::vector<ForcefieldAtomType> result;
+    int index = 0;
     for (auto &at : atoms_)
     {
-        auto type = dissolve_.addAtomType(Elements::element(std::get<2>(at)));
-        type->setName(std::get<1>(at));
-        result.emplace_back(type->Z(), type->index(), type->name(), "", "", type->charge(), type->shortRangeParameters());
+        std::vector<double> params = {std::get<6>(at), std::get<5>(at)};
+        result.emplace_back(Elements::element(std::get<2>(at)), index++, std::get<1>(at), "", "", std::get<4>(at), params);
     }
     return result;
 }

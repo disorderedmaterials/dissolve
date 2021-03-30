@@ -20,4 +20,4 @@ std::string_view Forcefield_XML::description() const { return "Whatever forcefie
 std::string_view Forcefield_XML::publicationReferences() const { return "I have no idea"; }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_XML::shortRangeType() const { return Forcefield::LennardJonesGeometricType; }
+Forcefield::ShortRangeType Forcefield_XML::shortRangeType() const { return Forcefield::LennardJonesType; }
