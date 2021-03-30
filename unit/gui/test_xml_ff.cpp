@@ -185,15 +185,15 @@ TEST_F(XmlFFTest, XmlTree)
 
     // Test the top level branches of the tree
     auto atomIndex = treeModel.index(0, 0);
-    EXPECT_EQ(treeModel.data(atomIndex).toString().toStdString(), "Atoms");
+    EXPECT_EQ(treeModel.data(atomIndex).toString().toStdString(), "Atom Types (6)");
     auto bondIndex = treeModel.index(1, 0);
-    EXPECT_EQ(treeModel.data(bondIndex).toString().toStdString(), "Bonds");
+    EXPECT_EQ(treeModel.data(bondIndex).toString().toStdString(), "Bonds (5)");
     auto angleIndex = treeModel.index(2, 0);
-    EXPECT_EQ(treeModel.data(angleIndex).toString().toStdString(), "Angles");
+    EXPECT_EQ(treeModel.data(angleIndex).toString().toStdString(), "Angles (7)");
     auto torsionIndex = treeModel.index(3, 0);
-    EXPECT_EQ(treeModel.data(torsionIndex).toString().toStdString(), "Torsions");
+    EXPECT_EQ(treeModel.data(torsionIndex).toString().toStdString(), "Torsions (3)");
     auto improperIndex = treeModel.index(4, 0);
-    EXPECT_EQ(treeModel.data(improperIndex).toString().toStdString(), "Impropers");
+    EXPECT_EQ(treeModel.data(improperIndex).toString().toStdString(), "Impropers (2)");
 
     // Test the atoms.  Since we're mostly repeating the underlying
     // model, we're mostly just checking that the model passed through
