@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include <QAbstractTableModel>
-#include <QModelIndex>
 #include "gui/referencepoint.h"
 #include "templates/list.h"
+#include <QAbstractTableModel>
+#include <QModelIndex>
 
 #include <tuple>
 #include <vector>
@@ -29,4 +29,6 @@ class DataManagerModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+    // Register all changes to the model
+    void update();
 };

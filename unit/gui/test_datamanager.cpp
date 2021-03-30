@@ -31,6 +31,8 @@ TEST_F(DataManagerTest, DataManger)
     ref->setSuffix("Suffix Example");
     ref->setRestartFile("Restart Example");
 
+    model.update();
+
     ASSERT_EQ(model.rowCount(), 1);
     ASSERT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "Suffix Example");
     ASSERT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Restart Example");

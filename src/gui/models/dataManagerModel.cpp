@@ -49,3 +49,9 @@ QVariant DataManagerModel::headerData(int section, Qt::Orientation orientation, 
             return QVariant();
     }
 }
+
+void DataManagerModel::update()
+{
+    beginResetModel();
+    endResetModel();
+}
