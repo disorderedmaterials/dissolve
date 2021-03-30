@@ -32,7 +32,7 @@ bool BroadeningFunctionKeyword::read(LineParser &parser, int startArg, const Cor
 }
 
 // Write keyword data to specified LineParser
-bool BroadeningFunctionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool BroadeningFunctionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     std::string params;
     for (auto n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)

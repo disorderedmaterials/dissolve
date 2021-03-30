@@ -12,11 +12,11 @@
 class Histogram3D;
 
 // One-Dimensional Data
-class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore<Data3D>
+class Data3D : public PlottableData, public ObjectStore<Data3D>
 {
     public:
     Data3D();
-    virtual ~Data3D();
+    virtual ~Data3D() = default;
     Data3D(const Data3D &source);
     // Clear data
     void clear();
@@ -25,6 +25,8 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
      * Data
      */
     private:
+    // Tag for data (optional)
+    std::string tag_;
     // X axis array
     std::vector<double> x_;
     // Y axis array
@@ -41,6 +43,10 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
     VersionCounter version_;
 
     public:
+    // Set tag
+    void setTag(std::string_view tag);
+    // Return tag
+    std::string_view tag() const;
     // Initialise arrays to specified size
     void initialise(int xSize, int ySize, int zSize, bool withError = false);
     // Initialise to be consistent in size and axes with supplied object

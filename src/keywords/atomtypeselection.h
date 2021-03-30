@@ -26,7 +26,7 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 
     public:
     // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const;
+    bool isDataEmpty() const override;
     // Check selection and make sure it is consistent based on the source Configurations
     void checkSelection();
     // Return selection after checking it for validity
@@ -37,13 +37,13 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const;
+    int minArguments() const override;
     // Return maximum number of arguments accepted
-    int maxArguments() const;
+    int maxArguments() const override;
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData);
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix);
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
 
     /*
      * Object Management

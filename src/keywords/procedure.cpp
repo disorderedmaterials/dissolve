@@ -32,7 +32,7 @@ bool ProcedureKeyword::read(LineParser &parser, int startArg, const CoreData &co
 }
 
 // Write keyword data to specified LineParser
-bool ProcedureKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ProcedureKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Write the keyword name as the start of the data
     if (!parser.writeLineF("{}{}\n", prefix, name()))

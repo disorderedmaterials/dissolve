@@ -5,27 +5,22 @@
 
 #include "io/import/data1d.h"
 #include "math/data1d.h"
-#include "templates/list.h"
-#include "templates/refdatalist.h"
-
-// Forward Declarations
-/* none */
+#include "templates/optionalref.h"
+#include <list>
 
 // Data1D Store
 class Data1DStore
 {
     public:
-    Data1DStore();
-    ~Data1DStore();
+    Data1DStore() = default;
+    ~Data1DStore() = default;
 
     /*
      * Data
      */
     private:
-    // List of contained data
-    List<Data1D> data_;
-    // References for Data1D and associated file/format
-    RefDataList<Data1D, Data1DImportFileFormat> dataReferences_;
+    // Vector of contained data
+    std::list<std::pair<Data1D, Data1DImportFileFormat>> data_;
 
     public:
     // Add named data reference to store, reading file and format from specified parser / starting argument
@@ -34,9 +29,7 @@ class Data1DStore
     // Check to see if the named data is present in the store
     bool containsData(std::string_view name) const;
     // Return named data
-    const Data1D &data(std::string_view name) const;
-    // Return list of all data
-    const List<Data1D> &data() const;
-    // Return list of all data references
-    const RefDataList<Data1D, Data1DImportFileFormat> &dataReferences() const;
+    OptionalReferenceWrapper<const Data1D> data(std::string_view name) const;
+    // Return vector of all data
+    const std::list<std::pair<Data1D, Data1DImportFileFormat>> &data() const;
 };

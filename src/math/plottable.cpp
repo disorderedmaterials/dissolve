@@ -8,16 +8,6 @@
 PlottableData::PlottableData(PlottableData::PlottableDataType type) { type_ = type; }
 
 /*
- * Basic Information
- */
-
-// Set name of plottable
-void PlottableData::setName(std::string_view name) { name_ = name; }
-
-// Return name of plottable
-std::string_view PlottableData::name() const { return name_; }
-
-/*
  * Axis Information
  */
 

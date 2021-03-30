@@ -58,7 +58,7 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
             if (!itemName.isEmpty())
             {
                 auto &item = dissolve_->processingModuleData().value<Data1D>(qPrintable(itemName));
-                createRenderable<RenderableData1D>(item.objectTag(), item.name(), "Default");
+                createRenderable<RenderableData1D>(item.objectTag(), item.tag(), "Default");
             }
         }
         else if (dimensionality == 2)
@@ -67,7 +67,7 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
             if (!itemName.isEmpty())
             {
                 auto &item = dissolve_->processingModuleData().value<Data2D>(qPrintable(itemName));
-                createRenderable<RenderableData2D>(item.objectTag(), item.name(), "Default");
+                createRenderable<RenderableData2D>(item.objectTag(), item.tag(), "Default");
             }
         }
         else if (dimensionality == 3)
@@ -76,7 +76,7 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
             if (!itemName.isEmpty())
             {
                 auto &item = dissolve_->processingModuleData().value<Data3D>(qPrintable(itemName));
-                createRenderable<RenderableData3D>(item.objectTag(), item.name(), "Default");
+                createRenderable<RenderableData3D>(item.objectTag(), item.tag(), "Default");
             }
         }
     }

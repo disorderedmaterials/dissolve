@@ -652,7 +652,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         testResult = (error <= testThreshold);
         Messenger::print("Test reference data '{}' has error of {:7.3f}% with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",
-                         testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
+                         testData.tag(), error, testResult ? "OK" : "NOT OK", testThreshold);
     }
     else
     {
@@ -660,7 +660,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         auto indexI = partials.atomTypes().indexOf(typeIorTotal);
         auto indexJ = partials.atomTypes().indexOf(typeJ);
         if ((indexI == -1) || (indexJ == -1))
-            return Messenger::error("Unrecognised test data name '{}'.\n", testData.name());
+            return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 
         // AtomTypes are valid, so check the 'target'
         double error = -1.0;
@@ -671,12 +671,12 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         else if (DissolveSys::sameString(target, "full"))
             error = Error::percent(partials.partial(indexI, indexJ), testData);
         else
-            return Messenger::error("Unrecognised test data name '{}'.\n", testData.name());
+            return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 
         testResult = (error <= testThreshold);
         Messenger::print("Test reference data '{}' has error of {:7.3f}% with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",
-                         testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
+                         testData.tag(), error, testResult ? "OK" : "NOT OK", testThreshold);
     }
 
     return testResult;
@@ -689,11 +689,10 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     LineParser parser;
 
     // Loop over supplied test data and see if we can locate it amongst our PartialSets
-    ListIterator<Data1D> dataIterator(testData.data());
-    while (Data1D *data = dataIterator.iterate())
+    for (auto &[data, format] : testData.data())
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
-        std::string dataName{data->name()};
+        std::string dataName{data.tag()};
         std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
@@ -703,10 +702,10 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
 
         // Check first argument to check it has the corect prefix
         if (!DissolveSys::sameString(prefix, parser.argsv(0)))
-            return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
+            return Messenger::error("Unrecognised test data name '{}'.\n", data.tag());
 
-        if (!testReferencePartial(partials, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : nullptr,
-                                  parser.hasArg(3) ? parser.argsv(3) : nullptr))
+        if (!testReferencePartial(partials, testThreshold, data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : "",
+                                  parser.hasArg(3) ? parser.argsv(3) : ""))
             return false;
     }
 
@@ -720,11 +719,10 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     LineParser parser;
 
     // Loop over supplied test data and see if we can locate it amongst our PartialSets
-    ListIterator<Data1D> dataIterator(testData.data());
-    while (Data1D *data = dataIterator.iterate())
+    for (auto &[data, format] : testData.data())
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
-        std::string dataName{data->name()};
+        std::string dataName{data.tag()};
         std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
@@ -739,11 +737,11 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         else if (DissolveSys::sameString(prefixB, parser.argsv(0)))
             setA = false;
         else
-            return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
+            return Messenger::error("Unrecognised test data name '{}'.\n", data.tag());
         const PartialSet &targetSet = (setA ? partialsA : partialsB);
 
-        if (!testReferencePartial(targetSet, testThreshold, *data, parser.argsv(1),
-                                  parser.hasArg(2) ? parser.argsv(2) : nullptr, parser.hasArg(3) ? parser.argsv(3) : nullptr))
+        if (!testReferencePartial(targetSet, testThreshold, data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : "",
+                                  parser.hasArg(3) ? parser.argsv(3) : ""))
             return false;
     }
 

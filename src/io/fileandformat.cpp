@@ -151,13 +151,13 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
 }
 
 // Write format / filename to specified parser
-bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix)
+bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  '{}'\n", prefix, formatKeyword(format_), filename_);
 }
 
 // Write options and end block
-bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix)
+bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) const
 {
     return keywords_.write(parser, fmt::format("{}  ", prefix));
 }

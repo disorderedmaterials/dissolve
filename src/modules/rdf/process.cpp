@@ -136,10 +136,9 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Set names of resources and filename in Data1D within the PartialSet
         unweightedgr.setObjectTags(fmt::format("{}//{}//UnweightedGR", cfg->niceName(), uniqueName_));
-        unweightedgr.setFileNames(cfg->niceName(), "unweighted", "rdf");
 
         // Save data if requested
-        if (saveData && (!MPIRunMaster(procPool, unweightedgr.save())))
+        if (saveData && (!MPIRunMaster(procPool, unweightedgr.save(cfg->niceName(), "unweighted", "rdf"))))
             return false;
     }
 

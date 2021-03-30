@@ -59,7 +59,7 @@ bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData 
 }
 
 // Write keyword data to specified LineParser
-bool ModuleGroupsKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ModuleGroupsKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over defined groups
     ListIterator<ModuleGroup> groupIterator(data_.groups());

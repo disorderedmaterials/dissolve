@@ -19,7 +19,7 @@ class PlottableData
     {
         OneAxisPlottable,  /* Contains data points plotted against one axis (x) */
         TwoAxisPlottable,  /* Contains data points plotted against two axes (x and y) */
-        ThreeAxisPlottable /* Contains data points plotted againas three axes (x, y, and z) */
+        ThreeAxisPlottable /* Contains data points plotted against three axes (x, y, and z) */
     };
     PlottableData(PlottableDataType type);
 
@@ -29,16 +29,6 @@ class PlottableData
     private:
     // Type of plottable
     PlottableDataType type_;
-
-    protected:
-    // Name of plottable
-    std::string name_;
-
-    public:
-    // Set name of plottable
-    void setName(std::string_view name);
-    // Return name of plottable
-    std::string_view name() const;
 
     /*
      * Axis Information

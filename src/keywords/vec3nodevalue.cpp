@@ -58,7 +58,7 @@ bool Vec3NodeValueKeyword::read(LineParser &parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool Vec3NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool Vec3NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x.asString(true), data_.y.asString(true),
                              data_.z.asString(true));

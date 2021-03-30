@@ -32,7 +32,7 @@ bool BoolKeyword::read(LineParser &parser, int startArg, const CoreData &coreDat
 }
 
 // Write keyword data to specified LineParser
-bool BoolKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool BoolKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }

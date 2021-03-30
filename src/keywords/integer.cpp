@@ -97,7 +97,7 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &core
 }
 
 // Write keyword data to specified LineParser
-bool IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }

@@ -46,16 +46,14 @@ bool Data1DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &
 }
 
 // Write keyword data to specified LineParser
-bool Data1DStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool Data1DStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of one-dimensional data
-    RefDataListIterator<Data1D, Data1DImportFileFormat> dataIterator(data_.dataReferences());
-    while (Data1D *data = dataIterator.iterate())
+    for (const auto &[data, format] : data_.data())
     {
-        Data1DImportFileFormat &ff = dataIterator.currentData();
-        if (!ff.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, data->name())))
+        if (!format.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, data.tag())))
             return false;
-        if (!ff.writeBlock(parser, fmt::format("{}  ", prefix)))
+        if (!format.writeBlock(parser, fmt::format("{}  ", prefix)))
             return false;
         if (!parser.writeLineF("{}End{}\n", prefix, name()))
             return false;

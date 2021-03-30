@@ -33,7 +33,7 @@ bool PairBroadeningFunctionKeyword::read(LineParser &parser, int startArg, const
 }
 
 // Write keyword data to specified LineParser
-bool PairBroadeningFunctionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool PairBroadeningFunctionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!parser.writeLineF("{}{}", prefix, name()))
         return false;

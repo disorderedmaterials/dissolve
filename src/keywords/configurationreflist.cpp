@@ -62,7 +62,7 @@ bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, const C
 }
 
 // Write keyword data to specified LineParser
-bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of Configuration
     std::string configurationString;

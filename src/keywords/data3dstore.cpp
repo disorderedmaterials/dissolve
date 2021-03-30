@@ -44,16 +44,14 @@ bool Data3DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &
 }
 
 // Write keyword data to specified LineParser
-bool Data3DStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool Data3DStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of one-dimensional data
-    RefDataListIterator<Data3D, Data3DImportFileFormat> dataIterator(data_.dataReferences());
-    while (Data3D *data = dataIterator.iterate())
+    for (const auto &[data, format] : data_.data())
     {
-        Data3DImportFileFormat &ff = dataIterator.currentData();
-        if (!ff.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, data->name())))
+        if (!format.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, data.tag())))
             return false;
-        if (!ff.writeBlock(parser, fmt::format("{}  ", prefix)))
+        if (!format.writeBlock(parser, fmt::format("{}  ", prefix)))
             return false;
         if (!parser.writeLineF("{}End{}\n", prefix, name()))
             return false;

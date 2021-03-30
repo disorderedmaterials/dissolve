@@ -59,7 +59,7 @@ bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, const Co
 }
 
 // Write keyword data to specified LineParser
-bool IntegerDoubleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool IntegerDoubleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (const auto &idData : data_)
     {

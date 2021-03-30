@@ -218,7 +218,7 @@ class KeywordList
     // Try to parse keyword in specified LineParser
     KeywordBase::ParseResult parse(LineParser &parser, const CoreData &coreData);
     // Write all keywords to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix, bool onlyIfSet = true);
+    bool write(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
     // Write all keywords in groups to specified LineParser
-    bool writeGroups(LineParser &parser, std::string_view prefix, bool onlyIfSet = true);
+    bool writeGroups(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
 };

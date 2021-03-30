@@ -56,7 +56,7 @@ class PairBroadeningFunction
     // Read function data from LineParser source
     bool readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData);
     // Write function data to LineParser source
-    bool writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker = true);
+    bool writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker = true) const;
     // Set function type
     void setFunction(FunctionType function);
     // Return function type

@@ -55,7 +55,7 @@ class EPSRModuleWidget : public ModuleWidget
      */
     private:
     // Temporary data currently shown on debug tab
-    List<Data1D> debugFunctionData_;
+    std::list<Data1D> debugFunctionData_;
 
     private:
     // Update data shown on EP functions viewer

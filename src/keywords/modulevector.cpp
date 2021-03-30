@@ -76,7 +76,7 @@ bool ModuleVectorKeyword::read(LineParser &parser, int startArg, const CoreData 
 }
 
 // Write keyword data to specified LineParser
-bool ModuleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ModuleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of referenced Modules
     for (auto *module : data_)

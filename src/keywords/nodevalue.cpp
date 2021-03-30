@@ -30,7 +30,7 @@ bool NodeValueKeyword::read(LineParser &parser, int startArg, const CoreData &co
 }
 
 // Write keyword data to specified LineParser
-bool NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_.asString()))
         return false;

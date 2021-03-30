@@ -34,7 +34,7 @@ bool StringKeyword::read(LineParser &parser, int startArg, const CoreData &coreD
 }
 
 // Write keyword data to specified LineParser
-bool StringKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool StringKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_);
 }

@@ -77,7 +77,7 @@ bool ExpressionVariableVectorKeyword::read(LineParser &parser, int startArg, con
 }
 
 // Write keyword data to specified LineParser
-bool ExpressionVariableVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ExpressionVariableVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of defined ExpressionNode's (ExpressionVariables)
     for (const auto node : data_)

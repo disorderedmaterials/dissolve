@@ -132,7 +132,7 @@ bool Vec3IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &
 }
 
 // Write keyword data to specified LineParser
-bool Vec3IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool Vec3IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }

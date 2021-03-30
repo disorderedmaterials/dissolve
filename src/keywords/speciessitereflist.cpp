@@ -67,7 +67,7 @@ bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, const Cor
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool SpeciesSiteRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // If there are no sites in the list, no need to write anything
     if (data_.nItems() == 0)

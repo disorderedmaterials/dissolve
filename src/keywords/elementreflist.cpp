@@ -47,7 +47,7 @@ bool ElementVectorKeyword::read(LineParser &parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool ElementVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ElementVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Don't write anything if there are no items in the list
     if (data_.size() == 0)

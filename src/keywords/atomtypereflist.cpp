@@ -48,7 +48,7 @@ bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, const CoreDa
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool AtomTypeRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Don't write anything if there are no items in the list
     if (data_.empty())

@@ -147,7 +147,7 @@ void ScatteringMatrix::print(double q) const
                 break;
             }
         }
-        Messenger::print("{}  {}\n", line, data_.at(row).name());
+        Messenger::print("{}  {}\n", line, data_.at(row).tag());
 
         // Limit to sensible number of rows
         if (row >= std::max(nColsWritten, 10))
@@ -199,7 +199,7 @@ void ScatteringMatrix::printInverse(double q) const
                 break;
             }
         }
-        Messenger::print("{}  {}\n", line, data_.at(col).name());
+        Messenger::print("{}  {}\n", line, data_.at(col).tag());
 
         // Limit to sensible number of rows
         if (col >= std::max(nColsWritten, 10))
@@ -323,7 +323,7 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     auto index = 0;
     for (auto [i, j] : typePairs_)
     {
-        estimatedSQ[index].setName(fmt::format("EstimatedSQ-{}-{}-{}.sq", i->name(), j->name(), groupName));
+        estimatedSQ[index].setTag(fmt::format("EstimatedSQ-{}-{}-{}.sq", i->name(), j->name(), groupName));
         estimatedSQ[index].setObjectTag(
             fmt::format("{}//EstimatedSQ//{}//{}-{}", objectNamePrefix, groupName, i->name(), j->name()));
         ++index;
@@ -335,7 +335,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
 {
     // Make sure that the scattering weights are valid
     if (!dataWeights.isValid())
-        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.name());
+        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.tag());
 
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
@@ -374,7 +374,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
 {
     // Make sure that the scattering weights are valid
     if (!dataWeights.isValid())
-        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.name());
+        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.tag());
 
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
