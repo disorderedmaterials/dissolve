@@ -41,19 +41,19 @@ TEST_F(XmlFFTest, XmlBond)
     EXPECT_EQ(bonds.columnCount(), 4);
     EXPECT_EQ(bonds.rowCount(), 5);
 
-    std::vector<XmlBondData> reference = {{"O801", "C800", 0.141000, 267776.000000},
-                                          {"H802", "C800", 0.109000, 284512.000000},
-                                          {"H803", "C800", 0.109000, 284512.000000},
-                                          {"H804", "C800", 0.109000, 284512.000000},
-                                          {"H805", "O801", 0.094500, 462750.400000}};
+    std::vector<XmlBondData> reference = {{"O801", "C800", 1.41000, 2677.760000},
+                                          {"H802", "C800", 1.09000, 2845.120000},
+                                          {"H803", "C800", 1.09000, 2845.120000},
+                                          {"H804", "C800", 1.09000, 2845.120000},
+                                          {"H805", "O801", 0.94500, 4627.50400000}};
 
     int row = 0;
     for (auto b : reference)
     {
         EXPECT_EQ(bonds.data(bonds.index(row, 0)).toString().toStdString(), std::get<0>(b));
         EXPECT_EQ(bonds.data(bonds.index(row, 1)).toString().toStdString(), std::get<1>(b));
-        EXPECT_EQ(bonds.data(bonds.index(row, 2)).toDouble(), std::get<2>(b));
-        EXPECT_EQ(bonds.data(bonds.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_DOUBLE_EQ(bonds.data(bonds.index(row, 2)).toDouble(), std::get<2>(b));
+        EXPECT_DOUBLE_EQ(bonds.data(bonds.index(row, 3)).toDouble(), std::get<3>(b));
         ++row;
     }
 }
@@ -206,8 +206,8 @@ TEST_F(XmlFFTest, XmlTree)
     // Test the bonds
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, bondIndex)).toString().toStdString(), "O801");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 1, bondIndex)).toString().toStdString(), "C800");
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 2, bondIndex)).toDouble(), 0.141);
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, bondIndex)).toDouble(), 267776);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 2, bondIndex)).toDouble(), 1.41);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 3, bondIndex)).toDouble(), 2677.76);
 
     // Test the angles
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, angleIndex)).toString().toStdString(), "O801");
@@ -256,8 +256,8 @@ TEST_F(XmlFFTest, XmlTree)
     // Test the bonds
     auto bond = xmlFF->getBondTerm((*oxygen).get(), (*carbon).get());
     ASSERT_TRUE(bond);
-    EXPECT_EQ((*bond).get().parameters()[0], 267776.000000);
-    EXPECT_EQ((*bond).get().parameters()[1], 0.141000);
+    EXPECT_EQ((*bond).get().parameters()[0], 2677.76000000);
+    EXPECT_EQ((*bond).get().parameters()[1], 1.41000);
 
     // Test the angles
     auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
