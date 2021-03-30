@@ -51,3 +51,5 @@ target_include_directories(
   neta PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLRRUNTIME_INCLUDE_DIRS} ${ANTLR_NETAGrammarLexer_OUTPUT_DIR}
                ${ANTLR_NETAGrammarParser_OUTPUT_DIR}
 )
+
+target_link_libraries(neta PRIVATE base)

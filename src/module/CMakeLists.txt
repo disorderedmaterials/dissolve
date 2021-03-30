@@ -13,3 +13,4 @@ add_library(
 )
 
 include_directories(module PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(module PRIVATE base)

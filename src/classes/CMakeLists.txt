@@ -123,3 +123,4 @@ add_library(
 )
 
 include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(classes PRIVATE base)

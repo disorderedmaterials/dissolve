@@ -104,3 +104,5 @@ target_include_directories(
           ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR}
           ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
 )
+
+target_link_libraries(render PRIVATE base)
