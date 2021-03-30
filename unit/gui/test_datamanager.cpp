@@ -3,8 +3,8 @@
 
 #include "gui/models/dataManagerModel.h"
 #include "gui/referencepoint.h"
-#include "templates/list.h"
 #include <gtest/gtest.h>
+#include <vector>
 
 namespace UnitTest
 {
@@ -21,15 +21,13 @@ class DataManagerTest : public ::testing::Test
 TEST_F(DataManagerTest, DataManger)
 {
 
-    List<ReferencePoint> points;
+    std::vector<ReferencePoint> points;
     DataManagerModel model(points);
 
     ASSERT_EQ(model.columnCount(), 2);
     ASSERT_EQ(model.rowCount(), 0);
 
-    auto ref = points.add();
-    ref->setSuffix("Suffix Example");
-    ref->setRestartFile("Restart Example");
+    points.emplace_back("Suffix Example", "Restart Example");
 
     model.update();
 

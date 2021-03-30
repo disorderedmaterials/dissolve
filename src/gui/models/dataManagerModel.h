@@ -4,11 +4,8 @@
 #pragma once
 
 #include "gui/referencepoint.h"
-#include "templates/list.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
-
-#include <tuple>
 #include <vector>
 
 class DataManagerModel : public QAbstractTableModel
@@ -16,10 +13,10 @@ class DataManagerModel : public QAbstractTableModel
     Q_OBJECT
 
     private:
-    List<ReferencePoint> &referencePoints_;
+    std::vector<ReferencePoint> &referencePoints_;
 
     public:
-    DataManagerModel(List<ReferencePoint> &referencePoints);
+    DataManagerModel(std::vector<ReferencePoint> &referencePoints);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

@@ -3,17 +3,17 @@
 
 #pragma once
 
-#include "templates/listitem.h"
 #include <string>
 
 // Forward Declarations
 /* none */
 
 // Reference Point
-class ReferencePoint : public ListItem<ReferencePoint>
+class ReferencePoint
 {
     public:
     ReferencePoint();
+    ReferencePoint(std::string_view suffix, std::string_view restart);
     ~ReferencePoint();
 
     /*

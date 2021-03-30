@@ -11,7 +11,7 @@
 #include <QMessageBox>
 #include <QRegExp>
 
-DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints)
+DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints)
     : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(referencePoints_)
 {
     ui_.setupUi(this);
@@ -168,12 +168,11 @@ void DataManagerDialog::on_ReferencePointOpenButton_clicked(bool checked)
     if (!ok)
         return;
 
-    ReferencePoint *refPoint = referencePoints_.add();
-    refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(restartFile)));
-    refPoint->setSuffix(qPrintable(suffix));
+    referencePoints_.emplace_back(qPrintable(suffix), qPrintable(QDir::current().relativeFilePath(restartFile)));
+    auto &refPoint = referencePoints_.back();
 
     // Load the data
-    if (!dissolve_.loadRestartAsReference(refPoint->restartFile(), refPoint->suffix()))
+    if (!dissolve_.loadRestartAsReference(refPoint.restartFile(), refPoint.suffix()))
         QMessageBox::warning(this, "Error loading reference point",
                              "Couldn't load the reference point data specified.\nThis may be because your simulation "
                              "setup doesn't match that expected by the restart data.\n");
@@ -205,9 +204,7 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
         return;
     }
 
-    ReferencePoint *refPoint = referencePoints_.add();
-    refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(filename)));
-    refPoint->setSuffix(qPrintable(suffix));
+    referencePoints_.emplace_back(qPrintable(suffix), qPrintable(QDir::current().relativeFilePath(filename)));
 
     if (!dissolve_.loadRestartAsReference(qPrintable(filename), qPrintable(suffix)))
         QMessageBox::warning(this, "Error loading reference point",

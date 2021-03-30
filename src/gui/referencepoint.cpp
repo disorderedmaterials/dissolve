@@ -3,7 +3,8 @@
 
 #include "gui/referencepoint.h"
 
-ReferencePoint::ReferencePoint() : ListItem<ReferencePoint>() {}
+ReferencePoint::ReferencePoint() {}
+ReferencePoint::ReferencePoint(std::string_view suffix, std::string_view restart) : suffix_(suffix), restartFile_(restart) {}
 
 ReferencePoint::~ReferencePoint() {}
 

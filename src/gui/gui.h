@@ -111,7 +111,7 @@ class DissolveWindow : public QMainWindow
      */
     private:
     // List of ReferencePoints currently loaded
-    List<ReferencePoint> referencePoints_;
+    std::vector<ReferencePoint> referencePoints_;
 
     /*
      * Update Functions
