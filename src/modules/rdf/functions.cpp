@@ -704,8 +704,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         if (!DissolveSys::sameString(prefix, parser.argsv(0)))
             return Messenger::error("Unrecognised test data name '{}'.\n", data.tag());
 
-        if (!testReferencePartial(partials, testThreshold, data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : nullptr,
-                                  parser.hasArg(3) ? parser.argsv(3) : nullptr))
+        if (!testReferencePartial(partials, testThreshold, data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : "",
+                                  parser.hasArg(3) ? parser.argsv(3) : ""))
             return false;
     }
 
@@ -740,8 +740,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
             return Messenger::error("Unrecognised test data name '{}'.\n", data.tag());
         const PartialSet &targetSet = (setA ? partialsA : partialsB);
 
-        if (!testReferencePartial(targetSet, testThreshold, data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : nullptr,
-                                  parser.hasArg(3) ? parser.argsv(3) : nullptr))
+        if (!testReferencePartial(targetSet, testThreshold, data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : "",
+                                  parser.hasArg(3) ? parser.argsv(3) : ""))
             return false;
     }
 
