@@ -8,7 +8,7 @@
 #include <QModelIndex>
 #include <vector>
 
-class DataManagerModel : public QAbstractTableModel
+class DataManagerReferencePointModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -16,7 +16,7 @@ class DataManagerModel : public QAbstractTableModel
     std::vector<ReferencePoint> &referencePoints_;
 
     public:
-    DataManagerModel(std::vector<ReferencePoint> &referencePoints);
+    DataManagerReferencePointModel(std::vector<ReferencePoint> &referencePoints);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

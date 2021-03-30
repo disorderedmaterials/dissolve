@@ -31,7 +31,7 @@ class DataManagerDialog : public QDialog
     // List of current ReferencePoints
     std::vector<ReferencePoint> &referencePoints_;
     // ReferencePoint Model
-    DataManagerModel refModel_;
+    DataManagerReferencePointModel refModel_;
 
     /*
      * UI

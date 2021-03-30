@@ -1,21 +1,24 @@
 #include "gui/models/dataManagerModel.h"
 #include "templates/variantpointer.h"
 
-DataManagerModel::DataManagerModel(std::vector<ReferencePoint> &referencePoints) : referencePoints_(referencePoints) {}
+DataManagerReferencePointModel::DataManagerReferencePointModel(std::vector<ReferencePoint> &referencePoints)
+    : referencePoints_(referencePoints)
+{
+}
 
-int DataManagerModel::rowCount(const QModelIndex &parent) const
+int DataManagerReferencePointModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return referencePoints_.size();
 }
 
-int DataManagerModel::columnCount(const QModelIndex &parent) const
+int DataManagerReferencePointModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 2;
 }
 
-QVariant DataManagerModel::data(const QModelIndex &index, int role) const
+QVariant DataManagerReferencePointModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -35,7 +38,7 @@ QVariant DataManagerModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant DataManagerModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant DataManagerReferencePointModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
         return QVariant();
@@ -50,7 +53,7 @@ QVariant DataManagerModel::headerData(int section, Qt::Orientation orientation, 
     }
 }
 
-void DataManagerModel::update()
+void DataManagerReferencePointModel::update()
 {
     beginResetModel();
     endResetModel();

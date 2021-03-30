@@ -22,7 +22,7 @@ TEST_F(DataManagerTest, DataManger)
 {
 
     std::vector<ReferencePoint> points;
-    DataManagerModel model(points);
+    DataManagerReferencePointModel model(points);
 
     ASSERT_EQ(model.columnCount(), 2);
     ASSERT_EQ(model.rowCount(), 0);
