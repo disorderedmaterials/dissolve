@@ -14,15 +14,15 @@ bool Data2DStore::addData(std::string_view dataName, LineParser &parser, int sta
                           const CoreData &coreData)
 {
     // Create new data
-    auto &data = data_.emplace_back();
-    data.first.setTag(dataName);
+    auto &[data, format] = data_.emplace_back();
+    data.setTag(dataName);
 
     // Read the file / format
-    if (!data.second.read(parser, startArg, endKeyword, coreData))
+    if (!format.read(parser, startArg, endKeyword, coreData))
         return false;
 
     // Load the data
-    return data.second.importData(data.first, parser.processPool());
+    return format.importData(data, parser.processPool());
 }
 
 // Check to see if the named data is present in the store

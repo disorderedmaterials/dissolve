@@ -22,7 +22,7 @@ bool Data1DStore::addData(std::string_view dataName, LineParser &parser, int sta
         return false;
 
     // Load the data
-    return format.importData(data.first, parser.processPool());
+    return format.importData(data, parser.processPool());
 }
 
 // Check to see if the named data is present in the store
