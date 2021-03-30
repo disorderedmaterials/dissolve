@@ -38,8 +38,8 @@ TEST_F(XmlFFTest, XmlBond)
 
     bonds.readFile(doc.root());
 
-    ASSERT_EQ(bonds.columnCount(), 4);
-    ASSERT_EQ(bonds.rowCount(), 5);
+    EXPECT_EQ(bonds.columnCount(), 4);
+    EXPECT_EQ(bonds.rowCount(), 5);
 
     std::vector<XmlBondData> reference = {{"O801", "C800", 0.141000, 267776.000000},
                                           {"H802", "C800", 0.109000, 284512.000000},
@@ -50,10 +50,10 @@ TEST_F(XmlFFTest, XmlBond)
     int row = 0;
     for (auto b : reference)
     {
-        ASSERT_EQ(bonds.data(bonds.index(row, 0)).toString().toStdString(), std::get<0>(b));
-        ASSERT_EQ(bonds.data(bonds.index(row, 1)).toString().toStdString(), std::get<1>(b));
-        ASSERT_EQ(bonds.data(bonds.index(row, 2)).toDouble(), std::get<2>(b));
-        ASSERT_EQ(bonds.data(bonds.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_EQ(bonds.data(bonds.index(row, 0)).toString().toStdString(), std::get<0>(b));
+        EXPECT_EQ(bonds.data(bonds.index(row, 1)).toString().toStdString(), std::get<1>(b));
+        EXPECT_EQ(bonds.data(bonds.index(row, 2)).toDouble(), std::get<2>(b));
+        EXPECT_EQ(bonds.data(bonds.index(row, 3)).toDouble(), std::get<3>(b));
         ++row;
     }
 }
@@ -64,8 +64,8 @@ TEST_F(XmlFFTest, XmlAngle)
 
     angles.readFile(doc.root());
 
-    ASSERT_EQ(angles.columnCount(), 5);
-    ASSERT_EQ(angles.rowCount(), 7);
+    EXPECT_EQ(angles.columnCount(), 5);
+    EXPECT_EQ(angles.rowCount(), 7);
 
     std::vector<XmlAngleData> reference = {
         {"O801", "C800", "H802", 1.911136, 292.880000}, {"O801", "C800", "H803", 1.911136, 292.880000},
@@ -76,11 +76,11 @@ TEST_F(XmlFFTest, XmlAngle)
     int row = 0;
     for (auto b : reference)
     {
-        ASSERT_EQ(angles.data(angles.index(row, 0)).toString().toStdString(), std::get<0>(b));
-        ASSERT_EQ(angles.data(angles.index(row, 1)).toString().toStdString(), std::get<1>(b));
-        ASSERT_EQ(angles.data(angles.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        ASSERT_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b));
-        ASSERT_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
+        EXPECT_EQ(angles.data(angles.index(row, 0)).toString().toStdString(), std::get<0>(b));
+        EXPECT_EQ(angles.data(angles.index(row, 1)).toString().toStdString(), std::get<1>(b));
+        EXPECT_EQ(angles.data(angles.index(row, 2)).toString().toStdString(), std::get<2>(b));
+        EXPECT_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
         ++row;
     }
 }
@@ -91,8 +91,8 @@ TEST_F(XmlFFTest, XmlTorsion)
 
     torsions.readFile(doc.root());
 
-    ASSERT_EQ(torsions.columnCount(), 16);
-    ASSERT_EQ(torsions.rowCount(), 3);
+    EXPECT_EQ(torsions.columnCount(), 16);
+    EXPECT_EQ(torsions.rowCount(), 3);
 
     std::vector<XmlTorsionData> reference = {{"H805", "O801", "C800", "H802", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3,
                                               4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
@@ -104,15 +104,15 @@ TEST_F(XmlFFTest, XmlTorsion)
     int row = 0;
     for (auto b : reference)
     {
-        ASSERT_EQ(torsions.data(torsions.index(row, 0)).toString().toStdString(), std::get<0>(b));
-        ASSERT_EQ(torsions.data(torsions.index(row, 1)).toString().toStdString(), std::get<1>(b));
-        ASSERT_EQ(torsions.data(torsions.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        ASSERT_EQ(torsions.data(torsions.index(row, 3)).toString().toStdString(), std::get<3>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 0)).toString().toStdString(), std::get<0>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 1)).toString().toStdString(), std::get<1>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 2)).toString().toStdString(), std::get<2>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 3)).toString().toStdString(), std::get<3>(b));
 
-        ASSERT_EQ(torsions.data(torsions.index(row, 4)).toDouble(), std::get<4>(b));
-        ASSERT_EQ(torsions.data(torsions.index(row, 5)).toDouble(), std::get<5>(b));
-        ASSERT_EQ(torsions.data(torsions.index(row, 6)).toDouble(), std::get<6>(b));
-        ASSERT_EQ(torsions.data(torsions.index(row, 7)).toDouble(), std::get<7>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 4)).toDouble(), std::get<4>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 5)).toDouble(), std::get<5>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 6)).toDouble(), std::get<6>(b));
+        EXPECT_EQ(torsions.data(torsions.index(row, 7)).toDouble(), std::get<7>(b));
         ++row;
     }
 }
@@ -123,8 +123,8 @@ TEST_F(XmlFFTest, XmlImproper)
 
     impropers.readFile(doc.root());
 
-    ASSERT_EQ(impropers.columnCount(), 16);
-    ASSERT_EQ(impropers.rowCount(), 2);
+    EXPECT_EQ(impropers.columnCount(), 16);
+    EXPECT_EQ(impropers.rowCount(), 2);
 
     std::vector<XmlImproperData> reference = {{"C800", "O801", "H802", "H803", 0.000000, 0.000000, 0.000000, 0.000000, 1, 2, 3,
                                                4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
@@ -134,15 +134,15 @@ TEST_F(XmlFFTest, XmlImproper)
     int row = 0;
     for (auto b : reference)
     {
-        ASSERT_EQ(impropers.data(impropers.index(row, 0)).toString().toStdString(), std::get<0>(b));
-        ASSERT_EQ(impropers.data(impropers.index(row, 1)).toString().toStdString(), std::get<1>(b));
-        ASSERT_EQ(impropers.data(impropers.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        ASSERT_EQ(impropers.data(impropers.index(row, 3)).toString().toStdString(), std::get<3>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 0)).toString().toStdString(), std::get<0>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 1)).toString().toStdString(), std::get<1>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 2)).toString().toStdString(), std::get<2>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 3)).toString().toStdString(), std::get<3>(b));
 
-        ASSERT_EQ(impropers.data(impropers.index(row, 4)).toDouble(), std::get<4>(b));
-        ASSERT_EQ(impropers.data(impropers.index(row, 5)).toDouble(), std::get<5>(b));
-        ASSERT_EQ(impropers.data(impropers.index(row, 6)).toDouble(), std::get<6>(b));
-        ASSERT_EQ(impropers.data(impropers.index(row, 7)).toDouble(), std::get<7>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 4)).toDouble(), std::get<4>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 5)).toDouble(), std::get<5>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 6)).toDouble(), std::get<6>(b));
+        EXPECT_EQ(impropers.data(impropers.index(row, 7)).toDouble(), std::get<7>(b));
         ++row;
     }
 }
@@ -155,8 +155,8 @@ TEST_F(XmlFFTest, XmlAtom)
 
     atoms.readFile(doc.root());
 
-    ASSERT_EQ(atoms.columnCount(), 4);
-    ASSERT_EQ(atoms.rowCount(), 6);
+    EXPECT_EQ(atoms.columnCount(), 4);
+    EXPECT_EQ(atoms.rowCount(), 6);
 
     std::vector<XmlAtomData> reference = {{"opls_802", "H802", "H", 1.008000},  {"opls_804", "H804", "H", 1.008000},
                                           {"opls_801", "O801", "O", 15.999000}, {"opls_803", "H803", "H", 1.008000},
@@ -165,10 +165,10 @@ TEST_F(XmlFFTest, XmlAtom)
     int row = 0;
     for (auto b : reference)
     {
-        ASSERT_EQ(atoms.data(atoms.index(row, 0)).toString().toStdString(), std::get<0>(b));
-        ASSERT_EQ(atoms.data(atoms.index(row, 1)).toString().toStdString(), std::get<1>(b));
-        ASSERT_EQ(atoms.data(atoms.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        ASSERT_EQ(atoms.data(atoms.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_EQ(atoms.data(atoms.index(row, 0)).toString().toStdString(), std::get<0>(b));
+        EXPECT_EQ(atoms.data(atoms.index(row, 1)).toString().toStdString(), std::get<1>(b));
+        EXPECT_EQ(atoms.data(atoms.index(row, 2)).toString().toStdString(), std::get<2>(b));
+        EXPECT_EQ(atoms.data(atoms.index(row, 3)).toDouble(), std::get<3>(b));
         ++row;
     }
 }
@@ -235,7 +235,7 @@ TEST_F(XmlFFTest, XmlTree)
     ForcefieldLibrary::registerForcefield(treeModel.toForcefield());
     auto xmlFF = ForcefieldLibrary::forcefield("TestFF");
     ASSERT_TRUE(xmlFF);
-    ASSERT_EQ(xmlFF->name(), "TestFF");
+    EXPECT_EQ(xmlFF->name(), "TestFF");
 
     // Pull the atoms
     auto oxygen = xmlFF->atomTypeByName("O801");
@@ -256,25 +256,25 @@ TEST_F(XmlFFTest, XmlTree)
     // Test the bonds
     auto bond = xmlFF->getBondTerm((*oxygen).get(), (*carbon).get());
     ASSERT_TRUE(bond);
-    ASSERT_EQ((*bond).get().parameters()[0], 267776.000000);
-    ASSERT_EQ((*bond).get().parameters()[1], 0.141000);
+    EXPECT_EQ((*bond).get().parameters()[0], 267776.000000);
+    EXPECT_EQ((*bond).get().parameters()[1], 0.141000);
 
     // Test the angles
     auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
     ASSERT_TRUE(angle);
-    ASSERT_EQ((*angle).get().parameters()[0], 292.88000);
-    ASSERT_EQ((*angle).get().parameters()[1], 1.911136);
+    EXPECT_EQ((*angle).get().parameters()[0], 292.88000);
+    EXPECT_EQ((*angle).get().parameters()[1], 1.911136);
 
     // Test the torsions
     auto torsion = xmlFF->getTorsionTerm((*hydrogen5).get(), (*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
     ASSERT_TRUE(torsion);
-    ASSERT_EQ((*torsion).get().parameters()[0], 0);
-    ASSERT_EQ((*torsion).get().parameters()[2], 0.736384);
+    EXPECT_EQ((*torsion).get().parameters()[0], 0);
+    EXPECT_EQ((*torsion).get().parameters()[2], 0.736384);
 
     // Test the impropers
     auto improper = xmlFF->getImproperTerm((*carbon).get(), (*oxygen).get(), (*hydrogen2).get(), (*hydrogen3).get());
     ASSERT_TRUE(improper);
-    ASSERT_EQ((*improper).get().parameters()[0], 0);
+    EXPECT_EQ((*improper).get().parameters()[0], 0);
 }
 
 } // namespace UnitTest
