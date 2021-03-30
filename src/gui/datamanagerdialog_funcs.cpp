@@ -12,9 +12,10 @@
 #include <QRegExp>
 
 DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints)
-    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints)
+    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(referencePoints_)
 {
     ui_.setupUi(this);
+    ui_.ReferencePointsTable->setModel(&refModel_);
 
     updateControls();
 }
@@ -101,42 +102,14 @@ void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, Q
     }
 }
 
-// Update ReferencePoint table row
-void DataManagerDialog::referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Data Suffix
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<ReferencePoint>(refPoint));
-        ui_.ReferencePointsTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.ReferencePointsTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(refPoint->suffix())));
-
-    // Restart file name
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<ReferencePoint>(refPoint));
-        ui_.ReferencePointsTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.ReferencePointsTable->item(row, 1);
-    item->setText(QString::fromStdString(std::string(refPoint->restartFile())));
-}
-
 // Return currently-selected ReferencePoint
 ReferencePoint *DataManagerDialog::currentReferencePoint() const
 {
     // Get current item from tree, and check the parent item
-    QTableWidgetItem *item = ui_.ReferencePointsTable->currentItem();
-    if (!item)
+    auto index = ui_.ReferencePointsTable->currentIndex();
+    if (!index.isValid())
         return nullptr;
-    return VariantPointer<ReferencePoint>(item->data(Qt::UserRole));
+    return VariantPointer<ReferencePoint>(refModel_.data(index, Qt::UserRole));
 }
 
 // Update controls
@@ -153,8 +126,7 @@ void DataManagerDialog::updateControls()
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table
-    ConstTableWidgetUpdater<DataManagerDialog, ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this,
-                                                                               &DataManagerDialog::referencePointRowUpdate);
+    refModel_.update();
     ui_.ReferencePointsTable->resizeColumnsToContents();
 }
 

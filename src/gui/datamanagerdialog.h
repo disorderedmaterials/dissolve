@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui/models/dataManagerModel.h"
 #include "gui/referencepoint.h"
 #include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
@@ -28,6 +29,8 @@ class DataManagerDialog : public QDialog
     Dissolve &dissolve_;
     // List of current ReferencePoints
     List<ReferencePoint> &referencePoints_;
+    // ReferencePoint Model
+    DataManagerModel refModel_;
 
     /*
      * UI
@@ -42,8 +45,6 @@ class DataManagerDialog : public QDialog
                          const QString locationIconResource);
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QTableWidget *table, GenericItem *current, QString filter);
-    // Update ReferencePoint table row
-    void referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems);
     // Return currently-selected ReferencePoint
     ReferencePoint *currentReferencePoint() const;
     // Update controls
