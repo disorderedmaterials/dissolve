@@ -42,9 +42,9 @@ QVariant DataManagerModel::headerData(int section, Qt::Orientation orientation, 
     switch (section)
     {
         case 0:
-            return "Suffix";
+            return "Data Suffix";
         case 1:
-            return "Restart File";
+            return "Source";
         default:
             return QVariant();
     }
