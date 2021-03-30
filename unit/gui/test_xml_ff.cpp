@@ -79,8 +79,8 @@ TEST_F(XmlFFTest, XmlAngle)
         EXPECT_EQ(angles.data(angles.index(row, 0)).toString().toStdString(), std::get<0>(b));
         EXPECT_EQ(angles.data(angles.index(row, 1)).toString().toStdString(), std::get<1>(b));
         EXPECT_EQ(angles.data(angles.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        EXPECT_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b));
-        EXPECT_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
+        EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
         ++row;
     }
 }
@@ -109,10 +109,10 @@ TEST_F(XmlFFTest, XmlTorsion)
         EXPECT_EQ(torsions.data(torsions.index(row, 2)).toString().toStdString(), std::get<2>(b));
         EXPECT_EQ(torsions.data(torsions.index(row, 3)).toString().toStdString(), std::get<3>(b));
 
-        EXPECT_EQ(torsions.data(torsions.index(row, 4)).toDouble(), std::get<4>(b));
-        EXPECT_EQ(torsions.data(torsions.index(row, 5)).toDouble(), std::get<5>(b));
-        EXPECT_EQ(torsions.data(torsions.index(row, 6)).toDouble(), std::get<6>(b));
-        EXPECT_EQ(torsions.data(torsions.index(row, 7)).toDouble(), std::get<7>(b));
+        EXPECT_DOUBLE_EQ(torsions.data(torsions.index(row, 4)).toDouble(), std::get<4>(b));
+        EXPECT_DOUBLE_EQ(torsions.data(torsions.index(row, 5)).toDouble(), std::get<5>(b));
+        EXPECT_DOUBLE_EQ(torsions.data(torsions.index(row, 6)).toDouble(), std::get<6>(b));
+        EXPECT_DOUBLE_EQ(torsions.data(torsions.index(row, 7)).toDouble(), std::get<7>(b));
         ++row;
     }
 }
@@ -139,10 +139,10 @@ TEST_F(XmlFFTest, XmlImproper)
         EXPECT_EQ(impropers.data(impropers.index(row, 2)).toString().toStdString(), std::get<2>(b));
         EXPECT_EQ(impropers.data(impropers.index(row, 3)).toString().toStdString(), std::get<3>(b));
 
-        EXPECT_EQ(impropers.data(impropers.index(row, 4)).toDouble(), std::get<4>(b));
-        EXPECT_EQ(impropers.data(impropers.index(row, 5)).toDouble(), std::get<5>(b));
-        EXPECT_EQ(impropers.data(impropers.index(row, 6)).toDouble(), std::get<6>(b));
-        EXPECT_EQ(impropers.data(impropers.index(row, 7)).toDouble(), std::get<7>(b));
+        EXPECT_DOUBLE_EQ(impropers.data(impropers.index(row, 4)).toDouble(), std::get<4>(b));
+        EXPECT_DOUBLE_EQ(impropers.data(impropers.index(row, 5)).toDouble(), std::get<5>(b));
+        EXPECT_DOUBLE_EQ(impropers.data(impropers.index(row, 6)).toDouble(), std::get<6>(b));
+        EXPECT_DOUBLE_EQ(impropers.data(impropers.index(row, 7)).toDouble(), std::get<7>(b));
         ++row;
     }
 }
@@ -168,7 +168,7 @@ TEST_F(XmlFFTest, XmlAtom)
         EXPECT_EQ(atoms.data(atoms.index(row, 0)).toString().toStdString(), std::get<0>(b));
         EXPECT_EQ(atoms.data(atoms.index(row, 1)).toString().toStdString(), std::get<1>(b));
         EXPECT_EQ(atoms.data(atoms.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        EXPECT_EQ(atoms.data(atoms.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_DOUBLE_EQ(atoms.data(atoms.index(row, 3)).toDouble(), std::get<3>(b));
         ++row;
     }
 }
@@ -201,7 +201,7 @@ TEST_F(XmlFFTest, XmlTree)
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, atomIndex)).toString().toStdString(), "opls_802");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 1, atomIndex)).toString().toStdString(), "H802");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 2, atomIndex)).toString().toStdString(), "H");
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, atomIndex)).toDouble(), 1.008000);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 3, atomIndex)).toDouble(), 1.008000);
 
     // Test the bonds
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, bondIndex)).toString().toStdString(), "O801");
@@ -213,23 +213,23 @@ TEST_F(XmlFFTest, XmlTree)
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, angleIndex)).toString().toStdString(), "O801");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 1, angleIndex)).toString().toStdString(), "C800");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 2, angleIndex)).toString().toStdString(), "H802");
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 3, angleIndex)).toDouble(), 1.911136);
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 4, angleIndex)).toDouble(), 292.88);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 3, angleIndex)).toDouble(), 1.911136);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 4, angleIndex)).toDouble(), 292.88);
 
     // Test the torsions
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, torsionIndex)).toString().toStdString(), "H805");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 1, torsionIndex)).toString().toStdString(), "O801");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 2, torsionIndex)).toString().toStdString(), "C800");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 3, torsionIndex)).toString().toStdString(), "H802");
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 4, torsionIndex)).toDouble(), 0);
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 6, torsionIndex)).toDouble(), 0.736384);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 4, torsionIndex)).toDouble(), 0);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 6, torsionIndex)).toDouble(), 0.736384);
 
     // Test the impropers
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, improperIndex)).toString().toStdString(), "C800");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 1, improperIndex)).toString().toStdString(), "O801");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 2, improperIndex)).toString().toStdString(), "H802");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 3, improperIndex)).toString().toStdString(), "H803");
-    EXPECT_EQ(treeModel.data(treeModel.index(0, 4, improperIndex)).toDouble(), 0);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 4, improperIndex)).toDouble(), 0);
 
     // Construct the actual forcefield
     ForcefieldLibrary::registerForcefield(treeModel.toForcefield());
@@ -256,8 +256,8 @@ TEST_F(XmlFFTest, XmlTree)
     // Test the bonds
     auto bond = xmlFF->getBondTerm((*oxygen).get(), (*carbon).get());
     ASSERT_TRUE(bond);
-    EXPECT_EQ((*bond).get().parameters()[0], 2677.76000000);
-    EXPECT_EQ((*bond).get().parameters()[1], 1.41000);
+    EXPECT_DOUBLE_EQ((*bond).get().parameters()[0], 2677.76000000);
+    EXPECT_DOUBLE_EQ((*bond).get().parameters()[1], 1.41000);
 
     // Test the angles
     auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
