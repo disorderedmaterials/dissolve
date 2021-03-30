@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/speciesbond.h"
 #include "classes/speciesring.h"
 #include "neta/node.h"
 #include <vector>

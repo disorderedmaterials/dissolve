@@ -189,6 +189,31 @@ antlrcpp::Any NETAVisitor::visitModifier(NETAParser::ModifierContext *context)
     return visitChildren(context);
 }
 
+antlrcpp::Any NETAVisitor::visitOption(NETAParser::OptionContext *context)
+{
+    // Check comparison operator - must be either '=' or '!='
+    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+        return Messenger::error("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText());
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+    if (op != NETANode::ComparisonOperator::EqualTo && op != NETANode::ComparisonOperator::NotEqualTo)
+        throw(NETAExceptions::NETASyntaxException(fmt::format(
+            "Option '{}' may only use the equal to ('=') or not equal to ('!=') operators.", context->opt->getText())));
+
+    if (currentNETAContext()->isValidOption(context->opt->getText()))
+    {
+        if (!currentNETAContext()->setOption(context->opt->getText(), op, context->value->getText()))
+            throw(NETAExceptions::NETASyntaxException(
+                fmt::format("Failed to set option '{}' for the current context ({}).", context->opt->getText(),
+                            NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
+    }
+    else
+        throw(NETAExceptions::NETASyntaxException(
+            fmt::format("'{}' is not a valid option keyword for the current context ({}).", context->opt->getText(),
+                        NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
+
+    return visitChildren(context);
+}
+
 antlrcpp::Any NETAVisitor::visitFlag(NETAParser::FlagContext *context)
 {
     if (currentNETAContext()->isValidFlag(context->Keyword()->getText()))

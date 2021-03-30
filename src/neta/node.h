@@ -111,6 +111,15 @@ class NETANode
     virtual bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
 
     /*
+     * Options
+     */
+    public:
+    // Return whether the specified option is valid for this node
+    virtual bool isValidOption(std::string_view s) const;
+    // Set value and comparator for specified modifier
+    virtual bool setOption(std::string_view option, ComparisonOperator op, std::string_view value);
+
+    /*
      * Flags
      */
     public:

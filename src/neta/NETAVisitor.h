@@ -45,5 +45,6 @@ class NETAVisitor : private NETAParserBaseVisitor
     antlrcpp::Any visitTargetList(NETAParser::TargetListContext *context) override;
     // Context Modifiers
     antlrcpp::Any visitModifier(NETAParser::ModifierContext *context) override;
+    antlrcpp::Any visitOption(NETAParser::OptionContext *context) override;
     antlrcpp::Any visitFlag(NETAParser::FlagContext *context) override;
 };
