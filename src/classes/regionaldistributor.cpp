@@ -315,7 +315,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
     for (auto c = 0; c < primaryCells.nItems(); ++c)
     {
         // Loop over all cell neighbours for this primary Cell
-        for (const auto &neighbour : primaryCells[c]->allCellNeighbours())
+        for (const auto *neighbour : primaryCells[c]->allCellNeighbours())
         {
             cellIndex = neighbour->index();
 
@@ -407,7 +407,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
 
     // Loop over Atoms in Cell
     std::shared_ptr<Molecule> mol;
-    for (auto atom : cell->atoms())
+    for (auto &atom : cell->atoms())
     {
         // Get the Atom's Molecule pointer
         mol = atom->molecule();
@@ -443,7 +443,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
      */
     std::shared_ptr<Molecule> molecule = nullptr;
 
-    for (auto &cell : lockedCells_[processOrGroup])
+    for (auto *cell : lockedCells_[processOrGroup])
     {
         if (DND)
             Messenger::print("  Searching for suitable Molecule to assign to process/group {} from Cell index {} "
