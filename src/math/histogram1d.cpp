@@ -192,8 +192,7 @@ Histogram1D Histogram1D::operator+(const Histogram1D &other) const
     }
     Histogram1D ret = *this;
 
-    for (auto n = 0; n < nBins_; ++n)
-        ret.bins_[n] += other.bins_[n];
+    std::transform(other.bins_.cbegin(), other.bins_.cend(), ret.bins_.cbegin(), ret.bins_.begin(), std::plus<>());
 
     ret.nBinned_ = this->nBinned_ + other.nBinned_;
     ret.nMissed_ = this->nMissed_ + other.nMissed_;

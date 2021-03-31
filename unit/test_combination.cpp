@@ -42,6 +42,7 @@ TEST(CombinationTest, CheckNumberOfCombinations)
     }
 
     EXPECT_EQ(combinations.size(), expectedCombinations.size());
+    EXPECT_EQ(combinations.size(), 0.5 * numTests * (numTests - 1));
 }
 TEST(CombinationTest, CheckCombinations)
 {

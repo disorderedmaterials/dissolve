@@ -18,9 +18,16 @@
 #include "modules/rdf/rdf.h"
 #include "templates/algorithms.h"
 #include <iterator>
+#include <tuple>
+
+#ifdef MULTITHREADING
+#include "parallel_helpers.h"
 #include <tbb/combinable.h>
 #include <tbb/parallel_for.h>
-#include <tuple>
+constexpr bool MULTITHREADED = true;
+#else
+constexpr bool MULTITHREADED = false;
+#endif
 
 /*
  * Private Functions
@@ -147,103 +154,11 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     return true;
 }
 
-struct TempHistogram
-// Currently having to create a temp histogram struct as the normal histogram sometimes throws an exception in the data object
-// store while in the parallel computations
-{
-    TempHistogram() = default;
-    void initialise(Histogram1D &histo)
-    {
-        this->nBinned_ = histo.nBinned();
-        this->nBins_ = histo.nBins();
-        this->binCentres_ = histo.binCentres();
-        this->bins_ = histo.bins();
-        this->binWidth_ = histo.binWidth();
-        this->minimum_ = histo.minimum();
-        this->maximum_ = histo.maximum();
-    }
-    // Bin specified value, returning success
-    bool bin(double x)
-    {
-        // Calculate target bin
-        auto bin = int((x - minimum_) / binWidth_);
-
-        // Check bin range
-        if ((bin < 0) || (bin >= nBins_))
-        {
-            ++nMissed_;
-            return false;
-        }
-
-        ++bins_[bin];
-        ++nBinned_;
-
-        return true;
-    }
-    TempHistogram operator+(const TempHistogram &other) const
-    {
-        TempHistogram ret = *this;
-        for (auto n = 0; n < nBins_; ++n)
-            ret.bins_[n] += other.bins_[n];
-
-        ret.nBinned_ = this->nBinned_ + other.nBinned_;
-        ret.nMissed_ = this->nMissed_ + other.nMissed_;
-        ret.nBins_ = this->nBins_;
-
-        return ret;
-    }
-
-    // Minimum value for data (hard left-edge of first bin)
-    double minimum_;
-    // Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-    double maximum_;
-    // Bin width
-    double binWidth_;
-    // Number of bins
-    int nBins_;
-    // Histogram bins
-    std::vector<long int> bins_;
-    // Array of bin centres
-    std::vector<double> binCentres_;
-    // Number of values binned over all bins
-    long int nBinned_;
-    // Number of points missed (out of bin range)
-    long int nMissed_;
-    // Accumulated data
-};
-
-struct PartialHistograms
-{
-    PartialHistograms() = default;
-    PartialHistograms(PartialSet &partialSet)
-    {
-
-        histograms_.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes());
-        for (int i = 0; i < partialSet.nAtomTypes(); ++i)
-            for (int j = 0; j < partialSet.nAtomTypes(); ++j)
-                histograms_[{i, j}].initialise(partialSet.fullHistogram(i, j));
-        // histograms_[{i, j}] = partialSet.fullHistogram(i, j);
-    }
-    PartialHistograms operator+(const PartialHistograms &other) const
-    {
-        PartialHistograms ret;
-        ret.histograms_.initialise(this->histograms_.nRows(), this->histograms_.nColumns());
-        for (int i = 0; i < this->histograms_.nRows(); ++i)
-            for (int j = 0; j < this->histograms_.nColumns(); ++j)
-            {
-                ret.histograms_[{i, j}] = this->histograms_[{i, j}] + other.histograms_[{i, j}];
-            }
-        return ret;
-    }
-    Array2D<TempHistogram> histograms_;
-};
-
 // Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
     bool retVal;
-    constexpr bool PARALLEL = true;
-    if constexpr (PARALLEL)
+    if constexpr (MULTITHREADED)
         retVal = calculateGRCellsParallelImpl(procPool, cfg, partialSet, rdfRange);
     else
         retVal = calculateGRCellsSingleImpl(procPool, cfg, partialSet, rdfRange);
@@ -321,6 +236,7 @@ bool RDFModule::calculateGRCellsSingleImpl(ProcessPool &procPool, Configuration 
 bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
                                              const double rdfRange)
 {
+#ifdef MULTITHREADING
     // Grab the Box pointer and Cell array
     const auto *box = cfg->box();
     auto &cellArray = cfg->cells();
@@ -331,9 +247,11 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
     auto range = chop_range(0, cellArray.nCells(), nChunks, offset);
     int start = std::get<0>(range);
     int end = std::get<1>(range);
-
-    tbb::combinable<PartialHistograms> pHistograms([&partialSet]() { return PartialHistograms(partialSet); });
     Combinations comb(end - start, 2);
+
+    tbb::combinable<RDFModuleHelpers::PartialHistograms> pHistograms(
+        [&partialSet]() { return RDFModuleHelpers::PartialHistograms(partialSet); });
+
     tbb::parallel_for(tbb::blocked_range<int>(0, comb.getNumCombinations()),
                       [&pHistograms, start, cfg, &comb, rdfRange](tbb::blocked_range<int> r) {
                           for (int i = r.begin(); i < r.end(); ++i)
@@ -368,24 +286,9 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
                               }
                           }
                       });
-    auto histograms = pHistograms.combine(std::plus<PartialHistograms>());
-    // Add all the histograms together, for the temp histogram this is a bit more manual
-    // if we were using the normal histogram we could simple use the .add method
 
-    // for (int k = 0; k < partialSet.nAtomTypes(); ++k)
-    //     for (int j = 0; j < partialSet.nAtomTypes(); ++j)
-    //         partialSet.fullHistogram(k, j).add(histograms.histograms_[{k, j}]);
-    for (int k = 0; k < partialSet.nAtomTypes(); ++k)
-        for (int j = 0; j < partialSet.nAtomTypes(); ++j)
-        {
-            auto &histo = partialSet.fullHistogram(k, j);
-            auto nBinned = histo.nBinned();
-            auto &bins = histo.bins();
-            for (auto n = 0; n < histo.nBins(); ++n)
-                bins[n] += histograms.histograms_[{k, j}].bins_[n];
-
-            nBinned += histograms.histograms_[{k, j}].nBinned_;
-        }
+    auto histograms = pHistograms.combine(std::plus<RDFModuleHelpers::PartialHistograms>());
+    RDFModuleHelpers::combinePartialHistogramsIntoPartialSet(partialSet, histograms);
 
     for (int n = start; n < end; ++n)
     {
@@ -393,21 +296,15 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
         auto &atomsI = cellI->atoms();
 
         // Add contributions between atoms in cellI
-        for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
-        {
-            auto &i = *iter;
-            auto typeI = i->localTypeIndex();
-
-            for (auto jter = std::next(iter, 1); jter != atomsI.end(); ++jter)
-            {
-                auto &j = *jter;
-
-                // No need to perform MIM since we're in the same cell
-                double distance = (i->r() - j->r()).magnitude();
-                partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
-            }
-        }
+        for_each_pair(atomsI.begin(), atomsI.end(), [&](const int idx, auto &i, const int jdx, auto &j) {
+            if (idx == jdx)
+                return;
+            // No need to perform MIM since we're in the same cell
+            double distance = (i->r() - j->r()).magnitude();
+            partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+        });
     }
+#endif
     return true;
 }
 

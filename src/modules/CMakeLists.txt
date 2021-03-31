@@ -24,7 +24,7 @@ macro(dissolve_add_module header modulename)
         ${MODULENOGUI_LINK_LIBS} "module_${modulename}_nogui"
         CACHE INTERNAL "" FORCE
     )
-    target_link_libraries(module_${modulename}_nogui PRIVATE base)
+    target_link_libraries(module_${modulename}_nogui PRIVATE base ${THREADING_LINK_LIBS})
   endif()
 
   # Add library target
@@ -44,7 +44,7 @@ macro(dissolve_add_module header modulename)
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/src
   )
-  target_link_libraries(module_${modulename} PRIVATE base)
+  target_link_libraries(module_${modulename} PRIVATE base ${THREADING_LINK_LIBS})
 endmacro()
 macro(dissolve_add_module_gui modulename)
   message(STATUS "...    GUI component 'module_${modulename}_gui'")
@@ -92,7 +92,7 @@ macro(dissolve_add_module_gui modulename)
     ${Qt5Widgets_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
   )
-  target_link_libraries(module_${modulename}_gui PRIVATE base)
+  target_link_libraries(module_${modulename}_gui PRIVATE base ${THREADING_LINK_LIBS})
 endmacro()
 
 # Module subdirectories

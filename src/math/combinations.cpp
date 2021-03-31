@@ -12,20 +12,16 @@ std::pair<int, int> Combinations::nthIndexPair(int n) const
 
 int Combinations::nChooseK(int n, int k) const
 {
-    if (k > n)
-        return 0;
-    if (k * 2 > n)
-        k = n - k;
-    if (k == 0)
-        return 1;
-
-    int result = n;
-    for (int i = 2; i <= k; ++i)
+    // Function n choose k specialised for either k = 1 or k = 2
+    switch (k)
     {
-        result *= (n - i + 1);
-        result /= i;
+        case 1:
+            return n;
+        case 2:
+            return (n * (n - 1)) >> 1;
+        default:
+            return -1;
     }
-    return result;
 }
 
 Combinations::NthCombination Combinations::getCoefficent(int N, int k) const
