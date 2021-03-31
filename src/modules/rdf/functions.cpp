@@ -700,7 +700,7 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         if (parser.nArgs() == 0)
             return Messenger::error("Test data has no name?");
 
-        // Check first argument to check it has the corect prefix
+        // Check first argument to check it has the correct prefix
         if (!DissolveSys::sameString(prefix, parser.argsv(0)))
             return Messenger::error("Unrecognised test data name '{}'.\n", data.tag());
 
