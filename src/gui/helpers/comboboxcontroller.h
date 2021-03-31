@@ -17,7 +17,7 @@
 
 template <class Iter, class Lam> Iter combo_box_updater(QComboBox *comboBox, Iter begin, Iter end, Lam getItemText)
 {
-    using itemType = typename std::iterator_traits<decltype(begin)>::value_type;
+    using itemType = typename std::iterator_traits<Iter>::value_type;
 
     auto index = 0;
     Iter currentItem = end;
