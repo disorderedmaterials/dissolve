@@ -24,7 +24,7 @@ class IntegerStringVectorKeyword : public KeywordData<IntegerStringVectorKeyword
     private:
     // Number of required integers
     int nRequiredIntegers_;
-    // Number of required values (or -1 for any number, but at least one)
+    // Number of required values (or, if not specified, one or more)
     std::optional<int> nRequiredValues_;
 
     /*
