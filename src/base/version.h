@@ -5,7 +5,6 @@
 
 // Forward Declarations
 class CoreData;
-class ProcessPool;
 
 // Version Counter
 class VersionCounter

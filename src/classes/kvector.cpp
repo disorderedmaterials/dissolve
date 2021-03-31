@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/kvector.h"
-#include "base/processpool.h"
 #include "classes/braggreflection.h"
 
 KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes)

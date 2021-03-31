@@ -8,10 +8,7 @@
 
 #include "base/processgroup.h"
 #include "base/timer.h"
-#include "math/data1d.h"
 #include "templates/array.h"
-#include "templates/array2d.h"
-#include "templates/vector3.h"
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL
 #include <mpi.h>

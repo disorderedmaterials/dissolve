@@ -3,7 +3,6 @@
 
 #include "classes/neutronweights.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"

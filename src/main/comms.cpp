@@ -2,9 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/processpool.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/species.h"
 #include "main/dissolve.h"
 
 // Return a world process pool

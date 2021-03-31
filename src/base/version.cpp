@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/version.h"
-#include "base/processpool.h"
 
 VersionCounter::VersionCounter() { version_ = 0; }
 

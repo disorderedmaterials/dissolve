@@ -8,7 +8,6 @@
 #include "templates/array3d.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // One-Dimensional Histogram
 class Histogram3D : public ListItem<Histogram3D>

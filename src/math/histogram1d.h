@@ -7,7 +7,6 @@
 #include "math/sampleddouble.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // One-Dimensional Histogram
 class Histogram1D : public ListItem<Histogram1D>

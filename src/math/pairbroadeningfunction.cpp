@@ -3,13 +3,11 @@
 
 #include "math/pairbroadeningfunction.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesintra.h"
 #include "data/atomicmasses.h"
 #include "templates/algorithms.h"
-#include "templates/enumhelpers.h"
 
 PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionType function)
 {

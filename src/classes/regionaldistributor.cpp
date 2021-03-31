@@ -7,7 +7,6 @@
 #include "classes/atom.h"
 #include "classes/cell.h"
 #include "classes/molecule.h"
-#include "templates/array3d.h"
 #include <algorithm>
 
 // Debug Mode

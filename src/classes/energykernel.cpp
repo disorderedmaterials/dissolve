@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/energykernel.h"
-#include "base/processpool.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"

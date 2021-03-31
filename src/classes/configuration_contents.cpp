@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"

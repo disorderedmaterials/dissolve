@@ -4,7 +4,6 @@
 #include "base/processpool.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include <string.h>
 
 // Static Members
 int ProcessPool::nWorldProcesses_ = 1;

@@ -11,7 +11,6 @@
 // Forward Declarations
 class AtomType;
 class LineParser;
-class ProcessPool;
 class SpeciesIntra;
 
 // Pair Broadening Function

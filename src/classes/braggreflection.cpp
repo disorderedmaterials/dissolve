@@ -3,7 +3,6 @@
 
 #include "classes/braggreflection.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 

@@ -3,12 +3,10 @@
 
 #include "classes/xrayweights.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
 #include "templates/algorithms.h"
-#include "templates/enumhelpers.h"
 #include <functional>
 #include <numeric>
 

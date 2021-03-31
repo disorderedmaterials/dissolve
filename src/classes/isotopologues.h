@@ -10,7 +10,6 @@
 class CoreData;
 class Isotopologue;
 class LineParser;
-class ProcessPool;
 class Species;
 
 // Isotopologues

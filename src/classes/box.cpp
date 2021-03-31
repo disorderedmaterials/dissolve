@@ -7,7 +7,6 @@
 #include "math/data1d.h"
 #include "math/interpolator.h"
 #include <algorithm>
-#include <string.h>
 
 Box::Box()
 {

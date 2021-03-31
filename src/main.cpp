@@ -6,9 +6,6 @@
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
-#include <ctime>
-#include <stdlib.h>
-#include <time.h>
 
 int main(int args, char **argv)
 {

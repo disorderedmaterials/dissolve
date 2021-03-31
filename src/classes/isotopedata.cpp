@@ -4,10 +4,8 @@
 #include "classes/isotopedata.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
-#include "templates/enumhelpers.h"
 
 IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 {

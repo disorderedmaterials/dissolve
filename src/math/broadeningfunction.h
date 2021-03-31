@@ -10,7 +10,6 @@
 // Forward Declarations
 class CoreData;
 class LineParser;
-class ProcessPool;
 
 // Broadening Function
 class BroadeningFunction

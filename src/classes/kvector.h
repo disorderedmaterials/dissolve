@@ -10,7 +10,6 @@
 // Forward Declarations
 class BraggReflection;
 class CoreData;
-class ProcessPool;
 
 // K-Vector
 class KVector

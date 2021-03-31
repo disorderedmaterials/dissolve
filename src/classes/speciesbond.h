@@ -9,7 +9,6 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class ProcessPool;
 
 // SpeciesBond Definition
 class SpeciesBond : public SpeciesIntra

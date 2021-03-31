@@ -8,7 +8,6 @@
 #include "templates/array2d.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // One-Dimensional Histogram
 class Histogram2D : public ListItem<Histogram2D>

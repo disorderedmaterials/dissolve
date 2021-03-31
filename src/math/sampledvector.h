@@ -8,7 +8,6 @@
 // Forward Declarations
 class CoreData;
 class LineParser;
-class ProcessPool;
 
 // Vector of double values with sampling
 class SampledVector

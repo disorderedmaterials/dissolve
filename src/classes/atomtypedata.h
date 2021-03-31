@@ -11,7 +11,6 @@ class AtomType;
 class CoreData;
 class IsotopeData;
 class Isotope;
-class ProcessPool;
 
 /*
  * AtomTypeData Definition

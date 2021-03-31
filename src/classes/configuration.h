@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/processpool.h"
 #include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomtypelist.h"
@@ -28,6 +27,7 @@ class Box;
 class Cell;
 class CoordinateSet;
 class PotentialMap;
+class ProcessPool;
 class Species;
 
 // Configuration

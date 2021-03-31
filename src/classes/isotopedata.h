@@ -9,7 +9,6 @@
 class CoreData;
 class Isotope;
 class LineParser;
-class ProcessPool;
 
 /*
  * IsotopeData Definition

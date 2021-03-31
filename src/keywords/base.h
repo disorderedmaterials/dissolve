@@ -18,7 +18,6 @@ class Module;
 class ProcedureNode;
 class Species;
 class SpeciesSite;
-class ProcessPool;
 
 // Keyword Base Class
 class KeywordBase : public ListItem<KeywordBase>

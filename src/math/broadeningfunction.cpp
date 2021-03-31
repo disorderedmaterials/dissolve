@@ -3,9 +3,7 @@
 
 #include "math/broadeningfunction.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
-#include "templates/enumhelpers.h"
 
 BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4,
                                        double p5, double p6)

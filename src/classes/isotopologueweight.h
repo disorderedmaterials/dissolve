@@ -9,7 +9,6 @@
 // Forward Declarations
 class Species;
 class Isotopologue;
-class ProcessPool;
 class LineParser;
 
 // Isotopologue Weight
