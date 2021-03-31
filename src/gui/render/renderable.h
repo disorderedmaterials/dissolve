@@ -12,7 +12,6 @@
 
 // Forward Declarations
 class GenericList;
-class PlottableData;
 class RenderableGroup;
 class View;
 

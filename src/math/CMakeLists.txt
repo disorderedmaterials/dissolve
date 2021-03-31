@@ -22,7 +22,6 @@ add_library(
   matrix3.cpp
   matrix4.cpp
   pairbroadeningfunction.cpp
-  plottable.cpp
   poissonfit.cpp
   range.cpp
   regression.cpp
@@ -61,7 +60,6 @@ add_library(
   mc.h
   minimiser.h
   pairbroadeningfunction.h
-  plottable.h
   poissonfit.h
   praxis.h
   range.h
