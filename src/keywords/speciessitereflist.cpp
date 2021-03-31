@@ -41,10 +41,7 @@ bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, const Cor
         // Find target Species (first argument)
         Species *sp = coreData.findSpecies(parser.argsv(n));
         if (!sp)
-        {
-            Messenger::error("Error adding SpeciesSite - no Species named '{}' exists.\n", parser.argsv(startArg));
-            return false;
-        }
+            return Messenger::error("Error adding SpeciesSite - no Species named '{}' exists.\n", parser.argsv(n));
 
         // Find specified Site (second argument) in the Species
         auto speciesSite = sp->findSite(parser.argsv(n + 1));
