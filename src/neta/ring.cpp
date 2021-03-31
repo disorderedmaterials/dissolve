@@ -6,15 +6,13 @@
 #include "data/ff/atomtype.h"
 #include <algorithm>
 
-NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)
+NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Ring)
 {
     repeatCount_ = 1;
-    repeatCountOperator_ = NETANode::GreaterThanEqualTo;
+    repeatCountOperator_ = NETANode::ComparisonOperator::GreaterThanEqualTo;
     sizeValue_ = -1;
-    sizeValueOperator_ = NETANode::EqualTo;
+    sizeValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 }
-
-NETARingNode::~NETARingNode() {}
 
 /*
  * Modifiers
@@ -23,7 +21,8 @@ NETARingNode::~NETARingNode() {}
 // Return enum options for NETARingModifiers
 EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 {
-    return EnumOptions<NETARingNode::NETARingModifier>("RingModifier", {{SizeModifier, "size"}, {RepeatRingModifier, "n"}});
+    return EnumOptions<NETARingNode::NETARingModifier>("RingModifier",
+                                                       {{NETARingModifier::Size, "size"}, {NETARingModifier::Repeat, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -38,11 +37,11 @@ bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op,
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETARingNode::SizeModifier):
+        case (NETARingNode::NETARingModifier::Size):
             sizeValue_ = value;
             sizeValueOperator_ = op;
             break;
-        case (NETARingNode::RepeatRingModifier):
+        case (NETARingNode::NETARingModifier::Repeat):
             repeatCount_ = value;
             repeatCountOperator_ = op;
             break;
@@ -82,7 +81,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, std::vector<Species
         {
             // Special case - if NotEqualTo was specified as the comparison operator, check that against the maximum
             // size
-            if ((sizeValueOperator_ == NETANode::NotEqualTo) && (path.size() == maxSize))
+            if ((sizeValueOperator_ == NETANode::ComparisonOperator::NotEqualTo) && (path.size() == maxSize))
                 continue;
 
             // Add new ring
@@ -110,35 +109,34 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     std::vector<const SpeciesAtom *> ringPath;
     if (sizeValue_ == -1)
         findRings(i, rings, ringPath, 3, 6);
-    else if (sizeValueOperator_ == NETANode::EqualTo)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::EqualTo)
         findRings(i, rings, ringPath, sizeValue_, sizeValue_);
-    else if (sizeValueOperator_ == NETANode::LessThan)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThan)
         findRings(i, rings, ringPath, 3, sizeValue_ - 1);
-    else if (sizeValueOperator_ == NETANode::LessThanEqualTo)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThanEqualTo)
         findRings(i, rings, ringPath, 3, sizeValue_);
-    else if (sizeValueOperator_ == NETANode::GreaterThan)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThan)
         findRings(i, rings, ringPath, sizeValue_ + 1, 99);
-    else if (sizeValueOperator_ == NETANode::GreaterThanEqualTo)
+    else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThanEqualTo)
         findRings(i, rings, ringPath, sizeValue_, 99);
     else
         findRings(i, rings, ringPath, 3, 99);
 
     // Prune rings for duplicates
-    for (auto it = rings.begin(); it != rings.end(); ++it)
-        rings.erase(std::remove_if(it + 1, rings.end(), [&it](const auto &otherIt) { return *it == otherIt; }));
+    rings.erase(std::unique(rings.begin(), rings.end()), rings.end());
 
     // Loop over rings
     auto nMatches = 0, totalScore = 0;
     int nodeScore = NETANode::NoMatch;
-    for (auto ring : rings)
+    for (const auto &ring : rings)
     {
         // Check through atoms in the ring - either in order or not - to see if the ring matches
         // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
         // atoms in the ring at once)
 
         auto ringScore = 0;
-        std::vector<const SpeciesAtom *> ringAtoms = ring.atoms();
-        for (auto node : branch_)
+        auto ringAtoms = ring.atoms();
+        for (const auto &node : branch_)
         {
             nodeScore = node->score(nullptr, ringAtoms);
             if (nodeScore == NETANode::NoMatch)

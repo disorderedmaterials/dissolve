@@ -45,7 +45,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
         if (onlyWhenEnergyStable)
         {
-            auto stabilityResult = EnergyModule::nUnstable(configs);
+            auto stabilityResult = EnergyModule::nUnstable(dissolve.processingModuleData(), configs);
             if (stabilityResult == EnergyModule::NotAssessable)
                 return false;
             else if (stabilityResult > 0)
@@ -140,8 +140,10 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto smoothing = rdfModule->keywords().asInt("Smoothing");
             for (Configuration *cfg : rdfModule->targetConfigurations())
             {
-                const auto &originalGR = cfg->moduleData().value<PartialSet>("OriginalGR");
-                auto &unweightedGR = cfg->moduleData().realise<PartialSet>("UnweightedGR");
+                const auto &originalGR = dissolve.processingModuleData().value<PartialSet>(
+                    fmt::format("{}//OriginalGR", cfg->niceName()), rdfModule->uniqueName());
+                auto &unweightedGR = dissolve.processingModuleData().realise<PartialSet>(
+                    fmt::format("{}//UnweightedGR", cfg->niceName()), rdfModule->uniqueName());
                 RDFModule::calculateUnweightedGR(procPool, cfg, originalGR, unweightedGR, broadening, smoothing);
             }
 
@@ -159,7 +161,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target
             // Configurations
             for (Configuration *cfg : module->targetConfigurations())
-                cfg->moduleData().realise<bool>("_ForceNeutronSQ") = true;
+                dissolve.processingModuleData().realise<bool>("_ForceNeutronSQ", cfg->niceName()) = true;
 
             // Run the NeutronSQModule (quietly)
             Messenger::mute();

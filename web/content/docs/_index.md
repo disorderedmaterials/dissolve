@@ -9,6 +9,7 @@ linkTitle: "User Guide"
 - Dr T. Youngs
 - Dr A. Washington (January 2020 - present)
 - D. Nixon (January 2020 - present)
+- S. Smith (March 2021 - present)
 - C. Green (August 2020 - present), Simona (September 2019 - August 2020), J. Busch (October 2019 - December 2019)
 - Contributions, testing, and guidance from D. T. Bowron, T. F. Headen, S. G&auml;rtner, and O. Alderman.
 

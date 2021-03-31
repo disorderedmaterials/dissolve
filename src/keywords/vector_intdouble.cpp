@@ -22,7 +22,7 @@ int IntegerDoubleVectorKeyword::minArguments() const { return (nRequiredIntegers
 int IntegerDoubleVectorKeyword::maxArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(99)); }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     std::vector<int> i;
     std::vector<double> d;
@@ -59,7 +59,7 @@ bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, CoreData
 }
 
 // Write keyword data to specified LineParser
-bool IntegerDoubleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool IntegerDoubleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (const auto &idData : data_)
     {

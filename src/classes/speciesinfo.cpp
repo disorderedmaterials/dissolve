@@ -4,7 +4,7 @@
 #include "classes/speciesinfo.h"
 #include "base/sysfunc.h"
 
-SpeciesInfo::SpeciesInfo() : ListItem<SpeciesInfo>()
+SpeciesInfo::SpeciesInfo()
 {
     species_ = nullptr;
     population_ = 0;

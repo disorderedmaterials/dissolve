@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
 
@@ -11,7 +10,7 @@
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
+class Histogram1D : public ListItem<Histogram1D>
 {
     public:
     Histogram1D();
@@ -86,15 +85,13 @@ class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
     void operator=(const Histogram1D &source);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
 
     /*
      * Parallel Comms

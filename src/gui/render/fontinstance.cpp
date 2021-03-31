@@ -59,8 +59,6 @@ bool FontInstance::setUp(QString fontFileName)
             Messenger::print("Failed to set unicode character mapping for font - special characters may not render "
                              "correctly.\n");
 
-        // 		font_->Depth(3.0);
-        // 		font_->Outset(-.5, 1.5);
         font_->FaceSize(1);
         FTBBox boundingBox = font_->BBox("0123456789");
         fontBaseHeight_ = boundingBox.Upper().Y() - boundingBox.Lower().Y();
@@ -91,8 +89,6 @@ FTBBox FontInstance::boundingBox(std::string_view text) const
     // Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with
     // trailing spaces..
     FTBBox box = font_->BBox(fmt::format(".{}.", text).c_str());
-    // 	double newWidth = box.Upper().X() - dotWidth_;
-    // 	box.Upper().X(newWidth);
     return FTBBox(box.Lower(), FTPoint(box.Upper().X() - dotWidth_, box.Upper().Y()));
 }
 

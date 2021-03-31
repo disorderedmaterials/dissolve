@@ -6,19 +6,22 @@
 #include <QWidget>
 
 // Forward Declarations
+class GenericList;
 class LineParser;
 
 // ModuleWidget, base class for any Module-specific control widget
 class ModuleWidget : public QWidget
 {
     public:
-    ModuleWidget(QWidget *parent);
+    ModuleWidget(QWidget *parent, const GenericList &processingData);
     virtual ~ModuleWidget();
 
     /*
      * UI
      */
     protected:
+    // Processing data source
+    const GenericList &processingData_;
     // Whether widget is currently refreshing
     bool refreshing_;
 
@@ -35,13 +38,4 @@ class ModuleWidget : public QWidget
     virtual void disableSensitiveControls();
     // Enable sensitive controls within widget
     virtual void enableSensitiveControls();
-
-    /*
-     * State I/O
-     */
-    public:
-    // Read widget state through specified LineParser
-    virtual bool readState(LineParser &parser);
-    // Write widget state through specified LineParser
-    virtual bool writeState(LineParser &parser) const;
 };

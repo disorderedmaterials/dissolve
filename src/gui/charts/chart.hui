@@ -153,15 +153,6 @@ class ChartBase : public QWidget
     void recalculateLayout();
 
     /*
-     * State I/O
-     */
-    public:
-    // Read widget state through specified LineParser
-    virtual bool readState(LineParser &parser) = 0;
-    // Write widget state through specified LineParser
-    virtual bool writeState(LineParser &parser) const = 0;
-
-    /*
      * Signals / Slots
      */
     protected slots:

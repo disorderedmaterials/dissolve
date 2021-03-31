@@ -171,7 +171,7 @@ then
 	echo " -- Found existing release with tag $RELEASE_TAG"
 	echo "    url: $CURRENT_URL"
 
-	# Get short hash for tag
+	# Get short hash for existing tag
 	TAG_HASH=`git rev-parse --short $RELEASE_TAG`
 	echo "   hash: $TAG_HASH"
 
@@ -199,14 +199,14 @@ then
 		# Update tag SHA?
 		if [ "$UPDATE_TAG_SHA" = "true" ]
 		then
-			FULL_HEAD_HASH=`git rev-parse HEAD`
-			echo " -- Updating tag hash to that of the current HEAD (${FULL_HEAD_HASH})"
-			RESULT=$(curl --silent --show-error -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous)
+			TAG_HASH=`git rev-parse --short HEAD`
+			echo " -- Updating tag hash to that of the current HEAD (${TAG_HASH})"
+			RESULT=$(curl --silent --show-error -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${TAG_HASH}'" }' ${REPO_URL}/git/refs/tags/${RELEASE_TAG})
 		fi
 
 		# Construct release information
 		RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
-		#RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
+		RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
 		RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
 		RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
 		RELEASE_DATA=${RELEASE_DATA}', "draft": false'
@@ -238,9 +238,12 @@ then
 	echo " -- No release with tag $RELEASE_TAG currently exists."
 	echo "    A new one will be created."
 
+    # Get the hash of the current revision
+	TAG_HASH=`git rev-parse --short HEAD`
+
 	# Construct release information
 	RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
-	#RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
+	RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
 	RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
 	RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
 	RELEASE_DATA=${RELEASE_DATA}', "draft": false'

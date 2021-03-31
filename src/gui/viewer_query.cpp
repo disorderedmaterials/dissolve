@@ -49,11 +49,6 @@ void BaseViewer::generateQueryImage()
     setupGL();
     renderGL();
 
-    // TEST Save offscreen image
-    // 	QImage fboImage(offscreenBuffer_->toImage());
-    // 	QImage tile(fboImage.constBits(), fboImage.width(), fboImage.height(), QImage::Format_ARGB32);
-    // 	tile.save("query.png", "png");
-
     // Reset pixel scaling
     setPixelScaling(1.0);
 

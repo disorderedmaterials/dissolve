@@ -19,15 +19,17 @@ foreach(SRCFILE ${tests_SRC})
   target_include_directories(
     ${NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR4_INCLUDE_DIRS} ${ANTLR_OUTPUT_DIRS}
                     ${Qt5Widgets_INCLUDE_DIRS}
+                    ${CONAN_INCLUDE_DIRS_GTEST}
   )
   target_link_libraries(
     ${NAME}
-    PUBLIC ${CONAN_LIBS} ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
+    PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module 'nogui' libs
            ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS}
-    INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11 CONAN_PKG::GTest
+    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
+    INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
   )
+  add_test(NAME ${NAME} COMMAND ${NAME})
 
   # Register the test
   gtest_discover_tests(${NAME} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")

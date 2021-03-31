@@ -3,14 +3,13 @@
 
 #pragma once
 
-#include "genericitems/base.h"
-#include <ctime>
-
 // Forward Declarations
+class CoreData;
+class LineParser;
 class ProcessPool;
 
 // Double value with sampling
-class SampledDouble : public GenericItemBase
+class SampledDouble
 {
     public:
     SampledDouble();
@@ -54,15 +53,13 @@ class SampledDouble : public GenericItemBase
     void operator/=(double factor);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
 
     /*
      * Parallel Comms

@@ -4,7 +4,8 @@
 #include "classes/braggreflection.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
-#include "genericitems/array2ddouble.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 
 BraggReflection::BraggReflection()
 {
@@ -98,14 +99,11 @@ void BraggReflection::addKVectors(int count) { nKVectors_ += count; }
 int BraggReflection::nKVectors() const { return nKVectors_; }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view BraggReflection::itemClassName() { return "BraggReflection"; }
-
 // Read data through specified parser
-bool BraggReflection::read(LineParser &parser, CoreData &coreData)
+bool BraggReflection::deserialise(LineParser &parser)
 {
     // Read index, Q centre, and number of contributing K-vectors
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -115,7 +113,7 @@ bool BraggReflection::read(LineParser &parser, CoreData &coreData)
     nKVectors_ = parser.argi(2);
 
     // Read intensities array
-    if (!GenericItemContainer<Array2D<double>>::read(intensities_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intensities_, parser))
         return false;
 
     return true;
@@ -129,7 +127,7 @@ bool BraggReflection::write(LineParser &parser)
         return false;
 
     // Write intensities array
-    if (!GenericItemContainer<Array2D<double>>::write(intensities_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(intensities_, parser))
         return false;
 
     return true;

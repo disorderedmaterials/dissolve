@@ -91,10 +91,10 @@ class Forcefield
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
     // Determine and return atom type for specified SpeciesAtom from supplied Array of types
     static OptionalReferenceWrapper<const ForcefieldAtomType>
-    determineAtomType(const SpeciesAtom *i,
+    determineAtomType(const SpeciesAtom &i,
                       const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom *i) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom &i) const;
 
     public:
     // Create NETA definitions for all atom types from stored defs
@@ -166,7 +166,7 @@ class Forcefield
 
     protected:
     // Assign suitable AtomType to the supplied atom
-    bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
+    bool assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const;
     // Assign / generate bond term parameters
     virtual bool assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const;
     // Assign / generate angle term parameters
@@ -194,41 +194,9 @@ class Forcefield
         SelectionOnlyFlag = 4      /* Only assign terms where all atoms are in the current selection */
     };
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
-    int assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy) const;
+    int assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy, bool setSpeciesAtomCharges) const;
     // Assign intramolecular parameters to the supplied Species
     bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
-
-    /*
-     * Atom Environment Helpers
-     */
-    public:
-    // Atom Geometry enum
-    enum AtomGeometry
-    {
-        UnboundGeometry,
-        TerminalGeometry,
-        LinearGeometry,
-        TShapeGeometry,
-        TrigonalPlanarGeometry,
-        TetrahedralGeometry,
-        SquarePlanarGeometry,
-        TrigonalBipyramidalGeometry,
-        OctahedralGeometry,
-        nAtomGeometries
-    };
-
-    protected:
-    // Calculate and return the geometry of the specified SpeciesAtom
-    AtomGeometry geometryOfAtom(SpeciesAtom *i) const;
-    // Return whether the specified SpeciesAtom exists in the specified geometry
-    bool isAtomGeometry(SpeciesAtom *i, AtomGeometry geom) const;
-    // Return whether supplied bonding pattern around the SpeciesAtom matches *exactly*
-    bool isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble = 0, const int nTriple = 0,
-                       const int nQuadruple = 0, const int nAromatic = 0) const;
-    // Return whether the specified atom is bound to a specific element (and count thereof)
-    bool isBoundTo(const SpeciesAtom *i, Elements::Element Z, const int count = 1, bool allowMoreThanCount = true) const;
-    // Guess and return oxidation state for the specified SpeciesAtom
-    int guessOxidationState(const SpeciesAtom *i) const;
 };
 
 template <class T, typename... Args>

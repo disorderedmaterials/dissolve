@@ -130,7 +130,6 @@ set(components_SRCS
     viewer_funcs.cpp
     viewer_input.cpp
     viewer_interaction.cpp
-    viewer_io.cpp
     viewer_options.cpp
     viewer_query.cpp
     viewer_render.cpp
@@ -172,7 +171,7 @@ target_include_directories(
   components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 )
 
-target_link_libraries(components widgets)
+target_link_libraries(components widgets base)
 
 # -----------------
 # Main Dissolve GUI
@@ -278,6 +277,7 @@ target_link_libraries(
   widgets
   components
   models
+  base
 )
 
 # Subdirectories

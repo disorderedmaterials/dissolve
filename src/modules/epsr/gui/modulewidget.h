@@ -20,7 +20,7 @@ class EPSRModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve &dissolve);
+    EPSRModuleWidget(QWidget *parent, const GenericList &processingData, EPSRModule *module, Dissolve &dissolve);
     ~EPSRModuleWidget();
 
     private:
@@ -44,15 +44,6 @@ class EPSRModuleWidget : public ModuleWidget
     void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
     /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
-
-    /*
      * Widgets / Functions
      */
     private:
@@ -64,7 +55,7 @@ class EPSRModuleWidget : public ModuleWidget
      */
     private:
     // Temporary data currently shown on debug tab
-    List<Data1D> debugFunctionData_;
+    std::list<Data1D> debugFunctionData_;
 
     private:
     // Update data shown on EP functions viewer

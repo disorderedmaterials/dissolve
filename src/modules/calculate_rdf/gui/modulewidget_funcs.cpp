@@ -2,11 +2,13 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 
-CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                   CalculateRDFModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -39,30 +41,6 @@ void CalculateRDFModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateRDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateRDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -79,9 +57,9 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
     for (const auto *cfg : module_->targetConfigurations())
     {
         // Calculated RDF
-        auto *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
-                                                fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
+        auto rdf = rdfGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
+            fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
         rdf->setColour(StockColours::BlueStockColour);
     }
 }

@@ -15,9 +15,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-NETADefinition::NETADefinition() { rootNode_ = std::make_shared<NETARootNode>(this); }
-
-NETADefinition::~NETADefinition() { rootNode_->clear(); }
+NETADefinition::NETADefinition() : rootNode_(nullptr) {}
 
 /*
  * Data
@@ -26,10 +24,13 @@ NETADefinition::~NETADefinition() { rootNode_->clear(); }
 // Return root node pointer
 std::shared_ptr<NETARootNode> NETADefinition::rootNode() { return rootNode_; }
 
-// Creat definition from stored definition string
+// Create definition from stored definition string
 bool NETADefinition::create(const Forcefield *associatedFF)
 {
-    // Create string stream and set up ANTLR input strem
+    // Create a new root node, overwriting the old one
+    rootNode_ = std::make_shared<NETARootNode>(this);
+
+    // Create string stream and set up ANTLR input stream
     std::stringstream stream;
     stream << definitionString_;
     antlr4::ANTLRInputStream input(stream);
@@ -43,7 +44,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     // Generate tokens from input stream
     antlr4::CommonTokenStream tokens(&lexer);
 
-    // Create ANTLR parser and set-up error listenres
+    // Create ANTLR parser and set-up error listeners
     NETAParser parser(&tokens);
     NETAParserErrorListener parserErrorListener(*this);
     parser.removeErrorListeners();
@@ -74,6 +75,13 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
 
     return true;
+}
+
+// Set definition string and create definition
+bool NETADefinition::create(std::string_view definition, const Forcefield *associatedFF)
+{
+    definitionString_ = definition;
+    return create(associatedFF);
 }
 
 // Set generating string

@@ -12,14 +12,7 @@ template <class Data3D> int ObjectStore<Data3D>::objectCount_ = 0;
 template <class Data3D> int ObjectStore<Data3D>::objectType_ = ObjectInfo::Data3DObject;
 template <class Data3D> std::string_view ObjectStore<Data3D>::objectTypeName_ = "Data3D";
 
-Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data3D>(), ObjectStore<Data3D>(this)
-{
-    hasError_ = false;
-
-    clear();
-}
-
-Data3D::~Data3D() {}
+Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this), hasError_(false) {}
 
 Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this)
 {
@@ -41,6 +34,12 @@ void Data3D::clear()
 /*
  * Data
  */
+
+// Set tag
+void Data3D::setTag(std::string_view tag) { tag_ = tag; }
+
+// Return tag
+std::string_view Data3D::tag() const { return tag_; }
 
 // Initialise arrays to specified size
 void Data3D::initialise(int xSize, int ySize, int zSize, bool withError)
@@ -192,7 +191,7 @@ double Data3D::minValue() const
     if (values_.empty())
         return 0.0;
 
-    return *std::min_element(values_.cbegin(), values_.cend());
+    return *std::min_element(values_.begin(), values_.end());
 }
 
 // Return maximum value over all data points
@@ -201,7 +200,7 @@ double Data3D::maxValue() const
     if (values_.empty())
         return 0.0;
 
-    return *std::max_element(values_.cbegin(), values_.cend());
+    return *std::max_element(values_.begin(), values_.end());
 }
 
 // Add / initialise errors array
@@ -223,13 +222,7 @@ bool Data3D::valuesHaveErrors() const { return hasError_; }
 // Return error value specified
 double &Data3D::error(int xIndex, int yIndex, int zIndex)
 {
-    if (!hasError_)
-    {
-        static double dummy;
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     ++version_;
 
@@ -238,13 +231,7 @@ double &Data3D::error(int xIndex, int yIndex, int zIndex)
 
 const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
 {
-    if (!hasError_)
-    {
-        static double dummy;
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but error(int,int) was requested.\n",
-                        name(), objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     return errors_[{xIndex, yIndex, zIndex}];
 }
@@ -252,9 +239,7 @@ const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
 // Return three-dimensional errors Array
 Array3D<double> &Data3D::errors3D()
 {
-    if (!hasError_)
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     ++version_;
 
@@ -263,9 +248,7 @@ Array3D<double> &Data3D::errors3D()
 
 const Array3D<double> &Data3D::errors3D() const
 {
-    if (!hasError_)
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     return errors_;
 }
@@ -276,7 +259,7 @@ const Array3D<double> &Data3D::errors3D() const
 
 void Data3D::operator=(const Data3D &source)
 {
-    name_ = source.name_;
+    tag_ = source.tag_;
     x_ = source.x_;
     y_ = source.y_;
     z_ = source.z_;
@@ -322,14 +305,11 @@ void Data3D::operator/=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Data3D::itemClassName() { return "Data3D"; }
-
 // Read data through specified LineParser
-bool Data3D::read(LineParser &parser, CoreData &coreData)
+bool Data3D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -341,7 +321,7 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
     // Read object name
     if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
-    name_ = parser.line();
+    tag_ = parser.line();
 
     // Read axis sizes and initialise arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -407,12 +387,12 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data3D::write(LineParser &parser)
+bool Data3D::serialise(LineParser &parser) const
 {
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))
         return false;
-    if (!parser.writeLineF("{}\n", name()))
+    if (!parser.writeLineF("{}\n", tag_))
         return false;
 
     // Write axis sizes and errors flag
@@ -451,7 +431,7 @@ bool Data3D::write(LineParser &parser)
     }
     else
     {
-        for (auto &value : values_)
+        for (const auto &value : values_)
             if (!parser.writeLineF("{:e}\n", value))
                 return false;
     }

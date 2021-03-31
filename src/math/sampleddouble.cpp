@@ -125,14 +125,11 @@ void SampledDouble::operator/=(double x)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view SampledDouble::itemClassName() { return "SampledDouble"; }
-
 // Read data through specified LineParser
-bool SampledDouble::read(LineParser &parser, CoreData &coreData)
+bool SampledDouble::deserialise(LineParser &parser)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
@@ -144,7 +141,7 @@ bool SampledDouble::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool SampledDouble::write(LineParser &parser) { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
+bool SampledDouble::serialise(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
 
 /*
  * Parallel Comms

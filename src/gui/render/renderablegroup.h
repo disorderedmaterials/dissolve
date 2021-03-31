@@ -6,15 +6,18 @@
 #include "gui/render/colourdefinition.h"
 #include "gui/render/linestipple.h"
 #include "gui/stockcolours.h"
+#include <array>
 
 // Forward declarations
 class Renderable;
 
 // Renderable Group
-class RenderableGroup : public ListItem<RenderableGroup>
+class RenderableGroup
 {
     public:
     RenderableGroup(std::string_view name, StockColours::StockColour colour);
+    RenderableGroup(const RenderableGroup &other) = delete;
+    RenderableGroup(RenderableGroup &&other);
 
     /*
      * Name
@@ -32,17 +35,18 @@ class RenderableGroup : public ListItem<RenderableGroup>
      */
     private:
     // Renderables using this group
-    RefList<Renderable> renderables_;
+    std::vector<std::shared_ptr<Renderable>> renderables_;
 
     public:
-    // Associate Renderable to group (if it isn't already)
-    void associateRenderable(Renderable *renderable);
+    // Add Renderable to group (if it isn't already)
+    void addRenderable(const std::shared_ptr<Renderable> &renderable);
     // Remove Renderable from group (if it exists)
     void removeRenderable(Renderable *renderable);
     // Return whether the group is used by the specified renderable
-    bool usedByRenderable(Renderable *renderable) const;
+    bool usedByRenderable(const Renderable *renderable) const;
     // Return list of Renderables using this group
-    const RefList<Renderable> &renderables() const;
+    std::vector<std::shared_ptr<Renderable>> &renderables();
+    const std::vector<std::shared_ptr<Renderable>> &renderables() const;
     // Return whether the group is empty
     bool isEmpty() const;
     // Empty the group, removing all Renderable targets
@@ -81,11 +85,11 @@ class RenderableGroup : public ListItem<RenderableGroup>
     // Stock colour associated to this group
     StockColours::StockColour fixedStockColour_;
     // Usage counters for stock colours when colouringStyle_ == AutomaticIndividualColouring
-    Array<int> automaticStockColourUsageCount_;
+    std::array<int, StockColours::nStockColours> automaticStockColourUsageCount_;
 
     private:
     // Set colour information for the supplied Renderable, according to our settings
-    void setRenderableColour(Renderable *rend);
+    void setRenderableColour(std::shared_ptr<Renderable> renderable);
     // Set all Renderable colours
     void setRenderableColours();
 
@@ -110,7 +114,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 
     private:
     // Set line style for the supplied Renderable, according to our settings
-    void setRenderableLineStyle(Renderable *rend);
+    void setRenderableLineStyle(Renderable *renderable);
     // Set all Renderable line styles
     void setRenderableLineStyles();
 

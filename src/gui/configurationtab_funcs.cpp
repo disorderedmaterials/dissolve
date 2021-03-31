@@ -37,9 +37,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     // Set target for ProcedureEditor, and connect signals
     ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
     connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
-
-    // Set up the ModuleEditor
-    ui_.LayerPanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -227,13 +224,3 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 
     dissolveWindow_->setModified();
 }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool ConfigurationTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
-
-// Write widget state through specified LineParser
-bool ConfigurationTab::writeState(LineParser &parser) const { return true; }

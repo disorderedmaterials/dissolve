@@ -3,13 +3,15 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/energy/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module) : ModuleWidget(parent), module_(module)
+EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, const GenericList &processingData, EnergyModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -61,19 +63,15 @@ void EnergyModuleWidget::updateControls(int flags)
     QPalette labelPalette = ui_.StableLabel->palette();
     if (currentConfiguration_)
     {
-        const auto &totalEnergyArray =
-            currentConfiguration_->moduleData().value<Data1D>("Total", module_->uniqueName(), Data1D());
-        if (totalEnergyArray.nValues() < stabilityWindow)
-            ui_.GradientValueLabel->setText("N/A");
+        if (processingData_.contains(fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()),
+                                     module_->uniqueName()))
+            ui_.GradientValueLabel->setText(QString::number(processingData_.value<double>(
+                fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()), module_->uniqueName())));
         else
-        {
-            auto grad = currentConfiguration_->moduleData().value<double>("EnergyGradient", "", 0.0);
-            ui_.GradientValueLabel->setText(QString::number(grad));
-        }
+            ui_.GradientValueLabel->setText("N/A");
 
-        auto stable = currentConfiguration_->moduleData().value<bool>("EnergyStable", "", false);
-
-        if (stable)
+        if (processingData_.valueOr<bool>(fmt::format("{}//EnergyStable", currentConfiguration_->niceName()),
+                                          module_->uniqueName(), false))
         {
             labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
             ui_.StableLabel->setText("Yes");
@@ -95,30 +93,6 @@ void EnergyModuleWidget::updateControls(int flags)
     ui_.PlotWidget->updateToolbar();
 
     energyGraph_->postRedisplay();
-}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool EnergyModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!energyGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool EnergyModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!energyGraph_->readSession(parser))
-        return false;
-
-    return true;
 }
 
 /*
@@ -148,31 +122,28 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         return;
 
     // Add data targets
-    Renderable *rend;
-    energyGraph_->createRenderable(Renderable::Data1DRenderable,
-                                   fmt::format("{}//{}//Total", currentConfiguration_->niceName(), module_->uniqueName()),
-                                   "Total", "Totals");
-    rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//{}//Inter", currentConfiguration_->niceName(), module_->uniqueName()),
-        "Inter", "Totals");
-    rend->setColour(StockColours::RedStockColour);
-    rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//{}//Intra", currentConfiguration_->niceName(), module_->uniqueName()),
-        "Intra", "Totals");
-    rend->setColour(StockColours::BlueStockColour);
+    energyGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//{}//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Totals");
+    auto inter = energyGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//{}//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Totals");
+    inter->setColour(StockColours::RedStockColour);
+    auto intra = energyGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//{}//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Totals");
+    intra->setColour(StockColours::BlueStockColour);
 
-    rend = energyGraph_->createRenderable(Renderable::Data1DRenderable,
-                                          fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()),
-                                          "Bond", "Intramolecular");
-    rend->setColour(StockColours::GreenStockColour);
-    rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//{}//Angle", currentConfiguration_->niceName(), module_->uniqueName()),
-        "Angle", "Intramolecular");
-    rend->setColour(StockColours::PurpleStockColour);
-    rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//{}//Torsion", currentConfiguration_->niceName(), module_->uniqueName()),
-        "Torsion", "Intramolecular");
-    rend->setColour(StockColours::OrangeStockColour);
+    auto bond = energyGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Intramolecular");
+    bond->setColour(StockColours::GreenStockColour);
+    auto angle = energyGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//{}//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Intramolecular");
+    angle->setColour(StockColours::PurpleStockColour);
+    auto torsion = energyGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//{}//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Intramolecular");
+    torsion->setColour(StockColours::OrangeStockColour);
+    auto improper = energyGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//{}//Improper", currentConfiguration_->niceName(), module_->uniqueName()), "Improper",
+        "Intramolecular");
+    improper->setColour(StockColours::CyanStockColour);
 
     updateControls();
 }

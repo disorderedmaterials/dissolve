@@ -20,7 +20,7 @@ class TestModuleWidget : public ModuleWidget
     TestModule *module_;
 
     public:
-    TestModuleWidget(QWidget *parent, TestModule *module);
+    TestModuleWidget(QWidget *parent, const GenericList &processingData, TestModule *module);
 
     /*
      * UI

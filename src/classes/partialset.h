@@ -15,7 +15,7 @@ class Configuration;
 class Interpolator;
 
 // Set of Partials
-class PartialSet : public ListItem<PartialSet>, public GenericItemBase
+class PartialSet
 {
     public:
     PartialSet();
@@ -104,13 +104,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Calculate and return total unbound function
     Data1D unboundTotal(bool applyConcentrationWeights) const;
     // Save all partials and total
-    bool save() const;
+    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix) const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names
     std::string_view objectNamePrefix() const;
-    // Set underlying Data1D file names
-    void setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix);
 
     /*
      * Manipulation
@@ -138,15 +136,13 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     void operator*=(const double factor);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
 
     /*
      * Parallel Comms

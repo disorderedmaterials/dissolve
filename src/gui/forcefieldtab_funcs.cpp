@@ -13,6 +13,7 @@
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
 #include <QListWidgetItem>
@@ -96,9 +97,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
-
-    // -- Charges / Parameters delegates
-    // 	for (auto n=3; n<9; ++n) ui_.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
     DataViewer *viewer = ui_.PairPotentialsPlotWidget->dataViewer();
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -722,20 +720,18 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *
     PairPotential *pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
     if (pp)
     {
-        Renderable *fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
+        auto fullPotential = graph->createRenderable<RenderableData1D>(pp->uFull().objectTag(), "Full");
         fullPotential->setColour(StockColours::BlackStockColour);
 
-        Renderable *originalPotential =
-            graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
+        auto originalPotential = graph->createRenderable<RenderableData1D>(pp->uOriginal().objectTag(), "Original");
         originalPotential->setColour(StockColours::RedStockColour);
         originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
 
-        Renderable *additionalPotential =
-            graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
+        auto additionalPotential = graph->createRenderable<RenderableData1D>(pp->uAdditional().objectTag(), "Additional");
         additionalPotential->setColour(StockColours::BlueStockColour);
         additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
 
-        Renderable *dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
+        auto dUFull = graph->createRenderable<RenderableData1D>(pp->dUFull().objectTag(), "Force");
         dUFull->setColour(StockColours::GreenStockColour);
     }
 }
@@ -755,7 +751,6 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
     {
         // Functional form
         case (2):
-            // 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
             dissolveWindow_->setModified();
             break;
         // Charge I
@@ -945,13 +940,3 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
             break;
     }
 }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool ForcefieldTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
-
-// Write widget state through specified LineParser
-bool ForcefieldTab::writeState(LineParser &parser) const { return true; }

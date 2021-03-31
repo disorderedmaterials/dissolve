@@ -36,7 +36,6 @@ void GetGizmoNameDialog::on_NameEdit_textChanged(const QString text)
     auto nameValid = true;
     if (text.isEmpty())
         nameValid = false;
-    // 	else if (WorkspaceTab::findGizmo(qPrintable(text), currentGizmo_)) nameValid = false;
 
     // Update indicator
     ui_.NameIndicator->setOK(nameValid);

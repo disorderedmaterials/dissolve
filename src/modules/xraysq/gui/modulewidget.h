@@ -19,7 +19,7 @@ class XRaySQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Dissolve &dissolve);
+    XRaySQModuleWidget(QWidget *parent, const GenericList &processingData, XRaySQModule *module, Dissolve &dissolve);
     ~XRaySQModuleWidget();
 
     private:
@@ -40,15 +40,6 @@ class XRaySQModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 
     /*
      * Widgets / Functions

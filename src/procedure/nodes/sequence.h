@@ -124,7 +124,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Return block termination keyword for current context
     std::string_view blockTerminationKeyword() const;
     // Read structure from specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write structure to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 };

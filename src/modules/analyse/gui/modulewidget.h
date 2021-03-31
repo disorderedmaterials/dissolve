@@ -18,7 +18,7 @@ class AnalyseModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    AnalyseModuleWidget(QWidget *parent, AnalyseModule *module, const CoreData &coreData);
+    AnalyseModuleWidget(QWidget *parent, const GenericList &processingData, AnalyseModule *module, const CoreData &coreData);
 
     private:
     // Associated Module

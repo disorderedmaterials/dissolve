@@ -7,7 +7,6 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/molecule.h"
-#include "templates/orderedpointerlist.h"
 #include <memory>
 
 ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}

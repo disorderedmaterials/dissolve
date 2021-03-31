@@ -30,9 +30,8 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             targetSpecies_ = site->parent();
 
             // Copy basic atom and bond information from species
-            ListIterator<SpeciesAtom> atomIterator(targetSpecies_->atoms());
-            while (SpeciesAtom *i = atomIterator.iterate())
-                averageSpecies_.addAtom(i->Z(), i->r());
+            for (const auto &i : targetSpecies_->atoms())
+                averageSpecies_.addAtom(i.Z(), i.r());
             for (const auto &bond : targetSpecies_->bonds())
                 averageSpecies_.addBond(bond.indexI(), bond.indexJ());
         }

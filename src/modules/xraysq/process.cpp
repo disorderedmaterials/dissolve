@@ -74,14 +74,14 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
                              WindowFunction::forms().keyword(wf));
 
         // Store the reference data in processing
-        referenceData.setName(uniqueName());
+        referenceData.setTag(uniqueName());
         Data1D &storedData =
             dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
         storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
-        referenceData.setName(uniqueName());
+        referenceData.setTag(uniqueName());
         Data1D &storedDataFT =
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
@@ -157,8 +157,6 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
 
-    bool created;
-
     // Get unweighted S(Q) from the specified SQMOdule
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
         return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
@@ -172,10 +170,10 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weights.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-    PartialSet &weightedSQ = dissolve.processingModuleData().realise<PartialSet>("WeightedSQ", uniqueName_,
-                                                                                 GenericItem::InRestartFileFlag, &created);
-    if (created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
+    auto [weightedSQ, wSQtatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+    if (wSQtatus == GenericItem::ItemStatus::Created)
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "sq", "Q, 1/Angstroms");
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
@@ -184,7 +182,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
         return false;
     if (saveFormFactors)
     {
@@ -236,9 +234,9 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    auto &weightedGR = dissolve.processingModuleData().realise<PartialSet>("WeightedGR", uniqueName_,
-                                                                           GenericItem::InRestartFileFlag, &created);
-    if (created)
+    auto [weightedGR, wGRstatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+    if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
     weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
@@ -256,7 +254,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
         return false;
 
     return true;

@@ -15,7 +15,7 @@ class PlottableData;
 class RenderableGroup;
 class View;
 
-class Renderable : public ListItem<Renderable>
+class Renderable
 {
     public:
     // Renderable type
@@ -138,13 +138,15 @@ class Renderable : public ListItem<Renderable>
      */
     protected:
     // Group that this Renderable is associated to (if any)
-    RenderableGroup *group_;
+    OptionalReferenceWrapper<RenderableGroup> group_;
 
     public:
     // Set group that this Renderable is associated to
-    void setGroup(RenderableGroup *group);
+    void setGroup(RenderableGroup &group);
+    // Remove the renderagle's group association
+    void unSetGroup();
     // Return group that this Renderable is associated to
-    RenderableGroup *group() const;
+    OptionalReferenceWrapper<RenderableGroup> group() const;
 
     /*
      * Basic Style

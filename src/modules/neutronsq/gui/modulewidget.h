@@ -19,7 +19,7 @@ class NeutronSQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve);
+    NeutronSQModuleWidget(QWidget *parent, const GenericList &processingData, NeutronSQModule *module, Dissolve &dissolve);
     ~NeutronSQModuleWidget();
 
     private:
@@ -40,15 +40,6 @@ class NeutronSQModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 
     /*
      * Widgets / Functions

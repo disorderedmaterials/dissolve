@@ -16,7 +16,7 @@ class CalculateCNModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    CalculateCNModuleWidget(QWidget *parent, CalculateCNModule *cnModule);
+    CalculateCNModuleWidget(QWidget *parent, const GenericList &processingData, CalculateCNModule *cnModule);
 
     /*
      * Data

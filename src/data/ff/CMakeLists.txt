@@ -21,6 +21,7 @@ macro(dissolve_add_forcefield ffname)
 
   # Set common include dirs
   include_directories(ff_${ffname} PRIVATE ${PROJECT_SOURCE_DIR}/src)
+  target_link_libraries(ff_${ffname} PRIVATE base)
 endmacro()
 
 # Main Forcefield Library
@@ -43,6 +44,7 @@ add_library(
 )
 
 include_directories(ff PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(ff PRIVATE base)
 
 # Forcefield subdirectories
 message(STATUS "Looking for forcefields in ${CMAKE_CURRENT_SOURCE_DIR}...")

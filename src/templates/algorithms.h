@@ -7,11 +7,35 @@
 #include <optional>
 #include <tuple>
 
+// Cut a range into a smaller segment for MPI
+template <typename T> auto chop_range(const T begin, const T end, const int nChunks, const int index)
+{
+    auto diff = end - begin;
+    T start = begin + std::ldiv((const long int)index * diff, (const long int)nChunks).quot;
+    T stop = begin + std::ldiv((const long int)(index + 1) * diff, (const long int)nChunks).quot;
+    return std::make_tuple(start, stop);
+}
+
 // Perform an operation on every pair of elements in a container
 template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam lambda)
 {
     int i = 0;
     for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
+    {
+        int j = i;
+        for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)
+        {
+            lambda(i, *elem1, j, *elem2);
+        }
+    }
+}
+
+// Perform an operation on every pair of elements in a container
+template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, int nChunks, int index, Lam lambda)
+{
+    auto [start, stop] = chop_range(begin, end, nChunks, index);
+    int i = start - begin;
+    for (auto elem1 = start; elem1 != stop; ++elem1, ++i)
     {
         int j = i;
         for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)

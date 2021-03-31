@@ -79,10 +79,10 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto rho = rdfModule->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
-    bool wasCreated;
-    auto &unweightedsq = dissolve.processingModuleData().realise<PartialSet>("UnweightedSQ", uniqueName_,
-                                                                             GenericItem::InRestartFileFlag, &wasCreated);
-    if (wasCreated)
+    auto uSQObject =
+        dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &unweightedsq = uSQObject.first;
+    if (uSQObject.second == GenericItem::ItemStatus::Created)
         unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName_, "unweighted", "sq", "Q, 1/Angstroms");
 
     // Is the PartialSet already up-to-date?
@@ -112,8 +112,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                                     "could not be located.\n",
                                     braggModule->uniqueName());
-        const auto &braggReflections = dissolve.processingModuleData().value<Array<BraggReflection>>(
-            "BraggReflections", braggModule->uniqueName(), Array<BraggReflection>());
+        const auto &braggReflections =
+            dissolve.processingModuleData().value<Array<BraggReflection>>("BraggReflections", braggModule->uniqueName());
         const auto nReflections = braggReflections.nItems();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found BraggReflections data for module '{}' (nReflections = {}, QMax = {} "
@@ -121,10 +121,10 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          braggModule->uniqueName(), nReflections, braggQMax);
 
         // Create a temporary array into which our broadened Bragg partials will be placed
-        bool created;
-        auto &braggPartials = dissolve.processingModuleData().realise<Array2D<Data1D>>("BraggPartials", uniqueName_,
-                                                                                       GenericItem::NoFlag, &created);
-        if (created)
+        auto braggPartialsObject =
+            dissolve.processingModuleData().realiseIf<Array2D<Data1D>>("BraggPartials", uniqueName_, GenericItem::NoFlags);
+        auto &braggPartials = braggPartialsObject.first;
+        if (braggPartialsObject.second == GenericItem::ItemStatus::Created)
         {
             // Initialise the array
             braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
@@ -224,7 +224,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                             dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
                                             includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1));
     // Save data if requested
-    if (saveData && !MPIRunMaster(procPool, unweightedsq.save()))
+    if (saveData && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "unweighted", "sq")))
         return false;
 
     return true;

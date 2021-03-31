@@ -21,7 +21,7 @@ class RDFModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve);
+    RDFModuleWidget(QWidget *parent, const GenericList &processingData, RDFModule *module, Dissolve &dissolve);
     ~RDFModuleWidget();
 
     private:
@@ -42,15 +42,6 @@ class RDFModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 
     /*
      * Widgets / Functions

@@ -67,15 +67,6 @@ class GraphGizmo : public QWidget, public Gizmo
     DataViewer *dataViewer() const;
 
     /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
-
-    /*
      * Widget Signals / Slots
      */
     private slots:

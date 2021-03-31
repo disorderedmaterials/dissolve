@@ -93,10 +93,9 @@ void IsotopologueSetKeywordWidget::addButton_clicked(bool checked)
     if (!item)
     {
         // No item selected - add next missing Species
-        ListIterator<Species> speciesIterator(coreData_.species());
-        while (const auto *sp = speciesIterator.iterate())
+        for (const auto &sp : coreData_.species())
         {
-            if (!set.contains(sp))
+            if (!set.contains(sp.get()))
             {
                 set.add(sp->naturalIsotopologue(), 1.0);
                 break;

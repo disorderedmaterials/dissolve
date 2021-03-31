@@ -21,7 +21,7 @@ class BraggModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    BraggModuleWidget(QWidget *parent, BraggModule *module);
+    BraggModuleWidget(QWidget *parent, const GenericList &processingData, BraggModule *module);
     ~BraggModuleWidget();
 
     private:
@@ -44,15 +44,6 @@ class BraggModuleWidget : public ModuleWidget
     void disableSensitiveControls();
     // Enable sensitive controls within widget
     void enableSensitiveControls();
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 
     /*
      * Widgets / Functions

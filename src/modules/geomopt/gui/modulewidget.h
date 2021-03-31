@@ -20,7 +20,7 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
     GeometryOptimisationModule *module_;
 
     public:
-    GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module);
+    GeometryOptimisationModuleWidget(QWidget *parent, const GenericList &processingData, GeometryOptimisationModule *module);
 
     /*
      * UI

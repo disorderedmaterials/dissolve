@@ -6,11 +6,12 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/array2dchar.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 
-PartialSet::PartialSet() : ListItem<PartialSet>() { fingerprint_ = "NO_FINGERPRINT"; }
+PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
 PartialSet::~PartialSet()
 {
@@ -64,13 +65,13 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view p
     std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setName(title);
-        boundPartials_[{n, m}].setName(title);
-        unboundPartials_[{n, m}].setName(title);
+        partials_[{n, m}].setTag(title);
+        boundPartials_[{n, m}].setTag(title);
+        unboundPartials_[{n, m}].setTag(title);
     });
 
     // Set up array for total
-    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    total_.setTag(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
     total_.clear();
 
     fingerprint_ = "NO_FINGERPRINT";
@@ -259,33 +260,38 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 }
 
 // Save all partials and total
-bool PartialSet::save() const
+bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix) const
 {
+    assert(!prefix.empty());
+
     LineParser parser;
 
-    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        // Open file and check that we're OK to proceed writing to it
-        std::string filename{partials_[{typeI, typeJ}].name()};
-        Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+    // Write partials
+    for_each_pair_early(atomTypes_.begin(), atomTypes_.end(),
+                        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool> {
+                            // Open file and check that we're OK to proceed writing to it
+                            std::string filename{
+                                fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
+                            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-        parser.openOutput(filename, true);
-        if (!parser.isFileGoodForWriting())
-            return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
+                            parser.openOutput(filename, true);
+                            if (!parser.isFileGoodForWriting())
+                                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-        auto &full = partials_[{typeI, typeJ}];
-        auto &bound = boundPartials_[{typeI, typeJ}];
-        auto &unbound = unboundPartials_[{typeI, typeJ}];
-        parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
-        for (auto n = 0; n < full.nValues(); ++n)
-            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
-                              unbound.value(n));
-        parser.closeFiles();
+                            auto &full = partials_[{typeI, typeJ}];
+                            auto &bound = boundPartials_[{typeI, typeJ}];
+                            auto &unbound = unboundPartials_[{typeI, typeJ}];
+                            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
+                            for (auto n = 0; n < full.nValues(); ++n)
+                                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n),
+                                                  bound.value(n), unbound.value(n));
+                            parser.closeFiles();
 
-        return EarlyReturn<bool>::Continue;
-    });
+                            return EarlyReturn<bool>::Continue;
+                        });
 
-    Messenger::printVerbose("Writing total file '{}'...\n", total_.name());
-    Data1DExportFileFormat exportFormat(total_.name());
+    Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
+    Data1DExportFileFormat exportFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
     return exportFormat.exportData(total_);
 }
 
@@ -314,22 +320,6 @@ void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
 
 // Return prefix applied to object names
 std::string_view PartialSet::objectNamePrefix() const { return objectNamePrefix_; }
-
-// Set underlying Data1D file names
-void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix)
-{
-    // Set titles for partials
-    std::string title;
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setName(title);
-        boundPartials_[{n, m}].setName(title);
-        unboundPartials_[{n, m}].setName(title);
-    });
-
-    // Set up array for total
-    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
-}
 
 /*
  * Manipulation
@@ -499,14 +489,11 @@ void PartialSet::operator*=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view PartialSet::itemClassName() { return "PartialSet"; }
-
 // Read data through specified LineParser
-bool PartialSet::read(LineParser &parser, CoreData &coreData)
+bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
         return false;
@@ -517,7 +504,7 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
 
     // Read atom types
     atomTypes_.clear();
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
     auto nTypes = atomTypes_.nItems();
 
@@ -532,28 +519,28 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
     {
         for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            if (!partials_[{typeI, typeJ}].read(parser, coreData))
+            if (!partials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!boundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!boundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!unboundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!unboundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
         }
     }
 
     // Read total
-    if (!total_.read(parser, coreData))
+    if (!total_.deserialise(parser))
         return false;
 
     // Read empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::read(emptyBoundPartials_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;
 }
 
 // Write data through specified LineParser
-bool PartialSet::write(LineParser &parser)
+bool PartialSet::serialise(LineParser &parser) const
 {
     // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
     // common scale
@@ -566,27 +553,27 @@ bool PartialSet::write(LineParser &parser)
         return false;
 
     // Write out AtomTypes first
-    atomTypes_.write(parser);
+    atomTypes_.serialise(parser);
     auto nTypes = atomTypes_.nItems();
 
     // Write individual Data1D
     for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_[{typeI, typeJ}].write(parser))
+        if (!partials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!boundPartials_[{typeI, typeJ}].write(parser))
+        if (!boundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!unboundPartials_[{typeI, typeJ}].write(parser))
+        if (!unboundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
 
         return EarlyReturn<bool>::Continue;
     });
 
     // Write total
-    if (!total_.write(parser))
+    if (!total_.serialise(parser))
         return false;
 
     // Write empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::write(emptyBoundPartials_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;

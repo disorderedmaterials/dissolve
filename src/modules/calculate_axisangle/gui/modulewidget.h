@@ -21,7 +21,7 @@ class CalculateAxisAngleModuleWidget : public ModuleWidget
     CalculateAxisAngleModule *module_;
 
     public:
-    CalculateAxisAngleModuleWidget(QWidget *parent, CalculateAxisAngleModule *module);
+    CalculateAxisAngleModuleWidget(QWidget *parent, const GenericList &processingData, CalculateAxisAngleModule *module);
 
     /*
      * UI
@@ -35,15 +35,6 @@ class CalculateAxisAngleModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 
     /*
      * Widgets / Functions

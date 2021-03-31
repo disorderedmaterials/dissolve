@@ -91,13 +91,4 @@ class MainTab
     virtual void disableSensitiveControls() = 0;
     // Enable sensitive controls within the tab
     virtual void enableSensitiveControls() = 0;
-
-    /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    virtual bool writeState(LineParser &parser) const = 0;
-    // Read widget state through specified LineParser
-    virtual bool readState(LineParser &parser, const CoreData &coreData) = 0;
 };

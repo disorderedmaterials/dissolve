@@ -24,7 +24,7 @@ int AtomTypeRefListKeyword::minArguments() const { return 1; }
 int AtomTypeRefListKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments (which are AtomType names) and add them to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -48,7 +48,7 @@ bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &co
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool AtomTypeRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Don't write anything if there are no items in the list
     if (data_.empty())

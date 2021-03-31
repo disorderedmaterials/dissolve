@@ -237,10 +237,6 @@ void ChartBase::dropEvent(QDropEvent *event)
     // Widgets are almost in the right place, so don't animate anything
     currentHotSpot_ = nullptr;
     draggedBlock_ = nullptr;
-
-    // 	layOutWidgets(animate);
-
-    // 	repaint();
 }
 
 /*

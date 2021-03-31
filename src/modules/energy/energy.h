@@ -89,9 +89,9 @@ class EnergyModule : public Module
     // Return total energy (interatomic and intramolecular) of Species
     static double totalEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap);
     // Check energy stability of specified Configuration
-    static EnergyStability checkStability(Configuration *cfg);
+    static EnergyStability checkStability(GenericList &processingData, Configuration *cfg);
     // Check energy stability of specified Configurations, returning the number that are unstable
-    static int nUnstable(const RefList<Configuration> &configurations);
+    static int nUnstable(GenericList &processingData, const RefList<Configuration> &configurations);
 
     /*
      * GUI Widget

@@ -222,6 +222,8 @@ class LineParser
     public:
     // Returns number of arguments grabbed from last parse
     int nArgs() const;
+    // Returns the specified argument as a string
+    std::string args(int i);
     // Returns the specified argument as a string view
     std::string_view argsv(int i);
     // Returns the specified argument as an integer

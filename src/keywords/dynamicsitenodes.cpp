@@ -42,7 +42,7 @@ int DynamicSiteNodesKeyword::minArguments() const { return 0; }
 int DynamicSiteNodesKeyword::maxArguments() const { return 0; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
@@ -52,7 +52,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, CoreData &c
     data_.append(dynamicSite);
 
     // Attempt to read the DynamicSite data
-    if (!dynamicSite->read(parser, coreData))
+    if (!dynamicSite->deserialise(parser, coreData))
         return false;
 
     // Check for required axes?
@@ -65,7 +65,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, CoreData &c
 }
 
 // Write keyword data to specified LineParser
-bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of dynamic sites in the RefList
     for (auto dynamicSite : data_)

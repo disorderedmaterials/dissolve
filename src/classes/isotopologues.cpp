@@ -166,14 +166,11 @@ void Isotopologues::normalise()
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Isotopologues::itemClassName() { return "Isotopologues"; }
-
 // Read data through specified LineParser
-bool Isotopologues::read(LineParser &parser, CoreData &coreData)
+bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // Read Species name
     if (parser.getArgsDelim() != LineParser::Success)
@@ -208,7 +205,7 @@ bool Isotopologues::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Isotopologues::write(LineParser &parser)
+bool Isotopologues::serialise(LineParser &parser) const
 {
     // Write Species name, integer population, and number of isotopologues in the mix
     if (!parser.writeLineF("'{}'  {}  {}\n", species_->name(), speciesPopulation_, mix_.size()))

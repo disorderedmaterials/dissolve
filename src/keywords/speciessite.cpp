@@ -32,7 +32,7 @@ int SpeciesSiteKeyword::minArguments() const { return 2; }
 int SpeciesSiteKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Species (first argument)
     Species *sp = coreData.findSpecies(parser.argsv(startArg));
@@ -43,10 +43,11 @@ bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, CoreData &coreDa
     }
 
     // Find specified Site (second argument) in the Species
-    data_ = sp->findSite(parser.argsv(startArg + 1));
-    if (!data_)
+    auto site = sp->findSite(parser.argsv(startArg + 1));
+    if (!site)
         return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                 parser.argsv(startArg + 1), sp->name());
+    data_ = &site->get();
     if (axesRequired_ && (!data_->hasAxes()))
         return Messenger::error(
             "Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
@@ -58,7 +59,7 @@ bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, CoreData &coreDa
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool SpeciesSiteKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (data_)
     {

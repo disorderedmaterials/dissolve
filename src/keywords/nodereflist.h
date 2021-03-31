@@ -69,11 +69,11 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const { return 1; }
+    int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
-    int maxArguments() const { return 99; }
+    int maxArguments() const override { return 99; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData)
     {
         if (!parentNode())
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
@@ -95,7 +95,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
         return true;
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         if (KeywordData<RefList<N> &>::data_.nItems() == 0)
             return true;

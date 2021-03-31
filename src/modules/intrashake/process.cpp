@@ -91,10 +91,9 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
         // Ensure that the Species used in the present Configuration have attached atom lists
-        ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-        while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
+        for (auto &spInfo : cfg->usedSpecies())
         {
-            Species *sp = spInfo->species();
+            Species *sp = spInfo.species();
             if (!sp->attachedAtomListsGenerated())
             {
                 Messenger::print("Performing one-time generation of attached atom lists for intramolecular "

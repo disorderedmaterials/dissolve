@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/rdf/gui/modulewidget.h"
@@ -10,8 +11,8 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+RDFModuleWidget::RDFModuleWidget(QWidget *parent, const GenericList &processingData, RDFModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -77,34 +78,6 @@ void RDFModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool RDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!partialsGraph_->writeSession(parser))
-        return false;
-    if (!totalsGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool RDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!partialsGraph_->readSession(parser))
-        return false;
-    if (!totalsGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -124,9 +97,8 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule *module)
     for (Configuration *cfg : module->targetConfigurations())
     {
         // Add calculated total G(r)
-        totalsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                       fmt::format("{}//{}//UnweightedGR//Total", cfg->niceName(), module_->uniqueName()),
-                                       cfg->niceName(), "Calc");
+        totalsGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//{}//UnweightedGR//Total", cfg->niceName(), module_->uniqueName()), cfg->niceName(), "Calc");
     }
 }
 
@@ -147,15 +119,15 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
         // Full partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Full", prefix, id),
-                                         fmt::format("{} (Full)", id), "Full");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Full", prefix, id),
+                                                           fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Bound", prefix, id),
-                                         fmt::format("{} (Bound)", id), "Bound");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Bound", prefix, id),
+                                                           fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Unbound", prefix, id),
-                                         fmt::format("{} (Unbound)", id), "Unbound");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Unbound", prefix, id),
+                                                           fmt::format("{} (Unbound)", id), "Unbound");
     });
 }

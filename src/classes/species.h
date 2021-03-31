@@ -14,6 +14,7 @@
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
 #include "templates/objectstore.h"
+#include <list>
 #include <memory>
 
 // Forward Declarations
@@ -21,7 +22,7 @@ class Box;
 class Forcefield;
 
 // Species Definition
-class Species : public ListItem<Species>
+class Species
 {
     public:
     Species();
@@ -55,7 +56,7 @@ class Species : public ListItem<Species>
      */
     private:
     // List of Atoms in the Species
-    List<SpeciesAtom> atoms_;
+    std::list<SpeciesAtom> atoms_;
     // List of selected Atoms
     RefList<SpeciesAtom> selectedAtoms_;
     // Version of the atom selection
@@ -65,17 +66,21 @@ class Species : public ListItem<Species>
 
     public:
     // Add a new atom to the Species
-    SpeciesAtom *addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
+    SpeciesAtom &addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
     // Remove the specified atom from the species
     void removeAtom(SpeciesAtom *i);
     // Return the number of atoms in the species
     int nAtoms() const;
+    // Renumber atoms so they are sequential in the list
+    void renumberAtoms();
     // Return the first atom in the Species
-    SpeciesAtom *firstAtom() const;
+    const SpeciesAtom &firstAtom() const;
     // Return the nth atom in the Species
-    SpeciesAtom *atom(int n);
-    // Return the list of atoms
-    const List<SpeciesAtom> &atoms() const;
+    SpeciesAtom &atom(int n);
+    const SpeciesAtom &atom(int n) const;
+    // Return a reference to the vector of atoms
+    const std::list<SpeciesAtom> &atoms() const;
+    std::list<SpeciesAtom> &atoms();
     // Set coordinates of specified atom
     void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
     // Set coordinates of specified atom (by index and individual coordinates)
@@ -264,7 +269,7 @@ class Species : public ListItem<Species>
      */
     private:
     // List of defined sites
-    List<SpeciesSite> sites_;
+    std::vector<SpeciesSite> sites_;
 
     public:
     // Add a new SpeciesSite to this Species
@@ -274,13 +279,16 @@ class Species : public ListItem<Species>
     // Return number of defined SpeciesSites
     int nSites() const;
     // Return SpeciesSite List
-    const List<SpeciesSite> &sites() const;
+    const std::vector<SpeciesSite> &sites() const;
+    std::vector<SpeciesSite> &sites();
+
     // Return nth SpeciesSite defined
-    SpeciesSite *site(int n);
+    SpeciesSite &site(int n);
     // Generate unique site name with base name provided
     std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = nullptr) const;
     // Search for SpeciesSite by name
-    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    OptionalReferenceWrapper<const SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    OptionalReferenceWrapper<SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
 
     /*
      * Transforms

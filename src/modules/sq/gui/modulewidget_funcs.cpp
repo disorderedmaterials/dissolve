@@ -3,15 +3,15 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/sq/gui/modulewidget.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
-#include "templates/variantpointer.h"
 
-SQModuleWidget::SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+SQModuleWidget::SQModuleWidget(QWidget *parent, const GenericList &processingData, SQModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -68,34 +68,6 @@ void SQModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool SQModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!partialsGraph_->writeSession(parser))
-        return false;
-    if (!totalGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool SQModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!partialsGraph_->readSession(parser))
-        return false;
-    if (!totalGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -106,12 +78,11 @@ void SQModuleWidget::setGraphDataTargets(SQModule *module)
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                         fmt::format("{}//UnweightedSQ//{}//Full", module_->uniqueName(), id), id,
-                                         "Partial S(Q)");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}//Full", module_->uniqueName(), id),
+                                                           id, "Partial S(Q)");
     });
 
     // Add calculated total F(Q)
-    totalGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedSQ//Total", module_->uniqueName()),
-                                  "Calculated", "Total F(Q)");
+    totalGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//Total", module_->uniqueName()), "Calculated",
+                                                    "Total F(Q)");
 }

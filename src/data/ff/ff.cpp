@@ -91,19 +91,19 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
 OptionalReferenceWrapper<const ForcefieldAtomType>
-Forcefield::determineAtomType(const SpeciesAtom *i,
+Forcefield::determineAtomType(const SpeciesAtom &i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
-    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i->Z()));
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.userIndex(), Elements::symbol(i.Z()));
 
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
-    for (const auto &typeRef : atomTypes[i->Z()])
+    for (const auto &typeRef : atomTypes[i.Z()])
     {
         // Get the scoring for this type
         auto &type = typeRef.get();
-        auto score = type.neta().score(i);
+        auto score = type.neta().score(&i);
         Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
         if (score > bestScore)
         {
@@ -115,14 +115,14 @@ Forcefield::determineAtomType(const SpeciesAtom *i,
     if (bestScore == -1)
         Messenger::printVerbose("  -- no suitable type found.");
     else
-        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i->userIndex(),
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i.userIndex(),
                                 bestType->get().index(), bestType->get().name(), bestScore);
 
     return bestType;
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom *i) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom &i) const
 {
     return determineAtomType(i, atomTypesByElementPrivate_);
 }
@@ -270,7 +270,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> types;
     for (const auto *i : atoms)
     {
-        auto optType = determineType ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
+        auto optType = determineType ? determineAtomType(*i) : atomTypeByName(i->atomType()->name(), i->Z());
         if (!optType)
         {
             Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
@@ -283,7 +283,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
 }
 
 // Assign suitable AtomType to the supplied atom
-bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
+bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const
 {
     auto optRef = determineAtomType(i);
     if (!optRef)
@@ -294,45 +294,50 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     auto at = coreData.findAtomType(assignedType.name());
     if (!at)
     {
-        at = coreData.addAtomType(i->Z());
+        at = coreData.addAtomType(i.Z());
         at->setName(assignedType.name());
-        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
+        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
     }
     else
-        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
+        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
 
     // Copy parameters from the Forcefield's atom type
     at->setShortRangeParameters(assignedType.parameters());
     at->setShortRangeType(shortRangeType());
     at->setCharge(assignedType.charge());
 
+    // Set the charge on the SpeciesAtom if requested
+    if (setSpeciesAtomCharges)
+        i.setCharge(assignedType.charge());
+
     // Set type in the SpeciesAtom
-    i->setAtomType(at);
+    i.setAtomType(at);
 
     return true;
 }
 
 // Assign suitable atom types to the supplied Species, returning the number of failures
-int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy) const
+int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
+                                bool setSpeciesAtomCharges) const
 {
     Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
 
     // Loop over Species atoms
     auto nFailed = 0;
-    for (auto *i = sp->atoms().first(); i != nullptr; i = i->next())
+    for (auto &i : sp->atoms())
     {
         // Obey the supplied strategy:
         // -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)
-        if ((strategy == Forcefield::TypeMissing) && i->atomType())
+        if ((strategy == Forcefield::TypeMissing) && i.atomType())
             continue;
 
         // -- Don't assign a type unless the atom is selected (strategy == Forcefield::TypeSelection)
-        if ((strategy == Forcefield::TypeSelection) && (!i->isSelected()))
+        if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
             continue;
 
-        if (!assignAtomType(i, coreData))
+        if (!assignAtomType(i, coreData, setSpeciesAtomCharges))
         {
-            Messenger::error("No matching forcefield type for atom {} ({}).\n", i->userIndex(), Elements::symbol(i->Z()));
+            Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
             ++nFailed;
         }
     }
@@ -481,43 +486,42 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         ForcefieldImproperTerm improperTerm;
 
         // Loop over potential improper sites in the Species and see if any match terms in the forcefield
-        ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-        while (SpeciesAtom *i = atomIterator.iterate())
+        for (auto &i : sp->atoms())
         {
             // If we have less than three bonds to the central atom 'i', can continue now
-            if (i->nBonds() < 3)
+            if (i.nBonds() < 3)
                 continue;
 
-            if (selectionOnly && (!i->isSelected()))
+            if (selectionOnly && (!i.isSelected()))
                 continue;
 
             // Loop over combinations of bonds to the central atom
-            for (auto indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
+            for (auto indexJ = 0; indexJ < i.nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
-                auto *j = i->bond(indexJ).partner(i);
+                auto *j = i.bond(indexJ).partner(&i);
 
                 if (selectionOnly && (!j->isSelected()))
                     continue;
 
-                for (auto indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
+                for (auto indexK = indexJ + 1; indexK < i.nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
-                    auto *k = i->bond(indexK).partner(i);
+                    auto *k = i.bond(indexK).partner(&i);
 
                     if (selectionOnly && (!k->isSelected()))
                         continue;
 
-                    for (auto indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
+                    for (auto indexL = indexK + 1; indexL < i.nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
-                        auto *l = i->bond(indexL).partner(i);
+                        auto *l = i.bond(indexL).partner(&i);
 
                         if (selectionOnly && (!l->isSelected()))
                             continue;
 
                         // Try to assign / generate an improper term (which may legitimately not exist)
-                        if (!assignImproperTermParameters(improperTerm, i, j, k, l, determineTypes))
+                        if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))
                             return false;
 
                         if (improperTerm.form() == SpeciesTorsion::NoForm)
@@ -525,9 +529,9 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
                         // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
                         // one.
-                        auto optImproper = sp->getImproper(i, j, k, l);
+                        auto optImproper = sp->getImproper(&i, j, k, l);
                         if (!optImproper)
-                            optImproper = sp->addImproper(i, j, k, l);
+                            optImproper = sp->addImproper(&i, j, k, l);
                         SpeciesImproper &improper = *optImproper;
 
                         improper.setForm(improperTerm.form());
@@ -539,219 +543,4 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     }
 
     return true;
-}
-
-/*
- * Atom Environment Helpers
- */
-
-// Calculate and return the geometry of the specified SpeciesAtom
-Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
-{
-    AtomGeometry result = nAtomGeometries;
-    double angle, largest;
-    SpeciesAtom *h, *j;
-
-    // Work based on the number of bound atoms
-    switch (i->nBonds())
-    {
-        // 'Simple' cases first
-        case (0):
-            result = Forcefield::UnboundGeometry;
-            break;
-        case (1):
-            result = Forcefield::TerminalGeometry;
-            break;
-        case (5):
-            result = Forcefield::TrigonalBipyramidalGeometry;
-            break;
-        case (6):
-            result = Forcefield::OctahedralGeometry;
-            break;
-        // For the remaining types, take averages of bond angles about the atom
-        case (2):
-            h = i->bond(0).partner(i);
-            j = i->bond(1).partner(i);
-            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-            if (angle > 150.0)
-                result = Forcefield::LinearGeometry;
-            else
-                result = Forcefield::TetrahedralGeometry;
-            break;
-        case (3):
-            h = i->bond(0).partner(i);
-            j = i->bond(1).partner(i);
-            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-            largest = angle;
-            j = i->bond(2).partner(i);
-            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-            if (angle > largest)
-                largest = angle;
-            h = i->bond(1).partner(i);
-            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-            if (angle > largest)
-                largest = angle;
-            if (largest > 150.0)
-                result = Forcefield::TShapeGeometry;
-            else if ((largest > 115.0) && (largest < 125.0))
-                result = Forcefield::TrigonalPlanarGeometry;
-            else
-                result = Forcefield::TetrahedralGeometry;
-            break;
-        case (4):
-            // Two possibilities - tetrahedral or square planar. Tetrahedral will have an
-            // average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
-            angle = 0.0;
-            for (auto n = 0; n < i->nBonds(); ++n)
-            {
-                h = i->bond(n).partner(i);
-                for (auto m = n + 1; m < i->nBonds(); ++m)
-                {
-                    j = i->bond(m).partner(i);
-                    angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-                }
-            }
-            angle /= 6.0;
-            if ((angle > 100.0) && (angle < 115.0))
-                result = Forcefield::TetrahedralGeometry;
-            else
-                result = Forcefield::SquarePlanarGeometry;
-            break;
-    }
-
-    return result;
-}
-
-// Return whether the specified SpeciesAtom exists in the specified geometry
-bool Forcefield::isAtomGeometry(SpeciesAtom *i, AtomGeometry geom) const { return (geometryOfAtom(i) == geom); }
-
-// Return whether supplied bonding pattern around the SpeciesAtom matches *exactly*
-bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble, const int nTriple,
-                               const int nQuadruple, const int nAromatic) const
-{
-    auto actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
-    for (const SpeciesBond &bond : i->bonds())
-    {
-        switch (bond.bondType())
-        {
-            case (SpeciesBond::SingleBond):
-                if (nSingle == actualNSingle)
-                    return false;
-                ++actualNSingle;
-                break;
-            case (SpeciesBond::DoubleBond):
-                if (nDouble == actualNDouble)
-                    return false;
-                ++actualNDouble;
-                break;
-            case (SpeciesBond::TripleBond):
-                if (nTriple == actualNTriple)
-                    return false;
-                ++actualNTriple;
-                break;
-            case (SpeciesBond::QuadrupleBond):
-                if (nQuadruple == actualNQuadruple)
-                    return false;
-                ++actualNQuadruple;
-                break;
-            case (SpeciesBond::AromaticBond):
-                if (nAromatic == actualNAromatic)
-                    return false;
-                ++actualNAromatic;
-                break;
-            default:
-                Messenger::error("Bond has unassigned bond type.\n");
-                return false;
-        }
-    }
-
-    // Check sums - a supplied value of -1 means 'any number'
-    if ((nSingle != -1) && (nSingle != actualNSingle))
-        return false;
-    if ((nDouble != -1) && (nDouble != actualNDouble))
-        return false;
-    if ((nTriple != -1) && (nTriple != actualNTriple))
-        return false;
-    if ((nQuadruple != -1) && (nQuadruple != actualNQuadruple))
-        return false;
-    if ((nAromatic != -1) && (nAromatic != actualNAromatic))
-        return false;
-
-    return true;
-}
-
-// Return whether the specified atom is bound to a specific element (and count thereof)
-bool Forcefield::isBoundTo(const SpeciesAtom *i, Elements::Element Z, const int count, bool allowMoreThanCount) const
-{
-    auto found = std::count_if(i->bonds().begin(), i->bonds().end(),
-                               [i, Z](const SpeciesBond &bond) { return bond.partner(i)->Z() == Z; });
-
-    return (found < count ? false : (found == count ? true : allowMoreThanCount));
-}
-
-// Guess and return oxidation state for the specified SpeciesAtom
-int Forcefield::guessOxidationState(const SpeciesAtom *i) const
-{
-    /*
-     * Approximate the OS of the supplied atom by considering its local environment.
-     * We won't consider the whole molecule, and will assume the following rules in addition to the standard:
-     *   - A singly-bound Oxygen is considered to be -1 (which effectively includes it's 'R' group
-     *   - An R-group is considered to be +1
-     */
-    auto osBound = 0;
-
-    // Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments
-    // (OS == 0)
-    auto nSameElement = 0;
-
-    const auto &bonds = i->bonds();
-    for (const SpeciesBond &bond : bonds)
-    {
-        auto Z = bond.partner(i)->Z();
-        switch (Z)
-        {
-            // Group 1A - Alkali earth metals (includes Hydrogen)
-            case (Elements::H):
-            case (Elements::Li):
-            case (Elements::Na):
-            case (Elements::K):
-            case (Elements::Rb):
-            case (Elements::Cs):
-            case (Elements::Fr):
-                osBound += 1;
-                break;
-            // Group 2A - Alkaline earth metals
-            case (Elements::Be):
-            case (Elements::Mg):
-            case (Elements::Ca):
-            case (Elements::Sr):
-            case (Elements::Ba):
-            case (Elements::Ra):
-                osBound += 1;
-                break;
-            // Oxygen
-            case (Elements::O):
-                if (bond.bondType() == SpeciesBond::DoubleBond)
-                    osBound -= 2;
-                else
-                    osBound -= 1;
-                break;
-            // Halogens (F, Cl, Br, I)
-            case (Elements::F):
-            case (Elements::Cl):
-            case (Elements::Br):
-            case (Elements::I):
-                osBound -= 1;
-                break;
-            default:
-                break;
-        }
-
-        // Check for same element
-        if (Z == i->Z())
-            ++nSameElement;
-    }
-
-    // Return the negative of the bound OS, or zero if we were only bound to the same element as ourselves
-    return (nSameElement == i->nBonds() ? 0 : -osBound);
 }

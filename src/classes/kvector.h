@@ -3,16 +3,17 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "templates/array.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
 class BraggReflection;
+class CoreData;
+class ProcessPool;
 
 // K-Vector
-class KVector : public GenericItemBase
+class KVector
 {
     public:
     KVector(int h = 0, int k = 0, int l = 0, int reflectionIndex = -1, int nAtomTypes = 0);
@@ -59,12 +60,9 @@ class KVector : public GenericItemBase
     double intensity(int typeI, int typeJ);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
-
     /*
      * Parallel Comms
      */

@@ -20,7 +20,7 @@ class SQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve);
+    SQModuleWidget(QWidget *parent, const GenericList &processingData, SQModule *module, Dissolve &dissolve);
     ~SQModuleWidget();
 
     private:
@@ -41,15 +41,6 @@ class SQModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 
     /*
      * Widgets / Functions

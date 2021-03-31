@@ -70,13 +70,4 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
     void disableSensitiveControls();
     // Enable sensitive controls within tab
     void enableSensitiveControls();
-
-    /*
-     * State
-     */
-    public:
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser, const CoreData &coreData);
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
 };

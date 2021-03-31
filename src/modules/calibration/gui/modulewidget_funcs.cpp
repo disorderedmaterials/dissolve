@@ -9,8 +9,8 @@
 #include "modules/calibration/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-CalibrationModuleWidget::CalibrationModuleWidget(QWidget *parent, CalibrationModule *module)
-    : ModuleWidget(parent), module_(module)
+CalibrationModuleWidget::CalibrationModuleWidget(QWidget *parent, const GenericList &processingData, CalibrationModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -38,27 +38,3 @@ CalibrationModuleWidget::~CalibrationModuleWidget() {}
 
 // Update controls within widget
 void CalibrationModuleWidget::updateControls(int flags) { dataView_->postRedisplay(); }
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalibrationModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer session
-    if (!dataView_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalibrationModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer session
-    if (!dataView_->readSession(parser))
-        return false;
-
-    return true;
-}

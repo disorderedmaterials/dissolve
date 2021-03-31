@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.15)
 project(Dissolve)
 
 set(DESCRIPTION "Dissolve")
@@ -9,12 +10,6 @@ set(VERSION_PATCH "0")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
-
-cmake_minimum_required(VERSION 2.8)
-
-if(COMMAND cmake_policy)
-  cmake_policy(VERSION 2.6)
-endif(COMMAND cmake_policy)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -30,7 +25,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Include Conan Packages
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(CMAKE_TARGETS)
+conan_basic_setup(TARGETS)
 
 # Catch defines
 if(PARALLEL)
@@ -39,6 +34,11 @@ if(PARALLEL)
   include_directories(${MPI_INCLUDE_PATH})
   set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${MPI_LIBRARIES})
 endif(PARALLEL)
+
+if(MULTI_THREADING)
+  add_definitions("-DMULTITHREADING")
+  set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::tbb)
+endif(MULTI_THREADING)
 
 # Add local Modules dir to cmake search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
@@ -151,6 +151,10 @@ if(APPLE)
 
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
   add_definitions(-D_MAC)
+
+  if(MULTI_THREADING)
+    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onedpl)
+  endif(MULTI_THREADING)
 
   if(GUI)
     # Find GLUT
@@ -282,7 +286,7 @@ target_link_libraries(
          # Module 'nogui' libs
          ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
   PRIVATE # External libs
-          antlr4-runtime ${EXTRA_LINK_LIBS}
+          antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
   INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
 )
 
@@ -315,6 +319,7 @@ if(GUI)
             ${OPENGL_LIBRARIES}
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
+            ${THREADING_LINK_LIBS}
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
   )
 endif(GUI)

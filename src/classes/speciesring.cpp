@@ -7,7 +7,7 @@
 
 SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> atoms) : atoms_(atoms){};
 
-bool SpeciesRing::operator==(const SpeciesRing &other)
+bool SpeciesRing::operator==(const SpeciesRing &other) const
 {
     // Check ring size first
     const auto nAtoms = atoms_.size();

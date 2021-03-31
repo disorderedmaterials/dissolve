@@ -2,11 +2,14 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_dangle/gui/modulewidget.h"
 
-CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                         CalculateDAngleModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -71,30 +74,6 @@ void CalculateDAngleModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateDAngleModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateDAngleModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
@@ -108,20 +87,17 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule *mod
     for (Configuration *cfg : module_->targetConfigurations())
     {
         // Calculated B...C RDF
-        auto *rdf = rdfGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()),
-            "B...C g(r)");
+        auto rdf = rdfGraph_->createRenderable<RenderableData2D>(
+            fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
         rdf->setColour(StockColours::BlueStockColour);
 
         // Calculated angle histogram
-        auto *angle = angleGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
-            "A-B...C Angle");
+        auto angle = angleGraph_->createRenderable<RenderableData2D>(
+            fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
         angle->setColour(StockColours::RedStockColour);
 
         // Calculated distance-angle map
-        dAngleGraph_->createRenderable(Renderable::Data2DRenderable,
-                                       fmt::format("{}//Process2D//{}//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()),
-                                       "B...C vs A-B...C");
+        dAngleGraph_->createRenderable<RenderableData2D>(
+            fmt::format("{}//Process2D//{}//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C");
     }
 }

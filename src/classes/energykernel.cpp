@@ -9,6 +9,7 @@
 #include "classes/molecule.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
+#include "templates/algorithms.h"
 #include <iterator>
 #include <numeric>
 
@@ -28,8 +29,6 @@ EnergyKernel::~EnergyKernel() {}
 // Return PairPotential energy between atoms provided as pointers, at the distance specified
 double EnergyKernel::pairPotentialEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r)
 {
-    // Messenger::print("E  {} {} @ {} = {}\n", std::min(i->arrayIndex(), j->arrayIndex()), std::max(i->arrayIndex(),
-    // j->arrayIndex()), r, potentialMap_.energy(i, j, r));
     return potentialMap_.energy(i, j, r);
 }
 
@@ -83,13 +82,14 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     double rSq, scale;
 
     // Get start/stride for specified loop context
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto offset = processPool_.interleavedLoopStart(strategy);
+    auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     // Loop over central cell atoms
     if (applyMim)
     {
-        for (auto indexI = centralAtoms.begin() + start; indexI < centralAtoms.end(); indexI += stride)
+        auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
+        for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
             molI = ii->molecule();
@@ -121,7 +121,8 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     }
     else
     {
-        for (auto indexI = centralCell->atoms().begin() + start; indexI < centralCell->atoms().end(); indexI += stride)
+        auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), nChunks, offset);
+        for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
             molI = ii->molecule();
@@ -171,8 +172,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     double rSq, scale;
 
     // Get start/stride for specified loop context
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto offset = processPool_.interleavedLoopStart(strategy);
+    auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     // Straight loop over Cells *not* requiring mim
     for (auto *otherCell : centralCell->cellNeighbours())
@@ -185,7 +186,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             rJ = jj->r();
 
             // Loop over central cell atoms
-            for (auto indexI = centralAtoms.begin() + start; indexI < centralAtoms.end(); indexI += stride)
+            auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
+            for (auto indexI = begin; indexI < end; ++indexI)
             {
                 ii = *indexI;
 
@@ -222,7 +224,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             rJ = jj->r();
 
             // Loop over central cell atoms
-            for (auto indexI = centralAtoms.begin() + start; indexI < centralAtoms.end(); indexI += stride)
+            auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
+            for (auto indexI = begin; indexI < end; ++indexI)
             {
                 ii = *indexI;
 
@@ -271,14 +274,15 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
     const auto rI = i->r();
 
     // Get start/stride for specified loop context
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto offset = processPool_.interleavedLoopStart(strategy);
+    auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     if (flags & KernelFlags::ApplyMinimumImageFlag)
     {
+        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), nChunks, offset);
         // Loop over other Atoms
         if (flags & KernelFlags::ExcludeSelfFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -303,7 +307,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -328,7 +332,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -353,7 +357,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 }
             }
         else
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -377,8 +381,9 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
     else
     {
         // Loop over atom neighbours
+        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), nChunks, offset);
         if (flags & KernelFlags::ExcludeSelfFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -403,7 +408,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -428,7 +433,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -453,7 +458,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 }
             }
         else
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -571,12 +576,13 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
 
     // Set start/stride for parallel loop
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto offset = processPool_.interleavedLoopStart(strategy);
+    auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     auto totalEnergy = 0.0;
     Cell *cell;
-    for (auto cellId = start; cellId < cellArray.nCells(); cellId += stride)
+    auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
+    for (auto cellId = begin; cellId < end; ++cellId)
     {
         cell = cellArray.cell(cellId);
 

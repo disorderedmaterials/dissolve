@@ -4,19 +4,15 @@
 #include "classes/speciesatom.h"
 #include "base/processpool.h"
 #include "classes/atomtype.h"
+#include "classes/box.h"
 #include "classes/species.h"
 #include "classes/speciesbond.h"
 #include "data/elements.h"
 #include <algorithm>
 
-SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
+SpeciesAtom::SpeciesAtom() : Z_(Elements::Unknown), charge_(0.0), atomType_(nullptr), index_(-1), selected_(false)
 {
-    Z_ = Elements::Unknown;
-    charge_ = 0.0;
-    atomType_ = nullptr;
     r_.zero();
-    index_ = -1;
-    selected_ = false;
 }
 
 // Set Species parent
@@ -75,10 +71,10 @@ void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
 // Return SpeciesAtomType of SpeciesAtom
 std::shared_ptr<AtomType> SpeciesAtom::atomType() const { return atomType_; }
 
-// Set List index (0->[N-1])
+// Set index (0->[N-1])
 void SpeciesAtom::setIndex(int id) { index_ = id; }
 
-// Return List index (0->[N-1])
+// Return index (0->[N-1])
 int SpeciesAtom::index() const { return index_; }
 
 // Return 'user' index (1->N)
@@ -135,11 +131,11 @@ void SpeciesAtom::addAngle(SpeciesAngle &angle)
 
     // Insert the pointers to the other Atoms into the exclusions_ list
     if (angle.i() != this)
-        exclusions_.add(angle.i());
+        exclusions_.emplace_back(angle.i(), 0.0);
     if (angle.j() != this)
-        exclusions_.add(angle.j());
+        exclusions_.emplace_back(angle.j(), 0.0);
     if (angle.k() != this)
-        exclusions_.add(angle.k());
+        exclusions_.emplace_back(angle.k(), 0.0);
 }
 
 // Remove angle reference
@@ -165,24 +161,24 @@ void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double scaling14)
     // Insert the pointers to the other Atoms into the exclusions_ list
     if (torsion.i() == this)
     {
-        exclusions_.add(torsion.j());
-        exclusions_.add(torsion.k());
-        exclusions_.add(torsion.l(), scaling14);
+        exclusions_.emplace_back(torsion.j(), 0.0);
+        exclusions_.emplace_back(torsion.k(), 0.0);
+        exclusions_.emplace_back(torsion.l(), scaling14);
     }
     else if (torsion.l() == this)
     {
-        exclusions_.add(torsion.i(), scaling14);
-        exclusions_.add(torsion.j());
-        exclusions_.add(torsion.k());
+        exclusions_.emplace_back(torsion.i(), scaling14);
+        exclusions_.emplace_back(torsion.j(), 0.0);
+        exclusions_.emplace_back(torsion.k(), 0.0);
     }
     else
     {
-        exclusions_.add(torsion.i());
-        exclusions_.add(torsion.l());
+        exclusions_.emplace_back(torsion.i(), 0.0);
+        exclusions_.emplace_back(torsion.l(), 0.0);
         if (torsion.j() != this)
-            exclusions_.add(torsion.j());
+            exclusions_.emplace_back(torsion.j(), 0.0);
         if (torsion.k() != this)
-            exclusions_.add(torsion.k());
+            exclusions_.emplace_back(torsion.k(), 0.0);
     }
 }
 
@@ -224,20 +220,15 @@ const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::imprope
 // Return scaling factor to employ with specified Atom
 double SpeciesAtom::scaling(const SpeciesAtom *j) const
 {
-    // Look through our ordered list of excluded Atom interactions
-    for (auto n = 0; n < exclusions_.nItems(); ++n)
+    auto it = std::find_if(exclusions_.begin(), exclusions_.end(), [j](const auto &p) { return p.first == j; });
+    if (it != exclusions_.end())
     {
-        // If the current item matches our Atom 'j', we have found a match
-        if (exclusions_.pointer(n) == j)
-            return exclusions_.data(n);
-
-        // If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the
-        // list
-        if (exclusions_.pointer(n) > j)
-            return 1.0;
+        return it->second;
     }
-
-    return 1.0;
+    else
+    {
+        return 1.0;
+    }
 }
 
 /*
@@ -260,3 +251,171 @@ void SpeciesAtom::setCoordinates(const Vec3<double> &newr) { r_ = newr; }
 
 // Translate coordinates of atom
 void SpeciesAtom::translateCoordinates(const Vec3<double> &delta) { r_ += delta; }
+
+/*
+ * Atom Environment Helpers
+ */
+
+EnumOptions<SpeciesAtom::AtomGeometry> SpeciesAtom::geometries()
+{
+    return EnumOptions<SpeciesAtom::AtomGeometry>("AtomGeometry", {
+                                                                      {AtomGeometry::Unknown, "Unknown"},
+                                                                      {AtomGeometry::Unbound, "Unbound"},
+                                                                      {AtomGeometry::Terminal, "Terminal"},
+                                                                      {AtomGeometry::Linear, "Linear"},
+                                                                      {AtomGeometry::TShape, "TS"},
+                                                                      {AtomGeometry::TrigonalPlanar, "TP"},
+                                                                      {AtomGeometry::Tetrahedral, "Tet"},
+                                                                      {AtomGeometry::SquarePlanar, "SqP"},
+                                                                      {AtomGeometry::TrigonalBipyramidal, "TBP"},
+                                                                      {AtomGeometry::Octahedral, "Oct"},
+                                                                  });
+}
+
+// Calculate and return the geometry of this atom
+SpeciesAtom::AtomGeometry SpeciesAtom::geometry() const { return geometry(this); }
+
+// Return whether the geometry of this atom matches that specified
+bool SpeciesAtom::isGeometry(SpeciesAtom::AtomGeometry geom) const { return geometry(this) == geom; }
+
+// Calculate and return the geometry of the specified SpeciesAtom
+SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
+{
+    double angle, largest;
+    SpeciesAtom *h, *j;
+    const auto &bonds = i->bonds();
+
+    // Work based on the number of bound atoms
+    switch (bonds.size())
+    {
+        // 'Simple' cases first
+        case (0):
+            return AtomGeometry::Unbound;
+        case (1):
+            return AtomGeometry::Terminal;
+        case (5):
+            return AtomGeometry::TrigonalBipyramidal;
+        case (6):
+            return AtomGeometry::Octahedral;
+            // For the remaining types, take averages of bond angles about the atom
+        case (2):
+            h = bonds[0].get().partner(i);
+            j = bonds[1].get().partner(i);
+            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+            if (angle > 150.0)
+                return AtomGeometry::Linear;
+            else
+                return AtomGeometry::Tetrahedral;
+            break;
+        case (3):
+            h = bonds[0].get().partner(i);
+            j = bonds[1].get().partner(i);
+            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+            largest = angle;
+            j = bonds[2].get().partner(i);
+            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+            if (angle > largest)
+                largest = angle;
+            h = bonds[1].get().partner(i);
+            angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+            if (angle > largest)
+                largest = angle;
+            if (largest > 150.0)
+                return AtomGeometry::TShape;
+            else if ((largest > 115.0) && (largest < 125.0))
+                return AtomGeometry::TrigonalPlanar;
+            else
+                return AtomGeometry::Tetrahedral;
+            break;
+        case (4):
+            // Two possibilities - tetrahedral or square planar. Tetrahedral will have an
+            // average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
+            angle = 0.0;
+            for (auto n = 0; n < i->nBonds(); ++n)
+            {
+                h = bonds[n].get().partner(i);
+                for (auto m = n + 1; m < i->nBonds(); ++m)
+                {
+                    j = bonds[m].get().partner(i);
+                    angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+                }
+            }
+            angle /= 6.0;
+            if ((angle > 100.0) && (angle < 115.0))
+                return AtomGeometry::Tetrahedral;
+            else
+                return AtomGeometry::SquarePlanar;
+    }
+
+    return AtomGeometry::Unknown;
+}
+
+// Return whether the specified SpeciesAtom exists in the specified geometry
+bool SpeciesAtom::isGeometry(const SpeciesAtom *i, AtomGeometry geom) { return geometry(i) == geom; }
+
+// Guess and return oxidation state for the specified SpeciesAtom
+int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
+{
+    /*
+     * Approximate the OS of the supplied atom by considering its local environment.
+     * We won't consider the whole molecule, and will assume the following rules in addition to the standard:
+     *   - A singly-bound Oxygen is considered to be -1 (which effectively includes it's 'R' group
+     *   - An R-group is considered to be +1
+     */
+    auto osBound = 0;
+
+    // Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments
+    // (OS == 0)
+    auto nSameElement = 0;
+
+    const auto &bonds = i->bonds();
+    for (const SpeciesBond &bond : bonds)
+    {
+        auto Z = bond.partner(i)->Z();
+        switch (Z)
+        {
+            // Group 1A - Alkali earth metals (includes Hydrogen)
+            case (Elements::H):
+            case (Elements::Li):
+            case (Elements::Na):
+            case (Elements::K):
+            case (Elements::Rb):
+            case (Elements::Cs):
+            case (Elements::Fr):
+                osBound += 1;
+                break;
+                // Group 2A - Alkaline earth metals
+            case (Elements::Be):
+            case (Elements::Mg):
+            case (Elements::Ca):
+            case (Elements::Sr):
+            case (Elements::Ba):
+            case (Elements::Ra):
+                osBound += 1;
+                break;
+                // Oxygen
+            case (Elements::O):
+                if (bond.bondType() == SpeciesBond::DoubleBond)
+                    osBound -= 2;
+                else
+                    osBound -= 1;
+                break;
+                // Halogens (F, Cl, Br, I)
+            case (Elements::F):
+            case (Elements::Cl):
+            case (Elements::Br):
+            case (Elements::I):
+                osBound -= 1;
+                break;
+            default:
+                break;
+        }
+
+        // Check for same element
+        if (Z == i->Z())
+            ++nSameElement;
+    }
+
+    // Return the negative of the bound OS, or zero if we were only bound to the same element as ourselves
+    return (nSameElement == i->nBonds() ? 0 : -osBound);
+}

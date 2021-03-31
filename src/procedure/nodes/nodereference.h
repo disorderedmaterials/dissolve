@@ -52,7 +52,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
      */
     public:
     // Read structure from specified LineParser
-    bool read(LineParser &parser, int startArg, CoreData &coreData, const Procedure *procedure);
+    bool read(LineParser &parser, int startArg, const CoreData &coreData, const Procedure *procedure);
     // Write structure to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 };

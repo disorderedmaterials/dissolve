@@ -70,8 +70,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 bool upToDate;
                 Timer timer;
                 Messenger::mute();
-                rdfModule.calculateGR(procPool, cfg, RDFModule::CellsMethod, cfg->box()->inscribedSphereRadius(), 0.05,
-                                      upToDate);
+                rdfModule.calculateGR(dissolve.processingModuleData(), procPool, cfg, RDFModule::CellsMethod,
+                                      cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
                 Messenger::unMute();
                 timing += timer.split();
             }
@@ -96,8 +96,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 bool upToDate;
                 Timer timer;
                 Messenger::mute();
-                rdfModule.calculateGR(procPool, cfg, RDFModule::SimpleMethod, cfg->box()->inscribedSphereRadius(), 0.05,
-                                      upToDate);
+                rdfModule.calculateGR(dissolve.processingModuleData(), procPool, cfg, RDFModule::SimpleMethod,
+                                      cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
                 Messenger::unMute();
                 timing += timer.split();
             }

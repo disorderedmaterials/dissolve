@@ -477,8 +477,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     hotSpot = hotSpot->next();
 
     // Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero
-    // height 	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next())
-    // spot->setWidth(maxWidth);
+    // height
     for (auto *spot = hotSpot; spot != nullptr; spot = spot->next())
         spot->setHeight(0);
 
@@ -495,13 +494,3 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     // Return required size
     return requiredSize;
 }
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ModuleListChart::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool ModuleListChart::readState(LineParser &parser) { return true; }
