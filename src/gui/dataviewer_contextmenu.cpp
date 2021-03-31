@@ -110,7 +110,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 if (renderable->type() == Renderable::Data1DRenderable)
                 {
                     Data1DExportFileFormat exportFormat(qPrintable(filename));
-                    auto *r1d = dynamic_cast<RenderableData1D *>(renderable.get());
+                    auto *r1d = static_cast<RenderableData1D *>(renderable.get());
                     if (!r1d->source())
                         Messenger::error("Failed to locate 1D data to export.\n");
                     else
@@ -119,7 +119,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 else if (renderable->type() == Renderable::Data2DRenderable)
                 {
                     Data2DExportFileFormat exportFormat(qPrintable(filename));
-                    auto *r2d = dynamic_cast<RenderableData2D *>(renderable.get());
+                    auto *r2d = static_cast<RenderableData2D *>(renderable.get());
                     if (!r2d->source())
                         Messenger::error("Failed to locate 2D data to export.\n");
                     else
@@ -128,7 +128,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 else if (renderable->type() == Renderable::Data3DRenderable)
                 {
                     Data3DExportFileFormat exportFormat(qPrintable(filename));
-                    auto *r3d = dynamic_cast<RenderableData3D *>(renderable.get());
+                    auto *r3d = static_cast<RenderableData3D *>(renderable.get());
                     if (!r3d->source())
                         Messenger::error("Failed to locate 3D data to export\n");
                     else
