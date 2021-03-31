@@ -140,7 +140,7 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
                     if (rdfModule)
                         rdfModuleName = rdfModule->uniqueName();
                     else
-                        rdfModuleName = "NO_FUCKING RDF";
+                        rdfModuleName = "UNKNOWN_RDF_MODULE";
                 }
             }
 
