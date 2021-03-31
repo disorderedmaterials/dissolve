@@ -20,7 +20,9 @@ template <class D> class GenericItemSearcher
 
     public:
     GenericItemSearcher(const GenericItemSearcher &) = delete;
+    GenericItemSearcher(GenericItemSearcher &&) = delete;
     GenericItemSearcher &operator=(const GenericItemSearcher &) = delete;
+    GenericItemSearcher &operator=(GenericItemSearcher &&) = delete;
 
     /*
      * Searchers
