@@ -37,8 +37,11 @@ add_library(
   constants.h
   cuboid.h
   data1d.h
+  data1dbase.h
   data2d.h
+  data2dbase.h
   data3d.h
+  data3dbase.h
   doubleexp.h
   error.h
   extrema.h
