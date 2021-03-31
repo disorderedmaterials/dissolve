@@ -264,7 +264,6 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
 bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup)
 {
     Cell *primaryCell = nullptr;
-    const Cell *readOnlyCell;
     int cellIndex;
 
     // Obvious check first - is the Molecule available for distribution / assignment?
@@ -335,7 +334,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
             }
 
             // All good - add to our list
-            readOnlyCells.insert(readOnlyCell);
+            readOnlyCells.insert(neighbour);
         }
     }
 
