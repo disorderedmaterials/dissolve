@@ -54,6 +54,8 @@ class DataTestModule : public Module
      * Functions
      */
     private:
+    // Internal 1D data testing
+    std::vector<std::pair<std::string, std::string>> internal1DData_;
     // Test 1D datasets
     Data1DStore test1DData_;
     // Test 2D datasets
