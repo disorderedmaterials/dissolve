@@ -145,7 +145,7 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             }
 
             // Add experimentally-determined partial g(r)
-            for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+            for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto &at1, int m, auto &at2) {
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 // Experimentally-determined unweighted partial
