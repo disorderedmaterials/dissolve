@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/messenger.h"
+#include <cassert>
 #include <iterator>
 #include <stddef.h>
 
