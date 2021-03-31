@@ -4,14 +4,15 @@
 #pragma once
 
 #include "base/version.h"
-#include "math/plottable.h"
+#include "math/data1dbase.h"
 #include "math/sampledvector.h"
+#include <string>
 
 // Forward Declarations
 class Data1D;
 
 // One-Dimensional Data with Statistics
-class SampledData1D : public PlottableData
+class SampledData1D : public Data1DBase
 {
     public:
     SampledData1D();

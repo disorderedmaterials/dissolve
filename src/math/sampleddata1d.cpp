@@ -7,9 +7,9 @@
 #include "math/histogram1d.h"
 #include "templates/algorithms.h"
 
-SampledData1D::SampledData1D() : PlottableData(PlottableData::OneAxisPlottable) {}
+SampledData1D::SampledData1D() {}
 
-SampledData1D::SampledData1D(const SampledData1D &source) : PlottableData(PlottableData::OneAxisPlottable) { (*this) = source; }
+SampledData1D::SampledData1D(const SampledData1D &source) { (*this) = source; }
 
 // Clear Data
 void SampledData1D::clear()

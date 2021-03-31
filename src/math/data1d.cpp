@@ -7,9 +7,9 @@
 #include "base/sysfunc.h"
 #include "templates/algorithms.h"
 
-Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), hasError_(false) {}
+Data1D::Data1D() : hasError_(false) {}
 
-Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable) { (*this) = source; }
+Data1D::Data1D(const Data1D &source) { (*this) = source; }
 
 // Clear Data
 void Data1D::clear()
