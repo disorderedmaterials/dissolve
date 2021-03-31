@@ -39,13 +39,6 @@ RenderableSpeciesSite::~RenderableSpeciesSite() {}
 int RenderableSpeciesSite::dataVersion() { return (siteSource_ ? siteSource_->version() : -99); }
 
 /*
- * Transform / Limits
- */
-
-// Transform data according to current settings
-void RenderableSpeciesSite::transformValues() {}
-
-/*
  * Rendering Primitives
  */
 

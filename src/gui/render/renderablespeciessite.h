@@ -31,13 +31,6 @@ class RenderableSpeciesSite : public Renderable
     int dataVersion() override;
 
     /*
-     * Transform / Limits
-     */
-    protected:
-    // Transform data values according to current settings
-    void transformValues() override;
-
-    /*
      * Rendering Primitives
      */
     private:
