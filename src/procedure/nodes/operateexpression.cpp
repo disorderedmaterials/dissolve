@@ -59,7 +59,7 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
 {
     const auto &x = targetData2D_->xAxis();
     const auto &y = targetData2D_->yAxis();
-    auto &values = targetData2D_->values2D();
+    auto &values = targetData2D_->values();
 
     z_->setValue(0.0);
 
