@@ -21,7 +21,6 @@ class GenericItemProducer
     GenericItemProducer &operator=(const GenericItemProducer &) = delete;
     GenericItemProducer &operator=(GenericItemProducer &&) = delete;
 
-
     /*
      * Producers
      */
