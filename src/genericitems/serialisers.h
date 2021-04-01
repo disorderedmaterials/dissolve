@@ -16,7 +16,9 @@ class GenericItemSerialiser
 
     public:
     GenericItemSerialiser(const GenericItemSerialiser &) = delete;
+    GenericItemSerialiser(GenericItemSerialiser &&) = delete;
     GenericItemSerialiser &operator=(const GenericItemSerialiser &) = delete;
+    GenericItemSerialiser &operator=(GenericItemSerialiser &&) = delete;
 
     /*
      * Serialisers
