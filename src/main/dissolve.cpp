@@ -83,5 +83,5 @@ void Dissolve::clear()
     // I/O
     setInputFilename("");
     restartFilename_.clear();
-    saveRestartTimes_ = 0.0;
+    saveRestartTimes_.clear();
 }
