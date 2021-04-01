@@ -253,25 +253,6 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
     return unbound;
 }
 
-// Return Data1D with specified tag, if it exists
-OptionalReferenceWrapper<const Data1D> PartialSet::data1DWithTag(std::string_view tag) const
-{
-    auto fullIt = std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.tag() == tag; });
-    if (fullIt != partials_.end())
-        return *fullIt;
-    auto boundIt =
-        std::find_if(boundPartials_.begin(), boundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
-    if (boundIt != boundPartials_.end())
-        return *boundIt;
-    auto unboundIt =
-        std::find_if(unboundPartials_.begin(), unboundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
-    if (unboundIt != unboundPartials_.end())
-        return *unboundIt;
-    if (total_.tag() == tag)
-        return total_;
-    return {};
-}
-
 // Save all partials and total
 bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
                       std::string_view abscissaUnits) const
@@ -476,6 +457,29 @@ void PartialSet::operator*=(const double factor)
     });
 
     total_ *= factor;
+}
+
+/*
+ * Searchers
+ */
+
+// Return Data1D with specified tag, if it exists
+OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view tag) const
+{
+    auto fullIt = std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    if (fullIt != partials_.end())
+        return *fullIt;
+    auto boundIt =
+        std::find_if(boundPartials_.begin(), boundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    if (boundIt != boundPartials_.end())
+        return *boundIt;
+    auto unboundIt =
+        std::find_if(unboundPartials_.begin(), unboundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    if (unboundIt != unboundPartials_.end())
+        return *unboundIt;
+    if (total_.tag() == tag)
+        return total_;
+    return {};
 }
 
 /*
