@@ -279,6 +279,15 @@ if(BUILD_TESTS)
   add_subdirectory(tests)
 endif(BUILD_TESTS)
 
+if(BUILD_BENCHMARKS)
+  # The conan package of goooglebenchmark segfaults - so lets use fetch content
+  include(FetchContent)
+  set(BENCHMARK_ENABLE_TESTING "OFF")
+  fetchcontent_declare(googlebenchmark GIT_REPOSITORY https://github.com/google/benchmark.git)
+  fetchcontent_makeavailable(googlebenchmark)
+  add_subdirectory(benchmark)
+endif(BUILD_BENCHMARKS)
+
 # Build CLI target executable
 target_link_libraries(
   ${target_name}
