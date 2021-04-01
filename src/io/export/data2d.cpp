@@ -43,14 +43,14 @@ Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat(
  */
 
 // Export Data2D as simple block data
-bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
+bool Data2DExportFileFormat::exportBlock(LineParser &parser, const std::vector<double> &xAxis, const std::vector<double> &yAxis,
+                                         const Array2D<double> &values, OptionalReferenceWrapper<const Array2D<double>> errors)
 {
     // Export header comment
-    if (!parser.writeLineF("# {} blocks (nX) of {} points (nY).\n", data.xAxis().size(), data.yAxis().size()))
+    if (!parser.writeLineF("# {} blocks (nX) of {} points (nY).\n", xAxis.size(), yAxis.size()))
         return false;
 
     // Export datapoints, separating each block of a specific x value with a single blank line
-    const Array2D<double> &values = data.values();
     for (auto x = 0; x < values.nRows(); ++x)
     {
         for (auto y = 0; y < values.nColumns(); ++y)
@@ -64,12 +64,11 @@ bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
 }
 
 // Export Data2D as cartesian data
-bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &data)
+bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const std::vector<double> &xAxis,
+                                             const std::vector<double> &yAxis, const Array2D<double> &values,
+                                             OptionalReferenceWrapper<const Array2D<double>> errors)
 {
-    // Three-column format (x  y  value) in blocks of similar y value, separated by blank lines
-    const Array2D<double> &values = data.values();
-    const auto &xAxis = data.xAxis();
-    const auto &yAxis = data.yAxis();
+    // Three-column format (x  y value) in blocks of similar y value, separated by blank lines
     for (auto x = 0; x < values.nRows(); ++x)
     {
         for (auto y = 0; y < values.nColumns(); ++y)
@@ -83,7 +82,7 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &d
 }
 
 // Export Data2D using current filename and format
-bool Data2DExportFileFormat::exportData(const Data2D &data)
+bool Data2DExportFileFormat::exportData(const Data2DBase &data)
 {
     // Open the file
     LineParser parser;
@@ -96,7 +95,9 @@ bool Data2DExportFileFormat::exportData(const Data2D &data)
     // Write data
     auto result = false;
     if (data2DFormat() == Data2DExportFileFormat::BlockData2D)
-        result = exportBlock(parser, data);
+        result = exportBlock(parser, data.xAxis(), data.yAxis(), data.values());
+    else if (data2DFormat() == Data2DExportFileFormat::CartesianData2D)
+        result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.values());
     else
     {
         Messenger::error("Unrecognised Data2D format.\nKnown formats are:\n");
