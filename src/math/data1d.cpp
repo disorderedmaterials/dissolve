@@ -11,6 +11,17 @@ Data1D::Data1D() : hasError_(false) {}
 
 Data1D::Data1D(const Data1D &source) { (*this) = source; }
 
+Data1D::Data1D(const Data1DBase &source)
+{
+    x_ = source.xAxis();
+    values_ = source.values();
+    hasError_ = source.valuesHaveErrors();
+    if (hasError_)
+        errors_ = source.errors();
+    else
+        errors_.clear();
+}
+
 // Clear Data
 void Data1D::clear()
 {

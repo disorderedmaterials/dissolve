@@ -16,6 +16,7 @@ class Data1D : public Data1DBase
     Data1D();
     virtual ~Data1D() = default;
     Data1D(const Data1D &source);
+    Data1D(const Data1DBase &source);
     // Clear data
     void clear();
 
