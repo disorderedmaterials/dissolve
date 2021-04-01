@@ -54,9 +54,9 @@ template <class D> class GenericItemSearcher
     // Return the searcher instance
     static const GenericItemSearcher &instance()
     {
-        static GenericItemSearcher _instance;
+        static GenericItemSearcher instance;
 
-        return _instance;
+        return instance;
     }
 
     /*
