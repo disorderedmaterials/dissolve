@@ -228,7 +228,7 @@ double Integrator::absSum(const Data2D &data)
 double Integrator::sum(const Data3D &data)
 {
     // Grab data array
-    const Array3D<double> &values = data.values3D();
+    const Array3D<double> &values = data.values();
 
     return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0);
 }
@@ -237,7 +237,7 @@ double Integrator::sum(const Data3D &data)
 double Integrator::absSum(const Data3D &data)
 {
     // Grab data array
-    const Array3D<double> &values = data.values3D();
+    const Array3D<double> &values = data.values();
 
     return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0,
                            [](auto acc, auto n) { return acc + fabs(n); });

@@ -129,7 +129,7 @@ void Transformer::transformValues(Data3D &data)
     const auto &xAxis = data.xAxis();
     const auto &yAxis = data.yAxis();
     const auto &zAxis = data.zAxis();
-    auto &values = data.values3D();
+    auto &values = data.values();
 
     // Data3D x, y and z arrays may be of different sizes
     for (auto i = 0; i < xAxis.size(); ++i)

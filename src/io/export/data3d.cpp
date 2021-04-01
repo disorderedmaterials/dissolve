@@ -52,7 +52,7 @@ bool Data3DExportFileFormat::exportBlock(LineParser &parser, const Data3D &data)
         return false;
 
     // Export datapoints, separating each block of a specific x value with a single blank line
-    const Array3D<double> &values = data.values3D();
+    const Array3D<double> &values = data.values();
     for (auto x = 0; x < values.nX(); ++x)
     {
         for (auto y = 0; y < values.nY(); ++y)
@@ -74,7 +74,7 @@ bool Data3DExportFileFormat::exportBlock(LineParser &parser, const Data3D &data)
 bool Data3DExportFileFormat::exportCartesian(LineParser &parser, const Data3D &data)
 {
     // Four-column format (x  y  z  value) in blocks of similar x and y value, separated by blank lines
-    const Array3D<double> &values = data.values3D();
+    const Array3D<double> &values = data.values();
     const auto &xAxis = data.xAxis();
     const auto &yAxis = data.yAxis();
     const auto &zAxis = data.zAxis();
@@ -101,7 +101,7 @@ bool Data3DExportFileFormat::exportCartesian(LineParser &parser, const Data3D &d
 bool Data3DExportFileFormat::exportPDens(LineParser &parser, const Data3D &data)
 {
     // Line 1 (Integer Extents): nx, ny, nz, xmin, ymin, zmin, xmax, ymax, zmax
-    const Array3D<double> &values = data.values3D();
+    const Array3D<double> &values = data.values();
     if (!parser.writeLineF("{:5d}{:5d}{:5d}{:5d}{:5d}{:5d}{:5d}{:5d}{:5d}\n", values.nX(), values.nY(), values.nZ(), 0, 0, 0,
                            values.nX(), values.nY(), values.nZ()))
         return false;
