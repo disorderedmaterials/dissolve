@@ -8,7 +8,7 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "modules/forces/forces.h"
-#include "modules/import/import.h"
+#include "modules/import_trajectory/importtraj.h"
 
 // Run set-up stage
 bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool)

@@ -7,7 +7,6 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "modules/import/import.h"
 #include <memory>
 
 // Clear contents of Configuration, leaving other definitions intact
