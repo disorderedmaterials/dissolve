@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/neutronweights.h"
 #include "classes/species.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
-#include "math/filters.h"
 #include "math/ft.h"
-#include "modules/import/import.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
