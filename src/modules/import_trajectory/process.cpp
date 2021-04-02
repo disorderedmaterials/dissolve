@@ -54,5 +54,8 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
     dissolve.processingModuleData().realise<std::streampos>(streamPosName, uniqueName(), GenericItem::InRestartFileFlag) =
         parser.tellg();
 
+    // Make sure that the configuration contents are up-to-date w.r.t. cell locations etc.
+    cfg->updateCellContents();
+
     return true;
 }
