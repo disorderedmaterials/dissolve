@@ -186,7 +186,7 @@ std::shared_ptr<Atom> Configuration::atom(int n)
 void Configuration::scaleMoleculeCentres(double factor)
 {
     Vec3<double> oldCog, newCog, newPos;
-    for (auto mol : molecules_)
+    for (auto &mol : molecules_)
     {
         // First, work out the centre of geometry of the Molecule, and fold it into the Box
         oldCog = box()->fold(mol->centreOfGeometry(box()));
