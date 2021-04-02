@@ -99,10 +99,10 @@ Layer  'Processing'
 # Trajectory Processing
 Module  Import
   Configuration  'Bulk'
-  ReadTrajectory  True
+
   # Trajectory file contains 95 frames
-  TrajectoryFile  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
-  EndTrajectoryFile
+  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  EndFormat
 EndModule
 
 # Oxygen-oxygen radial distribution function
