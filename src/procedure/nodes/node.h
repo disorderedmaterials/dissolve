@@ -134,7 +134,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return scope (SequenceNode) in which this node exists
     SequenceProcedureNode *scope() const;
     // Return Procedure in which this node exists
-    const Procedure *procedure() const;
+    virtual const Procedure *procedure() const;
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node if it is currently in scope, and optionally matches the type given
