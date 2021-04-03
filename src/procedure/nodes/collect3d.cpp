@@ -101,14 +101,9 @@ bool Collect3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
 // Return accumulated data
 const Data3D &Collect3DProcedureNode::accumulatedData() const
 {
-    if (!histogram_)
-    {
-        Messenger::error("No histogram pointer set in Collect3DProcedureNode, so no accumulated data to return.\n");
-        static Data3D dummy;
-        return dummy;
-    }
+    assert(histogram_);
 
-    return histogram_->accumulatedData();
+    return histogram_->get().accumulatedData();
 }
 
 // Return x range minimum
@@ -178,8 +173,8 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Zero the current bins, ready for the new pass
     target.zeroBins();
 
-    // Store a pointer to the data
-    histogram_ = &target;
+    // Store a reference to the data
+    histogram_ = target;
 
     // Retrieve the observables
     std::tie(xObservable_, xObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
@@ -203,13 +198,11 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 ProcedureNode::NodeExecutionResult Collect3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                    std::string_view prefix, GenericList &targetList)
 {
-    assert(xObservable_);
-    assert(yObservable_);
-    assert(zObservable_);
+    assert(xObservable_ && yObservable_ && zObservable_ && histogram_);
 
     // Bin the current value of the observable
-    if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_),
-                        zObservable_->value(zObservableIndex_)) &&
+    if (histogram_->get().bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_),
+                              zObservable_->value(zObservableIndex_)) &&
         subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
@@ -223,7 +216,7 @@ bool Collect3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     assert(histogram_);
 
     // Accumulate the current binned data
-    histogram_->accumulate();
+    histogram_->get().accumulate();
 
     // Finalise any branches
     if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList)))

@@ -57,14 +57,9 @@ bool Collect2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
 // Return accumulated data
 const Data2D &Collect2DProcedureNode::accumulatedData() const
 {
-    if (!histogram_)
-    {
-        Messenger::error("No histogram pointer set in Collect2DProcedureNode, so no accumulated data to return.\n");
-        static Data2D dummy;
-        return dummy;
-    }
+    assert(histogram_);
 
-    return histogram_->accumulatedData();
+    return histogram_->get().accumulatedData();
 }
 
 // Return x range minimum
@@ -100,6 +95,7 @@ SequenceProcedureNode *Collect2DProcedureNode::addSubCollectBranch(ProcedureNode
 
 // Return whether this node has a branch
 bool Collect2DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
+
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *Collect2DProcedureNode::branch() { return subCollectBranch_; }
 
@@ -124,8 +120,8 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Zero the current bins, ready for the new pass
     target.zeroBins();
 
-    // Store a pointer to the data
-    histogram_ = &target;
+    // Store a reference to the data
+    histogram_ = target;
 
     // Retrieve the observables
     std::tie(xObservable_, xObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
@@ -146,11 +142,11 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                    std::string_view prefix, GenericList &targetList)
 {
-    assert(xObservable_);
-    assert(yObservable_);
+    assert(xObservable_ && yObservable_ && histogram_);
 
     // Bin the current value of the observable
-    if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_)) && subCollectBranch_)
+    if (histogram_->get().bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_)) &&
+        subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
     return ProcedureNode::Success;
@@ -163,7 +159,7 @@ bool Collect2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     assert(histogram_);
 
     // Accumulate the current binned data
-    histogram_->accumulate();
+    histogram_->get().accumulate();
 
     // Finalise any branches
     if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList)))

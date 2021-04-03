@@ -41,7 +41,7 @@ class Collect2DProcedureNode : public ProcedureNode
     // Index of y observable data to use (retrieved from keyword)
     int yObservableIndex_;
     // Histogram in which to accumulate data
-    Histogram2D *histogram_;
+    OptionalReferenceWrapper<Histogram2D> histogram_;
 
     public:
     // Return accumulated data

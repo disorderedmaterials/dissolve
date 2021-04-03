@@ -36,7 +36,7 @@ class Collect1DProcedureNode : public ProcedureNode
     // Index of x observable data to use (retrieved from keyword)
     int xObservableIndex_;
     // Histogram in which to accumulate data
-    Histogram1D *histogram_;
+    OptionalReferenceWrapper<Histogram1D> histogram_;
 
     public:
     // Return accumulated data

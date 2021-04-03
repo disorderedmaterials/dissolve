@@ -49,7 +49,7 @@ class Collect3DProcedureNode : public ProcedureNode
     // Index of z observable data to use (retrieved from keyword)
     int zObservableIndex_;
     // Histogram in which to accumulate data
-    Histogram3D *histogram_;
+    OptionalReferenceWrapper<Histogram3D> histogram_;
 
     public:
     // Return accumulated data
