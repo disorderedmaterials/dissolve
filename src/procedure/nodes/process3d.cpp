@@ -108,9 +108,9 @@ bool Process3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool Process3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                     GenericList &targetList)
+// Finalise any necessary data after execution
+bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
     auto &data = targetList.realise<Data3D>(fmt::format("Process3D//{}", name()), prefix, GenericItem::InRestartFileFlag);

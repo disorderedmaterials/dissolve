@@ -106,9 +106,9 @@ bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool Process2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                     GenericList &targetList)
+// Finalise any necessary data after execution
+bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
     auto &data = targetList.realise<Data2D>(fmt::format("Process2D//{}", name()), prefix, GenericItem::InRestartFileFlag);

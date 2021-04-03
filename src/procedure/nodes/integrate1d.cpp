@@ -60,9 +60,9 @@ bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view pref
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool Integrate1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                       GenericList &targetList)
+// Finalise any necessary data after execution
+bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                        GenericList &targetList)
 {
     // Get ranges
     auto rangeA = keywords_.retrieve<Range>("RangeA");

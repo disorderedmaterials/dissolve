@@ -74,8 +74,8 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool Sum1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+// Finalise any necessary data after execution
+bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Calculate integrals
     sum_[0] += Integrator::sum(processNode_->processedData(), rangeA_);

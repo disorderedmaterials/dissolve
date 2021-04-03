@@ -181,7 +181,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Prepare any necessary data, ready for execution
     virtual bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
     // Execute node, targetting the supplied Configuration
-    virtual bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) = 0;
+    virtual bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
     // Finalise any necessary data after execution
     virtual bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
 
