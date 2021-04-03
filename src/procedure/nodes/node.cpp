@@ -24,7 +24,6 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::Collect2DNode, "Collect2D"},
                      {ProcedureNode::Collect3DNode, "Collect3D"},
                      {ProcedureNode::DynamicSiteNode, "DynamicSite"},
-                     {ProcedureNode::ExcludeNode, "Exclude"},
                      {ProcedureNode::Fit1DNode, "Fit1D"},
                      {ProcedureNode::Integrate1DNode, "Integrate1D"},
                      {ProcedureNode::OperateBaseNode, "Operate(Any)"},

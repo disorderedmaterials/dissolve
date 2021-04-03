@@ -40,7 +40,6 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Collect3DNode,
         END_CalculateNodes,
         DynamicSiteNode,
-        ExcludeNode,
         Fit1DNode,
         Integrate1DNode,
         BEGIN_OperateNodes,
