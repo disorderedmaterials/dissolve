@@ -76,8 +76,7 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                               std::string_view prefix, GenericList &targetList)
+bool Sum1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Calculate integrals
     sum_[0] += Integrator::sum(processNode_->processedData(), rangeA_);
@@ -96,5 +95,5 @@ ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &proc
         Messenger::print("Sum1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[2].value(), sum_[2].stDev(),
                          rangeC_.minimum(), rangeC_.maximum());
 
-    return ProcedureNode::Success;
+    return true;
 }

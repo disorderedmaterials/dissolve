@@ -43,6 +43,5 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
     // Prepare any necessary data, ready for execution
     bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                               GenericList &targetList) override;
+    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 };

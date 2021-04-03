@@ -179,18 +179,10 @@ class ProcedureNode : public ListItem<ProcedureNode>
      * Execution
      */
     public:
-    // Node execution result
-    enum NodeExecutionResult
-    {
-        Failure,
-        Success,
-        SomethingElse
-    };
     // Prepare any necessary data, ready for execution
     virtual bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
     // Execute node, targetting the supplied Configuration
-    virtual NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                        GenericList &targetList) = 0;
+    virtual bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) = 0;
     // Finalise any necessary data after execution
     virtual bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
 

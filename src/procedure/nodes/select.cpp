@@ -172,8 +172,7 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                std::string_view prefix, GenericList &targetList)
+bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Create our arrays of sites
     sites_.clear();
@@ -203,7 +202,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
     {
         const SiteStack *siteStack = cfg->siteStack(site);
         if (siteStack == nullptr)
-            return ProcedureNode::Failure;
+            return false;
 
         for (auto n = 0; n < siteStack->nSites(); ++n)
         {
@@ -242,8 +241,8 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
      */
     for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
     {
-        if (dynamicNode->execute(procPool, cfg, prefix, targetList) == ProcedureNode::Failure)
-            return ProcedureNode::Failure;
+        if (!dynamicNode->execute(procPool, cfg, prefix, targetList))
+            return false;
 
         const Array<Site> &generatedSites = dynamicNode->generatedSites();
         for (auto n = 0; n < generatedSites.nItems(); ++n)
@@ -262,12 +261,12 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-            if (forEachBranch_->execute(procPool, cfg, prefix, targetList) == ProcedureNode::Failure)
-                return ProcedureNode::Failure;
+            if (!forEachBranch_->execute(procPool, cfg, prefix, targetList))
+                return false;
         }
     }
 
-    return ProcedureNode::Success;
+    return true;
 }
 
 // Finalise any necessary data after execution

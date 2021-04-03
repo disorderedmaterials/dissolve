@@ -36,8 +36,8 @@ int CalculateDistanceProcedureNode::dimensionality() const { return 1; }
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateDistanceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                           std::string_view prefix, GenericList &targetList)
+bool CalculateDistanceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                             GenericList &targetList)
 {
 
     assert(sites_[0] && sites_[0]->currentSite());
@@ -46,5 +46,5 @@ ProcedureNode::NodeExecutionResult CalculateDistanceProcedureNode::execute(Proce
     // Determine the value of the observable
     value_.x = cfg->box()->minimumDistance(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
 
-    return ProcedureNode::Success;
+    return true;
 }

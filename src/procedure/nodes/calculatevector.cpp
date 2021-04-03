@@ -53,8 +53,8 @@ bool CalculateVectorProcedureNode::prepare(Configuration *cfg, std::string_view 
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                         std::string_view prefix, GenericList &targetList)
+bool CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                           GenericList &targetList)
 {
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
@@ -66,5 +66,5 @@ ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(Process
     if (rotateIntoFrame_)
         value_ = sites_[0]->currentSite()->axes() * value_;
 
-    return ProcedureNode::Success;
+    return true;
 }

@@ -75,8 +75,8 @@ const Array<Site> &DynamicSiteProcedureNode::generatedSites() const { return gen
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                     std::string_view prefix, GenericList &targetList)
+bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                       GenericList &targetList)
 {
     // Clear our current list of sites
     generatedSites_.clear();
@@ -109,5 +109,5 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
         }
     }
 
-    return ProcedureNode::Success;
+    return true;
 }

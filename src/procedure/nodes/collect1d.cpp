@@ -118,8 +118,8 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   std::string_view prefix, GenericList &targetList)
+bool Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                     GenericList &targetList)
 {
     assert(xObservable_ && histogram_);
 
@@ -127,7 +127,7 @@ ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &
     if (histogram_->get().bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
-    return ProcedureNode::Success;
+    return true;
 }
 
 // Finalise any necessary data after execution

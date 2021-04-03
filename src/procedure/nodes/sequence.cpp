@@ -353,28 +353,19 @@ bool SequenceProcedureNode::prepare(Configuration *cfg, std::string_view prefix,
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                  std::string_view prefix, GenericList &targetList)
+bool SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    ProcedureNode::NodeExecutionResult result = ProcedureNode::Success;
-
     // If there are no nodes, just exit now
     if (sequence_.nItems() == 0)
-        return ProcedureNode::Success;
+        return true;
 
     // Loop over nodes in the list, executing each in turn
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
-    {
-        // Get the result of executing the node
-        result = node->execute(procPool, cfg, prefix, targetList);
+        if (!node->execute(procPool, cfg, prefix, targetList))
+            return false;
 
-        // If the result is not Success, don't process any more nodes
-        if (result != ProcedureNode::Success)
-            break;
-    }
-
-    return result;
+    return true;
 }
 
 // Finalise any necessary data after execution

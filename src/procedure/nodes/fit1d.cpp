@@ -113,10 +113,9 @@ void Fit1DProcedureNode::setSaveData(bool on) { saveData_ = on; }
 bool Fit1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Fit1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                               std::string_view prefix, GenericList &targetList)
+bool Fit1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    return ProcedureNode::Success;
+    return true;
 }
 
 // Finalise any necessary data after execution

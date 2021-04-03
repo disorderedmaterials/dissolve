@@ -62,8 +62,8 @@ bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view pref
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                     std::string_view prefix, GenericList &targetList)
+bool Integrate1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                       GenericList &targetList)
 {
     // Get ranges
     auto rangeA = keywords_.retrieve<Range>("RangeA");
@@ -83,5 +83,5 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
     Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].value(), integral_[2].stDev(),
                      rangeC.minimum(), rangeC.maximum());
 
-    return ProcedureNode::Success;
+    return true;
 }

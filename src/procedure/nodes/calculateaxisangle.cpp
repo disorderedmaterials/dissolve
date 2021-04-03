@@ -57,8 +57,8 @@ bool CalculateAxisAngleProcedureNode::prepare(Configuration *cfg, std::string_vi
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateAxisAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                            std::string_view prefix, GenericList &targetList)
+bool CalculateAxisAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                              GenericList &targetList)
 {
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
@@ -66,5 +66,5 @@ ProcedureNode::NodeExecutionResult CalculateAxisAngleProcedureNode::execute(Proc
     value_ = Box::angleInDegrees(sites_[0]->currentSite()->axes().columnAsVec3(axisI_),
                                  sites_[1]->currentSite()->axes().columnAsVec3(axisJ_));
 
-    return ProcedureNode::Success;
+    return true;
 }

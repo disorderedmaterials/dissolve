@@ -139,8 +139,8 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   std::string_view prefix, GenericList &targetList)
+bool Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                     GenericList &targetList)
 {
     assert(xObservable_ && yObservable_ && histogram_);
 
@@ -149,7 +149,7 @@ ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool &
         subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
-    return ProcedureNode::Success;
+    return true;
 }
 
 // Finalise any necessary data after execution

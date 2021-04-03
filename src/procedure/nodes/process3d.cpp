@@ -110,8 +110,8 @@ bool Process3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   std::string_view prefix, GenericList &targetList)
+bool Process3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                     GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
     auto &data = targetList.realise<Data3D>(fmt::format("Process3D//{}", name()), prefix, GenericItem::InRestartFileFlag);
@@ -136,9 +136,8 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
             operateNode->setTarget(processedData_);
         }
 
-        ProcedureNode::NodeExecutionResult result = normalisationBranch_->execute(procPool, cfg, prefix, targetList);
-        if (result != ProcedureNode::Success)
-            return result;
+        if (!normalisationBranch_->execute(procPool, cfg, prefix, targetList))
+            return false;
     }
 
     // Save data?
@@ -151,12 +150,12 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
             else
             {
                 procPool.decideFalse();
-                return ProcedureNode::Failure;
+                return false;
             }
         }
         else if (!procPool.decision())
-            return ProcedureNode::Failure;
+            return false;
     }
 
-    return ProcedureNode::Success;
+    return true;
 }

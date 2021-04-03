@@ -62,8 +62,8 @@ OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>>
 bool ParametersProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                    std::string_view prefix, GenericList &targetList)
+bool ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
-    return ProcedureNode::Success;
+    return true;
 }
