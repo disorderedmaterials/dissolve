@@ -27,8 +27,6 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
     keywords_.add("Control", new ExpressionKeyword(expression_, variables_), "Expression", "Expression to apply to values");
 }
 
-OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

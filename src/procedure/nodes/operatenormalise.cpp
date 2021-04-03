@@ -21,8 +21,6 @@ OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(int value)
     keywords_.add("Control", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
 }
 
-OperateNormaliseProcedureNode::~OperateNormaliseProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

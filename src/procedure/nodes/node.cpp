@@ -62,8 +62,6 @@ ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<Proced
     name_ = fmt::format("Node{:04d}", ++nodeCount);
 }
 
-ProcedureNode::~ProcedureNode() {}
-
 /*
  * Identity
  */

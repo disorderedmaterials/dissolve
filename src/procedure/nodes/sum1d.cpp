@@ -29,8 +29,6 @@ Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : P
                   "X range for third summation region");
 }
 
-Sum1DProcedureNode::~Sum1DProcedureNode() {}
-
 /*
  * Identity
  */

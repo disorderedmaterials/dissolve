@@ -15,8 +15,6 @@ OperateSphericalShellNormaliseProcedureNode::OperateSphericalShellNormaliseProce
 {
 }
 
-OperateSphericalShellNormaliseProcedureNode::~OperateSphericalShellNormaliseProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

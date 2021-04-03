@@ -38,8 +38,6 @@ Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObse
     subCollectBranch_ = nullptr;
 }
 
-Collect2DProcedureNode::~Collect2DProcedureNode() {}
-
 /*
  * Identity
  */

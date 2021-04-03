@@ -13,7 +13,7 @@ class OperateSphericalShellNormaliseProcedureNode : public OperateProcedureNodeB
 {
     public:
     OperateSphericalShellNormaliseProcedureNode();
-    ~OperateSphericalShellNormaliseProcedureNode();
+    ~OperateSphericalShellNormaliseProcedureNode() override = default;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

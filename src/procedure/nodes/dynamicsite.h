@@ -23,7 +23,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
 {
     public:
     DynamicSiteProcedureNode(SelectProcedureNode *parent);
-    ~DynamicSiteProcedureNode();
+    ~DynamicSiteProcedureNode() override = default;
 
     /*
      * Identity

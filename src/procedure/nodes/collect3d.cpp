@@ -82,8 +82,6 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzOb
     subCollectBranch_ = nullptr;
 }
 
-Collect3DProcedureNode::~Collect3DProcedureNode() {}
-
 /*
  * Identity
  */

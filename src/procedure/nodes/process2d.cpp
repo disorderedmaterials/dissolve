@@ -33,8 +33,6 @@ Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *tar
     processedData_ = nullptr;
 }
 
-Process2DProcedureNode::~Process2DProcedureNode() {}
-
 /*
  * Identity
  */

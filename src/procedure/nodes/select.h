@@ -24,7 +24,7 @@ class SelectProcedureNode : public ProcedureNode
 {
     public:
     SelectProcedureNode(SpeciesSite *site = nullptr, bool axesRequired = false);
-    ~SelectProcedureNode();
+    ~SelectProcedureNode() override;
 
     /*
      * Identity

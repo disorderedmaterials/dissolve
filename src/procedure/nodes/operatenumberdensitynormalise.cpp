@@ -31,8 +31,6 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
     selectNodes_ = selectNodes;
 }
 
-OperateNumberDensityNormaliseProcedureNode::~OperateNumberDensityNormaliseProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

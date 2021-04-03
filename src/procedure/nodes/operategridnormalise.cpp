@@ -15,8 +15,6 @@ OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode()
 {
 }
 
-OperateGridNormaliseProcedureNode::~OperateGridNormaliseProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

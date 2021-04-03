@@ -22,8 +22,6 @@ CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType n
     value_ = 0.0;
 }
 
-CalculateProcedureNodeBase::~CalculateProcedureNodeBase() {}
-
 /*
  * Identity
  */

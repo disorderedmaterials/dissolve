@@ -15,7 +15,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 {
     public:
     ProcedureNodeReference(ProcedureNode *node = nullptr);
-    ~ProcedureNodeReference();
+    ~ProcedureNodeReference() = default;
 
     /*
      * Data

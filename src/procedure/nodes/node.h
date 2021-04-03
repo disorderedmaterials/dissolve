@@ -74,7 +74,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();
     ProcedureNode(NodeType nodeType);
-    virtual ~ProcedureNode();
+    virtual ~ProcedureNode() = default;
 
     /*
      * Identity

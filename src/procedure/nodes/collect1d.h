@@ -18,7 +18,7 @@ class Collect1DProcedureNode : public ProcedureNode
     public:
     Collect1DProcedureNode(CalculateProcedureNodeBase *observable = nullptr, double rMin = 0.0, double rMax = 10.0,
                            double binWidth = 0.05);
-    ~Collect1DProcedureNode();
+    ~Collect1DProcedureNode() override = default;
 
     /*
      * Identity

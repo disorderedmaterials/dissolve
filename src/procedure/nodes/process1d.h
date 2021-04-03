@@ -17,7 +17,7 @@ class Process1DProcedureNode : public ProcedureNode
 {
     public:
     Process1DProcedureNode(const Collect1DProcedureNode *target = nullptr);
-    ~Process1DProcedureNode();
+    ~Process1DProcedureNode() override = default;
 
     /*
      * Identity

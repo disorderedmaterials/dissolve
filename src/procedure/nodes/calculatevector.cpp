@@ -23,8 +23,6 @@ CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *
                   "Whether to rotate the calculated vector into the local frame defined on 'I'");
 }
 
-CalculateVectorProcedureNode::~CalculateVectorProcedureNode() {}
-
 /*
  * Observable Target
  */

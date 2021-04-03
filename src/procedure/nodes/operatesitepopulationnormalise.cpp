@@ -31,8 +31,6 @@ OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProce
     selectNodes_ = selectNodes;
 }
 
-OperateSitePopulationNormaliseProcedureNode::~OperateSitePopulationNormaliseProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

@@ -14,7 +14,7 @@ class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBa
     public:
     OperateNumberDensityNormaliseProcedureNode();
     OperateNumberDensityNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
-    ~OperateNumberDensityNormaliseProcedureNode();
+    ~OperateNumberDensityNormaliseProcedureNode() override = default;
 
     /*
      * Target Sites (SelectNodes)

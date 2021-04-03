@@ -22,8 +22,6 @@ CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *si
     keywords_.add("Control", siteKeywords_[2], "K", "Site that represents 'k' in the angle i-j-k");
 }
 
-CalculateAngleProcedureNode::~CalculateAngleProcedureNode() {}
-
 /*
  * Observable Target
  */

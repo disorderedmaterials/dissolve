@@ -26,8 +26,6 @@ DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent)
                   "Define one or more Elements to include in this site");
 }
 
-DynamicSiteProcedureNode::~DynamicSiteProcedureNode() {}
-
 /*
  * Identity
  */

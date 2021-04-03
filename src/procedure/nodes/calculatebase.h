@@ -17,7 +17,7 @@ class CalculateProcedureNodeBase : public ProcedureNode
     CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0 = nullptr,
                                SelectProcedureNode *site1 = nullptr, SelectProcedureNode *site2 = nullptr,
                                SelectProcedureNode *site3 = nullptr);
-    virtual ~CalculateProcedureNodeBase();
+    virtual ~CalculateProcedureNodeBase() override = default;
 
     /*
      * Identity

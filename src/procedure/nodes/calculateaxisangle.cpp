@@ -26,8 +26,6 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedure
                   "Axis to use from site J");
 }
 
-CalculateAxisAngleProcedureNode::~CalculateAxisAngleProcedureNode() {}
-
 /*
  * Observable Target
  */

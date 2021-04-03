@@ -16,7 +16,7 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
     public:
     CalculateAxisAngleProcedureNode(SelectProcedureNode *site0 = nullptr, OrientedSite::SiteAxis axis0 = OrientedSite::XAxis,
                                     SelectProcedureNode *site1 = nullptr, OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
-    ~CalculateAxisAngleProcedureNode();
+    ~CalculateAxisAngleProcedureNode() override = default;
 
     /*
      * Data

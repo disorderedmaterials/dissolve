@@ -13,8 +13,6 @@ OperateMultiplyProcedureNode::OperateMultiplyProcedureNode()
     keywords_.add("Control", new NodeValueKeyword(this, 1.0), "Value", "Constant value to use as the multiplier");
 }
 
-OperateMultiplyProcedureNode::~OperateMultiplyProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

@@ -12,8 +12,6 @@ ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode
     keywords_.add("Control", new ExpressionVariableVectorKeyword(this, parameters_), "Parameter", "Defined parameters");
 }
 
-ParametersProcedureNode::~ParametersProcedureNode() {}
-
 /*
  * Identity
  */

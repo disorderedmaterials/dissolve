@@ -12,8 +12,6 @@ OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeT
     targetData3D_ = nullptr;
 }
 
-OperateProcedureNodeBase::~OperateProcedureNodeBase() {}
-
 /*
  * Identity
  */

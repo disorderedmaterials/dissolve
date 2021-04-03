@@ -14,7 +14,7 @@ class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
     public:
     OperateNormaliseProcedureNode(double value = 1.0);
     OperateNormaliseProcedureNode(int value);
-    ~OperateNormaliseProcedureNode();
+    ~OperateNormaliseProcedureNode() override = default;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

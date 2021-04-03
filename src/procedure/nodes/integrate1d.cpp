@@ -28,8 +28,6 @@ Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode 
                   "X range for third integration region");
 }
 
-Integrate1DProcedureNode::~Integrate1DProcedureNode() {}
-
 /*
  * Identity
  */

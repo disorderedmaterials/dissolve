@@ -23,8 +23,6 @@ Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : Procedu
     saveData_ = false;
 }
 
-Fit1DProcedureNode::~Fit1DProcedureNode() {}
-
 /*
  * Identity
  */

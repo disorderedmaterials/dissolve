@@ -23,7 +23,7 @@ class Collect3DProcedureNode : public ProcedureNode
     Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin = 0.0, double xMax = 10.0,
                            double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
                            double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
-    ~Collect3DProcedureNode();
+    ~Collect3DProcedureNode() override = default;
 
     /*
      * Identity

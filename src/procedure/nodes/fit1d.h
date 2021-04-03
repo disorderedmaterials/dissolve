@@ -21,7 +21,7 @@ class Fit1DProcedureNode : public ProcedureNode
 {
     public:
     Fit1DProcedureNode(Collect1DProcedureNode *target = nullptr);
-    ~Fit1DProcedureNode();
+    ~Fit1DProcedureNode() override = default;
 
     /*
      * Identity

@@ -12,8 +12,6 @@ OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeB
     keywords_.add("Control", new NodeValueKeyword(this, 1.0), "Value", "Constant value to use as the divisor");
 }
 
-OperateDivideProcedureNode::~OperateDivideProcedureNode() {}
-
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */

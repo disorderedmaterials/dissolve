@@ -14,7 +14,7 @@ class CalculateDistanceProcedureNode : public CalculateProcedureNodeBase
 {
     public:
     CalculateDistanceProcedureNode(SelectProcedureNode *site0 = nullptr, SelectProcedureNode *site1 = nullptr);
-    ~CalculateDistanceProcedureNode();
+    ~CalculateDistanceProcedureNode() override = default;
 
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)

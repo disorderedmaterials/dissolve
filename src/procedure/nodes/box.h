@@ -16,7 +16,7 @@ class BoxProcedureNode : public ProcedureNode
     public:
     BoxProcedureNode(Vec3<double> lengths = Vec3<double>(1.0, 1.0, 1.0), Vec3<double> angles = Vec3<double>(90, 90, 90),
                      bool nonPeriodic = false);
-    ~BoxProcedureNode();
+    ~BoxProcedureNode() override = default;
 
     /*
      * Identity

@@ -32,8 +32,6 @@ Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *tar
     processedData_ = nullptr;
 }
 
-Process3DProcedureNode::~Process3DProcedureNode() {}
-
 /*
  * Identity
  */

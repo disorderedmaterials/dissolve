@@ -29,8 +29,6 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
     subCollectBranch_ = nullptr;
 }
 
-Collect1DProcedureNode::~Collect1DProcedureNode() {}
-
 /*
  * Identity
  */

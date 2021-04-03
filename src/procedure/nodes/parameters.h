@@ -15,7 +15,7 @@ class ParametersProcedureNode : public ProcedureNode
 {
     public:
     ParametersProcedureNode();
-    ~ParametersProcedureNode();
+    ~ParametersProcedureNode() override = default;
 
     /*
      * Identity

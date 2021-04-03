@@ -19,8 +19,6 @@ CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNo
     keywords_.add("Control", siteKeywords_[1], "J", "Site that represents 'j' in the distance i-j");
 }
 
-CalculateDistanceProcedureNode::~CalculateDistanceProcedureNode() {}
-
 /*
  * Observable Target
  */

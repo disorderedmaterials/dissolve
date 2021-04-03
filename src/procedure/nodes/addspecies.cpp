@@ -31,8 +31,6 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue populati
                   "Positioning", "Positioning type for individual molecules");
 }
 
-AddSpeciesProcedureNode::~AddSpeciesProcedureNode() {}
-
 /*
  * Identity
  */

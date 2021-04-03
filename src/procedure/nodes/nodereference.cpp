@@ -15,8 +15,6 @@ ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<P
     analyseModuleParent_ = nullptr;
 }
 
-ProcedureNodeReference::~ProcedureNodeReference() {}
-
 /*
  * Data
  */

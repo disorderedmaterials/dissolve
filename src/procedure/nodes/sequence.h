@@ -16,7 +16,7 @@ class SequenceProcedureNode : public ProcedureNode
     public:
     SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, ProcedureNode *parentNode = nullptr,
                           std::string_view blockTerminationKeyword = "");
-    ~SequenceProcedureNode();
+    ~SequenceProcedureNode() override;
 
     /*
      * Identity

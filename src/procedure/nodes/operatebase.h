@@ -17,7 +17,7 @@ class OperateProcedureNodeBase : public ProcedureNode
 {
     public:
     OperateProcedureNodeBase(ProcedureNode::NodeType nodeType);
-    virtual ~OperateProcedureNodeBase();
+    virtual ~OperateProcedureNodeBase() override = default;
 
     /*
      * Identity

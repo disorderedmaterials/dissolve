@@ -15,7 +15,7 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
     public:
     CalculateVectorProcedureNode(SelectProcedureNode *site0 = nullptr, SelectProcedureNode *site1 = nullptr,
                                  bool rotateIntoFrame = false);
-    ~CalculateVectorProcedureNode();
+    ~CalculateVectorProcedureNode() override = default;
 
     /*
      * Data
