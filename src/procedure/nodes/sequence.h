@@ -23,7 +23,7 @@ class SequenceProcedureNode : public ProcedureNode
      */
     public:
     // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context);
+    bool isContextRelevant(ProcedureNode::NodeContext context) override;
 
     /*
      * Node Keywords
@@ -104,12 +104,12 @@ class SequenceProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
     // Execute node, targetting the supplied Configuration
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                               GenericList &targetList);
+                                               GenericList &targetList) override;
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 
     /*
      * Read / Write

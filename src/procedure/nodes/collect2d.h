@@ -26,7 +26,7 @@ class Collect2DProcedureNode : public ProcedureNode
      */
     public:
     // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context);
+    bool isContextRelevant(ProcedureNode::NodeContext context) override;
 
     /*
      * Data
@@ -70,19 +70,19 @@ class Collect2DProcedureNode : public ProcedureNode
     // Add and return subcollection sequence branch
     SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
     // Return whether this node has a branch
-    bool hasBranch() const;
+    bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch();
+    SequenceProcedureNode *branch() override;
 
     /*
      * Execute
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
     // Execute node, targetting the supplied Configuration
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                               GenericList &targetList);
+                                               GenericList &targetList) override;
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 };
