@@ -138,9 +138,6 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
                 return Messenger::error("Failed to cast dataNode_ into a Process1DProcedureNode.\n");
             referenceData_ = process1DNode->processedData();
             break;
-        case (ProcedureNode::nNodeTypes):
-            return Messenger::error("No node type set in Fit1DProcedureNode::finalise().\n");
-            break;
         default:
             return Messenger::error("No suitable data to extract from a node of type '{}'.\n",
                                     ProcedureNode::nodeTypes().keyword(dataNode_.type()));

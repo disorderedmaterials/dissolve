@@ -70,7 +70,7 @@ int SequenceProcedureNode::nNodes() const { return sequence_.nItems(); }
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
 ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, ProcedureNode *excludeNode,
-                                                  ProcedureNode::NodeType nt) const
+                                                  std::optional<ProcedureNode::NodeType> optNodeType) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
@@ -81,9 +81,7 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
             if (DissolveSys::sameString(node->name(), name))
             {
                 // Check type
-                if (nt == ProcedureNode::nNodeTypes)
-                    return node;
-                else if (node->type() == nt)
+                if (!optNodeType || optNodeType.value() == node->type())
                     return node;
             }
         }
@@ -91,7 +89,7 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
         // If the node has a branch, descend into it
         if (node->hasBranch())
         {
-            ProcedureNode *result = node->branch()->searchNodes(name, excludeNode, nt);
+            ProcedureNode *result = node->branch()->searchNodes(name, excludeNode, optNodeType);
             if (result)
                 return result;
         }
@@ -131,7 +129,7 @@ const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const { return context_; }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-ProcedureNode *SequenceProcedureNode::node(std::string_view name, ProcedureNode::NodeType nt) const
+ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
@@ -139,16 +137,14 @@ ProcedureNode *SequenceProcedureNode::node(std::string_view name, ProcedureNode:
         if (DissolveSys::sameString(node->name(), name))
         {
             // Check type
-            if (nt == ProcedureNode::nNodeTypes)
-                return node;
-            else if (node->type() == nt)
+            if (!optNodeType || optNodeType.value() == node->type())
                 return node;
         }
 
         // If the node has a branch, recurse in to that
         if (node->hasBranch())
         {
-            ProcedureNode *branchNode = node->branch()->node(name, nt);
+            ProcedureNode *branchNode = node->branch()->node(name, optNodeType);
             if (branchNode)
                 return branchNode;
         }
@@ -158,7 +154,8 @@ ProcedureNode *SequenceProcedureNode::node(std::string_view name, ProcedureNode:
 }
 
 // Return list of nodes of specified type present in the Procedure
-RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode *queryingNode, ProcedureNode::NodeType nt)
+RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode *queryingNode,
+                                                    std::optional<ProcedureNode::NodeType> optNodeType)
 {
     RefList<ProcedureNode> matches;
 
@@ -166,15 +163,13 @@ RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode *queryingNode,
     while (ProcedureNode *node = nodeIterator.iterate())
     {
         // Check type
-        if (nt == ProcedureNode::nNodeTypes)
-            matches.append(node);
-        else if (node->type() == nt)
+        if (!optNodeType || optNodeType.value() == node->type())
             matches.append(node);
 
         // If the node has a branch, recurse in to that
         if (node->hasBranch())
         {
-            RefList<ProcedureNode> branchNodes = node->branch()->nodes(node, nt);
+            RefList<ProcedureNode> branchNodes = node->branch()->nodes(node, optNodeType);
             matches += branchNodes;
         }
     }
@@ -184,7 +179,7 @@ RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode *queryingNode,
 
 // Return named node if it is currently in scope, and optionally matches the type given
 ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, std::string_view name,
-                                                  ProcedureNode::NodeType nt)
+                                                  std::optional<ProcedureNode::NodeType> optNodeType)
 {
     // Is this node present in our own sequence?
     if (queryingNode && (!sequence_.contains(queryingNode)))
@@ -200,23 +195,22 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, s
         if (DissolveSys::sameString(node->name(), name))
         {
             // Check type
-            if (nt == ProcedureNode::nNodeTypes)
-                return node;
-            else if (node->type() == nt)
+            if (!optNodeType || optNodeType.value() == node->type())
                 return node;
         }
     }
 
     // Not in our list. Recursively check our parent(s)
     if (parentNode_)
-        return parentNode_->nodeInScope(name, nt);
+        return parentNode_->nodeInScope(name, optNodeType);
 
     // Not found
     return nullptr;
 }
 
-// Return list of nodes of specified type present in scope
-RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryingNode, ProcedureNode::NodeType nt)
+// Return list of nodes of optional specified type present in scope
+RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryingNode,
+                                                           std::optional<ProcedureNode::NodeType> optNodeType)
 {
     // Is this node present in our own sequence?
     if (queryingNode && (!sequence_.contains(queryingNode)))
@@ -232,29 +226,27 @@ RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryi
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
         // Check type
-        if (nt == ProcedureNode::nNodeTypes)
-            matches.append(node);
-        else if (node->type() == nt)
+        if (!optNodeType || optNodeType.value() == node->type())
             matches.append(node);
     }
 
     // Not in our list. Recursively check our parent(s)
     if (parentNode_)
-        matches += parentNode_->nodesInScope(nt);
+        matches += parentNode_->nodesInScope(optNodeType);
 
     return matches;
 }
 
 // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
 ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
-                                                 ProcedureNode::NodeType nt) const
+                                                 std::optional<ProcedureNode::NodeType> optNodeType) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)
-        return parentNode_->scope()->nodeExists(name, excludeNode, nt);
+        return parentNode_->scope()->nodeExists(name, excludeNode, optNodeType);
 
     // No parent node, so we must be the topmost sequence - run the search from here
-    return searchNodes(name, excludeNode, nt);
+    return searchNodes(name, excludeNode, optNodeType);
 }
 
 // Return the named parameter if it is currently in scope
@@ -498,9 +490,6 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::SequenceNode):
                 /* This should never be called */
                 newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
-                break;
-            case (ProcedureNode::nNodeTypes):
-                return Messenger::error("Unrecognised procedure node type '{}' found.\n", parser.argsv(0));
                 break;
             default:
                 return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '{}'.\n",

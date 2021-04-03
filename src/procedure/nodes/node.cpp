@@ -137,30 +137,31 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 }
 
 // Return named node if it is currently in scope, and optionally matches the type given
-ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, ProcedureNode::NodeType nt)
+ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType)
 {
     if (!scope_)
         return nullptr;
 
-    return scope_->nodeInScope(this, name, nt);
+    return scope_->nodeInScope(this, name, optNodeType);
 }
 
-// Return list of nodes of specified type present in this node's scope
-RefList<ProcedureNode> ProcedureNode::nodesInScope(ProcedureNode::NodeType nt)
+// Return list of nodes of optional specified type present in this node's scope
+RefList<ProcedureNode> ProcedureNode::nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType)
 {
     if (!scope_)
         return RefList<ProcedureNode>();
 
-    return scope_->nodesInScope(this, nt);
+    return scope_->nodesInScope(this, optNodeType);
 }
 
 // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode, ProcedureNode::NodeType nt) const
+ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
+                                         std::optional<ProcedureNode::NodeType> optNodeType) const
 {
     if (!scope_)
         return nullptr;
 
-    return scope_->nodeExists(name, excludeNode, nt);
+    return scope_->nodeExists(name, excludeNode, optNodeType);
 }
 
 // Return list of nodes of specified type present in the Procedure

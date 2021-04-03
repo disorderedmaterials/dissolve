@@ -26,7 +26,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
     // Parent AnalyseModule owning the node (if relevant)
     AnalyseModule *analyseModuleParent_;
     // Allowable node types (when reading / setting)
-    bool allowedTypes_[ProcedureNode::nNodeTypes];
+    std::vector<ProcedureNode::NodeType> allowedTypes_;
 
     public:
     // Return target node
@@ -35,8 +35,6 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
     ProcedureNode::NodeType type() const;
     // Add allowable node type
     void addAllowableNodeType(ProcedureNode::NodeType nt);
-    // Allow all node types
-    void setAllowAllNodeTypes();
     // Return if node pointer is NULL
     bool isNull() const;
 

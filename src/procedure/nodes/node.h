@@ -59,8 +59,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Process3DNode,
         SelectNode,
         SequenceNode,
-        Sum1DNode,
-        nNodeTypes
+        Sum1DNode
     };
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();
@@ -139,12 +138,12 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node if it is currently in scope, and optionally matches the type given
-    ProcedureNode *nodeInScope(std::string_view name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
-    // Return list of nodes of specified type present in this node's scope
-    RefList<ProcedureNode> nodesInScope(ProcedureNode::NodeType nt);
+    ProcedureNode *nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
+    // Return list of nodes of optional specified type present in this node's scope
+    RefList<ProcedureNode> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
     ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
-                              ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+                              std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
     // Return list of nodes of specified type present in the Procedure
     RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
     // Return the named parameter if it is currently in scope
