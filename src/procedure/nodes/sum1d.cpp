@@ -98,9 +98,3 @@ ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &proc
 
     return ProcedureNode::Success;
 }
-
-// Finalise any necessary data after execution
-bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
-{
-    return true;
-}

@@ -160,10 +160,3 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
 
     return ProcedureNode::Success;
 }
-
-// Finalise any necessary data after execution
-bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                      GenericList &targetList)
-{
-    return true;
-}

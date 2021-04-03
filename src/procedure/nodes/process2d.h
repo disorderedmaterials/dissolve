@@ -69,6 +69,4 @@ class Process2DProcedureNode : public ProcedureNode
     // Execute node, targetting the supplied Configuration
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                                GenericList &targetList) override;
-    // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 };

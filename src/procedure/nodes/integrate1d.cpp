@@ -85,10 +85,3 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
 
     return ProcedureNode::Success;
 }
-
-// Finalise any necessary data after execution
-bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                        GenericList &targetList)
-{
-    return true;
-}
