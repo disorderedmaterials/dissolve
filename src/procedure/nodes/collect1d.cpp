@@ -12,12 +12,12 @@
 
 Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax,
                                                double binWidth)
-    : ProcedureNode(ProcedureNode::Collect1DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Collect1D)
 {
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, observable, 0),
-        "QuantityX", "Calculated observable to collect");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        observable, 0),
+                  "QuantityX", "Calculated observable to collect");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxBinwidthlabels),

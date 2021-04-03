@@ -14,20 +14,20 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
                                                CalculateProcedureNodeBase *zObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
-    : ProcedureNode(ProcedureNode::Collect3DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Collect3D)
 {
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0),
-        "QuantityX", "Calculated observable to collect for x axis");
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0),
-        "QuantityY", "Calculated observable to collect for y axis");
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, zObservable, 0),
-        "QuantityZ", "Calculated observable to collect for z axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        xObservable, 0),
+                  "QuantityX", "Calculated observable to collect for x axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        yObservable, 0),
+                  "QuantityY", "Calculated observable to collect for y axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        zObservable, 0),
+                  "QuantityZ", "Calculated observable to collect for z axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
@@ -49,20 +49,20 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
 Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
-    : ProcedureNode(ProcedureNode::Collect3DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Collect3D)
 {
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xyzObservable, 0),
-        "QuantityX", "Calculated observable to collect for x axis");
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xyzObservable, 1),
-        "QuantityY", "Calculated observable to collect for y axis");
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xyzObservable, 2),
-        "QuantityZ", "Calculated observable to collect for z axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        xyzObservable, 0),
+                  "QuantityX", "Calculated observable to collect for x axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        xyzObservable, 1),
+                  "QuantityY", "Calculated observable to collect for y axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        xyzObservable, 2),
+                  "QuantityZ", "Calculated observable to collect for z axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),

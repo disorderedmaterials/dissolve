@@ -11,21 +11,21 @@
 #include "procedure/nodes/select.h"
 
 OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode()
-    : OperateProcedureNodeBase(ProcedureNode::OperateNumberDensityNormaliseNode)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise)
 {
     // Create keywords - store the pointers to the superclasses for later use
     keywords_.add("Control",
-                  new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_),
+                  new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::NodeType::Select, false, selectNodes_),
                   "Site", "Site(s) by which to normalise data based on their population");
 }
 
 OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(
     RefList<const SelectProcedureNode> selectNodes)
-    : OperateProcedureNodeBase(ProcedureNode::OperateNumberDensityNormaliseNode)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise)
 {
     // Create keywords - store the pointers to the superclasses for later use
     keywords_.add("Control",
-                  new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_),
+                  new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::NodeType::Select, false, selectNodes_),
                   "Site", "Site(s) by which to normalise data based on their population");
 
     selectNodes_ = selectNodes;

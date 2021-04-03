@@ -7,7 +7,7 @@
 #include "expression/variable.h"
 #include "keywords/types.h"
 
-ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
+ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Parameters)
 {
     keywords_.add("Control", new ExpressionVariableVectorKeyword(this, parameters_), "Parameter", "Defined parameters");
 }

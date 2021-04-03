@@ -7,7 +7,8 @@
 #include "keywords/types.h"
 #include "math/data1d.h"
 
-OperateMultiplyProcedureNode::OperateMultiplyProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateMultiplyNode)
+OperateMultiplyProcedureNode::OperateMultiplyProcedureNode()
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateMultiply)
 {
     keywords_.add("Control", new NodeValueKeyword(this, 1.0), "Value", "Constant value to use as the multiplier");
 }

@@ -15,9 +15,10 @@
 #include "procedure/nodes/select.h"
 
 Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::Integrate1DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Integrate1D)
 {
-    keywords_.add("Control", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
+    keywords_.add("Control",
+                  new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::NodeType::Process1D, false, target),
                   "SourceData", "Process1D node containing the data to integrate");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first integration region");

@@ -13,16 +13,16 @@
 Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable,
                                                double xMin, double xMax, double xBinWidth, double yMin, double yMax,
                                                double yBinWidth)
-    : ProcedureNode(ProcedureNode::Collect2DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Collect2D)
 {
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0),
-        "QuantityX", "Calculated observable to collect for x axis");
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0),
-        "QuantityY", "Calculated observable to collect for y axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        xObservable, 0),
+                  "QuantityX", "Calculated observable to collect for x axis");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        yObservable, 0),
+                  "QuantityY", "Calculated observable to collect for y axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxBinwidthlabels),

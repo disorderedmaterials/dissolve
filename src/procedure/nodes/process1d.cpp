@@ -15,9 +15,10 @@
 #include "procedure/nodes/select.h"
 
 Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::Process1DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Process1D)
 {
-    keywords_.add("Control", new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target),
+    keywords_.add("Control",
+                  new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::NodeType::Collect1D, false, target),
                   "SourceData", "Collect1D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
@@ -126,7 +127,7 @@ bool Process1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
         ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
         while (ProcedureNode *node = nodeIterator.iterate())
         {
-            if (!node->isType(ProcedureNode::OperateBaseNode))
+            if (!node->isType(ProcedureNode::NodeType::OperateBase))
                 continue;
 
             // Cast the node

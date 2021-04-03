@@ -12,9 +12,10 @@
 #include "procedure/nodes/select.h"
 
 Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::Process3DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Process3D)
 {
-    keywords_.add("Control", new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target),
+    keywords_.add("Control",
+                  new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::NodeType::Collect3D, false, target),
                   "SourceData", "Collect3D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
@@ -128,7 +129,7 @@ bool Process3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
         ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
         while (ProcedureNode *node = nodeIterator.iterate())
         {
-            if (!node->isType(ProcedureNode::OperateBaseNode))
+            if (!node->isType(ProcedureNode::NodeType::OperateBase))
                 continue;
 
             // Cast the node

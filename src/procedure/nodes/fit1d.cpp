@@ -11,9 +11,9 @@
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
 
-Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : ProcedureNode(ProcedureNode::Fit1DNode)
+Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : ProcedureNode(ProcedureNode::NodeType::Fit1D)
 {
-    dataNode_.addAllowableNodeType(ProcedureNode::Process1DNode);
+    dataNode_.addAllowableNodeType(ProcedureNode::NodeType::Process1D);
 
     // Create variables, and add them to the vector
     xVariable_ = std::make_shared<ExpressionVariable>("x");
@@ -126,13 +126,13 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     Process1DProcedureNode *process1DNode;
     switch (dataNode_.type())
     {
-        case (ProcedureNode::Collect1DNode):
+        case (ProcedureNode::NodeType::Collect1D):
             collect1DNode = dynamic_cast<Collect1DProcedureNode *>(dataNode_.node());
             if (collect1DNode)
                 return Messenger::error("Failed to cast dataNode_ into a Collect1DProcedureNode.\n");
             referenceData_ = collect1DNode->accumulatedData();
             break;
-        case (ProcedureNode::Process1DNode):
+        case (ProcedureNode::NodeType::Process1D):
             process1DNode = dynamic_cast<Process1DProcedureNode *>(dataNode_.node());
             if (process1DNode)
                 return Messenger::error("Failed to cast dataNode_ into a Process1DProcedureNode.\n");

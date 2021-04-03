@@ -10,12 +10,12 @@
 #include "procedure/nodes/select.h"
 
 CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1)
-    : CalculateProcedureNodeBase(ProcedureNode::CalculateDistanceNode, site0, site1)
+    : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateDistance, site0, site1)
 {
     // Create keywords - store the pointers to the superclasses for later use
-    siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
+    siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true, site0);
     keywords_.add("Control", siteKeywords_[0], "I", "Site that represents 'i' in the distance i-j");
-    siteKeywords_[1] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site1);
+    siteKeywords_[1] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true, site1);
     keywords_.add("Control", siteKeywords_[1], "J", "Site that represents 'j' in the distance i-j");
 }
 

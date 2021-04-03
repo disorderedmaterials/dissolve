@@ -15,7 +15,8 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) : ProcedureNode(ProcedureNode::DynamicSiteNode)
+DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent)
+    : ProcedureNode(ProcedureNode::NodeType::DynamicSite)
 {
     parent_ = parent;
 

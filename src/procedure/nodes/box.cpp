@@ -9,7 +9,7 @@
 #include "keywords/types.h"
 
 BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic)
-    : ProcedureNode(ProcedureNode::BoxNode)
+    : ProcedureNode(ProcedureNode::NodeType::Box)
 {
     keywords_.add("Control", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
     keywords_.add("Control", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");

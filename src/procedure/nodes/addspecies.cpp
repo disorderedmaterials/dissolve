@@ -12,7 +12,7 @@
 
 AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue population, NodeValue density,
                                                  Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::AddSpeciesNode)
+    : ProcedureNode(ProcedureNode::NodeType::AddSpecies)
 {
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");

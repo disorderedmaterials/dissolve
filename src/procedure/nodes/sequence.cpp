@@ -8,7 +8,7 @@
 
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure,
                                              ProcedureNode *parentNode, std::string_view blockTerminationKeyword)
-    : ProcedureNode(ProcedureNode::SequenceNode)
+    : ProcedureNode(ProcedureNode::NodeType::Sequence)
 {
     context_ = context;
     procedure_ = procedure;
@@ -415,79 +415,79 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argsv(0));
         switch (nt)
         {
-            case (ProcedureNode::AddSpeciesNode):
+            case (ProcedureNode::NodeType::AddSpecies):
                 newNode = new AddSpeciesProcedureNode();
                 break;
-            case (ProcedureNode::BoxNode):
+            case (ProcedureNode::NodeType::Box):
                 newNode = new BoxProcedureNode();
                 break;
-            case (ProcedureNode::CalculateAngleNode):
+            case (ProcedureNode::NodeType::CalculateAngle):
                 newNode = new CalculateAngleProcedureNode();
                 break;
-            case (ProcedureNode::CalculateDistanceNode):
+            case (ProcedureNode::NodeType::CalculateDistance):
                 newNode = new CalculateDistanceProcedureNode();
                 break;
-            case (ProcedureNode::CalculateBaseNode):
+            case (ProcedureNode::NodeType::CalculateBase):
                 /* This should never be called */
                 return Messenger::error("Can't create a node of CalculateBase type directly - create the "
                                         "parent node instead.\n");
                 break;
-            case (ProcedureNode::CalculateVectorNode):
+            case (ProcedureNode::NodeType::CalculateVector):
                 newNode = new CalculateVectorProcedureNode();
                 break;
-            case (ProcedureNode::Collect1DNode):
+            case (ProcedureNode::NodeType::Collect1D):
                 newNode = new Collect1DProcedureNode();
                 break;
-            case (ProcedureNode::Collect2DNode):
+            case (ProcedureNode::NodeType::Collect2D):
                 newNode = new Collect2DProcedureNode();
                 break;
-            case (ProcedureNode::Collect3DNode):
+            case (ProcedureNode::NodeType::Collect3D):
                 newNode = new Collect3DProcedureNode();
                 break;
-            case (ProcedureNode::Fit1DNode):
+            case (ProcedureNode::NodeType::Fit1D):
                 newNode = new Fit1DProcedureNode();
                 break;
-            case (ProcedureNode::OperateBaseNode):
+            case (ProcedureNode::NodeType::OperateBase):
                 /* This should never be called */
                 return Messenger::error("Can't create a node of OperateBase type directly - create the parent node instead.\n");
                 break;
-            case (ProcedureNode::OperateDivideNode):
+            case (ProcedureNode::NodeType::OperateDivide):
                 newNode = new OperateDivideProcedureNode();
                 break;
-            case (ProcedureNode::OperateExpressionNode):
+            case (ProcedureNode::NodeType::OperateExpression):
                 newNode = new OperateExpressionProcedureNode();
                 break;
-            case (ProcedureNode::OperateMultiplyNode):
+            case (ProcedureNode::NodeType::OperateMultiply):
                 newNode = new OperateMultiplyProcedureNode();
                 break;
-            case (ProcedureNode::OperateNormaliseNode):
+            case (ProcedureNode::NodeType::OperateNormalise):
                 newNode = new OperateNormaliseProcedureNode();
                 break;
-            case (ProcedureNode::OperateNumberDensityNormaliseNode):
+            case (ProcedureNode::NodeType::OperateNumberDensityNormalise):
                 newNode = new OperateNumberDensityNormaliseProcedureNode();
                 break;
-            case (ProcedureNode::OperateSitePopulationNormaliseNode):
+            case (ProcedureNode::NodeType::OperateSitePopulationNormalise):
                 newNode = new OperateSitePopulationNormaliseProcedureNode();
                 break;
-            case (ProcedureNode::OperateSphericalShellNormaliseNode):
+            case (ProcedureNode::NodeType::OperateSphericalShellNormalise):
                 newNode = new OperateSphericalShellNormaliseProcedureNode();
                 break;
-            case (ProcedureNode::ParametersNode):
+            case (ProcedureNode::NodeType::Parameters):
                 newNode = new ParametersProcedureNode();
                 break;
-            case (ProcedureNode::Process1DNode):
+            case (ProcedureNode::NodeType::Process1D):
                 newNode = new Process1DProcedureNode();
                 break;
-            case (ProcedureNode::Process2DNode):
+            case (ProcedureNode::NodeType::Process2D):
                 newNode = new Process2DProcedureNode();
                 break;
-            case (ProcedureNode::Process3DNode):
+            case (ProcedureNode::NodeType::Process3D):
                 newNode = new Process3DProcedureNode();
                 break;
-            case (ProcedureNode::SelectNode):
+            case (ProcedureNode::NodeType::Select):
                 newNode = new SelectProcedureNode();
                 break;
-            case (ProcedureNode::SequenceNode):
+            case (ProcedureNode::NodeType::Sequence):
                 /* This should never be called */
                 newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
                 break;
