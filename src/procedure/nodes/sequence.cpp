@@ -181,13 +181,8 @@ RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode *queryingNode,
 ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, std::string_view name,
                                                   std::optional<ProcedureNode::NodeType> optNodeType)
 {
-    // Is this node present in our own sequence?
-    if (queryingNode && (!sequence_.contains(queryingNode)))
-    {
-        Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodeInScope() is not a member "
-                         "of this sequence.\n");
-        return nullptr;
-    }
+    if (queryingNode)
+        assert(sequence_.contains(queryingNode));
 
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
@@ -212,13 +207,8 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, s
 RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryingNode,
                                                            std::optional<ProcedureNode::NodeType> optNodeType)
 {
-    // Is this node present in our own sequence?
-    if (queryingNode && (!sequence_.contains(queryingNode)))
-    {
-        Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodesInScope() is not a "
-                         "member of this sequence.\n");
-        return RefList<ProcedureNode>();
-    }
+    if (queryingNode)
+        assert(sequence_.contains(queryingNode));
 
     RefList<ProcedureNode> matches;
 
@@ -254,13 +244,8 @@ std::shared_ptr<ExpressionVariable>
 SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
                                         std::shared_ptr<ExpressionVariable> excludeParameter)
 {
-    // Is this node present in our own sequence?
-    if (queryingNode && (!sequence_.contains(queryingNode)))
-    {
-        Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parameterInScope() is not a "
-                         "member of this sequence.\n");
-        return nullptr;
-    }
+    if (queryingNode)
+        assert(sequence_.contains(queryingNode));
 
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
@@ -293,13 +278,8 @@ SequenceProcedureNode::parameterExists(std::string_view name, std::shared_ptr<Ex
 // Create and return reference list of parameters in scope
 std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(ProcedureNode *queryingNode)
 {
-    // Is this node present in our own sequence?
-    if (queryingNode && (!sequence_.contains(queryingNode)))
-    {
-        Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parametersInScope() is not a "
-                         "member of this sequence.\n");
-        return {};
-    }
+    if (queryingNode)
+        assert(sequence_.contains(queryingNode));
 
     std::vector<std::shared_ptr<ExpressionVariable>> parameters;
 
