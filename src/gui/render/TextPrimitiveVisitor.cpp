@@ -23,7 +23,7 @@ EnumOptions<TextPrimitiveVisitor::EscapedFormatter> TextPrimitiveVisitor::escape
 // Return the topmost format in the stack
 const TextFormat &TextPrimitiveVisitor::currentFormat() const
 {
-    assert(formatStack_.size() != 0);
+    assert(!formatStack_.empty());
 
     return formatStack_.back();
 }
