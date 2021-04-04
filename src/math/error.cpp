@@ -52,15 +52,11 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
-    // Grab x and y arrays from data A
-    const auto &aX = A.xAxis();
-    const auto &aY = A.values();
-
     // Generate RMSE at x values of A
     auto rmse = 0.0, firstX = 0.0, lastX = 0.0;
     double delta;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(aX, aY))
+    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
@@ -96,13 +92,9 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
-    // Grab x and y arrays from data A
-    const auto &aX = A.xAxis();
-    const auto &aY = A.values();
-
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(aX, aY))
+    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
@@ -141,18 +133,10 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
-    // Grab x and y arrays from data A
-    const auto &aX = A.xAxis();
-    const auto &aY = A.values();
-
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
-    double x, y;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < 1; ++n)
+    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -164,9 +148,6 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
         // Is this the first point considered?
         if (nPointsConsidered == 0)
             firstX = x;
-
-        // Get y reference value
-        y = aY[n];
 
         // Accumulate sum
         sum += atan(fabs((y - interpolatedB.y(x)) / y));
@@ -189,19 +170,11 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
-    // Grab x and y arrays from data A
-    const auto &aX = A.xAxis();
-    const auto &aY = A.values();
-
     // Calculate summed absolute error and absolute y value deviations from average
-    auto sume = 0.0, sumy = 0.0;
-    auto firstPoint = -1, lastPoint = -1;
-    double x, y;
-    for (auto n = 0; n < aX.size(); ++n)
+    auto sume = 0.0, sumy = 0.0, firstX = 0.0, lastX = 0.0;
+    auto nPointsConsidered = 0;
+    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -211,16 +184,15 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
             break;
 
         // Is this the first point considered?
-        if (firstPoint == -1)
-            firstPoint = n;
+        if (nPointsConsidered == 0)
+            firstX = x;
 
         // Get y reference value
-        y = aY[n];
-        sume += fabs(y - interpolatedB.y(aX[n]));
+        sume += fabs(y - interpolatedB.y(x));
         sumy += fabs(y);
 
-        // Update last point considered
-        lastPoint = n;
+        lastX = x;
+        ++nPointsConsidered;
     }
 
     // Calculate percentage error, avoiding divide-by-zero if the sum of y values is zero
@@ -230,10 +202,10 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
     {
         if (zeroSum)
             Messenger::print("Absolute squared error between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n",
-                             percentError, aX[firstPoint], aX[lastPoint], (lastPoint - firstPoint) + 1);
+                             percentError, firstX, lastX, nPointsConsidered);
         else
             Messenger::print("Percentage error between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n",
-                             percentError, aX[firstPoint], aX[lastPoint], (lastPoint - firstPoint) + 1);
+                             percentError, firstX, lastX, nPointsConsidered);
     }
 
     return percentError;
@@ -288,18 +260,11 @@ double euclidean(const Data1D &A, const Data1D &B, bool quiet)
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
-    // Grab x and y arrays from data A
-    const auto &aX = A.xAxis();
-    const auto &aY = A.values();
-
-    auto a2 = 0.0, a = 0.0, sos = 0.0, delta = 0.0;
+    auto y2 = 0.0, sos = 0.0, delta = 0.0;
     auto firstX = 0.0, lastX = 0.0, x = 0.0;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.size(); ++n)
+    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -312,21 +277,19 @@ double euclidean(const Data1D &A, const Data1D &B, bool quiet)
         if (nPointsConsidered == 0)
             firstX = x;
 
-        a = aY[n];
-
-        delta = a - interpolatedB.y(x);
+        delta = y - interpolatedB.y(x);
         sos += delta * delta;
-        a2 += a * a;
+        y2 += y * y;
 
         lastX = x;
         ++nPointsConsidered;
     }
 
     // Calculate final error and summarise result
-    auto euc = sos / sqrt(a2);
+    auto euc = sos / sqrt(y2);
     if (!quiet)
-        Messenger::print("Euclidean between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", euc, firstX,
-                         lastX, nPointsConsidered);
+        Messenger::print("Euclidean distance between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", euc,
+                         firstX, lastX, nPointsConsidered);
 
     return euc;
 }
