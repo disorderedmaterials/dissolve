@@ -10,10 +10,10 @@
 EnumOptions<TextPrimitiveVisitor::EscapedFormatter> TextPrimitiveVisitor::escapedFormatters()
 {
     return EnumOptions<TextPrimitiveVisitor::EscapedFormatter>("EscapedFormatter",
-                                                               {{TextPrimitiveVisitor::BoldFormatter, "b"},
-                                                                {TextPrimitiveVisitor::ItalicFormatter, "it"},
-                                                                {TextPrimitiveVisitor::SubScriptFormatter, "sub"},
-                                                                {TextPrimitiveVisitor::SuperScriptFormatter, "sup"}});
+                                                               {{TextPrimitiveVisitor::EscapedFormatter::Bold, "b"},
+                                                                {TextPrimitiveVisitor::EscapedFormatter::Italic, "it"},
+                                                                {TextPrimitiveVisitor::EscapedFormatter::SubScript, "sub"},
+                                                                {TextPrimitiveVisitor::EscapedFormatter::SuperScript, "sup"}});
 }
 
 /*
@@ -79,23 +79,22 @@ antlrcpp::Any TextPrimitiveVisitor::visitFormatter(TextPrimitiveParser::Formatte
 
     switch (formatter)
     {
-        case (TextPrimitiveVisitor::BoldFormatter):
+        case (TextPrimitiveVisitor::EscapedFormatter::Bold):
             format.setBold(true);
             break;
-        case (TextPrimitiveVisitor::ItalicFormatter):
+        case (TextPrimitiveVisitor::EscapedFormatter::Italic):
             format.setItalic(true);
             break;
-        case (TextPrimitiveVisitor::SubScriptFormatter):
+        case (TextPrimitiveVisitor::EscapedFormatter::SubScript):
             format.adjustY(-fontInstance_->fontBaseHeight() * format.scale() * (1.0 / 3.0));
             format.setScale(0.583 * format.scale());
             break;
-        case (TextPrimitiveVisitor::SuperScriptFormatter):
+        case (TextPrimitiveVisitor::EscapedFormatter::SuperScript):
             format.adjustY(fontInstance_->fontBaseHeight() * format.scale() * (2.0 / 3.0));
             format.setScale(0.583 * format.scale());
             break;
         default:
             throw(std::runtime_error("Unhandled formatting escape sequence found in text.\n"));
-            break;
     }
 
     // Push new format

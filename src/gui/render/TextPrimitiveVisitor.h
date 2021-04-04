@@ -18,13 +18,12 @@ class TextPrimitiveVisitor : TextPrimitiveParserBaseVisitor
 {
     public:
     // Escaped Formatters Enum
-    enum EscapedFormatter
+    enum class EscapedFormatter
     {
-        BoldFormatter,
-        ItalicFormatter,
-        SubScriptFormatter,
-        SuperScriptFormatter,
-        nEscapedFormatters
+        Bold,
+        Italic,
+        SubScript,
+        SuperScript
     };
     // Return enum options for EscapedFormatter
     static EnumOptions<TextPrimitiveVisitor::EscapedFormatter> escapedFormatters();
