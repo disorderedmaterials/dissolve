@@ -81,6 +81,17 @@ double FontInstance::fontBaseHeight() const { return fontBaseHeight_; }
 double FontInstance::fontFullHeight() const { return fontFullHeight_; }
 
 // Return bounding box for specified string
+FTBBox FontInstance::boundingBox(const QString &text) const
+{
+    if (!font_)
+        return FTBBox();
+
+    // Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with
+    // trailing spaces..
+    FTBBox box = font_->BBox(fmt::format(".{}.", qPrintable(text)).c_str());
+    return FTBBox(box.Lower(), FTPoint(box.Upper().X() - dotWidth_, box.Upper().Y()));
+}
+
 FTBBox FontInstance::boundingBox(std::string_view text) const
 {
     if (!font_)
@@ -103,25 +114,23 @@ double FontInstance::scaleFactor() const { return scaleFactor_; }
  */
 
 // Set face size
-bool FontInstance::setFaceSize(double faceSize)
+void FontInstance::setFaceSize(double faceSize)
 {
-    if (!font_)
-        return false;
-
-    font_->FaceSize(faceSize);
-
-    return true;
+    if (font_)
+        font_->FaceSize(faceSize);
 }
 
 // Render supplied text
-bool FontInstance::renderText(std::string text) const
+void FontInstance::renderText(const QString &text) const
 {
-    if (!font_)
-        return false;
+    if (font_)
+        font_->Render(qPrintable(text));
+}
 
-    font_->Render(text.c_str());
-
-    return true;
+void FontInstance::renderText(const std::string &text) const
+{
+    if (font_)
+        font_->Render(text.c_str());
 }
 
 /*
@@ -129,7 +138,7 @@ bool FontInstance::renderText(std::string text) const
  */
 
 // Calculate bounding box for specified string
-void FontInstance::boundingBox(std::string_view text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
+void FontInstance::boundingBox(const QString &text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
 {
     FTBBox box = boundingBox(text);
     lowerLeft.set(box.Lower().X(), box.Lower().Y(), box.Lower().Z());
@@ -139,14 +148,20 @@ void FontInstance::boundingBox(std::string_view text, Vec3<double> &lowerLeft, V
 }
 
 // Calculate bounding box width for specified string
+double FontInstance::boundingBoxWidth(const QString &text) const
+{
+    auto box = boundingBox(text);
+    return scaleFactor_ * (box.Upper().X() - box.Lower().X());
+}
+
 double FontInstance::boundingBoxWidth(std::string_view text) const
 {
-    FTBBox box = boundingBox(text);
+    auto box = boundingBox(text);
     return scaleFactor_ * (box.Upper().X() - box.Lower().X());
 }
 
 // Calculate bounding box height for specified string
-double FontInstance::boundingBoxHeight(std::string_view text) const
+double FontInstance::boundingBoxHeight(const QString &text) const
 {
     FTBBox box = boundingBox(text);
     return scaleFactor_ * (box.Upper().Y() - box.Lower().Y());

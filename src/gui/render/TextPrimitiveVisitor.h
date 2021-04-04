@@ -46,7 +46,7 @@ class TextPrimitiveVisitor : TextPrimitiveParserBaseVisitor
     // Return the topmost format in the stack
     const TextFormat &currentFormat() const;
     // Add new text fragment
-    void addText(std::string_view text, const TextFormat format);
+    void addText(const QString &text, const TextFormat format);
 
     public:
     // Construct description within supplied object, from given tree

@@ -48,7 +48,7 @@ std::vector<TextFragment> TextPrimitiveVisitor::create(TextPrimitiveParser::Prim
  */
 
 // Add new text fragment
-void TextPrimitiveVisitor::addText(std::string_view text, const TextFormat format)
+void TextPrimitiveVisitor::addText(const QString &text, const TextFormat format)
 {
     // Add new fragment using supplied format settings
     fragments_.emplace_back(text, format.scale(), Vec3<double>(horizontalPosition_, format.y(), 0.0), format.isItalic(),
@@ -64,7 +64,7 @@ void TextPrimitiveVisitor::addText(std::string_view text, const TextFormat forma
 
 antlrcpp::Any TextPrimitiveVisitor::visitPlainText(TextPrimitiveParser::PlainTextContext *ctx)
 {
-    addText(ctx->getText(), currentFormat());
+    addText(QString::fromStdString(ctx->getText()), currentFormat());
 
     return visitChildren(ctx);
 }

@@ -121,7 +121,7 @@ void SelectSymbolDialog::updateTable(bool force)
         {
             item = new QTableWidgetItem();
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            item->setText(QString::fromStdString(std::string(SymbolData::symbol((SymbolData::Symbol)n))));
+            item->setText(SymbolData::symbol((SymbolData::Symbol)n));
             item->setTextAlignment(Qt::AlignCenter);
             item->setData(Qt::UserRole, QVariant::fromValue(n));
             item->setSizeHint(itemSize);

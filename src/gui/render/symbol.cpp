@@ -9,9 +9,9 @@ namespace SymbolData
 {
 
 // Return symbol vector
-const std::vector<std::tuple<Symbol, std::string, std::string, std::string>> &symbols()
+const std::vector<std::tuple<Symbol, QString, QString, QString>> &symbols()
 {
-    static std::vector<std::tuple<Symbol, std::string, std::string, std::string>> symbolData = {
+    static std::vector<std::tuple<Symbol, QString, QString, QString>> symbolData = {
         {MultiplySymbol, "mult", "\u00D7", "Multiplication Sign"},
         {DivisionSymbol, "div", "\u00F7", "Division Sign"},
         {AngstromSymbol, "angstrom", "\u212B", "Angstrom"},
@@ -71,8 +71,8 @@ const std::vector<std::tuple<Symbol, std::string, std::string, std::string>> &sy
 // Return enumeration for named symbol
 Symbol symbol(std::string_view name)
 {
-    auto it = std::find_if(symbols().begin(), symbols().end(),
-                           [&name](auto &sym) { return DissolveSys::sameString(std::get<1>(sym), name, true); });
+    auto it =
+        std::find_if(symbols().begin(), symbols().end(), [&name](auto &sym) { return name == qPrintable(std::get<1>(sym)); });
 
     if (it == symbols().end())
         return nSymbols;
@@ -81,16 +81,15 @@ Symbol symbol(std::string_view name)
 }
 
 // Return symbol string
-std::string_view symbol(Symbol sym) { return std::get<2>(symbols()[sym]); }
+QString symbol(Symbol sym) { return std::get<2>(symbols()[sym]); }
 
 // Return symbol description
-std::string_view description(Symbol sym) { return std::get<3>(symbols()[sym]); }
+QString description(Symbol sym) { return std::get<3>(symbols()[sym]); }
 
 // Return first symbol whose description contains the search text
-Symbol firstDescriptionMatch(std::string_view text)
+Symbol firstDescriptionMatch(QString text)
 {
-    auto it = std::find_if(symbols().begin(), symbols().end(),
-                           [&text](auto &sym) { return std::get<3>(sym).find(text) != std::string::npos; });
+    auto it = std::find_if(symbols().begin(), symbols().end(), [&text](auto &sym) { return std::get<3>(sym).contains(text); });
     if (it == symbols().end())
         return nSymbols;
 

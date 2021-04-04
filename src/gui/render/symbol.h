@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <QString>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -69,13 +70,13 @@ enum Symbol
 };
 
 // Return symbol vector
-const std::vector<std::tuple<Symbol, std::string, std::string, std::string>> &symbols();
+const std::vector<std::tuple<Symbol, QString, QString, QString>> &symbols();
 // Return enumeration for named symbol
 Symbol symbol(std::string_view name);
 // Return symbol string
-std::string_view symbol(Symbol sym);
+QString symbol(Symbol sym);
 // Return symbol description
-std::string_view description(Symbol sym);
+QString description(Symbol sym);
 // Return first symbol whose description contains the search text
-Symbol firstDescriptionMatch(std::string_view text);
+Symbol firstDescriptionMatch(QString text);
 }; // namespace SymbolData

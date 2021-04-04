@@ -55,22 +55,26 @@ class FontInstance
      */
     public:
     // Set face size
-    bool setFaceSize(double faceSize);
+    void setFaceSize(double faceSize);
     // Render supplied text
-    bool renderText(std::string text) const;
+    void renderText(const QString &text) const;
+    void renderText(const std::string &text) const;
 
     /*
      * Bounding Box Calculation
      */
     private:
     // Return bounding box for specified string
+    FTBBox boundingBox(const QString &text) const;
     FTBBox boundingBox(std::string_view text) const;
 
     public:
     // Calculate bounding box for specified string
+    void boundingBox(const QString &text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
     void boundingBox(std::string_view text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
     // Calculate bounding box width for specified string
+    double boundingBoxWidth(const QString &text) const;
     double boundingBoxWidth(std::string_view text) const;
     // Calculate bounding box height for specified string
-    double boundingBoxHeight(std::string_view text) const;
+    double boundingBoxHeight(const QString &text) const;
 };
