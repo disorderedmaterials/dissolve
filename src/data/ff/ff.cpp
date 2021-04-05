@@ -301,9 +301,12 @@ bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpec
     else
         Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
 
-    // Copy parameters from the Forcefield's atom type
-
-    at->setShortRangeParameters(assignedType.parameters());
+    // Copy parameters from the assigned atom type - we take only the required number for the specified shortRangeType.
+    // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
+    std::vector<double> params;
+    params.insert(params.begin(), assignedType.parameters().begin(),
+                  assignedType.parameters().begin() + Forcefield::shortRangeTypes().minArgs(shortRangeType()).value_or(0));
+    at->setShortRangeParameters(params);
     at->setShortRangeType(shortRangeType());
     at->setCharge(assignedType.charge());
 
