@@ -4,7 +4,6 @@
 #pragma once
 
 #include "data/ff/ff.h"
-#include "data/ff/uff/uffatomtype.h"
 #include "templates/optionalref.h"
 
 // Forward Declarations
@@ -47,31 +46,38 @@ class Forcefield_UFF : public Forcefield
      * Atom Type Data
      */
     protected:
-    // UFF atom types
-    std::vector<UFFAtomType> uffAtomTypes_;
-
-    private:
-    // Return UFF atom type with name specified
-    OptionalReferenceWrapper<const UFFAtomType> uffAtomTypeByName(std::string_view name) const;
-    // Return first UFF atom type for specified element
-    OptionalReferenceWrapper<const UFFAtomType> uffAtomTypeForElement(int el) const;
-    // Determine and return atom type for specified SpeciesAtom
-    OptionalReferenceWrapper<const UFFAtomType> determineUFFAtomType(const SpeciesAtom *i) const;
+    // UFF atom type data
+    enum UFFAtomTypeData
+    {
+        Epsilon, /* LJ Epsilon, calculated from UFF data */
+        Sigma,   /* LJ Sigma, calculated from UFF data */
+        R,       /* single bond radius (Angstroms) */
+        Theta,   /* equilibrium angle geometry (degrees) */
+        X,       /* nonbond distance (Angstroms) */
+        D,       /* nonbond dissociation energy (kcal/mol) */
+        Zeta,    /* nonbond scale parameter */
+        Z,       /* effective charge */
+        Chi,     /* GMP electronegativity */
+        V,       /* sp3 torsional barrier parameter (kcal/mol) */
+        U        /* sp2 torsional barrier parameter (kcal/mol) */
+    };
 
     protected:
-    // Determine and return atom type for specified SpeciesAtom
-    OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom &i) const override;
+    // Add new atom type with its own parameters
+    void addUFFAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                        std::string_view description, double r, double theta, double x, double D, double zeta,
+                        double effectiveCharge, double chi, double V, double U);
 
     /*
      * Term Assignment
      */
     private:
     // Return bond order for specified atom type pair
-    double bondOrder(const UFFAtomType &i, const UFFAtomType &j) const;
+    double bondOrder(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
     // Return bond order correction for specified atom type pair
-    double bondOrderCorrection(const UFFAtomType &i, const UFFAtomType &j) const;
+    double bondOrderCorrection(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
     // Return electronegativity correction for specified atom type pair
-    double electronegativityCorrection(const UFFAtomType &i, const UFFAtomType &j) const;
+    double electronegativityCorrection(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
 
     protected:
     // Assign / generate bond term parameters

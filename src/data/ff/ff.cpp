@@ -302,6 +302,7 @@ bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpec
         Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
 
     // Copy parameters from the Forcefield's atom type
+
     at->setShortRangeParameters(assignedType.parameters());
     at->setShortRangeType(shortRangeType());
     at->setCharge(assignedType.charge());
