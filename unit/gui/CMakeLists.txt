@@ -17,8 +17,13 @@ foreach(SRCFILE ${tests_SRC})
 
   # Configure target
   target_include_directories(
-    ${NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR4_INCLUDE_DIRS} ${ANTLR_OUTPUT_DIRS}
-                    ${Qt5Widgets_INCLUDE_DIRS} ${CONAN_INCLUDE_DIRS_GTEST} CONAN_PKG::pugixml
+    ${NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src
+                    ${PROJECT_BINARY_DIR}/src
+                    ${ANTLR4_INCLUDE_DIRS}
+                    ${ANTLR_OUTPUT_DIRS}
+                    ${Qt5Widgets_INCLUDE_DIRS}
+		    ${CONAN_INCLUDE_DIRS_GTEST}
+                    CONAN_PKG::pugixml
   )
   target_link_libraries(
     ${NAME}
