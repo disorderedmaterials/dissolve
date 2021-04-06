@@ -184,12 +184,8 @@ void Histogram1D::operator=(const Histogram1D &source)
 
 Histogram1D Histogram1D::operator+(const Histogram1D &other) const
 {
-    if (nBins_ != other.nBins_)
-    {
-        Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size ({} vs {}).\n", nBins_,
-                         other.nBins_);
-        return {};
-    }
+    assert(nBins_ == other.nBins_);
+
     Histogram1D ret = *this;
 
     std::transform(other.bins_.cbegin(), other.bins_.cend(), ret.bins_.cbegin(), ret.bins_.begin(), std::plus<>());

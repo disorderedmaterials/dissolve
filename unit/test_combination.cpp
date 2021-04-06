@@ -36,7 +36,7 @@ TEST(CombinationTest, CheckNumberOfCombinations)
     Combinations comb(numTests, 2);
     for (int i = 0; i < comb.getNumCombinations(); i++)
     {
-        auto [m, n] = comb.nthIndexPair(i);
+        auto [m, n] = comb.nthCombination(i);
 
         combinations.emplace_back(m, n);
     }
@@ -62,7 +62,7 @@ TEST(CombinationTest, CheckCombinations)
     Combinations comb(numTests, 2);
     for (int i = 0; i < comb.getNumCombinations(); i++)
     {
-        auto [m, n] = comb.nthIndexPair(i);
+        auto [m, n] = comb.nthCombination(i);
 
         combinations.emplace_back(m, n);
     }

@@ -22,8 +22,7 @@
 
 #ifdef MULTITHREADING
 #include "parallel_helpers.h"
-#include <tbb/combinable.h>
-#include <tbb/parallel_for.h>
+#include "templates/parallel_tbb.h"
 constexpr bool MULTITHREADED = true;
 #else
 constexpr bool MULTITHREADED = false;
@@ -50,7 +49,6 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
 // Calculate partial g(r) with optimised double-loop
 bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth)
 {
-
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
 
@@ -157,12 +155,10 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 // Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
-    bool retVal;
     if constexpr (MULTITHREADED)
-        retVal = calculateGRCellsParallelImpl(procPool, cfg, partialSet, rdfRange);
+        return calculateGRCellsParallelImpl(procPool, cfg, partialSet, rdfRange);
     else
-        retVal = calculateGRCellsSingleImpl(procPool, cfg, partialSet, rdfRange);
-    return retVal;
+        return calculateGRCellsSingleImpl(procPool, cfg, partialSet, rdfRange);
 }
 
 bool RDFModule::calculateGRCellsSingleImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
@@ -249,46 +245,47 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
     int end = std::get<1>(range);
     Combinations comb(end - start, 2);
 
-    tbb::combinable<RDFModuleHelpers::PartialHistograms> pHistograms(
+    auto combinableHistograms = algorithms::paralleltbb::combinable<RDFModuleHelpers::PartialHistograms>(
         [&partialSet]() { return RDFModuleHelpers::PartialHistograms(partialSet); });
 
-    tbb::parallel_for(tbb::blocked_range<int>(0, comb.getNumCombinations()),
-                      [&pHistograms, start, cfg, &comb, rdfRange](tbb::blocked_range<int> r) {
-                          for (int i = r.begin(); i < r.end(); ++i)
-                          {
-                              auto &histograms = pHistograms.local().histograms_;
-                              const auto *box = cfg->box();
-                              auto &cellArray = cfg->cells();
-                              auto [n, m] = comb.nthIndexPair(i);
-                              auto *cellI = cellArray.cell(n + start);
-                              auto *cellJ = cellArray.cell(m + start);
+    auto lambda = [&combinableHistograms, start, cfg, &comb, rdfRange](const auto &range) {
+        for (auto i = range.begin(); i < range.end(); ++i)
+        {
+            auto &histograms = combinableHistograms.local().histograms_;
+            const auto *box = cfg->box();
+            auto &cellArray = cfg->cells();
+            auto [n, m] = comb.nthCombination(i);
+            auto *cellI = cellArray.cell(n + start);
+            auto *cellJ = cellArray.cell(m + start);
 
-                              if (!cellArray.withinRange(cellI, cellJ, rdfRange))
-                                  continue;
+            if (!cellArray.withinRange(cellI, cellJ, rdfRange))
+                continue;
 
-                              // Add contributions between atoms in cellI and cellJ
-                              auto &atomsI = cellI->atoms();
-                              auto &atomsJ = cellJ->atoms();
+            // Add contributions between atoms in cellI and cellJ
+            auto &atomsI = cellI->atoms();
+            auto &atomsJ = cellJ->atoms();
 
-                              // Perform minimum image calculation on all atom pairs -
-                              // quicker than working out if we need to given the absence of a 2D look-up array
-                              for (auto &i : atomsI)
-                              {
-                                  auto typeI = i->localTypeIndex();
-                                  auto &rI = i->r();
+            // Perform minimum image calculation on all atom pairs -
+            // quicker than working out if we need to given the absence of a 2D look-up array
+            for (auto &i : atomsI)
+            {
+                auto typeI = i->localTypeIndex();
+                auto &rI = i->r();
 
-                                  for (auto &j : atomsJ)
-                                  {
-                                      auto &rJ = j->r();
-                                      auto distance = box->minimumDistance(rJ, rI);
-                                      histograms[{typeI, j->localTypeIndex()}].bin(distance);
-                                  }
-                              }
-                          }
-                      });
+                for (auto &j : atomsJ)
+                {
+                    auto &rJ = j->r();
+                    auto distance = box->minimumDistance(rJ, rI);
+                    histograms[{typeI, j->localTypeIndex()}].bin(distance);
+                }
+            }
+        }
+    };
 
-    auto histograms = pHistograms.combine(std::plus<RDFModuleHelpers::PartialHistograms>());
-    RDFModuleHelpers::combinePartialHistogramsIntoPartialSet(partialSet, histograms);
+    auto histograms = algorithms::paralleltbb::parallel_for_reduction(
+        combinableHistograms, algorithms::paralleltbb::blocked_range(0, comb.getNumCombinations()), lambda);
+
+    histograms.addToPartialSet(partialSet);
 
     for (int n = start; n < end; ++n)
     {

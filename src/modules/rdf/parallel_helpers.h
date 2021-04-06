@@ -7,7 +7,6 @@
 
 namespace RDFModuleHelpers
 {
-
 struct TempHistogram
 // Currently having to create a temp histogram struct as the normal histogram sometimes throws an exception in the data object
 // store while in the parallel computations
@@ -80,8 +79,8 @@ struct PartialHistograms
     {
 
         histograms_.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes());
-        for (int i = 0; i < partialSet.nAtomTypes(); ++i)
-            for (int j = 0; j < partialSet.nAtomTypes(); ++j)
+        for (auto i = 0; i < partialSet.nAtomTypes(); ++i)
+            for (auto j = 0; j < partialSet.nAtomTypes(); ++j)
                 histograms_[{i, j}].initialise(partialSet.fullHistogram(i, j));
         // histograms_[{i, j}] = partialSet.fullHistogram(i, j);
     }
@@ -89,29 +88,30 @@ struct PartialHistograms
     {
         PartialHistograms ret;
         ret.histograms_.initialise(this->histograms_.nRows(), this->histograms_.nColumns());
-        for (int i = 0; i < this->histograms_.nRows(); ++i)
-            for (int j = 0; j < this->histograms_.nColumns(); ++j)
+        for (auto i = 0; i < this->histograms_.nRows(); ++i)
+            for (auto j = 0; j < this->histograms_.nColumns(); ++j)
             {
                 ret.histograms_[{i, j}] = this->histograms_[{i, j}] + other.histograms_[{i, j}];
             }
         return ret;
     }
+
+    void addToPartialSet(PartialSet &target)
+    {
+        for (auto k = 0; k < target.nAtomTypes(); ++k)
+            for (auto j = 0; j < target.nAtomTypes(); ++j)
+            {
+                auto &histo = target.fullHistogram(k, j);
+                auto nBinned = histo.nBinned();
+                auto &bins = histo.bins();
+                for (auto n = 0; n < histo.nBins(); ++n)
+                    bins[n] += histograms_[{k, j}].bins_[n];
+
+                nBinned += histograms_[{k, j}].nBinned_;
+            }
+    }
+
     Array2D<TempHistogram> histograms_;
 };
-
-inline void combinePartialHistogramsIntoPartialSet(PartialSet &target, PartialHistograms &histograms)
-{
-    for (int k = 0; k < target.nAtomTypes(); ++k)
-        for (int j = 0; j < target.nAtomTypes(); ++j)
-        {
-            auto &histo = target.fullHistogram(k, j);
-            auto nBinned = histo.nBinned();
-            auto &bins = histo.bins();
-            for (auto n = 0; n < histo.nBins(); ++n)
-                bins[n] += histograms.histograms_[{k, j}].bins_[n];
-
-            nBinned += histograms.histograms_[{k, j}].nBinned_;
-        }
-}
 
 } // namespace RDFModuleHelpers

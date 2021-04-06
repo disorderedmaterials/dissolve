@@ -3,7 +3,7 @@
 
 #include "math/combinations.h"
 
-std::pair<int, int> Combinations::nthIndexPair(int n) const
+std::pair<int, int> Combinations::nthCombination(int n) const
 {
     auto [a2, remainder] = getCoefficent(n, 2);
     auto [a1, remainder_a1] = getCoefficent(remainder, 1);
@@ -27,15 +27,13 @@ int Combinations::nChooseK(int n, int k) const
 Combinations::NthCombination Combinations::getCoefficent(int N, int k) const
 {
 
-    int at = k - 1;
-    int nCt = 0;
+    auto at = k - 1;
+    auto nCt = 0;
     if (nCt >= N)
-    {
         return {at, N - nCt};
-    }
 
-    int atPrev = at;
-    int nCtPrev = nCt;
+    auto atPrev = at;
+    auto nCtPrev = nCt;
     bool found = false;
     while (!found)
     {
@@ -44,9 +42,7 @@ Combinations::NthCombination Combinations::getCoefficent(int N, int k) const
         nCtPrev = nCt;
         nCt = nChooseK(at, k);
         if (nCt > N)
-        {
             found = true;
-        }
     }
     return {atPrev, N - nCtPrev};
 }

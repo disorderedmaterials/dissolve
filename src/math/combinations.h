@@ -16,7 +16,7 @@
 // Combinations comb(5, 2)
 // std::vector<char> list = {'A', 'B', 'C', 'D', 'E'}
 // for (int i = 0 ; i < comb.getNumCombinations() ; ++i){
-//      auto [m, n] = nthIndexPair(i);
+//      auto [m, n] = nthCombination(i);
 //      auto c1 = list[m];
 //      auto c2 = list[n];
 //}
@@ -30,11 +30,16 @@ class Combinations
 
     public:
     Combinations(int N, int k) : N_(N), k_(k) {}
-    std::pair<int, int> nthIndexPair(int n) const;
+    // Returns the nth combination
+    std::pair<int, int> nthCombination(int n) const;
+    // returns the number of combinations
     int getNumCombinations() const;
 
     private:
+    // returns n choose k (specialised for k = 1 and k = 2)
     int nChooseK(int N, int k) const;
+    // returns the bionomial coefficent,
+    // see https : // en.wikipedia.org/wiki/Combinatorial_number_system
     NthCombination getCoefficent(int n, int k) const;
 
     int N_;
