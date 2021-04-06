@@ -357,7 +357,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 
     procPool.resetAccumulatedTime();
     timer.start();
-    for_each_pair_early(0, originalgr.nAtomTypes(),
+    success = for_each_pair_early(0, originalgr.nAtomTypes(),
                         [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
                             // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
                             // have all data already)
