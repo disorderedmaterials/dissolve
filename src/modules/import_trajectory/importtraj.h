@@ -6,17 +6,12 @@
 #include "io/import/trajectory.h"
 #include "module/module.h"
 
-// Forward Declarations
-class Data1D;
-class Data2D;
-class Data3D;
-
-// Import Module
-class ImportModule : public Module
+// Import Trajectory Module
+class ImportTrajectoryModule : public Module
 {
     public:
-    ImportModule();
-    ~ImportModule() override = default;
+    ImportTrajectoryModule();
+    ~ImportTrajectoryModule() override = default;
 
     /*
      * Instances
@@ -50,7 +45,7 @@ class ImportModule : public Module
      */
     private:
     // Trajectory file source
-    TrajectoryImportFileFormat trajectoryFile_;
+    TrajectoryImportFileFormat trajectoryFormat_;
 
     /*
      * Processing
