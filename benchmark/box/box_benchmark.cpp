@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
 #include "benchmark/benchmark.h"
 #include "classes/box.h"
 #include "templates/vector3.h"
@@ -49,5 +51,3 @@ BENCHMARK_TEMPLATE(BM_MIM, CubicBox);
 BENCHMARK_TEMPLATE(BM_MIM, OrthorhombicBox);
 BENCHMARK_TEMPLATE(BM_MIM, MonoclinicBox);
 BENCHMARK_TEMPLATE(BM_MIM, TriclinicBox);
-
-BENCHMARK_MAIN();
