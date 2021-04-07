@@ -357,24 +357,25 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 
     procPool.resetAccumulatedTime();
     timer.start();
-    if (!for_each_pair_early(0, originalgr.nAtomTypes(),
-                             [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
-                                 // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
-                                 // processes have all data already)
-                                 if (method != RDFModule::TestMethod)
-                                 {
-                                     if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
-                                         return false;
-                                     if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
-                                         return false;
-                                 }
+    auto success = for_each_pair_early(
+        0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
+            // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
+            // processes have all data already)
+            if (method != RDFModule::TestMethod)
+            {
+                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                    return false;
+                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                    return false;
+            }
 
-                                 // Create unbound histogram from total and bound data
-                                 originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-                                 originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+            // Create unbound histogram from total and bound data
+            originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+            originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
 
-                                 return EarlyReturn<bool>::Continue;
-                             }))
+            return EarlyReturn<bool>::Continue;
+        });
+    if (success.has_value() && !success.value())
         return false;
 
     // Transform histogram data into radial distribution functions
