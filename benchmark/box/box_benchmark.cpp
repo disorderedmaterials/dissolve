@@ -22,13 +22,13 @@ template <typename BoxType> BoxType createTestBox()
     else if constexpr (std::is_same_v<BoxType, MonoclinicBox>)
     {
         Vec3<double> lengths = {1.00, 1.00, 1.00};
-        MonoclinicBox box(lengths, M_PI_4);
+        MonoclinicBox box(lengths, 45);
         return box;
     }
     else if constexpr (std::is_same_v<BoxType, TriclinicBox>)
     {
         Vec3<double> lengths = {1.00, 1.00, 1.00};
-        Vec3<double> angles = {M_PI_4, M_PI_4, M_PI_4};
+        Vec3<double> angles = {45, 45, 45};
         TriclinicBox box(lengths, angles);
         return box;
     }
@@ -44,6 +44,7 @@ template <typename BoxType> static void BM_MIM(benchmark::State &state)
     for (auto _ : state)
     {
         auto dist = box.minimumDistance(p1, p2);
+        benchmark::DoNotOptimize(dist);
     }
 }
 

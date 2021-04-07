@@ -8,7 +8,7 @@ dissolve_benchmark(box)
 # create a single benchmark executable
 add_executable(benchmarks benchmarks.cpp ${benchmark_files})
 
-target_include_directories(benchmarks PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(benchmarks PRIVATE ${PROJECT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(
   benchmarks
   PRIVATE benchmark::benchmark
@@ -18,3 +18,19 @@ target_link_libraries(
   PRIVATE # External libs
           antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
 )
+target_compile_options(benchmarks PRIVATE -O3)
+
+# Find all the input files
+file(
+  GLOB benchmarkFiles
+  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_files/*.txt"
+)
+
+# configure the input header to point to the directory containing the benchmark
+set(BENCHMARK_PATH \"${CMAKE_CURRENT_BINARY_DIR}/\")
+configure_file(benchmark_config.h.in benchmark_config.h @ONLY)
+
+foreach(benchmarkFile ${benchmarkFiles})
+  file(COPY ${benchmarkFile} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endforeach(benchmarkFile)
