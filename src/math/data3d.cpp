@@ -4,20 +4,12 @@
 #include "math/data3d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "math/histogram3d.h"
 
-// Static Members (ObjectStore)
-template <class Data3D> RefDataList<Data3D, int> ObjectStore<Data3D>::objects_;
-template <class Data3D> int ObjectStore<Data3D>::objectCount_ = 0;
-template <class Data3D> int ObjectStore<Data3D>::objectType_ = ObjectInfo::Data3DObject;
-template <class Data3D> std::string_view ObjectStore<Data3D>::objectTypeName_ = "Data3D";
+Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), hasError_(false) {}
 
-Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this), hasError_(false) {}
-
-Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this)
-{
-    (*this) = source;
-}
+Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable) { (*this) = source; }
 
 // Clear Data
 void Data3D::clear()
@@ -313,11 +305,6 @@ bool Data3D::deserialise(LineParser &parser)
 {
     clear();
 
-    // Read object tag
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
     // Read object name
     if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
@@ -389,9 +376,7 @@ bool Data3D::deserialise(LineParser &parser)
 // Write data through specified LineParser
 bool Data3D::serialise(LineParser &parser) const
 {
-    // Write object tag and name
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
+    // Write tag
     if (!parser.writeLineF("{}\n", tag_))
         return false;
 

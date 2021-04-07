@@ -38,21 +38,8 @@ RenderableConfiguration::~RenderableConfiguration() {}
  * Data
  */
 
-// Return whether a valid data source is available (attempting to set it if not)
-bool RenderableConfiguration::validateDataSource()
-{
-    // Don't try to access source_ if we are not currently permitted to do so
-    if (!sourceDataAccessEnabled_)
-        return false;
-
-    return source_;
-}
-
-// Invalidate the current data source
-void RenderableConfiguration::invalidateDataSource() { source_ = nullptr; }
-
 // Return version of data
-int RenderableConfiguration::dataVersion() { return (validateDataSource() ? source_->contentsVersion() : -99); }
+int RenderableConfiguration::dataVersion() { return (source_ ? source_->contentsVersion() : -99); }
 
 /*
  * Transform / Limits
@@ -140,7 +127,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
     Vec3<double> ri, rj;
 
     // Check data source
-    if (!validateDataSource())
+    if (!source_)
         return;
 
     // Clear existing data

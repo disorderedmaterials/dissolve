@@ -25,41 +25,25 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, const Generi
     view.axes().setMax(1, 1.0);
     view.setAutoFollowType(View::AllAutoFollow);
 
-    setGraphDataTargets();
-
-    updateControls();
-
     refreshing_ = false;
 }
 
 // Update controls within widget
-void CalculateRDFModuleWidget::updateControls(int flags)
+void CalculateRDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+        rdfGraph_->clearRenderables();
+
+    if (rdfGraph_->renderables().empty())
+        for (const auto *cfg : module_->targetConfigurations())
+            rdfGraph_
+                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->uniqueName(), cfg->niceName()),
+                                                     fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
+                ->setColour(StockColours::BlueStockColour);
+
+    // Validate renderables if they need it
+    rdfGraph_->validateRenderables(processingData_);
+
     ui_.RDFPlotWidget->updateToolbar();
-
     rdfGraph_->postRedisplay();
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void CalculateRDFModuleWidget::setGraphDataTargets()
-{
-    // Remove any current data
-    rdfGraph_->clearRenderables();
-
-    if (!module_)
-        return;
-
-    // Loop over Configuration targets in Module
-    for (const auto *cfg : module_->targetConfigurations())
-    {
-        // Calculated RDF
-        auto rdf = rdfGraph_->createRenderable<RenderableData1D>(
-            fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
-            fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
-        rdf->setColour(StockColours::BlueStockColour);
-    }
 }

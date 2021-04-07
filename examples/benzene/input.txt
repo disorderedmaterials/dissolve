@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.7.0 at 10:54:15 on 17-12-2020.
+# Input file written by Dissolve v0.8.0 at 12:10:16 on 10-03-2021.
 
 #==============================================================================#
 #                                 Master Terms                                 #
@@ -147,10 +147,7 @@ Configuration  'Bulk'
 
   Temperature  300.0
 
-  SizeFactor  10.0
-
-  # Modules
-  # -- None
+  SizeFactor  1.0
 EndConfiguration
 
 #==============================================================================#
@@ -163,12 +160,13 @@ Layer  'Evolve (Standard)'
   Module  MolShake  'MolShake01'
     Frequency  1
     Configuration  'Bulk'
-    RotationStepSize   9.00000e+01
-    TranslationStepSize   3.00000e+00
+    RotationStepSize   6.77636e+00
+    TranslationStepSize   1.36346e-01
   EndModule
 
   Module  MD  'MD01'
     Frequency  5
+    Disabled
     Configuration  'Bulk'
   EndModule
 
@@ -180,6 +178,7 @@ EndLayer
 
 Layer  'Analysis'
   Frequency  1
+  Disabled
 
   Module  CalculateAxisAngle  'CalculateAxisAngle01'
     Frequency  1
@@ -235,6 +234,7 @@ EndLayer
 
 Layer  'Refine (EPSR)'
   Frequency  5
+  Disabled
 
   Module  EPSR  'EPSR01'
     Frequency  1

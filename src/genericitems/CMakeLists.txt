@@ -3,6 +3,7 @@ add_library(
   deserialisers.cpp
   list.cpp
   producers.cpp
+  searchers.cpp
   serialisers.cpp
   deserialisers.h
   list.h

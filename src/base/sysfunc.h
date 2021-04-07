@@ -44,6 +44,8 @@ class DissolveSys
     static std::string_view beforeLastChar(const std::string_view s, char c);
     // Get characters after last occurrence of designated character, or an empty string if the character does not exist
     static std::string_view afterLastChar(const std::string_view s, char c);
+    // Return if the target string starts with the specified characters
+    static bool startsWith(std::string_view target, std::string_view beginning);
     // Return if the target string ends with the specified characters
     static bool endsWith(std::string_view target, std::string_view ending);
     // Remove comments from supplied string

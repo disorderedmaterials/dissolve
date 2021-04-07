@@ -345,29 +345,23 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto &interData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Inter", cfg->niceName()),
                                                                               uniqueName(), GenericItem::InRestartFileFlag);
             interData.addPoint(dissolve.iteration(), interEnergy);
-            interData.setObjectTag(fmt::format("{}//{}//Inter", cfg->niceName(), uniqueName()));
             auto &intraData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Intra", cfg->niceName()),
                                                                               uniqueName(), GenericItem::InRestartFileFlag);
             intraData.addPoint(dissolve.iteration(), intraEnergy);
-            intraData.setObjectTag(fmt::format("{}//{}//Intra", cfg->niceName(), uniqueName()));
             auto &bondData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Bond", cfg->niceName()),
                                                                              uniqueName(), GenericItem::InRestartFileFlag);
             bondData.addPoint(dissolve.iteration(), bondEnergy);
-            bondData.setObjectTag(fmt::format("{}//{}//Bond", cfg->niceName(), uniqueName()));
             auto &angleData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Angle", cfg->niceName()),
                                                                               uniqueName(), GenericItem::InRestartFileFlag);
             angleData.addPoint(dissolve.iteration(), angleEnergy);
-            angleData.setObjectTag(fmt::format("{}//{}//Angle", cfg->niceName(), uniqueName()));
             auto &torsionData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Torsions", cfg->niceName()),
                                                                                 uniqueName(), GenericItem::InRestartFileFlag);
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
-            torsionData.setObjectTag(fmt::format("{}//{}//Torsion", cfg->niceName(), uniqueName()));
 
             // Append to arrays of total energies
             auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(
                 fmt::format("{}//Total", cfg->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
             totalEnergyArray.addPoint(dissolve.iteration(), interEnergy + intraEnergy);
-            totalEnergyArray.setObjectTag(fmt::format("{}//{}//Total", cfg->niceName(), uniqueName()));
 
             // Determine stability of energy
             // Check number of points already stored for the Configuration
@@ -387,15 +381,11 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                  stabilityWindow, grad, thresholdValue, DissolveSys::btoa(stable));
             }
 
-            // Set variable in Configuration
-            dissolve.processingModuleData().realise<double>(fmt::format("{}//EnergyGradient", cfg->niceName()), uniqueName(),
-                                                            GenericItem::InRestartFileFlag) = grad;
-            dissolve.processingModuleData().realise<bool>(fmt::format("{}//EnergyStable", cfg->niceName()), uniqueName(),
-                                                          GenericItem::InRestartFileFlag) = stable;
-            dissolve.processingModuleData()
-                .realise<Data1D>(fmt::format("{}//EnergyStability", cfg->niceName()), uniqueName(),
-                                 GenericItem::InRestartFileFlag)
-                .addPoint(dissolve.iteration(), stable);
+            // Set energy data under the configuration's prefix
+            dissolve.processingModuleData().realise<double>("EnergyGradient", cfg->niceName(), GenericItem::InRestartFileFlag) =
+                grad;
+            dissolve.processingModuleData().realise<bool>("EnergyStable", cfg->niceName(), GenericItem::InRestartFileFlag) =
+                stable;
 
             // If writing to a file, append it here
             if (saveData)

@@ -91,13 +91,13 @@ Layer  'Processing'
   # -- Partial g(r) (unbound terms)
   Module  DataTest  'Partial g(r) (unbound)'
     Threshold  0.05
-    Data1D  'Bulk//RDF01//OriginalGR//OW-OW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.g01'
+    Data1D  'RDF01//Bulk//OriginalGR//OW-OW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.g01'
       Y  2
     EndData1D
-    Data1D  'Bulk//RDF01//OriginalGR//OW-HW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.g01'
+    Data1D  'RDF01//Bulk//OriginalGR//OW-HW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.g01'
       Y  4
     EndData1D
-    Data1D  'Bulk//RDF01//OriginalGR//HW-HW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.g01'
+    Data1D  'RDF01//Bulk//OriginalGR//HW-HW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.g01'
       Y  6
     EndData1D
   EndModule
@@ -105,10 +105,10 @@ Layer  'Processing'
   # -- Partial g(r) (intramolecular terms)
   Module  DataTest  'Partial g(r) (bound)'
     Threshold  0.08
-    Data1D  'Bulk//RDF01//OriginalGR//OW-HW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
+    Data1D  'RDF01//Bulk//OriginalGR//OW-HW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
       Y  4
     EndData1D
-    Data1D  'Bulk//RDF01//OriginalGR//HW-HW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
+    Data1D  'RDF01//Bulk//OriginalGR//HW-HW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
       Y  6
     EndData1D
   EndModule
@@ -117,7 +117,7 @@ Layer  'Processing'
   Module  DataTest  'Partial g(r) (zeroed bound)'
     ErrorType  RMSE
     Threshold  1.0e-5
-    Data1D  'Bulk//RDF01//OriginalGR//OW-OW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
+    Data1D  'RDF01//Bulk//OriginalGR//OW-OW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
       Y  2
     EndData1D
   EndModule

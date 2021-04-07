@@ -24,8 +24,7 @@ GraphGizmo::GraphGizmo(Dissolve &dissolve, const QString uniqueName) : Gizmo(dis
     dataViewer_->groupManager().setGroupColouring("Default", RenderableGroup::AutomaticIndividualColouring);
 
     // Permit the user to add data to the DataViewer
-    dataViewer_->setFlags(DataViewer::UserCanAddDataFlag + DataViewer::UserCanRenameDataFlag +
-                          DataViewer::UserCanRemoveDataFlag);
+    dataViewer_->setFlags(DataViewer::UserCanRenameDataFlag + DataViewer::UserCanRemoveDataFlag);
     dataViewer_->setDissolve(&dissolve);
 
     // Update associated toolbar
@@ -85,18 +84,18 @@ bool GraphGizmo::acceptsData(std::string_view dataType)
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool GraphGizmo::sendData(std::string_view dataType, std::string_view objectTag, std::string_view name)
+bool GraphGizmo::sendData(std::string_view dataType, std::string_view tag, std::string_view name)
 {
     switch (Renderable::renderableTypes().enumeration(dataType))
     {
         case (Renderable::Data1DRenderable):
-            dataViewer_->createRenderable<RenderableData1D>(objectTag, name);
+            dataViewer_->createRenderable<RenderableData1D>(tag, name);
             break;
         case (Renderable::Data2DRenderable):
-            dataViewer_->createRenderable<RenderableData2D>(objectTag, name);
+            dataViewer_->createRenderable<RenderableData2D>(tag, name);
             break;
         case (Renderable::Data3DRenderable):
-            dataViewer_->createRenderable<RenderableData3D>(objectTag, name);
+            dataViewer_->createRenderable<RenderableData3D>(tag, name);
             break;
         default:
             return false;

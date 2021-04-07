@@ -517,9 +517,6 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
     std::string newName;
     auto error = false, skipCurrentItem = false;
 
-    // Enable suffixing of all ObjectStore types
-    ObjectInfo::enableAutoSuffixing(dataSuffix);
-
     while (!parser.eofOrBlank())
     {
         // Master will read the next line from the file
@@ -580,9 +577,6 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
     // Error encountered?
     if (error)
         Messenger::error("Errors encountered while loading restart file.\n");
-
-    // Disable suffixing of all ObjectStore types
-    ObjectInfo::disableAutoSuffixing();
 
     // Done
     if (worldPool().isWorldMaster())

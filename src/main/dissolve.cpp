@@ -13,10 +13,6 @@
 #include "math/histogram3d.h"
 #include "math/pairbroadeningfunction.h"
 
-// Static Members (ObjectInfo)
-bool ObjectInfo::autoSuffixing_ = false;
-std::string ObjectInfo::autoSuffix_;
-
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
     // Set Module instances list in our core data

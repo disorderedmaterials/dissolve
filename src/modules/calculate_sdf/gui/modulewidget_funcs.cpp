@@ -44,13 +44,9 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, const Generi
     referenceMoleculeRenderable_ = nullptr;
 
     // Add on "<None>" option for reference molecule
-    ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(nullptr));
+    ui_.ReferenceMoleculeCombo->addItem("<None>");
 
     refreshing_ = false;
-
-    updateControls();
-
-    setGraphDataTargets();
 }
 
 /*
@@ -58,22 +54,9 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, const Generi
  */
 
 // Update controls within widget
-void CalculateSDFModuleWidget::updateControls(int flags)
+void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     refreshing_ = true;
-
-    // Update the viewer's toolbar
-    ui_.SDFPlotWidget->updateToolbar();
-
-    // Refresh the graph
-    sdfGraph_->postRedisplay();
-
-    // Get cutoff limits from data
-    if (sdfRenderable_)
-    {
-        ui_.DataMinValueLabel->setText(QString::number(sdfRenderable_->valuesMin(), 'e', 4));
-        ui_.DataMaxValueLabel->setText(QString::number(sdfRenderable_->valuesMax(), 'e', 4));
-    }
 
     // Update available reference molecule combo
     RefDataList<Species, std::string> refMolecules;
@@ -86,36 +69,22 @@ void CalculateSDFModuleWidget::updateControls(int flags)
         refMolecules.append(sp.get(), fmt::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
-    refreshing_ = false;
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void CalculateSDFModuleWidget::setGraphDataTargets()
-{
-    // Remove any current data
-    sdfGraph_->clearRenderables();
-    sdfRenderable_ = nullptr;
-    referenceMoleculeRenderable_ = nullptr;
-
-    if (!module_)
-        return;
-
-    // Loop over Configuration targets in Module
-    for (Configuration *cfg : module_->targetConfigurations())
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || sdfGraph_->renderables().empty())
     {
-        // Calculated SDF
-        sdfRenderable_ = sdfGraph_->createRenderable<RenderableData3D>(
-            fmt::format("{}//Process3D//{}//SDF", module_->uniqueName(), cfg->niceName()),
-            fmt::format("SDF//{}", cfg->niceName()), cfg->niceName());
+        sdfGraph_->clearRenderables();
+        sdfRenderable_ = nullptr;
+        referenceMoleculeRenderable_ = nullptr;
+    }
 
-        if (sdfRenderable_)
+    // Create SDF renderable if it doesn't already exist
+    if (!sdfRenderable_)
+    {
+        sdfRenderable_ = sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//Process3D//SDF", module_->uniqueName()),
+                                                                       fmt::format("SDF"));
+        sdfRenderable_->setColour(StockColours::BlueStockColour);
+        auto *cfg = module_->targetConfigurations().firstItem();
+        if (cfg)
         {
-            sdfRenderable_->setColour(StockColours::BlueStockColour);
-
             auto lowerCutoff = (cfg->nMolecules() / cfg->box()->volume()) * 3.0;
             auto upperCutoff = 1.0;
 
@@ -127,13 +96,31 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
             r3d->setLowerCutoff(lowerCutoff);
             r3d->setUpperCutoff(upperCutoff);
         }
-
-        // Reference molecule
-        if (referenceMolecule_)
-            referenceMoleculeRenderable_ =
-                sdfGraph_->createRenderable<RenderableSpecies, Species>(referenceMolecule_, "Reference Molecule");
     }
+
+    // Create reference molecule renderable if it doesn't already exist
+    if (referenceMolecule_ && !referenceMoleculeRenderable_)
+        referenceMoleculeRenderable_ =
+            sdfGraph_->createRenderable<RenderableSpecies, Species>(referenceMolecule_, "Reference Molecule");
+
+    // Get cutoff limits from data
+    if (sdfRenderable_)
+    {
+        ui_.DataMinValueLabel->setText(QString::number(sdfRenderable_->valuesMin(), 'e', 4));
+        ui_.DataMaxValueLabel->setText(QString::number(sdfRenderable_->valuesMax(), 'e', 4));
+    }
+
+    // Validate renderables if they need it
+    sdfGraph_->validateRenderables(processingData_);
+    ui_.SDFPlotWidget->updateToolbar();
+    sdfGraph_->postRedisplay();
+
+    refreshing_ = false;
 }
+
+/*
+ * Widgets / Functions
+ */
 
 void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
 {
@@ -168,5 +155,12 @@ void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int
     else
         referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());
 
-    setGraphDataTargets();
+    // Reset / remove renderable for the molecule
+    if (referenceMoleculeRenderable_)
+    {
+        sdfGraph_->removeRenderable(referenceMoleculeRenderable_);
+        referenceMoleculeRenderable_ = nullptr;
+    }
+
+    updateControls(ModuleWidget::UpdateType::Normal);
 }

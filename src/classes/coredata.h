@@ -78,6 +78,7 @@ class CoreData
     // Return number of master Bond parameters in list
     int nMasterBonds() const;
     // Return list of master Bond parameters
+    std::list<MasterIntra> &masterBonds();
     const std::list<MasterIntra> &masterBonds() const;
     // Return whether named master Bond parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterBond(std::string_view name);
@@ -87,6 +88,7 @@ class CoreData
     // Return number of master Angles parameters in list
     int nMasterAngles() const;
     // Return list of master Angle parameters
+    std::list<MasterIntra> &masterAngles();
     const std::list<MasterIntra> &masterAngles() const;
     // Return whether named master Angle parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterAngle(std::string_view name);
@@ -96,6 +98,7 @@ class CoreData
     // Return number of master Torsions parameters in list
     int nMasterTorsions() const;
     // Return list of master Torsion parameters
+    std::list<MasterIntra> &masterTorsions();
     const std::list<MasterIntra> &masterTorsions() const;
     // Return whether named master Torsion parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterTorsion(std::string_view name);
@@ -105,6 +108,7 @@ class CoreData
     // Return number of master Impropers parameters in list
     int nMasterImpropers() const;
     // Return list of master Improper parameters
+    std::list<MasterIntra> &masterImpropers();
     const std::list<MasterIntra> &masterImpropers() const;
     // Return whether named master Improper parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterImproper(std::string_view name);

@@ -24,7 +24,7 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
                                                                  {Renderable::SpeciesSiteRenderable, "SpeciesSite"}});
 }
 
-Renderable::Renderable(Renderable::RenderableType type, std::string_view objectTag)
+Renderable::Renderable(Renderable::RenderableType type, std::string_view tag)
 {
     // Instance
     instances_.append(this);
@@ -34,7 +34,7 @@ Renderable::Renderable(Renderable::RenderableType type, std::string_view objectT
     name_ = "New Renderable";
 
     // Data tag
-    objectTag_ = objectTag;
+    tag_ = tag;
 
     // Group
     group_ = std::nullopt;
@@ -81,6 +81,15 @@ Renderable::RenderableType Renderable::type() const { return type_; }
  * Data
  */
 
+// Transform data values
+void Renderable::transformValues() {}
+
+// Attempt to set the data source, searching the supplied list for the object
+void Renderable::validateDataSource(const GenericList &sourceList) {}
+
+// Invalidate the current data source
+void Renderable::invalidateDataSource() {}
+
 // Set whether access to source data is currently enabled
 void Renderable::setSourceDataAccessEnabled(bool b) { sourceDataAccessEnabled_ = b; }
 
@@ -88,15 +97,22 @@ void Renderable::setSourceDataAccessEnabled(bool b) { sourceDataAccessEnabled_ =
 bool Renderable::sourceDataAccessEnabled() { return sourceDataAccessEnabled_; }
 
 // Return identifying tag for source data object
-std::string_view Renderable::objectTag() const { return objectTag_; }
+std::string_view Renderable::tag() const { return tag_; }
+
+// Validate all renderables
+void Renderable::validateAll(const GenericList &source)
+{
+    for (Renderable *rend : instances_)
+        rend->validateDataSource(source);
+}
 
 // Invalidate renderable data for specified object tag
-int Renderable::invalidate(std::string_view objectTag)
+int Renderable::invalidate(std::string_view tag)
 {
     auto count = 0;
     for (Renderable *rend : instances_)
     {
-        if (objectTag != rend->objectTag_)
+        if (tag != rend->tag_)
             continue;
 
         rend->invalidateDataSource();
@@ -190,12 +206,8 @@ void Renderable::setValuesTransformEquation(std::string_view transformEquation)
 {
     valuesTransform_.setEquation(transformEquation);
 
-    // Make sure transformed data is up to date
     if (valuesTransform_.enabled())
-    {
         valuesTransformDataVersion_ = -1;
-        transformValues();
-    }
 }
 
 // Return values transform equation
@@ -209,9 +221,7 @@ void Renderable::setValuesTransformEnabled(bool enabled)
 {
     valuesTransform_.setEnabled(enabled);
 
-    // Make sure transformed data is up to date
     valuesTransformDataVersion_ = -1;
-    transformValues();
 }
 
 // Return whether values transform is enabled
@@ -306,23 +316,12 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
     // Grab copy of the relevant colour definition for this Renderable
     const ColourDefinition &colourDefinition = colour();
 
-    // Check whether the primitive for this Renderable needs updating
-    auto upToDate = true;
-    if (forceUpdate)
-        upToDate = false;
-    else if (lastAxesVersion_ != axes.version())
-        upToDate = false;
-    else if (!DissolveSys::sameString(
-                 lastColourDefinitionFingerprint_,
-                 fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()), true))
-        upToDate = false;
-    else if (lastDataVersion_ != dataVersion())
-        upToDate = false;
-    else if (lastStyleVersion_ != styleVersion())
-        upToDate = false;
-
-    // If the primitive is out of date, recreate it's data.
-    if (!upToDate)
+    // If the primitive is out of date, recreate it
+    if (forceUpdate || lastAxesVersion_ != axes.version() || lastDataVersion_ != dataVersion() ||
+        valuesTransformDataVersion_ != dataVersion() || lastStyleVersion_ != styleVersion() ||
+        !DissolveSys::sameString(lastColourDefinitionFingerprint_,
+                                 fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()),
+                                 true))
     {
         // Recreate Primitives for the underlying data
         recreatePrimitives(view, colourDefinition);

@@ -77,7 +77,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, const Ge
 
     setGraphDataTargets(module_);
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     refreshing_ = false;
 }
@@ -87,7 +87,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, const Ge
  */
 
 // Update controls within widget
-void CalculateAngleModuleWidget::updateControls(int flags)
+void CalculateAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.RDFABPlotWidget->updateToolbar();
     ui_.RDFBCPlotWidget->updateToolbar();
@@ -123,24 +123,24 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
 
     // Calculated A...B RDF
     auto rdfAB = rdfABGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//Process1D//{}//RDF(AB)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+        fmt::format("{}//Process1D//RDF(AB)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
     rdfAB->setColour(StockColours::BlueStockColour);
 
     // Calculated B...C RDF
     auto rdfBC = rdfBCGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+        fmt::format("{}//Process1D//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
     rdfBC->setColour(StockColours::BlueStockColour);
 
     // Calculated angle histogram
     auto angle = angleGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
+        fmt::format("{}//Process1D//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
     angle->setColour(StockColours::RedStockColour);
 
     // Calculated (A-B)-C distance-angle map
     dAngleABGraph_->createRenderable<RenderableData2D>(
-        fmt::format("{}//Process2D//{}//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()), "A-B vs A-B-C");
+        fmt::format("{}//Process2D//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()), "A-B vs A-B-C");
 
     // Calculated A-(B-C) distance-angle map
     dAngleBCGraph_->createRenderable<RenderableData2D>(
-        fmt::format("{}//Process2D//{}//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()), "B-C vs A-B-C");
+        fmt::format("{}//Process2D//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()), "B-C vs A-B-C");
 }

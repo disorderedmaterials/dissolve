@@ -354,11 +354,9 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
         // Set up Data1D array with our empty data
         std::fill(braggPartials.begin(), braggPartials.end(), temp);
     }
-    auto braggTotalObject = moduleData.realiseIf<Data1D>(fmt::format("{}//OriginalBraggTotal", cfg->niceName()), uniqueName(),
-                                                         GenericItem::InRestartFileFlag);
-    auto &braggTotal = braggTotalObject.first;
-    if (braggTotalObject.second == GenericItem::ItemStatus::Created)
-        braggTotal.setObjectTag(fmt::format("{}//OriginalBragg//Total", cfg->niceName()));
+
+    auto &braggTotal = moduleData.realise<Data1D>(fmt::format("{}//OriginalBragg//Total", cfg->niceName()), uniqueName(),
+                                                  GenericItem::InRestartFileFlag);
     braggTotal.clear();
 
     // Zero Bragg partials
@@ -372,8 +370,6 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
         // Retrieve partial container and make sure its object tag is set
         auto &partial = braggPartials[{typeI, typeJ}];
-        partial.setObjectTag(
-            fmt::format("{}//OriginalBragg//{}-{}", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName()));
 
         // Loop over defined Bragg reflections
         for (auto n = 0; n < nReflections; ++n)

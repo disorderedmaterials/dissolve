@@ -22,7 +22,7 @@ void GenericList::clearAll() { items_.clear(); }
 // Return whether the named item is contained in the list
 bool GenericList::contains(std::string_view name, std::string_view prefix) const
 {
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name));
+    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
     return (it != items_.end());
 }
 
@@ -32,7 +32,7 @@ const std::map<std::string, GenericItem::Type> &GenericList::items() const { ret
 // Return the version of the named item from the list
 int GenericList::version(std::string_view name, std::string_view prefix) const
 {
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name));
+    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
     assert(it != items_.end());
     return std::get<GenericItem::Version>(it->second);
 }
@@ -40,10 +40,10 @@ int GenericList::version(std::string_view name, std::string_view prefix) const
 // Remove named item
 void GenericList::remove(std::string_view name, std::string_view prefix)
 {
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name));
+    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
     if (it == items_.end())
         throw(std::runtime_error(fmt::format("GenericList::remove() - No item named '{}' exists.\n",
-                                             prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name))));
+                                             prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name))));
 
     items_.erase(it);
 }
@@ -52,8 +52,8 @@ void GenericList::remove(std::string_view name, std::string_view prefix)
 void GenericList::rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName,
                          std::string_view newPrefix)
 {
-    std::string oldVarName = oldPrefix.empty() ? std::string(oldName) : fmt::format("{}_{}", oldPrefix, oldName);
-    std::string newVarName = newPrefix.empty() ? std::string(newName) : fmt::format("{}_{}", newPrefix, newName);
+    std::string oldVarName = oldPrefix.empty() ? std::string(oldName) : fmt::format("{}//{}", oldPrefix, oldName);
+    std::string newVarName = newPrefix.empty() ? std::string(newName) : fmt::format("{}//{}", newPrefix, newName);
 
     auto it = items_.find(oldVarName);
     if (it == items_.end())

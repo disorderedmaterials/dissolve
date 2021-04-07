@@ -30,16 +30,6 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
     // Copy to clipboard
     QAction *copyToClipboardAction = menu.addAction("&Copy to clipboard");
 
-    // If the user can add data, add a new section allowing it
-    RefDataList<QAction, int> addDataAction;
-    if (hasFlag(DataViewer::UserCanAddDataFlag))
-    {
-        menu.addSeparator();
-        addDataAction.append(menu.addAction("Add Data&1D..."), 1);
-        addDataAction.append(menu.addAction("Add Data&2D..."), 2);
-        addDataAction.append(menu.addAction("Add Data&3D..."), 3);
-    }
-
     // Execute the menu
     QAction *selectedAction = menu.exec(mapToGlobal(pos));
 
@@ -48,38 +38,6 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
         view_.resetViewMatrix();
     else if (selectedAction == copyToClipboardAction)
         copyViewToClipboard(true);
-    else if (addDataAction.contains(selectedAction))
-    {
-        auto dimensionality = addDataAction.dataForItem(selectedAction);
-        SelectGenericItemDialog genericItemDialog(this, *dissolve_);
-        if (dimensionality == 1)
-        {
-            auto itemName = genericItemDialog.selectGenericItem<Data1D>();
-            if (!itemName.isEmpty())
-            {
-                auto &item = dissolve_->processingModuleData().value<Data1D>(qPrintable(itemName));
-                createRenderable<RenderableData1D>(item.objectTag(), item.tag(), "Default");
-            }
-        }
-        else if (dimensionality == 2)
-        {
-            auto itemName = genericItemDialog.selectGenericItem<Data2D>();
-            if (!itemName.isEmpty())
-            {
-                auto &item = dissolve_->processingModuleData().value<Data2D>(qPrintable(itemName));
-                createRenderable<RenderableData2D>(item.objectTag(), item.tag(), "Default");
-            }
-        }
-        else if (dimensionality == 3)
-        {
-            auto itemName = genericItemDialog.selectGenericItem<Data3D>();
-            if (!itemName.isEmpty())
-            {
-                auto &item = dissolve_->processingModuleData().value<Data3D>(qPrintable(itemName));
-                createRenderable<RenderableData3D>(item.objectTag(), item.tag(), "Default");
-            }
-        }
-    }
 }
 
 // Show renderable context menu
@@ -152,29 +110,29 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 if (renderable->type() == Renderable::Data1DRenderable)
                 {
                     Data1DExportFileFormat exportFormat(qPrintable(filename));
-                    Data1D *data = Data1D::findObject(renderable->objectTag());
-                    if (!data)
-                        fmt::print("Failed to locate data to export (tag = {}).\n", renderable->objectTag());
+                    auto *r1d = static_cast<RenderableData1D *>(renderable.get());
+                    if (!r1d->source())
+                        Messenger::error("Failed to locate 1D data to export.\n");
                     else
-                        exportFormat.exportData(*data);
+                        exportFormat.exportData(r1d->source()->get());
                 }
                 else if (renderable->type() == Renderable::Data2DRenderable)
                 {
                     Data2DExportFileFormat exportFormat(qPrintable(filename));
-                    Data2D *data = Data2D::findObject(renderable->objectTag());
-                    if (!data)
-                        fmt::print("Failed to locate data to export (tag = {}).\n", renderable->objectTag());
+                    auto *r2d = static_cast<RenderableData2D *>(renderable.get());
+                    if (!r2d->source())
+                        Messenger::error("Failed to locate 2D data to export.\n");
                     else
-                        exportFormat.exportData(*data);
+                        exportFormat.exportData(r2d->source()->get());
                 }
                 else if (renderable->type() == Renderable::Data3DRenderable)
                 {
                     Data3DExportFileFormat exportFormat(qPrintable(filename));
-                    Data3D *data = Data3D::findObject(renderable->objectTag());
-                    if (!data)
-                        fmt::print("Failed to locate data to export (tag = {}).", renderable->objectTag());
+                    auto *r3d = static_cast<RenderableData3D *>(renderable.get());
+                    if (!r3d->source())
+                        Messenger::error("Failed to locate 3D data to export\n");
                     else
-                        exportFormat.exportData(*data);
+                        exportFormat.exportData(r3d->source()->get());
                 }
             }
         }
@@ -185,7 +143,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 return;
             destination->sendData(
                 QString::fromStdString(std::string(Renderable::renderableTypes().keyword(renderable->type()))),
-                renderable->objectTag(), renderable->name());
+                renderable->tag(), renderable->name());
         }
         else if (selectedAction == removeAction)
             removeRenderable(renderable);

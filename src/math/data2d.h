@@ -7,13 +7,12 @@
 #include "math/data1d.h"
 #include "math/plottable.h"
 #include "templates/array2d.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public PlottableData, public ObjectStore<Data2D>
+class Data2D : public PlottableData
 {
     public:
     Data2D();

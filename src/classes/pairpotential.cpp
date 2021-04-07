@@ -92,16 +92,12 @@ void PairPotential::setData1DNames()
     assert(atomTypeI_ && atomTypeJ_);
 
     uFull_.setTag(fmt::format("{}-{}", atomTypeI_->name(), atomTypeJ_->name()));
-    uFull_.setObjectTag(fmt::format("PairPotential//{}-{}//Full", atomTypeI_->name(), atomTypeJ_->name()));
 
     uAdditional_.setTag(fmt::format("{}-{} (Add)", atomTypeI_->name(), atomTypeJ_->name()));
-    uAdditional_.setObjectTag(fmt::format("PairPotential//{}-{}//Additional", atomTypeI_->name(), atomTypeJ_->name()));
 
     uOriginal_.setTag(fmt::format("{}-{} (Orig)", atomTypeI_->name(), atomTypeJ_->name()));
-    uOriginal_.setObjectTag(fmt::format("PairPotential//{}-{}//Original", atomTypeI_->name(), atomTypeJ_->name()));
 
     dUFull_.setTag(fmt::format("{}-{} (dU/dr)", atomTypeI_->name(), atomTypeJ_->name()));
-    dUFull_.setObjectTag(fmt::format("PairPotential//{}-{}//Force", atomTypeI_->name(), atomTypeJ_->name()));
 }
 
 // Set up PairPotential parameters from specified AtomTypes

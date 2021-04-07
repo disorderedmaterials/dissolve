@@ -139,13 +139,13 @@ EndModule
 # Test partial g(r) (unbound terms)
 Module  DataTest  'Partial g(r) (unbound)'
   Threshold  0.05
-  Data1D  'Liquid//RDFs//OriginalGR//CA-CA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
+  Data1D  'RDFs//Liquid//OriginalGR//CA-CA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
     Y  2
   EndData1D
-  Data1D  'Liquid//RDFs//OriginalGR//CA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
+  Data1D  'RDFs//Liquid//OriginalGR//CA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
     Y  4
   EndData1D
-  Data1D  'Liquid//RDFs//OriginalGR//HA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
+  Data1D  'RDFs//Liquid//OriginalGR//HA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
     Y  6
   EndData1D
 EndModule
@@ -153,13 +153,13 @@ EndModule
 # Test partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (bound)'
   Threshold  0.15
-  Data1D  'Liquid//RDFs//OriginalGR//CA-CA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
+  Data1D  'RDFs//Liquid//OriginalGR//CA-CA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  2
   EndData1D
-  Data1D  'Liquid//RDFs//OriginalGR//CA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
+  Data1D  'RDFs//Liquid//OriginalGR//CA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  4
   EndData1D
-  Data1D  'Liquid//RDFs//OriginalGR//HA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
+  Data1D  'RDFs//Liquid//OriginalGR//HA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  6
   EndData1D
 EndModule
@@ -290,13 +290,13 @@ EndModule
 # Test partial S(Q) derived from experiment via matrix inversion
 Module DataTest
   Threshold  2.0e-2
-  Data1D  'EPSR01//EstimatedSQ//Default//CA-CA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
+  Data1D  'EPSR01//EstimatedSQ//CA-CA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
     Y  2
   EndData1D
-  Data1D  'EPSR01//EstimatedSQ//Default//CA-HA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
+  Data1D  'EPSR01//EstimatedSQ//CA-HA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
     Y  4
   EndData1D
-  Data1D  'EPSR01//EstimatedSQ//Default//HA-HA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
+  Data1D  'EPSR01//EstimatedSQ//HA-HA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
     Y  6
   EndData1D
 EndModule

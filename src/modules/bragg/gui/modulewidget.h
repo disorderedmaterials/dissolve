@@ -39,11 +39,7 @@ class BraggModuleWidget : public ModuleWidget
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-    // Disable sensitive controls within widget
-    void disableSensitiveControls();
-    // Enable sensitive controls within widget
-    void enableSensitiveControls();
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions

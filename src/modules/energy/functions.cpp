@@ -275,7 +275,7 @@ EnergyModule::EnergyStability EnergyModule::checkStability(GenericList &processi
     }
     else
     {
-        Messenger::warn("No energy stability information is present in Configuration '{}' (yet) - check your setup.\n",
+        Messenger::warn("No energy stability information is present for Configuration '{}' (yet) - check your setup.\n",
                         cfg->name());
         return EnergyModule::NotAssessable;
     }
