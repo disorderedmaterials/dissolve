@@ -168,7 +168,7 @@ set(components_SRCS
 # Target 'components'
 add_library(components ${components_UIS_H} ${components_SRCS} ${components_MOC_SRCS})
 target_include_directories(
-  components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+    components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${CONAN_INCLUDE_DIRS_PUGIXML}
 )
 
 target_link_libraries(components widgets base)
