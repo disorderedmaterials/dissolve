@@ -1150,8 +1150,8 @@ bool ProcessPool::sum(double *source, int count, int rootRank, ProcessPool::Comm
         if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
             return false;
         // Put reduced data back into original buffer
-        for (auto n = 0; n < count; ++n)
-            source[n] = buffer[n];
+        std::copy(buffer, buffer+count, source);
+
     }
     else
     {
@@ -1178,8 +1178,7 @@ bool ProcessPool::sum(int *source, int count, int rootRank, ProcessPool::Communi
         if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
             return false;
         // Put reduced data back into original buffer
-        for (auto n = 0; n < count; ++n)
-            source[n] = buffer[n];
+        std::copy(buffer, buffer+count, source);
     }
     else
     {
@@ -1203,8 +1202,7 @@ bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorTyp
     if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(commType)) != MPI_SUCCESS)
         return false;
     // Put reduced data back into original buffer
-    for (auto n = 0; n < count; ++n)
-        source[n] = buffer[n];
+    std::copy(buffer, buffer+count, source);
     timer_.accumulate();
 #endif
     return true;
@@ -1216,8 +1214,7 @@ bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType c
 #ifdef PARALLEL
     timer_.start();
     int buffer[count];
-    for (auto n = 0; n < count; ++n)
-        buffer[n] = 0;
+    std::fill(buffer, buffer+count, 0);
 
     if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
         return true;
@@ -1225,8 +1222,7 @@ bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType c
         return false;
 
     // Put reduced data back into original buffer
-    for (auto n = 0; n < count; ++n)
-        source[n] = buffer[n];
+    std::copy(buffer, buffer+count, source);
     timer_.accumulate();
 #endif
     return true;
@@ -1244,8 +1240,7 @@ bool ProcessPool::allSum(long int *source, int count, ProcessPool::CommunicatorT
         return false;
 
     // Put reduced data back into original buffer
-    for (auto n = 0; n < count; ++n)
-        source[n] = buffer[n];
+    std::copy(buffer, buffer+count, source);
     timer_.accumulate();
 #endif
     return true;
