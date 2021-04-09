@@ -2,10 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
-#include "classes/masterintra.h"
 #include "data/isotopes.h"
 
 Species::Species()

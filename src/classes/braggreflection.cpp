@@ -3,7 +3,6 @@
 
 #include "classes/braggreflection.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 
@@ -130,42 +129,5 @@ bool BraggReflection::write(LineParser &parser)
     if (!GenericItemSerialiser::serialise<Array2D<double>>(intensities_, parser))
         return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool BraggReflection::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(q_, root))
-        return false;
-    if (!procPool.broadcast(index_, root))
-        return false;
-    if (!procPool.broadcast(nKVectors_, root))
-        return false;
-    if (!procPool.broadcast(intensities_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool BraggReflection::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(q_))
-        return Messenger::error("BraggReflection Q value is not equivalent (process {} has {:e}).\n", procPool.poolRank(), q_);
-    if (!procPool.equality(index_))
-        return Messenger::error("BraggReflection index is not equivalent (process {} has {}).\n", procPool.poolRank(), index_);
-    if (!procPool.equality(nKVectors_))
-        return Messenger::error("BraggReflection nKVectors is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                nKVectors_);
-    if (!procPool.equality(intensities_))
-        return Messenger::error("BraggReflection intensities are not equivalent.\n");
-#endif
     return true;
 }

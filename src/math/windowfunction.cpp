@@ -3,10 +3,7 @@
 
 #include "math/windowfunction.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "math/data1d.h"
-#include "templates/enumhelpers.h"
 
 WindowFunction::WindowFunction(WindowFunction::Form function) : form_(function), xMax_(0.0) {}
 

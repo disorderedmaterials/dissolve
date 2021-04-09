@@ -20,7 +20,6 @@ class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
 class SpeciesTorsion;
-class ProcessPool;
 
 // SpeciesAtom Definition
 class SpeciesAtom

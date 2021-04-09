@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/isotopologue.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"

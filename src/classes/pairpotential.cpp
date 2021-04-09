@@ -4,14 +4,11 @@
 #include "classes/pairpotential.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 #include "math/constants.h"
-#include "templates/enumhelpers.h"
 #include <math.h>
-#include <string.h>
 
 // Static members
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;

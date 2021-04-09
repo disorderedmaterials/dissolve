@@ -14,7 +14,6 @@
 // Forward Declarations
 class Dissolve;
 class Configuration;
-class ProcessPool;
 class ModuleList;
 class ModuleWidget;
 class QWidget;

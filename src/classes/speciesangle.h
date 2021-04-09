@@ -9,7 +9,6 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class ProcessPool;
 
 // SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra

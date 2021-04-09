@@ -405,39 +405,3 @@ bool Data1D::serialise(LineParser &parser) const
 
     return true;
 }
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data
-bool Data1D::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(x_, root))
-        return false;
-    if (!procPool.broadcast(values_, root))
-        return false;
-    if (!procPool.broadcast(hasError_, root))
-        return false;
-    if (!procPool.broadcast(errors_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool Data1D::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(x_))
-        return Messenger::error("Data1D x axis values not equivalent.\n");
-    if (!procPool.equality(values_))
-        return Messenger::error("Data1D y axis values not equivalent.\n");
-    if (!procPool.equality(hasError_))
-        return Messenger::error("Data1D error flag not equivalent.\n");
-    if (!procPool.equality(errors_))
-        return Messenger::error("Data1D error values not equivalent.\n");
-#endif
-    return true;
-}

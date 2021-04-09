@@ -31,9 +31,6 @@ Layer  'Processing'
     Method  Simple
   EndModule
 
-  Module SanityCheck
-  EndModule
-
 EndLayer
 
 # Pair Potentials

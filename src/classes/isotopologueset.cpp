@@ -3,7 +3,6 @@
 
 #include "classes/isotopologueset.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include <algorithm>

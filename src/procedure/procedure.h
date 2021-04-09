@@ -10,7 +10,6 @@
 // Forward Declarations
 class Configuration;
 class LineParser;
-class ProcessPool;
 
 // Procedure
 class Procedure

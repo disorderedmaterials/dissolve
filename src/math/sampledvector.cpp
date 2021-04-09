@@ -184,39 +184,3 @@ bool SampledVector::write(LineParser &parser)
 
     return true;
 }
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data
-bool SampledVector::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(count_, root))
-        return false;
-    if (!procPool.broadcast(mean_, root))
-        return false;
-    if (!procPool.broadcast(m2_, root))
-        return false;
-    if (!procPool.broadcast(stDev_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check equality of all data
-bool SampledVector::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(count_))
-        return Messenger::error("SampledVector count is not equivalent (process {} has {}).\n", procPool.poolRank(), count_);
-    if (!procPool.equality(mean_))
-        return Messenger::error("SampledVector mean vector is not equivalent.\n", procPool.poolRank());
-    if (!procPool.equality(m2_))
-        return Messenger::error("SampledVector m2 vector is not equivalent.\n", procPool.poolRank());
-    if (!procPool.equality(stDev_))
-        return Messenger::error("SampledVector stDev vector is not equivalent.\n", procPool.poolRank());
-#endif
-    return true;
-}

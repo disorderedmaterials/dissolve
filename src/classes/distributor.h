@@ -7,9 +7,6 @@
 #include "classes/cellarray.h"
 #include "templates/array.h"
 
-// Forward Declarations
-class ProcessPool;
-
 // Distributor
 class Distributor
 {

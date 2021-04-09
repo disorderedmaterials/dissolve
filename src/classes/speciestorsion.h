@@ -10,7 +10,6 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class ProcessPool;
 
 // SpeciesTorsion Definition
 class SpeciesTorsion : public SpeciesIntra

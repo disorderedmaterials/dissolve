@@ -8,7 +8,6 @@
 #include "templates/array3d.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // One-Dimensional Histogram
 class Histogram3D : public ListItem<Histogram3D>
@@ -141,8 +140,4 @@ class Histogram3D : public ListItem<Histogram3D>
     public:
     // Sum histogram data onto all processes
     bool allSum(ProcessPool &procPool);
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

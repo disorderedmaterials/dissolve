@@ -10,7 +10,6 @@
 class CoreData;
 class Isotopologue;
 class LineParser;
-class ProcessPool;
 class Species;
 
 // Isotopologues
@@ -70,13 +69,4 @@ class Isotopologues
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

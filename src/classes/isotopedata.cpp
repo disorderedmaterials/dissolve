@@ -4,10 +4,8 @@
 #include "classes/isotopedata.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
-#include "templates/enumhelpers.h"
 
 IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 {
@@ -85,51 +83,5 @@ bool IsotopeData::deserialise(LineParser &parser)
     isotope_ = Isotopes::isotope(Elements::element(parser.argi(0)), parser.argi(1));
     population_ = parser.argi(2);
     fraction_ = parser.argd(3);
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool IsotopeData::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    // For isotope_, need to broadcast element Z and isotope A
-    Elements::Element Z;
-    int A;
-    if (procPool.poolRank() == root)
-    {
-        Z = isotope_->Z();
-        A = isotope_->A();
-    }
-    procPool.broadcast(EnumCast<Elements::Element>(Z), root);
-    procPool.broadcast(A, root);
-    isotope_ = Isotopes::isotope(Z, A);
-
-    procPool.broadcast(population_, root);
-    procPool.broadcast(fraction_, root);
-#endif
-    return true;
-}
-
-// Check item equality
-bool IsotopeData::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(isotope_->Z()))
-        return Messenger::error("IsotopeData element z is not equivalent (process {} has '{}').\n", procPool.poolRank(),
-                                isotope_->Z());
-    if (!procPool.equality(isotope_->A()))
-        return Messenger::error("IsotopeData isotope A is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                isotope_->A());
-    if (!procPool.equality(population_))
-        return Messenger::error("IsotopeData population is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                population_);
-    if (!procPool.equality(fraction_))
-        return Messenger::error("IsotopeData fraction is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                fraction_);
-#endif
     return true;
 }

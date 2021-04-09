@@ -3,9 +3,7 @@
 
 #include "math/broadeningfunction.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
-#include "templates/enumhelpers.h"
 
 BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4,
                                        double p5, double p6)
@@ -638,33 +636,4 @@ bool BroadeningFunction::write(LineParser &parser)
     for (auto n = 0; n < nFunctionParameters(function_); ++n)
         line += fmt::format(" {:16.9e}", parameters_[n]);
     return parser.writeLine(line);
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool BroadeningFunction::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(EnumCast<BroadeningFunction::FunctionType>(function_), root))
-        return false;
-    if (!procPool.broadcast(parameters_, MAXBROADENINGFUNCTIONPARAMS, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool BroadeningFunction::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(EnumCast<BroadeningFunction::FunctionType>(function_)))
-        return Messenger::error("BroadeningFunction function type is not equivalent (process {} has {}).\n",
-                                procPool.poolRank(), function_);
-    if (!procPool.equality(parameters_, MAXBROADENINGFUNCTIONPARAMS))
-        return Messenger::error("BroadeningFunction parameters are not equivalent.\n");
-#endif
-    return true;
 }

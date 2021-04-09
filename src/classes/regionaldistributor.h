@@ -12,7 +12,6 @@
 #include <vector>
 
 // Forward Declarations
-class ProcessPool;
 class Molecule;
 
 // Regional Distributor

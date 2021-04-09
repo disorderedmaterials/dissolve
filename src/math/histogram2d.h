@@ -8,7 +8,6 @@
 #include "templates/array2d.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // One-Dimensional Histogram
 class Histogram2D : public ListItem<Histogram2D>
@@ -114,8 +113,4 @@ class Histogram2D : public ListItem<Histogram2D>
     public:
     // Sum histogram data onto all processes
     bool allSum(ProcessPool &procPool);
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

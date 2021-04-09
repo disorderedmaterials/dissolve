@@ -9,9 +9,6 @@
 #include "main/version.h"
 #include <QSurfaceFormat>
 #include <clocale>
-#include <ctime>
-#include <stdlib.h>
-#include <time.h>
 
 int main(int args, char **argv)
 {

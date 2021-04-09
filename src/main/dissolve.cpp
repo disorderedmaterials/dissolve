@@ -24,10 +24,6 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 
     // Clear everything
     clear();
-
-    // Parallel Comms
-    parallelStrategy_ = Dissolve::SequentialConfigStrategy;
-    parallelGroupPopulation_ = ProcessPool::MinimumGroupPopulation;
 }
 
 Dissolve::~Dissolve()
