@@ -23,7 +23,7 @@ foreach(SRCFILE ${tests_SRC})
             ${ANTLR4_INCLUDE_DIRS}
             ${ANTLR_OUTPUT_DIRS}
             ${Qt5Widgets_INCLUDE_DIRS}
-	    ${CONAN_INCLUDE_DIRS_GTEST}
+            ${CONAN_INCLUDE_DIRS_GTEST}
             CONAN_PKG::pugixml
   )
   target_link_libraries(
