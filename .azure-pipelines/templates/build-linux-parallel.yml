@@ -7,7 +7,7 @@ steps:
       set -ex
       # -- General
       sudo apt-get update -q
-      sudo apt-get install antlr4 ninja-build libopenmpi-dev openmpi-bin openmpi-common python3-setuptools uuid uuid-dev
+      sudo apt-get install antlr4 gcc-8 ninja-build libopenmpi-dev openmpi-bin openmpi-common python3-setuptools uuid uuid-dev
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
