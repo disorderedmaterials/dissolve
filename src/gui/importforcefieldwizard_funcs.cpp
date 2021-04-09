@@ -5,7 +5,7 @@
 #include "data/ff/xml/base.h"
 #include "gui/importforcefieldwizard.h"
 #include <QFileDialog>
-#include <filesystem>
+#include <QFileInfo>
 #include <pugixml.hpp>
 
 ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, Dissolve &mainDissolveInstance) : ff_(mainDissolveInstance)
@@ -72,8 +72,8 @@ void ImportForcefieldWizard::xmlFileDialog()
     ui_.lineEdit->setText(fileName);
     if (ui_.nameEdit->text().isEmpty())
     {
-        std::filesystem::path path(fileName.toStdString());
-        ui_.nameEdit->setText(path.stem().c_str());
+        QFileInfo path(fileName);
+        ui_.nameEdit->setText(path.baseName());
     }
 }
 
