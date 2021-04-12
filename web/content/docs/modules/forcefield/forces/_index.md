@@ -39,10 +39,10 @@ Dissolve implements several functional forms for each of the distinct intra- and
 |`TestAnalytic`|`true|false`|`false`|Use analytic interatomic energies rather than (production) tabulated potentials for tests|
 |`TestInter`|`true|false`|`true`|Include interatomic forces in test|
 |`TestIntra`|`true|false`|`true`|Include intramolecular forces in test|
-|`TestReference`|`ForceImportFileAndFormat`|--|Reference forces to test calculated forces against|
+|`TestReference`|[`ForcesFileAndFormat`]({{< ref "forcesformat" >}})|--|Reference forces to test calculated forces against|
 |`TestThreshold`|`double`|`0.1`|Threshold of force (%) at which test comparison will fail|
 
 ### Export Keywords
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`SaveForces`|`ForceImportFileAndFormat`|--|Save calculated energies to the specified file / format|
+|`SaveForces`|[`ForcesFileAndFormat`]({{< ref "forcesformat" >}})|--|Save calculated energies to the specified file / format|

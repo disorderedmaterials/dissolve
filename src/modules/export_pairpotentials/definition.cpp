@@ -7,7 +7,7 @@
 std::string_view ExportPairPotentialsModule::type() const { return "ExportPairPotentials"; }
 
 // Return category for module
-std::string_view ExportPairPotentialsModule::category() const { return "Input / Output"; }
+std::string_view ExportPairPotentialsModule::category() const { return "Export"; }
 
 // Return brief description of module
 std::string_view ExportPairPotentialsModule::brief() const { return "Export pair potentials"; }
