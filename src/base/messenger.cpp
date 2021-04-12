@@ -3,11 +3,7 @@
 
 #include "base/messenger.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
 
 // Static Members
 bool Messenger::quiet_ = false;

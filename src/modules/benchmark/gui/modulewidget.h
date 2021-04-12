@@ -20,7 +20,7 @@ class BenchmarkModuleWidget : public ModuleWidget
     BenchmarkModule *module_;
 
     public:
-    BenchmarkModuleWidget(QWidget *parent, BenchmarkModule *module);
+    BenchmarkModuleWidget(QWidget *parent, const GenericList &processingData, BenchmarkModule *module);
 
     /*
      * UI

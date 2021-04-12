@@ -10,7 +10,6 @@
 #include "gui/render/primitive.h"
 #include "gui/render/textprimitivelist.h"
 #include "templates/array.h"
-#include "templates/objectstore.h"
 #include "templates/vector3.h"
 #include "templates/vector4.h"
 #include <vector>

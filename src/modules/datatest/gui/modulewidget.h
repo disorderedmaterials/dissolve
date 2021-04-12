@@ -20,7 +20,7 @@ class DataTestModuleWidget : public ModuleWidget
     DataTestModule *module_;
 
     public:
-    DataTestModuleWidget(QWidget *parent, DataTestModule *module);
+    DataTestModuleWidget(QWidget *parent, const GenericList &processingData, DataTestModule *module);
 
     /*
      * UI

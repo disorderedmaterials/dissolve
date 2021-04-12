@@ -6,42 +6,36 @@
 #include <QWidget>
 
 // Forward Declarations
+class GenericList;
 class LineParser;
 
 // ModuleWidget, base class for any Module-specific control widget
 class ModuleWidget : public QWidget
 {
     public:
-    ModuleWidget(QWidget *parent);
+    ModuleWidget(QWidget *parent, const GenericList &processingData);
     virtual ~ModuleWidget();
 
     /*
      * UI
      */
     protected:
+    // Processing data source
+    const GenericList &processingData_;
     // Whether widget is currently refreshing
     bool refreshing_;
 
     public:
-    // Update flags
-    enum UpdateFlags
+    // Update Types
+    enum class UpdateType
     {
-        DefaultUpdateFlag = 0,        /* Standard update */
-        ResetGraphDataTargetsFlag = 1 /* Any renderables should be cleared and regenerated in viewers */
+        Normal,             /* Standard update - refresh / update existing content etc. */
+        RecreateRenderables /* Update as normal, but any existing renderables must be cleared and regenerated */
     };
     // Update controls within widget
-    virtual void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+    virtual void updateControls(UpdateType updateType);
     // Disable sensitive controls within widget
     virtual void disableSensitiveControls();
     // Enable sensitive controls within widget
     virtual void enableSensitiveControls();
-
-    /*
-     * State I/O
-     */
-    public:
-    // Read widget state through specified LineParser
-    virtual bool readState(LineParser &parser);
-    // Write widget state through specified LineParser
-    virtual bool writeState(LineParser &parser) const;
 };

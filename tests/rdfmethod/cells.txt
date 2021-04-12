@@ -19,17 +19,16 @@ Configuration  'Box'
   EndGenerator
   CellDivisionLength  5.0
 
-  # Test 'Cells' method of RDF calculation
-  Module  RDF
-    Frequency  1
-    InternalTest  On
-    Method  Cells
-  EndModule
 EndConfiguration
 
 Layer  'Processing'
 
-  Module SanityCheck
+  # Test 'Cells' method of RDF calculation
+  Module  RDF
+    COnfiguration  'Box'
+    Frequency  1
+    InternalTest  On
+    Method  Cells
   EndModule
 
 EndLayer

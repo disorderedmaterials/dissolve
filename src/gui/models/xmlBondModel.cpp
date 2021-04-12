@@ -10,7 +10,10 @@ void XmlBondModel::readFile(const pugi::xml_node &root)
     for (auto &b : root.select_nodes("/ForceField/HarmonicBondForce/Bond"))
     {
         bonds_.emplace_back(b.node().attribute("class1").as_string(), b.node().attribute("class2").as_string(),
-                            b.node().attribute("length").as_double(), b.node().attribute("k").as_double());
+                            // Convert from nm to Å
+                            b.node().attribute("length").as_double() * 10.0,
+                            // Convert from kJ/mol/nm² to kJ/mol/Å²
+                            b.node().attribute("k").as_double() / 100.0);
     }
     endResetModel();
 }

@@ -13,25 +13,26 @@ class Axes;
 class RenderableData1D : public Renderable
 {
     public:
-    RenderableData1D(const Data1D *source, std::string_view objectTag);
-    ~RenderableData1D();
+    RenderableData1D(const Data1D &source);
+    RenderableData1D(std::string_view tag);
+    ~RenderableData1D() = default;
 
     /*
      * Data
      */
     private:
     // Source data
-    const Data1D *source_;
-
-    private:
-    // Return whether a valid data source is available (attempting to set it if not)
-    bool validateDataSource();
-    // Invalidate the current data source
-    void invalidateDataSource();
+    OptionalReferenceWrapper<const Data1D> source_;
 
     public:
+    // Return source data
+    OptionalReferenceWrapper<const Data1D> source() const;
+    // Attempt to set the data source, searching the supplied list for the object
+    void validateDataSource(const GenericList &sourceList) override;
+    // Invalidate the current data source
+    void invalidateDataSource() override;
     // Return version of data
-    int dataVersion();
+    int dataVersion() override;
 
     /*
      * Transform / Limits
@@ -42,7 +43,7 @@ class RenderableData1D : public Renderable
 
     protected:
     // Transform data according to current settings
-    void transformValues();
+    void transformValues() override;
     // Return reference to transformed data
     const Data1D &transformedData();
 

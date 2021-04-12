@@ -3,7 +3,6 @@
 
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "templates/enumhelpers.h"
 #include <limits>
@@ -819,6 +818,17 @@ bool LineParser::commitCache()
 // Returns number of arguments grabbed from last parse
 int LineParser::nArgs() const { return arguments_.size(); }
 
+// Returns the specified argument as a string
+std::string LineParser::args(int i)
+{
+    if ((i < 0) || (i >= nArgs()))
+    {
+        Messenger::warn("LineParser::args() - Argument {} is out of range - returning \"NULL\"...\n", i);
+        return "NULL";
+    }
+    return arguments_[i];
+}
+
 // Returns the specified argument as a character string view
 std::string_view LineParser::argsv(int i)
 {
@@ -870,15 +880,15 @@ double LineParser::argd(int i)
     {
         std::string exponent{DissolveSys::afterChar(arguments_[i], "eE")};
         if (exponent.empty())
-            Messenger::warn(
+            Messenger::printVerbose(
                 "LineParser::argd() : String '{}' causes an out-of-range exception on conversion - returning 0.0...",
                 arguments_[i]);
         else if (std::stoi(exponent) >= std::numeric_limits<int>::max_exponent)
-            Messenger::warn("LineParser::argd() : String '{}' causes an overflow on conversion - returning 0.0...",
-                            arguments_[i]);
+            Messenger::printVerbose("LineParser::argd() : String '{}' causes an overflow on conversion - returning 0.0...",
+                                    arguments_[i]);
         else if (std::stoi(exponent) <= std::numeric_limits<int>::min_exponent)
-            Messenger::warn("LineParser::argd() : String '{}' causes an underflow on conversion - returning 0.0...",
-                            arguments_[i]);
+            Messenger::printVerbose("LineParser::argd() : String '{}' causes an underflow on conversion - returning 0.0...",
+                                    arguments_[i]);
     }
 
     return 0.0;

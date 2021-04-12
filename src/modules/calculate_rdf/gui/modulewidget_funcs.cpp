@@ -2,11 +2,13 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 
-CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                   CalculateRDFModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -23,65 +25,25 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDF
     view.axes().setMax(1, 1.0);
     view.setAutoFollowType(View::AllAutoFollow);
 
-    setGraphDataTargets();
-
-    updateControls();
-
     refreshing_ = false;
 }
 
 // Update controls within widget
-void CalculateRDFModuleWidget::updateControls(int flags)
+void CalculateRDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+        rdfGraph_->clearRenderables();
+
+    if (rdfGraph_->renderables().empty())
+        for (const auto *cfg : module_->targetConfigurations())
+            rdfGraph_
+                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->uniqueName(), cfg->niceName()),
+                                                     fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
+                ->setColour(StockColours::BlueStockColour);
+
+    // Validate renderables if they need it
+    rdfGraph_->validateRenderables(processingData_);
+
     ui_.RDFPlotWidget->updateToolbar();
-
     rdfGraph_->postRedisplay();
-}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateRDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateRDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void CalculateRDFModuleWidget::setGraphDataTargets()
-{
-    // Remove any current data
-    rdfGraph_->clearRenderables();
-
-    if (!module_)
-        return;
-
-    // Loop over Configuration targets in Module
-    for (const auto *cfg : module_->targetConfigurations())
-    {
-        // Calculated RDF
-        auto *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
-                                                fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
-        rdf->setColour(StockColours::BlueStockColour);
-    }
 }

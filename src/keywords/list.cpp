@@ -233,7 +233,7 @@ void KeywordList::hasBeenSet(std::string_view name)
  */
 
 // Try to parse node keyword in specified LineParser
-KeywordBase::ParseResult KeywordList::parse(LineParser &parser, CoreData &coreData)
+KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &coreData)
 {
     // Do we recognise the first item (the 'keyword')?
     KeywordBase *keyword = find(parser.argsv(0));
@@ -255,7 +255,7 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, CoreData &coreDa
 }
 
 // Write all keywords to specified LineParser
-bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIfSet)
+bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
     ListIterator<KeywordBase> keywordIterator(keywords_);
     while (KeywordBase *keyword = keywordIterator.iterate())
@@ -274,7 +274,7 @@ bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIf
 }
 
 // Write all keywords in groups to specified LineParser
-bool KeywordList::writeGroups(LineParser &parser, std::string_view prefix, bool onlyIfSet)
+bool KeywordList::writeGroups(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
     // Loop over keyword groups
     auto firstGroup = true;

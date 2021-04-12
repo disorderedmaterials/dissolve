@@ -73,8 +73,7 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
     auto *buttonGroup = new QButtonGroup(this);
 
     // Add new tabs in, one for each defined Species, and each containing checkboxes for each available site
-    ListIterator<Species> speciesIterator(coreData_.species());
-    while (auto *sp = speciesIterator.iterate())
+    for (const auto &sp : coreData_.species())
     {
         // Create the widget to hold our checkboxes for this Species
         auto *widget = new QWidget();
@@ -92,19 +91,18 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
         else
         {
             // Loop over sites defined in this Species
-            ListIterator<SpeciesSite> siteIterator(sp->sites());
-            while (auto *site = siteIterator.iterate())
+            for (auto &site : sp->sites())
             {
-                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site->name())));
-                if (keyword_->data() == site)
+                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site.name())));
+                if (keyword_->data() == &site)
                     radioButton->setChecked(true);
                 connect(radioButton, SIGNAL(clicked(bool)), this, SLOT(siteRadioButton_clicked(bool)));
-                radioButton->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(site));
+                radioButton->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(&site));
                 layout->addWidget(radioButton);
                 buttonGroup->addButton(radioButton);
 
                 // If this keyword demands oriented sites, disable the radio button if the site has no axes
-                if (keyword_->axesRequired() && (!site->hasAxes()))
+                if (keyword_->axesRequired() && (!site.hasAxes()))
                     radioButton->setDisabled(true);
             }
 

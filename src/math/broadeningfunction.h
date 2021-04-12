@@ -3,16 +3,16 @@
 
 #pragma once
 
+#include <string_view>
+
 #define MAXBROADENINGFUNCTIONPARAMS 6
 
-#include "genericitems/base.h"
-
 // Forward Declarations
+class CoreData;
 class LineParser;
-class ProcessPool;
 
 // Broadening Function
-class BroadeningFunction : public GenericItemBase
+class BroadeningFunction
 {
     public:
     // Function Types
@@ -103,22 +103,11 @@ class BroadeningFunction : public GenericItemBase
     double discreteKernelNormalisation(double deltaX, double omega) const;
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

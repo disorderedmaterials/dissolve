@@ -29,8 +29,13 @@ Configuration  'Bulk'
   InputCoordinates  dlpoly  '../_data/dlpoly/water3000_coul/CONFIG'
   EndInputCoordinates
 
+EndConfiguration
+
+Layer  'Processing'
+
   # Test analytical energy against production and reference energy
   Module Energy
+    Configuration  'Bulk'
     Test on
     TestAnalytic on
     TestReferenceInter    -34173.942995962962   # Straight Coulomb sum (no truncation)
@@ -38,16 +43,11 @@ Configuration  'Bulk'
 
   # Test production forces against reference forces
   Module Forces
+    Configuration  'Bulk'
     Test on
     TestAnalytic  on
     TestReference  dlpoly  '../_data/dlpoly/water3000_coul/REVCON'
     EndTestReference
-  EndModule
-EndConfiguration
-
-Layer  'Processing'
-
-  Module SanityCheck
   EndModule
 
 EndLayer

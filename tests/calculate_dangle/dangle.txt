@@ -99,10 +99,10 @@ Layer  'Processing'
 # Trajectory Processing
 Module  Import
   Configuration  'Bulk'
-  ReadTrajectory  True
+
   # Trajectory file contains 95 frames
-  TrajectoryFile  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
-  EndTrajectoryFile
+  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  EndFormat
 EndModule
 
 # Distance-Angle Map X-H...O
@@ -233,36 +233,31 @@ EndModule
 
 Module DataTest
   Frequency  95
-  Target  'DAngle(X-H...O)'
-  Data1D  'DAngle(X-H...O)_RDF(BC)_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
+  Data1D  'DAngle(X-H...O)//Process1D//RDF(BC)'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
   EndData1D
 EndModule
 
 Module DataTest
   Frequency  95
-  Target  'DAngle(X-H...O)-Analyser'
-  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
+  Data1D  'DAngle(X-H...O)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
   EndData1D
 EndModule
 
 Module DataTest
   Frequency  95
-  Target  'DAngle(X-H...O)'
-  Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
+  Data1D  'DAngle(X-H...O)//Process1D//Angle(ABC)'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
 EndModule
 
 Module DataTest
   Frequency  95
-  Target  'DAngle(X-H...O)-Analyser'
-  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//Angle'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
+  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Angle'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
 EndModule
 
 Module DataTest
   Frequency  95
-  Target  'DAngle(X-H...O)'
-  #Data2D  'DAngle(X-H...O)_DAngle(A-BC)_Bulk'  cartesian  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.surf'
+  #Data2D  'DAngle(X-H...O)//Process2D//DAngle(A-BC)'  cartesian  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.surf'
 #    XRange  0.0  5.0  0.01
 #    YRange  0.0  180  1.0
   #EndData2D

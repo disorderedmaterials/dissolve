@@ -34,8 +34,8 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const std::vector<dou
         auto smoothing = rdfModule->keywords().asInt("Smoothing");
         for (Configuration *cfg : rdfModule->targetConfigurations())
         {
-            const auto &originalGR = cfg->moduleData().value<PartialSet>("OriginalGR");
-            auto &unweightedGR = cfg->moduleData().realise<PartialSet>("UnweightedGR");
+            const auto &originalGR = dissolve_.processingModuleData().value<PartialSet>("OriginalGR", cfg->niceName());
+            auto &unweightedGR = dissolve_.processingModuleData().realise<PartialSet>("UnweightedGR", cfg->niceName());
             RDFModule::calculateUnweightedGR(processPool_, cfg, originalGR, unweightedGR, broadening, smoothing);
         }
     }
@@ -52,7 +52,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const std::vector<dou
         // Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target
         // Configurations
         for (Configuration *cfg : module->targetConfigurations())
-            cfg->moduleData().realise<bool>("_ForceNeutronSQ") = true;
+            dissolve_.processingModuleData().realise<bool>("_ForceNeutronSQ", cfg->niceName()) = true;
 
         // Run the NeutronSQModule (quietly)
         Messenger::mute();

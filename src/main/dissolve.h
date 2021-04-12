@@ -38,8 +38,6 @@ class Dissolve
     const CoreData &coreData() const;
     // Clear all data
     void clear();
-    // Register GenericItems
-    void registerGenericItems();
 
     /*
      * Atom Types
@@ -65,13 +63,13 @@ class Dissolve
      */
     public:
     // Return list of master Bond parameters
-    const std::vector<MasterIntra> &masterBonds() const;
+    const std::list<MasterIntra> &masterBonds() const;
     // Return list of master Angle parameters
-    const std::vector<MasterIntra> &masterAngles() const;
+    const std::list<MasterIntra> &masterAngles() const;
     // Return list of master Torsion parameters
-    const std::vector<MasterIntra> &masterTorsions() const;
+    const std::list<MasterIntra> &masterTorsions() const;
     // Return list of master Improper parameters
-    const std::vector<MasterIntra> &masterImpropers() const;
+    const std::list<MasterIntra> &masterImpropers() const;
     // Check and print MasterTerm usage
     void checkMasterTermUsage() const;
 
@@ -87,9 +85,7 @@ class Dissolve
     // Return number of defined Species
     int nSpecies() const;
     // Return Species list
-    List<Species> &species();
-    // Return nth Species in the list
-    Species *species(int n);
+    std::vector<std::unique_ptr<Species>> &species();
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
     // Copy AtomType, creating a new one if necessary
@@ -346,31 +342,6 @@ class Dissolve
      * Parallel Comms
      */
     public:
-    // Parallel Strategy
-    enum ParallelStrategy
-    {
-        SequentialConfigStrategy,
-        EvenStrategy,
-        nParallelStrategies
-    };
-    // Convert string to ParallelStrategy
-    static ParallelStrategy parallelStrategy(std::string_view s);
-
-    private:
-    // Parallel strategy for Configuration work
-    ParallelStrategy parallelStrategy_;
-    // Default process group population (per Configuration)
-    int parallelGroupPopulation_;
-
-    public:
-    // Set parallel strategy for Configuration work
-    void setParallelStrategy(ParallelStrategy ps);
-    // Return parallel strategy for Configuration work
-    ParallelStrategy parallelStrategy() const;
-    // Set default process group population (per Configuration)
-    void setParallelGroupPopulation(int groupPopulation);
-    // Return default process group population (per Configuration)
-    int parallelGroupPopulation() const;
     // Return world process pool
     ProcessPool &worldPool();
     // Set up local MPI pools

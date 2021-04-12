@@ -4,6 +4,7 @@
 #pragma once
 
 #include "gui/models/dataManagerModel.h"
+#include "genericitems/list.h"
 #include "gui/referencepoint.h"
 #include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
@@ -14,7 +15,6 @@ Q_DECLARE_METATYPE(const ReferencePoint *)
 
 // Forward Declarations
 class Dissolve;
-class GenericItem;
 
 // Data Manager Dialog
 class DataManagerDialog : public QDialog
@@ -41,11 +41,12 @@ class DataManagerDialog : public QDialog
     Ui::DataManagerDialog ui_;
 
     private:
-    // Append GenericItems to table under specified source
-    void addItemsToTable(QTableWidget *table, List<GenericItem> &items, const QString locationName,
-                         const QString locationIconResource);
+    // Add GenericItems to table
+    void addItems(const std::map<std::string, GenericItem::Type> &items);
     // Update the specified table of GenericItems, optionally filtering them by name and description
-    void filterTable(QTableWidget *table, GenericItem *current, QString filter);
+    void filterTable(QString filterText);
+    // Update ReferencePoint table row
+    void referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems);
     // Return currently-selected ReferencePoint
     ReferencePoint *currentReferencePoint() const;
     // Update controls

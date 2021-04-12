@@ -88,7 +88,6 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
 
         if (format_ == XYZTrajectory)
             headerResult = true;
-        // 		else if (format_ == OneThatNeedsAHeaderTrajectory) headerResult = writeAHeader(parser, cfg);
         else
             headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
         printAvailableFormats();

@@ -45,9 +45,6 @@ Configuration  'Box-noBragg'
   EndModule
 EndConfiguration
 
-Module SanityCheck
-EndModule
-
 # Pair Potentials
 PairPotentials
   Range  15.000000

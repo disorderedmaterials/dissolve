@@ -8,6 +8,9 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QMessageBox>
+#include <render/renderabledata1d.h>
+#include <render/renderabledata2d.h>
+#include <render/renderabledata3d.h>
 
 GraphGizmo::GraphGizmo(Dissolve &dissolve, const QString uniqueName) : Gizmo(dissolve, uniqueName)
 {
@@ -21,8 +24,7 @@ GraphGizmo::GraphGizmo(Dissolve &dissolve, const QString uniqueName) : Gizmo(dis
     dataViewer_->groupManager().setGroupColouring("Default", RenderableGroup::AutomaticIndividualColouring);
 
     // Permit the user to add data to the DataViewer
-    dataViewer_->setFlags(DataViewer::UserCanAddDataFlag + DataViewer::UserCanRenameDataFlag +
-                          DataViewer::UserCanRemoveDataFlag);
+    dataViewer_->setFlags(DataViewer::UserCanRenameDataFlag + DataViewer::UserCanRemoveDataFlag);
     dataViewer_->setDissolve(&dissolve);
 
     // Update associated toolbar
@@ -82,14 +84,22 @@ bool GraphGizmo::acceptsData(std::string_view dataType)
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool GraphGizmo::sendData(std::string_view dataType, std::string_view objectTag, std::string_view name)
+bool GraphGizmo::sendData(std::string_view dataType, std::string_view tag, std::string_view name)
 {
-    Renderable::RenderableType rendType = Renderable::renderableTypes().enumeration(dataType);
-    if ((rendType != Renderable::Data1DRenderable) && (rendType != Renderable::Data2DRenderable) &&
-        (rendType != Renderable::Data3DRenderable))
-        return false;
-
-    dataViewer_->createRenderable(rendType, objectTag, name, "Default");
+    switch (Renderable::renderableTypes().enumeration(dataType))
+    {
+        case (Renderable::Data1DRenderable):
+            dataViewer_->createRenderable<RenderableData1D>(tag, name);
+            break;
+        case (Renderable::Data2DRenderable):
+            dataViewer_->createRenderable<RenderableData2D>(tag, name);
+            break;
+        case (Renderable::Data3DRenderable):
+            dataViewer_->createRenderable<RenderableData3D>(tag, name);
+            break;
+        default:
+            return false;
+    }
 
     return true;
 }
@@ -100,35 +110,6 @@ bool GraphGizmo::sendData(std::string_view dataType, std::string_view objectTag,
 
 // Return pointer to the contained DataViewer
 DataViewer *GraphGizmo::dataViewer() const { return dataViewer_; }
-
-/*
- * State
- */
-
-// Write widget state through specified LineParser
-bool GraphGizmo::writeState(LineParser &parser) const
-{
-    // Write DataViewer state
-    if (!dataViewer_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool GraphGizmo::readState(LineParser &parser)
-{
-    // Read the DataViewer session info
-    if (!dataViewer_->readSession(parser))
-        return false;
-
-    // Make sure that our controls reflect the state of the underlying DataViewer
-    ui_.DataView->updateToolbar();
-    ui_.DataView->updateStatusBar();
-    ui_.DataView->updateDataTree();
-
-    return true;
-}
 
 /*
  * Widget Signals / Slots

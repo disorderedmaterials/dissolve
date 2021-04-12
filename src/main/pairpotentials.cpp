@@ -136,7 +136,7 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
             std::string itemName = fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
             if (!processingModuleData_.contains(itemName, "Dissolve"))
                 continue;
-            pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve", Data1D()));
+            pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
         }
     }
 

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui/helpers/comboboxcontroller.h"
 #include "gui/modulewidget.h"
 #include "modules/rdf/gui/ui_modulewidget.h"
 
@@ -21,14 +22,14 @@ class RDFModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve);
+    RDFModuleWidget(QWidget *parent, const GenericList &processingData, RDFModule *module, Dissolve &dissolve);
     ~RDFModuleWidget();
 
     private:
     // Associated Module
     RDFModule *module_;
-    // DataViewers contained within this widget
-    DataViewer *partialsGraph_, *totalsGraph_;
+    // Target partial data being displayed (if any)
+    OptionalReferenceWrapper<const PartialSet> targetPartials_;
     // Reference to Dissolve
     Dissolve &dissolve_;
 
@@ -38,31 +39,23 @@ class RDFModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::RDFModuleWidget ui_;
+    // DataViewer contained within this widget
+    DataViewer *rdfGraph_;
+
+    private:
+    // Create renderables for current target PartialSet
+    void createPartialSetRenderables(std::string_view targetPrefix);
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
      */
-    private:
-    // Current Configuration whose data is being displayed
-    Configuration *currentConfiguration_;
-
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets(RDFModule *module);
-
     private slots:
-    void on_TargetCombo_currentIndexChanged(int index);
+    void on_SummedPartialsButton_clicked(bool checked);
+    void on_TotalsButton_clicked(bool checked);
+    void on_ConfigurationPartialsButton_clicked(bool checked);
+    void on_ConfigurationTargetCombo_currentIndexChanged(int index);
 };

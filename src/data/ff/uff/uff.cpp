@@ -337,11 +337,11 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtomType(const SpeciesAtom *i) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtomType(const SpeciesAtom &i) const
 {
-    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i->Z()));
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.userIndex(), Elements::symbol(i.Z()));
 
-    auto uffType = determineUFFAtomType(i);
+    auto uffType = determineUFFAtomType(&i);
     if (!uffType)
         return std::nullopt;
 

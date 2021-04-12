@@ -3,195 +3,217 @@
 
 #pragma once
 
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "genericitems/container.h"
-#include "genericitems/items.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
+#include "genericitems/item.h"
+#include "genericitems/producers.h"
+#include "genericitems/searchers.h"
+#include "templates/optionalref.h"
+#include <any>
+#include <map>
+#include <typeindex>
 
 // Generic List
 class GenericList
 {
+    public:
+    GenericList() = default;
+    ~GenericList() = default;
+
     /*
-     * List Contents
+     * Child Items
      */
     private:
-    // List of generic items
-    List<GenericItem> items_;
+    // Map of items, where the tuple corresponds to <object, className, version, flags>
+    std::map<std::string, GenericItem::Type> items_;
 
     public:
     // Clear all items (except those that are marked protected)
     void clear();
     // Clear all items, including protected items
     void clearAll();
-    // Add specified item to list (from base class pointer)
-    void add(GenericItem *item);
-    // Create an item of the specified type
-    GenericItem *create(std::string_view name, std::string_view itemClassName, int version = 0, int flags = 0);
     // Return whether the named item is contained in the list
     bool contains(std::string_view name, std::string_view prefix = "") const;
     // Return item list
-    List<GenericItem> &items();
-    // Return the named item from the list
-    GenericItem *find(std::string_view name);
-    const GenericItem *find(std::string_view name) const;
-    // Return the named item from the list (with prefix)
-    GenericItem *find(std::string_view name, std::string_view prefix);
+    const std::map<std::string, GenericItem::Type> &items() const;
     // Return the version of the named item from the list
     int version(std::string_view name, std::string_view prefix = "") const;
     // Remove named item
-    bool remove(std::string_view name, std::string_view prefix);
+    void remove(std::string_view name, std::string_view prefix);
     // Rename item
-    bool rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName, std::string_view newPrefix);
+    void rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName, std::string_view newPrefix);
     // Prune all items with '@suffix'
     void pruneWithSuffix(std::string_view suffix);
+
+    /*
+     * Item Creation
+     */
+    public:
+    // Create or retrieve named item as templated type
+    template <class T> T &realise(std::string_view name, std::string_view prefix = "", int flags = GenericItem::NoFlags)
+    {
+        return realiseIf<T>(name, prefix, flags).first;
+    }
+    // Create or retrieve named item as templated type, also returning whether it was created
+    template <class T>
+    std::pair<T &, GenericItem::ItemStatus> realiseIf(std::string_view name, std::string_view prefix = "",
+                                                      int flags = GenericItem::NoFlags)
+    {
+        // Construct full name
+        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
+
+        auto it = items_.find(varName);
+        if (it != items_.end())
+        {
+            // Check type before we attempt to cast it
+            if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+                throw(std::runtime_error(
+                    fmt::format("GenericList::realise() - Item named '{}' exists, but has a different type "
+                                "to that requested ('{}' vs '{}').\n",
+                                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
+
+            // Bump version of the item and return it
+            ++std::get<GenericItem::Version>(it->second);
+            return {std::any_cast<T &>(std::get<GenericItem::AnyObject>(it->second)), GenericItem::ItemStatus::Existing};
+        }
+
+        // Create and return new item
+        items_.emplace(varName,
+                       GenericItem::Type(GenericItemProducer::create<T>(), GenericItemProducer::className<T>(), 0, flags));
+        auto &item = items_[varName];
+        return {std::any_cast<T &>(std::get<GenericItem::AnyObject>(item)), GenericItem::ItemStatus::Created};
+    }
 
     /*
      * Item Retrieval
      */
     public:
-    // Add new named item of template-guided type to specified list
-    template <class T> T &add(std::string_view name, std::string_view prefix = "", int flags = -1)
+    // Return named (const) item as templated type
+    template <class T> const T &value(std::string_view name, std::string_view prefix = "") const
     {
-        // Construct full name
-        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
+        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        if (it == items_.end())
+            throw(std::runtime_error(fmt::format("GenericList::value() - Item named '{}' does not exist.\n",
+                                                 prefix.empty() ? name : fmt::format("{}//{}", prefix, name))));
 
-        // Does the named variable already exist in the list?
-        auto *existingItem = find(varName);
-        if (existingItem)
-        {
-            Messenger::warn("Item '{}' already exists in the list - a dummy value will be returned instead.\n", varName);
-            static T dummy;
-            return dummy;
-        }
+        // Check type before we attempt to cast it
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+            throw(std::runtime_error(fmt::format(
+                "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
+                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
-        // Create new item
-        auto *newItem = new GenericItemContainer<T>(varName);
-        if (flags >= 0)
-            newItem->setFlags(flags);
-        add(newItem);
-        return newItem->data();
+        return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
     }
-    // Return named (const) item from specified list as template-guided type
-    template <class T>
-    const T &value(std::string_view name, std::string_view prefix = "", T defaultValue = T(), bool *found = nullptr) const
+    // Return copy of named item as templated type, or a default value
+    template <class T> T valueOr(std::string_view name, std::string_view prefix, T valueIfNotFound) const
     {
-        // Construct full name
-        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
+        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        if (it == items_.end())
+            return valueIfNotFound;
 
-        // Find item in the list
-        auto *item = find(varName);
-        if (!item)
-        {
-            Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
-            static T dummy;
-            dummy = defaultValue;
-            if (found != nullptr)
-                (*found) = false;
-            return dummy;
-        }
+        // Check type before we attempt to cast it
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+            throw(std::runtime_error(fmt::format(
+                "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
+                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
-        // Cast to correct type
-        auto *castItem = dynamic_cast<const GenericItemContainer<T> *>(item);
-        if (!castItem)
-            throw std::runtime_error(
-                fmt::format("GenericList.value({}) failed, because the target item is of the wrong type.", name));
-
-        if (found != nullptr)
-            (*found) = true;
-        return castItem->data();
+        return std::any_cast<const T>(std::get<GenericItem::AnyObject>(it->second));
     }
-    // Retrieve named item from specified list as template-guided type, assuming that it is going to be modified
-    template <class T>
-    T &retrieve(std::string_view name, std::string_view prefix = "", T defaultValue = T(), bool *found = nullptr)
+    // Return named (const) item as templated type, if it exists
+    template <class T> OptionalReferenceWrapper<const T> valueIf(std::string_view name, std::string_view prefix = "") const
     {
-        // Construct full name
-        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
+        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        if (it == items_.end())
+            return {};
 
-        // Find item in the list
-        auto *item = find(varName);
-        if (!item)
-        {
-            Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
-            static T dummy;
-            dummy = defaultValue;
-            if (found != nullptr)
-                (*found) = false;
-            return dummy;
-        }
+        // Check type before we attempt to cast it
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+            throw(std::runtime_error(fmt::format(
+                "GenericList::valueIf() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
+                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
-        // Cast to correct type
-        auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
-        if (!castItem)
-            throw std::runtime_error(
-                fmt::format("GenericList.retrieve({}) failed, because the item is not of the specified type.", name));
-
-        // Bump the version of the item
-        item->bumpVersion();
-
-        if (found != nullptr)
-            (*found) = true;
-        return castItem->data();
+        return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
     }
-    // Create or retrieve named item from specified list as template-guided type
-    template <class T> T &realise(std::string_view name, std::string_view prefix = "", int flags = -1, bool *created = nullptr)
+    // Retrieve named item as templated type, assuming that it is going to be modified
+    template <class T> T &retrieve(std::string_view name, std::string_view prefix = "")
     {
-        // Construct full name
-        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
+        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        if (it == items_.end())
+            throw(std::runtime_error(fmt::format("GenericList::retrieve() - Item named '{}' does not exist.\n",
+                                                 prefix.empty() ? name : fmt::format("{}//{}", prefix, name))));
 
-        // Find item in the list - if it isn't there, create it and return
-        auto *item = find(varName);
-        if (!item)
-        {
-            if (created != nullptr)
-                (*created) = true;
-            return add<T>(name, prefix, flags);
-        }
+        // Check type before we attempt to cast it
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+            throw(
+                std::runtime_error(fmt::format("GenericList::retrieve() - Item named '{}' exists, but has a different type "
+                                               "to that requested ('{}' vs '{}').\n",
+                                               prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                                               std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
-        // Cast to correct type
-        auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
-        if (!castItem)
-            throw std::runtime_error(
-                fmt::format("GenericList.realise({}) failed, because the item couldn't be cast to the desired type.", name));
-
-        // Update flags
-        if (flags >= 0)
-            item->setFlags(flags);
-
-        // Bump the version of the item
-        item->bumpVersion();
-
-        if (created != nullptr)
-            (*created) = false;
-        return castItem->data();
+        ++std::get<GenericItem::Version>(it->second);
+        return std::any_cast<T &>(std::get<GenericItem::AnyObject>(it->second));
     }
-    // Create or retrieve named item from specified list as template-guided type
-    template <class T> RefList<T> items() const
+    // Return names of all items of the template type
+    template <class T> std::vector<std::string_view> all() const
     {
-        RefList<T> items;
-        ListIterator<GenericItem> itemIterator(items_);
-        while (GenericItem *item = itemIterator.iterate())
-            if (DissolveSys::sameString(item->itemClassName(), T::itemClassName()))
-            {
-                // Cast to correct type
-                auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
-                if (!castItem)
-                    throw std::runtime_error(
-                        fmt::format("GenericList.items() failed to retrieve item {} as it is not actually class {}.",
-                                    item->itemClassName(), T::itemClassName()));
+        std::vector<std::string_view> matches;
+        for (auto &[key, value] : items_)
+            if (std::get<GenericItem::AnyObject>(value).type() == typeid(T))
+                matches.emplace_back(key);
 
-                items.append(&castItem->data());
-            }
-
-        return items;
+        return matches;
     }
 
     /*
-     * Parallel Comms
+     * Serialisation
      */
     public:
-    // Broadcast all data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check equality of all data
-    bool equality(ProcessPool &procPool);
+    // Serialise all objects via the specified LineParser
+    bool serialiseAll(LineParser &parser, std::string_view headerPrefix) const;
+    // Deserialise an object from the LineParser into our map
+    bool deserialise(LineParser &parser, CoreData &coreData, std::string name, std::string itemClass, int version = 0,
+                     int flags = 0);
+
+    /*
+     * Searchers
+     */
+    public:
+    // Search the object for a child object of the specified name
+    template <class T> OptionalReferenceWrapper<const T> search(std::string_view name, std::string_view prefix = "") const
+    {
+        auto varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
+        auto varNamePath = varName + "//";
+        for (auto &[key, value] : items_)
+        {
+            // Match name
+            if (varName == key)
+            {
+                // Check type before we attempt to cast it
+                if (std::get<GenericItem::AnyObject>(value).type() != typeid(T))
+                    throw(std::runtime_error(fmt::format("GenericList::search() - Item named '{}' exists, but has a different "
+                                                         "type to that requested ('{}' vs '{}').\n",
+                                                         prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                                                         std::get<GenericItem::AnyObject>(value).type().name(),
+                                                         typeid(T).name())));
+
+                return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(value));
+            }
+
+            // Subsearch in the item if its name plus "//" matches the beginning of the var name
+            if (DissolveSys::startsWith(varName, key + "//"))
+            {
+                auto dataName = varName;
+                dataName.erase(0, key.length() + 2);
+                auto optRef = GenericItemSearcher<T>::search(std::get<GenericItem::AnyObject>(value), dataName);
+                if (optRef)
+                    return optRef;
+            }
+        }
+
+        return {};
+    }
 };

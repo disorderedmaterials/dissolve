@@ -11,8 +11,9 @@
 #include "modules/calculate_sdf/gui/modulewidget.h"
 #include "modules/calculate_sdf/sdf.h"
 
-CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData)
-    : ModuleWidget(parent), module_(module), coreData_(coreData)
+CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                   CalculateSDFModule *module, const CoreData &coreData)
+    : ModuleWidget(parent, processingData), module_(module), coreData_(coreData)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -43,13 +44,9 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDF
     referenceMoleculeRenderable_ = nullptr;
 
     // Add on "<None>" option for reference molecule
-    ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(nullptr));
+    ui_.ReferenceMoleculeCombo->addItem("<None>");
 
     refreshing_ = false;
-
-    updateControls();
-
-    setGraphDataTargets();
 }
 
 /*
@@ -57,22 +54,9 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDF
  */
 
 // Update controls within widget
-void CalculateSDFModuleWidget::updateControls(int flags)
+void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     refreshing_ = true;
-
-    // Update the viewer's toolbar
-    ui_.SDFPlotWidget->updateToolbar();
-
-    // Refresh the graph
-    sdfGraph_->postRedisplay();
-
-    // Get cutoff limits from data
-    if (sdfRenderable_)
-    {
-        ui_.DataMinValueLabel->setText(QString::number(sdfRenderable_->valuesMin(), 'e', 4));
-        ui_.DataMaxValueLabel->setText(QString::number(sdfRenderable_->valuesMax(), 'e', 4));
-    }
 
     // Update available reference molecule combo
     RefDataList<Species, std::string> refMolecules;
@@ -81,67 +65,26 @@ void CalculateSDFModuleWidget::updateControls(int flags)
     for (CalculateAvgMolModule *module : avgMolModules)
         refMolecules.append(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species
-    ListIterator<Species> speciesIterator(coreData_.species());
-    while (Species *sp = speciesIterator.iterate())
-        refMolecules.append(sp, fmt::format("{} (Species)", sp->name()));
+    for (const auto &sp : coreData_.species())
+        refMolecules.append(sp.get(), fmt::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
-    refreshing_ = false;
-}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateSDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!sdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateSDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!sdfGraph_->readSession(parser))
-        return false;
-
-    setGraphDataTargets();
-
-    return true;
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void CalculateSDFModuleWidget::setGraphDataTargets()
-{
-    // Remove any current data
-    sdfGraph_->clearRenderables();
-    sdfRenderable_ = nullptr;
-    referenceMoleculeRenderable_ = nullptr;
-
-    if (!module_)
-        return;
-
-    // Loop over Configuration targets in Module
-    for (Configuration *cfg : module_->targetConfigurations())
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || sdfGraph_->renderables().empty())
     {
-        // Calculated SDF
-        sdfRenderable_ = dynamic_cast<RenderableData3D *>(sdfGraph_->createRenderable(
-            Renderable::Data3DRenderable, fmt::format("{}//Process3D//{}//SDF", module_->uniqueName(), cfg->niceName()),
-            fmt::format("SDF//{}", cfg->niceName()), cfg->niceName()));
+        sdfGraph_->clearRenderables();
+        sdfRenderable_ = nullptr;
+        referenceMoleculeRenderable_ = nullptr;
+    }
 
-        if (sdfRenderable_)
+    // Create SDF renderable if it doesn't already exist
+    if (!sdfRenderable_)
+    {
+        sdfRenderable_ = sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//Process3D//SDF", module_->uniqueName()),
+                                                                       fmt::format("SDF"));
+        sdfRenderable_->setColour(StockColours::BlueStockColour);
+        auto *cfg = module_->targetConfigurations().firstItem();
+        if (cfg)
         {
-            sdfRenderable_->setColour(StockColours::BlueStockColour);
-
             auto lowerCutoff = (cfg->nMolecules() / cfg->box()->volume()) * 3.0;
             auto upperCutoff = 1.0;
 
@@ -149,26 +92,43 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
             ui_.LowerCutoffSpin->setValue(lowerCutoff);
             ui_.UpperCutoffSpin->setValue(upperCutoff);
 
-            sdfRenderable_->setLowerCutoff(lowerCutoff);
-            sdfRenderable_->setUpperCutoff(upperCutoff);
-        }
-
-        // Reference molecule
-        if (referenceMolecule_)
-        {
-            referenceMoleculeRenderable_ = new RenderableSpecies(referenceMolecule_);
-            referenceMoleculeRenderable_->setName("Reference Molecule");
-            sdfGraph_->ownRenderable(referenceMoleculeRenderable_);
+            auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+            r3d->setLowerCutoff(lowerCutoff);
+            r3d->setUpperCutoff(upperCutoff);
         }
     }
+
+    // Create reference molecule renderable if it doesn't already exist
+    if (referenceMolecule_ && !referenceMoleculeRenderable_)
+        referenceMoleculeRenderable_ =
+            sdfGraph_->createRenderable<RenderableSpecies, Species>(referenceMolecule_, "Reference Molecule");
+
+    // Get cutoff limits from data
+    if (sdfRenderable_)
+    {
+        ui_.DataMinValueLabel->setText(QString::number(sdfRenderable_->valuesMin(), 'e', 4));
+        ui_.DataMaxValueLabel->setText(QString::number(sdfRenderable_->valuesMax(), 'e', 4));
+    }
+
+    // Validate renderables if they need it
+    sdfGraph_->validateRenderables(processingData_);
+    ui_.SDFPlotWidget->updateToolbar();
+    sdfGraph_->postRedisplay();
+
+    refreshing_ = false;
 }
+
+/*
+ * Widgets / Functions
+ */
 
 void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
 {
     if (refreshing_ || !sdfRenderable_)
         return;
 
-    sdfRenderable_->setLowerCutoff(value);
+    auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+    r3d->setLowerCutoff(value);
 
     sdfGraph_->postRedisplay();
 }
@@ -178,7 +138,8 @@ void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
     if (refreshing_ || !sdfRenderable_)
         return;
 
-    sdfRenderable_->setUpperCutoff(value);
+    auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+    r3d->setUpperCutoff(value);
 
     sdfGraph_->postRedisplay();
 }
@@ -194,5 +155,12 @@ void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int
     else
         referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());
 
-    setGraphDataTargets();
+    // Reset / remove renderable for the molecule
+    if (referenceMoleculeRenderable_)
+    {
+        sdfGraph_->removeRenderable(referenceMoleculeRenderable_);
+        referenceMoleculeRenderable_ = nullptr;
+    }
+
+    updateControls(ModuleWidget::UpdateType::Normal);
 }

@@ -3,14 +3,12 @@
 
 #include "classes/neutronweights.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "genericitems/array2ddouble.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 #include "templates/algorithms.h"
-#include "templates/broadcastlist.h"
-#include "templates/broadcastvector.h"
 
 NeutronWeights::NeutronWeights()
 {
@@ -268,10 +266,10 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
 
             // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
             // Isotopologue
-            for (auto *i = topes.species()->firstAtom(); i != nullptr; i = i->next())
+            for (const auto &i : topes.species()->atoms())
             {
-                Isotope *iso = tope->atomTypeIsotope(i->atomType());
-                atomTypes_.addIsotope(i->atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
+                Isotope *iso = tope->atomTypeIsotope(i.atomType());
+                atomTypes_.addIsotope(i.atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
             }
         }
     }
@@ -326,19 +324,16 @@ double NeutronWeights::boundCoherentAverageOfSquares() const { return boundCoher
 bool NeutronWeights::isValid() const { return valid_; }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view NeutronWeights::itemClassName() { return "NeutronWeights"; }
-
 // Read data through specified LineParser
-bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
+bool NeutronWeights::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
     // Read AtomTypeList
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
 
     // Read isotopologue mixtures
@@ -349,18 +344,18 @@ bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
     for (auto n = 0; n < nItems; ++n)
     {
         isotopologueMixtures_.emplace_back();
-        if (!isotopologueMixtures_.back().read(parser, coreData))
+        if (!isotopologueMixtures_.back().deserialise(parser, coreData))
             return false;
     }
 
     // Read arrays using static methods in the relevant GenericItemContainer
-    if (!GenericItemContainer<Array2D<double>>::read(concentrationProducts_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(concentrationProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::read(boundCoherentProducts_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(boundCoherentProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::read(weights_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(weights_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::read(intramolecularWeights_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intramolecularWeights_, parser))
         return false;
 
     // Read averages
@@ -373,90 +368,32 @@ bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool NeutronWeights::write(LineParser &parser)
+bool NeutronWeights::serialise(LineParser &parser) const
 {
     // Write AtomTypeList
-    if (!atomTypes_.write(parser))
+    if (!atomTypes_.serialise(parser))
         return false;
 
     // Write isotopologue mixtures
     if (!parser.writeLineF("{}  # nItems\n", isotopologueMixtures_.size()))
         return false;
     for (auto &topes : isotopologueMixtures_)
-        if (!topes.write(parser))
+        if (!topes.serialise(parser))
             return false;
 
     // Write arrays using static methods in the relevant GenericItemContainer
-    if (!GenericItemContainer<Array2D<double>>::write(concentrationProducts_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(concentrationProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::write(boundCoherentProducts_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(boundCoherentProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::write(weights_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(weights_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::write(intramolecularWeights_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(intramolecularWeights_, parser))
         return false;
 
     // Write averages
     if (!parser.writeLineF("{} {}\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_))
         return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast item contents
-bool NeutronWeights::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    BroadcastVector<Isotopologues> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
-    if (isoMixBroadcaster.failed())
-        return false;
-    if (!atomTypes_.broadcast(procPool, root, coreData))
-        return false;
-    if (!procPool.broadcast(concentrationProducts_, root))
-        return false;
-    if (!procPool.broadcast(boundCoherentProducts_, root))
-        return false;
-    if (!procPool.broadcast(weights_, root))
-        return false;
-    if (!procPool.broadcast(intramolecularWeights_, root))
-        return false;
-    if (!procPool.broadcast(boundCoherentAverageOfSquares_, root))
-        return false;
-    if (!procPool.broadcast(boundCoherentSquareOfAverage_, root))
-        return false;
-    if (!procPool.broadcast(valid_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool NeutronWeights::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!atomTypes_.equality(procPool))
-        return Messenger::error("NeutronWeights AtomTypes are not equivalent.\n");
-    if (!procPool.equality(concentrationProducts_))
-        return Messenger::error("NeutronWeights concentration matrix is not equivalent.\n");
-    if (!procPool.equality(boundCoherentProducts_))
-        return Messenger::error("NeutronWeights bound coherent matrix is not equivalent.\n");
-    if (!procPool.equality(weights_))
-        return Messenger::error("Unbound weights matrix is not equivalent.\n");
-    if (!procPool.equality(intramolecularWeights_))
-        return Messenger::error("Intramolecular weights matrix is not equivalent.\n");
-    if (!procPool.equality(boundCoherentAverageOfSquares_))
-        return Messenger::error("NeutronWeights bound coherent average of squares is not equivalent (process {} has {:e}).\n",
-                                procPool.poolRank(), boundCoherentAverageOfSquares_);
-    if (!procPool.equality(boundCoherentSquareOfAverage_))
-        return Messenger::error("NeutronWeights bound coherent square of average is not equivalent (process {} has {:e}).\n",
-                                procPool.poolRank(), boundCoherentSquareOfAverage_);
-    if (!procPool.equality(valid_))
-        return Messenger::error("NeutronWeights validity is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                valid_);
-#endif
     return true;
 }

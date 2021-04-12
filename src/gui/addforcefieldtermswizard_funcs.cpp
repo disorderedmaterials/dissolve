@@ -9,6 +9,7 @@
 #include "gui/helpers/treewidgetupdater.h"
 #include "gui/selectforcefieldwidget.h"
 #include "main/dissolve.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
 #include <QInputDialog>
@@ -69,7 +70,6 @@ AddForcefieldTermsWizard::~AddForcefieldTermsWizard() {}
 // Return (mapped) name to use for specified type
 const QString AddForcefieldTermsWizard::mappedName(const std::shared_ptr<AtomType> at)
 {
-    // RefDataItem<const AtomType, std::string> *item = typeNameMappings_.contains(at);
     auto it = typeNameMappings_.find(at);
     if (it == typeNameMappings_.end())
         return "???";
@@ -111,27 +111,27 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
     auto intraSelectionOnly = ui_.IntramolecularTermsAssignSelectionRadio->isChecked();
 
     // 1) Set AtomTypes
-    ListIterator<SpeciesAtom> originalAtomIterator(targetSpecies_->atoms());
-    ListIterator<SpeciesAtom> modifiedAtomIterator(modifiedSpecies_->atoms());
-    while (SpeciesAtom *i = originalAtomIterator.iterate())
+    for (const auto &&[original, modified] : zip(targetSpecies_->atoms(), modifiedSpecies_->atoms()))
     {
-        const SpeciesAtom *modifiedI = modifiedAtomIterator.iterate();
 
         // Selection only?
-        if (typesSelectionOnly && (!i->isSelected()))
+        if (typesSelectionOnly && (!original.isSelected()))
             continue;
 
         // Copy AtomType
-        dissolve.copyAtomType(modifiedI, i);
+        dissolve.copyAtomType(&modified, &original);
 
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
         {
-            i->atomType()->setShortRangeParameters(modifiedI->atomType()->shortRangeParameters());
-            i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
-            i->atomType()->setCharge(modifiedI->charge());
+            original.atomType()->setShortRangeParameters(modified.atomType()->shortRangeParameters());
+            original.atomType()->setShortRangeType(modified.atomType()->shortRangeType());
+            original.atomType()->setCharge(modified.atomType()->charge());
             dissolve.coreData().bumpAtomTypesVersion();
         }
+
+        // Copy charge on species atom
+        original.setCharge(modified.charge());
     }
 
     // Copy intramolecular terms
@@ -261,17 +261,20 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                 modifiedSpecies_->clearAtomTypes();
                 temporaryDissolve_.clearAtomTypes();
 
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll) != 0)
+                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
+                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
                     return false;
             }
             else if (ui_.AtomTypesAssignSelectionRadio->isChecked())
             {
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection) != 0)
+                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
+                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
                     return false;
             }
             else if (ui_.AtomTypesAssignMissingRadio->isChecked())
             {
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing) != 0)
+                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
+                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
                     return false;
             }
 

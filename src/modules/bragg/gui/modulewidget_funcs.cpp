@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/bragg/bragg.h"
@@ -10,7 +11,8 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module) : ModuleWidget(parent), module_(module)
+BraggModuleWidget::BraggModuleWidget(QWidget *parent, const GenericList &processingData, BraggModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -43,7 +45,7 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module) : Mod
 
     currentConfiguration_ = nullptr;
 
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::Normal);
 
     setGraphDataTargets();
 }
@@ -51,47 +53,13 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module) : Mod
 BraggModuleWidget::~BraggModuleWidget() {}
 
 // Update controls within widget
-void BraggModuleWidget::updateControls(int flags)
+void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     ui_.ReflectionsPlotWidget->updateToolbar();
     ui_.TotalsPlotWidget->updateToolbar();
 
     reflectionsGraph_->postRedisplay();
     totalsGraph_->postRedisplay();
-}
-
-// Disable sensitive controls within widget
-void BraggModuleWidget::disableSensitiveControls() {}
-
-// Enable sensitive controls within widget
-void BraggModuleWidget::enableSensitiveControls() {}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool BraggModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!reflectionsGraph_->writeSession(parser))
-        return false;
-    if (!totalsGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool BraggModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!reflectionsGraph_->readSession(parser))
-        return false;
-    if (!totalsGraph_->readSession(parser))
-        return false;
-
-    return true;
 }
 
 /*
@@ -113,8 +81,8 @@ void BraggModuleWidget::setGraphDataTargets()
     for (const auto *cfg : module_->targetConfigurations())
     {
         // Original F(Q)
-        totalsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//OriginalBragg//Total", cfg->niceName()),
-                                       cfg->niceName(), "Totals");
+        totalsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//Total", cfg->niceName()),
+                                                         cfg->niceName(), "Totals");
     }
 }
 
@@ -133,9 +101,8 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         const std::string id = fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName());
 
         // Original S(Q)
-        reflectionsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                            fmt::format("{}//OriginalBragg//{}", currentConfiguration_->niceName(), id),
-                                            fmt::format("Full//{}", id), "Full");
+        reflectionsGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//OriginalBragg//{}", currentConfiguration_->niceName(), id), fmt::format("Full//{}", id), "Full");
     });
 
     reflectionsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);

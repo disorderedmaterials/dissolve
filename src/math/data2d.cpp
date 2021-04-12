@@ -4,29 +4,14 @@
 #include "math/data2d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "math/data1d.h"
 #include "math/histogram2d.h"
 #include <algorithm>
 
-// Static Members (ObjectStore)
-template <class Data2D> RefDataList<Data2D, int> ObjectStore<Data2D>::objects_;
-template <class Data2D> int ObjectStore<Data2D>::objectCount_ = 0;
-template <class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2DObject;
-template <class Data2D> std::string_view ObjectStore<Data2D>::objectTypeName_ = "Data2D";
+Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), hasError_(false) {}
 
-Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data2D>(), ObjectStore<Data2D>(this)
-{
-    hasError_ = false;
-
-    clear();
-}
-
-Data2D::~Data2D() {}
-
-Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this)
-{
-    (*this) = source;
-}
+Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable) { (*this) = source; }
 
 // Clear Data
 void Data2D::clear()
@@ -42,6 +27,12 @@ void Data2D::clear()
 /*
  * Data
  */
+
+// Set tag
+void Data2D::setTag(std::string_view tag) { tag_ = tag; }
+
+// Return tag
+std::string_view Data2D::tag() const { return tag_; }
 
 // Initialise arrays to specified size
 void Data2D::initialise(int xSize, int ySize, bool withError)
@@ -244,13 +235,7 @@ bool Data2D::valuesHaveErrors() const { return hasError_; }
 // Return error value specified
 double &Data2D::error(int xIndex, int yIndex)
 {
-    if (!hasError_)
-    {
-        static double dummy = 0.0;
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     ++version_;
 
@@ -259,13 +244,7 @@ double &Data2D::error(int xIndex, int yIndex)
 
 const double &Data2D::error(int xIndex, int yIndex) const
 {
-    if (!hasError_)
-    {
-        static double dummy = 0.0;
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but error(int,int) was requested.\n",
-                        name(), objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     return errors_[{xIndex, yIndex}];
 }
@@ -273,9 +252,7 @@ const double &Data2D::error(int xIndex, int yIndex) const
 // Return two-dimensional errors Array
 Array2D<double> &Data2D::errors2D()
 {
-    if (!hasError_)
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     ++version_;
 
@@ -284,9 +261,7 @@ Array2D<double> &Data2D::errors2D()
 
 const Array2D<double> &Data2D::errors2D() const
 {
-    if (!hasError_)
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors2D() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     return errors_;
 }
@@ -297,7 +272,7 @@ const Array2D<double> &Data2D::errors2D() const
 
 void Data2D::operator=(const Data2D &source)
 {
-    name_ = source.name_;
+    tag_ = source.tag_;
     x_ = source.x_;
     y_ = source.y_;
     values_ = source.values_;
@@ -340,26 +315,18 @@ void Data2D::operator/=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Data2D::itemClassName() { return "Data2D"; }
-
 // Read data through specified LineParser
-bool Data2D::read(LineParser &parser, CoreData &coreData)
+bool Data2D::deserialise(LineParser &parser)
 {
     clear();
 
     // Read object tag
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
-    // Read object name
     if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
-    name_ = parser.line();
+    tag_ = parser.line();
 
     // Read axis sizes and initialise arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -416,12 +383,10 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data2D::write(LineParser &parser)
+bool Data2D::serialise(LineParser &parser) const
 {
-    // Write object tag and name
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
-    if (!parser.writeLineF("{}\n", name()))
+    // Write object tag
+    if (!parser.writeLineF("{}\n", tag_))
         return false;
 
     // Write axis sizes and errors flag
@@ -458,45 +423,5 @@ bool Data2D::write(LineParser &parser)
         }
     }
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data
-bool Data2D::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(x_, root))
-        return false;
-    if (!procPool.broadcast(y_, root))
-        return false;
-    if (!procPool.broadcast(values_, root))
-        return false;
-    if (!procPool.broadcast(hasError_, root))
-        return false;
-    if (!procPool.broadcast(errors_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool Data2D::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(x_))
-        return Messenger::error("Data2D x axis values not equivalent.\n");
-    if (!procPool.equality(y_))
-        return Messenger::error("Data2D y axis values not equivalent.\n");
-    if (!procPool.equality(values_))
-        return Messenger::error("Data2D values not equivalent.\n");
-    if (!procPool.equality(hasError_))
-        return Messenger::error("Data2D error flag not equivalent.\n");
-    if (!procPool.equality(errors_))
-        return Messenger::error("Data2D error values not equivalent.\n");
-#endif
     return true;
 }

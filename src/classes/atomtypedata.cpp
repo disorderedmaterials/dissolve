@@ -3,15 +3,11 @@
 
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/atomtypelist.h"
-#include "classes/coredata.h"
 #include "classes/isotopedata.h"
 #include "data/isotopes.h"
-#include "templates/broadcastlist.h"
-#include <string.h>
 
 AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
     : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
@@ -168,73 +164,14 @@ std::string_view AtomTypeData::atomTypeName() const { return atomType_->name(); 
  */
 
 // Write data through specified LineParser
-bool AtomTypeData::write(LineParser &parser)
+bool AtomTypeData::serialise(LineParser &parser) const
 {
     // Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
     if (!parser.writeLineF("{} {} {} {} {}\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
         return false;
     ListIterator<IsotopeData> isotopeIterator(isotopes_);
     while (IsotopeData *topeData = isotopeIterator.iterate())
-        if (!topeData->write(parser))
+        if (!topeData->serialise(parser))
             return false;
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-#ifdef PARALLEL
-// Broadcast data from Master to all Slaves
-bool AtomTypeData::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-    // For the atomType_, use the fact that the AtomType names are unique...
-    std::string typeName;
-    if (procPool.poolRank() == root)
-        typeName = atomType_->name();
-    procPool.broadcast(typeName, root);
-    atomType_ = coreData.findAtomType(typeName);
-
-    // Broadcast the IsotopeData list
-    BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
-    // if (topeBroadcaster.failed())
-    //   Messenger("Broadcase of AtomTypeData failed");
-
-    procPool.broadcast(population_, root);
-    procPool.broadcast(fraction_, root);
-    procPool.broadcast(boundCoherent_, root);
-}
-#endif
-
-// Check item equality
-bool AtomTypeData::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(atomTypeName()))
-        return Messenger::error("AtomTypeData atom type name is not equivalent (process {} has '{}').\n", procPool.poolRank(),
-                                atomTypeName());
-    if (!procPool.equality(population_))
-        return Messenger::error("AtomTypeData population is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                population_);
-    if (!procPool.equality(fraction_))
-        return Messenger::error("AtomTypeData fraction is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                fraction_);
-    if (!procPool.equality(boundCoherent_))
-        return Messenger::error("AtomTypeData bound coherent is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                boundCoherent_);
-
-    // Number of isotopes
-    if (!procPool.equality(isotopes_.nItems()))
-        return Messenger::error("AtomTypeData number of isotopes is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                isotopes_.nItems());
-    ListIterator<IsotopeData> isotopeIterator(isotopes_);
-    auto count = 0;
-    while (IsotopeData *topeData = isotopeIterator.iterate())
-    {
-        if (!topeData->equality(procPool))
-            return Messenger::error("AtomTypeData entry for isotope data {} is not equivalent.\n", count);
-        ++count;
-    }
-#endif
     return true;
 }

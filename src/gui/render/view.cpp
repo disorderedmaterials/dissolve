@@ -11,7 +11,7 @@
 // Static Members
 const double View::defaultZTranslation_ = -10.0;
 
-View::View(const List<Renderable> &renderables, FontInstance &fontInstance)
+View::View(const std::vector<std::shared_ptr<Renderable>> &renderables, FontInstance &fontInstance)
     : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
 {
     clear();
@@ -148,13 +148,6 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
         result.setColumn(2, (right + left) / (right - left), (top + bottom) / (top - bottom),
                          -(farClip + nearClip) / (farClip - nearClip), -1.0);
         result.setColumn(3, 0.0, 0.0, -(2.0 * nearClip * farClip) / (farClip - nearClip), 0.0);
-        // Equivalent to the following code:
-        // glMatrixMode(GL_PROJECTION);
-        // glLoadIdentity();
-        // top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-        // bottom = -top;
-        // glFrustum(aspect*bottom, aspect*top, bottom, top, prefs.clipNear(), prefs.clipFar());
-        // glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
     }
     else
     {
@@ -167,13 +160,6 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
         result.setColumn(1, 0.0, 2.0 / (top - bottom), 0.0, (top + bottom) / (top - bottom));
         result.setColumn(2, 0.0, 0.0, -1.0 / farClip, 0.0);
         result.setColumn(3, 0.0, 0.0, 0.0, 1.0);
-        // Equivalent to the following code:
-        // glMatrixMode(GL_PROJECTION);
-        // glLoadIdentity();
-        // top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-        // bottom = -top;
-        // glOrtho(aspect*top, aspect*bottom, top, bottom, -prefs.clipFar(), prefs.clipFar());
-        // glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
     }
 
     return result;
@@ -525,8 +511,6 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     // Project axis coordinates to get a screen-based yardstick
     auto axmin = dataToScreen(axes_.coordMin(axis));
     auto axmax = dataToScreen(axes_.coordMax(axis));
-    // 	axmin.print();
-    // 	axmax.print();
 
     // Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
     Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
@@ -708,8 +692,6 @@ void View::recalculateView(bool force)
         double globalHeight = globalMax.y - globalMin.y;
         axisPixelLength_[axisX] = coordMax[axisX].x - coordMin[axisX].x;
         axisPixelLength_[axisY] = coordMax[axisY].y - coordMin[axisY].y;
-        // 		double labelWidth = labelMax.x - labelMin.x;
-        // 		double labelHeight = labelMax.y - labelMin.y;
 
         // Now, we know the width and height of the axis on its own, and the extra 'added' by the labels, so work out
         // how much we need to shrink the axis by
@@ -760,14 +742,6 @@ void View::resetViewMatrix()
         viewRotation_.setIdentity();
         viewTranslation_.set(0.0, 0.0, 0.0);
 
-        // If a Normal view, reset the stretch factors
-        // 		if (viewType_ == View::NormalView)
-        // 		{
-        // 			axes_.setStretch(0, 1.0);
-        // 			axes_.setStretch(1, 1.0);
-        // 			axes_.setStretch(2, 1.0);
-        // 		}
-
         // Calculate zoom to show all data
         viewTranslation_.z = calculateRequiredZoom(axes_.realRange(0) * 0.5 * axes_.stretch(0),
                                                    axes_.realRange(1) * 0.5 * axes_.stretch(1), 0.9);
@@ -802,8 +776,6 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
         Axes::ensureSensibleRange(limitMin, limitMax);
 
         axes_.setRange(axis, limitMin, limitMax);
-        // 		axes_.setToLimit(axis, true);
-        // 		axes_.setToLimit(axis, false);
     }
 }
 
@@ -909,16 +881,21 @@ void View::autoFollowData()
     // Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive
     // regeneration further down the line
     auto updateRequired = false;
-    ListIterator<Renderable> renderableIterator(renderables_);
-    while (Renderable *rend = renderableIterator.iterate())
+    for (const auto &rend : renderables_)
     {
         // If the renderable isn't in the list, or our stored version is different, we need to update
-        RefDataItem<Renderable, int> *ri = autoFollowTransformVersions_.contains(rend);
-        if ((!ri) || (ri->data() != rend->dataVersion()))
-        {
-            updateRequired = true;
-            break;
-        }
+        auto it = std::find_if(autoFollowTransformVersions_.begin(), autoFollowTransformVersions_.end(),
+                               [rend](auto data) { return data.first == rend; });
+        if (it != autoFollowTransformVersions_.end() && (it->second == rend->dataVersion()))
+            continue;
+
+        // Update stored transformedData versions
+        if (it == autoFollowTransformVersions_.end())
+            autoFollowTransformVersions_.emplace_back(rend, rend->valuesTransformDataVersion());
+        else
+            it->second = rend->valuesTransformDataVersion();
+
+        updateRequired = true;
     }
 
     if (!updateRequired)
@@ -937,7 +914,7 @@ void View::autoFollowData()
         // Get y range over the horizontal range we've established
         auto first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-        for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+        for (const auto &rend : renderables_)
         {
             // Skip this Renderable if it is not currently visible
             if (!rend->isVisible())
@@ -983,11 +960,6 @@ void View::autoFollowData()
         axes_.setRange(0, xMin, xMax);
         axes_.setRange(1, yMin, yMax);
     }
-
-    // Update stored transformedData versions
-    renderableIterator.restart();
-    while (Renderable *rend = renderableIterator.iterate())
-        autoFollowTransformVersions_.addUnique(rend, rend->valuesTransformDataVersion());
 }
 
 /*
@@ -998,12 +970,12 @@ void View::autoFollowData()
 Vec3<double> View::dataMinima()
 {
     // If there are no Renderables, just return the current limits
-    if (renderables_.nItems() == 0)
+    if (renderables_.empty())
         return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
 
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1031,12 +1003,12 @@ Vec3<double> View::dataMinima()
 Vec3<double> View::dataMaxima()
 {
     // If there are no Renderables, just return the current limits
-    if (renderables_.nItems() == 0)
+    if (renderables_.empty())
         return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
 
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1065,7 +1037,7 @@ Vec3<double> View::positiveDataMinima()
 {
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1098,7 +1070,7 @@ Vec3<double> View::positiveDataMaxima()
 {
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())

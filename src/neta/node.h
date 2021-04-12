@@ -22,20 +22,19 @@ class NETANode
 {
     public:
     // Node types
-    enum NodeType
+    enum class NodeType
     {
-        BasicNode,
-        ConnectionNode,
-        OrNode,
-        PresenceNode,
-        RingNode,
-        RootNode,
-        nNETANodeTypes
+        Basic,
+        Connection,
+        Or,
+        Presence,
+        Ring,
+        Root
     };
     // Return enum options for Node Types
     static EnumOptions<NETANode::NodeType> nodeTypes();
     // Value Comparison Operators
-    enum ComparisonOperator
+    enum class ComparisonOperator
     {
         EqualTo,
         NotEqualTo,
@@ -110,6 +109,15 @@ class NETANode
     virtual bool isValidModifier(std::string_view s) const;
     // Set value and comparator for specified modifier
     virtual bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
+
+    /*
+     * Options
+     */
+    public:
+    // Return whether the specified option is valid for this node
+    virtual bool isValidOption(std::string_view s) const;
+    // Set value and comparator for specified modifier
+    virtual bool setOption(std::string_view option, ComparisonOperator op, std::string_view value);
 
     /*
      * Flags

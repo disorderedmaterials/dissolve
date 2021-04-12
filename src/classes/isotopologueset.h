@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/isotopologues.h"
-#include "genericitems/base.h"
 #include "templates/optionalref.h"
 #include <vector>
 
@@ -14,7 +13,7 @@ class Isotopologue;
 class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species
-class IsotopologueSet : public GenericItemBase
+class IsotopologueSet
 {
     public:
     IsotopologueSet() = default;
@@ -49,13 +48,11 @@ class IsotopologueSet : public GenericItemBase
     const std::vector<Isotopologues> &isotopologues() const;
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
 };

@@ -38,3 +38,4 @@ set(widgets_SRCS
 # Target 'gui'
 add_library(widgets ${widgets_UIS_H} ${widgets_SRCS} ${widgets_MOC_SRCS})
 target_include_directories(widgets PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS})
+target_link_libraries(widgets PRIVATE base)

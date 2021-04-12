@@ -3,14 +3,12 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "templates/listitem.h"
 #include "templates/refdatalist.h"
 
 // Forward Declarations
 class Species;
 class Isotopologue;
-class ProcessPool;
 class LineParser;
 
 // Isotopologue Weight

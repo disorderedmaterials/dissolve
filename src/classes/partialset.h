@@ -15,7 +15,7 @@ class Configuration;
 class Interpolator;
 
 // Set of Partials
-class PartialSet : public ListItem<PartialSet>, public GenericItemBase
+class PartialSet
 {
     public:
     PartialSet();
@@ -33,8 +33,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     double rdfBinWidth_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
-    // Abscissa units for contained data
-    std::string abscissaUnits_;
     // Histograms used for calculating full atom-atom partials in r
     Array2D<Histogram1D> fullHistograms_;
     // Histograms used for calculating bound atom-atom partials in r
@@ -51,16 +49,12 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     Array2D<char> emptyBoundPartials_;
     // Total function
     Data1D total_;
-    // Prefix applied to object names
-    std::string objectNamePrefix_;
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
-    bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, std::string_view prefix, std::string_view tag,
-               std::string_view suffix, std::string_view abscissaUnits);
+    bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth);
     // Set up PartialSet without initialising histogram arrays
-    bool setUpPartials(const AtomTypeList &atomTypes, std::string_view prefix, std::string_view tag, std::string_view suffix,
-                       std::string_view abscissaUnits);
+    bool setUpPartials(const AtomTypeList &atomTypes);
     // Set up histogram arrays for g(r) calculation
     void setUpHistograms(double rdfRange, double binWidth);
     // Reset partial arrays
@@ -103,14 +97,14 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     Data1D boundTotal(bool applyConcentrationWeights) const;
     // Calculate and return total unbound function
     Data1D unboundTotal(bool applyConcentrationWeights) const;
+    // Return Data1D with specified tag, if it exists
+    OptionalReferenceWrapper<const Data1D> data1DWithTag(std::string_view tag) const;
     // Save all partials and total
-    bool save() const;
+    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names
     std::string_view objectNamePrefix() const;
-    // Set underlying Data1D file names
-    void setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix);
 
     /*
      * Manipulation
@@ -138,22 +132,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     void operator*=(const double factor);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from root to all other processes
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
+    bool serialise(LineParser &parser) const;
 };

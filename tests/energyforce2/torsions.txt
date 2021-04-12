@@ -162,9 +162,6 @@ Module Forces
   TestThreshold  1.0e-6
 EndModule
 
-Module SanityCheck
-EndModule
-
 EndLayer
 
 # Pair Potentials

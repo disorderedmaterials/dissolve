@@ -152,25 +152,3 @@ void LayerTab::enableSensitiveControls()
     ui_.FrequencySpin->setEnabled(true);
     ui_.ModuleListPanel->enableSensitiveControls();
 }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool LayerTab::readState(LineParser &parser, const CoreData &coreData)
-{
-    if (!ui_.ModuleListPanel->readState(parser))
-        return false;
-
-    return true;
-}
-
-// Write widget state through specified LineParser
-bool LayerTab::writeState(LineParser &parser) const
-{
-    if (!ui_.ModuleListPanel->writeState(parser))
-        return false;
-
-    return true;
-}

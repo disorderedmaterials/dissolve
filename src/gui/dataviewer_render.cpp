@@ -47,17 +47,13 @@ void DataViewer::render2DOverlay()
      * Draw legend in top-right corner
      */
 
-    // Create RefList of legend entries
-    RefDataList<Renderable, double> legendEntries;
-
-    double maxTextWidth = -1.0;
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    auto maxTextWidth = -1.0;
+    for (auto &rend : renderables_)
     {
         if (!rend->isVisible())
             continue;
 
-        double textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
-        legendEntries.append(rend, textWidth);
+        auto textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
         if (textWidth > maxTextWidth)
             maxTextWidth = textWidth;
     }
@@ -70,11 +66,13 @@ void DataViewer::render2DOverlay()
 
     // Loop over legend entries
     GLfloat colour[4];
-    RefDataListIterator<Renderable, double> legendEntryIterator(legendEntries);
-    while (Renderable *rend = legendEntryIterator.iterate())
+    for (auto &rend : renderables_)
     {
+        if (!rend->isVisible())
+            continue;
+
         // Grab copy of the relevant colour definition for this Renderable
-        const ColourDefinition &colourDefinition = rend->colour();
+        const auto &colourDefinition = rend->colour();
 
         // Draw line indicator
         glPushMatrix();
@@ -130,27 +128,3 @@ void DataViewer::render2DOverlay()
                 break;
         }
 }
-
-// // Grab axes, and knock out values in the supplied vectors which correspond to the activated axis
-// Vec3<double> axisMinA, axisMinB, axisMaxA, axisMaxB;
-// int axis = interactionMode_ - DataViewer::ZoomXRangeInteraction;
-// axisMinA[(axis+1)%3] = view_.axes().coordMin((axis+1)%3)[(axis+1)%3];
-// axisMaxA[(axis+1)%3] = view_.axes().coordMax((axis+1)%3)[(axis+1)%3];
-// axisMinB[(axis+2)%3] = view_.axes().coordMin((axis+2)%3)[(axis+2)%3];
-// axisMaxB[(axis+2)%3] = view_.axes().coordMax((axis+2)%3)[(axis+2)%3];
-// axisMinA[axis] = 0.0;
-// axisMaxA[axis] = 0.0;
-// axisMinB[axis] = 0.0;
-// axisMaxB[axis] = 0.0;
-//
-// // Create 'bounding box' for slice primitive
-// Vec3<double> normal(0.0, 0.0, 1.0);
-//
-// interactionBoxPrimitive_.defineVertex(axisMinA + axisMinB, normal);
-// interactionBoxPrimitive_.defineVertex(axisMinA + axisMaxB, normal);
-// interactionBoxPrimitive_.defineVertex(axisMaxA + axisMaxB, normal);
-// interactionBoxPrimitive_.defineVertex(axisMaxA + axisMinB, normal);
-// interactionBoxPrimitive_.defineIndices(0,1);
-// interactionBoxPrimitive_.defineIndices(1,2);
-// interactionBoxPrimitive_.defineIndices(2,3);
-// interactionBoxPrimitive_.defineIndices(3,0);

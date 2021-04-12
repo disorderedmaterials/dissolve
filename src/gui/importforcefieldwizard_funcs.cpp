@@ -5,6 +5,7 @@
 #include "data/ff/xml/base.h"
 #include "gui/importforcefieldwizard.h"
 #include <QFileDialog>
+#include <QFileInfo>
 #include <pugixml.hpp>
 
 ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, Dissolve &mainDissolveInstance) : ff_(mainDissolveInstance)
@@ -69,6 +70,11 @@ void ImportForcefieldWizard::xmlFileDialog()
         return;
 
     ui_.lineEdit->setText(fileName);
+    if (ui_.nameEdit->text().isEmpty())
+    {
+        QFileInfo path(fileName);
+        ui_.nameEdit->setText(path.baseName());
+    }
 }
 
 void ImportForcefieldWizard::nameString(QString ffName)
@@ -89,8 +95,10 @@ void ImportForcefieldWizard::xmlString(QString fileName)
         auto root = doc.root();
 
         ff_.readFile(root);
+        ui_.xmlTree->expandAll();
         for (int i = 0; i < ff_.columnCount(QModelIndex()); i++)
             ui_.xmlTree->resizeColumnToContents(i);
+        ui_.xmlTree->collapseAll();
     }
     updateNavButtons();
 }

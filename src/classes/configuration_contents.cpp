@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "modules/import/import.h"
 #include <memory>
 
 // Clear contents of Configuration, leaving other definitions intact
@@ -46,37 +44,38 @@ int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 {
     // Check if we have an existing info for this Species
-    SpeciesInfo *spInfo = usedSpeciesInfo(sp);
+    auto spInfo = usedSpeciesInfo(sp);
     if (!spInfo)
     {
-        spInfo = usedSpecies_.add();
-        spInfo->setSpecies(sp);
+        auto &spIn = usedSpecies_.emplace_back();
+        spIn.setSpecies(sp);
+        spInfo = spIn;
     }
 
     // Increase the population
-    spInfo->addPopulation(population);
+    spInfo->get().addPopulation(population);
 
-    return spInfo;
+    return &spInfo->get();
 }
 
 // Return SpeciesInfo for specified Species
-SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
+OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
-        if (spInfo->species() == sp)
+    for (auto &spInfo : usedSpecies_)
+        if (spInfo.species() == sp)
             return spInfo;
 
-    return nullptr;
+    return std::nullopt;
 }
 
 // Return list of SpeciesInfo for the Configuration
-List<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
+std::vector<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 
 // Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
-        if (spInfo->species() == sp)
+    for (auto &spInfo : usedSpecies_)
+        if (spInfo.species() == sp)
             return true;
 
     return false;
@@ -88,9 +87,8 @@ double Configuration::atomicMass() const
     double mass = 0.0;
 
     // Get total molar mass in configuration
-    ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
-    while (SpeciesInfo *spInfo = speciesIterator.iterate())
-        mass += spInfo->species()->mass() * spInfo->population();
+    for (auto spInfo : usedSpecies_)
+        mass += spInfo.species()->mass() * spInfo.population();
 
     // Convert to absolute mass
     return mass / AVOGADRO;
@@ -121,14 +119,18 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet 
     addUsedSpecies(sp, 1);
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
-    SpeciesAtom *spi = sp->firstAtom();
     if (sourceCoordinates)
-        for (auto n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
-            addAtom(spi, newMolecule, sourceCoordinates->r(n));
+        for (auto n = 0; n < sp->nAtoms(); ++n)
+        {
+            addAtom(&sp->atom(n), newMolecule, sourceCoordinates->r(n));
+        }
     else
-        for (auto n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
-            addAtom(spi, newMolecule, spi->r());
-
+    {
+        for (auto n = 0; n < sp->nAtoms(); ++n)
+        {
+            addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
+        }
+    }
     return newMolecule;
 }
 
@@ -183,7 +185,7 @@ std::shared_ptr<Atom> Configuration::atom(int n)
 void Configuration::scaleMoleculeCentres(double factor)
 {
     Vec3<double> oldCog, newCog, newPos;
-    for (auto mol : molecules_)
+    for (auto &mol : molecules_)
     {
         // First, work out the centre of geometry of the Molecule, and fold it into the Box
         oldCog = box()->fold(mol->centreOfGeometry(box()));

@@ -14,24 +14,24 @@ EnumOptions<Averaging::AveragingScheme> averagingSchemes()
 }
 
 // Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary
-int pruneOldData(GenericList &moduleData, std::string_view name, std::string_view prefix, int nSetsInAverage)
+int pruneOldData(GenericList &processingData, std::string_view name, std::string_view prefix, int nSetsInAverage)
 {
     // Establish how many stored datasets we have
     int nStored = 0;
     for (nStored = 0; nStored < nSetsInAverage; ++nStored)
-        if (!moduleData.contains(fmt::format("{}_{}", name, nStored + 1), prefix))
+        if (!processingData.contains(fmt::format("{}//{}", name, nStored + 1), prefix))
             break;
-    Messenger::print("Average requested over {} datasets - {} available in module data ({} max).\n", nSetsInAverage, nStored,
+    Messenger::print("Average requested over {} data points - {} available in module data ({} max).\n", nSetsInAverage, nStored,
                      nSetsInAverage - 1);
 
     // Remove the oldest dataset if it exists, and shuffle the others down
     if (nStored == nSetsInAverage)
     {
-        moduleData.remove(fmt::format("{}_{}", name, nStored), prefix);
+        processingData.remove(fmt::format("{}//{}", name, nStored), prefix);
         --nStored;
     }
     for (auto n = nStored; n > 0; --n)
-        moduleData.rename(fmt::format("{}_{}", name, n), prefix, fmt::format("{}_{}", name, n + 1), prefix);
+        processingData.rename(fmt::format("{}//{}", name, n), prefix, fmt::format("{}//{}", name, n + 1), prefix);
 
     return nStored;
 }

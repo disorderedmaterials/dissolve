@@ -102,7 +102,7 @@ class DataViewer : public BaseViewer
     // Show general context menu
     void showGeneralContextMenu(QPoint pos);
     // Show renderable context menu
-    void showRenderableContextMenu(QPoint pos, Renderable *rend);
+    void showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderable> rend);
 
     /*
      * Control Flags
@@ -118,9 +118,8 @@ class DataViewer : public BaseViewer
     enum ControlFlag
     {
         NoFlags = 0,
-        UserCanAddDataFlag = 1,
-        UserCanRenameDataFlag = 2,
-        UserCanRemoveDataFlag = 4
+        UserCanRenameDataFlag = 1,
+        UserCanRemoveDataFlag = 2
     };
     // Set pointer to Dissolve
     void setDissolve(Dissolve *dissolve);

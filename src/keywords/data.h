@@ -24,7 +24,7 @@ template <class T> class KeywordData : public KeywordBase
 
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
-    virtual bool isDataEmpty() const
+    bool isDataEmpty() const override
     {
         // Override this function to handle cases where, for instance, checks for empty lists need to be made.
         return false;

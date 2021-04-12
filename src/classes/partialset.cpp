@@ -6,11 +6,12 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/array2dchar.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 
-PartialSet::PartialSet() : ListItem<PartialSet>() { fingerprint_ = "NO_FINGERPRINT"; }
+PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
 PartialSet::~PartialSet()
 {
@@ -29,14 +30,13 @@ PartialSet::~PartialSet()
  */
 
 // Set up PartialSet
-bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, std::string_view prefix,
-                       std::string_view tag, std::string_view suffix, std::string_view abscissaUnits)
+bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth)
 {
     // Set up partial arrays
-    if (!setUpPartials(atomTypes, prefix, tag, suffix, abscissaUnits))
+    if (!setUpPartials(atomTypes))
         return false;
 
-    // Initialise histograms for g(r) calcultion
+    // Initialise histograms for g(r) calculation
     setUpHistograms(rdfRange, binWidth);
 
     fingerprint_ = "NO_FINGERPRINT";
@@ -45,11 +45,8 @@ bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double bi
 }
 
 // Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view prefix, std::string_view tag,
-                               std::string_view suffix, std::string_view abscissaUnits)
+bool PartialSet::setUpPartials(const AtomTypeList &atomTypes)
 {
-    abscissaUnits_ = abscissaUnits;
-
     // Copy type array
     atomTypes_ = atomTypes;
     auto nTypes = atomTypes_.nItems();
@@ -61,16 +58,14 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view p
     emptyBoundPartials_ = false;
 
     // Set up array matrices for partials
-    std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setName(title);
-        boundPartials_[{n, m}].setName(title);
-        unboundPartials_[{n, m}].setName(title);
+        partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
+        boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
+        unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
     });
 
     // Set up array for total
-    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    total_.setTag("Total");
     total_.clear();
 
     fingerprint_ = "NO_FINGERPRINT";
@@ -258,77 +253,60 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
     return unbound;
 }
 
-// Save all partials and total
-bool PartialSet::save() const
+// Return Data1D with specified tag, if it exists
+OptionalReferenceWrapper<const Data1D> PartialSet::data1DWithTag(std::string_view tag) const
 {
+    auto fullIt = std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    if (fullIt != partials_.end())
+        return *fullIt;
+    auto boundIt =
+        std::find_if(boundPartials_.begin(), boundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    if (boundIt != boundPartials_.end())
+        return *boundIt;
+    auto unboundIt =
+        std::find_if(unboundPartials_.begin(), unboundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    if (unboundIt != unboundPartials_.end())
+        return *unboundIt;
+    if (total_.tag() == tag)
+        return total_;
+    return {};
+}
+
+// Save all partials and total
+bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
+                      std::string_view abscissaUnits) const
+{
+    assert(!prefix.empty());
+
     LineParser parser;
 
-    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        // Open file and check that we're OK to proceed writing to it
-        std::string filename{partials_[{typeI, typeJ}].name()};
-        Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+    // Write partials
+    for_each_pair_early(atomTypes_.begin(), atomTypes_.end(),
+                        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool> {
+                            // Open file and check that we're OK to proceed writing to it
+                            std::string filename{
+                                fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
+                            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-        parser.openOutput(filename, true);
-        if (!parser.isFileGoodForWriting())
-            return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
+                            parser.openOutput(filename, true);
+                            if (!parser.isFileGoodForWriting())
+                                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-        auto &full = partials_[{typeI, typeJ}];
-        auto &bound = boundPartials_[{typeI, typeJ}];
-        auto &unbound = unboundPartials_[{typeI, typeJ}];
-        parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
-        for (auto n = 0; n < full.nValues(); ++n)
-            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
-                              unbound.value(n));
-        parser.closeFiles();
+                            auto &full = partials_[{typeI, typeJ}];
+                            auto &bound = boundPartials_[{typeI, typeJ}];
+                            auto &unbound = unboundPartials_[{typeI, typeJ}];
+                            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
+                            for (auto n = 0; n < full.nValues(); ++n)
+                                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n),
+                                                  bound.value(n), unbound.value(n));
+                            parser.closeFiles();
 
-        return EarlyReturn<bool>::Continue;
-    });
+                            return EarlyReturn<bool>::Continue;
+                        });
 
-    Messenger::printVerbose("Writing total file '{}'...\n", total_.name());
-    Data1DExportFileFormat exportFormat(total_.name());
+    Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
+    Data1DExportFileFormat exportFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
     return exportFormat.exportData(total_);
-}
-
-// Name all object based on the supplied prefix
-void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
-{
-    // Set up suffix (if any)
-    std::string actualSuffix;
-    if (!suffix.empty())
-        actualSuffix = fmt::format("_{}", suffix);
-
-    objectNamePrefix_ = prefix;
-
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-                      partials_[{typeI, typeJ}].setObjectTag(
-                          fmt::format("{}//{}-{}//Full{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-                      boundPartials_[{typeI, typeJ}].setObjectTag(
-                          fmt::format("{}//{}-{}//Bound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-                      unboundPartials_[{typeI, typeJ}].setObjectTag(
-                          fmt::format("{}//{}-{}//Unbound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-                  });
-
-    total_.setObjectTag(fmt::format("{}//Total{}", prefix, actualSuffix));
-}
-
-// Return prefix applied to object names
-std::string_view PartialSet::objectNamePrefix() const { return objectNamePrefix_; }
-
-// Set underlying Data1D file names
-void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix)
-{
-    // Set titles for partials
-    std::string title;
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setName(title);
-        boundPartials_[{n, m}].setName(title);
-        unboundPartials_[{n, m}].setName(title);
-    });
-
-    // Set up array for total
-    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
 }
 
 /*
@@ -442,6 +420,8 @@ void PartialSet::operator+=(const double delta) { adjust(delta); }
 
 void PartialSet::operator+=(const PartialSet &source)
 {
+    assert(source.nAtomTypes() != 0);
+
     // If we currently contain no data, just copy the source data
     if (atomTypes_.nItems() == 0)
     {
@@ -499,25 +479,18 @@ void PartialSet::operator*=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view PartialSet::itemClassName() { return "PartialSet"; }
-
 // Read data through specified LineParser
-bool PartialSet::read(LineParser &parser, CoreData &coreData)
+bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
-    if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
-        return false;
-    if (parser.readNextLine(LineParser::Defaults, abscissaUnits_) != LineParser::Success)
-        return false;
     if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success)
         return false;
 
     // Read atom types
     atomTypes_.clear();
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
     auto nTypes = atomTypes_.nItems();
 
@@ -532,115 +505,58 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
     {
         for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            if (!partials_[{typeI, typeJ}].read(parser, coreData))
+            if (!partials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!boundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!boundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!unboundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!unboundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
         }
     }
 
     // Read total
-    if (!total_.read(parser, coreData))
+    if (!total_.deserialise(parser))
         return false;
 
     // Read empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::read(emptyBoundPartials_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;
 }
 
 // Write data through specified LineParser
-bool PartialSet::write(LineParser &parser)
+bool PartialSet::serialise(LineParser &parser) const
 {
     // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
     // common scale
 
-    if (!parser.writeLineF("{}\n", objectNamePrefix_))
-        return false;
-    if (!parser.writeLineF("{}\n", abscissaUnits_))
-        return false;
     if (!parser.writeLineF("{}\n", fingerprint_))
         return false;
 
     // Write out AtomTypes first
-    atomTypes_.write(parser);
+    atomTypes_.serialise(parser);
     auto nTypes = atomTypes_.nItems();
 
     // Write individual Data1D
     for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_[{typeI, typeJ}].write(parser))
+        if (!partials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!boundPartials_[{typeI, typeJ}].write(parser))
+        if (!boundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!unboundPartials_[{typeI, typeJ}].write(parser))
+        if (!unboundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
 
         return EarlyReturn<bool>::Continue;
     });
 
     // Write total
-    if (!total_.write(parser))
+    if (!total_.serialise(parser))
         return false;
 
     // Write empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::write(emptyBoundPartials_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from root to all other processes
-bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    // The structure should have already been setup(), so arrays should be ready to copy
-    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
-            return Messenger::error("Failed to broadcast partials_ array.\n");
-        if (!boundPartials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
-            return Messenger::error("Failed to broadcast boundPartials_ array.\n");
-        if (!unboundPartials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
-            return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
-
-        return EarlyReturn<bool>::Continue;
-    });
-
-    if (!total_.broadcast(procPool, root, coreData))
-        return Messenger::error("Failed to broadcast total_.\n");
-
-    if (!procPool.broadcast(emptyBoundPartials_))
-        return Messenger::error("Failed to broadcast emptyBoundPartials_ array.\n");
-    if (!procPool.broadcast(objectNamePrefix_))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool PartialSet::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_[{typeI, typeJ}].equality(procPool))
-            return Messenger::error("PartialSet full partial {}-{} is not equivalent.\n", typeI, typeJ);
-        if (!boundPartials_[{typeI, typeJ}].equality(procPool))
-            return Messenger::error("PartialSet bound partial {}-{} is not equivalent.\n", typeI, typeJ);
-        if (!unboundPartials_[{typeI, typeJ}].equality(procPool))
-            return Messenger::error("PartialSet unbound partial {}-{} is not equivalent.\n", typeI, typeJ);
-
-        return EarlyReturn<bool>::Continue;
-    });
-    if (!total_.equality(procPool))
-        return Messenger::error("PartialSet total sum is not equivalent.\n");
-    if (!procPool.equality(emptyBoundPartials_))
-        return Messenger::error("PartialSet emptyBoundPartials array is not equivalent.\n");
-#endif
     return true;
 }

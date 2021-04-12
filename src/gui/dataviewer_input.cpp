@@ -120,10 +120,6 @@ void DataViewer::mouseDoubleClicked()
         case (NoObject):
             break;
         case (AxisLineObject):
-            //			i = clickedObjectInfo_.asInteger();
-            // 			axesWindow_.updateAndShow();
-            // 			axesWindow_.ui.AxesTabs->setCurrentIndex(i);
-            // 			axesWindow_.ui.
             break;
         case (AxisTickLabelObject):
             break;
@@ -138,10 +134,6 @@ void DataViewer::mouseDoubleClicked()
         case (CustomObject):
             break;
     }
-
-    // Reset clicked object info
-    // 	clickedObject_ = NoObject;
-    // 	clickedObjectInfo_.clear();
 }
 
 // Context menu requested
@@ -154,7 +146,7 @@ void DataViewer::contextMenuRequested(QPoint pos)
     if (objectType == BaseViewer::RenderableObject)
     {
         // Get Renderable pointer....
-        Renderable *rend = renderableWithTag(queryObjectInfo());
+        auto rend = renderableWithTag(queryObjectInfo());
         if (!rend)
         {
             fmt::print("Couldn't locate renderable with tag '{}' in the DataViewer...", queryObjectInfo());

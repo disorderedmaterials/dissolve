@@ -99,7 +99,7 @@ class ConfigurationViewer : public BaseViewer
      */
     private:
     // Renderable for source Configuration
-    RenderableConfiguration *configurationRenderable_;
+    std::shared_ptr<RenderableConfiguration> configurationRenderable_;
 
     public:
     // Set renderable draw style

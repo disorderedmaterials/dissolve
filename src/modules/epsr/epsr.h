@@ -83,6 +83,12 @@ class EPSRModule : public Module
     // Target Configuration (determined from target modules)
     Configuration *targetConfiguration_;
 
+    private:
+    // Create / update delta S(Q) information
+    void updateDeltaSQ(GenericList &processingData,
+                       OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ = std::nullopt,
+                       OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ = std::nullopt);
+
     public:
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;

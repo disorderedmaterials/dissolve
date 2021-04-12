@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/speciesbond.h"
 #include "classes/speciesring.h"
 #include "neta/node.h"
 #include <vector>
@@ -18,7 +17,7 @@ class NETARingNode : public NETANode
 {
     public:
     NETARingNode(NETADefinition *parent);
-    ~NETARingNode();
+    ~NETARingNode() = default;
 
     /*
      * Modifiers
@@ -35,18 +34,17 @@ class NETARingNode : public NETANode
 
     public:
     // Available modifiers
-    enum NETARingModifier
+    enum class NETARingModifier
     {
-        SizeModifier,       /* 'size' - Specifies size of ring (default = -1) */
-        RepeatRingModifier, /* 'n' - Specifies the number of matches required (default = 1) */
-        nRingModifiers
+        Size,  /* 'size' - Specifies size of ring (default = -1) */
+        Repeat /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETARingModifiers
     static EnumOptions<NETARingNode::NETARingModifier> modifiers();
     // Return whether the specified modifier is valid for this node
-    bool isValidModifier(std::string_view s) const;
+    bool isValidModifier(std::string_view s) const override;
     // Set value and comparator for specified modifier
-    bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
+    bool setModifier(std::string_view modifier, ComparisonOperator op, int value) override;
 
     /*
      * Scoring
@@ -58,5 +56,5 @@ class NETARingNode : public NETANode
 
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const override;
 };

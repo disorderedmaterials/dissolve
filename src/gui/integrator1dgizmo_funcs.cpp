@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/integrator1dgizmo.h"
+#include "gui/render/renderabledata1d.h"
 #include "gui/selectgenericitemdialog.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
@@ -22,7 +23,7 @@ Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const QString uniqueNam
     view.axes().setTitle(1, "Y");
     view.axes().setRange(1, 0.0, 10.0);
 
-    integrationTarget_ = nullptr;
+    integrationTarget_ = std::nullopt;
     integrals_[0] = 0.0;
     integrals_[1] = 0.0;
     integrals_[2] = 0.0;
@@ -55,8 +56,8 @@ void Integrator1DGizmo::updateControls()
     ui_.PlotWidget->postRedisplay();
 
     // Get limits from data
-    double xMin = integrationTarget_ ? integrationTarget_->xAxis().front() : 0.0;
-    double xMax = integrationTarget_ ? integrationTarget_->xAxis().back() : 1.0;
+    auto xMin = integrationTarget_ ? integrationTarget_->get().xAxis().front() : 0.0;
+    auto xMax = integrationTarget_ ? integrationTarget_->get().xAxis().back() : 1.0;
     ui_.Region1MinSpin->setRange(xMin, xMax);
     ui_.Region1MaxSpin->setRange(xMin, xMax);
 
@@ -93,32 +94,7 @@ void Integrator1DGizmo::setGraphDataTargets()
     if (!integrationTarget_)
         return;
 
-    ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(), integrationTarget_->name());
-}
-
-/*
- * State
- */
-
-// Write widget state through specified LineParser
-bool Integrator1DGizmo::writeState(LineParser &parser) const
-{
-
-    // Write DataViewer state
-    if (!ui_.PlotWidget->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool Integrator1DGizmo::readState(LineParser &parser)
-{
-    // Read the DataViewer session info
-    if (!ui_.PlotWidget->readSession(parser))
-        return false;
-
-    return true;
+    ui_.PlotWidget->createRenderable<RenderableData1D, Data1D>(integrationTarget_->get(), integrationTarget_->get().tag());
 }
 
 /*
@@ -128,12 +104,12 @@ bool Integrator1DGizmo::readState(LineParser &parser)
 void Integrator1DGizmo::on_TargetSelectButton_clicked(bool checked)
 {
     SelectGenericItemDialog genericItemDialog(this, dissolve_);
-    Data1D *item = genericItemDialog.selectGenericItem<Data1D>();
-    if (!item)
+    auto itemName = genericItemDialog.selectGenericItem<Data1D>();
+    if (itemName.isEmpty())
         return;
 
     // Set target
-    integrationTarget_ = item;
+    integrationTarget_ = dissolve_.processingModuleData().retrieve<Data1D>(qPrintable(itemName));
 
     // Refresh graph data
     setGraphDataTargets();

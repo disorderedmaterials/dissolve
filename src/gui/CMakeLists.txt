@@ -130,7 +130,6 @@ set(components_SRCS
     viewer_funcs.cpp
     viewer_input.cpp
     viewer_interaction.cpp
-    viewer_io.cpp
     viewer_options.cpp
     viewer_query.cpp
     viewer_render.cpp
@@ -170,9 +169,10 @@ set(components_SRCS
 add_library(components ${components_UIS_H} ${components_SRCS} ${components_MOC_SRCS})
 target_include_directories(
   components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+                     ${CONAN_INCLUDE_DIRS_PUGIXML}
 )
 
-target_link_libraries(components widgets)
+target_link_libraries(components widgets base)
 
 # -----------------
 # Main Dissolve GUI
@@ -278,6 +278,7 @@ target_link_libraries(
   widgets
   components
   models
+  base
 )
 
 # Subdirectories

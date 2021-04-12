@@ -5,7 +5,6 @@
 
 #include "base/enumoptions.h"
 #include "math/matrix3.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class Atom;

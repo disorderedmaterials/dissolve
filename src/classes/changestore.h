@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/changedata.h"
-#include "templates/vector3.h"
 #include <memory>
 
 // Forward Declarations

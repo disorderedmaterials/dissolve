@@ -231,9 +231,6 @@ void Interpolator::interpolateConstrainedSpline()
         else
             fp[i] = 2.0 / (gradA + gradB);
     }
-    // 		fp[0] = (3.0*(y_[1] - y_[0])) / (2.0*x_[1]-x_[0]) - 0.5*fp[1];
-    // 		fp[nPoints-1] = (3.0*(y_[nPoints-1] - y_[nPoints-2])) / (2.0*x_[nPoints-1]-x_[nPoints-2]) -
-    // 0.5*fp[nPoints-2];
     fp[0] = 0.0;
     fp[nPoints - 1] = 0.0;
 

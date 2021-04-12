@@ -29,8 +29,13 @@ Configuration  'Bulk'
   InputCoordinates  dlpoly  '../_data/dlpoly/water3000_vdw/CONFIG'
   EndInputCoordinates
 
+EndConfiguration
+
+Layer  'Processing'
+
   # Test analytical energy against production and reference energy
   Module Energy
+    Configuration  'Bulk'
     Test on
     TestAnalytic on
     TestReferenceInter    1770.1666370083758
@@ -38,17 +43,12 @@ Configuration  'Bulk'
 
   # Test production forces against reference forces
   Module Forces
+    Configuration  'Bulk'
     Test on
     TestAnalytic  on
     TestThreshold  3.2   # See README
     TestReference  dlpoly  '../_data/dlpoly/water3000_vdw/REVCON'
     EndTestReference
-  EndModule
-EndConfiguration
-
-Layer  'Processing'
-
-  Module SanityCheck
   EndModule
 
 EndLayer

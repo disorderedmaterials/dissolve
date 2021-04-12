@@ -2,51 +2,42 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
+#include "classes/isotopedata.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/sq/gui/modulewidget.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
-#include "templates/variantpointer.h"
 
-SQModuleWidget::SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+SQModuleWidget::SQModuleWidget(QWidget *parent, const GenericList &processingData, SQModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);
 
-    // Set up partial S(Q) graph
+    // Set up S(Q) graph
 
-    partialsGraph_ = ui_.PartialSQPlotWidget->dataViewer();
+    sqGraph_ = ui_.SQPlotWidget->dataViewer();
 
-    partialsGraph_->view().setViewType(View::FlatXYView);
-    partialsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-    partialsGraph_->view().axes().setMax(0, 10.0);
-    partialsGraph_->view().axes().setTitle(1, "S(Q)");
-    partialsGraph_->view().axes().setMin(1, -1.0);
-    partialsGraph_->view().axes().setMax(1, 1.0);
-    partialsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-    partialsGraph_->view().setAutoFollowType(View::AllAutoFollow);
-    partialsGraph_->groupManager().setGroupColouring("Partial S(Q)", RenderableGroup::AutomaticIndividualColouring);
-    partialsGraph_->groupManager().setGroupVerticalShifting("Partial S(Q)", RenderableGroup::IndividualVerticalShifting);
-
-    // Set up total F(Q) graph
-
-    totalGraph_ = ui_.TotalFQPlotWidget->dataViewer();
-
-    totalGraph_->view().setViewType(View::FlatXYView);
-    totalGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-    totalGraph_->view().axes().setMax(0, 10.0);
-    totalGraph_->view().axes().setTitle(1, "S(Q)");
-    totalGraph_->view().axes().setMin(1, -1.0);
-    totalGraph_->view().axes().setMax(1, 1.0);
-    totalGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
-    totalGraph_->view().setAutoFollowType(View::AllAutoFollow);
-
-    setGraphDataTargets(module_);
-
-    updateControls();
+    sqGraph_->view().setViewType(View::FlatXYView);
+    sqGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+    sqGraph_->view().axes().setMax(0, 10.0);
+    sqGraph_->view().axes().setTitle(1, "F(Q)");
+    sqGraph_->view().axes().setMin(1, -1.0);
+    sqGraph_->view().axes().setMax(1, 1.0);
+    sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+    sqGraph_->view().setAutoFollowType(View::AllAutoFollow);
+    // -- Set group styling
+    sqGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+    sqGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+    sqGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+    sqGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+    sqGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+    sqGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+    sqGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+    sqGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
     refreshing_ = false;
 }
@@ -57,61 +48,84 @@ SQModuleWidget::~SQModuleWidget() {}
  * UI
  */
 
+// Create renderables for current target PartialSet
+void SQModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
+{
+    if (!targetPartials_)
+        return;
+
+    const PartialSet &ps = *targetPartials_;
+
+    for_each_pair(ps.atomTypes().begin(), ps.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+
+        // Full partial
+        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
+                                                     fmt::format("{} (Full)", id), "Full");
+
+        // Bound partial
+        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->uniqueName(), targetPrefix, id),
+                                                     fmt::format("{} (Bound)", id), "Bound");
+
+        // Unbound partial
+        sqGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Unbound)", id),
+            "Unbound");
+    });
+}
+
 // Update controls within widget
-void SQModuleWidget::updateControls(int flags)
+void SQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
-    ui_.PartialSQPlotWidget->updateToolbar();
-    ui_.TotalFQPlotWidget->updateToolbar();
+    refreshing_ = true;
 
-    partialsGraph_->postRedisplay();
-    totalGraph_->postRedisplay();
-}
+    // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
+    // located it
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || (!ui_.TotalButton->isChecked() && !targetPartials_))
+    {
+        ui_.SQPlotWidget->clearRenderableData();
 
-/*
- * State I/O
- */
+        if (ui_.PartialsButton->isChecked())
+        {
+            targetPartials_ = processingData_.valueIf<PartialSet>("UnweightedSQ", module_->uniqueName());
+            createPartialSetRenderables("UnweightedSQ");
+        }
+        else
+            sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//Total", module_->uniqueName()), "Total",
+                                                         "Calc");
+    }
 
-// Write widget state through specified LineParser
-bool SQModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!partialsGraph_->writeSession(parser))
-        return false;
-    if (!totalGraph_->writeSession(parser))
-        return false;
+    // Validate renderables if they need it
+    sqGraph_->validateRenderables(processingData_);
 
-    return true;
-}
+    sqGraph_->postRedisplay();
+    ui_.SQPlotWidget->updateToolbar();
 
-// Read widget state through specified LineParser
-bool SQModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!partialsGraph_->readSession(parser))
-        return false;
-    if (!totalGraph_->readSession(parser))
-        return false;
-
-    return true;
+    refreshing_ = false;
 }
 
 /*
  * Widgets / Functions
  */
 
-// Set data targets in graphs
-void SQModuleWidget::setGraphDataTargets(SQModule *module)
+void SQModuleWidget::on_TotalButton_clicked(bool checked)
 {
-    // Partial S(Q)
-    for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
-        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+    if (!checked)
+        return;
 
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                         fmt::format("{}//UnweightedSQ//{}//Full", module_->uniqueName(), id), id,
-                                         "Partial S(Q)");
-    });
+    sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
+    sqGraph_->view().axes().setTitle(1, "F(Q)");
 
-    // Add calculated total F(Q)
-    totalGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedSQ//Total", module_->uniqueName()),
-                                  "Calculated", "Total F(Q)");
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
+
+void SQModuleWidget::on_PartialsButton_clicked(bool checked)
+{
+    if (!checked)
+        return;
+
+    sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+    sqGraph_->view().axes().setTitle(1, "S(Q)");
+
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }

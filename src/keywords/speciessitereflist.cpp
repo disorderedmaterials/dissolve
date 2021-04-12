@@ -33,7 +33,7 @@ int SpeciesSiteRefListKeyword::minArguments() const { return 2; }
 int SpeciesSiteRefListKeyword::maxArguments() const { return 99; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments
     for (int n = startArg; n < parser.nArgs() - 1; n += 2)
@@ -41,16 +41,14 @@ bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, CoreData 
         // Find target Species (first argument)
         Species *sp = coreData.findSpecies(parser.argsv(n));
         if (!sp)
-        {
-            Messenger::error("Error adding SpeciesSite - no Species named '{}' exists.\n", parser.argsv(startArg));
-            return false;
-        }
+            return Messenger::error("Error adding SpeciesSite - no Species named '{}' exists.\n", parser.argsv(n));
 
         // Find specified Site (second argument) in the Species
-        SpeciesSite *site = sp->findSite(parser.argsv(n + 1));
-        if (!site)
+        auto speciesSite = sp->findSite(parser.argsv(n + 1));
+        if (!speciesSite)
             return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                     parser.argsv(n + 1), sp->name());
+        auto *site = &speciesSite->get();
         if (axesRequired_ && (!site->hasAxes()))
             return Messenger::error("Can't add site '{}' to keyword '{}', as the keyword requires axes "
                                     "specifications for all sites.\n",
@@ -66,7 +64,7 @@ bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, CoreData 
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool SpeciesSiteRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // If there are no sites in the list, no need to write anything
     if (data_.nItems() == 0)

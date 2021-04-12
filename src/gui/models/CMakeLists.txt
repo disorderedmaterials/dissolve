@@ -27,11 +27,13 @@ qt_wrap_cpp(
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})
 
-include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)
+include_directories(models PUBLIC ${CONAN_INCLUDE_DIRS_PUGIXML} PRIVATE ${PROJECT_SOURCE_DIR}/src ${CONAN_INCLUDE_DIRS_FMT})
 
 target_include_directories(
   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 )
 target_link_libraries(models keywordwidgets charts delegates widgets components gui)
+
+target_link_libraries(models PUBLIC CONAN_PKG::pugixml)
 
 include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)

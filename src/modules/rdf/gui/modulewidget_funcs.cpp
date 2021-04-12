@@ -2,7 +2,10 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
+#include "classes/isotopedata.h"
 #include "gui/dataviewer.hui"
+#include "gui/helpers/comboboxupdater.h"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/rdf/gui/modulewidget.h"
@@ -10,54 +13,38 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+Q_DECLARE_METATYPE(Configuration *);
+
+RDFModuleWidget::RDFModuleWidget(QWidget *parent, const GenericList &processingData, RDFModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);
 
-    // Set up partial g(r) graph
-    partialsGraph_ = ui_.PartialsPlotWidget->dataViewer();
+    // Set up RDF graph
+    rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
     // -- Set view
-    partialsGraph_->view().setViewType(View::FlatXYView);
-    partialsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-    partialsGraph_->view().axes().setMax(0, 10.0);
-    partialsGraph_->view().axes().setTitle(1, "g(r)");
-    partialsGraph_->view().axes().setMin(1, -1.0);
-    partialsGraph_->view().axes().setMax(1, 1.0);
-    partialsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-    partialsGraph_->view().setAutoFollowType(View::AllAutoFollow);
+    rdfGraph_->view().setViewType(View::FlatXYView);
+    rdfGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+    rdfGraph_->view().axes().setMax(0, 10.0);
+    rdfGraph_->view().axes().setTitle(1, "G(r)");
+    rdfGraph_->view().axes().setMin(1, -1.0);
+    rdfGraph_->view().axes().setMax(1, 1.0);
+    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+    rdfGraph_->view().setAutoFollowType(View::AllAutoFollow);
     // -- Set group styling
-    partialsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
-    partialsGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
-    partialsGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
-    partialsGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
-    partialsGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
-    partialsGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
-    partialsGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
-    partialsGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
-
-    // Set up total G(r) graph
-    totalsGraph_ = ui_.TotalsPlotWidget->dataViewer();
-    // -- Set view
-    totalsGraph_->view().setViewType(View::FlatXYView);
-    totalsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-    totalsGraph_->view().axes().setMax(0, 10.0);
-    totalsGraph_->view().axes().setTitle(1, "g(r)");
-    totalsGraph_->view().axes().setMin(1, -1.0);
-    totalsGraph_->view().axes().setMax(1, 1.0);
-    totalsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
-    totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
-    // -- Set group styling
-    totalsGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+    rdfGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+    rdfGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+    rdfGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+    rdfGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+    rdfGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+    rdfGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+    rdfGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+    rdfGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
+    rdfGraph_->groupManager().setGroupColouring("Total", RenderableGroup::AutomaticIndividualColouring);
+    rdfGraph_->groupManager().setGroupVerticalShifting("Total", RenderableGroup::IndividualVerticalShifting);
 
     refreshing_ = false;
-
-    currentConfiguration_ = nullptr;
-
-    updateControls();
-
-    setGraphDataTargets(module_);
 }
 
 RDFModuleWidget::~RDFModuleWidget() {}
@@ -66,96 +53,121 @@ RDFModuleWidget::~RDFModuleWidget() {}
  * UI
  */
 
+// Create renderables for current target PartialSet
+void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
+{
+    if (!targetPartials_)
+        return;
+
+    const PartialSet &ps = *targetPartials_;
+
+    for_each_pair(ps.atomTypes().begin(), ps.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+
+        // Full partial
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
+                                                      fmt::format("{} (Full)", id), "Full");
+
+        // Bound partial
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->uniqueName(), targetPrefix, id),
+                                                      fmt::format("{} (Bound)", id), "Bound");
+
+        // Unbound partial
+        rdfGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Unbound)", id),
+            "Unbound");
+    });
+}
+
 // Update controls within widget
-void RDFModuleWidget::updateControls(int flags)
+void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
-    ui_.PartialsPlotWidget->updateToolbar();
-    ui_.TotalsPlotWidget->updateToolbar();
+    refreshing_ = true;
 
-    partialsGraph_->postRedisplay();
-    totalsGraph_->postRedisplay();
-}
+    // Update partial set (Configuration) targets
+    auto optConfig = combo_box_updater(ui_.ConfigurationTargetCombo, module_->targetConfigurations().begin(),
+                                       module_->targetConfigurations().end(), [](auto item) { return item.item()->name(); });
 
-/*
- * State I/O
- */
+    // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
+    // located it
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || (!ui_.TotalsButton->isChecked() && !targetPartials_))
+    {
+        ui_.RDFPlotWidget->clearRenderableData();
 
-// Write widget state through specified LineParser
-bool RDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!partialsGraph_->writeSession(parser))
-        return false;
-    if (!totalsGraph_->writeSession(parser))
-        return false;
+        if (ui_.SummedPartialsButton->isChecked())
+        {
+            targetPartials_ = processingData_.valueIf<PartialSet>("UnweightedGR", module_->uniqueName());
+            createPartialSetRenderables("UnweightedGR");
+        }
+        else if (ui_.ConfigurationPartialsButton->isChecked())
+        {
+            auto targetPrefix = fmt::format("{}//UnweightedGR", optConfig.item()->niceName());
+            targetPartials_ = processingData_.valueIf<PartialSet>(targetPrefix, module_->uniqueName());
+            createPartialSetRenderables(targetPrefix);
+        }
+        else
+            for (auto *cfg : module_->targetConfigurations())
+                rdfGraph_->createRenderable<RenderableData1D>(
+                    fmt::format("{}//{}//UnweightedGR//Total", module_->uniqueName(), cfg->niceName()), cfg->niceName(),
+                    "Total");
+    }
 
-    return true;
-}
+    // Validate renderables if they need it
+    rdfGraph_->validateRenderables(processingData_);
 
-// Read widget state through specified LineParser
-bool RDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!partialsGraph_->readSession(parser))
-        return false;
-    if (!totalsGraph_->readSession(parser))
-        return false;
+    rdfGraph_->postRedisplay();
+    ui_.RDFPlotWidget->updateToolbar();
 
-    return true;
+    refreshing_ = false;
 }
 
 /*
  * Widgets / Functions
  */
 
-// Set data targets in graphs
-void RDFModuleWidget::setGraphDataTargets(RDFModule *module)
+void RDFModuleWidget::on_SummedPartialsButton_clicked(bool checked)
 {
-    if (!module)
+    if (!checked)
         return;
 
-    // Add targets to the combo box
-    ui_.TargetCombo->clear();
-    ui_.TargetCombo->addItem("Total");
-    for (Configuration *config : module->targetConfigurations())
-        ui_.TargetCombo->addItem(QString::fromStdString(std::string(config->name())), VariantPointer<Configuration>(config));
+    ui_.ConfigurationTargetCombo->setEnabled(false);
 
-    // Loop over Configurations and add total G(R)
-    for (Configuration *cfg : module->targetConfigurations())
-    {
-        // Add calculated total G(r)
-        totalsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                       fmt::format("{}//{}//UnweightedGR//Total", cfg->niceName(), module_->uniqueName()),
-                                       cfg->niceName(), "Calc");
-    }
+    rdfGraph_->view().axes().setTitle(1, "g(r)");
+    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }
 
-void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
+void RDFModuleWidget::on_TotalsButton_clicked(bool checked)
 {
-    // Remove any current data
-    partialsGraph_->clearRenderables();
+    if (!checked)
+        return;
 
-    // Get target data
-    std::string prefix;
-    currentConfiguration_ = VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
-    if (currentConfiguration_)
-        prefix = fmt::format("{}//{}", currentConfiguration_->niceName(), module_->uniqueName());
-    else
-        prefix = fmt::format("{}", module_->uniqueName());
+    ui_.ConfigurationTargetCombo->setEnabled(false);
 
-    for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
-        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+    rdfGraph_->view().axes().setTitle(1, "G(r)");
+    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
 
-        // Full partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Full", prefix, id),
-                                         fmt::format("{} (Full)", id), "Full");
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
 
-        // Bound partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Bound", prefix, id),
-                                         fmt::format("{} (Bound)", id), "Bound");
+void RDFModuleWidget::on_ConfigurationPartialsButton_clicked(bool checked)
+{
+    if (!checked)
+        return;
 
-        // Unbound partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Unbound", prefix, id),
-                                         fmt::format("{} (Unbound)", id), "Unbound");
-    });
+    ui_.ConfigurationTargetCombo->setEnabled(true);
+
+    rdfGraph_->view().axes().setTitle(1, "g(r)");
+    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
+
+void RDFModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
+{
+    if (refreshing_)
+        return;
+
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }

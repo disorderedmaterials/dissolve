@@ -47,10 +47,10 @@ void SiteViewer::setSpecies(Species *sp)
     // Create a new Renderable for the supplied Species
     if (species_)
     {
-        speciesRenderable_ = new RenderableSpecies(species_);
-        speciesRenderable_->setName("Species");
+        speciesRenderable_ = createRenderable<RenderableSpecies, Species>(species_, "Species");
         speciesRenderable_->setDisplayStyle(RenderableSpecies::LinesStyle);
-        ownRenderable(speciesRenderable_);
+        addRenderable(speciesRenderable_);
+
         view_.showAllData();
     }
 
@@ -72,9 +72,9 @@ void SiteViewer::setSite(SpeciesSite *site)
     // Create a new Renderable for the parent Species
     if (site_)
     {
-        siteRenderable_ = new RenderableSpeciesSite(species_, site_);
+        siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
         siteRenderable_->setName("Site");
-        ownRenderable(siteRenderable_);
+        addRenderable(siteRenderable_);
     }
 }
 
@@ -90,7 +90,6 @@ void SiteViewer::setSpeciesRenderableDrawStyle(RenderableSpecies::SpeciesDisplay
 {
     if (speciesRenderable_)
         speciesRenderable_->setDisplayStyle(ds);
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
 }
 
 // Return current renderable draw style
@@ -98,7 +97,6 @@ RenderableSpecies::SpeciesDisplayStyle SiteViewer::speciesRenderableDrawStyle() 
 {
     if (speciesRenderable_)
         return speciesRenderable_->displayStyle();
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
 
     return RenderableSpecies::LinesStyle;
 }

@@ -19,12 +19,14 @@ class NeutronSQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve);
+    NeutronSQModuleWidget(QWidget *parent, const GenericList &processingData, NeutronSQModule *module, Dissolve &dissolve);
     ~NeutronSQModuleWidget();
 
     private:
     // Associated Module
     NeutronSQModule *module_;
+    // Target partial data being displayed (if any)
+    OptionalReferenceWrapper<const PartialSet> targetPartials_;
     // Reference to Dissolve
     Dissolve &dissolve_;
 
@@ -35,20 +37,15 @@ class NeutronSQModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::NeutronSQModuleWidget ui_;
     // DataViewers contained within this widget
-    DataViewer *partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
+    DataViewer *graph_;
+
+    private:
+    // Create renderables for current target PartialSet
+    void createPartialSetRenderables(std::string_view targetPrefix);
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
@@ -56,4 +53,10 @@ class NeutronSQModuleWidget : public ModuleWidget
     private:
     // Set data targets in graphs
     void setGraphDataTargets(NeutronSQModule *module);
+
+    private slots:
+    void on_TotalFQButton_clicked(bool checked);
+    void on_PartialSQButton_clicked(bool checked);
+    void on_TotalGRButton_clicked(bool checked);
+    void on_PartialGRButton_clicked(bool checked);
 };

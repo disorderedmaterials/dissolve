@@ -76,18 +76,21 @@ int DoubleKeyword::minArguments() const { return 1; }
 int DoubleKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {
         if (!setData(parser.argd(startArg)))
         {
             if (minimumLimit_ && maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", data_, min_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", parser.argd(startArg),
+                                 min_, max_);
             else if (minimumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", data_, min_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", parser.argd(startArg),
+                                 min_);
             else
-                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", data_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", parser.argd(startArg),
+                                 max_);
 
             return false;
         }
@@ -98,7 +101,7 @@ bool DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool DoubleKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool DoubleKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_);
 }

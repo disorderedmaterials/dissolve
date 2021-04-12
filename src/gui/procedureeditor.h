@@ -61,18 +61,6 @@ class ProcedureEditor : public QWidget
     // Pointer to created ProcedureChart
     ProcedureChart *chart_;
 
-    private slots:
-    // 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
-
-    /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
-
     /*
      * Signals / Slots
      */

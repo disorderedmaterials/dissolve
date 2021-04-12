@@ -18,7 +18,6 @@ class Module;
 class ProcedureNode;
 class Species;
 class SpeciesSite;
-class ProcessPool;
 
 // Keyword Base Class
 class KeywordBase : public ListItem<KeywordBase>
@@ -147,9 +146,9 @@ class KeywordBase : public ListItem<KeywordBase>
     // Check number of arguments provided to keyword
     bool validNArgs(int nArgsProvided) const;
     // Parse arguments from supplied LineParser, starting at given argument offset
-    virtual bool read(LineParser &parser, int startArg, CoreData &coreData) = 0;
+    virtual bool read(LineParser &parser, int startArg, const CoreData &coreData) = 0;
     // Write keyword data to specified LineParser
-    virtual bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") = 0;
+    virtual bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
 
     /*
      * Parse Result

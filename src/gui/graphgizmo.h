@@ -53,7 +53,7 @@ class GraphGizmo : public QWidget, public Gizmo
     // Return whether this Gizmo accepts data of the specified type
     bool acceptsData(std::string_view dataType);
     // Send data (referenced by its object tag) to the Gizmo
-    bool sendData(std::string_view dataType, std::string_view objectTag, std::string_view name);
+    bool sendData(std::string_view dataType, std::string_view tag, std::string_view name);
 
     /*
      * Data
@@ -65,15 +65,6 @@ class GraphGizmo : public QWidget, public Gizmo
     public:
     // Return pointer to the contained DataViewer
     DataViewer *dataViewer() const;
-
-    /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 
     /*
      * Widget Signals / Slots

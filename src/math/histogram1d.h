@@ -3,15 +3,13 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
+class Histogram1D : public ListItem<Histogram1D>
 {
     public:
     Histogram1D();
@@ -86,15 +84,13 @@ class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
     void operator=(const Histogram1D &source);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
 
     /*
      * Parallel Comms
@@ -102,8 +98,4 @@ class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
     public:
     // Sum histogram data onto all processes
     bool allSum(ProcessPool &procPool);
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

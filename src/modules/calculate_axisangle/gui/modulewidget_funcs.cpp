@@ -2,11 +2,14 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
 #include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_axisangle/gui/modulewidget.h"
 
-CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, CalculateAxisAngleModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                               CalculateAxisAngleModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -47,10 +50,6 @@ CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, 
     dAngleView.axes().setRange(2, 0.0, 0.01);
     dAngleView.setAutoFollowType(View::AllAutoFollow);
 
-    setGraphDataTargets(module_);
-
-    updateControls();
-
     refreshing_ = false;
 }
 
@@ -59,8 +58,38 @@ CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, 
  */
 
 // Update controls within widget
-void CalculateAxisAngleModuleWidget::updateControls(int flags)
+void CalculateAxisAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+        rdfGraph_->clearRenderables();
+
+    // Calculated A...B RDF
+    if (rdfGraph_->renderables().empty())
+        for (const auto *cfg : module_->targetConfigurations())
+            rdfGraph_
+                ->createRenderable<RenderableData1D>(
+                    fmt::format("{}//Process1D//RDF(AB)", module_->uniqueName(), cfg->niceName()), "A...B g(r)")
+                ->setColour(StockColours::BlueStockColour);
+
+    // Calculated angle histogram
+    if (angleGraph_->renderables().empty())
+        for (const auto *cfg : module_->targetConfigurations())
+            angleGraph_
+                ->createRenderable<RenderableData1D>(
+                    fmt::format("{}//Process1D//AxisAngle(AB)", module_->uniqueName(), cfg->niceName()), "Axis Angle")
+                ->setColour(StockColours::RedStockColour);
+
+    // Calculated distance-angle map
+    if (dAngleGraph_->renderables().empty())
+        for (const auto *cfg : module_->targetConfigurations())
+            dAngleGraph_->createRenderable<RenderableData2D>(
+                fmt::format("{}//Process2D//DAxisAngle", module_->uniqueName(), cfg->niceName()), "A...B vs Axis Angle");
+
+    // Validate renderables if they need it
+    rdfGraph_->validateRenderables(processingData_);
+    angleGraph_->validateRenderables(processingData_);
+    dAngleGraph_->validateRenderables(processingData_);
+
     ui_.RDFPlotWidget->updateToolbar();
     ui_.AnglePlotWidget->updateToolbar();
     ui_.DAnglePlotWidget->updateToolbar();
@@ -68,60 +97,4 @@ void CalculateAxisAngleModuleWidget::updateControls(int flags)
     rdfGraph_->postRedisplay();
     angleGraph_->postRedisplay();
     dAngleGraph_->postRedisplay();
-}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateAxisAngleModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateAxisAngleModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void CalculateAxisAngleModuleWidget::setGraphDataTargets(CalculateAxisAngleModule *module)
-{
-    // Remove any current data
-    rdfGraph_->clearRenderables();
-
-    // Loop over Configuration targets in Module
-    for (const auto *cfg : module_->targetConfigurations())
-    {
-        // Calculated A...B RDF
-        auto *rdf = rdfGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(AB)", module_->uniqueName(), cfg->niceName()),
-            "A...B g(r)");
-        rdf->setColour(StockColours::BlueStockColour);
-
-        // Calculated angle histogram
-        auto *angle = angleGraph_->createRenderable(
-            Renderable::Data1DRenderable,
-            fmt::format("{}//Process1D//{}//AxisAngle(AB)", module_->uniqueName(), cfg->niceName()), "Axis Angle");
-        angle->setColour(StockColours::RedStockColour);
-
-        // Calculated distance-angle map
-        dAngleGraph_->createRenderable(Renderable::Data2DRenderable,
-                                       fmt::format("{}//Process2D//{}//DAxisAngle", module_->uniqueName(), cfg->niceName()),
-                                       "A...B vs Axis Angle");
-    }
 }

@@ -100,7 +100,7 @@ int Vec3IntegerKeyword::minArguments() const { return 3; }
 int Vec3IntegerKeyword::maxArguments() const { return 3; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool Vec3IntegerKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool Vec3IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg + 2))
     {
@@ -132,7 +132,7 @@ bool Vec3IntegerKeyword::read(LineParser &parser, int startArg, CoreData &coreDa
 }
 
 // Write keyword data to specified LineParser
-bool Vec3IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool Vec3IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }

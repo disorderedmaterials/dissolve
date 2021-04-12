@@ -19,17 +19,16 @@ Configuration  'Box'
   EndGenerator
   CellDivisionLength  5.0
 
-  # Test 'Simple' Method
-  Module  RDF
-    Frequency  1
-    InternalTest  On
-    Method  Simple
-  EndModule
 EndConfiguration
 
 Layer  'Processing'
 
-  Module SanityCheck
+  # Test 'Simple' Method
+  Module  RDF
+    Configuration  'Box'
+    Frequency  1
+    InternalTest  On
+    Method  Simple
   EndModule
 
 EndLayer

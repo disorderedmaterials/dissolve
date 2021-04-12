@@ -115,7 +115,7 @@ class SpeciesViewer : public BaseViewer
      */
     private:
     // Renderable for source Species
-    RenderableSpecies *speciesRenderable_;
+    std::shared_ptr<RenderableSpecies> speciesRenderable_;
 
     public:
     // Set renderable draw style

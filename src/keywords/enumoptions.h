@@ -74,11 +74,11 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const { return 1; }
+    int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
-    int maxArguments() const { return 1; }
+    int maxArguments() const override { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData)
     {
         if (parser.hasArg(startArg))
         {
@@ -95,7 +95,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
         return false;
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         return parser.writeLineF("{}{}  {}\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.keyword());
     }

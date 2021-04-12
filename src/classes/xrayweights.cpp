@@ -3,13 +3,10 @@
 
 #include "classes/xrayweights.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
-#include "genericitems/array2ddouble.h"
 #include "templates/algorithms.h"
-#include "templates/enumhelpers.h"
 #include <functional>
 #include <numeric>
 
@@ -64,20 +61,20 @@ void XRayWeights::clear()
 }
 
 // Set-up from supplied SpeciesInfo list
-bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors)
+bool XRayWeights::setUp(std::vector<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors)
 {
     valid_ = false;
 
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
-    for (auto *spInfo = speciesInfoList.first(); spInfo != nullptr; spInfo = spInfo->next())
+    for (auto &spInfo : speciesInfoList)
     {
-        const Species *sp = spInfo->species();
+        const Species *sp = spInfo.species();
 
         // Loop over Atoms in the Species
-        for (auto *i = sp->firstAtom(); i != nullptr; i = i->next())
-            atomTypes_.add(i->atomType(), spInfo->population());
+        for (const auto &i : sp->atoms())
+            atomTypes_.add(i.atomType(), spInfo.population());
     }
 
     // Perform final setup based on now-completed atomtypes list
@@ -87,8 +84,8 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 // Add Species to weights in the specified population
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
-    for (auto *i = sp->firstAtom(); i != nullptr; i = i->next())
-        atomTypes_.add(i->atomType(), population);
+    for (const auto &i : sp->atoms())
+        atomTypes_.add(i.atomType(), population);
 
     valid_ = false;
 }
@@ -265,14 +262,11 @@ std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector
 bool XRayWeights::isValid() const { return valid_; }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view XRayWeights::itemClassName() { return "XRayWeights"; }
-
 // Read data through specified LineParser
-bool XRayWeights::read(LineParser &parser, CoreData &coreData)
+bool XRayWeights::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
@@ -282,66 +276,22 @@ bool XRayWeights::read(LineParser &parser, CoreData &coreData)
     formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argsv(0));
 
     // Read AtomTypeList
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
 
     return finalise(formFactors_);
 }
 
 // Write data through specified LineParser
-bool XRayWeights::write(LineParser &parser)
+bool XRayWeights::serialise(LineParser &parser) const
 {
     // Write x-ray form factor dataset
     if (!parser.writeLineF("{}\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_)))
         return false;
 
     // Write AtomTypeList
-    if (!atomTypes_.write(parser))
+    if (!atomTypes_.serialise(parser))
         return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast item contents
-bool XRayWeights::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(EnumCast<XRayFormFactors::XRayFormFactorData>(formFactors_), root))
-        return false;
-    if (!atomTypes_.broadcast(procPool, root, coreData))
-        return false;
-    if (!procPool.broadcast(concentrations_, root))
-        return false;
-    if (!procPool.broadcast(concentrationProducts_, root))
-        return false;
-    if (!procPool.broadcast(preFactors_, root))
-        return false;
-    if (!procPool.broadcast(valid_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool XRayWeights::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(EnumCast<XRayFormFactors::XRayFormFactorData>(formFactors_)))
-        return Messenger::error("XRayWeights form factor datasets are not equivalent.\n");
-    if (!atomTypes_.equality(procPool))
-        return Messenger::error("XRayWeights AtomTypes are not equivalent.\n");
-    if (!procPool.equality(concentrations_))
-        return Messenger::error("XRayWeights concentrations array is not equivalent.\n");
-    if (!procPool.equality(concentrationProducts_))
-        return Messenger::error("XRayWeights concentration matrix is not equivalent.\n");
-    if (!procPool.equality(preFactors_))
-        return Messenger::error("XRayWeights bound coherent matrix is not equivalent.\n");
-    if (!procPool.equality(valid_))
-        return Messenger::error("XRayWeights validity is not equivalent (process {} has {}).\n", procPool.poolRank(), valid_);
-#endif
     return true;
 }

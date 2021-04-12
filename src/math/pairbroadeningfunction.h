@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "math/broadeningfunction.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
@@ -12,11 +11,10 @@
 // Forward Declarations
 class AtomType;
 class LineParser;
-class ProcessPool;
 class SpeciesIntra;
 
 // Pair Broadening Function
-class PairBroadeningFunction : public GenericItemBase
+class PairBroadeningFunction
 {
     public:
     // Function Types
@@ -55,9 +53,9 @@ class PairBroadeningFunction : public GenericItemBase
 
     public:
     // Read function data from LineParser source
-    bool readAsKeyword(LineParser &parser, int startArg, CoreData &coreData);
+    bool readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData);
     // Write function data to LineParser source
-    bool writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker = true);
+    bool writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker = true) const;
     // Set function type
     void setFunction(FunctionType function);
     // Return function type
@@ -75,22 +73,11 @@ class PairBroadeningFunction : public GenericItemBase
                                           SpeciesIntra *intra = nullptr);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

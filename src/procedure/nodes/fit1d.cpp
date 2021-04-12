@@ -163,7 +163,6 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
         MonteCarloMinimiser<Fit1DProcedureNode> mcMinimiser(*this, &Fit1DProcedureNode::equationCost, true);
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
-        // 		mcMinimiser.setMinStepSize(0.001);
         for (auto var : fitTargets_)
             mcMinimiser.addTarget(var);
 
@@ -177,10 +176,9 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
     auto &data =
-        targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
+        targetList.realise<Data1D>(fmt::format("{}//{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
 
-    data.setName(name());
-    data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));
+    data.setTag(name());
     data.clear();
 
     const auto &x = referenceData_.xAxis();
@@ -230,7 +228,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
  */
 
 // Read structure from specified LineParser
-bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
+bool Fit1DProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // The current line in the parser may contain a node name for us
     if (parser.nArgs() == 2)

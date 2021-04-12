@@ -21,7 +21,7 @@ class CalculateDAngleModuleWidget : public ModuleWidget
     CalculateDAngleModule *module_;
 
     public:
-    CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module);
+    CalculateDAngleModuleWidget(QWidget *parent, const GenericList &processingData, CalculateDAngleModule *module);
 
     /*
      * UI
@@ -34,23 +34,5 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
-
-    /*
-     * Widgets / Functions
-     */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets(CalculateDAngleModule *module);
-
-    private slots:
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 };

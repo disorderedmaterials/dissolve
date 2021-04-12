@@ -11,3 +11,4 @@ add_library(
 )
 
 include_directories(sg PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(sg PRIVATE base)

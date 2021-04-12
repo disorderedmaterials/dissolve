@@ -79,21 +79,19 @@ void Cell::addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Ce
 {
     // Create near-neighbour array of Cells not requiring minimum image to be applied
     cellNeighbours_.clear();
-    cellNeighbours_.resize(nearNeighbours.size());
-    std::copy(nearNeighbours.begin(), nearNeighbours.end(), cellNeighbours_.begin());
+    cellNeighbours_.reserve(nearNeighbours.size());
+    std::copy(nearNeighbours.begin(), nearNeighbours.end(), std::back_inserter(cellNeighbours_));
 
     // Create array of neighbours that require minimum image calculation
     mimCellNeighbours_.clear();
-    mimCellNeighbours_.resize(mimNeighbours.size());
-    std::copy(mimNeighbours.begin(), mimNeighbours.end(), mimCellNeighbours_.begin());
+    mimCellNeighbours_.reserve(mimNeighbours.size());
+    std::copy(mimNeighbours.begin(), mimNeighbours.end(), std::back_inserter(mimCellNeighbours_));
 
     // Create list of all cell neighbours
     allCellNeighbours_.clear();
-    allCellNeighbours_.resize(nearNeighbours.size() + mimNeighbours.size());
-    for (auto *nearNbr : nearNeighbours)
-        allCellNeighbours_.emplace_back(nearNbr);
-    for (auto *mimNbr : mimNeighbours)
-        allCellNeighbours_.emplace_back(mimNbr);
+    allCellNeighbours_.reserve(nearNeighbours.size() + mimNeighbours.size());
+    std::copy(nearNeighbours.begin(), nearNeighbours.end(), std::back_inserter(allCellNeighbours_));
+    std::copy(mimNeighbours.begin(), mimNeighbours.end(), std::back_inserter(allCellNeighbours_));
 }
 
 // Return adjacent Cell neighbour list

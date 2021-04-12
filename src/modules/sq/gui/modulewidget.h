@@ -20,14 +20,14 @@ class SQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve);
+    SQModuleWidget(QWidget *parent, const GenericList &processingData, SQModule *module, Dissolve &dissolve);
     ~SQModuleWidget();
 
     private:
     // Associated Module
     SQModule *module_;
-    // DataViewers contained within this widget
-    DataViewer *partialsGraph_, *totalGraph_;
+    // Target partial data being displayed (if any)
+    OptionalReferenceWrapper<const PartialSet> targetPartials_;
     // Reference to Dissolve
     Dissolve &dissolve_;
 
@@ -37,24 +37,21 @@ class SQModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::SQModuleWidget ui_;
+    // DataViewer contained within this widget
+    DataViewer *sqGraph_;
+
+    private:
+    // Create renderables for current target PartialSet
+    void createPartialSetRenderables(std::string_view targetPrefix);
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
      */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets(SQModule *module);
+    private slots:
+    void on_PartialsButton_clicked(bool checked);
+    void on_TotalButton_clicked(bool checked);
 };

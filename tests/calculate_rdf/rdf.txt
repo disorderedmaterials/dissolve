@@ -99,10 +99,10 @@ Layer  'Processing'
 # Trajectory Processing
 Module  Import
   Configuration  'Bulk'
-  ReadTrajectory  True
+
   # Trajectory file contains 95 frames
-  TrajectoryFile  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
-  EndTrajectoryFile
+  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  EndFormat
 EndModule
 
 # Oxygen-oxygen radial distribution function
@@ -157,16 +157,14 @@ EndModule
 Module DataTest
   Frequency  95
   Threshold  9.0e-3
-  Target  'RDF(OW-OW)'
-  Data1D  'RDF_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
+  Data1D  'RDF(OW-OW)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
   EndData1D
 EndModule
 
 Module DataTest
   Frequency  95
   Threshold  9.0e-3
-  Target  'RDF(OW-OW)-Analyser'
-  Data1D  'RDF_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
+  Data1D  'RDF(OW-OW)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
   EndData1D
 EndModule
 
@@ -223,16 +221,14 @@ EndModule
 Module DataTest
   Frequency  95
   Threshold  6.0e-3
-  Target  'RDF(H1-H2)'
-  Data1D  RDF_Bulk  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
+  Data1D  'RDF(H1-H2)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
   EndData1D
 EndModule
 
 Module DataTest
   Frequency  95
   Threshold  6.0e-3
-  Target  'RDF(H1-H2)-Analyser'
-  Data1D  'RDF_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
+  Data1D  'RDF(H1-H2)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
   EndData1D
 EndModule
 
@@ -288,15 +284,13 @@ EndModule
 
 Module DataTest
   Frequency  95
-  Target  'RDF(COM-COM)'
-  Data1D  RDF_Bulk  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
+  Data1D  'RDF(COM-COM)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
   EndData1D
 EndModule
 
 Module DataTest
   Frequency  95
-  Target  'RDF(COM-COM)-Analyser'
-  Data1D  'RDF_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
+  Data1D  'RDF(COM-COM)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
   EndData1D
 EndModule
 

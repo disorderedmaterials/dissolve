@@ -42,10 +42,9 @@ void GetSpeciesNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        ListIterator<Species> speciesIterator(coreData_.species());
-        while (Species *sp = speciesIterator.iterate())
+        for (const auto &sp : coreData_.species())
         {
-            if (species_ == sp)
+            if (species_ == sp.get())
                 continue;
 
             if (DissolveSys::sameString(sp->name(), qPrintable(text)))

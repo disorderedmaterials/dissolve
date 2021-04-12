@@ -125,14 +125,11 @@ void SampledDouble::operator/=(double x)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view SampledDouble::itemClassName() { return "SampledDouble"; }
-
 // Read data through specified LineParser
-bool SampledDouble::read(LineParser &parser, CoreData &coreData)
+bool SampledDouble::deserialise(LineParser &parser)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
@@ -144,7 +141,7 @@ bool SampledDouble::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool SampledDouble::write(LineParser &parser) { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
+bool SampledDouble::serialise(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
 
 /*
  * Parallel Comms
@@ -189,35 +186,6 @@ bool SampledDouble::allSum(ProcessPool &procPool)
         return false;
     if (!procPool.broadcast(m2_))
         return false;
-#endif
-    return true;
-}
-
-// Broadcast data
-bool SampledDouble::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(count_, root))
-        return false;
-    if (!procPool.broadcast(mean_, root))
-        return false;
-    if (!procPool.broadcast(m2_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check equality of all data
-bool SampledDouble::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(count_))
-        return Messenger::error("SampledDouble count is not equivalent (process {} has {}).\n", procPool.poolRank(), count_);
-    if (!procPool.equality(mean_))
-        return Messenger::error("SampledDouble mean value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                mean_);
-    if (!procPool.equality(m2_))
-        return Messenger::error("SampledDouble m2 value is not equivalent (process {} has {:e}).\n", procPool.poolRank(), m2_);
 #endif
     return true;
 }

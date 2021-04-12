@@ -7,17 +7,16 @@
 #include "math/data1d.h"
 #include "math/plottable.h"
 #include "templates/array2d.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
+class Data2D : public PlottableData
 {
     public:
     Data2D();
-    virtual ~Data2D();
+    virtual ~Data2D() = default;
     Data2D(const Data2D &source);
     // Clear data
     void clear();
@@ -26,6 +25,8 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
      * Data
      */
     private:
+    // Tag for data (optional)
+    std::string tag_;
     // X axis array
     std::vector<double> x_;
     // Y axis array
@@ -40,6 +41,10 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     VersionCounter version_;
 
     public:
+    // Set tag
+    void setTag(std::string_view tag);
+    // Return tag
+    std::string_view tag() const;
     // Initialise arrays to specified size
     void initialise(int xSize, int ySize, bool withError = false);
     // Initialise to be consistent in size and axes with supplied object
@@ -100,22 +105,11 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     void operator/=(const double factor);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
+    bool serialise(LineParser &parser) const;
 };

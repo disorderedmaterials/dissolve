@@ -383,9 +383,6 @@ Layer  'Processing'
     TestThreshold  7.0e-2
     EndModule
 
-    Module SanityCheck
-    EndModule
-
 EndLayer
 
 #------------------------------------------------------------------------------#

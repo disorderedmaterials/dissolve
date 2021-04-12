@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/processpool.h"
 #include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomtypelist.h"
@@ -28,6 +27,7 @@ class Box;
 class Cell;
 class CoordinateSet;
 class PotentialMap;
+class ProcessPool;
 class Species;
 
 // Configuration
@@ -82,7 +82,7 @@ class Configuration : public ListItem<Configuration>
      */
     private:
     // List of Species used by the Configuration and their populations
-    List<SpeciesInfo> usedSpecies_;
+    std::vector<SpeciesInfo> usedSpecies_;
     // AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
     AtomTypeList usedAtomTypes_;
     // Contents version, incremented whenever Configuration content or Atom positions change
@@ -108,9 +108,9 @@ class Configuration : public ListItem<Configuration>
     // Add Species to list of those used by the Configuration, setting/adding the population specified
     SpeciesInfo *addUsedSpecies(Species *sp, int population);
     // Return SpeciesInfo for specified Species
-    SpeciesInfo *usedSpeciesInfo(Species *sp);
+    OptionalReferenceWrapper<SpeciesInfo> usedSpeciesInfo(Species *sp);
     // Return list of SpeciesInfo for the Configuration
-    List<SpeciesInfo> &usedSpecies();
+    std::vector<SpeciesInfo> &usedSpecies();
     // Return if the specified Species is present in the usedSpecies list
     bool hasUsedSpecies(Species *sp);
     // Return the total atomic mass present in the Configuration
@@ -196,27 +196,6 @@ class Configuration : public ListItem<Configuration>
     void updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset);
 
     /*
-     * Modules
-     */
-    private:
-    // Module layer associated to this Configuration
-    ModuleLayer moduleLayer_;
-    // Variables set by Modules
-    GenericList moduleData_;
-
-    public:
-    // Associate Module to the Configuration
-    bool ownModule(Module *module);
-    // Return number of Modules associated to this Configuration
-    int nModules() const;
-    // Return Module layer for this Configuration
-    ModuleLayer &moduleLayer();
-    // Return list of Modules associated to this Configuration
-    ModuleList &modules();
-    // Return list of variables set by Modules
-    GenericList &moduleData();
-
-    /*
      * Site Stacks
      */
     private:
@@ -232,9 +211,9 @@ class Configuration : public ListItem<Configuration>
      */
     public:
     // Write through specified LineParser
-    bool write(LineParser &parser) const;
+    bool serialise(LineParser &parser) const;
     // Read through specified LineParser
-    bool read(LineParser &parser, const List<Species> &availableSpecies, double pairPotentialRange);
+    bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
 
     /*
      * Parallel Comms
@@ -245,9 +224,7 @@ class Configuration : public ListItem<Configuration>
 
     public:
     // Set up process pool for this Configuration
-    bool setUpProcessPool(Array<int> worldRanks, int groupPopulation);
+    bool setUpProcessPool(Array<int> worldRanks);
     // Return process pool for this Configuration
     ProcessPool &processPool();
-    // Broadcast coordinate from specified root process
-    bool broadcastCoordinates(ProcessPool &procPool, int rootRank);
 };

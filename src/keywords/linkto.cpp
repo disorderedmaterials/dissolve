@@ -35,14 +35,14 @@ int LinkToKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool LinkToKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool LinkToKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Messenger::warn("Don't call LinkToKeyword::read() - go through base().\n");
     return data_->read(parser, startArg, coreData);
 }
 
 // Write keyword data to specified LineParser
-bool LinkToKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool LinkToKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     Messenger::warn("Don't call LinkToKeyword::write() - go through base().\n");
     return data_->write(parser, data_->name(), prefix);

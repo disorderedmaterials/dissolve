@@ -31,7 +31,7 @@ int SpeciesRefListKeyword::minArguments() const { return 1; }
 int SpeciesRefListKeyword::maxArguments() const { return 99; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Each argument is the name of a Species that we will add to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -49,7 +49,7 @@ bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, CoreData &cor
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool SpeciesRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of Species
     std::string speciesString;

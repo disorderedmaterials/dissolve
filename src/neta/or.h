@@ -13,19 +13,19 @@ class NETAOrNode : public NETANode
 {
     public:
     // Node logic types
-    enum LogicType
+    enum class LogicType
     {
-        AndLogic,
-        OrLogic,
-        AndNotLogic
+        And,
+        Or,
+        AndNot
     };
     NETAOrNode(NETADefinition *parent);
-    ~NETAOrNode();
+    ~NETAOrNode() = default;
 
     /*
      * Scoring
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const override;
 };

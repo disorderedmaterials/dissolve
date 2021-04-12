@@ -4,15 +4,13 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "genericitems/base.h"
 
 // Forward Declarations
 class LineParser;
-class ProcessPool;
 class Data1D;
 
 // Window Function
-class WindowFunction : public GenericItemBase
+class WindowFunction
 {
     public:
     // Window Function Forms

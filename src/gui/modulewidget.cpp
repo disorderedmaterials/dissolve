@@ -3,7 +3,10 @@
 
 #include "gui/modulewidget.h"
 
-ModuleWidget::ModuleWidget(QWidget *parent) : QWidget(parent) { refreshing_ = false; }
+ModuleWidget::ModuleWidget(QWidget *parent, const GenericList &processingData)
+    : QWidget(parent), processingData_(processingData), refreshing_(false)
+{
+}
 
 ModuleWidget::~ModuleWidget() {}
 
@@ -12,20 +15,10 @@ ModuleWidget::~ModuleWidget() {}
  */
 
 // Update controls within widget
-void ModuleWidget::updateControls(int flags) {}
+void ModuleWidget::updateControls(UpdateType updateType) {}
 
 // Disable sensitive controls within widget
 void ModuleWidget::disableSensitiveControls() {}
 
 // Enable sensitive controls within widget
 void ModuleWidget::enableSensitiveControls() {}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ModuleWidget::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool ModuleWidget::readState(LineParser &parser) { return true; }

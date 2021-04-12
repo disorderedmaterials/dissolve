@@ -40,8 +40,4 @@ class ExponentialSpin : public QDoubleSpinBox
     QValidator::State validate(QString &text, int &pos) const;
     // Interpret text into value
     double valueFromText(const QString &text) const;
-
-    protected:
-    // Return which steps should be enabled
-    // 	StepEnabled stepEnabled() const;
 };

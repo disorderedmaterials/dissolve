@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "gui/render/renderabledata1d.h"
 #include "modules/calculate_cn/cn.h"
 #include "modules/calculate_cn/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/process1d.h"
 
-CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNModule *cnModule)
-    : ModuleWidget(parent), module_(cnModule)
+CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                 CalculateCNModule *cnModule)
+    : ModuleWidget(parent, processingData), module_(cnModule)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -26,74 +28,37 @@ CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNMod
 
     rdfDataLocated_ = false;
 
-    setGraphDataTargets();
-
     refreshing_ = false;
 }
 
 // Update controls within widget
-void CalculateCNModuleWidget::updateControls(int flags)
+void CalculateCNModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     // Update CN labels
-    if (module_)
-    {
-        ui_.RegionAResultFrame->setText(module_->coordinationNumber(0));
-        auto rangeBOn = module_->isRangeBEnabled();
-        ui_.RegionBResultFrame->setText(rangeBOn ? module_->coordinationNumber(1) : SampledDouble());
-        ui_.RegionBResultFrame->setEnabled(rangeBOn);
-        auto rangeCOn = module_->isRangeCEnabled();
-        ui_.RegionCResultFrame->setText(rangeCOn ? module_->coordinationNumber(2) : SampledDouble());
-        ui_.RegionCResultFrame->setEnabled(rangeCOn);
-    }
-    else
-    {
-        ui_.RegionAResultFrame->setText(SampledDouble());
-        ui_.RegionAResultFrame->setEnabled(false);
-        ui_.RegionBResultFrame->setText(SampledDouble());
-        ui_.RegionBResultFrame->setEnabled(false);
-        ui_.RegionCResultFrame->setText(SampledDouble());
-        ui_.RegionCResultFrame->setEnabled(false);
-    }
+    ui_.RegionAResultFrame->setText(module_->coordinationNumber(0));
+    auto rangeBOn = module_->isRangeBEnabled();
+    ui_.RegionBResultFrame->setText(rangeBOn ? module_->coordinationNumber(1) : SampledDouble());
+    ui_.RegionBResultFrame->setEnabled(rangeBOn);
+    auto rangeCOn = module_->isRangeCEnabled();
+    ui_.RegionCResultFrame->setText(rangeCOn ? module_->coordinationNumber(2) : SampledDouble());
+    ui_.RegionCResultFrame->setEnabled(rangeCOn);
 
     // Clear and recreate graph data targets?
-    if ((!rdfDataLocated_) || (flags & ModuleWidget::ResetGraphDataTargetsFlag))
-        setGraphDataTargets();
-
-    rdfGraph_->postRedisplay();
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void CalculateCNModuleWidget::setGraphDataTargets()
-{
-    rdfGraph_->clearRenderables();
-
-    // Get target RDF module
-    auto found = false;
-    const CalculateRDFModule *rdfModule =
-        module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
-
-    // If the RDF data for the graph has not yet been found, attempt to locate it now
-    if (!rdfDataLocated_)
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || !rdfData_)
     {
-        if ((!found) || (!rdfModule))
-        {
-            Messenger::warn("No suitable CalculateRDF target set for CalculateCN, so can't plot RDF.\n");
-            return;
-        }
+        rdfGraph_->clearRenderables();
 
-        // Check that processed ata exists in the RDF module
-        if (!rdfModule->rdfResult())
+        // Get target RDF module
+        auto found = false;
+        auto *rdfModule = module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
+        if (!rdfModule)
             return;
+
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", rdfModule->uniqueName()), "RDF");
     }
 
-    // Set RDF data target
-    Renderable *rdfRenderable = rdfGraph_->createRenderable(
-        Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->uniqueName());
-    rdfRenderable->setColour(StockColours::BlueStockColour);
+    // Validate renderables if they need it
+    rdfGraph_->validateRenderables(processingData_);
 
-    rdfDataLocated_ = true;
+    rdfGraph_->postRedisplay();
 }

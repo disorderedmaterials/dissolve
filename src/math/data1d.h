@@ -5,14 +5,13 @@
 
 #include "base/version.h"
 #include "math/plottable.h"
-#include "templates/objectstore.h"
 
 // One-Dimensional Data
-class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
+class Data1D : public PlottableData
 {
     public:
     Data1D();
-    virtual ~Data1D();
+    virtual ~Data1D() = default;
     Data1D(const Data1D &source);
     // Clear data
     void clear();
@@ -21,6 +20,8 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
      * Data
      */
     private:
+    // Tag for data (optional)
+    std::string tag_;
     // X array
     std::vector<double> x_;
     // Values at each x
@@ -33,6 +34,10 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     VersionCounter version_;
 
     public:
+    // Set tag
+    void setTag(std::string_view tag);
+    // Return tag
+    std::string_view tag() const;
     // Initialise arrays to specified size
     void initialise(int size, bool withError = false);
     // Initialise to be consistent in size and x axis with supplied object
@@ -95,22 +100,11 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     void operator/=(const double factor);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
+    bool serialise(LineParser &parser) const;
 };

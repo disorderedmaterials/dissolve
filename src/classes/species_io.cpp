@@ -58,9 +58,9 @@ bool Species::loadFromXYZ(std::string_view filename)
             return false;
         }
         auto Z = Elements::element(parser.argsv(0));
-        SpeciesAtom *i = addAtom(Z, parser.arg3d(1));
+        auto &i = addAtom(Z, parser.arg3d(1));
         if (parser.hasArg(4))
-            i->setCharge(parser.argd(4));
+            i.setCharge(parser.argd(4));
     }
 
     Messenger::print("Successfully loaded XYZ data from file '{}'.\n", filename);
@@ -99,11 +99,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     std::shared_ptr<AtomType> at;
     Isotopologue *iso;
     OptionalReferenceWrapper<SpeciesAngle> a;
-    SpeciesAtom *i;
     OptionalReferenceWrapper<SpeciesBond> b;
     OptionalReferenceWrapper<SpeciesImproper> imp;
     OptionalReferenceWrapper<SpeciesTorsion> torsion;
     OptionalReferenceWrapper<MasterIntra> master;
+    OptionalReferenceWrapper<SpeciesSite> speciesSite;
     SpeciesSite *site;
     SpeciesBond::BondFunction bf;
     SpeciesAngle::AngleFunction af;
@@ -188,6 +188,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 a->get().setUp();
                 break;
             case (Species::AtomKeyword):
+            {
                 Z = Elements::element(parser.argsv(2));
                 if (Z == Elements::Unknown)
                 {
@@ -196,9 +197,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     error = true;
                     break;
                 }
-                i = addAtom(Z, parser.arg3d(3));
+                auto &i = addAtom(Z, parser.arg3d(3));
                 if (parser.hasArg(7))
-                    i->setCharge(parser.argd(7));
+                    i.setCharge(parser.argd(7));
 
                 // Locate the AtomType assigned to the Atom
                 if (DissolveSys::sameString("None", parser.argsv(6)))
@@ -215,8 +216,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
 
                 // Finally, set AtomType for the Atom
-                i->setAtomType(at);
+                i.setAtomType(at);
                 break;
+            }
             case (Species::BondKeyword):
                 // Create a new bond definition between the specified atoms
                 b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
@@ -297,15 +299,17 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 b->get().setBondType(bt);
                 break;
             case (Species::ChargeKeyword):
-                i = atom(parser.argi(1) - 1);
-                if (i)
-                    i->setCharge(parser.argd(2));
-                else
+            {
+                auto index = parser.argi(1) - 1;
+                if (index >= nAtoms())
                 {
                     Messenger::error("Specified Atom index ({}) for Charge keyword is out of range.\n", parser.argi(1));
                     error = true;
                 }
+                auto &i = atom(index);
+                i.setCharge(parser.argd(2));
                 break;
+            }
             case (Species::CoordinateSetsKeyword):
                 if (!coordinateSetInputCoordinates_.read(
                         parser, 1, fmt::format("End{}", keywords().keyword(Species::CoordinateSetsKeyword)), coreData))
@@ -455,8 +459,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::SiteKeyword):
                 // First argument is the name of the site to create - make sure it doesn't exist already
-                site = findSite(parser.argsv(1));
-                if (site)
+                speciesSite = findSite(parser.argsv(1));
+                if (speciesSite)
                 {
                     Messenger::error("The site '{}' already exists on Species '{}', and cannot be redefined.\n",
                                      parser.argsv(1), name());
@@ -565,11 +569,11 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     // Atoms
     parser.writeLineF("{}# Atoms\n", newPrefix);
     auto count = 0;
-    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+    for (const auto &i : atoms_)
     {
         if (!parser.writeLineF("{}{}  {:3d}  {:3}  {:12.6e}  {:12.6e}  {:12.6e}  '{}'  {:12.6e}\n", newPrefix,
-                               keywords().keyword(Species::AtomKeyword), ++count, Elements::symbol(i->Z()), i->r().x, i->r().y,
-                               i->r().z, i->atomType() == nullptr ? "None" : i->atomType()->name(), i->charge()))
+                               keywords().keyword(Species::AtomKeyword), ++count, Elements::symbol(i.Z()), i.r().x, i.r().y,
+                               i.r().z, i.atomType() == nullptr ? "None" : i.atomType()->name(), i.charge()))
             return false;
     }
 
@@ -765,9 +769,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         if (!parser.writeLineF("\n{}# Sites\n", newPrefix))
             return false;
 
-        ListIterator<SpeciesSite> siteIterator(sites());
-        while (SpeciesSite *site = siteIterator.iterate())
-            if (!site->write(parser, newPrefix))
+        for (auto &site : sites())
+            if (!site.write(parser, newPrefix))
                 return false;
     }
 

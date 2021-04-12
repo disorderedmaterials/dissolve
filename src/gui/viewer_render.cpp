@@ -186,7 +186,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         enableClipping();
 
     // Draw all Renderables
-    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
+    for (auto &rend : renderables_)
     {
         // If the Renderable is hidden, don't draw it!
         if (!rend->isVisible())
@@ -196,7 +196,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         rend->updateAndSendPrimitives(view(), renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
         // Update query
-        updateQuery(BaseViewer::RenderableObject, rend->objectTag(), Renderable::renderableTypes().keyword(rend->type()));
+        updateQuery(BaseViewer::RenderableObject, rend->tag(), Renderable::renderableTypes().keyword(rend->type()));
 
         glEnable(GL_COLOR_MATERIAL);
     }
@@ -289,21 +289,6 @@ void BaseViewer::setupGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-    // Configure fog effects
-    //	glFogi(GL_FOG_MODE, GL_LINEAR);
-    //	prefs.copyColour(Prefs::BackgroundColour, col);
-    //	glFogfv(GL_FOG_COLOR, col);
-    //	glFogf(GL_FOG_DENSITY, 0.35f);
-    //	glHint(GL_FOG_HINT, GL_NICEST);
-    //	glFogi(GL_FOG_START, prefs.depthNear());
-    //	glFogi(GL_FOG_END, prefs.depthFar());
-    //	glEnable(GL_FOG);
-    glDisable(GL_FOG);
-
-    // Configure face culling
-    // 	glCullFace(GL_BACK);
-    // 	glEnable(GL_CULL_FACE);
 }
 
 /*
@@ -499,7 +484,6 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 
             // Paste this tile into the main image
             painter.drawImage(x * tileWidth, imageHeight - (y + 1) * tileHeight, tile);
-            // 			tile.save(QString("tile-%1x%2.png").arg(x).arg(y), "png");
         }
         if (progress.wasCanceled())
             break;

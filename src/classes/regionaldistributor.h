@@ -6,13 +6,12 @@
 #include "base/processpool.h"
 #include "classes/cellarray.h"
 #include "templates/array.h"
-#include "templates/orderedpointerlist.h"
 #include <deque>
 #include <memory>
+#include <set>
 #include <vector>
 
 // Forward Declarations
-class ProcessPool;
 class Molecule;
 
 // Regional Distributor
@@ -21,7 +20,7 @@ class RegionalDistributor
     public:
     RegionalDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
                         ProcessPool &procPool, ProcessPool::DivisionStrategy strategy);
-    ~RegionalDistributor();
+    ~RegionalDistributor() = default;
     // Molecule Status Flag
     enum MoleculeStatusFlag
     {
@@ -76,7 +75,7 @@ class RegionalDistributor
     // Source CellArray
     const CellArray &cellArray_;
     // Lists of Cells locked by each process/group
-    OrderedPointerList<Cell> *lockedCells_;
+    std::vector<std::set<Cell *>> lockedCells_;
     // Cell process/group owners
     Array<int> cellLockOwners_;
     // Cell status flags

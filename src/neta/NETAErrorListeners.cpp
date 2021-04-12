@@ -36,5 +36,5 @@ void NETAParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4
     marker += '^';
     Messenger::print("{}\n", marker);
 
-    throw NETAExceptions::NETASyntaxException(message);
+    throw NETAExceptions::NETASyntaxException(fmt::format("Syntax Error: {}", message));
 }

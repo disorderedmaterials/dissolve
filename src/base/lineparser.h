@@ -4,16 +4,12 @@
 #pragma once
 
 #include "base/processpool.h"
-#include "templates/list.h"
 #include "templates/vector3.h"
 #include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
-
-// Forward Declarations
-/* none */
 
 // Line Parser
 class LineParser
@@ -222,6 +218,8 @@ class LineParser
     public:
     // Returns number of arguments grabbed from last parse
     int nArgs() const;
+    // Returns the specified argument as a string
+    std::string args(int i);
     // Returns the specified argument as a string view
     std::string_view argsv(int i);
     // Returns the specified argument as an integer

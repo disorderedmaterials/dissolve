@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 #include "neta/node.h"
 #include <memory>
@@ -19,7 +20,7 @@ class NETAConnectionNode : public NETANode
     NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {},
                        SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
-    ~NETAConnectionNode();
+    ~NETAConnectionNode() = default;
 
     /*
      * Atom Targets
@@ -34,9 +35,9 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Add element target to node
-    bool addElementTarget(Elements::Element Z);
+    bool addElementTarget(Elements::Element Z) override;
     // Add forcefield type target to node
-    bool addFFTypeTarget(const ForcefieldAtomType &ffType);
+    bool addFFTypeTarget(const ForcefieldAtomType &ffType) override;
 
     /*
      * Modifiers
@@ -57,19 +58,40 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Available modifiers
-    enum NETAConnectionModifier
+    enum class NETAConnectionModifier
     {
-        NBondsModifier,           /* 'nbonds' - Specifies number of bonds (default = -1) */
-        NHydrogensModifier,       /* 'nh' - Specifies number of hydrogens (default = -1) */
-        RepeatConnectionModifier, /* 'n' - Specifies the number of matches required (default = 1) */
-        nConnectionModifiers
+        NBonds,     /* 'nbonds' - Specifies number of bonds (default = -1) */
+        NHydrogens, /* 'nh' - Specifies number of hydrogens (default = -1) */
+        Repeat      /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETAConnectionModifiers
     static EnumOptions<NETAConnectionNode::NETAConnectionModifier> modifiers();
     // Return whether the specified modifier is valid for this node
-    bool isValidModifier(std::string_view s) const;
+    bool isValidModifier(std::string_view s) const override;
     // Set value and comparator for specified modifier
-    bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
+    bool setModifier(std::string_view modifier, ComparisonOperator op, int value) override;
+
+    /*
+     * Options
+     */
+    private:
+    // Atom Geometry
+    SpeciesAtom::AtomGeometry geometry_;
+    // Geometry comparison operator
+    NETANode::ComparisonOperator geometryOperator_;
+
+    public:
+    // Available options
+    enum class NETAConnectionOption
+    {
+        Geometry /* 'geometry' - Specifies the required geometry about the atom (default = none) */
+    };
+    // Return enum options for NETARootOptions
+    static EnumOptions<NETAConnectionNode::NETAConnectionOption> options();
+    // Return whether the specified option is valid for this node
+    bool isValidOption(std::string_view s) const override;
+    // Set value and comparator for specified option
+    bool setOption(std::string_view option, ComparisonOperator op, std::string_view value) override;
 
     /*
      * Flags
@@ -80,22 +102,21 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Available flags
-    enum NETAConnectionFlag
+    enum class NETAConnectionFlag
     {
-        RootFlag, /* 'root' - Specifies that the root atom of the current path may be re-matched */
-        nConnectionFlags
+        Root /* 'root' - Specifies that the root atom of the current path may be re-matched */
     };
     // Return enum options for NETAConnectionFlags
     static EnumOptions<NETAConnectionNode::NETAConnectionFlag> flags();
     // Return whether the specified flag is valid for this node
-    bool isValidFlag(std::string_view s) const;
+    bool isValidFlag(std::string_view s) const override;
     // Set specified flag
-    bool setFlag(std::string_view flag, bool state);
+    bool setFlag(std::string_view flag, bool state) override;
 
     /*
      * Scoring
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const override;
 };

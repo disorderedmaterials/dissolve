@@ -9,9 +9,6 @@
 #include "main/version.h"
 #include <QSurfaceFormat>
 #include <clocale>
-#include <ctime>
-#include <stdlib.h>
-#include <time.h>
 
 int main(int args, char **argv)
 {
@@ -76,6 +73,15 @@ int main(int args, char **argv)
             ProcessPool::finalise();
             return 1;
         }
+
+        // Set restart file frequency and whether to write heartbeat file
+        if (options.writeNoFiles())
+        {
+            dissolve.setRestartFileFrequency(0);
+            dissolve.setWriteHeartBeat(false);
+        }
+        else
+            dissolve.setRestartFileFrequency(options.restartFileFrequency());
 
         // Iterate before launching the GUI?
         if (options.nIterations())

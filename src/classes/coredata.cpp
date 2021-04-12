@@ -117,7 +117,8 @@ MasterIntra &CoreData::addMasterBond(std::string_view name)
 int CoreData::nMasterBonds() const { return masterBonds_.size(); }
 
 // Return list of master Bond parameters
-const std::vector<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
+std::list<MasterIntra> &CoreData::masterBonds() { return masterBonds_; }
+const std::list<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
 
 // Return whether named master Bond parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterBond(std::string_view name) const
@@ -160,7 +161,8 @@ MasterIntra &CoreData::addMasterAngle(std::string_view name)
 int CoreData::nMasterAngles() const { return masterAngles_.size(); }
 
 // Return list of master Angle parameters
-const std::vector<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
+std::list<MasterIntra> &CoreData::masterAngles() { return masterAngles_; }
+const std::list<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
 
 // Return whether named master Angle parameters exist
 OptionalReferenceWrapper<MasterIntra> CoreData::getMasterAngle(std::string_view name)
@@ -203,7 +205,8 @@ MasterIntra &CoreData::addMasterTorsion(std::string_view name)
 int CoreData::nMasterTorsions() const { return masterTorsions_.size(); }
 
 // Return list of master Torsion parameters
-const std::vector<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
+std::list<MasterIntra> &CoreData::masterTorsions() { return masterTorsions_; }
+const std::list<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
 
 // Return whether named master Torsion parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterTorsion(std::string_view name) const
@@ -246,7 +249,8 @@ MasterIntra &CoreData::addMasterImproper(std::string_view name)
 int CoreData::nMasterImpropers() const { return masterImpropers_.size(); }
 
 // Return list of master Improper parameters
-const std::vector<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
+std::list<MasterIntra> &CoreData::masterImpropers() { return masterImpropers_; }
+const std::list<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
 
 // Return whether named master Improper parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterImproper(std::string_view name) const
@@ -303,27 +307,28 @@ void CoreData::clearMasterTerms()
 // Add new Species
 Species *CoreData::addSpecies()
 {
-    Species *newSpecies = species_.add();
+    auto &newSpecies = species_.emplace_back(std::make_unique<Species>());
 
     // Create a suitable unique name
     newSpecies->setName(uniqueSpeciesName("NewSpecies"));
 
-    return newSpecies;
+    return newSpecies.get();
 }
 
 // Remove specified Species
-void CoreData::removeSpecies(Species *sp) { species_.remove(sp); }
+void CoreData::removeSpecies(Species *sp)
+{
+    species_.erase(std::remove_if(species_.begin(), species_.end(), [&](const auto &p) { return sp == p.get(); }),
+                   species_.end());
+}
 
 // Return number of Species in list
-int CoreData::nSpecies() const { return species_.nItems(); }
+int CoreData::nSpecies() const { return species_.size(); }
 
 // Return core Species list
-List<Species> &CoreData::species() { return species_; }
+std::vector<std::unique_ptr<Species>> &CoreData::species() { return species_; }
 
-const List<Species> &CoreData::species() const { return species_; }
-
-// Return nth Species in list
-Species *CoreData::species(int n) { return species_[n]; }
+const std::vector<std::unique_ptr<Species>> &CoreData::species() const { return species_; }
 
 // Generate unique Species name with base name provided
 std::string CoreData::uniqueSpeciesName(std::string_view base) const
@@ -342,11 +347,16 @@ std::string CoreData::uniqueSpeciesName(std::string_view base) const
 // Search for Species by name
 Species *CoreData::findSpecies(std::string_view name) const
 {
-    for (auto *sp = species_.first(); sp != nullptr; sp = sp->next())
-        if (DissolveSys::sameString(sp->name(), name))
-            return sp;
-
-    return nullptr;
+    auto it = std::find_if(species_.begin(), species_.end(),
+                           [name](const auto &sp) { return DissolveSys::sameString(sp->name(), name); });
+    if (it != species_.end())
+    {
+        return (*it).get();
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 /*

@@ -75,7 +75,8 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
 
     // Generate the contents
     Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
-    auto result = generator_.execute(procPool, this, "Generator", moduleData_);
+    GenericList dummyList;
+    auto result = generator_.execute(procPool, this, "Generator", dummyList);
     if (!result)
         return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
     Messenger::print("\n");
@@ -178,33 +179,14 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 double Configuration::temperature() const { return temperature_; }
 
 /*
- * Modules
- */
-
-// Associate Module to the Configuration
-bool Configuration::ownModule(Module *module) { return moduleLayer_.own(module); }
-
-// Return number of Modules associated to this Configuration
-int Configuration::nModules() const { return moduleLayer_.nModules(); }
-
-// Return Module layer for this Configuration
-ModuleLayer &Configuration::moduleLayer() { return moduleLayer_; }
-
-// Return list of Modules associated to this Configuration
-ModuleList &Configuration::modules() { return moduleLayer_; }
-
-// Return list of data variables set by Modules
-GenericList &Configuration::moduleData() { return moduleData_; }
-
-/*
  * Parallel Comms
  */
 
 // Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(Array<int> worldRanks, int groupPopulation)
+bool Configuration::setUpProcessPool(Array<int> worldRanks)
 {
     // Create pool
-    processPool_.setUp(name_, worldRanks, groupPopulation);
+    processPool_.setUp(name_, worldRanks);
 
     // Assign processes, and
     if (!processPool_.assignProcessesToGroups())
@@ -216,40 +198,3 @@ bool Configuration::setUpProcessPool(Array<int> worldRanks, int groupPopulation)
 
 // Return process pool for this Configuration
 ProcessPool &Configuration::processPool() { return processPool_; }
-
-// Broadcast coordinate from specified root process
-bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
-{
-#ifdef PARALLEL
-    std::vector<double> x, y, z;
-    x.resize(atoms_.size());
-    y.resize(atoms_.size());
-    z.resize(atoms_.size());
-
-    // Master assembles Atom coordinate arrays...
-    if (procPool.poolRank() == rootRank)
-    {
-        Messenger::printVerbose("Process rank {} is assembling coordinate data...\n", procPool.poolRank());
-        std::transform(atoms_.begin(), atoms_.end(), x.begin(), [](const auto &atom) { return atom->r().x; });
-        std::transform(atoms_.begin(), atoms_.end(), y.begin(), [](const auto &atom) { return atom->r().y; });
-        std::transform(atoms_.begin(), atoms_.end(), z.begin(), [](const auto &atom) { return atom->r().z; });
-    }
-
-    if (!procPool.broadcast(x, rootRank))
-        return false;
-    if (!procPool.broadcast(y, rootRank))
-        return false;
-    if (!procPool.broadcast(z, rootRank))
-        return false;
-
-    // Slaves then store values into Atoms, updating related info as we go
-    if (procPool.isSlave())
-        for (auto n = 0; n < atoms_.size(); ++n)
-            atoms_[n]->setCoordinates(x[n], y[n], z[n]);
-
-    // Broadcast contents version
-    if (!contentsVersion_.broadcast(procPool, rootRank))
-        return false;
-#endif
-    return true;
-}

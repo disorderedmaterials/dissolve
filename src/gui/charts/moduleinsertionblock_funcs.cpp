@@ -43,8 +43,6 @@ void ModuleInsertionBlock::paintEvent(QPaintEvent *event)
     borderPath.lineTo(width() - metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
     borderPath.closeSubpath();
 
-    // 	painter.setBrush(Qt::white);
-
     // Ready - draw the border + fill!
     painter.drawPath(borderPath);
 }

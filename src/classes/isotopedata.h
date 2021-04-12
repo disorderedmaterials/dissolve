@@ -9,7 +9,6 @@
 class CoreData;
 class Isotope;
 class LineParser;
-class ProcessPool;
 
 /*
  * IsotopeData Definition
@@ -53,16 +52,7 @@ class IsotopeData : public ListItem<IsotopeData>
      */
     public:
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
+    bool deserialise(LineParser &parser);
 };

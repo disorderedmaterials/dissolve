@@ -3,45 +3,50 @@
 
 #include "gui/render/renderabledata2d.h"
 #include "base/lineparser.h"
+#include "genericitems/list.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data2d.h"
 #include "math/extrema.h"
 #include "templates/array2d.h"
 
-RenderableData2D::RenderableData2D(const Data2D *source, std::string_view objectTag)
-    : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
+RenderableData2D::RenderableData2D(const Data2D &source)
+    : Renderable(Renderable::Data2DRenderable, ""), source_(source), displayStyle_(LinesStyle)
 {
-    // Set defaults
-    displayStyle_ = LinesStyle;
     colour().setStyle(ColourDefinition::HSVGradientStyle);
 }
 
-RenderableData2D::~RenderableData2D() {}
+RenderableData2D::RenderableData2D(std::string_view tag)
+    : Renderable(Renderable::Data2DRenderable, tag), displayStyle_(LinesStyle)
+{
+    colour().setStyle(ColourDefinition::HSVGradientStyle);
+}
 
 /*
  * Data
  */
 
-// Return whether a valid data source is available (attempting to set it if not)
-bool RenderableData2D::validateDataSource()
+// Return source data
+OptionalReferenceWrapper<const Data2D> RenderableData2D::source() const { return source_; }
+
+// Attempt to set the data source, searching the supplied list for the object
+void RenderableData2D::validateDataSource(const GenericList &sourceList)
 {
     // Don't try to access source_ if we are not currently permitted to do so
     if (!sourceDataAccessEnabled_)
-        return false;
+        return;
 
-    // If there is no valid source set, attempt to set it now...
-    if (!source_)
-        source_ = Data2D::findObject(objectTag_);
+    if (source_)
+        return;
 
-    return source_;
+    source_ = sourceList.search<const Data2D>(tag_);
 }
 
 // Invalidate the current data source
-void RenderableData2D::invalidateDataSource() { source_ = nullptr; }
+void RenderableData2D::invalidateDataSource() { source_ = std::nullopt; }
 
 // Return version of data
-int RenderableData2D::dataVersion() { return (validateDataSource() ? source_->version() : -99); }
+int RenderableData2D::dataVersion() { return (source_ ? source_->get().version() : -99); }
 
 /*
  * Transform / Limits
@@ -138,7 +143,7 @@ void RenderableData2D::transformValues()
 const Data2D &RenderableData2D::transformedData()
 {
     // Check that we have a valid source
-    if (!validateDataSource())
+    if (!source_)
         return transformedData_;
 
     // If the value transform is not enabled, just return the original data
@@ -158,14 +163,13 @@ const Data2D &RenderableData2D::transformedData()
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData2D::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
-    if (!validateDataSource())
+    if (!source_)
     {
-        if (!source_)
-            reinitialisePrimitives(0, GL_LINE_STRIP, true);
+        reinitialisePrimitives(0, GL_LINE_STRIP, true);
         return;
     }
 
-    reinitialisePrimitives(source_->yAxis().size(), GL_LINE_STRIP, true);
+    reinitialisePrimitives(source_->get().yAxis().size(), GL_LINE_STRIP, true);
     constructLine(transformedData().xAxis(), transformedData().yAxis(), transformedData().values2D(), view.axes(),
                   colourDefinition);
 }
@@ -207,7 +211,6 @@ void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa
 
     // Get some values from axes so we can calculate colours properly
     auto vLogarithmic = axes.logarithmic(2);
-    // double vStretch = axes.stretch(2);
 
     // Temporary variables
     GLfloat colour[4];

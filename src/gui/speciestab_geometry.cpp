@@ -21,12 +21,12 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
     assert(index.column() == 1);
 
     // The row of the QModelIndex represents the SpecieAtom index in the Species
-    auto *i = species_->atom(index.row());
+    auto &i = species_->atom(index.row());
 
     // Construct valid names list
     std::vector<std::string> validNames;
     for (auto &at : dissolve_.atomTypes())
-        if (at->Z() == i->Z())
+        if (at->Z() == i.Z())
             validNames.emplace_back(at->name());
 
     return validNames;
@@ -122,16 +122,15 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
                       ? QString("@%1").arg(QString::fromStdString(std::string(speciesBond->masterParameters()->name())))
                       : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesBond->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.BondTable->item(row, n + 3);
+        if (!item)
         {
             item = new QTableWidgetItem;
             ui_.BondTable->setItem(row, n + 3, item);
         }
-        else
-            item = ui_.BondTable->item(row, n + 3);
 
         item->setText(QString::number(speciesBond->parameter(n)));
         item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
@@ -174,16 +173,15 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
             ? QString("@%1").arg(QString::fromStdString(std::string(speciesAngle->masterParameters()->name())))
             : QString::fromStdString(std::string(SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesAngle->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.AngleTable->item(row, n + 4);
+        if (!item)
         {
             item = new QTableWidgetItem;
             ui_.AngleTable->setItem(row, n + 4, item);
         }
-        else
-            item = ui_.AngleTable->item(row, n + 4);
 
         item->setText(QString::number(speciesAngle->parameter(n)));
         item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
@@ -225,18 +223,16 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
             ? QString("@%1").arg(QString::fromStdString(std::string(speciesTorsion->masterParameters()->name())))
             : QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesTorsion->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.TorsionTable->item(row, n + 5);
+        if (!item)
         {
             item = new QTableWidgetItem;
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.TorsionTable->setItem(row, n + 5, item);
         }
-        else
-            item = ui_.TorsionTable->item(row, n + 5);
-
         item->setText(QString::number(speciesTorsion->parameter(n)));
     }
 }
@@ -275,16 +271,15 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
             ? QString("@%1").arg(QString::fromStdString(std::string(speciesImproper->masterParameters()->name())))
             : QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(speciesImproper->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesImproper->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.ImproperTable->item(row, n + 5);
+        if (!item)
         {
             item = new QTableWidgetItem;
             ui_.ImproperTable->setItem(row, n + 5, item);
         }
-        else
-            item = ui_.ImproperTable->item(row, n + 5);
 
         item->setText(QString::number(speciesImproper->parameter(n)));
         item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
@@ -324,7 +319,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target SpeciesAtom from the passed widget
-    SpeciesAtom *speciesAtom = w ? w->data(Qt::UserRole).value<SpeciesAtom *>() : nullptr;
+    SpeciesAtom *speciesAtom = w ? ui_.AtomTable->item(w->row(), 0)->data(Qt::UserRole).value<SpeciesAtom *>() : nullptr;
     if (!speciesAtom)
         return;
     Vec3<double> r = speciesAtom->r();
@@ -654,9 +649,6 @@ void SpeciesTab::updateGeometryTab()
 {
     Locker refreshLocker(refreshLock_);
 
-    // -- SpeciesAtom Table
-    // 	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
-    // 	else ui_.AtomTable->hideColumn(5);
     if (!species_)
         ui_.AtomTable->clearContents();
     else

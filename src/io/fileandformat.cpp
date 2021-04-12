@@ -103,7 +103,7 @@ KeywordList &FileAndFormat::keywords() { return keywords_; }
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endKeyword, CoreData &coreData)
+bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData)
 {
     // Convert first argument to format type
     format_ = format(parser.argsv(startArg));
@@ -151,13 +151,13 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
 }
 
 // Write format / filename to specified parser
-bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix)
+bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  '{}'\n", prefix, formatKeyword(format_), filename_);
 }
 
 // Write options and end block
-bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix)
+bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) const
 {
     return keywords_.write(parser, fmt::format("{}  ", prefix));
 }

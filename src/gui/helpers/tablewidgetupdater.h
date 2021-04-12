@@ -73,6 +73,22 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Co
         // iterate over
         table->setRowCount(rowCount);
     }
+    ConstTableWidgetUpdater(QTableWidget *table, const std::list<I> &vector, T *functionParent,
+                            TableWidgetRowUpdateFunction updateRow)
+    {
+
+        int rowCount = 0;
+
+        for (auto &dataItem : vector)
+        {
+            updateItemAtIndex(table, rowCount, &dataItem, functionParent, updateRow);
+            ++rowCount;
+        }
+
+        // Set the number of table rows again here in order to catch the case where there were zero data items to
+        // iterate over
+        table->setRowCount(rowCount);
+    }
     ConstTableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
     {
 
@@ -181,6 +197,15 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         // iterate over
         table->setRowCount(rowCount);
     }
+    TableWidgetUpdater(QTableWidget *table, std::list<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    {
+        int rowCount = 0;
+        for (auto &dataItem : list)
+        {
+            updateItemAtIndex(table, rowCount, &dataItem, functionParent, updateRow);
+            ++rowCount;
+        }
+    }
     TableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
     {
 
@@ -188,6 +213,22 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
 
         ListIterator<I> dataIterator(list);
         while (I *dataItem = dataIterator.iterate())
+        {
+            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
+            ++rowCount;
+        }
+
+        // Set the number of table rows again here in order to catch the case where there were zero data items to
+        // iterate over
+        table->setRowCount(rowCount);
+    }
+    TableWidgetUpdater(QTableWidget *table, std::vector<std::shared_ptr<I>> &list, T *functionParent,
+                       TableWidgetRowUpdateFunction updateRow)
+    {
+
+        int rowCount = 0;
+
+        for (const auto dataItem : list)
         {
             updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
             ++rowCount;

@@ -20,7 +20,6 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     {
         double boxSize = parser.argd(1);
         Messenger::print("File has a cubic cell (side length {} Angstroms)", boxSize);
-        // 		targetModel()->setCell(Vec3<double>(boxSize,boxSize,boxSize), Vec3<double>(90,90,90));
     }
     else
     {
@@ -32,11 +31,6 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
         angles = parser.arg3d(0);
-
-        // angles.x = phib = angle between a and b (== gamma)
-        // angles.y = thetac = angle deviation from cartesian z (== 90-beta)  ?? CHECK
-        // angles.z = phic = angle deviation from cartesian z (== 90-alpha)  ?? CHECK
-        // 		targetModel()->setCell(lengths, Vec3<double>(90-angles.z, 90-angles.y, angles.x));
     }
 
     // 2 : step sizes etc. **IGNORED**
@@ -92,13 +86,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
                         return false;
                     currentArg = 0;
                 }
-                // partnerId = parser.argi(currentArg) - 1;
                 currentArg += 2;
-
-                // Create new bond between these atoms (only if the partnerId is less than the current atom
-                // index)  **IGNORED** 				if (partnerId < n)
-                // targetModel()->bondAtoms(atomOffset+n, atomOffset+partnerId, Bond::Single);
-
                 --nRestraints;
             }
         }

@@ -21,7 +21,8 @@ class CalculateSDFModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData);
+    CalculateSDFModuleWidget(QWidget *parent, const GenericList &processingData, CalculateSDFModule *module,
+                             const CoreData &coreData);
 
     private:
     // Associated Module
@@ -38,32 +39,19 @@ class CalculateSDFModuleWidget : public ModuleWidget
     // DataViewers contained within this widget
     DataViewer *sdfGraph_;
     // Renderable for our SDF
-    RenderableData3D *sdfRenderable_;
+    std::shared_ptr<RenderableData3D> sdfRenderable_;
     // Reference molecule (Species) to display alongside density
     Species *referenceMolecule_;
     // Renderable for reference molecule
-    RenderableSpecies *referenceMoleculeRenderable_;
+    std::shared_ptr<RenderableSpecies> referenceMoleculeRenderable_;
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
-    /*
-     * State I/O
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
      */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets();
-
     private slots:
     void on_LowerCutoffSpin_valueChanged(double value);
     void on_UpperCutoffSpin_valueChanged(double value);

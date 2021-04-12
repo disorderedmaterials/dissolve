@@ -3,14 +3,11 @@
 
 #include "math/pairbroadeningfunction.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesintra.h"
 #include "data/atomicmasses.h"
-#include "genericitems/array2ddouble.h"
 #include "templates/algorithms.h"
-#include "templates/enumhelpers.h"
 
 PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionType function)
 {
@@ -65,11 +62,11 @@ int PairBroadeningFunction::nFunctionParameters(FunctionType func) { return Pair
  */
 
 // Read function data from LineParser source
-bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, CoreData &coreData)
+bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // First argument is the form of the function, or a '&' to indicate that a full block-style definition of the data
     if (DissolveSys::sameString("&", parser.argsv(startArg)))
-        return read(parser, coreData);
+        return deserialise(parser);
 
     PairBroadeningFunction::FunctionType funcType = PairBroadeningFunction::functionType(parser.argsv(startArg));
     if (funcType == PairBroadeningFunction::nFunctionTypes)
@@ -111,7 +108,7 @@ bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, Cor
 }
 
 // Write function data to LineParser source
-bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker)
+bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker) const
 {
     // If the functional form requires a block rather than a single line, write an '&' and start a new line
     if (writeBlockMarker && (function_ == PairBroadeningFunction::GaussianElementPairFunction))
@@ -247,14 +244,11 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view PairBroadeningFunction::itemClassName() { return "PairBroadeningFunction"; }
-
 // Read data through specified LineParser
-bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
+bool PairBroadeningFunction::deserialise(LineParser &parser)
 {
     // First line is function name
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -312,40 +306,3 @@ bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
 
 // Write data through specified LineParser
 bool PairBroadeningFunction::write(LineParser &parser) { return writeAsKeyword(parser, "", false); }
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool PairBroadeningFunction::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(EnumCast<PairBroadeningFunction::FunctionType>(function_), root))
-        return false;
-    if (!procPool.broadcast(gaussianFWHM_, root))
-        return false;
-    if (!procPool.broadcast(elementPairGaussianFWHM_, root))
-        return false;
-    if (!procPool.broadcast(elementPairGaussianFlags_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool PairBroadeningFunction::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(EnumCast<PairBroadeningFunction::FunctionType>(function_)))
-        return Messenger::error("PairBroadeningFunction function type is not equivalent (process {} has {}).\n",
-                                procPool.poolRank(), function_);
-    if (!procPool.equality(gaussianFWHM_))
-        return Messenger::error("PairBroadeningFunction Gaussian parameters are not equivalent.\n");
-    if (!procPool.equality(elementPairGaussianFWHM_))
-        return Messenger::error("PairBroadeningFunction element pair Gaussian parameters are not equivalent.\n");
-    if (!procPool.equality(elementPairGaussianFlags_))
-        return Messenger::error("PairBroadeningFunction element pair Gaussian parameters are not equivalent.\n");
-#endif
-    return true;
-}

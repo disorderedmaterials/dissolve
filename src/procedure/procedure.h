@@ -10,7 +10,6 @@
 // Forward Declarations
 class Configuration;
 class LineParser;
-class ProcessPool;
 
 // Procedure
 class Procedure
@@ -56,7 +55,7 @@ class Procedure
      */
     public:
     // Read procedure from specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write procedure to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 };

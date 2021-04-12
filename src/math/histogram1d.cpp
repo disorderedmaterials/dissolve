@@ -180,14 +180,11 @@ void Histogram1D::operator=(const Histogram1D &source)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Histogram1D::itemClassName() { return "Histogram1D"; }
-
 // Read data through specified LineParser
-bool Histogram1D::read(LineParser &parser, CoreData &coreData)
+bool Histogram1D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -201,21 +198,21 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
     nMissed_ = parser.argli(1);
 
     for (auto n = 0; n < nBins_; ++n)
-        if (!averages_[n].read(parser, coreData))
+        if (!averages_[n].deserialise(parser))
             return false;
 
     return true;
 }
 
 // Write data through specified LineParser
-bool Histogram1D::write(LineParser &parser)
+bool Histogram1D::serialise(LineParser &parser) const
 {
     if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, binWidth_))
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
     for (auto n = 0; n < nBins_; ++n)
-        if (!averages_[n].write(parser))
+        if (!averages_.at(n).serialise(parser))
             return false;
 
     return true;
@@ -231,70 +228,6 @@ bool Histogram1D::allSum(ProcessPool &procPool)
 #ifdef PARALLEL
     if (!procPool.allSum(bins_.data(), nBins_))
         return false;
-#endif
-    return true;
-}
-
-// Broadcast data
-bool Histogram1D::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    // Range data
-    if (!procPool.broadcast(minimum_, root))
-        return false;
-    if (!procPool.broadcast(maximum_, root))
-        return false;
-    if (!procPool.broadcast(binWidth_, root))
-        return false;
-    if (!procPool.broadcast(nBins_, root))
-        return false;
-
-    // Data
-    if (!procPool.broadcast(nBinned_, root))
-        return false;
-    if (!procPool.broadcast(nMissed_, root))
-        return false;
-    if (!procPool.broadcast(binCentres_, root))
-        return false;
-    if (!procPool.broadcast(bins_, root))
-        return false;
-    for (auto &n : averages_)
-        if (!n.broadcast(procPool, root, coreData))
-            return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool Histogram1D::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    // Check number of items in arrays first
-    if (!procPool.equality(minimum_))
-        return Messenger::error("Histogram1D minimum value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                minimum_);
-    if (!procPool.equality(maximum_))
-        return Messenger::error("Histogram1D maximum value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                maximum_);
-    if (!procPool.equality(binWidth_))
-        return Messenger::error("Histogram1D bin width is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                binWidth_);
-    if (!procPool.equality(nBins_))
-        return Messenger::error("Histogram1D number of bins is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                nBins_);
-    if (!procPool.equality(binCentres_))
-        return Messenger::error("Histogram1D bin centre values not equivalent.\n");
-    if (!procPool.equality(bins_))
-        return Messenger::error("Histogram1D bin values not equivalent.\n");
-    if (!procPool.equality(nBinned_))
-        return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process {} has {}).\n",
-                                procPool.poolRank(), nBinned_);
-    if (!procPool.equality(nMissed_))
-        return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process {} has {}).\n",
-                                procPool.poolRank(), nBinned_);
-    for (auto n : averages_)
-        if (!n.equality(procPool))
-            return Messenger::error("Histogram1D average values not equivalent.\n");
 #endif
     return true;
 }

@@ -6,6 +6,7 @@
 #include "classes/potentialmap.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
+#include "templates/algorithms.h"
 #include <numeric>
 
 // Return total interatomic energy of Configuration
@@ -41,7 +42,6 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
 // Return total interatomic energy of Species
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
 {
-    SpeciesAtom *i, *j;
     Vec3<double> rI;
     double r, scale, energy = 0.0;
     const auto cutoff = potentialMap.range();
@@ -54,24 +54,24 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
     // NOTE PR #334 : use for_each_pair
     for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
     {
-        i = sp->atom(indexI);
-        rI = i->r();
+        auto &i = sp->atom(indexI);
+        rI = i.r();
 
         for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
-            j = sp->atom(indexJ);
+            auto &j = sp->atom(indexJ);
 
             // Get interatomic distance
-            r = (j->r() - rI).magnitude();
+            r = (j.r() - rI).magnitude();
             if (r > cutoff)
                 continue;
 
             // Get intramolecular scaling of atom pair
-            scale = i->scaling(j);
+            scale = i.scaling(&j);
             if (scale < 1.0e-3)
                 continue;
 
-            energy += potentialMap.energy(i, j, r) * scale;
+            energy += potentialMap.energy(&i, &j, r) * scale;
         }
     }
 
@@ -144,10 +144,11 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    for (auto m = start; m < cfg->nMolecules(); m += stride)
+    auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+    for (auto it = begin; it < end; ++it)
     {
         // Get Molecule pointer
-        mol = molecules[m];
+        mol = *it;
 
         // Loop over Bond
         bondEnergy += std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
@@ -251,10 +252,10 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Species *sp, const Poten
 }
 
 // Check energy stability of specified Configuration
-EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
+EnergyModule::EnergyStability EnergyModule::checkStability(GenericList &processingData, Configuration *cfg)
 {
     // First, check if the Configuration is targetted by an EnergyModule
-    if (!cfg->moduleData().value<bool>("_IsEnergyModuleTarget", "", false))
+    if (!processingData.valueOr<bool>("IsEnergyModuleTarget", cfg->niceName(), false))
     {
         Messenger::error("Configuration '{}' is not targeted by any EnergyModule, so stability cannot be assessed. "
                          "Check your setup!\n",
@@ -263,9 +264,9 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
     }
 
     // Retrieve the EnergyStable flag from the Configuration's module data
-    if (cfg->moduleData().contains("EnergyStable"))
+    if (processingData.contains("EnergyStable", cfg->niceName()))
     {
-        auto stable = cfg->moduleData().value<bool>("EnergyStable");
+        auto stable = processingData.value<bool>("EnergyStable", cfg->niceName());
         if (!stable)
         {
             Messenger::print("Energy for Configuration '{}' is not yet stable.\n", cfg->name());
@@ -274,7 +275,7 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
     }
     else
     {
-        Messenger::warn("No energy stability information is present in Configuration '{}' (yet) - check your setup.\n",
+        Messenger::warn("No energy stability information is present for Configuration '{}' (yet) - check your setup.\n",
                         cfg->name());
         return EnergyModule::NotAssessable;
     }
@@ -283,14 +284,14 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
 }
 
 // Check energy stability of specified Configurations, returning the number that failed
-int EnergyModule::nUnstable(const RefList<Configuration> &configurations)
+int EnergyModule::nUnstable(GenericList &processingData, const RefList<Configuration> &configurations)
 {
     auto nFailed = 0;
 
-    for (Configuration *cfg : configurations)
+    for (auto *cfg : configurations)
     {
         // Check the stability of this Configuration
-        auto result = checkStability(cfg);
+        auto result = checkStability(processingData, cfg);
 
         if (result == EnergyModule::EnergyStable)
             ++nFailed;

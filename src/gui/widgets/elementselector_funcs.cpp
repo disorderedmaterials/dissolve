@@ -37,7 +37,6 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
         buttons_.push_back(button);
         button->setText(QString::fromStdString(std::string(Elements::symbol(Elements::element(n)))));
         button->setMinimumSize(24, 24);
-        // 		button->setMaximumSize(24,24);
         button->setToolTip(QString("%1 (%2)").arg(QString::fromStdString(std::string(Elements::name(Elements::element(n)))),
                                                   QString::fromStdString(std::string(Elements::symbol(Elements::element(n))))));
 

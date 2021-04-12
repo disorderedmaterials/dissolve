@@ -53,7 +53,6 @@ enum ConfigurationKeyword
     EndConfigurationKeyword,   /* 'EndConfiguration' - Signals the end of the Configuration block */
     GeneratorKeyword,          /* 'Generator' - Define the generator procedure for the Configuration */
     InputCoordinatesKeyword,   /* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
-    ModuleKeyword,             /* 'Module' - Starts the set up of a Module for this configuration */
     SizeFactorKeyword,         /* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
     TemperatureKeyword         /* 'Temperature' - Defines the temperature of the simulation */
 };
@@ -153,11 +152,8 @@ namespace SimulationBlock
 // Simulation Block Keyword Enum
 enum SimulationKeyword
 {
-    EndSimulationKeyword,           /* 'EndSimulation' - Signals the end of the Simulation block */
-    ParallelStrategyKeyword,        /* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
-    ParallelGroupPopulationKeyword, /* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes
-                       in a pool in to */
-    SeedKeyword                     /* 'Seed' - Random seed to use */
+    EndSimulationKeyword, /* 'EndSimulation' - Signals the end of the Simulation block */
+    SeedKeyword           /* 'Seed' - Random seed to use */
 };
 // Return enum option info for SimulationKeyword
 EnumOptions<SimulationBlock::SimulationKeyword> keywords();

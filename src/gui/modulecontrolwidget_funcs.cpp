@@ -60,6 +60,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     {
         ui_.ModuleControlsStack->addWidget(moduleWidget_);
         ui_.ModuleOutputButton->setEnabled(true);
+        moduleWidget_->updateControls(ModuleWidget::UpdateType::RecreateRenderables);
     }
 
     updateControls();
@@ -78,7 +79,7 @@ void ModuleControlWidget::setUpModule()
     module_->setUp(*dissolve_, dissolve_->worldPool());
 
     if (moduleWidget_)
-        moduleWidget_->updateControls(ModuleWidget::ResetGraphDataTargetsFlag);
+        moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
 }
 
 /*
@@ -102,7 +103,7 @@ void ModuleControlWidget::updateControls()
 
     // Update additional controls (if they exist)
     if (moduleWidget_)
-        moduleWidget_->updateControls();
+        moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
 }
 
 // Disable sensitive controls
@@ -139,42 +140,3 @@ void ModuleControlWidget::on_ModuleOutputButton_clicked(bool checked)
 
 // Keyword data for Module has been modified
 void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }
-
-/*
- * State I/O
- */
-
-// Read widget state through specified LineParser
-bool ModuleControlWidget::readState(LineParser &parser)
-{
-    Locker refreshLocker(refreshLock_);
-
-    // Write currently-open page...
-    if (parser.getArgsDelim() != LineParser::Success)
-        return false;
-    ui_.ModuleControlsStack->setCurrentIndex(parser.argi(0));
-    if (parser.argi(0) == 0)
-        ui_.ModuleControlsButton->setChecked(true);
-    else if (parser.argi(0) == 1)
-        ui_.ModuleOutputButton->setChecked(true);
-
-    // Additional controls state
-    if (moduleWidget_ && (!moduleWidget_->readState(parser)))
-        return false;
-
-    return true;
-}
-
-// Write widget state through specified LineParser
-bool ModuleControlWidget::writeState(LineParser &parser) const
-{
-    // Write currently-open page...
-    if (!parser.writeLineF("%i\n", ui_.ModuleControlsStack->currentIndex()))
-        return false;
-
-    // Additional controls state
-    if (moduleWidget_ && (!moduleWidget_->writeState(parser)))
-        return false;
-
-    return true;
-}

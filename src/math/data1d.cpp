@@ -4,31 +4,12 @@
 #include "math/data1d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "math/histogram1d.h"
+#include "base/sysfunc.h"
 #include "templates/algorithms.h"
 
-// Static Members (ObjectStore)
-template <class Data1D> RefDataList<Data1D, int> ObjectStore<Data1D>::objects_;
-template <class Data1D> int ObjectStore<Data1D>::objectCount_ = 0;
-template <class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1DObject;
-template <class Data1D> std::string_view ObjectStore<Data1D>::objectTypeName_ = "Data1D";
+Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), hasError_(false) {}
 
-Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this)
-{
-    static int count = 0;
-    name_ = fmt::format("Data1D_{}", ++count);
-
-    hasError_ = false;
-
-    clear();
-}
-
-Data1D::~Data1D() {}
-
-Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable), ObjectStore<Data1D>(this)
-{
-    (*this) = source;
-}
+Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable) { (*this) = source; }
 
 // Clear Data
 void Data1D::clear()
@@ -41,6 +22,12 @@ void Data1D::clear()
 /*
  * Data
  */
+
+// Set tag
+void Data1D::setTag(std::string_view tag) { tag_ = tag; }
+
+// Return tag
+std::string_view Data1D::tag() const { return tag_; }
 
 // Initialise arrays to specified size
 void Data1D::initialise(int size, bool withError)
@@ -118,15 +105,11 @@ void Data1D::addPoint(double x, double value)
 // Add new data point with error
 void Data1D::addPoint(double x, double value, double error)
 {
+    assert(hasError_);
+
     x_.push_back(x);
     values_.push_back(value);
-
-    if (hasError_)
-        errors_.push_back(error);
-    else
-        Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='{}', tag='{}') has no "
-                        "error information associated with it.\n",
-                        name(), objectTag());
+    errors_.push_back(error);
 
     ++version_;
 }
@@ -223,8 +206,6 @@ double Data1D::maxValue() const
 // Add / initialise errors array
 void Data1D::addErrors()
 {
-    // 	if (hasError_) Messenger::warn("Adding an error array to a Data1D that already has one...\n");
-
     errors_.clear();
     errors_.resize(x_.size());
 
@@ -239,13 +220,7 @@ bool Data1D::valuesHaveErrors() const { return hasError_; }
 // Return error value specified
 double &Data1D::error(int index)
 {
-    if (!hasError_)
-    {
-        static double dummy = 0.0;
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     ++version_;
 
@@ -254,13 +229,7 @@ double &Data1D::error(int index)
 
 const double &Data1D::error(int index) const
 {
-    if (!hasError_)
-    {
-        static double dummy;
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     return errors_[index];
 }
@@ -268,9 +237,7 @@ const double &Data1D::error(int index) const
 // Return error Array
 std::vector<double> &Data1D::errors()
 {
-    if (!hasError_)
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     ++version_;
 
@@ -279,9 +246,7 @@ std::vector<double> &Data1D::errors()
 
 const std::vector<double> &Data1D::errors() const
 {
-    if (!hasError_)
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     return errors_;
 }
@@ -292,7 +257,7 @@ const std::vector<double> &Data1D::errors() const
 
 void Data1D::operator=(const Data1D &source)
 {
-    name_ = source.name_;
+    tag_ = source.tag_;
     x_ = source.x_;
     values_ = source.values_;
     hasError_ = source.hasError_;
@@ -307,15 +272,12 @@ void Data1D::operator+=(const Data1D &source)
     if (x_.empty())
     {
         copyArrays(source);
+        ++version_;
         return;
     }
 
     // Check array sizes
-    if (x_.size() != source.x_.size())
-    {
-        Messenger::error("Can't += these Data1D together since they are of differing sizes.\n");
-        return;
-    }
+    assert(x_.size() == source.x_.size());
 
     ++version_;
 
@@ -337,20 +299,16 @@ void Data1D::operator-=(const Data1D &source)
     {
         copyArrays(source);
         std::transform(values_.begin(), values_.end(), values_.begin(), std::negate<>());
+        ++version_;
         return;
     }
 
-    // Check array sizes
-    if (x_.size() != source.x_.size())
-    {
-        Messenger::error("Can't -= these Data1D together since they are of differing sizes.\n");
-        return;
-    }
+    assert(x_.size() == source.x_.size());
+
+    // Loop over points, subtracting the source values from our array
+    std::transform(values_.begin(), values_.end(), source.values().begin(), values_.begin(), std::minus<>());
 
     ++version_;
-
-    // Loop over points, summing them into our array
-    std::transform(values_.begin(), values_.end(), source.values().begin(), values_.begin(), std::minus<>());
 }
 
 void Data1D::operator-=(const double delta)
@@ -372,12 +330,7 @@ void Data1D::operator*=(const double factor)
 
 void Data1D::operator*=(const std::vector<double> &factors)
 {
-    // Check array sizes
-    if (x_.size() != factors.size())
-    {
-        Messenger::error("Can't *= this Array with Data1D values since they are of differing sizes.\n");
-        return;
-    }
+    assert(x_.size() == factors.size());
 
     std::transform(values_.begin(), values_.end(), factors.begin(), values_.begin(), std::multiplies<>());
 }
@@ -393,26 +346,18 @@ void Data1D::operator/=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
-// Return class name
-std::string_view Data1D::itemClassName() { return "Data1D"; }
-
 // Read data through specified LineParser
-bool Data1D::read(LineParser &parser, CoreData &coreData)
+bool Data1D::deserialise(LineParser &parser)
 {
     clear();
 
-    // Read object tag
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
-    // Read object name
+    // Read name
     if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
-    name_ = parser.line();
+    tag_ = parser.line();
 
     // Read number of points and whether errors are present
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -436,12 +381,10 @@ bool Data1D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data1D::write(LineParser &parser)
+bool Data1D::serialise(LineParser &parser) const
 {
-    // Write object tag and name
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
-    if (!parser.writeLineF("{}\n", name()))
+    // Write tag
+    if (!parser.writeLineF("{}\n", tag_))
         return false;
 
     // Write axis size and errors flag
@@ -460,41 +403,5 @@ bool Data1D::write(LineParser &parser)
             if (!parser.writeLineF("{}  {}\n", x, value))
                 return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data
-bool Data1D::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(x_, root))
-        return false;
-    if (!procPool.broadcast(values_, root))
-        return false;
-    if (!procPool.broadcast(hasError_, root))
-        return false;
-    if (!procPool.broadcast(errors_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool Data1D::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(x_))
-        return Messenger::error("Data1D x axis values not equivalent.\n");
-    if (!procPool.equality(values_))
-        return Messenger::error("Data1D y axis values not equivalent.\n");
-    if (!procPool.equality(hasError_))
-        return Messenger::error("Data1D error flag not equivalent.\n");
-    if (!procPool.equality(errors_))
-        return Messenger::error("Data1D error values not equivalent.\n");
-#endif
     return true;
 }

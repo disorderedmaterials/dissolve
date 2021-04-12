@@ -75,18 +75,21 @@ int IntegerKeyword::minArguments() const { return 1; }
 int IntegerKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IntegerKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {
         if (!setData(parser.argi(startArg)))
         {
             if (minimumLimit_ && maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", data_, min_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", parser.argi(startArg),
+                                 min_, max_);
             else if (minimumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", data_, min_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", parser.argi(startArg),
+                                 min_);
             else
-                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", data_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", parser.argi(startArg),
+                                 max_);
 
             return false;
         }
@@ -97,7 +100,7 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }

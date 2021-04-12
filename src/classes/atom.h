@@ -4,7 +4,6 @@
 #pragma once
 
 #include "templates/dynamicarrayobject.h"
-#include "templates/orderedpointerdataarray.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
@@ -13,7 +12,6 @@
 // Forward Declarations
 class Cell;
 class Molecule;
-class ProcessPool;
 class SpeciesAtom;
 
 // Atom Definition

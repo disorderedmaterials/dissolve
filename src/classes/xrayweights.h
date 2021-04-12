@@ -5,7 +5,6 @@
 
 #include "classes/atomtypelist.h"
 #include "data/formfactors.h"
-#include "genericitems/base.h"
 #include "templates/array2d.h"
 #include "templates/list.h"
 #include <functional>
@@ -16,7 +15,7 @@ class Species;
 class SpeciesInfo;
 
 // XRay Weights Container
-class XRayWeights : public GenericItemBase
+class XRayWeights
 {
     public:
     XRayWeights();
@@ -44,7 +43,7 @@ class XRayWeights : public GenericItemBase
     // Clear contents
     void clear();
     // Set-up from supplied SpeciesInfo list
-    bool setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
+    bool setUp(std::vector<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
     // Add Species to weights in the specified population
     void addSpecies(const Species *sp, int population);
     // Finalise weights after addition of all individual Species
@@ -100,22 +99,11 @@ class XRayWeights : public GenericItemBase
     bool isValid() const;
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast item contents
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
+    bool serialise(LineParser &parser) const;
 };
