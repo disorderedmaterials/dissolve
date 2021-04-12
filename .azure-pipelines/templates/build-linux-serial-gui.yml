@@ -29,7 +29,8 @@ steps:
       export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
       mkdir build
       cd build
-      conan install --remote=conan-center -s compiler.libcxx=libstdc++11 ../
+      conan remote add conan-center-2 https://api.bintray.com/conan/conan/conan-center
+      conan install --remote=conan-center-2 -s compiler.libcxx=libstdc++11 ../
       cmake -G "Ninja" -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'
