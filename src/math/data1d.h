@@ -5,10 +5,9 @@
 
 #include "base/version.h"
 #include "math/plottable.h"
-#include "templates/objectstore.h"
 
 // One-Dimensional Data
-class Data1D : public PlottableData, public ObjectStore<Data1D>
+class Data1D : public PlottableData
 {
     public:
     Data1D();
@@ -108,13 +107,4 @@ class Data1D : public PlottableData, public ObjectStore<Data1D>
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data
-    bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
-    // Check item equality
-    bool equality(ProcessPool &procPool);
 };

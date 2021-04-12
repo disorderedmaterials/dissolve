@@ -10,10 +10,8 @@
 EnumOptions<SimulationBlock::SimulationKeyword> SimulationBlock::keywords()
 {
     return EnumOptions<SimulationBlock::SimulationKeyword>(
-        "SimulationKeyword", {{SimulationBlock::EndSimulationKeyword, "EndSimulation"},
-                              {SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1},
-                              {SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1},
-                              {SimulationBlock::SeedKeyword, "Seed", 1}});
+        "SimulationKeyword",
+        {{SimulationBlock::EndSimulationKeyword, "EndSimulation"}, {SimulationBlock::SeedKeyword, "Seed", 1}});
 }
 
 // Parse Simulation block
@@ -43,18 +41,6 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
                 Messenger::print("Found end of {} block.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
                 blockDone = true;
-                break;
-            case (SimulationBlock::ParallelStrategyKeyword):
-                if (Dissolve::parallelStrategy(parser.argsv(1)) == Dissolve::nParallelStrategies)
-                {
-                    Messenger::error("Unrecognised parallel strategy '{}'.\n", parser.argsv(1));
-                    error = true;
-                }
-                else
-                    dissolve->setParallelStrategy(Dissolve::parallelStrategy(parser.argsv(1)));
-                break;
-            case (SimulationBlock::ParallelGroupPopulationKeyword):
-                dissolve->setParallelGroupPopulation(parser.argi(1));
                 break;
             case (SimulationBlock::SeedKeyword):
                 dissolve->setSeed(parser.argi(1));

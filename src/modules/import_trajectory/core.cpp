@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "modules/import/import.h"
+#include "modules/import_trajectory/importtraj.h"
 
-ImportModule::ImportModule() : Module(nRequiredTargets())
+ImportTrajectoryModule::ImportTrajectoryModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();
@@ -14,4 +14,4 @@ ImportModule::ImportModule() : Module(nRequiredTargets())
  */
 
 // Create instance of this module
-Module *ImportModule::createInstance() const { return new ImportModule; }
+Module *ImportTrajectoryModule::createInstance() const { return new ImportTrajectoryModule; }

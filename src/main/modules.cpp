@@ -24,13 +24,12 @@
 #include "modules/export_trajectory/exporttraj.h"
 #include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
-#include "modules/import/import.h"
+#include "modules/import_trajectory/importtraj.h"
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"
-#include "modules/sanitycheck/sanitycheck.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
 #include "modules/xraysq/xraysq.h"
@@ -111,7 +110,7 @@ bool Dissolve::registerMasterModules()
         return false;
     if (!registerMasterModule(new GeometryOptimisationModule))
         return false;
-    if (!registerMasterModule(new ImportModule))
+    if (!registerMasterModule(new ImportTrajectoryModule))
         return false;
     if (!registerMasterModule(new IntraShakeModule))
         return false;
@@ -122,8 +121,6 @@ bool Dissolve::registerMasterModules()
     if (!registerMasterModule(new NeutronSQModule))
         return false;
     if (!registerMasterModule(new RDFModule))
-        return false;
-    if (!registerMasterModule(new SanityCheckModule))
         return false;
     if (!registerMasterModule(new SQModule))
         return false;

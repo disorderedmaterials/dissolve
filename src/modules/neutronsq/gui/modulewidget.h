@@ -25,6 +25,8 @@ class NeutronSQModuleWidget : public ModuleWidget
     private:
     // Associated Module
     NeutronSQModule *module_;
+    // Target partial data being displayed (if any)
+    OptionalReferenceWrapper<const PartialSet> targetPartials_;
     // Reference to Dissolve
     Dissolve &dissolve_;
 
@@ -35,11 +37,15 @@ class NeutronSQModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::NeutronSQModuleWidget ui_;
     // DataViewers contained within this widget
-    DataViewer *partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
+    DataViewer *graph_;
+
+    private:
+    // Create renderables for current target PartialSet
+    void createPartialSetRenderables(std::string_view targetPrefix);
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
@@ -47,4 +53,10 @@ class NeutronSQModuleWidget : public ModuleWidget
     private:
     // Set data targets in graphs
     void setGraphDataTargets(NeutronSQModule *module);
+
+    private slots:
+    void on_TotalFQButton_clicked(bool checked);
+    void on_PartialSQButton_clicked(bool checked);
+    void on_TotalGRButton_clicked(bool checked);
+    void on_PartialGRButton_clicked(bool checked);
 };

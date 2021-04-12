@@ -10,7 +10,6 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class ProcessPool;
 
 // SpeciesImproper Definition
 class SpeciesImproper : public SpeciesIntra

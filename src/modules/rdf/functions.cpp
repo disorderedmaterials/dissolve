@@ -267,7 +267,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
+        originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -357,21 +357,26 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 
     procPool.resetAccumulatedTime();
     timer.start();
-    for_each_pair(0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) {
-        // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
-        // have all data already)
-        if (method != RDFModule::TestMethod)
-        {
-            if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
-                return false;
-            if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
-                return false;
-        }
+    auto success = for_each_pair_early(
+        0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
+            // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
+            // processes have all data already)
+            if (method != RDFModule::TestMethod)
+            {
+                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                    return false;
+                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                    return false;
+            }
 
-        // Create unbound histogram from total and bound data
-        originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-        originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
-    });
+            // Create unbound histogram from total and bound data
+            originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+            originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+
+            return EarlyReturn<bool>::Continue;
+        });
+    if (success.has_value() && !success.value())
+        return false;
 
     // Transform histogram data into radial distribution functions
     originalgr.formPartials(box->volume());
@@ -471,8 +476,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
-    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR", parentModule->uniqueName()));
+    summedUnweightedGR.setUpPartials(combinedAtomTypes);
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // RefList for simplicity
@@ -561,8 +565,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
-    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR//{}", parentModule->uniqueName(), moduleGroup->name()));
+    summedUnweightedGR.setUpPartials(combinedAtomTypes);
 
     // Sum Configurations into the PartialSet
     std::string fingerprint;
@@ -700,7 +703,7 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         if (parser.nArgs() == 0)
             return Messenger::error("Test data has no name?");
 
-        // Check first argument to check it has the corect prefix
+        // Check first argument to check it has the correct prefix
         if (!DissolveSys::sameString(prefix, parser.argsv(0)))
             return Messenger::error("Unrecognised test data name '{}'.\n", data.tag());
 

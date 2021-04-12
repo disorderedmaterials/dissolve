@@ -361,6 +361,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 
     // Enable data access in Renderables, and update all tabs.
     Renderable::setSourceDataAccessEnabled(true);
+    Renderable::validateAll(dissolve_.processingModuleData());
     ui_.MainTabs->updateAllTabs();
     repaint();
     Renderable::setSourceDataAccessEnabled(false);

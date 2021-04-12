@@ -13,10 +13,6 @@
 #include "math/histogram3d.h"
 #include "math/pairbroadeningfunction.h"
 
-// Static Members (ObjectInfo)
-bool ObjectInfo::autoSuffixing_ = false;
-std::string ObjectInfo::autoSuffix_;
-
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
     // Set Module instances list in our core data
@@ -28,10 +24,6 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 
     // Clear everything
     clear();
-
-    // Parallel Comms
-    parallelStrategy_ = Dissolve::SequentialConfigStrategy;
-    parallelGroupPopulation_ = ProcessPool::MinimumGroupPopulation;
 }
 
 Dissolve::~Dissolve()
@@ -83,5 +75,5 @@ void Dissolve::clear()
     // I/O
     setInputFilename("");
     restartFilename_.clear();
-    saveRestartTimes_ = 0.0;
+    saveRestartTimes_.clear();
 }

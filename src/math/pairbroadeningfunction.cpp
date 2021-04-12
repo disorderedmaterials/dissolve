@@ -3,13 +3,11 @@
 
 #include "math/pairbroadeningfunction.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesintra.h"
 #include "data/atomicmasses.h"
 #include "templates/algorithms.h"
-#include "templates/enumhelpers.h"
 
 PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionType function)
 {
@@ -308,40 +306,3 @@ bool PairBroadeningFunction::deserialise(LineParser &parser)
 
 // Write data through specified LineParser
 bool PairBroadeningFunction::write(LineParser &parser) { return writeAsKeyword(parser, "", false); }
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool PairBroadeningFunction::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(EnumCast<PairBroadeningFunction::FunctionType>(function_), root))
-        return false;
-    if (!procPool.broadcast(gaussianFWHM_, root))
-        return false;
-    if (!procPool.broadcast(elementPairGaussianFWHM_, root))
-        return false;
-    if (!procPool.broadcast(elementPairGaussianFlags_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool PairBroadeningFunction::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(EnumCast<PairBroadeningFunction::FunctionType>(function_)))
-        return Messenger::error("PairBroadeningFunction function type is not equivalent (process {} has {}).\n",
-                                procPool.poolRank(), function_);
-    if (!procPool.equality(gaussianFWHM_))
-        return Messenger::error("PairBroadeningFunction Gaussian parameters are not equivalent.\n");
-    if (!procPool.equality(elementPairGaussianFWHM_))
-        return Messenger::error("PairBroadeningFunction element pair Gaussian parameters are not equivalent.\n");
-    if (!procPool.equality(elementPairGaussianFlags_))
-        return Messenger::error("PairBroadeningFunction element pair Gaussian parameters are not equivalent.\n");
-#endif
-    return true;
-}

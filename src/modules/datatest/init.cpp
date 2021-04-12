@@ -15,7 +15,6 @@ void DataTestModule::initialise()
                   "<target> <fileformat> <filename> [options...]");
     keywords_.add("Test", new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::EuclideanError), "ErrorType",
                   "Type of error calculation to use");
-    keywords_.add("Test", new ModuleVectorKeyword(1), "Target", "Module containing target data", "<Module>");
     keywords_.add("Test", new DoubleKeyword(5.0e-3, 1.0e-5), "Threshold", "Threshold for error metric above which test fails",
                   "<threshold[0.1]>");
 }

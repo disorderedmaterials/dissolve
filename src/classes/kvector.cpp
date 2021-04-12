@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/kvector.h"
-#include "base/processpool.h"
 #include "classes/braggreflection.h"
 
 KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes)
@@ -101,45 +100,4 @@ void KVector::calculateIntensities(BraggReflection *reflectionArray)
 double KVector::intensity(int typeI, int typeJ)
 {
     return (cosTerms_[typeI] * cosTerms_[typeJ] + sinTerms_[typeI] * sinTerms_[typeJ]) * (hkl_.x == 0 ? 1 : 2);
-}
-
-/*
- * Serialisation
- */
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool KVector::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(hkl_, root))
-        return false;
-    if (!procPool.broadcast(braggReflectionIndex_, root))
-        return false;
-    if (!procPool.broadcast(cosTerms_, root))
-        return false;
-    if (!procPool.broadcast(sinTerms_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool KVector::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(hkl_))
-        return Messenger::error("KVector hkl value is not equivalent.\n");
-    if (!procPool.equality(braggReflectionIndex_))
-        return Messenger::error("KVector bragg reflection index is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                braggReflectionIndex_);
-    if (!procPool.equality(cosTerms_))
-        return Messenger::error("KVector cos terms are not equivalent.\n");
-    if (!procPool.equality(sinTerms_))
-        return Messenger::error("KVector sin terms are not equivalent.\n");
-#endif
-    return true;
 }

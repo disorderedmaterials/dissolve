@@ -152,11 +152,8 @@ namespace SimulationBlock
 // Simulation Block Keyword Enum
 enum SimulationKeyword
 {
-    EndSimulationKeyword,           /* 'EndSimulation' - Signals the end of the Simulation block */
-    ParallelStrategyKeyword,        /* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
-    ParallelGroupPopulationKeyword, /* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes
-                       in a pool in to */
-    SeedKeyword                     /* 'Seed' - Random seed to use */
+    EndSimulationKeyword, /* 'EndSimulation' - Signals the end of the Simulation block */
+    SeedKeyword           /* 'Seed' - Random seed to use */
 };
 // Return enum option info for SimulationKeyword
 EnumOptions<SimulationBlock::SimulationKeyword> keywords();

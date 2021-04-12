@@ -31,23 +31,19 @@ class CalculateCNModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::CalculateCNModuleWidget ui_;
+    // RDF data from which we are calculating the coordination number
+    OptionalReferenceWrapper<const Data1D> rdfData_;
+    // DataViewer for RDF plot
+    DataViewer *rdfGraph_;
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
      */
     private:
-    // DataViewer for RDF plot
-    DataViewer *rdfGraph_;
     // Whether the RDF data to plot has been succesfully located
     bool rdfDataLocated_;
-
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets();
-
-    private slots:
 };

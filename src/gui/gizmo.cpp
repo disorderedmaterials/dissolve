@@ -97,4 +97,4 @@ RefList<Gizmo> Gizmo::allThatAccept(const QString &dataType)
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool Gizmo::sendData(const QString &dataType, std::string_view objectTag, std::string_view name) { return false; }
+bool Gizmo::sendData(const QString &dataType, std::string_view tag, std::string_view name) { return false; }

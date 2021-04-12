@@ -49,9 +49,6 @@ Layer  'Processing'
     EndTestReference
   EndModule
 
-  Module SanityCheck
-  EndModule
-
 EndLayer
 
 # Pair Potentials

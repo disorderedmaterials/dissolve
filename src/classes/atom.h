@@ -12,7 +12,6 @@
 // Forward Declarations
 class Cell;
 class Molecule;
-class ProcessPool;
 class SpeciesAtom;
 
 // Atom Definition

@@ -60,6 +60,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     {
         ui_.ModuleControlsStack->addWidget(moduleWidget_);
         ui_.ModuleOutputButton->setEnabled(true);
+        moduleWidget_->updateControls(ModuleWidget::UpdateType::RecreateRenderables);
     }
 
     updateControls();
@@ -78,7 +79,7 @@ void ModuleControlWidget::setUpModule()
     module_->setUp(*dissolve_, dissolve_->worldPool());
 
     if (moduleWidget_)
-        moduleWidget_->updateControls(ModuleWidget::ResetGraphDataTargetsFlag);
+        moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
 }
 
 /*
@@ -102,7 +103,7 @@ void ModuleControlWidget::updateControls()
 
     // Update additional controls (if they exist)
     if (moduleWidget_)
-        moduleWidget_->updateControls();
+        moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
 }
 
 // Disable sensitive controls

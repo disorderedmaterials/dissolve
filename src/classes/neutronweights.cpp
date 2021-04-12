@@ -3,15 +3,12 @@
 
 #include "classes/neutronweights.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 #include "templates/algorithms.h"
-#include "templates/broadcastlist.h"
-#include "templates/broadcastvector.h"
 
 NeutronWeights::NeutronWeights()
 {
@@ -398,63 +395,5 @@ bool NeutronWeights::serialise(LineParser &parser) const
     if (!parser.writeLineF("{} {}\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_))
         return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast item contents
-bool NeutronWeights::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    BroadcastVector<Isotopologues> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
-    if (isoMixBroadcaster.failed())
-        return false;
-    if (!atomTypes_.broadcast(procPool, root, coreData))
-        return false;
-    if (!procPool.broadcast(concentrationProducts_, root))
-        return false;
-    if (!procPool.broadcast(boundCoherentProducts_, root))
-        return false;
-    if (!procPool.broadcast(weights_, root))
-        return false;
-    if (!procPool.broadcast(intramolecularWeights_, root))
-        return false;
-    if (!procPool.broadcast(boundCoherentAverageOfSquares_, root))
-        return false;
-    if (!procPool.broadcast(boundCoherentSquareOfAverage_, root))
-        return false;
-    if (!procPool.broadcast(valid_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool NeutronWeights::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!atomTypes_.equality(procPool))
-        return Messenger::error("NeutronWeights AtomTypes are not equivalent.\n");
-    if (!procPool.equality(concentrationProducts_))
-        return Messenger::error("NeutronWeights concentration matrix is not equivalent.\n");
-    if (!procPool.equality(boundCoherentProducts_))
-        return Messenger::error("NeutronWeights bound coherent matrix is not equivalent.\n");
-    if (!procPool.equality(weights_))
-        return Messenger::error("Unbound weights matrix is not equivalent.\n");
-    if (!procPool.equality(intramolecularWeights_))
-        return Messenger::error("Intramolecular weights matrix is not equivalent.\n");
-    if (!procPool.equality(boundCoherentAverageOfSquares_))
-        return Messenger::error("NeutronWeights bound coherent average of squares is not equivalent (process {} has {:e}).\n",
-                                procPool.poolRank(), boundCoherentAverageOfSquares_);
-    if (!procPool.equality(boundCoherentSquareOfAverage_))
-        return Messenger::error("NeutronWeights bound coherent square of average is not equivalent (process {} has {:e}).\n",
-                                procPool.poolRank(), boundCoherentSquareOfAverage_);
-    if (!procPool.equality(valid_))
-        return Messenger::error("NeutronWeights validity is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                valid_);
-#endif
     return true;
 }

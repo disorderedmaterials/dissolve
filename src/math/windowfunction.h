@@ -7,7 +7,6 @@
 
 // Forward Declarations
 class LineParser;
-class ProcessPool;
 class Data1D;
 
 // Window Function

@@ -21,7 +21,9 @@ class GenericItemDeserialiser
 
     public:
     GenericItemDeserialiser(const GenericItemDeserialiser &) = delete;
+    GenericItemDeserialiser(GenericItemDeserialiser &&) = delete;
     GenericItemDeserialiser &operator=(const GenericItemDeserialiser &) = delete;
+    GenericItemDeserialiser &operator=(GenericItemDeserialiser &&) = delete;
 
     /*
      * Deserialisers

@@ -189,8 +189,7 @@ bool Distributor::canHardLock(int cellIndex) const
     if (cellLocks_.at(cellIndex) != NoLocks)
         return false;
 
-    Cell *cell = cellArray_.cell(cellIndex);
-    int id;
+    auto *cell = cellArray_.cell(cellIndex);
 
     // For the specified Cell to be hard lockable its neighbours must not be HardLocked
 
@@ -293,7 +292,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
     }
 
     // Loop over target groups / processes
-    // Every process will determine the next object for every group / process, and return therelevant one at the end of the
+    // Every process will determine the next object for every group / process, and return the relevant one at the end of the
     // routine
     for (auto processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
     {

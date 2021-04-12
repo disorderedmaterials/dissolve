@@ -3,7 +3,6 @@
 
 #include "main/cli.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
 #include "main/version.h"
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>

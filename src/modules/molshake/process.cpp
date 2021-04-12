@@ -10,7 +10,6 @@
 #include "classes/regionaldistributor.h"
 #include "classes/scaledenergykernel.h"
 #include "main/dissolve.h"
-#include "modules/energy/energy.h"
 #include "modules/molshake/molshake.h"
 
 // Run main processing

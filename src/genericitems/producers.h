@@ -17,7 +17,9 @@ class GenericItemProducer
 
     public:
     GenericItemProducer(const GenericItemProducer &) = delete;
+    GenericItemProducer(GenericItemProducer &&) = delete;
     GenericItemProducer &operator=(const GenericItemProducer &) = delete;
+    GenericItemProducer &operator=(GenericItemProducer &&) = delete;
 
     /*
      * Producers

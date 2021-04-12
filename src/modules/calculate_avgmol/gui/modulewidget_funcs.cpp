@@ -21,13 +21,7 @@ CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget *parent, const 
  */
 
 // Update controls within widget
-void CalculateAvgMolModuleWidget::updateControls(int flags) {}
-
-// Disable sensitive controls within widget
-void CalculateAvgMolModuleWidget::disableSensitiveControls() {}
-
-// Enable sensitive controls within widget
-void CalculateAvgMolModuleWidget::enableSensitiveControls() {}
+void CalculateAvgMolModuleWidget::updateControls(ModuleWidget::UpdateType updateType) {}
 
 /*
  * Widgets / Functions

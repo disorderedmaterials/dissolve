@@ -83,7 +83,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     auto &unweightedsq = uSQObject.first;
     if (uSQObject.second == GenericItem::ItemStatus::Created)
-        unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName_, "unweighted", "sq", "Q, 1/Angstroms");
+        unweightedsq.setUpPartials(unweightedgr.atomTypes());
 
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(unweightedsq.fingerprint(),
@@ -205,26 +205,16 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, averaging,
                                        averagingScheme);
 
-        // Need to rename data within the contributing datasets to avoid clashes with the averaged data
-        for (auto n = averaging; n > 0; --n)
-        {
-            if (!dissolve.processingModuleData().contains(fmt::format("UnweightedSQ_{}", n), uniqueName_))
-                continue;
-            auto &p = dissolve.processingModuleData().retrieve<PartialSet>(fmt::format("UnweightedSQ_{}", n), uniqueName_);
-            p.setObjectTags(fmt::format("{}//UnweightedSQ", uniqueName_), fmt::format("Avg{}", n));
-        }
-
         // Re-set the object names and fingerprints of the partials
         unweightedsq.setFingerprint(currentFingerprint);
     }
 
-    // Set names of resources (Data1D) within the PartialSet
-    unweightedsq.setObjectTags(fmt::format("{}//{}", uniqueName_, "UnweightedSQ"));
+    // Set fingerprint
     unweightedsq.setFingerprint(fmt::format("{}/{}",
                                             dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
                                             includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1));
     // Save data if requested
-    if (saveData && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "unweighted", "sq")))
+    if (saveData && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
         return false;
 
     return true;

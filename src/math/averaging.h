@@ -42,7 +42,7 @@ bool average(GenericList &processingData, std::string_view name, std::string_vie
     int nData = pruneOldData(processingData, name, prefix, nSetsInAverage);
 
     // Store the current T as the earliest data (index == 1)
-    T &recentData = processingData.realise<T>(fmt::format("{}_1", name), prefix, GenericItem::InRestartFileFlag);
+    T &recentData = processingData.realise<T>(fmt::format("{}//1", name), prefix, GenericItem::InRestartFileFlag);
     recentData = currentData;
     ++nData;
 
@@ -55,7 +55,7 @@ bool average(GenericList &processingData, std::string_view name, std::string_vie
     for (auto n = 0; n < nData; ++n)
     {
         // Get a copy of the (n+1)'th dataset
-        T data = processingData.value<T>(fmt::format("{}_{}", name, n + 1), prefix);
+        T data = processingData.value<T>(fmt::format("{}//{}", name, n + 1), prefix);
 
         // Determine the weighting factor
         if (averagingScheme == Averaging::LinearAveraging)
@@ -106,7 +106,7 @@ static bool arrayAverage(GenericList &processingData, std::string_view name, std
     for (auto n = 0; n < nData; ++n)
     {
         // Get a copy of the (n+1)'th dataset
-        T data = processingData.value<T>(fmt::format("{}_{}", name, n + 1), prefix);
+        T data = processingData.value<T>(fmt::format("{}//{}", name, n + 1), prefix);
 
         // Determine the weighting factor
         if (averagingScheme == Averaging::LinearAveraging)

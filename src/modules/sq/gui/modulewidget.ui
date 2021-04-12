@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>255</width>
-    <height>192</height>
+    <width>309</width>
+    <height>163</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,9 +24,9 @@
   <property name="windowTitle">
    <string>SQ Controls</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>0</number>
+    <number>4</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -41,132 +41,100 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="Tabs">
-     <property name="currentIndex">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="TotalsTab">
-      <attribute name="title">
-       <string>Total F(Q)</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>4</number>
+     <item>
+      <widget class="QPushButton" name="TotalButton">
+       <property name="toolTip">
+        <string>Show the total F(Q) formed from the partial S(Q)</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>Total F(Q)</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>true</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="TotalSQPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="TotalFQPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="PartialSQTab">
-      <attribute name="title">
-       <string>Partial S(Q)</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>4</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PartialsButton">
+       <property name="toolTip">
+        <string>Show the partial S(Q) from Fourier transform of the target partial g(r)</string>
        </property>
-       <property name="leftMargin">
-        <number>4</number>
+       <property name="text">
+        <string>Partial S(Q)</string>
        </property>
-       <property name="topMargin">
-        <number>4</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>4</number>
+       <property name="checked">
+        <bool>false</bool>
        </property>
-       <property name="bottomMargin">
-        <number>4</number>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
-       <item>
-        <widget class="QFrame" name="PartialSQPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="PartialSQPlotWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="SQPlotFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="DataWidget" name="SQPlotWidget" native="true"/>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

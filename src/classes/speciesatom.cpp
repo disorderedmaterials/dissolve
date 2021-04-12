@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesatom.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/species.h"

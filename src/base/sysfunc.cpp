@@ -157,6 +157,15 @@ std::string_view DissolveSys::afterLastChar(const std::string_view s, char c)
     return s.substr(pos + 1);
 }
 
+// Return if the target string starts with the specified characters
+bool DissolveSys::startsWith(std::string_view target, std::string_view beginning)
+{
+    if (beginning.size() > target.size())
+        return false;
+
+    return std::equal(beginning.begin(), beginning.end(), target.begin());
+}
+
 // Return if the target string ends with the specified characters
 bool DissolveSys::endsWith(std::string_view target, std::string_view ending)
 {

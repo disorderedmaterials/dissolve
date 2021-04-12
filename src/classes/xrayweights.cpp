@@ -3,12 +3,10 @@
 
 #include "classes/xrayweights.h"
 #include "base/lineparser.h"
-#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
 #include "templates/algorithms.h"
-#include "templates/enumhelpers.h"
 #include <functional>
 #include <numeric>
 
@@ -295,49 +293,5 @@ bool XRayWeights::serialise(LineParser &parser) const
     if (!atomTypes_.serialise(parser))
         return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast item contents
-bool XRayWeights::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(EnumCast<XRayFormFactors::XRayFormFactorData>(formFactors_), root))
-        return false;
-    if (!atomTypes_.broadcast(procPool, root, coreData))
-        return false;
-    if (!procPool.broadcast(concentrations_, root))
-        return false;
-    if (!procPool.broadcast(concentrationProducts_, root))
-        return false;
-    if (!procPool.broadcast(preFactors_, root))
-        return false;
-    if (!procPool.broadcast(valid_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool XRayWeights::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(EnumCast<XRayFormFactors::XRayFormFactorData>(formFactors_)))
-        return Messenger::error("XRayWeights form factor datasets are not equivalent.\n");
-    if (!atomTypes_.equality(procPool))
-        return Messenger::error("XRayWeights AtomTypes are not equivalent.\n");
-    if (!procPool.equality(concentrations_))
-        return Messenger::error("XRayWeights concentrations array is not equivalent.\n");
-    if (!procPool.equality(concentrationProducts_))
-        return Messenger::error("XRayWeights concentration matrix is not equivalent.\n");
-    if (!procPool.equality(preFactors_))
-        return Messenger::error("XRayWeights bound coherent matrix is not equivalent.\n");
-    if (!procPool.equality(valid_))
-        return Messenger::error("XRayWeights validity is not equivalent (process {} has {}).\n", procPool.poolRank(), valid_);
-#endif
     return true;
 }

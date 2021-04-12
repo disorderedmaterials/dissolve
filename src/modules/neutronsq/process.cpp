@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/neutronweights.h"
 #include "classes/species.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
-#include "math/filters.h"
 #include "math/ft.h"
-#include "modules/import/import.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
@@ -74,14 +71,12 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         referenceData.setTag(uniqueName());
         auto &storedData =
             dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
-        storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setTag(uniqueName());
         auto &storedDataFT =
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
-        storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
@@ -171,16 +166,13 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedSQ, wSQstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     if (wSQstatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "sq", "Q, 1/Angstroms");
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes());
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
 
-    // Set names of resources (Data1D) within the PartialSet
-    weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
-
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
         return false;
 
     /*
@@ -196,16 +188,13 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.setUpPartials(unweightedGR.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
+        weightedGR.setUpPartials(unweightedGR.atomTypes());
 
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
 
-    // Set names of resources (Data1D) within the PartialSet
-    weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
-
     // Save data if requested
-    if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "weighted", "gr"))))
+    if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "WeightedGR", "gr", "r, Angstroms"))))
         return false;
 
     // Calculate representative total g(r) from FT of calculated S(Q)
@@ -216,7 +205,6 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
-    repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
     if (saveGR)

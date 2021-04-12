@@ -4,22 +4,14 @@
 #include "math/data2d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "math/data1d.h"
 #include "math/histogram2d.h"
 #include <algorithm>
 
-// Static Members (ObjectStore)
-template <class Data2D> RefDataList<Data2D, int> ObjectStore<Data2D>::objects_;
-template <class Data2D> int ObjectStore<Data2D>::objectCount_ = 0;
-template <class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2DObject;
-template <class Data2D> std::string_view ObjectStore<Data2D>::objectTypeName_ = "Data2D";
+Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), hasError_(false) {}
 
-Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this), hasError_(false) {}
-
-Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this)
-{
-    (*this) = source;
-}
+Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable) { (*this) = source; }
 
 // Clear Data
 void Data2D::clear()
@@ -332,11 +324,6 @@ bool Data2D::deserialise(LineParser &parser)
     clear();
 
     // Read object tag
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
-    // Read object name
     if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
     tag_ = parser.line();
@@ -398,9 +385,7 @@ bool Data2D::deserialise(LineParser &parser)
 // Write data through specified LineParser
 bool Data2D::serialise(LineParser &parser) const
 {
-    // Write object tag and name
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
+    // Write object tag
     if (!parser.writeLineF("{}\n", tag_))
         return false;
 
@@ -438,45 +423,5 @@ bool Data2D::serialise(LineParser &parser) const
         }
     }
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data
-bool Data2D::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(x_, root))
-        return false;
-    if (!procPool.broadcast(y_, root))
-        return false;
-    if (!procPool.broadcast(values_, root))
-        return false;
-    if (!procPool.broadcast(hasError_, root))
-        return false;
-    if (!procPool.broadcast(errors_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool Data2D::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(x_))
-        return Messenger::error("Data2D x axis values not equivalent.\n");
-    if (!procPool.equality(y_))
-        return Messenger::error("Data2D y axis values not equivalent.\n");
-    if (!procPool.equality(values_))
-        return Messenger::error("Data2D values not equivalent.\n");
-    if (!procPool.equality(hasError_))
-        return Messenger::error("Data2D error flag not equivalent.\n");
-    if (!procPool.equality(errors_))
-        return Messenger::error("Data2D error values not equivalent.\n");
-#endif
     return true;
 }

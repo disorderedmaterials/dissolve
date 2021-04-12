@@ -51,14 +51,20 @@ void BaseViewer::clearRenderables()
     emit(renderableRemoved());
 }
 
+// Attempt to validate all renderables
+void BaseViewer::validateRenderables(const GenericList &source)
+{
+    for (auto &renderable : renderables_)
+        renderable->validateDataSource(source);
+}
+
 // Return list of Renderables
 const std::vector<std::shared_ptr<Renderable>> &BaseViewer::renderables() const { return renderables_; }
 
-// Return Renderable with specified objectTag (if it exists)
-std::shared_ptr<Renderable> BaseViewer::renderableWithTag(std::string_view objectTag) const
+// Return Renderable with specified tag (if it exists)
+std::shared_ptr<Renderable> BaseViewer::renderableWithTag(std::string_view tag) const
 {
-    auto it = std::find_if(renderables_.begin(), renderables_.end(),
-                           [objectTag](auto &data) { return objectTag == data->objectTag(); });
+    auto it = std::find_if(renderables_.begin(), renderables_.end(), [tag](auto &data) { return tag == data->tag(); });
     if (it != renderables_.end())
         return *it;
 

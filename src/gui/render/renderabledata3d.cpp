@@ -3,6 +3,7 @@
 
 #include "gui/render/renderabledata3d.h"
 #include "base/lineparser.h"
+#include "genericitems/list.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data3d.h"
@@ -10,44 +11,45 @@
 #include "templates/array2d.h"
 #include "templates/array3d.h"
 
-RenderableData3D::RenderableData3D(const Data3D *source, std::string_view objectTag)
-    : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
+RenderableData3D::RenderableData3D(const Data3D &source)
+    : Renderable(Renderable::Data3DRenderable, ""), source_(source), displayStyle_(SolidStyle), lowerCutoff_(0.0),
+      upperCutoff_(1.0), surfaceShininess_(128.0)
 {
-    // Set style defaults
-    displayStyle_ = SolidStyle;
-    lowerCutoff_ = 0.0;
-    upperCutoff_ = 1.0;
-    surfaceShininess_ = 128.0;
-
-    // Create primitive
     dataPrimitive_ = createPrimitive();
 }
 
-RenderableData3D::~RenderableData3D() {}
+RenderableData3D::RenderableData3D(std::string_view tag)
+    : Renderable(Renderable::Data3DRenderable, tag), displayStyle_(SolidStyle), lowerCutoff_(0.0), upperCutoff_(1.0),
+      surfaceShininess_(128.0)
+{
+    dataPrimitive_ = createPrimitive();
+}
 
 /*
  * Data
  */
 
-// Return whether a valid data source is available (attempting to set it if not)
-bool RenderableData3D::validateDataSource()
+// Return source data
+OptionalReferenceWrapper<const Data3D> RenderableData3D::source() const { return source_; }
+
+// Attempt to set the data source, searching the supplied list for the object
+void RenderableData3D::validateDataSource(const GenericList &sourceList)
 {
     // Don't try to access source_ if we are not currently permitted to do so
     if (!sourceDataAccessEnabled_)
-        return false;
+        return;
 
-    // If there is no valid source set, attempt to set it now...
-    if (!source_)
-        source_ = Data3D::findObject(objectTag_);
+    if (source_)
+        return;
 
-    return source_;
+    source_ = sourceList.search<const Data3D>(tag_);
 }
 
 // Invalidate the current data source
-void RenderableData3D::invalidateDataSource() { source_ = nullptr; }
+void RenderableData3D::invalidateDataSource() { source_ = std::nullopt; }
 
 // Return version of data
-int RenderableData3D::dataVersion() { return (validateDataSource() ? source_->version() : -99); }
+int RenderableData3D::dataVersion() { return (source_ ? source_->get().version() : -99); }
 
 /*
  * Transform / Limits
@@ -156,7 +158,7 @@ void RenderableData3D::transformValues()
 const Data3D &RenderableData3D::transformedData()
 {
     // Check that we have a valid source
-    if (!validateDataSource())
+    if (!source_)
         return transformedData_;
 
     // If the value transform is not enabled, just return the original data
@@ -178,7 +180,7 @@ void RenderableData3D::recreatePrimitives(const View &view, const ColourDefiniti
 {
     dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
 
-    if (!validateDataSource())
+    if (!source_)
         return;
 
     marchingCubesOriginal(transformedData_.xAxis(), transformedData_.yAxis(), transformedData_.zAxis(),

@@ -3,12 +3,14 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/helpers/comboboxcontroller.h"
 #include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/energy/gui/modulewidget.h"
-#include "templates/variantpointer.h"
+
+Q_DECLARE_METATYPE(Configuration *);
 
 EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, const GenericList &processingData, EnergyModule *module)
     : ModuleWidget(parent, processingData), module_(module)
@@ -16,12 +18,9 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, const GenericList &proce
     // Set up user interface
     ui_.setupUi(this);
 
-    NumberFormat numberFormat;
-
     // Grab our DataViewer widget
+    NumberFormat numberFormat;
     energyGraph_ = ui_.PlotWidget->dataViewer();
-
-    // Start a new, empty session
     auto &view = energyGraph_->view();
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "Iteration");
@@ -33,16 +32,10 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, const GenericList &proce
     view.axes().setMin(1, -1.0);
     view.axes().setMax(1, 1.0);
     numberFormat = view.axes().numberFormat(1);
-    numberFormat.setType(NumberFormat::ScientificFormat);
+    numberFormat.setType(NumberFormat::FormatType::Scientific);
     numberFormat.setUseENotation(true);
     view.axes().setNumberFormat(1, numberFormat);
     view.setAutoFollowType(View::XAutoFollow);
-
-    currentConfiguration_ = nullptr;
-
-    setGraphDataTargets(module_);
-
-    updateControls();
 
     refreshing_ = false;
 }
@@ -54,24 +47,57 @@ EnergyModuleWidget::~EnergyModuleWidget() {}
  */
 
 // Update controls within widget
-void EnergyModuleWidget::updateControls(int flags)
+void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
+    // Update partial set (Configuration) targets
+    auto optConfig = combo_box_updater(ui_.ConfigurationTargetCombo, module_->targetConfigurations().begin(),
+                                       module_->targetConfigurations().end(), [](auto item) { return item.item()->name(); });
+
     // Set gradient and stability labels
     auto stabilityWindow = module_->keywords().asInt("StabilityWindow");
     ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
-    QPalette labelPalette = ui_.StableLabel->palette();
-    if (currentConfiguration_)
+    // Create / update renderables?
+    if (optConfig == module_->targetConfigurations().end())
+        energyGraph_->clearRenderables();
+    else if (updateType == ModuleWidget::UpdateType::RecreateRenderables || energyGraph_->renderables().empty())
     {
-        if (processingData_.contains(fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()),
-                                     module_->uniqueName()))
-            ui_.GradientValueLabel->setText(QString::number(processingData_.value<double>(
-                fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()), module_->uniqueName())));
+        // Clear any existing renderables
+        energyGraph_->clearRenderables();
+
+        auto cfg = *optConfig;
+        auto prefix = fmt::format("{}//{}", module_->uniqueName(), cfg->niceName());
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Total", prefix), "Total", "Totals");
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Inter", prefix), "Inter", "Totals")
+            ->setColour(StockColours::RedStockColour);
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Intra", prefix), "Intra", "Totals")
+            ->setColour(StockColours::BlueStockColour);
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bond", prefix), "Bond", "Intramolecular")
+            ->setColour(StockColours::GreenStockColour);
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle", prefix), "Angle", "Intramolecular")
+            ->setColour(StockColours::PurpleStockColour);
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Torsion", prefix), "Torsion", "Intramolecular")
+            ->setColour(StockColours::OrangeStockColour);
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Improper", prefix), "Improper", "Intramolecular")
+            ->setColour(StockColours::CyanStockColour);
+    }
+
+    // Validate renderables if they need it
+    energyGraph_->validateRenderables(processingData_);
+
+    // Update labels
+    QPalette labelPalette = ui_.StableLabel->palette();
+    if (optConfig != module_->targetConfigurations().end())
+    {
+        auto cfg = *optConfig;
+
+        if (processingData_.contains(fmt::format("{}//EnergyGradient", cfg->niceName()), module_->uniqueName()))
+            ui_.GradientValueLabel->setText(QString::number(
+                processingData_.value<double>(fmt::format("{}//EnergyGradient", cfg->niceName()), module_->uniqueName())));
         else
             ui_.GradientValueLabel->setText("N/A");
 
-        if (processingData_.valueOr<bool>(fmt::format("{}//EnergyStable", currentConfiguration_->niceName()),
-                                          module_->uniqueName(), false))
+        if (processingData_.valueOr<bool>(fmt::format("{}//EnergyStable", cfg->niceName()), module_->uniqueName(), false))
         {
             labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
             ui_.StableLabel->setText("Yes");
@@ -99,51 +125,7 @@ void EnergyModuleWidget::updateControls(int flags)
  * Widgets / Functions
  */
 
-// Set data targets in graphs
-void EnergyModuleWidget::setGraphDataTargets(EnergyModule *module)
+void EnergyModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
 {
-    if (!module)
-        return;
-
-    // Add Configuration targets to the combo box
-    ui_.TargetCombo->clear();
-    for (Configuration *config : module->targetConfigurations())
-        ui_.TargetCombo->addItem(QString::fromStdString(std::string(config->name())), VariantPointer<Configuration>(config));
-}
-
-void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
-{
-    // Remove any current data
-    energyGraph_->clearRenderables();
-
-    // Get target Configuration
-    currentConfiguration_ = VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
-    if (!currentConfiguration_)
-        return;
-
-    // Add data targets
-    energyGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//{}//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Totals");
-    auto inter = energyGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//{}//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Totals");
-    inter->setColour(StockColours::RedStockColour);
-    auto intra = energyGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//{}//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Totals");
-    intra->setColour(StockColours::BlueStockColour);
-
-    auto bond = energyGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Intramolecular");
-    bond->setColour(StockColours::GreenStockColour);
-    auto angle = energyGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//{}//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Intramolecular");
-    angle->setColour(StockColours::PurpleStockColour);
-    auto torsion = energyGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//{}//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Intramolecular");
-    torsion->setColour(StockColours::OrangeStockColour);
-    auto improper = energyGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//{}//Improper", currentConfiguration_->niceName(), module_->uniqueName()), "Improper",
-        "Intramolecular");
-    improper->setColour(StockColours::CyanStockColour);
-
-    updateControls();
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }

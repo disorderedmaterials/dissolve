@@ -9,9 +9,6 @@
 #include "classes/data3dstore.h"
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // DataTest Module
 class DataTestModule : public Module
 {
@@ -63,27 +60,6 @@ class DataTestModule : public Module
     Data2DStore test2DData_;
     // Test 3D datasets
     Data3DStore test3DData_;
-
-    private:
-    // Find reference Data
-    template <class T>
-    const OptionalReferenceWrapper<const T> findReferenceData(std::string_view dataIdentifier, Module *targetModule,
-                                                              GenericList &processingModuleData)
-    {
-        // The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in
-        // the target list?
-        if (targetModule && processingModuleData.contains(dataIdentifier, targetModule->uniqueName()))
-            return processingModuleData.value<T>(dataIdentifier, targetModule->uniqueName());
-        else if (processingModuleData.contains(dataIdentifier))
-            return processingModuleData.value<T>(dataIdentifier);
-
-        // If we haven't found it yet, try a search by object tag
-        if (T::findObject(dataIdentifier))
-            return *T::findObject(dataIdentifier);
-
-        // Failed to find data
-        return {};
-    }
 
     /*
      * GUI Widget

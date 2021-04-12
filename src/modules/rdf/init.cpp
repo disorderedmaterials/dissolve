@@ -23,7 +23,7 @@ void RDFModule::initialise()
                   "Maximum r to calculate g(r) out to, unless UseHalfCellRange is true");
     keywords_.add("Control", new BoolKeyword(true), "UseHalfCellRange",
                   "Whether to use the maximal RDF range possible that avoids periodic images", "<True|False>");
-    keywords_.add("Control", new IntegerKeyword(5, 1), "Averaging",
+    keywords_.add("Control", new IntegerKeyword(5, 0), "Averaging",
                   "Number of historical partial sets to combine into final partials", "<5>");
     keywords_.add(
         "Control",

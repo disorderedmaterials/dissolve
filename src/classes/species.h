@@ -13,7 +13,6 @@
 #include "classes/speciessite.h"
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
-#include "templates/objectstore.h"
 #include <list>
 #include <memory>
 

@@ -11,7 +11,6 @@
 #include "gui/forcefieldtab.h"
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
-#include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/render/renderabledata1d.h"
 #include "gui/widgets/elementselector.hui"
@@ -20,6 +19,8 @@
 
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+Q_DECLARE_METATYPE(MasterIntra *)
+Q_DECLARE_METATYPE(PairPotential *)
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
@@ -121,7 +122,7 @@ bool ForcefieldTab::canClose() const { return false; }
  */
 
 // Row update function for BondsTable
-void ForcefieldTab::updateBondsTableRow(int row, const MasterIntra *masterBond, bool createItems)
+void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -129,7 +130,7 @@ void ForcefieldTab::updateBondsTableRow(int row, const MasterIntra *masterBond, 
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterBond));
+        item->setData(Qt::UserRole, QVariant::fromValue(masterBond));
         ui_.MasterBondsTable->setItem(row, 0, item);
     }
     else
@@ -140,7 +141,6 @@ void ForcefieldTab::updateBondsTableRow(int row, const MasterIntra *masterBond, 
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterBond));
         ui_.MasterBondsTable->setItem(row, 1, item);
     }
     else
@@ -154,7 +154,6 @@ void ForcefieldTab::updateBondsTableRow(int row, const MasterIntra *masterBond, 
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterBond));
             ui_.MasterBondsTable->setItem(row, n + 2, item);
         }
         else
@@ -164,7 +163,7 @@ void ForcefieldTab::updateBondsTableRow(int row, const MasterIntra *masterBond, 
 }
 
 // Row update function for AnglesTable
-void ForcefieldTab::updateAnglesTableRow(int row, const MasterIntra *masterAngle, bool createItems)
+void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -172,7 +171,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, const MasterIntra *masterAngle
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterAngle));
+        item->setData(Qt::UserRole, QVariant::fromValue(masterAngle));
         ui_.MasterAnglesTable->setItem(row, 0, item);
     }
     else
@@ -183,7 +182,6 @@ void ForcefieldTab::updateAnglesTableRow(int row, const MasterIntra *masterAngle
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterAngle));
         ui_.MasterAnglesTable->setItem(row, 1, item);
     }
     else
@@ -196,7 +194,6 @@ void ForcefieldTab::updateAnglesTableRow(int row, const MasterIntra *masterAngle
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterAngle));
             ui_.MasterAnglesTable->setItem(row, n + 2, item);
         }
         else
@@ -206,7 +203,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, const MasterIntra *masterAngle
 }
 
 // Row update function for TorsionsTable
-void ForcefieldTab::updateTorsionsTableRow(int row, const MasterIntra *masterTorsion, bool createItems)
+void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -214,7 +211,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, const MasterIntra *masterTor
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterTorsion));
+        item->setData(Qt::UserRole, QVariant::fromValue(masterTorsion));
         ui_.MasterTorsionsTable->setItem(row, 0, item);
     }
     else
@@ -225,7 +222,6 @@ void ForcefieldTab::updateTorsionsTableRow(int row, const MasterIntra *masterTor
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterTorsion));
         ui_.MasterTorsionsTable->setItem(row, 1, item);
     }
     else
@@ -239,7 +235,6 @@ void ForcefieldTab::updateTorsionsTableRow(int row, const MasterIntra *masterTor
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterTorsion));
             ui_.MasterTorsionsTable->setItem(row, n + 2, item);
         }
         else
@@ -249,7 +244,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, const MasterIntra *masterTor
 }
 
 // Row update function for ImpropersTable
-void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterImproper, bool createItems)
+void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -257,7 +252,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterIm
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterImproper));
+        item->setData(Qt::UserRole, QVariant::fromValue(masterImproper));
         ui_.MasterImpropersTable->setItem(row, 0, item);
     }
     else
@@ -268,7 +263,6 @@ void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterIm
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterImproper));
         ui_.MasterImpropersTable->setItem(row, 1, item);
     }
     else
@@ -282,7 +276,6 @@ void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterIm
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterImproper));
             ui_.MasterImpropersTable->setItem(row, n + 2, item);
         }
         else
@@ -358,7 +351,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
 }
 
 // Row update function for PairPotentialsTable
-void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *pairPotential, bool createItems)
+void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -366,7 +359,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *p
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+        item->setData(Qt::UserRole, QVariant::fromValue(pairPotential));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui_.PairPotentialsTable->setItem(row, 0, item);
     }
@@ -378,7 +371,6 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *p
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui_.PairPotentialsTable->setItem(row, 1, item);
     }
@@ -390,7 +382,6 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *p
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui_.PairPotentialsTable->setItem(row, 2, item);
     }
@@ -402,7 +393,6 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *p
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui_.PairPotentialsTable->setItem(row, 3, item);
     }
@@ -414,7 +404,6 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *p
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui_.PairPotentialsTable->setItem(row, 4, item);
     }
@@ -429,7 +418,6 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *p
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
             item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             ui_.PairPotentialsTable->setItem(row, col++, item);
         }
@@ -445,27 +433,27 @@ void ForcefieldTab::updateControls()
     Locker refreshLocker(refreshLock_);
 
     // Master Bonds Table
-    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(),
-                                                                     this, &ForcefieldTab::updateBondsTableRow);
+    TableWidgetUpdater<ForcefieldTab, MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(), this,
+                                                                &ForcefieldTab::updateBondsTableRow);
     ui_.MasterBondsTable->resizeColumnsToContents();
 
     // Master Angles Table
-    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> anglesUpdater(
-        ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
+    TableWidgetUpdater<ForcefieldTab, MasterIntra> anglesUpdater(ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(),
+                                                                 this, &ForcefieldTab::updateAnglesTableRow);
     ui_.MasterAnglesTable->resizeColumnsToContents();
 
     // Torsions Table
-    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> torsionsUpdater(
+    TableWidgetUpdater<ForcefieldTab, MasterIntra> torsionsUpdater(
         ui_.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
     ui_.MasterTorsionsTable->resizeColumnsToContents();
 
     // Impropers Table
-    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> impropersUpdater(
+    TableWidgetUpdater<ForcefieldTab, MasterIntra> impropersUpdater(
         ui_.MasterImpropersTable, dissolve_.coreData().masterImpropers(), this, &ForcefieldTab::updateImpropersTableRow);
     ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
-    ConstTableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
         ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
@@ -492,8 +480,8 @@ void ForcefieldTab::updateControls()
     // -- Table
     // -- Get current row index before we refresh...
     auto ppRowIndex = ui_.PairPotentialsTable->currentRow();
-    ConstTableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
-                                                                    &ForcefieldTab::updatePairPotentialsTableRow);
+    TableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
+                                                               &ForcefieldTab::updatePairPotentialsTableRow);
     ui_.PairPotentialsTable->resizeColumnsToContents();
 
     refreshLocker.unlock();
@@ -540,7 +528,7 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
     Locker refreshLocker(refreshLock_);
 
-    ConstTableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
         ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
@@ -720,18 +708,19 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *
     PairPotential *pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
     if (pp)
     {
-        auto fullPotential = graph->createRenderable<RenderableData1D>(pp->uFull().objectTag(), "Full");
+        printf("IN here?\n");
+        auto fullPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uFull(), "Full");
         fullPotential->setColour(StockColours::BlackStockColour);
 
-        auto originalPotential = graph->createRenderable<RenderableData1D>(pp->uOriginal().objectTag(), "Original");
+        auto originalPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uOriginal(), "Original");
         originalPotential->setColour(StockColours::RedStockColour);
         originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
 
-        auto additionalPotential = graph->createRenderable<RenderableData1D>(pp->uAdditional().objectTag(), "Additional");
+        auto additionalPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uAdditional(), "Additional");
         additionalPotential->setColour(StockColours::BlueStockColour);
         additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
 
-        auto dUFull = graph->createRenderable<RenderableData1D>(pp->dUFull().objectTag(), "Force");
+        auto dUFull = graph->createRenderable<RenderableData1D, Data1D>(pp->dUFull(), "Force");
         dUFull->setColour(StockColours::GreenStockColour);
     }
 }
@@ -742,7 +731,8 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target PairPotential from the passed widget
-    PairPotential *pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : nullptr;
+    PairPotential *pairPotential =
+        w ? ui_.PairPotentialsTable->item(w->row(), 0)->data(Qt::UserRole).value<PairPotential *>() : nullptr;
     if (!pairPotential)
         return;
 
@@ -787,7 +777,7 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
+    MasterIntra *masterIntra = w ? ui_.MasterBondsTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
     if (!masterIntra)
         return;
 
@@ -828,7 +818,8 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
+    MasterIntra *masterIntra =
+        w ? ui_.MasterAnglesTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
     if (!masterIntra)
         return;
 
@@ -869,7 +860,8 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
+    MasterIntra *masterIntra =
+        w ? ui_.MasterTorsionsTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
     if (!masterIntra)
         return;
 
@@ -910,7 +902,8 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
+    MasterIntra *masterIntra =
+        w ? ui_.MasterImpropersTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
     if (!masterIntra)
         return;
 

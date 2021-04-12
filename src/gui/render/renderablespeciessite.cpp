@@ -35,32 +35,8 @@ RenderableSpeciesSite::~RenderableSpeciesSite() {}
  * Data
  */
 
-// Return whether a valid data source is available (attempting to set it if not)
-bool RenderableSpeciesSite::validateDataSource()
-{
-    // Don't try to access source_ if we are not currently permitted to do so
-    if (!sourceDataAccessEnabled_)
-        return false;
-
-    return ((speciesSource_ != nullptr) && (siteSource_ != nullptr));
-}
-
-// Invalidate the current data source
-void RenderableSpeciesSite::invalidateDataSource()
-{
-    speciesSource_ = nullptr;
-    siteSource_ = nullptr;
-}
-
 // Return version of data
 int RenderableSpeciesSite::dataVersion() { return (siteSource_ ? siteSource_->version() : -99); }
-
-/*
- * Transform / Limits
- */
-
-// Transform data according to current settings
-void RenderableSpeciesSite::transformValues() { return; }
 
 /*
  * Rendering Primitives
@@ -75,7 +51,7 @@ void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDef
     siteAssembly_.clear();
 
     // Check source pointers
-    if (!validateDataSource())
+    if (!siteSource_)
         return;
 
     // Generate a temporary Site from the parent Species

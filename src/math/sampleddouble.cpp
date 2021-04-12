@@ -189,32 +189,3 @@ bool SampledDouble::allSum(ProcessPool &procPool)
 #endif
     return true;
 }
-
-// Broadcast data
-bool SampledDouble::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(count_, root))
-        return false;
-    if (!procPool.broadcast(mean_, root))
-        return false;
-    if (!procPool.broadcast(m2_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check equality of all data
-bool SampledDouble::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(count_))
-        return Messenger::error("SampledDouble count is not equivalent (process {} has {}).\n", procPool.poolRank(), count_);
-    if (!procPool.equality(mean_))
-        return Messenger::error("SampledDouble mean value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                mean_);
-    if (!procPool.equality(m2_))
-        return Messenger::error("SampledDouble m2 value is not equivalent (process {} has {:e}).\n", procPool.poolRank(), m2_);
-#endif
-    return true;
-}

@@ -47,15 +47,11 @@ class CalculateSDFModuleWidget : public ModuleWidget
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
      */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets();
-
     private slots:
     void on_LowerCutoffSpin_valueChanged(double value);
     void on_UpperCutoffSpin_valueChanged(double value);

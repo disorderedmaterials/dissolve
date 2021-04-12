@@ -25,6 +25,8 @@ class XRaySQModuleWidget : public ModuleWidget
     private:
     // Associated Module
     XRaySQModule *module_;
+    // Target partial data being displayed (if any)
+    OptionalReferenceWrapper<const PartialSet> targetPartials_;
     // Reference to Dissolve
     Dissolve &dissolve_;
 
@@ -34,12 +36,16 @@ class XRaySQModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::XRaySQModuleWidget ui_;
-    // DataViewers contained within this widget
-    DataViewer *partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
+    // DataViewer contained within this widget
+    DataViewer *graph_;
+
+    private:
+    // Create renderables for current target PartialSet
+    void createPartialSetRenderables(std::string_view targetPrefix);
 
     public:
     // Update controls within widget
-    void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+    void updateControls(ModuleWidget::UpdateType updateType) override;
 
     /*
      * Widgets / Functions
@@ -47,4 +53,10 @@ class XRaySQModuleWidget : public ModuleWidget
     private:
     // Set data targets in graphs
     void setGraphDataTargets(XRaySQModule *module);
+
+    private slots:
+    void on_TotalFQButton_clicked(bool checked);
+    void on_PartialSQButton_clicked(bool checked);
+    void on_TotalGRButton_clicked(bool checked);
+    void on_PartialGRButton_clicked(bool checked);
 };
