@@ -14,4 +14,4 @@ The `ExportPairPotentials` module writes interatomic pair potential data to disk
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Format`|[`PairPotentialFileAndFormat`]({{< ref "pairpotential" >}})|--|Format and base filename of the pair potential files to write to disk.|
+|`Format`|[`PairPotentialFileAndFormat`]({{< ref "pairpotentialformat" >}})|--|Format and base filename of the pair potential files to write to disk.|

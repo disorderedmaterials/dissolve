@@ -14,5 +14,5 @@ The `ExportCoordinates` module writes the coordinate data from a target configur
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Format`|[`CoordinatesFileAndFormat`]({{< ref "coordinates" >}})|--|Format and filename of the coordinates file to write to disk.|
+|`Format`|[`CoordinatesFileAndFormat`]({{< ref "coordinatesformat" >}})|--|Format and filename of the coordinates file to write to disk.|
 |`TagWithIteration`|`bool`|`false`|Whether to append the current iteration number to the filename. This allows individual configuration files to be written, rather than overwriting the same file.|

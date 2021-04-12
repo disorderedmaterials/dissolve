@@ -14,4 +14,4 @@ The `ExportTrajectory` module writes the coordinate data from a target configura
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Format`|[`TrajectoryFileAndFormat`]({{< ref "trajectory" >}})|--|Format and filename of the target trajectory to write to disk.|
+|`Format`|[`TrajectoryFileAndFormat`]({{< ref "trajectoryformat" >}})|--|Format and filename of the target trajectory to write to disk.|

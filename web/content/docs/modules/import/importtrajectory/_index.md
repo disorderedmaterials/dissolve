@@ -18,4 +18,4 @@ The module requires that the contents of the configuration have been described i
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Format`|[`TrajectoryFileAndFormat`]({{< ref "trajectory" >}})|--|Format and filename of the target trajectory to read from disk.|
+|`Format`|[`TrajectoryFileAndFormat`]({{< ref "trajectoryformat" >}})|--|Format and filename of the target trajectory to read from disk.|

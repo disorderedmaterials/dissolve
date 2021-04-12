@@ -47,7 +47,7 @@ The application of instrumental broadening is the responsibility of the source [
 ### Reference Data
 Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`Reference`|[`Data1DFileAndFormat`]({{< ref "data1d" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. [`EPSR`]({{< ref "sq" >}})|
+|`Reference`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. [`EPSR`]({{< ref "sq" >}})|
 |`ReferenceNormalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Assumed normalisation type to remove from the reference total structure factor data once loaded|
 |`ReferenceWindowFunction`|[`WindowFunction`]({{< ref "normalisationtype" >}})|`Lorch0`|Window function to apply when Fourier-transforming reference $F(Q)$ to a reference $g(r)$|
 

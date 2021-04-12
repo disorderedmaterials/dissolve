@@ -3,17 +3,17 @@ title: Data1D
 description: One-dimensional data import/export
 ---
 
-## Import
+## Known Formats
 
-### File Types
+|Keyword|Import|Export|Description|
+|:-----:|:----:|:----:|-----------|
+|`xy`|&check;|&check;|Two-column data format, with $x$ values representing discrete points or bin centres|
+|`histogram`|&check;||Two-column data format, with $x$ values representing bin left-boundaries. The $x$ axis is converted internally to centre-bin values once reading is complete.|
+|`mint01`|&check;||Gudrun "mint01" file format, with $Q$ values representing bin left-boundaries. The $Q$ ($x$) axis is converted internally to centre-bin values once reading is complete.|
 
-|Keyword|Description|
-|:---:|-----------|
-|`xy`|Two-column data format, with $x$ values representing discrete points or bin centres|
-|`histogram`|Two-column data format, with $x$ values representing bin left-boundaries. The $x$ axis is converted internally to centre-bin values once reading is complete.|
-|`mint01`|Gudrun "mint01" file format, with $Q$ values representing bin left-boundaries. The $Q$ ($x$) axis is converted internally to centre-bin values once reading is complete.|
+## Options
 
-### Options
+### Import
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
@@ -28,11 +28,3 @@ Note that if multiple keywords that modify the data are supplied, the order of o
 1. Remove points from the beginning of the data (controlled by `RemovePoints`)
 2. Trim $x$ range of data (controlled by `Trim`)
 3. Form and subtract average level (controlled by `RemoveAverage`)
-
-## Export
-
-### File Types
-
-|Keyword|Description|
-|:---:|-----------|
-|`xy`|Two-column data format, with $x$ values representing discrete points or bin centres|
