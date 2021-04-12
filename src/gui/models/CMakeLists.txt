@@ -1,5 +1,5 @@
 set(models_MOC_HDRS
-    dataManagerModel.h
+    dataManagerReferencePointModel.h
     xmlAngleModel.h
     xmlAtomModel.h
     xmlBondModel.h
@@ -11,7 +11,7 @@ set(models_MOC_HDRS
 qt5_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
 set(models_SRCS
-    dataManagerModel.cpp
+    dataManagerReferencePointModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -32,7 +32,7 @@ include_directories(models PUBLIC ${CONAN_INCLUDE_DIRS_PUGIXML} PRIVATE ${PROJEC
 target_include_directories(
   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 )
-target_link_libraries(models keywordwidgets charts delegates widgets components gui)
+target_link_libraries(models PRIVATE keywordwidgets charts delegates widgets components gui)
 
 target_link_libraries(models PUBLIC CONAN_PKG::pugixml)
 

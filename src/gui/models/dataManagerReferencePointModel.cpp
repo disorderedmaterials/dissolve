@@ -1,4 +1,4 @@
-#include "gui/models/dataManagerModel.h"
+#include "gui/models/dataManagerReferencePointModel.h"
 #include "templates/variantpointer.h"
 
 DataManagerReferencePointModel::DataManagerReferencePointModel(std::vector<ReferencePoint> &referencePoints)

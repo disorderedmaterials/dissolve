@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/models/dataManagerModel.h"
+#include "gui/models/dataManagerReferencePointModel.h"
 #include "genericitems/list.h"
 #include "gui/referencepoint.h"
 #include "gui/ui_datamanagerdialog.h"
