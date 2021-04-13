@@ -6,27 +6,8 @@
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 
-BraggReflection::BraggReflection()
-{
-    q_ = 0.0;
-    index_ = -1;
-    nKVectors_ = 0;
-}
+BraggReflection::BraggReflection() : q_(0.0), index_(-1), nKVectors_(0) {}
 
-BraggReflection::~BraggReflection() {}
-
-BraggReflection::BraggReflection(const BraggReflection &source) { (*this) = source; }
-
-// Operator=
-void BraggReflection::operator=(const BraggReflection &source)
-{
-    q_ = source.q_;
-    index_ = source.index_;
-    intensities_ = source.intensities_;
-    nKVectors_ = source.nKVectors_;
-}
-
-// Operator+= (intensity addition)
 void BraggReflection::operator+=(const BraggReflection &source)
 {
     // If we have no intensities array, just copy the source's array
@@ -41,8 +22,14 @@ void BraggReflection::operator+=(const BraggReflection &source)
     nKVectors_ = source.nKVectors_;
 }
 
-// Operator*= (intensity scaling)
-void BraggReflection::operator*=(double scale) { intensities_ *= scale; }
+void BraggReflection::operator*=(double factor) { intensities_ *= factor; }
+
+BraggReflection BraggReflection::operator*(double factor) const
+{
+    auto result = *this;
+    result *= factor;
+    return result;
+}
 
 /*
  * Data
@@ -76,10 +63,7 @@ void BraggReflection::reset()
 // Add intensity between specified atomtypes
 void BraggReflection::addIntensity(int typeI, int typeJ, double intensity) { intensities_[{typeI, typeJ}] += intensity; }
 
-// Scale intensities between all atom types by factor provided
-void BraggReflection::scaleIntensities(double factor) { intensities_ *= factor; }
-
-// Scale intensity between all specific atom types by factor provided
+// Scale intensity between specified atom types by factor provided
 void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 {
     assert(typeI >= 0 && typeI < intensities_.nRows());
@@ -87,6 +71,9 @@ void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 
     intensities_[{typeI, typeJ}] *= factor;
 }
+
+// Return intensities array
+const Array2D<double> BraggReflection::intensities() const { return intensities_; }
 
 // Return intensity between specified atom types for this reflection
 double BraggReflection::intensity(int typeI, int typeJ) const { return intensities_[{typeI, typeJ}]; }
@@ -119,7 +106,7 @@ bool BraggReflection::deserialise(LineParser &parser)
 }
 
 // Write data through specified parser
-bool BraggReflection::write(LineParser &parser)
+bool BraggReflection::serialise(LineParser &parser) const
 {
     // Write index, Q centre, and number of contributing K-vectors
     if (!parser.writeLineF("{}  {}  {}\n", index_, q_, nKVectors_))

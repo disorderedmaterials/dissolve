@@ -5,28 +5,19 @@
 
 #include "base/lineparser.h"
 #include "templates/array2d.h"
-#include "templates/listitem.h"
-
-// Forward Declarations
-/* none */
 
 // BraggReflection Class
 class BraggReflection
 {
-    /*
-     *  BraggReflection acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same
-     * Q value.
-     */
     public:
     BraggReflection();
-    ~BraggReflection();
-    BraggReflection(const BraggReflection &source);
-    // Operator=
-    void operator=(const BraggReflection &source);
-    // Operator+= (intensity addition)
+    ~BraggReflection() = default;
+    BraggReflection(const BraggReflection &source) = default;
+    BraggReflection(BraggReflection &&source) = default;
+    BraggReflection &operator=(const BraggReflection &source) = default;
     void operator+=(const BraggReflection &source);
-    // Operator*= (intensity scaling)
     void operator*=(double factor);
+    BraggReflection operator*(double factor) const;
 
     /*
      * Data
@@ -54,10 +45,10 @@ class BraggReflection
     void reset();
     // Add intensity between specified atomtypes from k-vector
     void addIntensity(int typeI, int typeJ, double intensity);
-    // Scale intensities between all atom types by factor provided
-    void scaleIntensities(double factor);
-    // Scale intensity between all specific atom types by factor provided
+    // Scale intensity between specified atom types by factor provided
     void scaleIntensity(int typeI, int typeJ, double factor);
+    // Return intensities array
+    const Array2D<double> intensities() const;
     // Return intensity between specified atom types for this reflection
     double intensity(int typeI, int typeJ) const;
     // Increment number of contributing k-vectors
@@ -72,5 +63,5 @@ class BraggReflection
     // Read data through specified parser
     bool deserialise(LineParser &parser);
     // Write data through specified parser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
 };
