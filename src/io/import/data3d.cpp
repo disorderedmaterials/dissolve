@@ -39,13 +39,10 @@ EnumOptions<Data3DImportFileFormat::Data3DImportFormat> Data3DImportFileFormat::
 int Data3DImportFileFormat::nFormats() const { return Data3DImportFileFormat::nData3DImportFormats; }
 
 // Return format keyword for supplied index
-std::string_view Data3DImportFileFormat::formatKeyword(int id) const { return data3DImportFormats().keywordByIndex(id); }
+std::string Data3DImportFileFormat::formatKeyword(int id) const { return data3DImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view Data3DImportFileFormat::formatDescription(int id) const
-{
-    return data3DImportFormats().descriptionByIndex(id);
-}
+std::string Data3DImportFileFormat::formatDescription(int id) const { return data3DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data3DImportFormat
 Data3DImportFileFormat::Data3DImportFormat Data3DImportFileFormat::data3DFormat() const

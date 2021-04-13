@@ -30,9 +30,9 @@ class FileAndFormat
     // Return number of available formats
     virtual int nFormats() const = 0;
     // Return format keyword for supplied index
-    virtual std::string_view formatKeyword(int id) const = 0;
+    virtual std::string formatKeyword(int id) const = 0;
     // Return description string for supplied index
-    virtual std::string_view formatDescription(int id) const = 0;
+    virtual std::string formatDescription(int id) const = 0;
     // Convert text string to format index
     int format(std::string_view fmtString) const;
     // Set format index
@@ -40,9 +40,9 @@ class FileAndFormat
     // Return format index
     int formatIndex() const;
     // Return format string
-    std::string_view format() const;
+    std::string format() const;
     // Return description string
-    std::string_view description() const;
+    std::string description() const;
     // Print available formats
     void printAvailableFormats() const;
 

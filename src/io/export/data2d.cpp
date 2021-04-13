@@ -27,13 +27,10 @@ EnumOptions<Data2DExportFileFormat::Data2DExportFormat> Data2DExportFileFormat::
 int Data2DExportFileFormat::nFormats() const { return Data2DExportFileFormat::nData2DExportFormats; }
 
 // Return format keyword for supplied index
-std::string_view Data2DExportFileFormat::formatKeyword(int id) const { return data2DExportFormats().keywordByIndex(id); }
+std::string Data2DExportFileFormat::formatKeyword(int id) const { return data2DExportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view Data2DExportFileFormat::formatDescription(int id) const
-{
-    return data2DExportFormats().descriptionByIndex(id);
-}
+std::string Data2DExportFileFormat::formatDescription(int id) const { return data2DExportFormats().descriptionByIndex(id); }
 
 // Return current format as CoordinateExportFormat
 Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const

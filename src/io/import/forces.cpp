@@ -45,10 +45,10 @@ EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::for
 int ForceImportFileFormat::nFormats() const { return ForceImportFileFormat::nForceImportFormats; }
 
 // Return format keyword for supplied index
-std::string_view ForceImportFileFormat::formatKeyword(int id) const { return forceImportFormats().keywordByIndex(id); }
+std::string ForceImportFileFormat::formatKeyword(int id) const { return forceImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view ForceImportFileFormat::formatDescription(int id) const { return forceImportFormats().descriptionByIndex(id); }
+std::string ForceImportFileFormat::formatDescription(int id) const { return forceImportFormats().descriptionByIndex(id); }
 
 // Return current format as ForceImportFormat
 ForceImportFileFormat::ForceImportFormat ForceImportFileFormat::forceFormat() const
