@@ -74,9 +74,9 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Perform averaging of reflections data if requested
         if (averaging > 1)
         {
-            Averaging::arrayAverage<Array<BraggReflection>>(dissolve.processingModuleData(),
-                                                            fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName(),
-                                                            averaging, averagingScheme);
+            Averaging::vectorAverage<std::vector<BraggReflection>>(dissolve.processingModuleData(),
+                                                                   fmt::format("{}//BraggReflections", cfg->niceName()),
+                                                                   uniqueName(), averaging, averagingScheme);
         }
 
         // Form partial and total reflection functions
@@ -86,7 +86,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (saveReflections)
         {
             // Retrieve BraggReflection data from the Configuration's module data
-            const auto &braggReflections = dissolve.processingModuleData().value<const Array<BraggReflection>>(
+            const auto &braggReflections = dissolve.processingModuleData().value<const std::vector<BraggReflection>>(
                 fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
 
             // Open a file and save the basic reflection data
@@ -94,17 +94,18 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (!braggParser.openOutput(fmt::format("{}-Bragg.txt", cfg->niceName())))
                 return false;
             braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
-            for (auto n = 0; n < braggReflections.nItems(); ++n)
+            auto count = 0;
+            for (const auto &reflxn : braggReflections)
             {
-                if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", n, braggReflections.at(n).q(),
-                                            braggReflections.at(n).nKVectors(), braggReflections.at(n).intensity(0, 0)))
+                if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", ++count, reflxn.q(), reflxn.nKVectors(),
+                                            reflxn.intensity(0, 0)))
                     return false;
             }
             braggParser.closeFiles();
 
             // Save intensity data
             auto &types = cfg->usedAtomTypesList();
-            for_each_pair_early(
+            auto success = for_each_pair_early(
                 types.begin(), types.end(),
                 [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool> {
                     LineParser intensityParser(&procPool);
@@ -112,10 +113,9 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             fmt::format("{}-Bragg-{}-{}.txt", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName())))
                         return false;
                     intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
-                    for (auto n = 0; n < braggReflections.nItems(); ++n)
+                    for (const auto &reflxn : braggReflections)
                     {
-                        if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", braggReflections.at(n).q(),
-                                                        braggReflections.at(n).intensity(i, j)))
+                        if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", reflxn.q(), reflxn.intensity(i, j)))
                             return false;
                         intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                     }
@@ -123,6 +123,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     return EarlyReturn<bool>::Continue;
                 });
+            if (!success.value_or(true))
+                return false;
         }
     }
 

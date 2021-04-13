@@ -113,8 +113,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                     "could not be located.\n",
                                     braggModule->uniqueName());
         const auto &braggReflections =
-            dissolve.processingModuleData().value<Array<BraggReflection>>("BraggReflections", braggModule->uniqueName());
-        const auto nReflections = braggReflections.nItems();
+            dissolve.processingModuleData().value<std::vector<BraggReflection>>("BraggReflections", braggModule->uniqueName());
+        const auto nReflections = braggReflections.size();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found BraggReflections data for module '{}' (nReflections = {}, QMax = {} "
                          "Angstroms**-1).\n",

@@ -29,9 +29,9 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
         return true;
 
     // Realise the arrays from the Configuration
-    auto &braggKVectors = moduleData.realise<Array<KVector>>("BraggKVectors", cfg->niceName());
-    auto &braggReflections = moduleData.realise<Array<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()),
-                                                                        uniqueName(), GenericItem::InRestartFileFlag);
+    auto &braggKVectors = moduleData.realise<std::vector<KVector>>("BraggKVectors", cfg->niceName());
+    auto &braggReflections = moduleData.realise<std::vector<BraggReflection>>(
+        fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
     auto &braggAtomVectorXCos =
         moduleData.realise<Array2D<double>>(fmt::format("{}//BraggAtomVectorXCos", cfg->niceName()), uniqueName());
     auto &braggAtomVectorYCos =
@@ -80,7 +80,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
     double mag, magSq;
     int braggIndex;
     timer.start();
-    if (braggKVectors.nItems() == 0)
+    if (braggKVectors.empty())
     {
         Messenger::print("Performing initial set up of Bragg arrays...\n");
         timer.start();
@@ -93,15 +93,15 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
         braggMaximumHKL.y = qMax / rLengths.y;
         braggMaximumHKL.z = qMax / rLengths.z;
 
-        // Clear old arrays, and set a suitable chunk size for the k-vectors array
+        // Clear old arrays, and set a suitable reservation for the k-vectors array
         braggReflections.clear();
         braggKVectors.clear();
-        braggKVectors.setChunkSize(braggMaximumHKL.x * braggMaximumHKL.y * braggMaximumHKL.z);
+        braggKVectors.reserve(braggMaximumHKL.x * braggMaximumHKL.y * braggMaximumHKL.z);
 
         // Create temporary 3D array for k-vectors, and linear array for Bragg reflections
         OffsetArray3D<KVector> tempKVectors(0, braggMaximumHKL.x, -braggMaximumHKL.y, braggMaximumHKL.y, -braggMaximumHKL.z,
                                             braggMaximumHKL.z);
-        Array<BraggReflection> tempReflections(nBraggBins);
+        std::vector<BraggReflection> tempReflections(nBraggBins);
 
         // Initialise Bragg reflections - Q values reflect the centre-bins of the reflection.
         double q = 0.5 * qDelta;
@@ -160,7 +160,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
 
             // Look up and set the new index of the associated BraggReflection
             n.setBraggReflectionIndex(tempReflections[n.braggReflectionIndex()].index());
-            braggKVectors.add(n);
+            braggKVectors.emplace_back(n);
         }
 
         // Prune BraggReflections array, putting them into a sequential Array that will reflect their new indexing
@@ -168,14 +168,14 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
         {
             if (tempReflections[n].nKVectors() == 0)
                 continue;
-            braggReflections.add(tempReflections[n]);
+            braggReflections.emplace_back(tempReflections[n]);
         }
 
         Messenger::print("Bragg calculation spans {} k-vectors (max HKL = {} x {} x {}) over {} <= Q <= {} ({} elapsed).\n",
-                         braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax,
+                         braggKVectors.size(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax,
                          timer.elapsedTimeString());
         Messenger::print("{} unique Bragg reflections found using a Q resolution of {} Angstroms**-1.\n",
-                         braggReflections.nItems(), qDelta);
+                         braggReflections.size(), qDelta);
 
         // Create atom working arrays
         braggAtomVectorXCos.initialise(nAtoms, braggMaximumHKL.x + 1);
@@ -251,13 +251,10 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
     Messenger::print("Calculated atomic cos/sin terms ({} elapsed)\n", timer.totalTimeString());
 
     // Calculate k-vector contributions
-    KVector *kVectors = braggKVectors.array();
-    const auto nKVectors = braggKVectors.nItems();
     int localTypeIndex;
 
-    // Zero kvector cos/sin contributions
-    for (m = 0; m < nKVectors; ++m)
-        kVectors[m].zeroCosSinTerms();
+    // Zero k-vector cos/sin contributions
+    std::for_each(braggKVectors.begin(), braggKVectors.end(), [](auto &kvec) { kvec.zeroCosSinTerms(); });
 
     // Loop over atoms
     timer.start();
@@ -273,10 +270,8 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
         sinTermsL = braggAtomVectorZSin.pointerAt(n, braggMaximumHKL.z);
 
         // Loop over k-vectors
-        for (m = 0; m < nKVectors; ++m)
+        for (auto &kvec : braggKVectors)
         {
-            KVector &kvec = kVectors[m];
-
             // Grab h, k, and l indices from KVector
             h = kvec.h();
             k = kvec.k();
@@ -299,23 +294,16 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
     Messenger::print("Calculated atomic contributions to k-vectors ({} elapsed)\n", timer.totalTimeString());
 
     // Zero Bragg reflection intensities
-    BraggReflection *reflections = braggReflections.array();
-    auto nReflections = braggReflections.nItems();
-    for (m = 0; m < nReflections; ++m)
-        reflections[m].reset();
+    std::for_each(braggReflections.begin(), braggReflections.end(), [](auto &reflxn) { reflxn.reset(); });
 
     // Calculate intensities for individual KVectors - this will be automatically summed into the corresponding
     // BraggReflection
-    for (m = 0; m < nKVectors; ++m)
-        kVectors[m].calculateIntensities(reflections);
+    std::for_each(braggKVectors.begin(), braggKVectors.end(),
+                  [&braggReflections](auto &kvec) { kvec.calculateIntensities(braggReflections); });
 
     // Normalise intensities against number of atoms and unit cell multiplicity
-    auto &types = cfg->usedAtomTypesList();
     const auto divisor = 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
-    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
-        for (m = 0; m < nReflections; ++m)
-            reflections[m].scaleIntensity(i, j, divisor);
-    });
+    std::for_each(braggReflections.begin(), braggReflections.end(), [divisor](auto &reflxn) { reflxn *= divisor; });
 
     // Store the new version of the data
     moduleData.realise<int>("BraggVersion", cfg->niceName()) = cfg->contentsVersion();
@@ -329,8 +317,8 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
 {
     // Retrieve BraggReflection data from the Configuration's module data
     const auto &braggReflections =
-        moduleData.value<Array<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
-    const auto nReflections = braggReflections.nItems();
+        moduleData.value<std::vector<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
+    const auto nReflections = braggReflections.size();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
     const auto nTypes = cfg->nUsedAtomTypes();
@@ -397,8 +385,8 @@ bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPoo
 {
     // Retrieve BraggReflection data
     const auto &braggReflections =
-        moduleData.value<Array<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
-    const auto nReflections = braggReflections.nItems();
+        moduleData.value<std::vector<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
+    const auto nReflections = braggReflections.size();
 
     const auto nTypes = cfg->nUsedAtomTypes();
 
@@ -415,7 +403,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPoo
     for (auto n = 0; n < nReflections; ++n)
     {
         // Get Q bin (in the braggPartials) of the reflection
-        bin = braggReflections.at(n).q() / qDelta;
+        bin = int(braggReflections[n].q() / qDelta);
         if ((bin < 0) || (bin >= nBins))
         {
             Messenger::warn("Reflection {} is at Q = {} Angstroms**-1, which is outside of the current Q range.\n", n,
