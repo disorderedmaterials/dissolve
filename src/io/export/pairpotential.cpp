@@ -30,13 +30,13 @@ PairPotentialExportFileFormat::pairPotentialExportFormats()
 int PairPotentialExportFileFormat::nFormats() const { return PairPotentialExportFileFormat::nPairPotentialExportFormats; }
 
 // Return format keyword for supplied index
-std::string_view PairPotentialExportFileFormat::formatKeyword(int id) const
+std::string PairPotentialExportFileFormat::formatKeyword(int id) const
 {
     return pairPotentialExportFormats().keywordByIndex(id);
 }
 
 // Return description string for supplied index
-std::string_view PairPotentialExportFileFormat::formatDescription(int id) const
+std::string PairPotentialExportFileFormat::formatDescription(int id) const
 {
     return pairPotentialExportFormats().descriptionByIndex(id);
 }

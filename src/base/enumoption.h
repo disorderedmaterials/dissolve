@@ -45,9 +45,9 @@ template <class E> class EnumOption
     // Return option enumeration (i.e. from enum value)
     E enumeration() const { return enumeration_; }
     // Return option keyword
-    std::string_view keyword() const { return keyword_; }
+    std::string keyword() const { return keyword_; }
     // Return option description
-    std::string_view description() const { return description_; }
+    std::string description() const { return description_; }
     // Return minimum number of arguments the option takes
     std::optional<int> minArgs() const { return minArgs_; }
     // Return maximum number of arguments the option takes

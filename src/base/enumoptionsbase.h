@@ -17,15 +17,15 @@ class EnumOptionsBase
      */
     public:
     // Return name of options (e.g. from source enumeration)
-    virtual std::string_view name() const = 0;
+    virtual std::string name() const = 0;
 
     public:
     // Return number of options available
     virtual int nOptions() const = 0;
     // Return nth keyword in the list
-    virtual std::string_view keywordByIndex(int index) const = 0;
+    virtual std::string keywordByIndex(int index) const = 0;
     // Return description for the nth keyword in the list
-    virtual std::string_view descriptionByIndex(int index) const = 0;
+    virtual std::string descriptionByIndex(int index) const = 0;
     // Return index of current option
     virtual int index() const = 0;
     // Set current option index

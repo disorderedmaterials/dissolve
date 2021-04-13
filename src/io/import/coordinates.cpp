@@ -44,13 +44,10 @@ EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImport
 int CoordinateImportFileFormat::nFormats() const { return CoordinateImportFileFormat::nCoordinateImportFormats; }
 
 // Return format keyword for supplied index
-std::string_view CoordinateImportFileFormat::formatKeyword(int id) const
-{
-    return coordinateImportFormats().keywordByIndex(id);
-}
+std::string CoordinateImportFileFormat::formatKeyword(int id) const { return coordinateImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view CoordinateImportFileFormat::formatDescription(int id) const
+std::string CoordinateImportFileFormat::formatDescription(int id) const
 {
     return coordinateImportFormats().descriptionByIndex(id);
 }

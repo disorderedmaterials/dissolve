@@ -40,13 +40,10 @@ EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImport
 int TrajectoryImportFileFormat::nFormats() const { return TrajectoryImportFileFormat::nTrajectoryImportFormats; }
 
 // Return format keyword for supplied index
-std::string_view TrajectoryImportFileFormat::formatKeyword(int id) const
-{
-    return trajectoryImportFormats().keywordByIndex(id);
-}
+std::string TrajectoryImportFileFormat::formatKeyword(int id) const { return trajectoryImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view TrajectoryImportFileFormat::formatDescription(int id) const
+std::string TrajectoryImportFileFormat::formatDescription(int id) const
 {
     return trajectoryImportFormats().descriptionByIndex(id);
 }
