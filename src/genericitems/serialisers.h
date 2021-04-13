@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/lineparser.h"
 #include "classes/coredata.h"
 #include <any>
 #include <typeindex>
@@ -33,6 +34,16 @@ class GenericItemSerialiser
     template <class T> static bool simpleSerialise(const std::any &a, LineParser &parser)
     {
         return std::any_cast<const T &>(a).serialise(parser);
+    }
+    template <class T> static bool vectorSerialise(const std::any &a, LineParser &parser)
+    {
+        const auto &v = std::any_cast<const std::vector<T> &>(a);
+        if (!parser.writeLineF("{}  # size\n", v.size()))
+            return false;
+        for (const auto &i : v)
+            if (!i.serialise(parser))
+                return false;
+        return true;
     }
     // Register serialiser for specific class
     template <class T> void registerSerialiser(SerialiseFunction func) { serialisers_[typeid(T)] = std::move(func); }

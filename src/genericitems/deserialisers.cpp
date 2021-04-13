@@ -3,6 +3,7 @@
 
 #include "genericitems/deserialisers.h"
 #include "base/lineparser.h"
+#include "classes/braggreflection.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/partialsetaccumulator.h"
@@ -179,6 +180,9 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         return true;
     });
     registerDeserialiser<XRayWeights>(simpleDeserialiseCore<XRayWeights>);
+
+    // Containers of Custom Classes
+    registerDeserialiser<std::vector<BraggReflection>>(vectorDeserialise<BraggReflection>);
 }
 
 /*

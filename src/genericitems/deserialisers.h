@@ -3,15 +3,13 @@
 
 #pragma once
 
+#include "base/lineparser.h"
 #include "classes/coredata.h"
 #include <any>
 #include <fmt/core.h>
 #include <functional>
 #include <typeindex>
 #include <unordered_map>
-
-// Forward Declarations
-class LineParser;
 
 // GenericItem Deserialiser
 class GenericItemDeserialiser
@@ -42,6 +40,18 @@ class GenericItemDeserialiser
     template <class T> static bool simpleDeserialiseCore(std::any &a, LineParser &parser, const CoreData &coreData)
     {
         return std::any_cast<T &>(a).deserialise(parser, coreData);
+    }
+    template <class T> static bool vectorDeserialise(std::any &a, LineParser &parser, const CoreData &coreData)
+    {
+        auto &v = std::any_cast<std::vector<T> &>(a);
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        auto nItems = parser.argi(0);
+        v.resize(nItems);
+        for (auto &i : v)
+            if (!i.deserialise(parser))
+                return false;
+        return true;
     }
     // Register deserialiser for specific class
     template <class T> void registerDeserialiser(DeserialiseFunction func) { deserialisers_[typeid(T)] = std::move(func); }
