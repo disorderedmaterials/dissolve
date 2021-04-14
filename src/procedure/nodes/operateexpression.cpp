@@ -10,7 +10,7 @@
 #include "math/integrator.h"
 
 OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view expressionText)
-    : OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateExpression)
 {
     // Create variables, and add them to the vector
     x_ = std::make_shared<ExpressionVariable>("x");
@@ -26,8 +26,6 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
 
     keywords_.add("Control", new ExpressionKeyword(expression_, variables_), "Expression", "Expression to apply to values");
 }
-
-OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)

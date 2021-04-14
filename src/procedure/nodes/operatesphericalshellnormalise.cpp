@@ -11,11 +11,9 @@
 #include "procedure/nodes/select.h"
 
 OperateSphericalShellNormaliseProcedureNode::OperateSphericalShellNormaliseProcedureNode()
-    : OperateProcedureNodeBase(ProcedureNode::OperateSphericalShellNormaliseNode)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateSphericalShellNormalise)
 {
 }
-
-OperateSphericalShellNormaliseProcedureNode::~OperateSphericalShellNormaliseProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)

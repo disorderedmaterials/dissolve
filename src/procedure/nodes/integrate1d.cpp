@@ -15,9 +15,10 @@
 #include "procedure/nodes/select.h"
 
 Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::Integrate1DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Integrate1D)
 {
-    keywords_.add("Control", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
+    keywords_.add("Control",
+                  new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::NodeType::Process1D, false, target),
                   "SourceData", "Process1D node containing the data to integrate");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first integration region");
@@ -26,8 +27,6 @@ Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode 
     keywords_.add("Control", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
                   "X range for third integration region");
 }
-
-Integrate1DProcedureNode::~Integrate1DProcedureNode() {}
 
 /*
  * Identity
@@ -61,9 +60,9 @@ bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view pref
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                     std::string_view prefix, GenericList &targetList)
+// Finalise any necessary data after execution
+bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                        GenericList &targetList)
 {
     // Get ranges
     auto rangeA = keywords_.retrieve<Range>("RangeA");
@@ -83,12 +82,5 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
     Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].value(), integral_[2].stDev(),
                      rangeC.minimum(), rangeC.maximum());
 
-    return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                        GenericList &targetList)
-{
     return true;
 }

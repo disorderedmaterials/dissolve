@@ -17,14 +17,14 @@ class CalculateProcedureNodeBase : public ProcedureNode
     CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0 = nullptr,
                                SelectProcedureNode *site1 = nullptr, SelectProcedureNode *site2 = nullptr,
                                SelectProcedureNode *site3 = nullptr);
-    virtual ~CalculateProcedureNodeBase();
+    virtual ~CalculateProcedureNodeBase() override = default;
 
     /*
      * Identity
      */
     public:
     // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context);
+    bool isContextRelevant(ProcedureNode::NodeContext context) override;
 
     /*
      * Keywords
@@ -57,5 +57,5 @@ class CalculateProcedureNodeBase : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 };

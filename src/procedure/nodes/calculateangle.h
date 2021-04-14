@@ -15,7 +15,7 @@ class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
     public:
     CalculateAngleProcedureNode(SelectProcedureNode *site0 = nullptr, SelectProcedureNode *site1 = nullptr,
                                 SelectProcedureNode *site2 = nullptr);
-    ~CalculateAngleProcedureNode();
+    ~CalculateAngleProcedureNode() override = default;
 
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
@@ -31,6 +31,5 @@ class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
      */
     public:
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                               GenericList &targetList);
+    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 };

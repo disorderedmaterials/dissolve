@@ -14,7 +14,7 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 
-SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) : ProcedureNode(ProcedureNode::SelectNode)
+SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) : ProcedureNode(ProcedureNode::NodeType::Select)
 {
     if (site)
         speciesSites_.append(site);
@@ -25,18 +25,21 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) :
                   "Add target site(s) to the selection");
     keywords_.add("Control", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite",
                   "Add a new dynamic site to the selection");
-    keywords_.add("Control", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "SameMoleculeAsSite",
+    keywords_.add("Control", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true),
+                  "SameMoleculeAsSite",
                   "Request that the selected site comes from the molecule containing the current site in the specified "
                   "SelectNode");
-    keywords_.add("Control",
-                  new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameMoleculeExclusions_),
-                  "ExcludeSameMolecule",
-                  "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
-                  "SelectNode(s)");
     keywords_.add(
-        "Control", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameSiteExclusions_),
-        "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)");
-    keywords_.add("Control", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "ReferenceSite",
+        "Control",
+        new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true, sameMoleculeExclusions_),
+        "ExcludeSameMolecule",
+        "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
+        "SelectNode(s)");
+    keywords_.add("Control",
+                  new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true, sameSiteExclusions_),
+                  "ExcludeSameSite",
+                  "Exclude sites from selection if they are the current site in the specified SelectNode(s)");
+    keywords_.add("Control", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true), "ReferenceSite",
                   "Site to use as reference point when determining inclusions / exclusions");
     keywords_.add("Control", new RangeKeyword(inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels), "InclusiveRange",
                   "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)");
@@ -172,8 +175,7 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                std::string_view prefix, GenericList &targetList)
+bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Create our arrays of sites
     sites_.clear();
@@ -203,7 +205,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
     {
         const SiteStack *siteStack = cfg->siteStack(site);
         if (siteStack == nullptr)
-            return ProcedureNode::Failure;
+            return false;
 
         for (auto n = 0; n < siteStack->nSites(); ++n)
         {
@@ -242,8 +244,8 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
      */
     for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
     {
-        if (dynamicNode->execute(procPool, cfg, prefix, targetList) == ProcedureNode::Failure)
-            return ProcedureNode::Failure;
+        if (!dynamicNode->execute(procPool, cfg, prefix, targetList))
+            return false;
 
         const Array<Site> &generatedSites = dynamicNode->generatedSites();
         for (auto n = 0; n < generatedSites.nItems(); ++n)
@@ -262,12 +264,12 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-            if (forEachBranch_->execute(procPool, cfg, prefix, targetList) == ProcedureNode::Failure)
-                return ProcedureNode::Failure;
+            if (!forEachBranch_->execute(procPool, cfg, prefix, targetList))
+                return false;
         }
     }
 
-    return ProcedureNode::Success;
+    return true;
 }
 
 // Finalise any necessary data after execution

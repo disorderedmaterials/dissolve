@@ -9,14 +9,12 @@
 #include "keywords/types.h"
 
 BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic)
-    : ProcedureNode(ProcedureNode::BoxNode)
+    : ProcedureNode(ProcedureNode::NodeType::Box)
 {
     keywords_.add("Control", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
     keywords_.add("Control", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");
     keywords_.add("Control", new BoolKeyword(false), "NonPeriodic", "Whether the box is non-periodic");
 }
-
-BoxProcedureNode::~BoxProcedureNode() {}
 
 /*
  * Identity
@@ -39,8 +37,7 @@ bool BoxProcedureNode::mustBeNamed() const { return false; }
 bool BoxProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                                             GenericList &targetList)
+bool BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve necessary parameters
     auto lengths = keywords_.asVec3Double("Lengths");
@@ -49,7 +46,7 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPo
 
     // Create a Box in the target Configuration with our lengths and angles
     if (!cfg->createBox(lengths, angles, nonPeriodic))
-        return ProcedureNode::Failure;
+        return false;
 
     Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", cfg->box()->volume(),
                      cfg->box()->reciprocalVolume());
@@ -59,5 +56,5 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPo
         "[Box] Type is {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = {:10.4e} gamma = {:10.4e}\n",
         Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y, angles.z);
 
-    return ProcedureNode::Success;
+    return true;
 }

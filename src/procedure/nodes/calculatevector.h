@@ -15,7 +15,7 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
     public:
     CalculateVectorProcedureNode(SelectProcedureNode *site0 = nullptr, SelectProcedureNode *site1 = nullptr,
                                  bool rotateIntoFrame = false);
-    ~CalculateVectorProcedureNode();
+    ~CalculateVectorProcedureNode() override = default;
 
     /*
      * Data
@@ -38,8 +38,7 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                               GenericList &targetList);
+    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 };

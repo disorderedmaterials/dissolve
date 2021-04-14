@@ -11,11 +11,9 @@
 #include "procedure/nodes/select.h"
 
 OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode()
-    : OperateProcedureNodeBase(ProcedureNode::OperateGridNormaliseNode)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateGridNormalise)
 {
 }
-
-OperateGridNormaliseProcedureNode::~OperateGridNormaliseProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)

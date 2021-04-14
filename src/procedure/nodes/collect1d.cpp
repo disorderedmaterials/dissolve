@@ -12,12 +12,12 @@
 
 Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax,
                                                double binWidth)
-    : ProcedureNode(ProcedureNode::Collect1DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Collect1D)
 {
-    keywords_.add(
-        "Control",
-        new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, observable, 0),
-        "QuantityX", "Calculated observable to collect");
+    keywords_.add("Control",
+                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
+                                                                        observable, 0),
+                  "QuantityX", "Calculated observable to collect");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxBinwidthlabels),
@@ -28,8 +28,6 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
     // Initialise branch
     subCollectBranch_ = nullptr;
 }
-
-Collect1DProcedureNode::~Collect1DProcedureNode() {}
 
 /*
  * Identity
@@ -48,14 +46,9 @@ bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
 // Return accumulated data
 const Data1D &Collect1DProcedureNode::accumulatedData() const
 {
-    if (!histogram_)
-    {
-        Messenger::error("No histogram pointer set in Collect1DProcedureNode, so no accumulated data to return.\n");
-        static Data1D dummy;
-        return dummy;
-    }
+    assert(histogram_);
 
-    return histogram_->accumulatedData();
+    return histogram_->get().accumulatedData();
 }
 
 // Return range minimum
@@ -107,8 +100,8 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Zero the current bins, ready for the new pass
     target.zeroBins();
 
-    // Store a pointer to the data
-    histogram_ = &target;
+    // Store a reference to the data
+    histogram_ = target;
 
     // Retrieve the observable
     std::tie(xObservable_, xObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
@@ -123,16 +116,16 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   std::string_view prefix, GenericList &targetList)
+bool Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                     GenericList &targetList)
 {
-    assert(xObservable_);
+    assert(xObservable_ && histogram_);
 
     // Bin the current value of the observable, and execute sub-collection branch on success
-    if (histogram_->bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
+    if (histogram_->get().bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
-    return ProcedureNode::Success;
+    return true;
 }
 
 // Finalise any necessary data after execution
@@ -142,7 +135,7 @@ bool Collect1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     assert(histogram_);
 
     // Accumulate the current binned data
-    histogram_->accumulate();
+    histogram_->get().accumulate();
 
     // Finalise any branches
     if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList)))
