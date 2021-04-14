@@ -183,7 +183,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                      extents_.z);
 
     // Now, loop over extent integers and construct list of gridReferences within range
-    neighbourIndices_.clear();
+    std::vector<Vec3<int>> neighbourIndices;
     RefList<Cell> cellNbrs;
     Vec3<int> i, j;
     Cell *nbr;
@@ -230,12 +230,12 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                 nbr = cell(x, y, z);
                 if (cellNbrs.contains(nbr))
                     continue;
-                neighbourIndices_.add()->set(x, y, z);
+                neighbourIndices.emplace_back(x, y, z);
                 cellNbrs.append(nbr);
             }
         }
     }
-    Messenger::print("Added {} Cells to representative neighbour list.\n", neighbourIndices_.nItems());
+    Messenger::print("Added {} Cells to representative neighbour list.\n", neighbourIndices.size());
 
     // Finally, loop over Cells and set neighbours, and construct neighbour matrix
     Messenger::print("Constructing neighbour lists for individual Cells...\n");
@@ -251,10 +251,10 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
         mimNeighbours.clear();
 
         // Loop over list of (relative) neighbour cell indices
-        for (ListVec3<int> *item = neighbourIndices_.first(); item != nullptr; item = item->next())
+        for (auto nbrIndices : neighbourIndices)
         {
             // Retrieve Cell pointer
-            nbr = cell(gridRef.x + item->x, gridRef.y + item->y, gridRef.z + item->z);
+            nbr = cell(gridRef.x + nbrIndices.x, gridRef.y + nbrIndices.y, gridRef.z + nbrIndices.z);
             if (box_->type() == Box::NonPeriodicBoxType)
                 nearNeighbours.emplace_back(nbr);
             else if (minimumImageRequired(cells_[n].get(), nbr, pairPotentialRange))
@@ -288,9 +288,6 @@ Vec3<double> CellArray::realCellSize() const { return realCellSize_; }
 
 // Return cell extents out from given central cell
 Vec3<int> CellArray::extents() const { return extents_; }
-
-// Return list of Cell neighbour indices
-List<ListVec3<int>> CellArray::neighbourIndices() const { return neighbourIndices_; }
 
 // Retrieve Cell with (wrapped) grid reference specified
 Cell *CellArray::cell(int x, int y, int z) const
