@@ -12,8 +12,6 @@ Histogram1D::Histogram1D() : ListItem<Histogram1D>()
     clear();
 }
 
-Histogram1D::~Histogram1D() {}
-
 Histogram1D::Histogram1D(const Histogram1D &source) { (*this) = source; }
 
 // Clear Data

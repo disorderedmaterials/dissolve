@@ -13,8 +13,6 @@ Histogram2D::Histogram2D() : ListItem<Histogram2D>()
     clear();
 }
 
-Histogram2D::~Histogram2D() {}
-
 Histogram2D::Histogram2D(const Histogram2D &source) { (*this) = source; }
 
 // Clear Data

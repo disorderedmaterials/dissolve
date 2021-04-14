@@ -6,14 +6,12 @@
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
 
-// Forward Declarations
-
 // One-Dimensional Histogram
 class Histogram1D : public ListItem<Histogram1D>
 {
     public:
     Histogram1D();
-    ~Histogram1D();
+    ~Histogram1D() = default;
     Histogram1D(const Histogram1D &source);
     // Clear data
     void clear();

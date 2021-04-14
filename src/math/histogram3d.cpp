@@ -13,8 +13,6 @@ Histogram3D::Histogram3D() : ListItem<Histogram3D>()
     clear();
 }
 
-Histogram3D::~Histogram3D() {}
-
 Histogram3D::Histogram3D(const Histogram3D &source) { (*this) = source; }
 
 // Clear Data
