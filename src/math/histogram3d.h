@@ -7,7 +7,7 @@
 #include "math/sampleddouble.h"
 #include "templates/array3d.h"
 
-// One-Dimensional Histogram
+// Three-Dimensional Histogram
 class Histogram3D
 {
     public:

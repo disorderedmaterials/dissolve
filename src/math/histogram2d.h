@@ -7,7 +7,7 @@
 #include "math/sampleddouble.h"
 #include "templates/array2d.h"
 
-// One-Dimensional Histogram
+// Two-Dimensional Histogram
 class Histogram2D
 {
     public:
