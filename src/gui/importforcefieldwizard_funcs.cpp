@@ -73,7 +73,7 @@ void ImportForcefieldWizard::xmlFileDialog()
     if (ui_.nameEdit->text().isEmpty())
     {
         QFileInfo path(fileName);
-        ui_.nameEdit->setText(path.baseName());
+        ui_.nameEdit->setText("OpenMM/" + path.baseName());
     }
 }
 
