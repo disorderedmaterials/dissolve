@@ -150,7 +150,7 @@ int main(int args, char **argv)
 #endif
 
     // Run main simulation?
-    auto result = dissolve.iterate(options.nIterations().value());
+    auto result = dissolve.iterate(options.nIterations());
 
     // Print timing information
     dissolve.printTiming();
