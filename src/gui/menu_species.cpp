@@ -109,7 +109,7 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     if (!species)
         return;
 
-    AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
+    static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
 
     addForcefieldTermsDialog.reset();
     addForcefieldTermsDialog.setTargetSpecies(species);

@@ -20,6 +20,8 @@ class ForcefieldLibrary
     private:
     // Register Forcefields for use
     static void registerForcefields();
+    // Set up supplied forcefield for use, and add to internal list with no safety checks
+    static bool registerForcefield_(std::shared_ptr<Forcefield> ff);
 
     public:
     // Set up supplied forcefield for use, and add to internal list
