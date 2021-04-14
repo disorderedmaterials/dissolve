@@ -6,7 +6,7 @@
 #include "base/messenger.h"
 #include "math/histogram1d.h"
 
-Histogram2D::Histogram2D() : ListItem<Histogram2D>()
+Histogram2D::Histogram2D()
 {
     accumulatedData_.addErrors();
 

@@ -8,7 +8,7 @@
 #include "templates/array2d.h"
 
 // One-Dimensional Histogram
-class Histogram2D : public ListItem<Histogram2D>
+class Histogram2D
 {
     public:
     Histogram2D();

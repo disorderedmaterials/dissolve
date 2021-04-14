@@ -8,7 +8,7 @@
 #include "templates/array3d.h"
 
 // One-Dimensional Histogram
-class Histogram3D : public ListItem<Histogram3D>
+class Histogram3D
 {
     public:
     Histogram3D();

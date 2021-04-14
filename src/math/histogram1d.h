@@ -7,7 +7,7 @@
 #include "math/sampleddouble.h"
 
 // One-Dimensional Histogram
-class Histogram1D : public ListItem<Histogram1D>
+class Histogram1D
 {
     public:
     Histogram1D();
