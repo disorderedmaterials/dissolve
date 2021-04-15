@@ -269,7 +269,7 @@ TEST_F(XmlFFTest, XmlTree)
     auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
     ASSERT_TRUE(angle);
     EXPECT_EQ((*angle).get().parameters()[0], 292.88000);
-    EXPECT_EQ((*angle).get().parameters()[1], 1.911136);
+    EXPECT_EQ((*angle).get().parameters()[1], 1.911136 * 180 / PI);
 
     // Test the torsions
     auto torsion = xmlFF->getTorsionTerm((*hydrogen5).get(), (*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
