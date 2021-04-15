@@ -5,14 +5,12 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 
-Histogram1D::Histogram1D() : ListItem<Histogram1D>()
+Histogram1D::Histogram1D()
 {
     accumulatedData_.addErrors();
 
     clear();
 }
-
-Histogram1D::~Histogram1D() {}
 
 Histogram1D::Histogram1D(const Histogram1D &source) { (*this) = source; }
 
