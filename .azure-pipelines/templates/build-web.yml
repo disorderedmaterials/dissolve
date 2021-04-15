@@ -37,6 +37,10 @@ steps:
       sudo npm install -g link-checker
       link-checker --disable-external web/public
     displayName: 'Check Links'
+  - bash: |
+      set -ex
+      grep "Last modified" web/public/docs/index.html web/public/docs/inputfile/index.html
+    displayName: 'TEST'
   - task: DownloadSecureFile@1
     name: privateKey
     inputs:
