@@ -11,7 +11,7 @@ void XmlAngleModel::readFile(const pugi::xml_node &root)
     for (auto &a : root.select_nodes("/ForceField/HarmonicAngleForce/Angle"))
     {
         angles_.emplace_back(a.node().attribute("class1").as_string(), a.node().attribute("class2").as_string(),
-                             a.node().attribute("class3").as_string(), a.node().attribute("angle").as_double(),
+                             a.node().attribute("class3").as_string(), a.node().attribute("angle").as_double() * 180 / PI,
                              a.node().attribute("k").as_double());
     }
 
@@ -61,7 +61,7 @@ QVariant XmlAngleModel::data(const QModelIndex &index, int role) const
         case 2:
             return QVariant(QString(std::get<2>(angles_[index.row()]).c_str()));
         case 3:
-            return QVariant(std::get<3>(angles_[index.row()]) * 180 / PI);
+            return QVariant(std::get<3>(angles_[index.row()]));
         case 4:
             return QVariant(std::get<4>(angles_[index.row()]));
         default:

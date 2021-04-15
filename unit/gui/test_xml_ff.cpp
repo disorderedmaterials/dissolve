@@ -79,7 +79,7 @@ TEST_F(XmlFFTest, XmlAngle)
         EXPECT_EQ(angles.data(angles.index(row, 0)).toString().toStdString(), std::get<0>(b));
         EXPECT_EQ(angles.data(angles.index(row, 1)).toString().toStdString(), std::get<1>(b));
         EXPECT_EQ(angles.data(angles.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b));
+        EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b) * 180 / PI);
         EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
         ++row;
     }
@@ -219,7 +219,7 @@ TEST_F(XmlFFTest, XmlTree)
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, angleIndex)).toString().toStdString(), "O801");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 1, angleIndex)).toString().toStdString(), "C800");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 2, angleIndex)).toString().toStdString(), "H802");
-    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 3, angleIndex)).toDouble(), 1.911136);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 3, angleIndex)).toDouble(), 1.911136 * 180 / PI);
     EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 4, angleIndex)).toDouble(), 292.88);
 
     // Test the torsions
