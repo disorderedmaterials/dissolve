@@ -22,6 +22,7 @@ latexDashes = true
     [markup.goldmark.renderer]
       unsafe = true
 
+## Menu Definition
 [menu]
   [[menu.main]]
     name = "Home"
@@ -48,6 +49,7 @@ latexDashes = true
     url = "https://forum.projectdissolve.com"
     weight = 5
 
+# General Parameters
 [params]
 copyright = "Copyright (c) 2021 Team Dissolve and contributors. Built using Hugo/Docsy."
 releaseVersion = "0.7.5"
@@ -66,7 +68,7 @@ sidebar_menu_compact = true
 # Set to false if you don't want to display a logo (/assets/icons/logo.svg) in the top nav bar
 navbar_logo = true
 
-# Link Configuration
+# Link Definitions
 [params.links]
 # End user relevant links. These will show up on left side of footer and in the community page if you have one.
  [[params.links.developer]]
