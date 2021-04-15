@@ -10,14 +10,14 @@ class Forcefield_Strader2002 : public Forcefield
 {
     public:
     Forcefield_Strader2002() = default;
-    ~Forcefield_Strader2002() = default;
+    ~Forcefield_Strader2002() override = default;
 
     /*
      * Set Up
      */
     protected:
     // Set up / create all forcefield terms
-    bool setUp();
+    bool setUp() override;
 
     /*
      * Definition
