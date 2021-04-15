@@ -32,13 +32,13 @@ template <> GenericItemSearcher<const Data1D>::GenericItemSearcher()
  * Data2D
  */
 
-template <> GenericItemSearcher<const Data2D>::GenericItemSearcher() = default;
+template <> GenericItemSearcher<const Data2D>::GenericItemSearcher() {}
 
 /*
  * Data3D
  */
 
-template <> GenericItemSearcher<const Data3D>::GenericItemSearcher() = default;
+template <> GenericItemSearcher<const Data3D>::GenericItemSearcher() {}
 
 /*
  * SampledData1D
