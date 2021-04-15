@@ -4,6 +4,7 @@ endmacro(DISSOLVE_BENCHMARK)
 
 dissolve_benchmark(calculate_gr)
 dissolve_benchmark(box)
+dissolve_benchmark(histogram)
 
 # create a single benchmark executable
 add_executable(benchmarks benchmarks.cpp ${benchmark_files})

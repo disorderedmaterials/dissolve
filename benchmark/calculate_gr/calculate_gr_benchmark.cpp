@@ -1,8 +1,7 @@
-
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 #include "benchmark/benchmark.h"
-#include "internal/problems.h"
+#include "common/problems.h"
 
 template <ProblemSize problem, RDFModule::PartialsMethod method> static void BM_CalculateGR(benchmark::State &state)
 {
