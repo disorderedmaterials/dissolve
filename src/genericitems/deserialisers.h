@@ -57,9 +57,10 @@ class GenericItemDeserialiser
                 fmt::format("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
                             typeid(T).name())));
 
-        auto a = std::make_any<T &>(object);
+        auto a = std::make_any<T>(object);
         if (!(it->second)(a, parser, coreData))
             return false;
+        object = std::move(std::any_cast<T>(a));
 
         return true;
     }

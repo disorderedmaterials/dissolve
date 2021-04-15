@@ -29,8 +29,7 @@ steps:
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
       mkdir build
       cd build
-      conan remote add conan-center-2 https://api.bintray.com/conan/conan/conan-center
-      conan install --remote=conan-center-2 ../
+      conan install ..
       cmake -DGUI:bool=true -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} ../
       make
     displayName: 'Build'
