@@ -47,10 +47,11 @@ bool Forcefield::prepare()
 // Return enum options for ShortRangeType
 EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 {
-    return EnumOptions<Forcefield::ShortRangeType>("ShortRangeType", {{Forcefield::UndefinedType, "Undefined"},
-                                                                      {Forcefield::NoInteractionType, "None"},
-                                                                      {Forcefield::LennardJonesType, "LJ"},
-                                                                      {Forcefield::LennardJonesGeometricType, "LJGeometric"}});
+    return EnumOptions<Forcefield::ShortRangeType>("ShortRangeType",
+                                                   {{Forcefield::ShortRangeType::Undefined, "Undefined"},
+                                                    {Forcefield::ShortRangeType::NoInteraction, "None"},
+                                                    {Forcefield::ShortRangeType::LennardJones, "LJ", 2, 2},
+                                                    {Forcefield::ShortRangeType::LennardJonesGeometric, "LJGeometric", 2, 2}});
 }
 
 /*

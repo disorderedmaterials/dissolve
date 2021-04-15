@@ -279,7 +279,7 @@ std::string_view Forcefield_UFF::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_UFF::shortRangeType() const { return Forcefield::LennardJonesType; }
+Forcefield::ShortRangeType Forcefield_UFF::shortRangeType() const { return Forcefield::ShortRangeType::LennardJones; }
 
 /*
  * Atom Type Data

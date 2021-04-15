@@ -170,7 +170,7 @@ TEST_F(NETATest, Forcefield)
         }
         std::string_view name() const override { return "Test Forcefield for NETA."; }
         std::string_view description() const override { return "Test Forcefield for NETA."; }
-        ShortRangeType shortRangeType() const { return Forcefield::LennardJonesType; }
+        ShortRangeType shortRangeType() const { return Forcefield::ShortRangeType::LennardJones; }
     };
 
     Forcefield_TEST testFF;
