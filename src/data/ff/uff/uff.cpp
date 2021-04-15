@@ -58,14 +58,14 @@ void Forcefield_UFF::createAtomTypes()
                    6.899, 0.0, 2.0);
     addUFFAtomType(Elements::O, 16, "O_3", "", "Oxygen (tetrahedral)", 0.6580, 104.51, 3.5000, 0.0600, 14.085, 2.2998, 8.741,
                    0.018, 2.0);
-    addUFFAtomType(Elements::O, 17, "O_3_z", "", "Oxygen (in silicate)", 0.5280, 145.50, 3.5000, 0.0600, 14.085, 2.2998, 8.741,
-                   0.018, 2.0);
-    addUFFAtomType(Elements::O, 18, "O_R", "", "Oxygen (resonant)", 0.6800, 110.30, 3.5000, 0.0600, 14.085, 2.2998, 8.741, 0.0,
-                   2.0);
-    addUFFAtomType(Elements::O, 19, "O_2", "", "Oxygen (trigonal)", 0.6340, 120.00, 3.5000, 0.0600, 14.085, 2.2998, 8.741, 0.0,
-                   2.0);
-    addUFFAtomType(Elements::O, 20, "O_1", "", "Oxygen (linear)", 0.6390, 180.00, 3.5000, 0.0600, 14.085, 2.2998, 8.741, 0.0,
-                   2.0);
+    addUFFAtomType(Elements::O, 17, "O_3_z", "-Si", "Oxygen (in silicate)", 0.5280, 145.50, 3.5000, 0.0600, 14.085, 2.2998,
+                   8.741, 0.018, 2.0);
+    addUFFAtomType(Elements::O, 18, "O_R", "nbonds=2,ring()", "Oxygen (resonant)", 0.6800, 110.30, 3.5000, 0.0600, 14.085,
+                   2.2998, 8.741, 0.0, 2.0);
+    addUFFAtomType(Elements::O, 19, "O_2", "nbonds=1", "Oxygen (trigonal)", 0.6340, 120.00, 3.5000, 0.0600, 14.085, 2.2998,
+                   8.741, 0.0, 2.0);
+    addUFFAtomType(Elements::O, 20, "O_1", "nbonds=1,-C(nbonds=1)", "Oxygen (linear)", 0.6390, 180.00, 3.5000, 0.0600, 14.085,
+                   2.2998, 8.741, 0.0, 2.0);
     addUFFAtomType(Elements::F, 21, "F_", "", "Fluorine", 0.6680, 180.00, 3.3640, 0.0500, 14.762, 1.7350, 10.874, 0.0, 2.0);
     addUFFAtomType(Elements::Ne, 22, "Ne4+4", "", "Neon", 0.9200, 90.00, 3.2430, 0.0420, 15.440, 0.1944, 11.04, 0.0, 2.0);
     addUFFAtomType(Elements::Na, 23, "Na", "", "Sodium", 1.5390, 180.00, 2.9830, 0.0300, 12.000, 1.0809, 2.843, 0.0, 1.25);
