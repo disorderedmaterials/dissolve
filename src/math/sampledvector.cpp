@@ -21,6 +21,27 @@ void SampledVector::initialise(int nValues)
     reset();
 }
 
+// Initialise from pre-existing arrays
+void SampledVector::initialise(int count, const std::vector<double> &mean, const std::vector<double> &m2,
+                               const std::vector<double> &stDev)
+{
+    clear();
+
+    count_ = count;
+    mean_ = mean;
+    m2_ = m2;
+    stDev_ = stDev;
+}
+
+// Clear all arrays
+void SampledVector::clear()
+{
+    mean_.clear();
+    m2_.clear();
+    stDev_.clear();
+    count_ = 0;
+}
+
 // Reset values and statistics
 void SampledVector::reset()
 {
@@ -38,6 +59,9 @@ const std::vector<double> &SampledVector::values() const { return mean_; }
 
 // Return standard deviations of values
 const std::vector<double> &SampledVector::stDev() const { return stDev_; }
+
+// Return squared deviations
+const std::vector<double> &SampledVector::m2() const { return m2_; }
 
 /*
  * Operators
@@ -159,27 +183,27 @@ bool SampledVector::deserialise(LineParser &parser)
     initialise(parser.argi(0));
     count_ = parser.argi(1);
 
-    for (auto &&[mean, m2, stDev] : zip(mean_, m2_, stDev_))
+    for (auto &&[mean, stDev, m2] : zip(mean_, stDev_, m2_))
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
 
         mean = parser.argd(0);
-        m2 = parser.argd(1);
-        stDev = parser.argd(2);
+        stDev = parser.argd(1);
+        m2 = parser.argd(2);
     }
 
     return true;
 }
 
 // Write data through specified LineParser
-bool SampledVector::write(LineParser &parser)
+bool SampledVector::serialise(LineParser &parser) const
 {
-    if (!parser.writeLineF("{} {} # nData count", mean_.size(), count_))
+    if (!parser.writeLineF("{} {} # nData count\n", mean_.size(), count_))
         return false;
 
-    for (auto &&[mean, m2, stDev] : zip(mean_, m2_, stDev_))
-        if (!parser.writeLineF("{} {} {}\n", mean, m2, stDev))
+    for (auto &&[mean, stDev, m2] : zip(mean_, stDev_, m2_))
+        if (!parser.writeLineF("{} {} {}\n", mean, stDev, m2))
             return false;
 
     return true;

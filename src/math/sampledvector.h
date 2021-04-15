@@ -32,6 +32,11 @@ class SampledVector
     public:
     // Initialise arrays
     void initialise(int nValues);
+    // Initialise from pre-existing arrays
+    void initialise(int count, const std::vector<double> &mean, const std::vector<double> &stDev,
+                    const std::vector<double> &m2);
+    // Clear all arrays
+    void clear();
     // Reset values and statistics
     void reset();
     // Return number of samples contributing to averages etc.
@@ -40,6 +45,8 @@ class SampledVector
     const std::vector<double> &values() const;
     // Return standard deviations of values
     const std::vector<double> &stDev() const;
+    // Return squared deviations
+    const std::vector<double> &m2() const;
 
     /*
      * Operators
@@ -58,5 +65,5 @@ class SampledVector
     // Read data through specified LineParser
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool serialise(LineParser &parser) const;
 };
