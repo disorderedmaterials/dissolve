@@ -17,7 +17,7 @@
 
 static void BM_HistogramBinning_1d(benchmark::State &state)
 {
-    int bytes = 1 << state.range(0);
+    int bytes = state.range(0);
     int numVals = bytes / sizeof(long int);
     Histogram1D histo;
     histo.initialise(0, 1, 1.00 / numVals);
@@ -25,14 +25,16 @@ static void BM_HistogramBinning_1d(benchmark::State &state)
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
     for (auto _ : state)
         benchmark::DoNotOptimize(histo.bin(distribution(generator)));
-    state.SetBytesProcessed(long(state.iterations()) * sizeof(double));
+    // In each iteration we read 8 bytes of data
+    // Compare
+    state.SetItemsProcessed(state.iterations());
     state.SetLabel(std::to_string(bytes / 1024) + "kb");
 }
 
 static void BM_HistogramBinning_2d(benchmark::State &state)
 {
-    int bytes = 1 << state.range(0);
-    int numVals = (bytes / sizeof(long int)) / 2;
+    int bytes = state.range(0);
+    int numVals = sqrt((bytes / sizeof(long int)));
     Histogram2D histo;
     double binWidth = 1.00 / numVals;
     histo.initialise(0, 1, binWidth, 0, 1, binWidth);
@@ -40,13 +42,13 @@ static void BM_HistogramBinning_2d(benchmark::State &state)
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
     for (auto _ : state)
         benchmark::DoNotOptimize(histo.bin(distribution(generator), distribution(generator)));
-    state.SetBytesProcessed(long(state.iterations()) * sizeof(double) * 2);
+    state.SetItemsProcessed(state.iterations() * 2);
     state.SetLabel(std::to_string(bytes / 1024) + "kb");
 }
 static void BM_HistogramBinning_3d(benchmark::State &state)
 {
-    int bytes = 1 << state.range(0);
-    int numVals = (bytes / sizeof(long int)) / 3;
+    int bytes = state.range(0);
+    int numVals = cbrt((bytes / sizeof(long int)));
     Histogram3D histo;
     double binWidth = 1.00 / numVals;
     histo.initialise(0, 1, binWidth, 0, 1, binWidth, 0, 1, binWidth);
@@ -54,10 +56,10 @@ static void BM_HistogramBinning_3d(benchmark::State &state)
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
     for (auto _ : state)
         benchmark::DoNotOptimize(histo.bin(distribution(generator), distribution(generator), distribution(generator)));
-    state.SetBytesProcessed(long(state.iterations()) * sizeof(double) * 3);
+    state.SetItemsProcessed(state.iterations() * 3);
     state.SetLabel(std::to_string(bytes / 1024) + "kb");
 }
 
-BENCHMARK(BM_HistogramBinning_1d)->DenseRange(10, 24);
-BENCHMARK(BM_HistogramBinning_2d)->DenseRange(10, 16);
-BENCHMARK(BM_HistogramBinning_3d)->DenseRange(10, 12);
+BENCHMARK(BM_HistogramBinning_1d)->RangeMultiplier(2)->Range(1 << 10, 1 << 24);
+BENCHMARK(BM_HistogramBinning_2d)->RangeMultiplier(2)->Range(1 << 10, 1 << 24);
+BENCHMARK(BM_HistogramBinning_3d)->RangeMultiplier(2)->Range(1 << 10, 1 << 24);
