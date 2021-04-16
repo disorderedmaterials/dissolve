@@ -12,7 +12,6 @@ parameters:
 steps:
   - checkout: self
     submodules: true
-    fetchDepth: 1
   - bash: |
       git submodule update --init --recursive --depth 1
     displayName: 'Init Submodules'

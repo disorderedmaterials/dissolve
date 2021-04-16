@@ -84,14 +84,14 @@ int main(int args, char **argv)
             dissolve.setRestartFileFrequency(options.restartFileFrequency());
 
         // Iterate before launching the GUI?
-        if (options.nIterations())
+        if (options.nIterations() > 0)
         {
             // Prepare for run
             if (!dissolve.prepare())
                 return 1;
 
             // Run main simulation
-            auto result = dissolve.iterate(options.nIterations().value());
+            auto result = dissolve.iterate(options.nIterations());
             if (!result)
                 return 1;
         }

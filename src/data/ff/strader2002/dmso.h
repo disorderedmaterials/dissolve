@@ -3,17 +3,14 @@
 
 #pragma once
 
-#include "data/ff/pcl2019/base.h"
+#include "data/ff/ff.h"
 
-// Forward Declarations
-/* none */
-
-// Padua & Canongia Lopes Ionic Liquids (2019) Anions Forcefield
-class Forcefield_PCL2019_Anions : public PCL2019BaseForcefield
+// DMSO Forcefield
+class Forcefield_Strader2002 : public Forcefield
 {
     public:
-    Forcefield_PCL2019_Anions() = default;
-    ~Forcefield_PCL2019_Anions() override = default;
+    Forcefield_Strader2002() = default;
+    ~Forcefield_Strader2002() override = default;
 
     /*
      * Set Up
@@ -30,4 +27,6 @@ class Forcefield_PCL2019_Anions : public PCL2019BaseForcefield
     std::string_view name() const override;
     // Return description for Forcefield
     std::string_view description() const override;
+    // Return short-range interaction style for AtomTypes
+    Forcefield::ShortRangeType shortRangeType() const override;
 };

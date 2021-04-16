@@ -13,21 +13,21 @@ class Forcefield_PCL2019_Cations : public PCL2019BaseForcefield
 {
     public:
     Forcefield_PCL2019_Cations() = default;
-    ~Forcefield_PCL2019_Cations() = default;
+    ~Forcefield_PCL2019_Cations() override = default;
 
     /*
      * Set Up
      */
     protected:
     // Set up / create all forcefield terms
-    bool setUp();
+    bool setUp() override;
 
     /*
      * Definition
      */
     public:
     // Return name of Forcefield
-    std::string_view name() const;
+    std::string_view name() const override;
     // Return description for Forcefield
-    std::string_view description() const;
+    std::string_view description() const override;
 };
