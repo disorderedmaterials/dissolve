@@ -10,6 +10,11 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Import Forcefield Wizard</string>
   </property>
@@ -82,11 +87,21 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QPushButton" name="cancelButton">
-         <property name="text">
-          <string>Cancel</string>
-         </property>
-        </widget>
+	<widget class="QPushButton" name="cancelButton">
+	 <property name="text">
+	  <string>Cancel</string>
+	 </property>
+	 <property name="icon">
+	  <iconset resource="main.qrc">
+	     <normaloff>:/general/icons/general_false.svg</normaloff>:/general/icons/general_false.svg</iconset>
+	 </property>
+	 <property name="iconSize">
+	  <size>
+	   <width>16</width>
+	   <height>16</height>
+	  </size>
+	 </property>
+	</widget>
        </item>
        <item>
         <spacer name="horizontalSpacer">
@@ -102,20 +117,40 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="backButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Back</string>
-         </property>
+	<widget class="QPushButton" name="backButton">
+	 <property name="text">
+	  <string>Back</string>
+	 </property>
+	 <property name="icon">
+	  <iconset resource="main.qrc">
+	     <normaloff>:/general/icons/general_arrowleft.svg</normaloff>:/general/icons/general_arrowleft.svg</iconset>
+	 </property>
+	 <property name="iconSize">
+	  <size>
+	   <width>16</width>
+	   <height>16</height>
+	  </size>
+	 </property>
+	 <property name="enabled">
+	  <bool>false</bool>
+	 </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="continueButton">
          <property name="text">
           <string>Continue</string>
-         </property>
+	 </property>
+	 <property name="icon">
+	  <iconset resource="main.qrc">
+	     <normaloff>:/general/icons/general_arrowright.svg</normaloff>:/general/icons/general_arrowright.svg</iconset>
+	 </property>
+	 <property name="iconSize">
+	  <size>
+	   <width>16</width>
+	   <height>16</height>
+	  </size>
+	 </property>
         </widget>
        </item>
       </layout>
