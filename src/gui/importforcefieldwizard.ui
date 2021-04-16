@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ImportForcefieldWizardDialog</class>
+ <widget class="QDialog" name="ImportForcefieldWizardDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Import Forcefield Wizard</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QStackedWidget" name="stackedWidget">
+       <property name="minimumSize">
+        <size>
+         <width>319</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="page">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>OpenMM File</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="xmlFileButton">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+<item>
+          <layout class="QHBoxLayout" name="horizontalLayout_name">
+           <item>
+            <widget class="QLabel" name="label_name">
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="nameEdit"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_2">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+	  <widget class="QTreeView" name="xmlTree" />
+	 </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+	<widget class="QPushButton" name="cancelButton">
+	 <property name="text">
+	  <string>Cancel</string>
+	 </property>
+	 <property name="icon">
+	  <iconset resource="main.qrc">
+	     <normaloff>:/general/icons/general_false.svg</normaloff>:/general/icons/general_false.svg</iconset>
+	 </property>
+	 <property name="iconSize">
+	  <size>
+	   <width>16</width>
+	   <height>16</height>
+	  </size>
+	 </property>
+	</widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+	<widget class="QPushButton" name="backButton">
+	 <property name="text">
+	  <string>Back</string>
+	 </property>
+	 <property name="icon">
+	  <iconset resource="main.qrc">
+	     <normaloff>:/general/icons/general_arrowleft.svg</normaloff>:/general/icons/general_arrowleft.svg</iconset>
+	 </property>
+	 <property name="iconSize">
+	  <size>
+	   <width>16</width>
+	   <height>16</height>
+	  </size>
+	 </property>
+	 <property name="enabled">
+	  <bool>false</bool>
+	 </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="continueButton">
+         <property name="text">
+          <string>Continue</string>
+	 </property>
+	 <property name="icon">
+	  <iconset resource="main.qrc">
+	     <normaloff>:/general/icons/general_arrowright.svg</normaloff>:/general/icons/general_arrowright.svg</iconset>
+	 </property>
+	 <property name="iconSize">
+	  <size>
+	   <width>16</width>
+	   <height>16</height>
+	  </size>
+	 </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>xmlFileButton</tabstop>
+  <tabstop>continueButton</tabstop>
+  <tabstop>backButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="main.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>145</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>continueButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>nextStack()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>455</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>493</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>backButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>prevStack()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>352</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>xmlString(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>151</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nameEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>nameString(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>151</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xmlFileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>xmlFileDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>nextStack()</slot>
+  <slot>prevStack()</slot>
+  <slot>xmlString(QString)</slot>
+  <slot>nameString(QString)</slot>
+  <slot>xmlFileDialog()</slot>
+ </slots>
+</ui>

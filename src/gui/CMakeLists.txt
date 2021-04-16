@@ -25,6 +25,7 @@ set(components_MOC_HDRS
     addconfigurationwizard.h
     addforcefieldtermswizard.h
     importspecieswizard.h
+    importforcefieldwizard.h
     selectconfigurationwidget.h
     selectforcefieldwidget.h
     selectspecieswidget.h
@@ -85,6 +86,7 @@ set(components_UIS
     getspeciesnamedialog.ui
     gettabnamedialog.ui
     importspeciesdialog.ui
+    importforcefieldwizard.ui
     selectconfigurationdialog.ui
     selectelementdialog.ui
     selectforcefielddialog.ui
@@ -137,6 +139,7 @@ set(components_SRCS
     addconfigurationwizard_funcs.cpp
     addforcefieldtermswizard_funcs.cpp
     importspecieswizard_funcs.cpp
+    importforcefieldwizard_funcs.cpp
     selectconfigurationwidget_funcs.cpp
     selectforcefieldwidget_funcs.cpp
     selectspecieswidget_funcs.cpp
@@ -166,6 +169,7 @@ set(components_SRCS
 add_library(components ${components_UIS_H} ${components_SRCS} ${components_MOC_SRCS})
 target_include_directories(
   components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+                     ${CONAN_INCLUDE_DIRS_PUGIXML}
 )
 
 target_link_libraries(components widgets base)
@@ -273,6 +277,7 @@ target_link_libraries(
   delegates
   widgets
   components
+  models
   base
 )
 
@@ -282,3 +287,4 @@ add_subdirectory(charts)
 add_subdirectory(delegates)
 add_subdirectory(render)
 add_subdirectory(widgets)
+add_subdirectory(models)

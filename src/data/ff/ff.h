@@ -29,6 +29,9 @@ class Forcefield
 {
     public:
     Forcefield() = default;
+    Forcefield(std::vector<ForcefieldAtomType> &atoms, std::vector<ForcefieldBondTerm> &bonds,
+               std::vector<ForcefieldAngleTerm> &angles, std::vector<ForcefieldTorsionTerm> &torsions,
+               std::vector<ForcefieldImproperTerm> &impropers);
     virtual ~Forcefield() = default;
 
     /*

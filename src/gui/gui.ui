@@ -1122,6 +1122,7 @@
     <addaction name="SpeciesDeleteAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
+    <addaction name="ImportForcefieldAction"/>
    </widget>
    <widget class="QMenu" name="ConfigurationMenu">
     <property name="font">
@@ -1690,6 +1691,11 @@
   <action name="LayerCreateEvolveBasicAtomicAction">
    <property name="text">
     <string>Atomic (MC only)</string>
+   </property>
+  </action>
+  <action name="ImportForcefieldAction">
+   <property name="text">
+    <string>Import Forcefield...</string>
    </property>
   </action>
  </widget>

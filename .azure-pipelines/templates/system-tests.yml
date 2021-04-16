@@ -1,6 +1,10 @@
 parameters:
   - name: parallel
     default: false
+  - name: ppa
+    default: 'beineri/opt-qt-5.13.2-bionic'
+  - name: qtver
+    default: 513
 
 jobs:
   - job:
@@ -11,6 +15,10 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 1
+      - bash: |
+          set -ex
+          sudo add-apt-repository ppa:${{ parameters.ppa }} -y
+          sudo apt-get install qt${{ parameters.qtver }}base
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: 'current'

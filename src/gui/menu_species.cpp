@@ -5,6 +5,7 @@
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/editspeciesdialog.h"
 #include "gui/gui.h"
+#include "gui/importforcefieldwizard.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
 #include "gui/speciestab.h"
@@ -117,6 +118,21 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     {
         addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
 
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+    }
+}
+
+void DissolveWindow::on_ImportForcefieldAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    ImportForcefieldWizard importForcefieldWizardDialog(this, dissolve_);
+
+    importForcefieldWizardDialog.reset();
+
+    if (importForcefieldWizardDialog.exec() == QDialog::Accepted)
+    {
         // Fully update GUI
         setModified();
         fullUpdate();

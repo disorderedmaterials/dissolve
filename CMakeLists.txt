@@ -307,6 +307,7 @@ if(GUI)
            delegates
            charts
            components
+           models
            gui
            ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
@@ -319,6 +320,6 @@ if(GUI)
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
-    INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
+    INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11 CONAN_PKG::pugixml
   )
 endif(GUI)
