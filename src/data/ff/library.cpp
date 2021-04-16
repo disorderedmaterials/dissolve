@@ -17,6 +17,7 @@
 #include "data/ff/pcl2019/anions.h"
 #include "data/ff/pcl2019/cations.h"
 #include "data/ff/spcfw/spcfw.h"
+#include "data/ff/strader2002/dmso.h"
 #include "data/ff/uff/uff.h"
 #include "data/ff/xml/base.h"
 
@@ -69,6 +70,7 @@ void ForcefieldLibrary::registerForcefields()
     registerForcefield_(std::make_shared<Forcefield_PCL2019_Anions>());
     registerForcefield_(std::make_shared<Forcefield_PCL2019_Cations>());
     registerForcefield_(std::make_shared<Forcefield_SPCFw>());
+    registerForcefield_(std::make_shared<Forcefield_Strader2002>());
     registerForcefield_(std::make_shared<Forcefield_UFF>());
 }
 

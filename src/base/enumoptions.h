@@ -46,15 +46,15 @@ template <class E> class EnumOptions : public EnumOptionsBase
 
     public:
     // Return name of options (e.g. from source enumeration)
-    std::string_view name() const override { return name_; }
+    std::string name() const override { return name_; }
     // Return number of options available
     int nOptions() const override { return options_.size(); }
     // Return nth keyword in the list
-    std::string_view keywordByIndex(int index) const override { return options_[index].keyword(); }
+    std::string keywordByIndex(int index) const override { return options_[index].keyword(); }
     // Return description for the nth keyword in the list
-    std::string_view descriptionByIndex(int index) const override { return options_[index].description(); }
+    std::string descriptionByIndex(int index) const override { return options_[index].description(); }
     // Return current option keyword
-    std::string_view keyword() const { return currentOption_ == options_.cend() ? "UNDEFINED" : currentOption_->keyword(); }
+    std::string keyword() const { return currentOption_ == options_.cend() ? "UNDEFINED" : currentOption_->keyword(); }
     // Set current option keyword
     bool set(std::string_view keyword)
     {
@@ -116,7 +116,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         return currentOption_->enumeration();
     }
     // Return enumerated keyword
-    std::string_view keyword(E enumeration) const
+    std::string keyword(E enumeration) const
     {
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
@@ -127,7 +127,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         return it->keyword();
     }
     // Return enumerated keyword from uncast integer
-    std::string_view keywordFromInt(int uncastEnumeration) const
+    std::string keywordFromInt(int uncastEnumeration) const
     {
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [uncastEnumeration](auto &option) { return uncastEnumeration == option.enumeration(); });

@@ -14,7 +14,7 @@ class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeB
     public:
     OperateSitePopulationNormaliseProcedureNode();
     OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
-    ~OperateSitePopulationNormaliseProcedureNode();
+    ~OperateSitePopulationNormaliseProcedureNode() override = default;
 
     /*
      * Target Sites (SelectNodes)

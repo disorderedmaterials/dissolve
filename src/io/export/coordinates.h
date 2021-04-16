@@ -30,9 +30,9 @@ class CoordinateExportFileFormat : public FileAndFormat
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    std::string_view formatKeyword(int id) const;
+    std::string formatKeyword(int id) const;
     // Return description string for supplied index
-    std::string_view formatDescription(int id) const;
+    std::string formatDescription(int id) const;
     // Return current format as CoordinateExportFormat
     CoordinateExportFormat coordinateFormat() const;
 

@@ -30,10 +30,10 @@ EnumOptions<ForceExportFileFormat::ForceExportFormat> ForceExportFileFormat::for
 int ForceExportFileFormat::nFormats() const { return ForceExportFileFormat::nForceExportFormats; }
 
 // Return format keyword for supplied index
-std::string_view ForceExportFileFormat::formatKeyword(int id) const { return forceExportFormats().keywordByIndex(id); }
+std::string ForceExportFileFormat::formatKeyword(int id) const { return forceExportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view ForceExportFileFormat::formatDescription(int id) const { return forceExportFormats().descriptionByIndex(id); }
+std::string ForceExportFileFormat::formatDescription(int id) const { return forceExportFormats().descriptionByIndex(id); }
 
 // Return current format as ForceExportFormat
 ForceExportFileFormat::ForceExportFormat ForceExportFileFormat::forceFormat() const

@@ -4,14 +4,14 @@
 #pragma once
 
 #include "base/version.h"
-#include "math/plottable.h"
+#include "math/data3dbase.h"
 #include "templates/array3d.h"
 
 // Forward Declarations
 class Histogram3D;
 
 // One-Dimensional Data
-class Data3D : public PlottableData
+class Data3D : public Data3DBase
 {
     public:
     Data3D();
@@ -59,43 +59,43 @@ class Data3D : public PlottableData
     // Return x axis value specified
     double &xAxis(int index);
     const double &xAxis(int index) const;
-    // Return x axis Array
+    // Return x axis vector
     std::vector<double> &xAxis();
-    const std::vector<double> &xAxis() const;
+    const std::vector<double> &xAxis() const override;
     // Return y axis value specified
     double &yAxis(int index);
     const double &yAxis(int index) const;
-    // Return y axis Array
+    // Return y axis vector
     std::vector<double> &yAxis();
-    const std::vector<double> &yAxis() const;
+    const std::vector<double> &yAxis() const override;
     // Return z axis value specified
     double &zAxis(int index);
     const double &zAxis(int index) const;
     // Return z axis Array
     std::vector<double> &zAxis();
-    const std::vector<double> &zAxis() const;
+    const std::vector<double> &zAxis() const override;
     // Return value specified
     double &value(int xIndex, int yIndex, int zIndex);
     const double &value(int xIndex, int yIndex, int zIndex) const;
     // Return three-dimensional values Array
-    Array3D<double> &values3D();
-    const Array3D<double> &values3D() const;
+    Array3D<double> &values();
+    const Array3D<double> &values() const override;
     // Return number of values present in whole dataset
-    int nValues() const;
+    int nValues() const override;
     // Return minimum value over all data points
-    double minValue() const;
+    double minValue() const override;
     // Return maximum value over all data points
-    double maxValue() const;
+    double maxValue() const override;
     // Add / initialise errors array
     void addErrors();
     // Return whether the values have associated errors
-    bool valuesHaveErrors() const;
+    bool valuesHaveErrors() const override;
     // Return error value specified
     double &error(int xIndex, int yIndex, int zIndex);
     const double &error(int xIndex, int yIndex, int zIndex) const;
     // Return three-dimensional errors Array
-    Array3D<double> &errors3D();
-    const Array3D<double> &errors3D() const;
+    Array3D<double> &errors();
+    const Array3D<double> &errors() const override;
 
     /*
      * Operators

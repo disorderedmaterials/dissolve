@@ -6,14 +6,12 @@
 #include "base/messenger.h"
 #include "math/histogram1d.h"
 
-Histogram3D::Histogram3D() : ListItem<Histogram3D>()
+Histogram3D::Histogram3D()
 {
     accumulatedData_.addErrors();
 
     clear();
 }
-
-Histogram3D::~Histogram3D() {}
 
 Histogram3D::Histogram3D(const Histogram3D &source) { (*this) = source; }
 

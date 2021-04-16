@@ -1,2 +1,3 @@
 'Restart File' System Test
-Benzene system - test load of basic restart file
+benzene.txt - Test load of basic restart file containing a variety of data
+rdf.txt     - Test restarting of CalculateRDF module

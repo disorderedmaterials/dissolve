@@ -11,9 +11,9 @@
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
 
-Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : ProcedureNode(ProcedureNode::Fit1DNode)
+Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : ProcedureNode(ProcedureNode::NodeType::Fit1D)
 {
-    dataNode_.addAllowableNodeType(ProcedureNode::Process1DNode);
+    dataNode_.addAllowableNodeType(ProcedureNode::NodeType::Process1D);
 
     // Create variables, and add them to the vector
     xVariable_ = std::make_shared<ExpressionVariable>("x");
@@ -22,8 +22,6 @@ Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : Procedu
     dataNode_ = target;
     saveData_ = false;
 }
-
-Fit1DProcedureNode::~Fit1DProcedureNode() {}
 
 /*
  * Identity
@@ -112,13 +110,6 @@ void Fit1DProcedureNode::setSaveData(bool on) { saveData_ = on; }
 // Prepare any necessary data, ready for execution
 bool Fit1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
-// Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Fit1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                               std::string_view prefix, GenericList &targetList)
-{
-    return ProcedureNode::Success;
-}
-
 // Finalise any necessary data after execution
 bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
@@ -127,20 +118,17 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     Process1DProcedureNode *process1DNode;
     switch (dataNode_.type())
     {
-        case (ProcedureNode::Collect1DNode):
+        case (ProcedureNode::NodeType::Collect1D):
             collect1DNode = dynamic_cast<Collect1DProcedureNode *>(dataNode_.node());
             if (collect1DNode)
                 return Messenger::error("Failed to cast dataNode_ into a Collect1DProcedureNode.\n");
             referenceData_ = collect1DNode->accumulatedData();
             break;
-        case (ProcedureNode::Process1DNode):
+        case (ProcedureNode::NodeType::Process1D):
             process1DNode = dynamic_cast<Process1DProcedureNode *>(dataNode_.node());
             if (process1DNode)
                 return Messenger::error("Failed to cast dataNode_ into a Process1DProcedureNode.\n");
             referenceData_ = process1DNode->processedData();
-            break;
-        case (ProcedureNode::nNodeTypes):
-            return Messenger::error("No node type set in Fit1DProcedureNode::finalise().\n");
             break;
         default:
             return Messenger::error("No suitable data to extract from a node of type '{}'.\n",

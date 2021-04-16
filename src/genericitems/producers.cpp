@@ -4,6 +4,7 @@
 #include "genericitems/producers.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
+#include "classes/partialsetaccumulator.h"
 #include "classes/xrayweights.h"
 #include "genericitems/list.h"
 #include "math/data1d.h"
@@ -41,6 +42,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Histogram3D>("Histogram3D");
     registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
+    registerProducer<PartialSetAccumulator>("PartialSetAccumulator");
     registerProducer<SampledDouble>("SampledDouble");
     registerProducer<Vec3<int>>("Vec3<int>");
     registerProducer<Vec3<double>>("Vec3<double>");

@@ -32,7 +32,7 @@ void FileAndFormat::setFormatIndex(int id) { format_ = id; }
 int FileAndFormat::formatIndex() const { return format_; }
 
 // Return format string
-std::string_view FileAndFormat::format() const
+std::string FileAndFormat::format() const
 {
     if ((format_ < 0) || (format_ >= nFormats()))
         return "???";
@@ -41,7 +41,7 @@ std::string_view FileAndFormat::format() const
 }
 
 // Return nice format string
-std::string_view FileAndFormat::description() const
+std::string FileAndFormat::description() const
 {
     if ((format_ < 0) || (format_ >= nFormats()))
         return "???";

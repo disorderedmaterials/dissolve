@@ -9,19 +9,17 @@
 #include "math/integrator.h"
 
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
-    : OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNormalise)
 {
     keywords_.add("Control", new NodeValueKeyword(this, value), "Value", "Constant value to normalise to");
     keywords_.add("Control", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
 }
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(int value)
-    : OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNormalise)
 {
     keywords_.add("Control", new NodeValueKeyword(this, value), "Value", "Constant value to normalise to");
     keywords_.add("Control", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
 }
-
-OperateNormaliseProcedureNode::~OperateNormaliseProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)

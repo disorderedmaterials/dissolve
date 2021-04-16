@@ -4,9 +4,11 @@
 #pragma once
 
 #include "io/fileandformat.h"
+#include "templates/array3d.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
-class Data3D;
+class Data3DBase;
 
 // Data3D Export Formats
 class Data3DExportFileFormat : public FileAndFormat
@@ -33,9 +35,9 @@ class Data3DExportFileFormat : public FileAndFormat
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    std::string_view formatKeyword(int id) const;
+    std::string formatKeyword(int id) const;
     // Return description string for supplied index
-    std::string_view formatDescription(int id) const;
+    std::string formatDescription(int id) const;
     // Return current format as Data3DExportFormat
     Data3DExportFormat data3DFormat() const;
 
@@ -51,13 +53,19 @@ class Data3DExportFileFormat : public FileAndFormat
      */
     private:
     // Export Data3D as simple block data
-    bool exportBlock(LineParser &parser, const Data3D &data);
+    bool exportBlock(LineParser &parser, const std::vector<double> &xAxis, const std::vector<double> &yAxis,
+                     const std::vector<double> &zAxis, const Array3D<double> &values,
+                     OptionalReferenceWrapper<const Array3D<double>> errors = {});
     // Export Data3D as cartesian data
-    bool exportCartesian(LineParser &parser, const Data3D &data);
+    bool exportCartesian(LineParser &parser, const std::vector<double> &xAxis, const std::vector<double> &yAxis,
+                         const std::vector<double> &zAxis, const Array3D<double> &values,
+                         OptionalReferenceWrapper<const Array3D<double>> errors = {});
     // Export Data3D as pdens data
-    bool exportPDens(LineParser &parser, const Data3D &data);
+    bool exportPDens(LineParser &parser, const std::vector<double> &xAxis, const std::vector<double> &yAxis,
+                     const std::vector<double> &zAxis, const Array3D<double> &values,
+                     OptionalReferenceWrapper<const Array3D<double>> errors = {});
 
     public:
     // Export Data3D using current filename and format
-    bool exportData(const Data3D &data);
+    bool exportData(const Data3DBase &data);
 };

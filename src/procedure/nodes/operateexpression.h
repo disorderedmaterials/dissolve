@@ -14,7 +14,7 @@ class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 {
     public:
     OperateExpressionProcedureNode(std::string_view expressionText = "");
-    ~OperateExpressionProcedureNode();
+    ~OperateExpressionProcedureNode() override = default;
 
     /*
      * Expression and Variables

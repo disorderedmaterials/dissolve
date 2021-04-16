@@ -4,9 +4,10 @@
 #pragma once
 
 #include "io/fileandformat.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
-class Data2D;
+class Data2DBase;
 
 // Data2D Export Formats
 class Data2DExportFileFormat : public FileAndFormat
@@ -32,9 +33,9 @@ class Data2DExportFileFormat : public FileAndFormat
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    std::string_view formatKeyword(int id) const;
+    std::string formatKeyword(int id) const;
     // Return description string for supplied index
-    std::string_view formatDescription(int id) const;
+    std::string formatDescription(int id) const;
     // Return current format as Data2DExportFormat
     Data2DExportFormat data2DFormat() const;
 
@@ -50,11 +51,13 @@ class Data2DExportFileFormat : public FileAndFormat
      */
     private:
     // Export Data2D as simple block data
-    bool exportBlock(LineParser &parser, const Data2D &data);
+    bool exportBlock(LineParser &parser, const std::vector<double> &xAxis, const std::vector<double> &yAxis,
+                     const Array2D<double> &values, OptionalReferenceWrapper<const Array2D<double>> errors = {});
     // Export Data2D as cartesian data
-    bool exportCartesian(LineParser &parser, const Data2D &data);
+    bool exportCartesian(LineParser &parser, const std::vector<double> &xAxis, const std::vector<double> &yAxis,
+                         const Array2D<double> &values, OptionalReferenceWrapper<const Array2D<double>> errors = {});
 
     public:
     // Export Data2D using current filename and format
-    bool exportData(const Data2D &data);
+    bool exportData(const Data2DBase &data);
 };

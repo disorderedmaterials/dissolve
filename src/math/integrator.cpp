@@ -216,20 +216,19 @@ double Integrator::sumOfSquares(const Data1D &data, const Range range)
 }
 
 // Return sum of all values in supplied data
-double Integrator::sum(const Data2D &data) { return std::accumulate(data.values2D().begin(), data.values2D().end(), 0.0); }
+double Integrator::sum(const Data2D &data) { return std::accumulate(data.values().begin(), data.values().end(), 0.0); }
 
 // Return sum of all absolute values in supplied data
 double Integrator::absSum(const Data2D &data)
 {
-    return std::accumulate(data.values2D().begin(), data.values2D().end(), 0.0,
-                           [](auto a, auto b) { return fabs(a) + fabs(b); });
+    return std::accumulate(data.values().begin(), data.values().end(), 0.0, [](auto a, auto b) { return fabs(a) + fabs(b); });
 }
 
 // Return sum of all values in supplied data
 double Integrator::sum(const Data3D &data)
 {
     // Grab data array
-    const Array3D<double> &values = data.values3D();
+    const Array3D<double> &values = data.values();
 
     return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0);
 }
@@ -238,7 +237,7 @@ double Integrator::sum(const Data3D &data)
 double Integrator::absSum(const Data3D &data)
 {
     // Grab data array
-    const Array3D<double> &values = data.values3D();
+    const Array3D<double> &values = data.values();
 
     return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0,
                            [](auto acc, auto n) { return acc + fabs(n); });

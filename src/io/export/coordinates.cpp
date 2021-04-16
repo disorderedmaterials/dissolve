@@ -31,13 +31,10 @@ EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> CoordinateExport
 int CoordinateExportFileFormat::nFormats() const { return CoordinateExportFileFormat::nCoordinateExportFormats; }
 
 // Return format keyword for supplied index
-std::string_view CoordinateExportFileFormat::formatKeyword(int id) const
-{
-    return coordinateExportFormats().keywordByIndex(id);
-}
+std::string CoordinateExportFileFormat::formatKeyword(int id) const { return coordinateExportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view CoordinateExportFileFormat::formatDescription(int id) const
+std::string CoordinateExportFileFormat::formatDescription(int id) const
 {
     return coordinateExportFormats().descriptionByIndex(id);
 }

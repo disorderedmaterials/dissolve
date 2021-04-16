@@ -11,7 +11,6 @@ add_library(
   collect2d.cpp
   collect3d.cpp
   dynamicsite.cpp
-  exclude.cpp
   fit1d.cpp
   integrate1d.cpp
   node.cpp
@@ -43,7 +42,6 @@ add_library(
   collect2d.h
   collect3d.h
   dynamicsite.h
-  exclude.h
   fit1d.h
   integrate1d.h
   node.h

@@ -4,13 +4,16 @@
 #include "modules/import_trajectory/importtraj.h"
 
 // Return type of module
-std::string_view ImportTrajectoryModule::type() const { return "Import"; }
+std::string_view ImportTrajectoryModule::type() const { return "ImportTrajectory"; }
 
 // Return category for module
-std::string_view ImportTrajectoryModule::category() const { return "Input / Output"; }
+std::string_view ImportTrajectoryModule::category() const { return "Import"; }
 
 // Return brief description of module
-std::string_view ImportTrajectoryModule::brief() const { return "Import data to the target Configuration"; }
+std::string_view ImportTrajectoryModule::brief() const
+{
+    return "Import coordinates from a trajectory into a target Configuration";
+}
 
 // Return the number of Configuration targets this Module requires
 int ImportTrajectoryModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

@@ -14,9 +14,10 @@
 #include "procedure/nodes/select.h"
 
 Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::Process2DNode)
+    : ProcedureNode(ProcedureNode::NodeType::Process2D)
 {
-    keywords_.add("Control", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target),
+    keywords_.add("Control",
+                  new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::NodeType::Collect2D, false, target),
                   "SourceData", "Collect2D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
@@ -31,8 +32,6 @@ Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *tar
     // Initialise data pointer
     processedData_ = nullptr;
 }
-
-Process2DProcedureNode::~Process2DProcedureNode() {}
 
 /*
  * Identity
@@ -107,9 +106,9 @@ bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   std::string_view prefix, GenericList &targetList)
+// Finalise any necessary data after execution
+bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
     auto &data = targetList.realise<Data2D>(fmt::format("Process2D//{}", name()), prefix, GenericItem::InRestartFileFlag);
@@ -126,7 +125,7 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
         ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
         while (ProcedureNode *node = nodeIterator.iterate())
         {
-            if (!node->isType(ProcedureNode::OperateBaseNode))
+            if (!node->isType(ProcedureNode::NodeType::OperateBase))
                 continue;
 
             // Cast the node
@@ -134,9 +133,8 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
             operateNode->setTarget(processedData_);
         }
 
-        ProcedureNode::NodeExecutionResult result = normalisationBranch_->execute(procPool, cfg, prefix, targetList);
-        if (result != ProcedureNode::Success)
-            return result;
+        if (!normalisationBranch_->execute(procPool, cfg, prefix, targetList))
+            return false;
     }
 
     // Save data?
@@ -150,19 +148,12 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
             else
             {
                 procPool.decideFalse();
-                return ProcedureNode::Failure;
+                return false;
             }
         }
         else if (!procPool.decision())
-            return ProcedureNode::Failure;
+            return false;
     }
 
-    return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                      GenericList &targetList)
-{
     return true;
 }
