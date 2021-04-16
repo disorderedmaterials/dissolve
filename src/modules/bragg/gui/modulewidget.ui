@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
+    <width>457</width>
     <height>267</height>
    </rect>
   </property>
@@ -25,9 +25,6 @@
    <string>Bragg Controls</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>0</number>
-   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -41,32 +38,119 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="Tabs">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="TotalsButton">
+       <property name="toolTip">
+        <string>Show the total G(r) formed from summation over all target configurations</string>
+       </property>
+       <property name="text">
+        <string>Total</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PartialsButton">
+       <property name="toolTip">
+        <string>Show the partial g(r) formed from summation over all target configurations</string>
+       </property>
+       <property name="text">
+        <string>Partials</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ReflectionsButton">
+       <property name="toolTip">
+        <string>Show the partial g(r) formed from summation over all target configurations</string>
+       </property>
+       <property name="text">
+        <string>Reflections</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="HideSmallIntensitiesCheck">
+       <property name="toolTip">
+        <string>Hide any reflections in the list where all contributing intensities are below 1e-3</string>
+       </property>
+       <property name="text">
+        <string>Hide Small Intensities</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="Stack">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="ReflectionsTab">
-      <attribute name="title">
-       <string>Reflections</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+     <widget class="QWidget" name="PlotPage">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="ReflectionsPlotFrame">
+        <widget class="QFrame" name="PlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>6</horstretch>
@@ -82,7 +166,7 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -99,10 +183,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QComboBox" name="TargetCombo"/>
-          </item>
-          <item>
-           <widget class="DataWidget" name="ReflectionsPlotWidget" native="true">
+           <widget class="DataWidget" name="PlotWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -116,63 +197,34 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TotalsTab">
-      <attribute name="title">
-       <string>Totals</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+     <widget class="QWidget" name="ReflectionsPage">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="TotalsPlotFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QTableView" name="ReflectionsTable">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
          </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="DataWidget" name="TotalsPlotWidget" native="true"/>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
