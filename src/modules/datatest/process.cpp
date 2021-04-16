@@ -30,7 +30,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto optData = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
         if (!optData)
             return Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
-        const Data1D data = optData->get();
+        const Data1D &data = optData->get();
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
         // Generate the error estimate and compare against the threshold value
