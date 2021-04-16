@@ -7,7 +7,7 @@
 std::string_view ExportCoordinatesModule::type() const { return "ExportCoordinates"; }
 
 // Return category for module
-std::string_view ExportCoordinatesModule::category() const { return "Input / Output"; }
+std::string_view ExportCoordinatesModule::category() const { return "Export"; }
 
 // Return brief description of module
 std::string_view ExportCoordinatesModule::brief() const { return "Export coordinates for one or more Configurations"; }

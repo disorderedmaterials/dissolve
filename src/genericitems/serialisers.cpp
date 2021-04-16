@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
+#include "classes/partialsetaccumulator.h"
 #include "classes/xrayweights.h"
 #include "math/data1d.h"
 #include "math/data2d.h"
@@ -112,6 +113,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<Histogram3D>(simpleSerialise<Histogram3D>);
     registerSerialiser<NeutronWeights>(simpleSerialise<NeutronWeights>);
     registerSerialiser<PartialSet>(simpleSerialise<PartialSet>);
+    registerSerialiser<PartialSetAccumulator>(simpleSerialise<PartialSetAccumulator>);
     registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
     registerSerialiser<Vec3<int>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Vec3<int> &>(a);

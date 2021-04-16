@@ -7,12 +7,10 @@
 #include "expression/variable.h"
 #include "keywords/types.h"
 
-ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
+ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Parameters)
 {
     keywords_.add("Control", new ExpressionVariableVectorKeyword(this, parameters_), "Parameter", "Defined parameters");
 }
-
-ParametersProcedureNode::~ParametersProcedureNode() {}
 
 /*
  * Identity
@@ -62,8 +60,8 @@ OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>>
 bool ParametersProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                    std::string_view prefix, GenericList &targetList)
+bool ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
-    return ProcedureNode::Success;
+    return true;
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "math/sampleddata1d.h"
 #include "math/sampleddouble.h"
 #include "math/sampledvector.h"
 #include "templates/algorithms.h"
@@ -113,6 +114,37 @@ TEST_F(SampledValuesTest, SampledVectorAssertions)
     SampledVector v;
     v += {1, 2, 3, 4, 5};
     EXPECT_ANY_THROW({ v += std::vector<double>({1, 2, 3, 4}); });
+}
+
+TEST_F(SampledValuesTest, SampledData1D)
+{
+    SampledData1D a;
+    SampledDouble d;
+    std::vector<double> ys = {73.478, 4.901,  48.52,  83.77,  60.356, 84.403, 70.622, 13.638, 92.007, 39.253,
+                              31.703, 65.619, 17.404, 27.647, 40.677, 19.453, 73.203, 25.609, 17.674, 70.748};
+    auto x = 0.0;
+    const auto nPoints = ys.size();
+    a.initialise(nPoints);
+    for (auto n = 0; n < nPoints; ++n)
+    {
+        // Add values to sampled data1d
+        a += ys;
+
+        // Shuffle values
+        auto y = ys[0];
+        ys.erase(ys.begin());
+        ys.push_back(y);
+
+        // Accumulate the expected result while we're here
+        d += y;
+    }
+
+    // Check results
+    for (auto &&[y, stDev] : zip(a.values(), a.errors()))
+    {
+        EXPECT_DOUBLE_EQ(y, d.value());
+        EXPECT_DOUBLE_EQ(stDev, d.stDev());
+    }
 }
 
 } // namespace UnitTest

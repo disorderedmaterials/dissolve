@@ -7,14 +7,12 @@
 #include "math/sampleddouble.h"
 #include "templates/array2d.h"
 
-// Forward Declarations
-
-// One-Dimensional Histogram
-class Histogram2D : public ListItem<Histogram2D>
+// Two-Dimensional Histogram
+class Histogram2D
 {
     public:
     Histogram2D();
-    ~Histogram2D();
+    ~Histogram2D() = default;
     Histogram2D(const Histogram2D &source);
     // Clear data
     void clear();

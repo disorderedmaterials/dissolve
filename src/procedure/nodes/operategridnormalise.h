@@ -13,7 +13,7 @@ class OperateGridNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
     OperateGridNormaliseProcedureNode();
-    ~OperateGridNormaliseProcedureNode();
+    ~OperateGridNormaliseProcedureNode() override = default;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

@@ -37,7 +37,7 @@ class Procedure
     // Return the block termination keyword for the Procedure
     std::string_view blockTerminationKeyword() const;
     // Return named node if present, and which matches the (optional) type given
-    ProcedureNode *node(std::string_view name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+    ProcedureNode *node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
 
     /*
      * Execute

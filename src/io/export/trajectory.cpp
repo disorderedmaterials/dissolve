@@ -28,13 +28,10 @@ EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExport
 int TrajectoryExportFileFormat::nFormats() const { return TrajectoryExportFileFormat::nTrajectoryExportFormats; }
 
 // Return format keyword for supplied index
-std::string_view TrajectoryExportFileFormat::formatKeyword(int id) const
-{
-    return trajectoryExportFormats().keywordByIndex(id);
-}
+std::string TrajectoryExportFileFormat::formatKeyword(int id) const { return trajectoryExportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view TrajectoryExportFileFormat::formatDescription(int id) const
+std::string TrajectoryExportFileFormat::formatDescription(int id) const
 {
     return trajectoryExportFormats().descriptionByIndex(id);
 }

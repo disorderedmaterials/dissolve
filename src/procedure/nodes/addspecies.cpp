@@ -12,7 +12,7 @@
 
 AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue population, NodeValue density,
                                                  Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::AddSpeciesNode)
+    : ProcedureNode(ProcedureNode::NodeType::AddSpecies)
 {
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
@@ -30,8 +30,6 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue populati
                       positioningTypes() = AddSpeciesProcedureNode::RandomPositioning),
                   "Positioning", "Positioning type for individual molecules");
 }
-
-AddSpeciesProcedureNode::~AddSpeciesProcedureNode() {}
 
 /*
  * Identity
@@ -76,24 +74,18 @@ EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::p
 bool AddSpeciesProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                    std::string_view prefix, GenericList &targetList)
+bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
     const auto requestedPopulation = keywords_.asInt("Population");
     auto *sp = keywords_.retrieve<Species *>("Species");
     if (!sp)
-    {
-        Messenger::error("No Species set in AddSpecies node.\n");
-        return ProcedureNode::Failure;
-    }
+        return Messenger::error("No Species set in AddSpecies node.\n");
     const auto nAtomsToAdd = requestedPopulation * sp->nAtoms();
 
     // Can't add the Species if it has any missing core information
     if (!sp->checkSetUp())
-    {
-        Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", sp->name());
-        return ProcedureNode::Failure;
-    }
+        return Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", sp->name());
 
     Messenger::print("[AddSpecies] Adding species '{}' - population is {}.\n", sp->name(), requestedPopulation);
 
@@ -234,5 +226,5 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     Messenger::print("[AddSpecies] New box density is {:e} cubic Angstroms ({} g/cm3).\n", cfg->atomicDensity(),
                      cfg->chemicalDensity());
 
-    return ProcedureNode::Success;
+    return true;
 }

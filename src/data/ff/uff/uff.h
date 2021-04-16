@@ -21,25 +21,25 @@ class Forcefield_UFF : public Forcefield
 {
     public:
     Forcefield_UFF() = default;
-    ~Forcefield_UFF() = default;
+    ~Forcefield_UFF() override = default;
 
     /*
      * Set Up
      */
     protected:
     // Set up / create all forcefield terms
-    bool setUp();
+    bool setUp() override;
 
     /*
      * Definition
      */
     public:
     // Return name of Forcefield
-    std::string_view name() const;
+    std::string_view name() const override;
     // Return description for Forcefield
-    std::string_view description() const;
+    std::string_view description() const override;
     // Return short-range interaction style for AtomTypes
-    Forcefield::ShortRangeType shortRangeType() const;
+    Forcefield::ShortRangeType shortRangeType() const override;
 
     /*
      * Atom Type Data

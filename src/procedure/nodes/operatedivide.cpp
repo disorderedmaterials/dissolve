@@ -7,12 +7,10 @@
 #include "keywords/types.h"
 #include "math/data1d.h"
 
-OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateDivideNode)
+OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateDivide)
 {
     keywords_.add("Control", new NodeValueKeyword(this, 1.0), "Value", "Constant value to use as the divisor");
 }
-
-OperateDivideProcedureNode::~OperateDivideProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)

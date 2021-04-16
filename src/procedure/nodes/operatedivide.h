@@ -13,7 +13,7 @@ class OperateDivideProcedureNode : public OperateProcedureNodeBase
 {
     public:
     OperateDivideProcedureNode();
-    ~OperateDivideProcedureNode();
+    ~OperateDivideProcedureNode() override = default;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

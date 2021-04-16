@@ -29,8 +29,6 @@ class CellArray
     Vec3<double> realCellSize_;
     // Cell extents out from given central cell
     Vec3<int> extents_;
-    // List of Cell neighbour indices (within pair potential range)
-    List<ListVec3<int>> neighbourIndices_;
     // Cell axes
     Matrix3 axes_;
     // Cell array (one-dimensional)
@@ -53,8 +51,6 @@ class CellArray
     Vec3<double> realCellSize() const;
     // Return cell extents out from given central cell
     Vec3<int> extents() const;
-    // Return list of Cell neighbour indices
-    List<ListVec3<int>> neighbourIndices() const;
     // Retrieve Cell with (wrapped) grid reference specified
     Cell *cell(int x, int y, int z) const;
     // Retrieve Cell with id specified

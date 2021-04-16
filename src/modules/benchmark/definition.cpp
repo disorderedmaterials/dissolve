@@ -7,7 +7,7 @@
 std::string_view BenchmarkModule::type() const { return "Benchmark"; }
 
 // Return category for module
-std::string_view BenchmarkModule::category() const { return "NO CATEGORY ASSIGNED"; }
+std::string_view BenchmarkModule::category() const { return "Checks / Tests"; }
 
 // Return brief description of module
 std::string_view BenchmarkModule::brief() const { return "Perform benchmarking on a variety of functions"; }

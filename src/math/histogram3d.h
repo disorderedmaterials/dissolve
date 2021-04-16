@@ -7,14 +7,12 @@
 #include "math/sampleddouble.h"
 #include "templates/array3d.h"
 
-// Forward Declarations
-
-// One-Dimensional Histogram
-class Histogram3D : public ListItem<Histogram3D>
+// Three-Dimensional Histogram
+class Histogram3D
 {
     public:
     Histogram3D();
-    ~Histogram3D();
+    ~Histogram3D() = default;
     Histogram3D(const Histogram3D &source);
     // Clear data
     void clear();

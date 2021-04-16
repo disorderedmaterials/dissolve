@@ -15,7 +15,8 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) : ProcedureNode(ProcedureNode::DynamicSiteNode)
+DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent)
+    : ProcedureNode(ProcedureNode::NodeType::DynamicSite)
 {
     parent_ = parent;
 
@@ -24,8 +25,6 @@ DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) 
     keywords_.add("Definition", new ElementVectorKeyword(elements_), "Element",
                   "Define one or more Elements to include in this site");
 }
-
-DynamicSiteProcedureNode::~DynamicSiteProcedureNode() {}
 
 /*
  * Identity
@@ -75,8 +74,8 @@ const Array<Site> &DynamicSiteProcedureNode::generatedSites() const { return gen
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                     std::string_view prefix, GenericList &targetList)
+bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                       GenericList &targetList)
 {
     // Clear our current list of sites
     generatedSites_.clear();
@@ -109,5 +108,5 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
         }
     }
 
-    return ProcedureNode::Success;
+    return true;
 }

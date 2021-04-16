@@ -5,7 +5,6 @@
 
 #include "math/constants.h"
 #include "math/mathfunc.h"
-#include "templates/listitem.h"
 #include <fmt/core.h>
 #include <math.h>
 
@@ -409,26 +408,5 @@ template <class T> class Vec3
         T temp = get(a);
         set(a, get(b));
         set(b, temp);
-    }
-};
-
-/*
- * 3D vector with List Pointers
- */
-template <class T> class ListVec3 : public Vec3<T>, public ListItem<ListVec3<T>>
-{
-    public:
-    ListVec3<T>(T xx = 0, T yy = 0, T zz = 0) : Vec3<T>(xx, yy, zz), ListItem<ListVec3>() {}
-    ListVec3<T>(const Vec3<T> &source)
-    {
-        Vec3<T>::x = source.x;
-        Vec3<T>::y = source.y;
-        Vec3<T>::z = source.z;
-    }
-    void operator=(const Vec3<T> &source)
-    {
-        Vec3<T>::x = source.x;
-        Vec3<T>::y = source.y;
-        Vec3<T>::z = source.z;
     }
 };

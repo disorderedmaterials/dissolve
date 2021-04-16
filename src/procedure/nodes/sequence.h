@@ -16,14 +16,14 @@ class SequenceProcedureNode : public ProcedureNode
     public:
     SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, ProcedureNode *parentNode = nullptr,
                           std::string_view blockTerminationKeyword = "");
-    ~SequenceProcedureNode();
+    ~SequenceProcedureNode() override;
 
     /*
      * Identity
      */
     public:
     // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context);
+    bool isContextRelevant(ProcedureNode::NodeContext context) override;
 
     /*
      * Node Keywords
@@ -68,7 +68,7 @@ class SequenceProcedureNode : public ProcedureNode
     private:
     // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
     ProcedureNode *searchNodes(std::string_view name, ProcedureNode *excludeNode = nullptr,
-                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+                               std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
     // Search through the Procedure for the named parameter
     std::shared_ptr<ExpressionVariable> searchParameters(std::string_view name,
                                                          std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
@@ -79,17 +79,19 @@ class SequenceProcedureNode : public ProcedureNode
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present, and which matches the (optional) type given
-    ProcedureNode *node(std::string_view name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+    ProcedureNode *node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
     // Return list of nodes of specified type present in the Procedure
-    RefList<ProcedureNode> nodes(ProcedureNode *queryingNode, ProcedureNode::NodeType nt);
+    RefList<ProcedureNode> nodes(ProcedureNode *queryingNode,
+                                 std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
     // Return named node if it is currently in scope, and optionally matches the type given
     ProcedureNode *nodeInScope(ProcedureNode *queryingNode, std::string_view name,
-                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
-    // Return list of nodes of specified type present in scope
-    RefList<ProcedureNode> nodesInScope(ProcedureNode *queryingNode, ProcedureNode::NodeType nt);
+                               std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
+    // Return list of nodes of optional specified type present in scope
+    RefList<ProcedureNode> nodesInScope(ProcedureNode *queryingNode,
+                                        std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
     ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
-                              ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+                              std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(ProcedureNode *queryingNode, std::string_view name,
                                                          std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
@@ -104,12 +106,11 @@ class SequenceProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                               GenericList &targetList);
+    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 
     /*
      * Read / Write

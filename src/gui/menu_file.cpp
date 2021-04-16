@@ -197,5 +197,5 @@ void DissolveWindow::on_FileQuitAction_triggered(bool checked)
     if (!checkSaveCurrentInput())
         return;
 
-    QCoreApplication::quit();
+    close();
 }

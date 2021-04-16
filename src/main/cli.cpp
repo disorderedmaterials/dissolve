@@ -9,8 +9,7 @@
 #include <CLI/Formatter.hpp>
 
 CLIOptions::CLIOptions()
-    : nIterations_(std::nullopt), restartFileFrequency_(10), ignoreRestartFile_(false), ignoreStateFile_(false),
-      writeNoFiles_(false)
+    : nIterations_(0), restartFileFrequency_(10), ignoreRestartFile_(false), ignoreStateFile_(false), writeNoFiles_(false)
 {
 }
 
@@ -28,7 +27,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load");
 
     // Basic Control
-    app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 5)")->group("Basic Control");
+    app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 0)")->group("Basic Control");
     app.add_flag_callback("-q,--quiet", []() { Messenger::setQuiet(true); },
                           "Be quiet - don't output any messages whatsoever (output files are still written)")
         ->group("Basic Control");
@@ -85,7 +84,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 std::optional<std::string> CLIOptions::inputFile() const { return inputFile_; }
 
 // Return number of iterations to perform
-std::optional<int> CLIOptions::nIterations() const { return nIterations_; }
+int CLIOptions::nIterations() const { return nIterations_; }
 
 // Return frequency at which to write restart file
 int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }

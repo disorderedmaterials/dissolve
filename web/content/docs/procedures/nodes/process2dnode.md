@@ -22,6 +22,8 @@ Once a [`Collect2D`]({{< ref "collect2dnode" >}}) node has accumulated a histogr
 
 Scaling, normalisation, and other operations on the data can be performed through the the node's local branch (see below).
 
+The `Process2D` node is intended to appear at the very end of a procedure, preparing the collected data for consumption.
+
 ## Branching
 
 The `Process*` nodes all have a branch with the "Operate" context (accessed through the hidden `Normalisation` keyword) which is always executed, and can be used to perform mathematical operations via a sequence of `Operate*` nodes.

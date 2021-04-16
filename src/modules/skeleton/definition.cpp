@@ -7,7 +7,7 @@
 std::string_view SkeletonModule::type() const { return "Skeleton"; }
 
 // Return category for module
-std::string_view SkeletonModule::category() const { return "NO CATEGORY ASSIGNED"; }
+std::string_view SkeletonModule::category() const { return "HIDDEN"; }
 
 // Return brief description of module
 std::string_view SkeletonModule::brief() const

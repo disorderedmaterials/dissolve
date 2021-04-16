@@ -11,18 +11,16 @@
 
 CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1,
                                                          SelectProcedureNode *site2)
-    : CalculateProcedureNodeBase(ProcedureNode::CalculateAngleNode, site0, site1, site2)
+    : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAngle, site0, site1, site2)
 {
     // Create keywords - store the pointers to the superclasses for later use
-    siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
+    siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true, site0);
     keywords_.add("Control", siteKeywords_[0], "I", "Site that represents 'i' in the angle i-j-k");
-    siteKeywords_[1] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site1);
+    siteKeywords_[1] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true, site1);
     keywords_.add("Control", siteKeywords_[1], "J", "Site that represents 'j' in the angle i-j-k");
-    siteKeywords_[2] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site2);
+    siteKeywords_[2] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::NodeType::Select, true, site2);
     keywords_.add("Control", siteKeywords_[2], "K", "Site that represents 'k' in the angle i-j-k");
 }
-
-CalculateAngleProcedureNode::~CalculateAngleProcedureNode() {}
 
 /*
  * Observable Target
@@ -39,8 +37,8 @@ int CalculateAngleProcedureNode::dimensionality() const { return 1; }
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                        std::string_view prefix, GenericList &targetList)
+bool CalculateAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                          GenericList &targetList)
 {
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
@@ -50,5 +48,5 @@ ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessP
     value_.x = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(),
                                           sites_[2]->currentSite()->origin());
 
-    return ProcedureNode::Success;
+    return true;
 }

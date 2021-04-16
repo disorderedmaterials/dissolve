@@ -54,13 +54,10 @@ EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::
 int Data1DImportFileFormat::nFormats() const { return Data1DImportFileFormat::nData1DImportFormats; }
 
 // Return format keyword for supplied index
-std::string_view Data1DImportFileFormat::formatKeyword(int id) const { return data1DImportFormats().keywordByIndex(id); }
+std::string Data1DImportFileFormat::formatKeyword(int id) const { return data1DImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-std::string_view Data1DImportFileFormat::formatDescription(int id) const
-{
-    return data1DImportFormats().descriptionByIndex(id);
-}
+std::string Data1DImportFileFormat::formatDescription(int id) const { return data1DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data1DImportFormat
 Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const

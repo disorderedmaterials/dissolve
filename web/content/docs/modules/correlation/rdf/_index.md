@@ -37,7 +37,7 @@ where $g_{ij}(r, \Delta r)$ is calculated for a spherical shell with inner radiu
 |:------|:--:|:-----:|-----------|
 |`InternalTest`|`true|false`|`false`|Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop|
 |`Test`|`true|false`|`false`|Test calculated total and partials against reference data (specified with `TestReference`)|
-|`TestData`|`target`<br/>[`Data1DFileAndFormat`]({{< ref "data1d" >}})|--|Test target and reference data. The `target` is the internal name of a specific radial distribution function, which will be tested for agreement against the reference data. The `TestData` keyword may be given multiple times in order to test different partials, for instance.|
+|`TestData`|`target`<br/>[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Test target and reference data. The `target` is the internal name of a specific radial distribution function, which will be tested for agreement against the reference data. The `TestData` keyword may be given multiple times in order to test different partials, for instance.|
 |`TestThreshold`|`delta`|`1.0e-5`|Test threshold (%error) above which tests against reference data will fail|
 
 ### Export Keywords

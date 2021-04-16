@@ -14,9 +14,10 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::Sum1DNode)
+Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::NodeType::Sum1D)
 {
-    keywords_.add("Control", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
+    keywords_.add("Control",
+                  new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::NodeType::Process1D, false, target),
                   "SourceData", "Process1D node containing the data to sum");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first summation region");
@@ -27,8 +28,6 @@ Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : P
     keywords_.add("Control", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
                   "X range for third summation region");
 }
-
-Sum1DProcedureNode::~Sum1DProcedureNode() {}
 
 /*
  * Identity
@@ -75,9 +74,8 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                               std::string_view prefix, GenericList &targetList)
+// Finalise any necessary data after execution
+bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Calculate integrals
     sum_[0] += Integrator::sum(processNode_->processedData(), rangeA_);
@@ -96,11 +94,5 @@ ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &proc
         Messenger::print("Sum1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[2].value(), sum_[2].stDev(),
                          rangeC_.minimum(), rangeC_.maximum());
 
-    return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
-{
     return true;
 }

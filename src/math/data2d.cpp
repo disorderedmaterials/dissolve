@@ -9,9 +9,9 @@
 #include "math/histogram2d.h"
 #include <algorithm>
 
-Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), hasError_(false) {}
+Data2D::Data2D() : hasError_(false) {}
 
-Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable) { (*this) = source; }
+Data2D::Data2D(const Data2D &source) { (*this) = source; }
 
 // Clear Data
 void Data2D::clear()
@@ -142,7 +142,7 @@ double &Data2D::xAxis(int index)
 
 const double &Data2D::xAxis(int index) const { return x_[index]; }
 
-// Return x axis Array
+// Return x axis vector
 std::vector<double> &Data2D::xAxis()
 {
     ++version_;
@@ -183,14 +183,14 @@ double &Data2D::value(int xIndex, int yIndex)
 const double &Data2D::value(int xIndex, int yIndex) const { return values_[{xIndex, yIndex}]; }
 
 // Return two-dimensional values Array
-Array2D<double> &Data2D::values2D()
+Array2D<double> &Data2D::values()
 {
     ++version_;
 
     return values_;
 }
 
-const Array2D<double> &Data2D::values2D() const { return values_; }
+const Array2D<double> &Data2D::values() const { return values_; }
 
 // Return value specified from linear array
 double Data2D::value(int index) { return values_[index]; }
@@ -249,8 +249,8 @@ const double &Data2D::error(int xIndex, int yIndex) const
     return errors_[{xIndex, yIndex}];
 }
 
-// Return two-dimensional errors Array
-Array2D<double> &Data2D::errors2D()
+// Return two-dimensional errors array
+Array2D<double> &Data2D::errors()
 {
     assert(hasError_);
 
@@ -259,7 +259,7 @@ Array2D<double> &Data2D::errors2D()
     return errors_;
 }
 
-const Array2D<double> &Data2D::errors2D() const
+const Array2D<double> &Data2D::errors() const
 {
     assert(hasError_);
 

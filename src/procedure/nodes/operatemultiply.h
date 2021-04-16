@@ -13,7 +13,7 @@ class OperateMultiplyProcedureNode : public OperateProcedureNodeBase
 {
     public:
     OperateMultiplyProcedureNode();
-    ~OperateMultiplyProcedureNode();
+    ~OperateMultiplyProcedureNode() override = default;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

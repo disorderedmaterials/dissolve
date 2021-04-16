@@ -23,14 +23,14 @@ class DynamicSiteProcedureNode : public ProcedureNode
 {
     public:
     DynamicSiteProcedureNode(SelectProcedureNode *parent);
-    ~DynamicSiteProcedureNode();
+    ~DynamicSiteProcedureNode() override = default;
 
     /*
      * Identity
      */
     public:
     // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context);
+    bool isContextRelevant(ProcedureNode::NodeContext context) override;
     // Return whether a name for the node must be provided
     bool mustBeNamed() const;
 
@@ -69,6 +69,5 @@ class DynamicSiteProcedureNode : public ProcedureNode
      */
     public:
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                               GenericList &targetList);
+    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
 };
