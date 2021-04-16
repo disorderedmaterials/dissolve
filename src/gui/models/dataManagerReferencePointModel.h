@@ -4,8 +4,10 @@
 #pragma once
 
 #include "gui/referencepoint.h"
+#include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <optional>
 #include <vector>
 
 class DataManagerReferencePointModel : public QAbstractTableModel
@@ -14,9 +16,12 @@ class DataManagerReferencePointModel : public QAbstractTableModel
 
     private:
     std::vector<ReferencePoint> &referencePoints_;
+    Dissolve &dissolve_;
 
     public:
-    DataManagerReferencePointModel(std::vector<ReferencePoint> &referencePoints);
+    DataManagerReferencePointModel(Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints);
+
+    std::optional<std::string> addFile(std::string &&suffix, std::string &&path);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

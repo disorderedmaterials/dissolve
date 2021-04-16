@@ -11,7 +11,7 @@
 #include <QRegExp>
 
 DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints)
-    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(referencePoints_)
+    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(dissolve, referencePoints_)
 {
     ui_.setupUi(this);
     ui_.ReferencePointsTable->setModel(&refModel_);
@@ -129,14 +129,9 @@ void DataManagerDialog::on_ReferencePointOpenButton_clicked(bool checked)
     if (!ok)
         return;
 
-    referencePoints_.emplace_back(qPrintable(suffix), qPrintable(QDir::current().relativeFilePath(restartFile)));
-    auto &refPoint = referencePoints_.back();
-
-    // Load the data
-    if (!dissolve_.loadRestartAsReference(refPoint.restartFile(), refPoint.suffix()))
-        QMessageBox::warning(this, "Error loading reference point",
-                             "Couldn't load the reference point data specified.\nThis may be because your simulation "
-                             "setup doesn't match that expected by the restart data.\n");
+    auto err = refModel_.addFile(qPrintable(suffix), qPrintable(restartFile));
+    if (err)
+        QMessageBox::warning(this, "Error loading reference point", QString((*err).c_str()));
 
     updateControls();
 }
@@ -165,12 +160,9 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
         return;
     }
 
-    referencePoints_.emplace_back(qPrintable(suffix), qPrintable(QDir::current().relativeFilePath(filename)));
-
-    if (!dissolve_.loadRestartAsReference(qPrintable(filename), qPrintable(suffix)))
-        QMessageBox::warning(this, "Error loading reference point",
-                             "Couldn't load the reference point data.\nWhich is odd, annoying, and something you "
-                             "should let the developer know about.");
+    auto err = refModel_.addFile(qPrintable(suffix), qPrintable(filename));
+    if (err)
+        QMessageBox::warning(this, "Error loading reference point", QString((*err).c_str()));
 
     updateControls();
 }

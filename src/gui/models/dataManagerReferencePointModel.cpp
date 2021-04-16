@@ -1,8 +1,9 @@
 #include "gui/models/dataManagerReferencePointModel.h"
 #include "templates/variantpointer.h"
+#include <QFileDialog>
 
-DataManagerReferencePointModel::DataManagerReferencePointModel(std::vector<ReferencePoint> &referencePoints)
-    : referencePoints_(referencePoints)
+DataManagerReferencePointModel::DataManagerReferencePointModel(Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints)
+    : referencePoints_(referencePoints), dissolve_(dissolve)
 {
 }
 
@@ -57,4 +58,14 @@ void DataManagerReferencePointModel::update()
 {
     beginResetModel();
     endResetModel();
+}
+
+std::optional<std::string> DataManagerReferencePointModel::addFile(std::string &&suffix, std::string &&path)
+{
+    referencePoints_.emplace_back(suffix, QDir::current().relativeFilePath(QString(path.c_str())).toStdString());
+
+    if (!dissolve_.loadRestartAsReference(path, suffix))
+        return "Couldn't load the reference point data.\n"
+               "Which is odd, annoying, and something you should let the developer know about.";
+    return {};
 }
