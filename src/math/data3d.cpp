@@ -7,9 +7,9 @@
 #include "base/sysfunc.h"
 #include "math/histogram3d.h"
 
-Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), hasError_(false) {}
+Data3D::Data3D() : hasError_(false) {}
 
-Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable) { (*this) = source; }
+Data3D::Data3D(const Data3D &source) { (*this) = source; }
 
 // Clear Data
 void Data3D::clear()
@@ -104,7 +104,7 @@ double &Data3D::xAxis(int index)
 
 const double &Data3D::xAxis(int index) const { return x_[index]; }
 
-// Return x axis Array
+// Return x axis vector
 std::vector<double> &Data3D::xAxis()
 {
     ++version_;
@@ -165,14 +165,14 @@ double &Data3D::value(int xIndex, int yIndex, int zIndex)
 const double &Data3D::value(int xIndex, int yIndex, int zIndex) const { return values_[{xIndex, yIndex, zIndex}]; }
 
 // Return three-dimensional values Array
-Array3D<double> &Data3D::values3D()
+Array3D<double> &Data3D::values()
 {
     ++version_;
 
     return values_;
 }
 
-const Array3D<double> &Data3D::values3D() const { return values_; }
+const Array3D<double> &Data3D::values() const { return values_; }
 
 // Return number of values present in whole dataset
 int Data3D::nValues() const { return values_.linearArraySize(); }
@@ -229,7 +229,7 @@ const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
 }
 
 // Return three-dimensional errors Array
-Array3D<double> &Data3D::errors3D()
+Array3D<double> &Data3D::errors()
 {
     assert(hasError_);
 
@@ -238,7 +238,7 @@ Array3D<double> &Data3D::errors3D()
     return errors_;
 }
 
-const Array3D<double> &Data3D::errors3D() const
+const Array3D<double> &Data3D::errors() const
 {
     assert(hasError_);
 

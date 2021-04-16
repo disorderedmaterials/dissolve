@@ -4,15 +4,14 @@
 #pragma once
 
 #include "base/version.h"
-#include "math/data1d.h"
-#include "math/plottable.h"
+#include "math/data2dbase.h"
 #include "templates/array2d.h"
 
 // Forward Declarations
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public PlottableData
+class Data2D : public Data2DBase
 {
     public:
     Data2D();
@@ -56,43 +55,43 @@ class Data2D : public PlottableData
     // Zero values array
     void zero();
     // Return data version
-    int version() const;
+    int version() const override;
     // Return x axis value specified
     double &xAxis(int index);
     const double &xAxis(int index) const;
-    // Return x axis Array
+    // Return x axis vector
     std::vector<double> &xAxis();
-    const std::vector<double> &xAxis() const;
+    const std::vector<double> &xAxis() const override;
     // Return y axis value specified
     double &yAxis(int index);
     const double &yAxis(int index) const;
-    // Return y axis Array
+    // Return y axis vector
     std::vector<double> &yAxis();
-    const std::vector<double> &yAxis() const;
+    const std::vector<double> &yAxis() const override;
     // Return value specified
     double &value(int xIndex, int yIndex);
     const double &value(int xIndex, int yIndex) const;
     // Return two-dimensional values Array
-    Array2D<double> &values2D();
-    const Array2D<double> &values2D() const;
+    Array2D<double> &values();
+    const Array2D<double> &values() const override;
     // Return value specified from linear array
     double value(int index);
     // Return number of values present in whole dataset
-    int nValues() const;
+    int nValues() const override;
     // Return minimum value over all data points
-    double minValue() const;
+    double minValue() const override;
     // Return maximum value over all data points
-    double maxValue() const;
+    double maxValue() const override;
     // Add / initialise errors array
     void addErrors();
     // Return whether the values have associated errors
-    bool valuesHaveErrors() const;
+    bool valuesHaveErrors() const override;
     // Return error value specified
     double &error(int xIndex, int yIndex);
     const double &error(int xIndex, int yIndex) const;
     // Return two-dimensional errors Array
-    Array2D<double> &errors2D();
-    const Array2D<double> &errors2D() const;
+    Array2D<double> &errors();
+    const Array2D<double> &errors() const override;
 
     /*
      * Operators

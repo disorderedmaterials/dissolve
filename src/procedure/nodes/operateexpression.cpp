@@ -59,7 +59,7 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
 {
     const auto &x = targetData2D_->xAxis();
     const auto &y = targetData2D_->yAxis();
-    auto &values = targetData2D_->values2D();
+    auto &values = targetData2D_->values();
 
     z_->setValue(0.0);
 
@@ -89,7 +89,7 @@ bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Config
     const auto &x = targetData3D_->xAxis();
     const auto &y = targetData3D_->yAxis();
     const auto &z = targetData3D_->zAxis();
-    auto &values = targetData3D_->values3D();
+    auto &values = targetData3D_->values();
 
     z_->setValue(0.0);
 

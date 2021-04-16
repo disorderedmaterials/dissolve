@@ -182,7 +182,7 @@ class GenericList
      * Searchers
      */
     public:
-    // Search the object for a child object of the specified name
+    // Search for an object or child of the specified name
     template <class T> OptionalReferenceWrapper<const T> search(std::string_view name, std::string_view prefix = "") const
     {
         auto varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
@@ -203,7 +203,7 @@ class GenericList
                 return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(value));
             }
 
-            // Subsearch in the item if its name plus "//" matches the beginning of the var name
+            // Sub-search in the item if its name plus "//" matches the beginning of the var name
             if (DissolveSys::startsWith(varName, key + "//"))
             {
                 auto dataName = varName;
@@ -211,6 +211,64 @@ class GenericList
                 auto optRef = GenericItemSearcher<T>::search(std::get<GenericItem::AnyObject>(value), dataName);
                 if (optRef)
                     return optRef;
+            }
+        }
+
+        return {};
+    }
+    // Convert supplied object reference to base-class reference
+    template <class B, class T> const B &convertBase(const T &a, std::string_view varName) const
+    {
+        // Perform dynamic_cast to base class (B) and check
+        OptionalReferenceWrapper<const B> base = dynamic_cast<const B &>(a);
+        if (!base)
+            throw(
+                std::runtime_error(fmt::format("GenericList::convertBase() - Item named '{}' exists, but cannot be cast to the"
+                                               "requested base type '{}' (item type is '{}').\n",
+                                               varName, typeid(B).name(), typeid(T).name())));
+        return base->get();
+    }
+    // Search for an object or child of the specified name and possible types, casting to the given base class
+    template <class B, class T1, class T2>
+    OptionalReferenceWrapper<const B> searchBase(std::string_view name, std::string_view prefix = "") const
+    {
+        auto varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
+        auto varNamePath = varName + "//";
+        for (auto &[key, value] : items_)
+        {
+            // Match name
+            if (varName == key)
+            {
+                auto &object = std::get<GenericItem::AnyObject>(value);
+                OptionalReferenceWrapper<const B> optRef;
+                if (object.type() == typeid(T1))
+                    optRef = convertBase<B, T1>(std::any_cast<const T1 &>(object), varName);
+                else if (object.type() == typeid(T2))
+                    optRef = convertBase<B, T2>(std::any_cast<const T2 &>(object), varName);
+
+                // If we have no valid result, then throw since the data type is not valid
+                if (!optRef)
+                    throw(std::runtime_error(
+                        fmt::format("GenericList::searchBase() - Item named '{}' exists, but has a different "
+                                    "type to those allowed requested ('{}' vs '{}' or '{}').\n",
+                                    varName, object.type().name(), typeid(T1).name(), typeid(T2).name())));
+                return optRef;
+            }
+
+            // Sub-search in the item if its name plus "//" matches the beginning of the var name
+            if (DissolveSys::startsWith(varName, key + "//"))
+            {
+                auto dataName = varName;
+                dataName.erase(0, key.length() + 2);
+                auto &object = std::get<GenericItem::AnyObject>(value);
+
+                OptionalReferenceWrapper<const T1> optRefT1 = GenericItemSearcher<const T1>::search(object, dataName);
+                if (optRefT1)
+                    return convertBase<B, T1>(optRefT1->get(), varName);
+
+                OptionalReferenceWrapper<const T2> optRefT2 = GenericItemSearcher<const T2>::search(object, dataName);
+                if (optRefT2)
+                    return convertBase<B, T2>(optRefT2->get(), varName);
             }
         }
 

@@ -3,16 +3,20 @@
 
 #pragma once
 
+#include "base/lineparser.h"
+#include "base/processpool.h"
 #include "base/version.h"
-#include "math/plottable.h"
+#include "math/data1dbase.h"
+#include <string>
 
 // One-Dimensional Data
-class Data1D : public PlottableData
+class Data1D : public Data1DBase
 {
     public:
     Data1D();
     virtual ~Data1D() = default;
     Data1D(const Data1D &source);
+    Data1D(const Data1DBase &source);
     // Clear data
     void clear();
 
@@ -59,7 +63,7 @@ class Data1D : public PlottableData
     // Return x axis value specified
     double &xAxis(int index);
     const double &xAxis(int index) const;
-    // Return x axis Array
+    // Return x axis vector
     std::vector<double> &xAxis();
     const std::vector<double> &xAxis() const;
     // Return value specified

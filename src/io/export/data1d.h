@@ -4,9 +4,11 @@
 #pragma once
 
 #include "io/fileandformat.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
-class Data1D;
+class Data1DBase;
+class SampledData1D;
 
 // Data1D Export Formats
 class Data1DExportFileFormat : public FileAndFormat
@@ -49,9 +51,10 @@ class Data1DExportFileFormat : public FileAndFormat
      */
     private:
     // Export Data1D as simple XY (or XYE) data
-    bool exportXY(LineParser &parser, const Data1D &data);
+    bool exportXY(LineParser &parser, const std::vector<double> &xAxis, const std::vector<double> &values,
+                  OptionalReferenceWrapper<const std::vector<double>> errors = {});
 
     public:
     // Export Data1D using current filename and format
-    bool exportData(const Data1D &data);
+    bool exportData(const Data1DBase &data);
 };

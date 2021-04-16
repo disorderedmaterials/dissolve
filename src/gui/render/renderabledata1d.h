@@ -13,7 +13,7 @@ class Axes;
 class RenderableData1D : public Renderable
 {
     public:
-    RenderableData1D(const Data1D &source);
+    RenderableData1D(const Data1DBase &source);
     RenderableData1D(std::string_view tag);
     ~RenderableData1D() = default;
 
@@ -22,11 +22,11 @@ class RenderableData1D : public Renderable
      */
     private:
     // Source data
-    OptionalReferenceWrapper<const Data1D> source_;
+    OptionalReferenceWrapper<const Data1DBase> source_;
 
     public:
     // Return source data
-    OptionalReferenceWrapper<const Data1D> source() const;
+    OptionalReferenceWrapper<const Data1DBase> source() const;
     // Attempt to set the data source, searching the supplied list for the object
     void validateDataSource(const GenericList &sourceList) override;
     // Invalidate the current data source

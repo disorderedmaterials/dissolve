@@ -6,8 +6,9 @@
 #include "genericitems/list.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
+#include "math/sampleddata1d.h"
 
-RenderableData1D::RenderableData1D(const Data1D &source)
+RenderableData1D::RenderableData1D(const Data1DBase &source)
     : Renderable(Renderable::Data1DRenderable, ""), source_(source), displayStyle_(LinesStyle)
 {
     dataPrimitive_ = createPrimitive();
@@ -24,7 +25,7 @@ RenderableData1D::RenderableData1D(std::string_view tag)
  */
 
 // Return source data
-OptionalReferenceWrapper<const Data1D> RenderableData1D::source() const { return source_; }
+OptionalReferenceWrapper<const Data1DBase> RenderableData1D::source() const { return source_; }
 
 // Attempt to set the data source, searching the supplied list for the object
 void RenderableData1D::validateDataSource(const GenericList &sourceList)
@@ -36,7 +37,7 @@ void RenderableData1D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = sourceList.search<const Data1D>(tag_);
+    source_ = sourceList.searchBase<Data1DBase, Data1D, SampledData1D>(tag_);
 }
 
 // Invalidate the current data source
@@ -61,7 +62,7 @@ void RenderableData1D::transformValues()
     if (!source_)
         transformedData_.clear();
     else
-        transformedData_ = *source_;
+        transformedData_ = source_->get();
     valuesTransform_.transformValues(transformedData_);
 
     limitsMin_ = 0.0;
@@ -139,7 +140,7 @@ const Data1D &RenderableData1D::transformedData()
 
     // If the value transform is not enabled, just return the original data
     if (!valuesTransform_.enabled())
-        transformedData_ = *source_;
+        transformedData_ = source_->get();
     else
         // Make sure the transformed data is up-to-date
         transformValues();

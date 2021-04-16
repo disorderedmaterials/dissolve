@@ -137,7 +137,7 @@ void RenderableData3D::transformValues()
     // Values
     for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
-        auto val = transformedData_.values3D().linearValue(n);
+        auto val = transformedData_.values().linearValue(n);
         if (val > 0.0)
         {
             if (positiveValuesMin_ < 0.0)
@@ -184,8 +184,7 @@ void RenderableData3D::recreatePrimitives(const View &view, const ColourDefiniti
         return;
 
     marchingCubesOriginal(transformedData_.xAxis(), transformedData_.yAxis(), transformedData_.zAxis(),
-                          transformedData_.values3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.axes(),
-                          dataPrimitive_);
+                          transformedData_.values(), lowerCutoff_, upperCutoff_, colourDefinition, view.axes(), dataPrimitive_);
 }
 
 // Send primitives for rendering
