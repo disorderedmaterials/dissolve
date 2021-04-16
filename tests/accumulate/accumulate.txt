@@ -1,0 +1,151 @@
+#------------------------#
+#  Define Master Terms   #
+#------------------------#
+
+Master
+  Bond   OH   Harmonic  4431.53  1.0
+  Angle  HOH  Harmonic  317.5656 113.24
+EndMaster
+
+#------------------------#
+#     Define Species     #
+#------------------------#
+
+Species 'Water'
+  # Atoms
+  Atom    1    H     0.757    0.013    0.217   'HW'
+  Atom    2    O     0.015   -0.009   -0.373   'OW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond  1    2  @OH
+  Bond  3    2  @OH
+  Angle 1    2    3  @HOH
+
+  # Isotopologues
+  Isotopologue  'Natural'  OW=0  HW=0
+  Isotopologue  'Deuteriated'  OW=0  HW=2
+
+  # Analysis Sites
+  Site  'origin'
+    Origin  2
+    XAxis  1 3
+    YAxis  3
+  EndSite
+  Site  'O'
+    Origin  2
+  EndSite
+  Site  'H1'
+    Origin  1
+  EndSite
+  Site  'H2'
+    Origin  3
+  EndSite
+  Site  'COM'
+    Origin  1  2  3
+    OriginMassWeighted  True
+  EndSite
+EndSpecies
+
+#------------------------#
+#     Pair Potentials    #
+#------------------------#
+
+PairPotentials
+  Range  9.000000
+  Delta  0.050000
+  Parameters  'OW'  O  -0.82  LJGeometric    0.65	3.165492
+  Parameters  'HW'  H  0.41   LJGeometric    0.0      0.0
+EndPairPotentials
+
+#------------------------#
+#  Define Configuration  #
+#------------------------#
+
+Configuration  'Bulk'
+  Generator
+    AddSpecies
+      Density  9.99999642E-02 atoms/A3
+      Population  267
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
+EndConfiguration
+
+#------------------------#
+#   Define Processing    #
+#------------------------#
+
+Layer  'Processing'
+
+  # Trajectory Processing
+  Module  Import
+    Configuration  'Bulk'
+    ReadTrajectory  True
+    # Trajectory file contains 95 frames
+    TrajectoryFile  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+    EndTrajectoryFile
+  EndModule
+
+  # Calculate RDFs (no averaging)
+  Module  RDF  'RDF01'
+    Configuration  'Bulk'
+    Range  10.0
+    BinWidth  0.01
+    IntraBroadening  None
+    Averaging  0
+    Save  On
+  EndModule
+
+  # Accumulate RDFs
+  Module  Accumulate  'Accumulate01'
+    Target  'RDF01'
+    Data  'RDF'
+    Save  On
+  EndModule
+
+  # Calculate RDFs (with averaging)
+  Module  RDF  'AveragedRDF'
+    Configuration  'Bulk'
+    Range  10.0
+    BinWidth  0.01
+    IntraBroadening  None
+    Averaging  20
+    Save  On
+  EndModule
+
+  # Oxygen-oxygen radial distribution function
+  Module  CalculateRDF  'RDF(OW-OW)'
+    Configuration  'Bulk'
+    SiteA  Water  'O'
+    SiteB  Water  'O'
+    DistanceRange  0.0  10.0  0.01
+  EndModule
+
+  # Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
+  Module  CalculateRDF  'RDF(H1-H2)'
+    Configuration  'Bulk'
+    SiteA  Water  'H1'
+    SiteB  Water  'H2'
+    ExcludeSameMolecule  On
+    DistanceRange  0.0  10.0  0.01
+  EndModule
+
+  # Hydrogen-hydrogen (O-H, 1-1) radial distribution function, excluding intramolecular correlations
+  Module  CalculateRDF  'RDF(O-H1/H2)'
+    Configuration  'Bulk'
+    SiteA  Water  'O'
+    SiteB  Water  'H1'  Water  'H2'
+    ExcludeSameMolecule  On
+    DistanceRange  0.0  10.0  0.01
+  EndModule
+
+  Module  DataTest  'Totals'
+    InternalData1D  'Accumulate01//Accumulation//Total'  'AveragedRDF//UnweightedGR//Total'
+    InternalData1D  'Accumulate01//Accumulation//OW-OW//Full'  'RDF(OW-OW)//Process1D//RDF'
+    InternalData1D  'Accumulate01//Accumulation//OW-OW//Unbound'  'RDF(OW-OW)//Process1D//RDF'
+    InternalData1D  'Accumulate01//Accumulation//HW-OW//Unbound'  'RDF(O-H1/H2)//Process1D//RDF'
+    InternalData1D  'Accumulate01//Accumulation//HW-HW//Unbound'  'RDF(H1-H2)//Process1D//RDF'
+  EndModule
+
+EndLayer

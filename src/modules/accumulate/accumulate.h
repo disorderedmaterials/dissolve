@@ -3,18 +3,14 @@
 
 #pragma once
 
-#include "classes/configuration.h"
-#include "classes/data1dstore.h"
-#include "classes/data2dstore.h"
-#include "classes/data3dstore.h"
 #include "module/module.h"
 
-// DataTest Module
-class DataTestModule : public Module
+// Accumulate Module
+class AccumulateModule : public Module
 {
     public:
-    DataTestModule();
-    ~DataTestModule() override = default;
+    AccumulateModule();
+    ~AccumulateModule() = default;
 
     /*
      * Instances
@@ -46,22 +42,19 @@ class DataTestModule : public Module
     /*
      * Processing
      */
-    private:
+    public:
+    // Target PartialSet Enum
+    enum TargetPartialSet
+    {
+        GR,
+        SQ,
+        OriginalGR
+    };
+    // Return EnumOptions for TargetPartialSet
+    static EnumOptions<TargetPartialSet> targetPartialSet();
+
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions
-     */
-    private:
-    // Internal 1D data testing
-    std::vector<std::pair<std::string, std::string>> internal1DData_;
-    // Test 1D datasets
-    Data1DStore test1DData_;
-    // Test 2D datasets
-    Data2DStore test2DData_;
-    // Test 3D datasets
-    Data3DStore test3DData_;
 
     /*
      * GUI Widget
