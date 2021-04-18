@@ -58,11 +58,11 @@ class GeometryOptimisationModule : public Module
      */
     private:
     // Current (reference) coordinates
-    Array<double> xRef_, yRef_, zRef_;
+    std::vector<Vec3<double>> rRef_;
     // Temporary test coordinates
-    Array<double> xTemp_, yTemp_, zTemp_;
+    std::vector<Vec3<double>> rTemp_;
     // Current forces
-    Array<double> xForce_, yForce_, zForce_;
+    std::vector<Vec3<double>> f_;
     // Control variables (retrieved from keywords)
     int nCycles_;
     double tolerance_;
@@ -75,8 +75,6 @@ class GeometryOptimisationModule : public Module
     template <class T> void revertToReferenceCoordinates(T *target);
     // Return current RMS force
     double rmsForce() const;
-    // Determine suitable step size from current forces
-    double gradientStepSize();
     // Sort bounds / energies so that minimum energy is in the central position
     void sortBoundsAndEnergies(std::array<double, 3> &bounds, std::array<double, 3> &energies);
     // Return energy of adjusted coordinates, following the force vectors by the supplied amount
@@ -233,7 +231,7 @@ class GeometryOptimisationModule : public Module
 
         // Get the initial energy and forces of the Configuration
         auto oldEnergy = EnergyModule::totalEnergy(procPool, target, dissolve.potentialMap());
-        ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), xForce_, yForce_, zForce_);
+        ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), f_);
         auto oldRMSForce = rmsForce();
 
         // Set initial step size - the line minimiser will modify this as we proceed
@@ -255,7 +253,7 @@ class GeometryOptimisationModule : public Module
 
             // Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine
             // new step size
-            ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), xForce_, yForce_, zForce_);
+            ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), f_);
             auto newRMSForce = rmsForce();
 
             // Calculate deltas

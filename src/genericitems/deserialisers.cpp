@@ -36,7 +36,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         return true;
     });
 
-    // stdlib
+    // Standard Classes / Containers
     registerDeserialiser<std::streampos>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         // NOTE Can't implicit cast streampos into the arg for readArg(), so assume long long int for now.
         long long int pos;
@@ -62,6 +62,20 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             n = parser.argd(0);
+        }
+        return true;
+    });
+    registerDeserialiser<std::vector<Vec3<double>>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
+        auto &v = std::any_cast<std::vector<Vec3<double>> &>(a);
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        v.clear();
+        v.resize(parser.argi(0));
+        for (auto &n : v)
+        {
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            n = parser.arg3d(0);
         }
         return true;
     });

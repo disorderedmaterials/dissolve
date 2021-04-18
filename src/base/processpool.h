@@ -302,6 +302,9 @@ class ProcessPool
              ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Reduce (sum) double data to all processes
     bool allSum(double *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Reduce (sum) vector of Vec3<double> data to all processes
+    bool allSum(std::vector<Vec3<double>> &source,
+                ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Reduce (sum) int data to all processes
     bool allSum(int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Reduce (sum) int data to all processes

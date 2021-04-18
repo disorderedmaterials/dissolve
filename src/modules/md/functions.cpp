@@ -5,21 +5,19 @@
 #include "modules/md/md.h"
 
 // Cap forces in Configuration
-int MDModule::capForces(Configuration *cfg, double maxForce, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &f)
 {
     double fMag;
     const auto maxForceSq = maxForce * maxForce;
     auto nCapped = 0;
-    for (auto n = 0; n < cfg->nAtoms(); ++n)
+    for (auto &fxyz : f)
     {
-        fMag = fx[n] * fx[n] + fy[n] * fy[n] + fz[n] * fz[n];
+        fMag = fxyz.magnitudeSq();
         if (fMag < maxForceSq)
             continue;
 
         fMag = maxForce / sqrt(fMag);
-        fx[n] *= fMag;
-        fy[n] *= fMag;
-        fz[n] *= fMag;
+        fxyz *= fMag;
 
         ++nCapped;
     }
@@ -28,15 +26,15 @@ int MDModule::capForces(Configuration *cfg, double maxForce, Array<double> &fx, 
 }
 
 // Determine timestep based on maximal force component
-double MDModule::determineTimeStep(const Array<double> &fx, const Array<double> &fy, const Array<double> &fz)
+double MDModule::determineTimeStep(const std::vector<Vec3<double>> &f)
 {
-    double fMax = fx.maxAbs();
-    double fTemp = fy.maxAbs();
-    if (fTemp > fMax)
-        fMax = fTemp;
-    fTemp = fz.maxAbs();
-    if (fTemp > fMax)
-        fMax = fTemp;
+    auto fMax = 0.0;
+    for (auto &fxyz : f)
+    {
+        auto m = fxyz.absMax();
+        if (m > fMax)
+            fMax = m;
+    }
 
     return 1.0 / fMax;
 }

@@ -22,8 +22,8 @@ class SpeciesTorsion;
 class ForceKernel
 {
     public:
-    ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy,
-                Array<double> &fz, double cutoffDistance = -1.0);
+    ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, std::vector<Vec3<double>> &f,
+                double cutoffDistance = -1.0);
     ~ForceKernel() = default;
 
     /*
@@ -36,12 +36,8 @@ class ForceKernel
     const PotentialMap &potentialMap_;
     // Squared cutoff distance to use in calculation
     double cutoffDistanceSquared_;
-    // Force array for x component
-    Array<double> &fx_;
-    // Force array for y component
-    Array<double> &fy_;
-    // Force array for z component
-    Array<double> &fz_;
+    // Force vector
+    std::vector<Vec3<double>> &f_;
 
     /*
      * Internal Force Calculation
@@ -84,6 +80,14 @@ class ForceKernel
     void calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk);
     // Calculate torsion force parameters from supplied vectors, storing result in local class variables
     void calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl);
+    // Sum torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
+    void sumTorsionForceI(double du_dphi, int index);
+    // Sum torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index
+    void sumTorsionForceJ(double du_dphi, int index);
+    // Sum torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index
+    void sumTorsionForceK(double du_dphi, int index);
+    // Sum torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index
+    void sumTorsionForceL(double du_dphi, int index);
 
     public:
     // Calculate SpeciesBond forces

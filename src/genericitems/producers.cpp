@@ -22,12 +22,14 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<double>("double");
     registerProducer<int>("int");
 
-    // stdlib
+    // Standard Classes / Containers
     registerProducer<std::string>("std::string");
     registerProducer<std::streampos>("streampos");
     registerProducer<std::vector<double>>("std::vector<double>");
+    registerProducer<std::vector<Vec3<double>>>("std::vector<Vec3<double>>");
 
-    // Custom Classes
+    // Custom Classes / Containers
+    registerProducer<Array<Vec3<double>>>("Array<Vec3<double>>");
     registerProducer<Array<double>>("Array<double>");
     registerProducer<Array<SampledDouble>>("Array<SampledDouble>");
     registerProducer<Array<Vec3<double>>>("Array<Vec3<double>>");
