@@ -1,8 +1,8 @@
-set(models_MOC_HDRS xmlAngleModel.h xmlAtomModel.h xmlBondModel.h xmlImproperModel.h xmlTreeModel.h xmlTorsionModel.h)
+set(models_MOC_HDRS xmlAngleModel.h xmlAtomModel.h xmlBondModel.h xmlImproperModel.h xmlTreeModel.h xmlTorsionModel.h dataManagerReferencePointModel.h)
 
 qt5_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
-set(models_SRCS xmlAngleModel.cpp xmlAtomModel.cpp xmlBondModel.cpp xmlImproperModel.cpp xmlTreeModel.cpp xmlTorsionModel.cpp)
+set(models_SRCS xmlAngleModel.cpp xmlAtomModel.cpp xmlBondModel.cpp xmlImproperModel.cpp xmlTreeModel.cpp xmlTorsionModel.cpp dataManagerReferencePointModel.cpp)
 
 qt_wrap_cpp(
   models_SRCS
@@ -12,6 +12,7 @@ qt_wrap_cpp(
   xmlImproperModel.h
   xmlTreeModel.h
   xmlTorsionModel.h
+  dataManagerReferencePointModel.h
 )
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})

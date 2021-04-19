@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/models/dataManagerReferencePointModel.h"
-#include "gui/referencepoint.h"
+#include "classes/referencepoint.h"
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -21,8 +21,12 @@ class DataManagerTest : public ::testing::Test
 TEST_F(DataManagerTest, DataManger)
 {
 
+    CoreData coreData;
+    Dissolve dissolve(coreData);
     std::vector<ReferencePoint> points;
-    DataManagerReferencePointModel model(points);
+    DataManagerReferencePointModel model(dissolve, points);
+
+    ASSERT_TRUE(model.addFile("error", "restart/not.exist.restart"));
 
     auto result = model.addFile("benzene", "restart/benzene.txt.restart.txt");
 

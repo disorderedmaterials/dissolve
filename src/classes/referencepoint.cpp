@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "gui/referencepoint.h"
+#include "classes/referencepoint.h"
 
 ReferencePoint::ReferencePoint() {}
 ReferencePoint::ReferencePoint(std::string_view suffix, std::string_view restart) : suffix_(suffix), restartFile_(restart) {}

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/referencepoint.h"
+#include "classes/referencepoint.h"
 #include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>

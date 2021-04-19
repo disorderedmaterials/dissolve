@@ -5,7 +5,7 @@
 
 #include "gui/models/dataManagerReferencePointModel.h"
 #include "genericitems/list.h"
-#include "gui/referencepoint.h"
+#include "classes/referencepoint.h"
 #include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
 #include <QDialog>
