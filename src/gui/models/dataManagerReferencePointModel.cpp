@@ -28,10 +28,7 @@ QVariant DataManagerReferencePointModel::data(const QModelIndex &index, int role
     switch (role)
     {
         case Qt::DisplayRole:
-            if (index.column() == 0)
-                return std::string(item.suffix()).c_str();
-            return std::string(item.restartFile()).c_str();
-            ;
+	  return index.column() == 0 ? std::string(item.suffix()).c_str() : std::string(item.restartFile()).c_str();
         case Qt::UserRole:
             return VariantPointer<ReferencePoint>(&item);
         default:
@@ -66,7 +63,9 @@ std::optional<std::string> DataManagerReferencePointModel::addFile(std::string &
         return "Couldn't load the reference point data.\n"
                "Which is odd, annoying, and something you should let the developer know about.";
 
+    beginResetModel();
     referencePoints_.emplace_back(suffix, QDir::current().relativeFilePath(QString(path.c_str())).toStdString());
+    endResetModel();
 
     return {};
 }
