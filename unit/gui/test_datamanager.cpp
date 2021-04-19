@@ -24,10 +24,12 @@ TEST_F(DataManagerTest, DataManger)
     std::vector<ReferencePoint> points;
     DataManagerReferencePointModel model(points);
 
+    auto result = model.addFile("benzene", "restart/benzene.txt.restart.txt");
+
+    ASSERT_FALSE(result);
+
     ASSERT_EQ(model.columnCount(), 2);
     ASSERT_EQ(model.rowCount(), 0);
-
-    points.emplace_back("Suffix Example", "Restart Example");
 
     model.update();
 
