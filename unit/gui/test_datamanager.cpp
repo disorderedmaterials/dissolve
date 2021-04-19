@@ -24,22 +24,25 @@ TEST_F(DataManagerTest, DataManger)
     CoreData coreData;
     Dissolve dissolve(coreData);
     std::vector<ReferencePoint> points;
+
+    dissolve.clear();
+    dissolve.loadInput("restart/benzene.txt");
+
+
     DataManagerReferencePointModel model(dissolve, points);
 
-    ASSERT_TRUE(model.addFile("error", "restart/not.exist.restart"));
+    //Expect an error if the file does not exist
+    EXPECT_TRUE(model.addFile("error", "restart/not.exist.restart"));
 
-    auto result = model.addFile("benzene", "restart/benzene.txt.restart.txt");
+    //Expect this file to load properly
+    ASSERT_FALSE(model.addFile("benzene", "restart/benzene.txt.restart.test"));
 
-    ASSERT_FALSE(result);
+    EXPECT_EQ(model.columnCount(), 2);
+    EXPECT_EQ(model.rowCount(), 1);
 
-    ASSERT_EQ(model.columnCount(), 2);
-    ASSERT_EQ(model.rowCount(), 0);
-
-    model.update();
-
-    ASSERT_EQ(model.rowCount(), 1);
-    ASSERT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "Suffix Example");
-    ASSERT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Restart Example");
+    EXPECT_EQ(model.rowCount(), 1);
+    EXPECT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "benzene");
+    EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "restart/benzene.txt.restart.test");
 }
 
 } // namespace UnitTest
