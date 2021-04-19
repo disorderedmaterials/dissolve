@@ -18,9 +18,9 @@ static void BM_Array_1d(benchmark::State &state)
     int numVals = bytes / sizeof(int) / 2;
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-    std::vector<int> indicies(numVals);
-    std::iota(indicies.begin(), indicies.end(), 0);
-    std::shuffle(indicies.begin(), indicies.end(), generator);
+    std::vector<int> indices(numVals);
+    std::iota(indices.begin(), indices.end(), 0);
+    std::shuffle(indices.begin(), indices.end(), generator);
     Array<int> array(numVals);
     for (int i = 0; i < array.size(); ++i)
     {
@@ -29,8 +29,8 @@ static void BM_Array_1d(benchmark::State &state)
 
     for (auto _ : state)
     {
-        double sum = 0;
-        for (int i : indicies)
+        long long int sum = 0;
+        for (int i : indices)
             sum += array[i];
         benchmark::DoNotOptimize(sum);
     }
@@ -45,9 +45,9 @@ static void BM_Array_2d(benchmark::State &state)
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
     int dim = sqrt(numVals);
-    std::vector<int> indicies(dim * dim);
-    std::iota(indicies.begin(), indicies.end(), 0);
-    std::shuffle(indicies.begin(), indicies.end(), generator);
+    std::vector<int> indices(dim * dim);
+    std::iota(indices.begin(), indices.end(), 0);
+    std::shuffle(indices.begin(), indices.end(), generator);
 
     Array2D<int> array(dim, dim);
     for (int i = 0; i < array.nRows(); ++i)
@@ -57,7 +57,7 @@ static void BM_Array_2d(benchmark::State &state)
     for (auto _ : state)
     {
         long long int sum = 0;
-        for (int i : indicies)
+        for (int i : indices)
         {
             int row = i / dim;
             int column = i - row * dim;
@@ -76,9 +76,9 @@ static void BM_Array_3d(benchmark::State &state)
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
     int dim = cbrt(numVals);
-    std::vector<int> indicies(dim * dim * dim);
-    std::iota(indicies.begin(), indicies.end(), 0);
-    std::shuffle(indicies.begin(), indicies.end(), generator);
+    std::vector<int> indices(dim * dim * dim);
+    std::iota(indices.begin(), indices.end(), 0);
+    std::shuffle(indices.begin(), indices.end(), generator);
 
     Array3D<int> array(dim, dim, dim);
     for (int i = 0; i < array.nX(); ++i)
@@ -89,7 +89,7 @@ static void BM_Array_3d(benchmark::State &state)
     for (auto _ : state)
     {
         long long int sum = 0;
-        for (int idx : indicies)
+        for (int idx : indices)
         {
             int i = idx / (dim * dim);
             int j = (idx - i * (dim * dim)) / dim;

@@ -25,8 +25,6 @@ static void BM_HistogramBinning_1d(benchmark::State &state)
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
     for (auto _ : state)
         benchmark::DoNotOptimize(histo.bin(distribution(generator)));
-    // In each iteration we read 8 bytes of data
-    // Compare
     state.SetItemsProcessed(state.iterations());
     state.SetLabel(std::to_string(bytes / 1024) + "kb");
 }

@@ -7,9 +7,7 @@ template <ProblemSize problem, RDFModule::PartialsMethod method> static void BM_
 {
     Problem<problem> problemDef;
     for (auto _ : state)
-    {
         problemDef.template iterateCells<method>();
-    }
 }
 
 BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Small, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
