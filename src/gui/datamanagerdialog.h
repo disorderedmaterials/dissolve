@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/models/dataManagerReferencePointModel.h"
-#include "genericitems/list.h"
 #include "classes/referencepoint.h"
+#include "genericitems/list.h"
+#include "gui/models/dataManagerReferencePointModel.h"
 #include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
 #include <QDialog>

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "gui/models/dataManagerReferencePointModel.h"
 #include "classes/referencepoint.h"
+#include "gui/models/dataManagerReferencePointModel.h"
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -28,13 +28,12 @@ TEST_F(DataManagerTest, DataManger)
     dissolve.clear();
     dissolve.loadInput("restart/benzene.txt");
 
-
     DataManagerReferencePointModel model(dissolve, points);
 
-    //Expect an error if the file does not exist
+    // Expect an error if the file does not exist
     EXPECT_TRUE(model.addFile("error", "restart/not.exist.restart"));
 
-    //Expect this file to load properly
+    // Expect this file to load properly
     ASSERT_FALSE(model.addFile("benzene", "restart/benzene.txt.restart.test"));
 
     EXPECT_EQ(model.columnCount(), 2);
