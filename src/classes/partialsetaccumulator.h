@@ -41,6 +41,8 @@ class PartialSetAccumulator
     const Array2D<SampledData1D> &unboundPartials() const;
     // Return the sampled total function
     const SampledData1D &total() const;
+    // Save all partials and total (with errors)
+    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
 
     /*
      * Searchers

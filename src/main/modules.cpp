@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "main/dissolve.h"
+#include "modules/accumulate/accumulate.h"
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/benchmark/benchmark.h"
@@ -66,6 +67,8 @@ bool Dissolve::registerMasterModule(Module *masterInstance)
 // Register master instances for all Modules
 bool Dissolve::registerMasterModules()
 {
+    if (!registerMasterModule(new AccumulateModule))
+        return false;
     if (!registerMasterModule(new AnalyseModule))
         return false;
     if (!registerMasterModule(new AtomShakeModule))

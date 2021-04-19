@@ -81,6 +81,38 @@ const Array2D<SampledData1D> &PartialSetAccumulator::unboundPartials() const { r
 // Return the sampled total function
 const SampledData1D &PartialSetAccumulator::total() const { return total_; }
 
+// Save all partials and total (with errors)
+bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
+                                 std::string_view abscissaUnits) const
+{
+    assert(!prefix.empty());
+
+    LineParser parser;
+
+    // Write partials
+    for (auto &&[full, bound, unbound] : zip(partials_, boundPartials_, unboundPartials_))
+    {
+        // Open file and check that we're OK to proceed writing to it
+        std::string filename{fmt::format("{}-{}-{}.{}", prefix, tag, DissolveSys::niceName(full.tag()), suffix)};
+        Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+
+        parser.openOutput(filename, true);
+        if (!parser.isFileGoodForWriting())
+            return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
+
+        parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Error", "Bound",
+                          "Error", "Unbound", "Error");
+        for (auto n = 0; n < full.nValues(); ++n)
+            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), full.error(n),
+                              bound.value(n), bound.error(n), unbound.value(n), unbound.error(n));
+        parser.closeFiles();
+    }
+
+    Data1DExportFileFormat exportFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    Messenger::printVerbose("Writing total file '{}'...\n", exportFormat.filename());
+    return exportFormat.exportData(total_);
+}
+
 /*
  * Searchers
  */
