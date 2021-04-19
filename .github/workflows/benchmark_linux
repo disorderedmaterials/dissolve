@@ -1,0 +1,37 @@
+name: benchmarks_ubuntu
+
+on: [push, pull_request]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+        - name: Install Prerequisites
+          run: |
+            sudo apt-get update -q
+            sudo apt-get install antlr4 ninja-build python3-setuptools uuid uuid-dev
+        - name: Install Conan
+          run: |
+            sudo pip3 install wheel
+            sudo pip3 install conan
+        - name: Build
+          run: |
+            mkdir build
+            cd build
+            conan install ../ -s compiler.libcxx=libstdc++11
+            cmake -G "Ninja" -DBUILD_BENCHMARKS:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
+            ninja
+        - name: Run benchmark
+            run: ./bin/benchmarks --benchmark_format=json | tee benchmark_result.json
+        - name: Store benchmark result
+            uses: rhysd/github-action-benchmark@v1
+            with:
+                tool: 'googlecpp'
+                output-file-path: benchmark_result.json
+                # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
+                github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+                auto-push: true
