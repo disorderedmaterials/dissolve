@@ -10,6 +10,7 @@
 #include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
 #include <QDialog>
+#include <QSortFilterProxyModel>
 #include <vector>
 
 Q_DECLARE_METATYPE(const ReferencePoint *)
@@ -35,6 +36,8 @@ class DataManagerDialog : public QDialog
     DataManagerReferencePointModel refModel_;
     // Simulation Model
     DataManagerSimulationModel simModel_;
+    // Simulation Proxy
+    QSortFilterProxyModel simProxy_;
 
     /*
      * UI

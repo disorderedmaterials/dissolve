@@ -15,7 +15,10 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::v
 {
     ui_.setupUi(this);
     ui_.ReferencePointsTable->setModel(&refModel_);
-    ui_.SimulationDataTable->setModel(&simModel_);
+
+    simProxy_.setSourceModel(&simModel_);
+    ui_.SimulationDataTable->setModel(&simProxy_);
+    ui_.SimulationDataTable->setSortingEnabled(true);
 
     updateControls();
 }
@@ -56,24 +59,9 @@ DataManagerDialog::~DataManagerDialog() {}
 // Update the specified table of GenericItems, optionally filtering them by name and description
 void DataManagerDialog::filterTable(QString filterText)
 {
-    // // Loop over rows in the table
-    // for (auto n = 0; n < ui_.SimulationDataTable->rowCount(); ++n)
-    // {
-    //     QTableWidgetItem *item = ui_.SimulationDataTable->item(n, 0);
-    //     if (!item)
-    //         continue;
-
-    //     // Check filtering
-    //     if (filterText.isEmpty() || !item->text().contains(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard)))
-    //         ui_.SimulationDataTable->setRowHidden(n, false);
-    //     else
-    //     {
-    //         if (item->isSelected())
-    //             ui_.SimulationDataTable->setCurrentItem(nullptr);
-
-    //         ui_.SimulationDataTable->setRowHidden(n, true);
-    //     }
-    // }
+    if (filterText.isEmpty()) return;
+    simProxy_.setFilterRegExp(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard));
+    simProxy_.setFilterKeyColumn(0);
 }
 
 // Return currently-selected ReferencePoint
