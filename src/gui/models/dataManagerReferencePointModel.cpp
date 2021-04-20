@@ -63,7 +63,9 @@ std::optional<std::string> DataManagerReferencePointModel::addFile(std::string &
         return "Couldn't load the reference point data.\n"
                "Which is odd, annoying, and something you should let the developer know about.";
 
+    beginResetModel();
     referencePoints_.emplace_back(suffix, QDir::current().relativeFilePath(QString(path.c_str())).toStdString());
+    endResetModel();
 
     return {};
 }
