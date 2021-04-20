@@ -18,7 +18,7 @@ bool DissolveWindow::saveState()
     // Write reference points
     for (auto &refPoint : referencePoints_)
     {
-        if (!stateParser.writeLineF("ReferencePoint  '{}'  '{}'\n", refPoint.suffix(), refPoint.restartFile()))
+        if (!stateParser.writeLineF("ReferencePoint  '{}'  '{}'\n", std::get<0>(refPoint), std::get<1>(refPoint)))
             return false;
     }
 
@@ -54,17 +54,17 @@ bool DissolveWindow::loadState()
         else if (DissolveSys::sameString(stateParser.argsv(0), "ReferencePoint"))
         {
             referencePoints_.emplace_back(stateParser.argsv(1), stateParser.argsv(2));
-            auto &refPoint = referencePoints_.back();
+            auto &[suffix, restartFile] = referencePoints_.back();
 
-            if (!DissolveSys::fileExists(refPoint.restartFile()))
+            if (!DissolveSys::fileExists(restartFile))
                 QMessageBox::warning(this, "Error loading reference point",
                                      QString("Couldn't load reference point data from '%1' as the file does not exist.\n")
-                                         .arg(QString::fromStdString(std::string(refPoint.restartFile()))));
-            else if (!dissolve_.loadRestartAsReference(refPoint.restartFile(), refPoint.suffix()))
+                                         .arg(QString::fromStdString(std::string(restartFile))));
+            else if (!dissolve_.loadRestartAsReference(restartFile, suffix))
                 QMessageBox::warning(this, "Error loading reference point",
                                      QString("Couldn't load reference point data from '%1'.\nThis may be because your "
                                              "simulation setup doesn't match that expected by the restart data.\n")
-                                         .arg(QString::fromStdString(std::string(refPoint.restartFile()))));
+                                         .arg(QString::fromStdString(std::string(restartFile))));
         }
         else
         {

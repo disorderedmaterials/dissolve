@@ -108,7 +108,7 @@ void DataManagerDialog::on_ReferencePointRemoveButton_clicked(bool checked)
     if (!refPoint)
         return;
 
-    dissolve_.processingModuleData().pruneWithSuffix(refPoint->suffix());
+    dissolve_.processingModuleData().pruneWithSuffix(std::get<0>(*refPoint));
 
     updateControls();
 }

@@ -45,7 +45,6 @@ add_library(
   potentialmap.cpp
   partialset.cpp
   partialsetaccumulator.cpp
-  referencepoint.cpp
   regionaldistributor.cpp
   scaledenergykernel.cpp
   scatteringmatrix.cpp
