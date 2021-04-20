@@ -5,9 +5,6 @@
 
 #include <string>
 
-// Forward Declarations
-/* none */
-
 // Reference Point
 class ReferencePoint
 {
