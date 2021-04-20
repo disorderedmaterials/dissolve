@@ -17,10 +17,8 @@ bool DissolveWindow::saveState()
 
     // Write reference points
     for (auto &refPoint : referencePoints_)
-    {
         if (!stateParser.writeLineF("ReferencePoint  '{}'  '{}'\n", std::get<0>(refPoint), std::get<1>(refPoint)))
             return false;
-    }
 
     // Write current tab index
     if (!stateParser.writeLineF("TabIndex  {}\n", ui_.MainTabs->currentIndex()))
