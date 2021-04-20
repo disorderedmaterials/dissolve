@@ -13,15 +13,17 @@ Configuration  'Crystal'
     EndBox
     AddSpecies
       Population  500
+      BoxAction  None
       Species  'Mg'
     EndAddSpecies
     AddSpecies
       Population  500
+      BoxAction  None
       Species  'O'
     EndAddSpecies
   EndGenerator
 
-  InputCoordinates  epsr  ../_data/epsr25/mgo500-111/mgo.ato
+  InputCoordinates  epsr  ../_data/epsr25/mgo500-555/mgo.ato
   EndInputCoordinates
   Temperature  300.000000
 EndConfiguration
@@ -34,76 +36,65 @@ Layer  'Main Processing'
 
   Module  RDF  'RDFs'
     Frequency  1
-
+    Method  Simple
     Configuration  'Crystal'
 
   EndModule
 
-  Module  Bragg
+  Module  Bragg  'Bragg01'
     Frequency  1
 
     Configuration  'Crystal'
 
-    Multiplicity  1  1  1 
-    QMax  10.0
-    SaveReflections  On
+    Multiplicity  5  5  5
+    QMax  20.0
   EndModule
 
   Module  SQ  SQs
     SourceRDFs  'RDFs'
     QMin 0.05
-    QMax  10.0
+    # Slightly reduce QMax cf EPSR (20.0) for best consistency (EPSR "over-calculates" past the defined range)
+    QMax  19.0
     QDelta  0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  Lorch0
-    #Save  On
+    IncludeBragg  'Bragg01'
+    # For consistency with EPSR, broadening values (0.01 and 0.02) must be reflect Gaussian FWHM, so values here are multiplied by 2 sqrt(2 ln 2)
+    BraggQBroadening  GaussianC2  0.0235482  0.0470964
   EndModule
 
   Module  NeutronSQ  'NeutronSQ01'
     Frequency  1
 
     SourceSQs  'SQs'
-
-    #IncludeBragg  On
-    #QBroadening  GaussianC2  0.0  0.02
-    #BraggQBroadening  Gaussian  0.5
-
   EndModule
 
   # Tests
   # Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
   #                                 Column:    2        4        6
 
-  # Partial g(r)
-  Module  DataTest  'PartialGR'
-    Threshold  1.0e-5
+  # Partial S(Q)
+  Module  DataTest  'PartialSQ'
+    Threshold  1.5e-2
 
-    Data1D  'RDFs//Crystal//OriginalGR//Mg-Mg//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.g01'
+    Data1D  'SQs//UnweightedSQ//Mg-Mg//Unbound'  xy  '../_data/epsr25/mgo500-555/mgo.EPSR.f01'
       Y  2
     EndData1D
-    Data1D  'RDFs//Crystal//OriginalGR//Mg-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.g01'
+    Data1D  'SQs//UnweightedSQ//Mg-OX//Unbound'  xy  '../_data/epsr25/mgo500-555/mgo.EPSR.f01'
       Y  4
     EndData1D
-    Data1D  'RDFs//Crystal//OriginalGR//OX-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.g01'
+    Data1D  'SQs//UnweightedSQ//OX-OX//Unbound'  xy  '../_data/epsr25/mgo500-555/mgo.EPSR.f01'
       Y  6
     EndData1D
   EndModule
 
   # Partial S(Q)
-  Module  DataTest  'PartialSQ'
-    Threshold  1.0e-5
-
-    Data1D  'RDFs//UnweightedSQ//Mg-Mg//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.f01'
+  Module  DataTest  'TotalFQ'
+    Threshold  2.7e-3
+    Data1D  'NeutronSQ01//WeightedSQ//Total'  xy  '../_data/epsr25/mgo500-555/mgo.EPSR.u01'
       Y  2
     EndData1D
-    Data1D  'RDFs//UnweightedSQ//Mg-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.f01'
-      Y  4
-    EndData1D
-    Data1D  'RDFs//UnweightedSQ//OX-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.f01'
-      Y  6
-    EndData1D
   EndModule
-
 EndLayer
 
 # Pair Potentials
