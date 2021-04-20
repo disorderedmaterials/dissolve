@@ -28,7 +28,7 @@ QVariant DataManagerReferencePointModel::data(const QModelIndex &index, int role
     switch (role)
     {
         case Qt::DisplayRole:
-            return index.column() == 0 ? item.suffix().c_str() : item.restartFile().c_str();
+            return index.column() == 0 ? item.suffix().data() : item.restartFile().data();
         case Qt::UserRole:
             return VariantPointer<ReferencePoint>(&item);
         default:
