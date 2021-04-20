@@ -31,9 +31,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto qMax = keywords_.asDouble("QMax");
     const auto qMin = keywords_.asDouble("QMin");
     const auto multiplicity = keywords_.asVec3Int("Multiplicity");
-    // TODO Could look for this value in the Configuration's module data (could be set/stored if a known crystal repeat was
-    // used in the generation of the Configuration).
-    const bool saveReflections = keywords_.asBool("SaveReflections");
+    const auto saveReflections = keywords_.asBool("SaveReflections");
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n", qMin,
@@ -44,6 +42,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averaging,
                          Averaging::averagingSchemes().keyword(averagingScheme));
+    Messenger::print("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity.x, multiplicity.y,
+                     multiplicity.z);
     Messenger::print("\n");
 
     // Set up process pool - must do this to ensure we are using all available processes
@@ -56,6 +56,10 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     combinedAtomTypes.clear();
     for (Configuration *cfg : targetConfigurations_)
         combinedAtomTypes.add(cfg->usedAtomTypesList());
+
+    // Store unit cell information
+    auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", uniqueName_, GenericItem::InRestartFileFlag);
+    unitCellVolume = cfg->box()->volume() / (multiplicity.x * multiplicity.y * multiplicity.z);
 
     // Finalise combined AtomTypes matrix
     combinedAtomTypes.finalise();
