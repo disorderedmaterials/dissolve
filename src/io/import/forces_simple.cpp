@@ -23,8 +23,7 @@ bool ForceImportFileFormat::importSimple(LineParser &parser, std::vector<Vec3<do
         return false;
     auto nAtoms = parser.argi(0);
     Messenger::print(" --> Expecting forces for {} atoms.\n", nAtoms);
-    f.resize(nAtoms);
-    std::fill(f.begin(), f.end(), Vec3<double>());
+    f.resize(nAtoms, Vec3<double>());
 
     for (auto n = 0; n < nAtoms; ++n)
     {

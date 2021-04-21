@@ -39,8 +39,7 @@ bool ForceImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vec3<do
         return false;
     }
     Messenger::print(" --> Expecting forces for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
-    f.resize(nAtoms);
-    std::fill(f.begin(), f.end(), Vec3<double>());
+    f.resize(nAtoms, Vec3<double>());
 
     // Skip cell information if given
     if (imcon > 0)

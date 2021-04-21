@@ -108,8 +108,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto temperature = cfg->temperature();
 
         // Create arrays
-        std::vector<double> mass;
-        mass.resize(cfg->nAtoms(), 0.0);
+        std::vector<double> mass(cfg->nAtoms(), 0.0);
         std::vector<Vec3<double>> forces(cfg->nAtoms()), accelerations(cfg->nAtoms());
 
         // Variables
@@ -129,7 +128,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (status == GenericItem::ItemStatus::Created)
         {
             randomVelocities = true;
-            velocities.resize(cfg->nAtoms());
+            velocities.resize(cfg->nAtoms(), Vec3<double>());
         }
         if (randomVelocities)
             Messenger::print("Random initial velocities will be assigned.\n");
