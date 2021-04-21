@@ -27,7 +27,6 @@ SQModuleWidget::SQModuleWidget(QWidget *parent, const GenericList &processingDat
     sqGraph_->view().axes().setTitle(1, "F(Q)");
     sqGraph_->view().axes().setMin(1, -1.0);
     sqGraph_->view().axes().setMax(1, 1.0);
-    sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     sqGraph_->view().setAutoFollowType(View::AllAutoFollow);
     // -- Set group styling
     sqGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
