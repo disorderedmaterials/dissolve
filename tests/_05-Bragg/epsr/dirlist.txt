@@ -1,1 +1,0 @@
-/home/tris/src/duq/tests/_05-Bragg/epsr/mgo.EPSR.inp
