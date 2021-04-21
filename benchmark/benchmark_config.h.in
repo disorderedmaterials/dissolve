@@ -3,4 +3,4 @@
 */
 #pragma once
 
-const char *benchmark_path = @BENCHMARK_PATH@;
+inline const char *benchmark_path = @BENCHMARK_PATH@;

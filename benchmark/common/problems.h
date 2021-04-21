@@ -6,32 +6,40 @@
 #include "classes/box.h"
 #include "classes/coredata.h"
 #include "main/dissolve.h"
+#include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 
-enum ProblemSize
+enum ProblemType
 {
-    Small,
-    Medium,
-    Large
+    Argon1k,
+    Argon5k,
+    Argon10k,
+    Hexane1k,
 };
 
-template <ProblemSize problem> std::string benchmarkFilePath()
+template <ProblemType problem> std::string benchmarkFilePath()
 {
-    if constexpr (problem == ProblemSize::Small)
+    if constexpr (problem == ProblemType::Argon1k)
     {
-        std::string filename = "small_benchmark.txt";
+        std::string filename = "argon1k.txt";
         std::string fullPath = benchmark_path + filename;
         return fullPath;
     }
-    else if constexpr (problem == ProblemSize::Medium)
+    else if constexpr (problem == ProblemType::Argon5k)
     {
-        std::string filename = "medium_benchmark.txt";
+        std::string filename = "argon5k.txt";
         std::string fullPath = benchmark_path + filename;
         return fullPath;
     }
-    else if constexpr (problem == ProblemSize::Large)
+    else if constexpr (problem == ProblemType::Argon10k)
     {
-        std::string filename = "large_benchmark.txt";
+        std::string filename = "argon10k.txt";
+        std::string fullPath = benchmark_path + filename;
+        return fullPath;
+    }
+    else if constexpr (problem == ProblemType::Hexane1k)
+    {
+        std::string filename = "hexane1k.txt";
         std::string fullPath = benchmark_path + filename;
         return fullPath;
     }
@@ -45,7 +53,7 @@ constexpr auto CellsMethod = RDFModule::PartialsMethod::CellsMethod;
 constexpr auto SimpleMethod = RDFModule::PartialsMethod::SimpleMethod;
 } // namespace Method
 
-template <ProblemSize problem> struct Problem
+template <ProblemType problem> struct Problem
 {
     Problem() : dissolve_(coredata_)
     {
@@ -54,21 +62,25 @@ template <ProblemSize problem> struct Problem
         auto file = benchmarkFilePath<problem>();
         dissolve_.loadInput(file);
         dissolve_.prepare();
-        setUp();
-    }
-
-    void setUp()
-    {
         cfg_ = dissolve_.configurations().first();
         auto &procPool = dissolve_.worldPool();
         procPool.assignProcessesToGroups(cfg_->processPool());
-        // create the rdf module
-        rdfmodule_ = std::make_unique<RDFModule>();
-        rdfmodule_->addTargetConfiguration(cfg_);
-        cfg_->incrementContentsVersion();
+        setUpRDF();
     }
 
-    template <RDFModule::PartialsMethod method> void iterateCells()
+    void setUpRDF()
+    {
+        rdfmodule_ = std::make_unique<RDFModule>();
+        rdfmodule_->addTargetConfiguration(cfg_);
+    }
+
+    void setUpEnergy()
+    {
+        energymodule_ = std::make_unique<RDFModule>();
+        energymodule_->addTargetConfiguration(cfg_);
+    }
+
+    template <RDFModule::PartialsMethod method> void iterateGR()
     {
         double rdfRange = cfg_->box()->inscribedSphereRadius();
         bool upToDate = false;
@@ -76,8 +88,17 @@ template <ProblemSize problem> struct Problem
                                 upToDate);
         dissolve_.processingModuleData().clearAll();
     }
+
+    void iterateEnergy()
+    {
+        int a = 3;
+        int b = 4;
+    }
+
     CoreData coredata_;
     Dissolve dissolve_;
     std::unique_ptr<RDFModule> rdfmodule_;
+    std::unique_ptr<EnergyModule> energymodule_;
+
     Configuration *cfg_;
 };

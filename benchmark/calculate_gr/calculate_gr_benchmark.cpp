@@ -3,16 +3,16 @@
 #include "benchmark/benchmark.h"
 #include "common/problems.h"
 
-template <ProblemSize problem, RDFModule::PartialsMethod method> static void BM_CalculateGR(benchmark::State &state)
+template <ProblemType problem, RDFModule::PartialsMethod method> static void BM_CalculateGR(benchmark::State &state)
 {
     Problem<problem> problemDef;
     for (auto _ : state)
-        problemDef.template iterateCells<method>();
+        problemDef.template iterateGR<method>();
 }
 
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Small, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Small, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Medium, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Medium, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Large, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Large, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::Argon1k, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::Argon1k, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::Argon5k, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::Argon5k, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::Argon10k, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::Argon10k, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
