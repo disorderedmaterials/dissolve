@@ -44,14 +44,14 @@ std::string_view Data1D::tag() const { return tag_; }
 void Data1D::initialise(int size, bool withError)
 {
     x_.clear();
-    x_.resize(size);
+    x_.resize(size, 0.0);
     values_.clear();
-    values_.resize(size);
+    values_.resize(size, 0.0);
     hasError_ = withError;
     if (hasError_)
     {
         errors_.clear();
-        errors_.resize(size);
+        errors_.resize(size, 0.0);
     }
     else
         errors_.clear();
@@ -64,12 +64,12 @@ void Data1D::initialise(const Data1D &source)
 {
     x_ = source.x_;
     values_.clear();
-    values_.resize(x_.size());
+    values_.resize(x_.size(), 0.0);
     hasError_ = source.hasError_;
     if (hasError_)
     {
         errors_.clear();
-        errors_.resize(x_.size());
+        errors_.resize(x_.size(), 0.0);
     }
     else
         errors_.clear();
