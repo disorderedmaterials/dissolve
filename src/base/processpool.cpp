@@ -1216,21 +1216,24 @@ bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::Communi
     if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
         return true;
 
-    // Construct a contiguous POD buffer that we can send via MPI
-    std::vector<double> buffer(source.size());
+    // Construct POD buffers that we can send via MPI
+    std::vector<double> buffer(source.size()), received(source.size());
     for (auto n = 0; n < 3; ++n)
     {
+        std::fill(received.begin(), received.end(), 0.0);
+
         // Copy elements (x, y, or z) to buffer
         for (auto &&[buf, val] : zip(buffer, source))
             buf = val[n];
 
         // Reduce
-        if (MPI_Allreduce(source, buffer.data(), buffer.size(), MPI_DOUBLE, MPI_SUM, communicator(commType)) != MPI_SUCCESS)
+        if (MPI_Allreduce(buffer.data(), received.data(), received.size(), MPI_DOUBLE, MPI_SUM, communicator(commType)) !=
+            MPI_SUCCESS)
             return false;
 
-        // Put reduced data aback into source
-        for (auto &&[buf, val] : zip(buffer, source))
-            val[n] = buf;
+        // Put reduced data back into source
+        for (auto &&[rcvd, val] : zip(received, source))
+            val[n] = rcvd;
     }
 
     timer_.accumulate();
