@@ -164,12 +164,8 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
         }
 
         // Prune BraggReflections array, putting them into a sequential Array that will reflect their new indexing
-        for (auto n = 0; n < nBraggBins; ++n)
-        {
-            if (tempReflections[n].nKVectors() == 0)
-                continue;
-            braggReflections.emplace_back(tempReflections[n]);
-        }
+        std::copy_if(tempReflections.begin(), tempReflections.end(), std::back_inserter(braggReflections),
+                     [](const auto &reflection) { return reflection.nKVectors() != 0; });
 
         Messenger::print("Bragg calculation spans {} k-vectors (max HKL = {} x {} x {}) over {} <= Q <= {} ({} elapsed).\n",
                          braggKVectors.size(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax,
