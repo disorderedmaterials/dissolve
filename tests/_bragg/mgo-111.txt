@@ -1,63 +1,29 @@
-# Input file written by Dissolve v0.4.0 at 16:48:48 on 04-02-2019.
-
-#------------------------------------------------------------------------------#
-#                                Define Species                                #
-#------------------------------------------------------------------------------#
-
 Species 'Mg'
-  # Atoms
-  Atom    1   Mg     0.000     0.000     0.000  'Mg'
-  Isotopologue  Natural
+  Atom    1    Mg     0.0  0.0  0.0  'Mg'
 EndSpecies
 
 Species 'O'
-  # Atoms
-  Atom    1   O      0.500     0.500     0.500  'O'
-  Isotopologue  Natural
+  Atom    1    O      0.0  0.0  0.0  'OX'
 EndSpecies
 
+Configuration  'Crystal'
+  Generator
+    Box
+      Lengths  21.085  21.085  21.085
+    EndBox
+    AddSpecies
+      Population  500
+      Species  'Mg'
+    EndAddSpecies
+    AddSpecies
+      Population  500
+      Species  'O'
+    EndAddSpecies
+  EndGenerator
 
-#------------------------------------------------------------------------------#
-#                               Pair Potentials                                #
-#------------------------------------------------------------------------------#
-
-PairPotentials
-  # Atom Type Parameters
-  # Note: These are for reference only (unless GenerateAll is used).
-  # If you wish to modify the potential, change the relevant Generate lines below.
-  Parameters  Mg  Mg  0.000000e+00  1.000000e+00  2.501000e+00  0.000000e+00  0.000000e+00
-  Parameters  O  O   0.000000e+00  1.000000e+00  2.501000e+00  0.000000e+00  0.000000e+00
-  GenerateAll  LJ
-  Range  10.000000
-  Delta  0.005000
-  CoulombTruncation  Shifted
-  ShortRangeTruncation  Shifted
-EndPairPotentials
-
-#------------------------------------------------------------------------------#
-#                            Define Configurations                             #
-#------------------------------------------------------------------------------#
-
-Configuration  'Bulk'
-  Multiplier  500
-  Density  0.106679  atoms/A3
-  CellLengths  0.21084999E+02  0.21084999E+02  0.21084999E+02
-  CellAngles  90.000000  90.000000  90.000000
-
-  # Species Information
-  SpeciesInfo  'Mg'
-    Population  1.000000
-  EndSpeciesInfo
-  SpeciesInfo  'O'
-    Population  1.000000
-  EndSpeciesInfo
-
-  InputCoordinates  epsr  epsr/mgo-111/mgo.ato
-
+  InputCoordinates  epsr  ../_data/epsr25/mgo500-111/mgo.ato
+  EndInputCoordinates
   Temperature  300.000000
-
-  # Modules
-  # -- None
 EndConfiguration
 
 #------------------------------------------------------------------------------#
@@ -66,61 +32,84 @@ EndConfiguration
 
 Layer  'Main Processing'
 
-  Module  RDF  'RDF01'
+  Module  RDF  'RDFs'
     Frequency  1
 
-    Configuration  'Bulk'
+    Configuration  'Crystal'
 
   EndModule
 
   Module  Bragg
     Frequency  1
 
-    Configuration  'Bulk'
+    Configuration  'Crystal'
 
     Multiplicity  1  1  1 
     QMax  10.0
     SaveReflections  On
   EndModule
 
+  Module  SQ  SQs
+    SourceRDFs  'RDFs'
+    QMin 0.05
+    QMax  10.0
+    QDelta  0.05
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  Lorch0
+    #Save  On
+  EndModule
+
   Module  NeutronSQ  'NeutronSQ01'
     Frequency  1
 
-    Configuration  'Bulk'
+    SourceSQs  'SQs'
 
-    Isotopologue  'Bulk'  'Mg'  'Natural'  1.000000
-    Isotopologue  'Bulk'  'O'  'Natural'  1.000000
-
-    QMax  10.0
-    QDelta  0.05
-    IncludeBragg  On
+    #IncludeBragg  On
     #QBroadening  GaussianC2  0.0  0.02
     #BraggQBroadening  Gaussian  0.5
 
   EndModule
 
-  # -- Partial S(Q) (unbound terms)
-  Module  DataTest  'Partial S(Q) (unbound)'
-    Threshold  1.3
-    #Data1D  'Bulk//UnweightedSQ//Mg-Mg//Unbound'  histo  'epsr/mgo-111/mgo.EPSR.f01'  x=1  y=2
-    #Data1D  'Bulk//UnweightedSQ//Mg-O//Unbound'  histo  'epsr/mgo-111/mgo.EPSR.f01'  x=1  y=4
-    #Data1D  'Bulk//UnweightedSQ//O-O//Unbound'  histo  'epsr/mgo-111/mgo.EPSR.f01'  x=1  y=6
+  # Tests
+  # Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
+  #                                 Column:    2        4        6
+
+  # Partial g(r)
+  Module  DataTest  'PartialGR'
+    Threshold  1.0e-5
+
+    Data1D  'RDFs//Crystal//OriginalGR//Mg-Mg//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.g01'
+      Y  2
+    EndData1D
+    Data1D  'RDFs//Crystal//OriginalGR//Mg-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.g01'
+      Y  4
+    EndData1D
+    Data1D  'RDFs//Crystal//OriginalGR//OX-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.g01'
+      Y  6
+    EndData1D
   EndModule
 
-  # -- Total neutron-weighted F(Q)
-  Module  DataTest  'F(Q) Bulk'
-    Threshold  0.9
-    #Data1D  'Bulk//WeightedSQ//Total'  histo  'epsr/mgo-111/mgo.EPSR.u01'  x=1  y=2
+  # Partial S(Q)
+  Module  DataTest  'PartialSQ'
+    Threshold  1.0e-5
+
+    Data1D  'RDFs//UnweightedSQ//Mg-Mg//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.f01'
+      Y  2
+    EndData1D
+    Data1D  'RDFs//UnweightedSQ//Mg-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.f01'
+      Y  4
+    EndData1D
+    Data1D  'RDFs//UnweightedSQ//OX-OX//Unbound'  xy  '../_data/epsr25/mgo500-111/mgo.EPSR.f01'
+      Y  6
+    EndData1D
   EndModule
 
 EndLayer
 
-#------------------------------------------------------------------------------#
-#                                  Simulation                                  #
-#------------------------------------------------------------------------------#
-
-Simulation
-  BoxNormalisationPoints  500000000
-  Seed  -1
-EndSimulation
-
+# Pair Potentials
+PairPotentials
+  Range  10.000000
+  Delta  0.050000
+    Parameters  'OX'  O  -2.0   LJGeometric    0.6503    3.165492
+    Parameters  'Mg'  Mg  2.0    LJGeometric    1.0  2.0
+EndPairPotentials

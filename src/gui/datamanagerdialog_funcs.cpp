@@ -154,11 +154,5 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
     updateControls();
 }
 
-// void DataManagerDialog::on_ReferencePointsTable_currentItemChanged(QTableWidgetItem *currentItem,
-//                                                                    QTableWidgetItem *previousItem)
-// {
-//     ui_.ReferencePointRemoveButton->setEnabled(currentItem);
-// }
-
 // Dialog
 void DataManagerDialog::on_CloseButton_clicked(bool checked) { accept(); }

@@ -24,7 +24,7 @@ class DataManagerDialog : public QDialog
     Q_OBJECT
 
     public:
-  DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints, GenericList &items);
+    DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints, GenericList &items);
     ~DataManagerDialog();
 
     private:

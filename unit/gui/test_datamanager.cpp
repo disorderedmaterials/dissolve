@@ -42,6 +42,7 @@ TEST_F(DataManagerTest, DataManger)
     EXPECT_EQ(model.columnCount(), 2);
     EXPECT_EQ(model.rowCount(), 1);
 
+    EXPECT_EQ(model.rowCount(), 1);
     EXPECT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "benzene");
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "restart/benzene.txt.restart.test");
 

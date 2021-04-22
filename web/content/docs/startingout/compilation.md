@@ -182,6 +182,14 @@ Example: `-DBUILD_TESTS:bool=true`
 
 Default: `false`
 
+#### `BUILD_BENCHMARKS`
+
+In addition to the main build, also build the benchmarks located in the benchmark directory. If this option is specified, the Google benchmark library will be downloaded and compiled by cmake. 
+
+Usage: `-DBUILD_BECHMARKS:bool=true`
+
+Default: `false`
+
 #### `GUI`
 
 Requests that the GUI version of Dissolve be built. This option is mutually exclusive with `-DPARALLEL:bool=true`. Qt5 libraries and development tools must be present in the path, as well as [`FTGL`](http://ftgl.sourceforge.net/docs/html/).
