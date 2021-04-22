@@ -12,15 +12,13 @@
 // Copy coordinates from supplied Configuration into reference arrays
 template <> void GeometryOptimisationModule::setReferenceCoordinates(Configuration *cfg)
 {
-    for (auto &&[ref, i] : zip(rRef_, cfg->atoms()))
-        ref = i->r();
+    std::transform(cfg->atoms().begin(), cfg->atoms().end(), zRef_.begin(), [](const auto i){ return i->r();});
 }
 
 // Copy coordinates from supplied Species into reference arrays
 template <> void GeometryOptimisationModule::setReferenceCoordinates(Species *sp)
 {
-    for (auto &&[ref, i] : zip(rRef_, sp->atoms()))
-        ref = i.r();
+    std::transform(sp->atoms().begin(), sp->atoms().end(), rRef_.begin(), [](const auto i){ return i.r();});
 }
 
 // Revert Configuration to reference coordinates
