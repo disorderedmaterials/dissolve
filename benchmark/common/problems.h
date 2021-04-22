@@ -8,40 +8,59 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
+#include <string>
 
+namespace
+{
+const char *FILEEXTENSION = ".txt";
+}
 enum ProblemType
 {
-    Argon1k,
-    Argon5k,
-    Argon10k,
-    Hexane1k,
+    atomic,
+    smallMolecule,
+    mediumMolecule,
 };
 
-template <ProblemType problem> std::string benchmarkFilePath()
+enum Population
 {
-    if constexpr (problem == ProblemType::Argon1k)
+    small,
+    medium,
+    large,
+};
+
+template <Population population> std::string getFileName(std::string systemName)
+{
+    std::stringstream fileName;
+    fileName << benchmark_path << systemName;
+    if constexpr (population == Population::small)
     {
-        std::string filename = "argon1k.txt";
-        std::string fullPath = benchmark_path + filename;
-        return fullPath;
+        fileName << "1k";
     }
-    else if constexpr (problem == ProblemType::Argon5k)
+    else if constexpr (population == Population::medium)
     {
-        std::string filename = "argon5k.txt";
-        std::string fullPath = benchmark_path + filename;
-        return fullPath;
+        fileName << "5k";
     }
-    else if constexpr (problem == ProblemType::Argon10k)
+    else if constexpr (population == Population::large)
     {
-        std::string filename = "argon10k.txt";
-        std::string fullPath = benchmark_path + filename;
-        return fullPath;
+        fileName << "10k";
     }
-    else if constexpr (problem == ProblemType::Hexane1k)
+    fileName << FILEEXTENSION;
+    return fileName.str();
+}
+
+template <ProblemType problem, Population population> std::string benchmarkFilePath()
+{
+    if constexpr (problem == ProblemType::atomic)
     {
-        std::string filename = "hexane1k.txt";
-        std::string fullPath = benchmark_path + filename;
-        return fullPath;
+        return getFileName<population>("argon");
+    }
+    else if constexpr (problem == ProblemType::smallMolecule)
+    {
+        return getFileName<population>("water");
+    }
+    else if constexpr (problem == ProblemType::mediumMolecule)
+    {
+        return getFileName<population>("hexane");
     }
     else
         return {};
@@ -53,13 +72,13 @@ constexpr auto CellsMethod = RDFModule::PartialsMethod::CellsMethod;
 constexpr auto SimpleMethod = RDFModule::PartialsMethod::SimpleMethod;
 } // namespace Method
 
-template <ProblemType problem> struct Problem
+template <ProblemType problem, Population population> struct Problem
 {
     Problem() : dissolve_(coredata_)
     {
         Messenger::setQuiet(true);
         dissolve_.registerMasterModules();
-        auto file = benchmarkFilePath<problem>();
+        auto file = benchmarkFilePath<problem, population>();
         dissolve_.loadInput(file);
         dissolve_.prepare();
         cfg_ = dissolve_.configurations().first();

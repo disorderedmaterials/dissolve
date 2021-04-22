@@ -6,7 +6,7 @@
 #include "classes/species.h"
 #include "common/problems.h"
 
-template <ProblemType problem> EnergyKernel createEnergyKernel(Problem<problem> &problemDef)
+template <ProblemType problem, Population population> EnergyKernel createEnergyKernel(Problem<problem, population> &problemDef)
 {
 
     auto &procPool = problemDef.dissolve_.worldPool();
@@ -16,9 +16,9 @@ template <ProblemType problem> EnergyKernel createEnergyKernel(Problem<problem> 
     return kernel;
 }
 
-template <ProblemType problem> static void BM_CalculateEnergy_AtomicEnergy(benchmark::State &state)
+template <ProblemType problem, Population population> static void BM_CalculateEnergy_AtomicEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
     const auto &cellArray = problemDef.cfg_->cells();
     auto *cellI = cellArray.cell(1);
@@ -29,9 +29,9 @@ template <ProblemType problem> static void BM_CalculateEnergy_AtomicEnergy(bench
         energyKernel.energy(i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
 }
 
-template <ProblemType problem> static void BM_CalculateEnergy_MoleculeEnergy(benchmark::State &state)
+template <ProblemType problem, Population population> static void BM_CalculateEnergy_MoleculeEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
     const auto &mol = problemDef.cfg_->molecules().front();
     for (auto _ : state)
@@ -41,9 +41,9 @@ template <ProblemType problem> static void BM_CalculateEnergy_MoleculeEnergy(ben
     }
 }
 
-template <ProblemType problem> static void BM_CalculateEnergy_MoleculeBondEnergy(benchmark::State &state)
+template <ProblemType problem, Population population> static void BM_CalculateEnergy_MoleculeBondEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &bond = mol->species()->bonds().back();
@@ -54,9 +54,10 @@ template <ProblemType problem> static void BM_CalculateEnergy_MoleculeBondEnergy
     }
 }
 
-template <ProblemType problem> static void BM_CalculateEnergy_MoleculeTorsionEnergy(benchmark::State &state)
+template <ProblemType problem, Population population>
+static void BM_CalculateEnergy_MoleculeTorsionEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &torsion = mol->species()->torsions().front();
@@ -66,9 +67,10 @@ template <ProblemType problem> static void BM_CalculateEnergy_MoleculeTorsionEne
         benchmark::DoNotOptimize(energy);
     }
 }
-template <ProblemType problem> static void BM_CalculateEnergy_MoleculeAngleEnergy(benchmark::State &state)
+template <ProblemType problem, Population population>
+static void BM_CalculateEnergy_MoleculeAngleEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &angle = mol->species()->angles().front();
@@ -79,18 +81,20 @@ template <ProblemType problem> static void BM_CalculateEnergy_MoleculeAngleEnerg
     }
 }
 
-template <ProblemType problem> static void BM_CalculateEnergy_TotalIntraMolecularEnergy(benchmark::State &state)
+template <ProblemType problem, Population population>
+static void BM_CalculateEnergy_TotalIntraMolecularEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto &procPool = problemDef.dissolve_.worldPool();
     const auto &cellArray = problemDef.cfg_->cells();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
         EnergyModule::intraMolecularEnergy(procPool, problemDef.cfg_, potentialMap);
 }
-template <ProblemType problem> static void BM_CalculateEnergy_TotalInterAtomicEnergy(benchmark::State &state)
+template <ProblemType problem, Population population>
+static void BM_CalculateEnergy_TotalInterAtomicEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto &procPool = problemDef.dissolve_.worldPool();
     const auto &cellArray = problemDef.cfg_->cells();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
@@ -98,28 +102,49 @@ template <ProblemType problem> static void BM_CalculateEnergy_TotalInterAtomicEn
         EnergyModule::interAtomicEnergy(procPool, problemDef.cfg_, potentialMap);
 }
 
-template <ProblemType problem> static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state)
+template <ProblemType problem, Population population>
+static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     auto &procPool = problemDef.dissolve_.worldPool();
     const auto &cellArray = problemDef.cfg_->cells();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
         EnergyModule::interMolecularEnergy(procPool, problemDef.cfg_, potentialMap);
 }
-
+// Small molecule
 // Benchmarking pairwise energy calculation of an individual atom with another cell
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::Hexane1k);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::smallMolecule, Population::small);
 // Benchmarking individual molecule calculations
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, ProblemType::Hexane1k);
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, ProblemType::Hexane1k);
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeTorsionEnergy, ProblemType::Hexane1k);
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, ProblemType::Hexane1k)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, ProblemType::smallMolecule, Population::small);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, ProblemType::smallMolecule, Population::small);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, ProblemType::smallMolecule, Population::small)
+    ->Unit(benchmark::kMillisecond);
 // Benchmark energy calculations of the whole system
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, ProblemType::Hexane1k)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, ProblemType::Hexane1k)
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, ProblemType::smallMolecule, Population::small)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, ProblemType::smallMolecule, Population::small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::Hexane1k)
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::smallMolecule, Population::small)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+
+// medium molecule
+// Benchmarking pairwise energy calculation of an individual atom with another cell
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::mediumMolecule, Population::small);
+// Benchmarking individual molecule calculations
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, ProblemType::mediumMolecule, Population::small);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, ProblemType::mediumMolecule, Population::small);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeTorsionEnergy, ProblemType::mediumMolecule, Population::small);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, ProblemType::mediumMolecule, Population::small)
+    ->Unit(benchmark::kMillisecond);
+// Benchmark energy calculations of the whole system
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, ProblemType::mediumMolecule, Population::small)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, ProblemType::mediumMolecule, Population::small)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::mediumMolecule, Population::small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
