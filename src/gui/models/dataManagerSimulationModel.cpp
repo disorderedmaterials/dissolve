@@ -51,9 +51,11 @@ QVariant DataManagerSimulationModel::headerData(int section, Qt::Orientation ori
     switch (section)
     {
         case 0:
-            return "Data Suffix";
+            return "Item Name";
         case 1:
-            return "Source";
+            return "Class";
+        case 2:
+            return "Version";
         default:
             return QVariant();
     }
