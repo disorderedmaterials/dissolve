@@ -47,8 +47,6 @@ class DataManagerDialog : public QDialog
     Ui::DataManagerDialog ui_;
 
     private:
-    // Add GenericItems to table
-    void addItems(const std::map<std::string, GenericItem::Type> &items);
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QString filterText);
     // Update ReferencePoint table row
@@ -65,7 +63,6 @@ class DataManagerDialog : public QDialog
     void on_ReferencePointRemoveButton_clicked(bool checked);
     void on_ReferencePointCreateButton_clicked(bool checked);
     void on_ReferencePointOpenButton_clicked(bool checked);
-    // void on_ReferencePointsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *previousItem);
 
     // Dialog
     void on_CloseButton_clicked(bool checked);
