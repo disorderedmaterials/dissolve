@@ -10,8 +10,10 @@
 #include <QMessageBox>
 #include <QRegExp>
 
-DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints, GenericList &items)
-  : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(dissolve, referencePoints_), simModel_(dissolve, items)
+DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints,
+                                     GenericList &items)
+    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(dissolve, referencePoints_),
+      simModel_(dissolve, items)
 {
     ui_.setupUi(this);
     ui_.ReferencePointsTable->setModel(&refModel_);
@@ -32,7 +34,8 @@ DataManagerDialog::~DataManagerDialog() {}
 // Update the specified table of GenericItems, optionally filtering them by name and description
 void DataManagerDialog::filterTable(QString filterText)
 {
-    if (filterText.isEmpty()) return;
+    if (filterText.isEmpty())
+        return;
     simProxy_.setFilterRegExp(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard));
     simProxy_.setFilterKeyColumn(0);
 }

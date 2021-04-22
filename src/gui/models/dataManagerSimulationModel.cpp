@@ -1,9 +1,10 @@
-#include "genericitems/list.h"
 #include "gui/models/dataManagerSimulationModel.h"
+#include "genericitems/list.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
 
-DataManagerSimulationModel::DataManagerSimulationModel(Dissolve &dissolve, GenericList &items) : dissolve_(dissolve), items_(items)
+DataManagerSimulationModel::DataManagerSimulationModel(Dissolve &dissolve, GenericList &items)
+    : dissolve_(dissolve), items_(items)
 {
 }
 
@@ -30,17 +31,18 @@ QVariant DataManagerSimulationModel::data(const QModelIndex &index, int role) co
 
     int idx = 0;
     for (auto &[key, value] : items_.items())
-      if (idx++ == index.row())
-	switch (index.column()) {
-	case 0:
-	  return key.c_str();
-	case 1:
-	  return std::string(std::get<GenericItem::ClassName>(value)).c_str();
-	case 2:
-	  return std::get<GenericItem::Version>(value);
-	default:
-	  return QVariant();
-	}
+        if (idx++ == index.row())
+            switch (index.column())
+            {
+                case 0:
+                    return key.c_str();
+                case 1:
+                    return std::string(std::get<GenericItem::ClassName>(value)).c_str();
+                case 2:
+                    return std::get<GenericItem::Version>(value);
+                default:
+                    return QVariant();
+            }
     return QVariant();
 }
 
