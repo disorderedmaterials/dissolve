@@ -74,12 +74,6 @@ template <ProblemType problem> struct Problem
         rdfmodule_->addTargetConfiguration(cfg_);
     }
 
-    void setUpEnergy()
-    {
-        energymodule_ = std::make_unique<RDFModule>();
-        energymodule_->addTargetConfiguration(cfg_);
-    }
-
     template <RDFModule::PartialsMethod method> void iterateGR()
     {
         double rdfRange = cfg_->box()->inscribedSphereRadius();
@@ -87,12 +81,6 @@ template <ProblemType problem> struct Problem
         rdfmodule_->calculateGR(dissolve_.processingModuleData(), dissolve_.worldPool(), cfg_, method, rdfRange, 0.05,
                                 upToDate);
         dissolve_.processingModuleData().clearAll();
-    }
-
-    void iterateEnergy()
-    {
-        int a = 3;
-        int b = 4;
     }
 
     CoreData coredata_;
