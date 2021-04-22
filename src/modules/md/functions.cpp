@@ -28,7 +28,7 @@ int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &f)
 // Determine timestep based on maximal force component
 double MDModule::determineTimeStep(const std::vector<Vec3<double>> &f)
 {
-    auto fMax = *std::max_element(f.begin(), f.end(), [](auto & left, auto& right){ return left.absMax() < right.absMax(););
+    auto fMax = *std::max_element(f.begin(), f.end(), [](auto &left, auto &right) { return left.absMax() < right.absMax(); });
 
-    return 1.0 / fMax;
+    return 1.0 / fMax.absMax();
 }

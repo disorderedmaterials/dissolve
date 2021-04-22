@@ -166,8 +166,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
         const auto kb = 0.8314462;
         ke = 0.0;
-        ke = std::transform_reduce(momentum.begin(), momentum.end(), velocity.begin(), 0.0, std::plus<>, 
-                                                    [](const auto &m, const auto &v) { return 0.5 * m * v.dp(v); });
+        for (auto &&[m, v] : zip(mass, velocities))
+            ke += 0.5 * m * v.dp(v);
         tInstant = ke * 2.0 / (3.0 * atoms.size() * kb);
 
         // Rescale velocities for desired temperature

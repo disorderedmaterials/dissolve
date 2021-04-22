@@ -1223,8 +1223,7 @@ bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::Communi
         std::fill(received.begin(), received.end(), 0.0);
 
         // Copy elements (x, y, or z) to buffer
-        for (auto &&[buf, val] : zip(buffer, source))
-            buf = val[n];
+        std::transform(source.begin(), source.end(), buffer.begin(), [n](const auto &val) { return val.get(n); });
 
         // Reduce
         if (MPI_Allreduce(buffer.data(), received.data(), received.size(), MPI_DOUBLE, MPI_SUM, communicator(commType)) !=
