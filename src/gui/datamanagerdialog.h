@@ -3,11 +3,13 @@
 
 #pragma once
 
+#include "classes/referencepoint.h"
 #include "genericitems/list.h"
-#include "gui/referencepoint.h"
+#include "gui/models/dataManagerReferencePointModel.h"
 #include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
 #include <QDialog>
+#include <vector>
 
 Q_DECLARE_METATYPE(const ReferencePoint *)
 
@@ -20,14 +22,16 @@ class DataManagerDialog : public QDialog
     Q_OBJECT
 
     public:
-    DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints);
+    DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints);
     ~DataManagerDialog();
 
     private:
     // Reference to Dissolve
     Dissolve &dissolve_;
     // List of current ReferencePoints
-    List<ReferencePoint> &referencePoints_;
+    std::vector<ReferencePoint> &referencePoints_;
+    // ReferencePoint Model
+    DataManagerReferencePointModel refModel_;
 
     /*
      * UI

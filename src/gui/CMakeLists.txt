@@ -253,12 +253,10 @@ set(gui_SRCS
     menu_species.cpp
     menu_workspace.cpp
     outputhandler_funcs.cpp
-    referencepoint.cpp
     stockcolours.cpp
     systemtemplate.cpp
     thread_funcs.cpp
     tmdiarea_funcs.cpp
-    referencepoint.h
 )
 
 # Resources

@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "classes/referencepoint.h"
 #include "gui/maintab.h"
 #include "gui/outputhandler.hui"
-#include "gui/referencepoint.h"
 #include "gui/systemtemplate.h"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"
@@ -111,7 +111,7 @@ class DissolveWindow : public QMainWindow
      */
     private:
     // List of ReferencePoints currently loaded
-    List<ReferencePoint> referencePoints_;
+    std::vector<ReferencePoint> referencePoints_;
 
     /*
      * Update Functions

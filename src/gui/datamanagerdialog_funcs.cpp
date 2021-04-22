@@ -10,10 +10,11 @@
 #include <QMessageBox>
 #include <QRegExp>
 
-DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints)
-    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints)
+DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints)
+    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(dissolve, referencePoints_)
 {
     ui_.setupUi(this);
+    ui_.ReferencePointsTable->setModel(&refModel_);
 
     updateControls();
 }
@@ -74,42 +75,14 @@ void DataManagerDialog::filterTable(QString filterText)
     }
 }
 
-// Update ReferencePoint table row
-void DataManagerDialog::referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Data Suffix
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<ReferencePoint>(refPoint));
-        ui_.ReferencePointsTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.ReferencePointsTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(refPoint->suffix())));
-
-    // Restart file name
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<ReferencePoint>(refPoint));
-        ui_.ReferencePointsTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.ReferencePointsTable->item(row, 1);
-    item->setText(QString::fromStdString(std::string(refPoint->restartFile())));
-}
-
 // Return currently-selected ReferencePoint
 ReferencePoint *DataManagerDialog::currentReferencePoint() const
 {
     // Get current item from tree, and check the parent item
-    QTableWidgetItem *item = ui_.ReferencePointsTable->currentItem();
-    if (!item)
+    auto index = ui_.ReferencePointsTable->currentIndex();
+    if (!index.isValid())
         return nullptr;
-    return VariantPointer<ReferencePoint>(item->data(Qt::UserRole));
+    return VariantPointer<ReferencePoint>(refModel_.data(index, Qt::UserRole));
 }
 
 // Update controls
@@ -121,8 +94,7 @@ void DataManagerDialog::updateControls()
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table
-    ConstTableWidgetUpdater<DataManagerDialog, ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this,
-                                                                               &DataManagerDialog::referencePointRowUpdate);
+    refModel_.update();
     ui_.ReferencePointsTable->resizeColumnsToContents();
 }
 
@@ -136,7 +108,7 @@ void DataManagerDialog::on_ReferencePointRemoveButton_clicked(bool checked)
     if (!refPoint)
         return;
 
-    dissolve_.processingModuleData().pruneWithSuffix(refPoint->suffix());
+    dissolve_.processingModuleData().pruneWithSuffix(std::get<0>(*refPoint));
 
     updateControls();
 }
@@ -157,15 +129,9 @@ void DataManagerDialog::on_ReferencePointOpenButton_clicked(bool checked)
     if (!ok)
         return;
 
-    ReferencePoint *refPoint = referencePoints_.add();
-    refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(restartFile)));
-    refPoint->setSuffix(qPrintable(suffix));
-
-    // Load the data
-    if (!dissolve_.loadRestartAsReference(refPoint->restartFile(), refPoint->suffix()))
-        QMessageBox::warning(this, "Error loading reference point",
-                             "Couldn't load the reference point data specified.\nThis may be because your simulation "
-                             "setup doesn't match that expected by the restart data.\n");
+    auto err = refModel_.addFile(qPrintable(suffix), qPrintable(restartFile));
+    if (err)
+        QMessageBox::warning(this, "Error loading reference point", QString((*err).c_str()));
 
     updateControls();
 }
@@ -194,14 +160,9 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
         return;
     }
 
-    ReferencePoint *refPoint = referencePoints_.add();
-    refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(filename)));
-    refPoint->setSuffix(qPrintable(suffix));
-
-    if (!dissolve_.loadRestartAsReference(qPrintable(filename), qPrintable(suffix)))
-        QMessageBox::warning(this, "Error loading reference point",
-                             "Couldn't load the reference point data.\nWhich is odd, annoying, and something you "
-                             "should let the developer know about.");
+    auto err = refModel_.addFile(qPrintable(suffix), qPrintable(filename));
+    if (err)
+        QMessageBox::warning(this, "Error loading reference point", QString((*err).c_str()));
 
     updateControls();
 }

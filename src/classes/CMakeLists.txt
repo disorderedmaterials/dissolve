@@ -105,6 +105,7 @@ add_library(
   potentialmap.h
   partialset.h
   partialsetaccumulator.h
+  referencepoint.h
   regionaldistributor.h
   scaledenergykernel.h
   scatteringmatrix.h
