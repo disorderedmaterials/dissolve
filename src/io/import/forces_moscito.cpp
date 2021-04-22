@@ -5,7 +5,7 @@
 #include "io/import/forces.h"
 
 // Import Moscito forces through specified parser
-bool ForceImportFileFormat::importMoscito(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+bool ForceImportFileFormat::importMoscito(LineParser &parser, std::vector<Vec3<double>> &f)
 {
     /*
      * Import Moscito coordinate information through the specified line parser.
@@ -37,9 +37,7 @@ bool ForceImportFileFormat::importMoscito(LineParser &parser, Array<double> &fx,
     Messenger::print(" --> Structure file contains {} molecules.\n", nMolecules);
 
     // Can't pre-initialise for number of atoms as it is unknown at this point
-    fx.clear();
-    fy.clear();
-    fz.clear();
+    f.clear();
 
     for (auto n = 0; n < nMolecules; ++n)
     {
@@ -77,9 +75,8 @@ bool ForceImportFileFormat::importMoscito(LineParser &parser, Array<double> &fx,
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
             std::string coords{parser.line()};
-            fx.add(std::stof(coords.substr(0, 15)) * 10.0);
-            fy.add(std::stof(coords.substr(15, 15)) * 10.0);
-            fz.add(std::stof(coords.substr(30)) * 10.0);
+            f.emplace_back(std::stof(coords.substr(0, 15)) * 10.0, std::stof(coords.substr(15, 15)) * 10.0,
+                           std::stof(coords.substr(30)) * 10.0);
         }
     }
 

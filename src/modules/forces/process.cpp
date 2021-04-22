@@ -17,13 +17,11 @@ bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     {
         Messenger::print("Reading test reference forces.\n");
 
-        // Realise some arrays to store the forces in
-        auto &fx = dissolve.processingModuleData().realise<Array<double>>("ReferenceFX", uniqueName());
-        auto &fy = dissolve.processingModuleData().realise<Array<double>>("ReferenceFY", uniqueName());
-        auto &fz = dissolve.processingModuleData().realise<Array<double>>("ReferenceFZ", uniqueName());
+        // Realise and read the force array
+        auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>("ReferenceForces", uniqueName());
 
         // Read in the forces
-        if (!referenceForces_.importData(fx, fy, fz, &procPool))
+        if (!referenceForces_.importData(f, &procPool))
             return false;
     }
 
@@ -91,27 +89,13 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto *box = cfg->box();
             double scale;
 
-            // Allocate the force arrays
-            Array<double> interFx(cfg->nAtoms()), interFy(cfg->nAtoms()), interFz(cfg->nAtoms());
-            Array<double> intraFx(cfg->nAtoms()), intraFy(cfg->nAtoms()), intraFz(cfg->nAtoms());
-            Array<double> referenceFx(cfg->nAtoms()), referenceFy(cfg->nAtoms()), referenceFz(cfg->nAtoms());
-            Array<double> checkInterFx(cfg->nAtoms()), checkInterFy(cfg->nAtoms()), checkInterFz(cfg->nAtoms());
-            Array<double> checkIntraFx(cfg->nAtoms()), checkIntraFy(cfg->nAtoms()), checkIntraFz(cfg->nAtoms());
-            interFx = 0.0;
-            interFy = 0.0;
-            interFz = 0.0;
-            intraFx = 0.0;
-            intraFy = 0.0;
-            intraFz = 0.0;
-            referenceFx = 0.0;
-            referenceFy = 0.0;
-            referenceFz = 0.0;
-            checkInterFx = 0.0;
-            checkInterFy = 0.0;
-            checkInterFz = 0.0;
-            checkIntraFx = 0.0;
-            checkIntraFy = 0.0;
-            checkIntraFz = 0.0;
+            // Allocate the force vectors
+            std::vector<Vec3<double>> fInter, fIntra, fRef, fInterCheck, fIntraCheck;
+            fInter.resize(cfg->nAtoms(), Vec3<double>());
+            fIntra.resize(cfg->nAtoms(), Vec3<double>());
+            fRef.resize(cfg->nAtoms(), Vec3<double>());
+            fInterCheck.resize(cfg->nAtoms(), Vec3<double>());
+            fIntraCheck.resize(cfg->nAtoms(), Vec3<double>());
 
             // Calculate interatomic and intramlecular energy in a loop over defined Molecules
             Timer timer;
@@ -146,12 +130,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r) * scale;
                             else
                                 vecji *= potentialMap.force(molN->atom(ii), molN->atom(jj), r) * scale;
-                            interFx[i->arrayIndex()] += vecji.x;
-                            interFy[i->arrayIndex()] += vecji.y;
-                            interFz[i->arrayIndex()] += vecji.z;
-                            interFx[j->arrayIndex()] -= vecji.x;
-                            interFy[j->arrayIndex()] -= vecji.y;
-                            interFz[j->arrayIndex()] -= vecji.z;
+                            fInter[i->arrayIndex()] += vecji;
+                            fInter[j->arrayIndex()] -= vecji;
                         }
                     }
 
@@ -183,12 +163,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 else
                                     vecji *= potentialMap.force(i, j, r);
 
-                                interFx[i->arrayIndex()] += vecji.x;
-                                interFy[i->arrayIndex()] += vecji.y;
-                                interFz[i->arrayIndex()] += vecji.z;
-                                interFx[j->arrayIndex()] -= vecji.x;
-                                interFy[j->arrayIndex()] -= vecji.y;
-                                interFz[j->arrayIndex()] -= vecji.z;
+                                fInter[i->arrayIndex()] += vecji;
+                                fInter[j->arrayIndex()] -= vecji;
                             }
                         }
                     }
@@ -206,12 +182,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         vecji = box->minimumVector(i, j);
                         r = vecji.magAndNormalise();
                         vecji *= bond.force(r);
-                        intraFx[i->arrayIndex()] -= vecji.x;
-                        intraFy[i->arrayIndex()] -= vecji.y;
-                        intraFz[i->arrayIndex()] -= vecji.z;
-                        intraFx[j->arrayIndex()] += vecji.x;
-                        intraFy[j->arrayIndex()] += vecji.y;
-                        intraFz[j->arrayIndex()] += vecji.z;
+
+                        fIntra[i->arrayIndex()] -= vecji;
+                        fIntra[j->arrayIndex()] += vecji;
                     }
 
                     // Angle forces
@@ -236,15 +209,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         forcek *= force / magjk;
 
                         // Store forces
-                        intraFx[i->arrayIndex()] += forcei.x;
-                        intraFy[i->arrayIndex()] += forcei.y;
-                        intraFz[i->arrayIndex()] += forcei.z;
-                        intraFx[j->arrayIndex()] -= forcei.x + forcek.x;
-                        intraFy[j->arrayIndex()] -= forcei.y + forcek.y;
-                        intraFz[j->arrayIndex()] -= forcei.z + forcek.z;
-                        intraFx[k->arrayIndex()] += forcek.x;
-                        intraFy[k->arrayIndex()] += forcek.y;
-                        intraFz[k->arrayIndex()] += forcek.z;
+                        fIntra[i->arrayIndex()] += forcei;
+                        fIntra[j->arrayIndex()] -= forcei + forcek;
+                        fIntra[k->arrayIndex()] += forcek;
                     }
 
                     // Torsion forces
@@ -267,31 +234,29 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         du_dphi = torsion.force(phi * DEGRAD);
 
                         // Sum forces on Atoms
-                        auto index = i->arrayIndex();
-                        intraFx[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
-                        intraFy[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
-                        intraFz[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
+                        fIntra[i->arrayIndex()].add(du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0)),
+                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1)),
+                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2)));
 
-                        index = j->arrayIndex();
-                        intraFx[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
-                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
-                        intraFy[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
-                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
-                        intraFz[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
-                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
+                        fIntra[j->arrayIndex()].add(
+                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
+                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0))),
+                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
+                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1))),
+                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
+                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2))));
 
-                        index = k->arrayIndex();
-                        intraFx[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
-                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
-                        intraFy[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
-                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
-                        intraFz[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
-                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
+                        fIntra[k->arrayIndex()].add(
+                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
+                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0))),
+                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
+                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1))),
+                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
+                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2))));
 
-                        index = l->arrayIndex();
-                        intraFx[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
-                        intraFy[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
-                        intraFz[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
+                        fIntra[l->arrayIndex()].add(du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0)),
+                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1)),
+                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2)));
                     }
 
                     // Improper forces
@@ -314,43 +279,37 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         du_dphi = imp.force(phi * DEGRAD);
 
                         // Sum forces on Atoms
-                        auto index = i->arrayIndex();
-                        intraFx[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
-                        intraFy[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
-                        intraFz[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
+                        fIntra[i->arrayIndex()].add(du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0)),
+                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1)),
+                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2)));
 
-                        index = j->arrayIndex();
-                        intraFx[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
-                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
-                        intraFy[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
-                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
-                        intraFz[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
-                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
+                        fIntra[j->arrayIndex()].add(
+                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
+                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0))),
+                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
+                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1))),
+                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
+                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2))));
 
-                        index = k->arrayIndex();
-                        intraFx[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
-                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
-                        intraFy[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
-                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
-                        intraFz[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
-                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
+                        fIntra[k->arrayIndex()].add(
+                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
+                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0))),
+                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
+                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1))),
+                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
+                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2))));
 
-                        index = l->arrayIndex();
-                        intraFx[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
-                        intraFy[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
-                        intraFz[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
+                        fIntra[l->arrayIndex()].add(du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0)),
+                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1)),
+                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2)));
                     }
                 }
             }
             timer.stop();
 
             // Convert forces to 10J/mol
-            interFx *= 100.0;
-            interFy *= 100.0;
-            interFz *= 100.0;
-            intraFx *= 100.0;
-            intraFy *= 100.0;
-            intraFz *= 100.0;
+            std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto &f) { return f * 100.0; });
+            std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto &f) { return f * 100.0; });
 
             Messenger::print("Time to do total (test) forces was {}.\n", timer.totalTimeString());
 
@@ -370,12 +329,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Timer interTimer;
                 interTimer.start();
 
-                interAtomicForces(procPool, cfg, dissolve.potentialMap(), checkInterFx, checkInterFy, checkInterFz);
-                if (!procPool.allSum(checkInterFx, cfg->nAtoms()))
-                    return false;
-                if (!procPool.allSum(checkInterFy, cfg->nAtoms()))
-                    return false;
-                if (!procPool.allSum(checkInterFz, cfg->nAtoms()))
+                interAtomicForces(procPool, cfg, dissolve.potentialMap(), fInterCheck);
+                if (!procPool.allSum(fInterCheck))
                     return false;
 
                 interTimer.stop();
@@ -388,12 +343,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Timer intraTimer;
                 intraTimer.start();
 
-                intraMolecularForces(procPool, cfg, dissolve.potentialMap(), checkIntraFx, checkIntraFy, checkIntraFz);
-                if (!procPool.allSum(checkIntraFx, cfg->nAtoms()))
-                    return false;
-                if (!procPool.allSum(checkIntraFy, cfg->nAtoms()))
-                    return false;
-                if (!procPool.allSum(checkIntraFz, cfg->nAtoms()))
+                intraMolecularForces(procPool, cfg, dissolve.potentialMap(), fIntraCheck);
+                if (!procPool.allSum(fIntraCheck))
                     return false;
 
                 intraTimer.stop();
@@ -401,12 +352,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Convert forces to 10J/mol
-            checkInterFx *= 100.0;
-            checkInterFy *= 100.0;
-            checkInterFz *= 100.0;
-            checkIntraFx *= 100.0;
-            checkIntraFy *= 100.0;
-            checkIntraFz *= 100.0;
+            std::transform(fInterCheck.begin(), fInterCheck.end(), fInterCheck.begin(), [](auto &f) { return f * 100.0; });
+            std::transform(fIntraCheck.begin(), fIntraCheck.end(), fIntraCheck.begin(), [](auto &f) { return f * 100.0; });
 
             /*
              * Production Calculation Ends
@@ -423,35 +370,22 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             for (auto n = 0; n < cfg->nAtoms(); ++n)
             {
-                interRatio.set(interFx[n] - checkInterFx[n], interFy[n] - checkInterFy[n], interFz[n] - checkInterFz[n]);
-                intraRatio.set(intraFx[n] - checkIntraFx[n], intraFy[n] - checkIntraFy[n], intraFz[n] - checkIntraFz[n]);
-                if (fabs(interFx[n]) > 1.0e-6)
-                    interRatio.x *= 100.0 / interFx[n];
-                if (fabs(interFy[n]) > 1.0e-6)
-                    interRatio.y *= 100.0 / interFy[n];
-                if (fabs(interFz[n]) > 1.0e-6)
-                    interRatio.z *= 100.0 / interFz[n];
-                if (fabs(intraFx[n]) > 1.0e-6)
-                    intraRatio.x *= 100.0 / intraFx[n];
-                if (fabs(intraFy[n]) > 1.0e-6)
-                    intraRatio.y *= 100.0 / intraFy[n];
-                if (fabs(intraFz[n]) > 1.0e-6)
-                    intraRatio.z *= 100.0 / intraFz[n];
+                interRatio = fInter[n] - fInterCheck[n];
+                intraRatio = fIntra[n] - fIntraCheck[n];
+                auto failed = false;
 
-                if (fabs(intraRatio.x) > testThreshold)
-                    failed = true;
-                else if (fabs(intraRatio.y) > testThreshold)
-                    failed = true;
-                else if (fabs(intraRatio.z) > testThreshold)
-                    failed = true;
-                else if (fabs(interRatio.x) > testThreshold)
-                    failed = true;
-                else if (fabs(interRatio.y) > testThreshold)
-                    failed = true;
-                else if (fabs(interRatio.z) > testThreshold)
-                    failed = true;
-                else
-                    failed = false;
+                for (auto i = 0; i < 3; ++i)
+                {
+                    if (fabs(fInter[n].get(i)) > 1.0e-6)
+                        interRatio[i] *= 100.0 / fInter[n].get(i);
+                    if (fabs(interRatio[i]) > testThreshold)
+                        failed = true;
+
+                    if (fabs(fIntra[n].get(i)) > 1.0e-6)
+                        intraRatio[i] *= 100.0 / fIntra[n].get(i);
+                    if (fabs(intraRatio[i]) > testThreshold)
+                        failed = true;
+                }
 
                 // Sum average errors
                 sumError += fabs(intraRatio.x) + fabs(intraRatio.y) + fabs(intraRatio.z) + fabs(interRatio.x) +
@@ -461,12 +395,12 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (inter)\n",
-                                     n + 1, interFx[n] - checkInterFx[n], interRatio.x, interFy[n] - checkInterFy[n],
-                                     interRatio.y, interFz[n] - checkInterFz[n], interRatio.z);
+                                     n + 1, fInter[n].x - fInterCheck[n].x, interRatio.x, fInter[n].y - fInterCheck[n].y,
+                                     interRatio.y, fInter[n].z - fInterCheck[n].z, interRatio.z);
                     Messenger::print("                                   {:15.8e} ({:5.2f}%) {:15.8e} "
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (intra)\n",
-                                     intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n], intraRatio.y,
-                                     intraFz[n] - checkIntraFz[n], intraRatio.z);
+                                     fIntra[n].x - fIntraCheck[n].x, intraRatio.x, fIntra[n].y - fIntraCheck[n].y, intraRatio.y,
+                                     fIntra[n].z - fIntraCheck[n].z, intraRatio.z);
                     ++nFailed1;
                 }
             }
@@ -480,40 +414,27 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Vec3<double> totalRatio;
             sumError = 0.0;
             GenericList &processingData = dissolve.processingModuleData();
-            if (processingData.contains("ReferenceFX", uniqueName()) && processingData.contains("ReferenceFY", uniqueName()) &&
-                processingData.contains("ReferenceFZ", uniqueName()))
+            if (processingData.contains("ReferenceForces", uniqueName()))
             {
-                // Grab reference force arrays and check sizes
-                const auto &referenceFx = processingData.value<Array<double>>("ReferenceFX", uniqueName());
-                if (referenceFx.nItems() != cfg->nAtoms())
-                    return Messenger::error("Number of force components in ReferenceFX is {}, but the "
+                // Grab reference force array and check size
+                const auto &fRef = processingData.value<std::vector<Vec3<double>>>("ReferenceForces", uniqueName());
+                if (fRef.size() != cfg->nAtoms())
+                    return Messenger::error("Number of force components in ReferenceForces is {}, but the "
                                             "Configuration '{}' contains {} atoms.\n",
-                                            referenceFx.nItems(), cfg->name(), cfg->nAtoms());
-                const auto &referenceFy = processingData.value<Array<double>>("ReferenceFY", uniqueName());
-                if (referenceFy.nItems() != cfg->nAtoms())
-                    return Messenger::error("Number of force components in ReferenceFY is {}, but the "
-                                            "Configuration '{}' contains {} atoms.\n",
-                                            referenceFy.nItems(), cfg->name(), cfg->nAtoms());
-                const auto &referenceFz = processingData.value<Array<double>>("ReferenceFZ", uniqueName());
-                if (referenceFz.nItems() != cfg->nAtoms())
-                    return Messenger::error("Number of force components in ReferenceFZ is {}, but the "
-                                            "Configuration '{}' contains {} atoms.\n",
-                                            referenceFz.nItems(), cfg->name(), cfg->nAtoms());
+                                            fRef.size(), cfg->name(), cfg->nAtoms());
 
                 Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
                                  "atoms with erroneous forces will be output...\n");
                 sumError = 0.0;
                 for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
-                    totalRatio.x = referenceFx.at(n) - (interFx[n] + intraFx[n]);
-                    totalRatio.y = referenceFy.at(n) - (interFy[n] + intraFy[n]);
-                    totalRatio.z = referenceFz.at(n) - (interFz[n] + intraFz[n]);
-                    if (fabs(interFx[n] + intraFx[n]) > 1.0e-6)
-                        totalRatio.x *= 100.0 / (interFx[n] + intraFx[n]);
-                    if (fabs(interFy[n] + intraFy[n]) > 1.0e-6)
-                        totalRatio.y *= 100.0 / (interFy[n] + intraFy[n]);
-                    if (fabs(interFz[n] + intraFz[n]) > 1.0e-6)
-                        totalRatio.z *= 100.0 / (interFz[n] + intraFz[n]);
+                    totalRatio = fRef[n] - (fInter[n] + fIntra[n]);
+                    if (fabs(fInter[n].x + fIntra[n].x) > 1.0e-6)
+                        totalRatio.x *= 100.0 / (fInter[n].x + fIntra[n].x);
+                    if (fabs(fInter[n].y + fIntra[n].y) > 1.0e-6)
+                        totalRatio.y *= 100.0 / (fInter[n].y + fIntra[n].y);
+                    if (fabs(fInter[n].z + fIntra[n].z) > 1.0e-6)
+                        totalRatio.z *= 100.0 / (fInter[n].z + fIntra[n].z);
 
                     if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
@@ -531,9 +452,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     {
                         Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                          "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                         n + 1, referenceFx.at(n) - (interFx[n] + intraFx[n]), totalRatio.x,
-                                         referenceFy.at(n) - (interFy[n] + intraFy[n]), totalRatio.y,
-                                         referenceFz.at(n) - (interFz[n] + intraFz[n]), totalRatio.z);
+                                         n + 1, fRef[n].x - (fInter[n].x + fIntra[n].x), totalRatio.x,
+                                         fRef[n].y - (fInter[n].y + fIntra[n].y), totalRatio.y,
+                                         fRef[n].z - (fInter[n].z + fIntra[n].z), totalRatio.z);
                         ++nFailed2;
                     }
                 }
@@ -547,15 +468,13 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 sumError = 0.0;
                 for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
-                    totalRatio.x = referenceFx.at(n) - (checkInterFx[n] + checkIntraFx[n]);
-                    totalRatio.y = referenceFy.at(n) - (checkInterFy[n] + checkIntraFy[n]);
-                    totalRatio.z = referenceFz.at(n) - (checkInterFz[n] + checkIntraFz[n]);
-                    if (fabs(checkInterFx[n] + checkIntraFx[n]) > 1.0e-6)
-                        totalRatio.x *= 100.0 / (checkInterFx[n] + checkIntraFx[n]);
-                    if (fabs(checkInterFy[n] + checkIntraFy[n]) > 1.0e-6)
-                        totalRatio.y *= 100.0 / (checkInterFy[n] + checkIntraFy[n]);
-                    if (fabs(checkInterFz[n] + checkIntraFz[n]) > 1.0e-6)
-                        totalRatio.z *= 100.0 / (checkInterFz[n] + checkIntraFz[n]);
+                    totalRatio = fRef[n] - (fInterCheck[n] + fIntraCheck[n]);
+                    if (fabs(fInterCheck[n].x + fIntraCheck[n].x) > 1.0e-6)
+                        totalRatio.x *= 100.0 / (fInterCheck[n].x + fIntraCheck[n].x);
+                    if (fabs(fInterCheck[n].y + fIntraCheck[n].y) > 1.0e-6)
+                        totalRatio.y *= 100.0 / (fInterCheck[n].y + fIntraCheck[n].y);
+                    if (fabs(fInterCheck[n].z + fIntraCheck[n].z) > 1.0e-6)
+                        totalRatio.z *= 100.0 / (fInterCheck[n].z + fIntraCheck[n].z);
 
                     if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
@@ -573,9 +492,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     {
                         Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                          "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                         n + 1, referenceFx.at(n) - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x,
-                                         referenceFy.at(n) - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y,
-                                         referenceFz.at(n) - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
+                                         n + 1, fRef[n].x - (fInterCheck[n].x + fIntraCheck[n].x), totalRatio.x,
+                                         fRef[n].y - (fInterCheck[n].y + fIntraCheck[n].y), totalRatio.y,
+                                         fRef[n].z - (fInterCheck[n].z + fIntraCheck[n].z), totalRatio.z);
                         ++nFailed3;
                     }
                 }
@@ -597,42 +516,34 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             Messenger::print("Calculating total forces for Configuration '{}'...\n", cfg->name());
 
-            // Realise the force arrays
-            auto &fx =
-                dissolve.processingModuleData().realise<Array<double>>(fmt::format("{}//FX", cfg->niceName()), uniqueName());
-            auto &fy =
-                dissolve.processingModuleData().realise<Array<double>>(fmt::format("{}//FY", cfg->niceName()), uniqueName());
-            auto &fz =
-                dissolve.processingModuleData().realise<Array<double>>(fmt::format("{}//FZ", cfg->niceName()), uniqueName());
-            fx.initialise(cfg->nAtoms());
-            fy.initialise(cfg->nAtoms());
-            fz.initialise(cfg->nAtoms());
+            // Realise the force vector
+            auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>(
+                fmt::format("{}//Forces", cfg->niceName()), uniqueName());
+            f.resize(cfg->nAtoms());
 
             procPool.resetAccumulatedTime();
 
             // Calculate interatomic forces
             Timer interTimer;
             interTimer.start();
-            interAtomicForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+            interAtomicForces(procPool, cfg, dissolve.potentialMap(), f);
             interTimer.stop();
             Messenger::printVerbose("Time to do interatomic forces was {}.\n", interTimer.totalTimeString());
 
             // Calculate intramolecular forces
             Timer intraTimer;
             intraTimer.start();
-            intraMolecularForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+            intraMolecularForces(procPool, cfg, dissolve.potentialMap(), f);
             intraTimer.stop();
 
             // Convert forces to 10J/mol
-            fx *= 100.0;
-            fy *= 100.0;
-            fz *= 100.0;
+            std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });
 
             Messenger::print("Time to do interatomic forces was {}, intramolecular forces was {} ({} comms).\n",
                              interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 
             // If writing to a file, append it here
-            if (saveData && !exportedForces_.exportData(fx, fy, fz))
+            if (saveData && !exportedForces_.exportData(f))
                 return Messenger::error("Failed to save forces.\n");
         }
     }

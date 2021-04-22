@@ -5,7 +5,7 @@
 #include "io/import/forces.h"
 
 // Import DL_POLY forces through specified parser
-bool ForceImportFileFormat::importDLPOLY(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+bool ForceImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &f)
 {
     /*
      * Read DL_POLY force information through the specified line parser.
@@ -39,9 +39,7 @@ bool ForceImportFileFormat::importDLPOLY(LineParser &parser, Array<double> &fx, 
         return false;
     }
     Messenger::print(" --> Expecting forces for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
-    fx.initialise(nAtoms);
-    fy.initialise(nAtoms);
-    fz.initialise(nAtoms);
+    f.resize(nAtoms, Vec3<double>());
 
     // Skip cell information if given
     if (imcon > 0)
@@ -55,9 +53,7 @@ bool ForceImportFileFormat::importDLPOLY(LineParser &parser, Array<double> &fx, 
             return false;
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        fx[n] = parser.argd(0);
-        fy[n] = parser.argd(1);
-        fz[n] = parser.argd(2);
+        f[n] = parser.arg3d(0);
     }
 
     return true;

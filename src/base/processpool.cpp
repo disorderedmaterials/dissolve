@@ -4,6 +4,7 @@
 #include "base/processpool.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
+#include "templates/algorithms.h"
 
 // Static Members
 int ProcessPool::nWorldProcesses_ = 1;
@@ -1207,6 +1208,38 @@ bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorTyp
     return true;
 }
 
+// Reduce (sum) vector of Vec3<double> data to all processes
+bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    timer_.start();
+    if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
+        return true;
+
+    // Construct POD buffers that we can send via MPI
+    std::vector<double> buffer(source.size()), received(source.size());
+    for (auto n = 0; n < 3; ++n)
+    {
+        std::fill(received.begin(), received.end(), 0.0);
+
+        // Copy elements (x, y, or z) to buffer
+        std::transform(source.begin(), source.end(), buffer.begin(), [n](const auto &val) { return val.get(n); });
+
+        // Reduce
+        if (MPI_Allreduce(buffer.data(), received.data(), received.size(), MPI_DOUBLE, MPI_SUM, communicator(commType)) !=
+            MPI_SUCCESS)
+            return false;
+
+        // Put reduced data back into source
+        for (auto &&[rcvd, val] : zip(received, source))
+            val[n] = rcvd;
+    }
+
+    timer_.accumulate();
+#endif
+    return true;
+}
+
 // Reduce (sum) int data to all processes
 bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType commType)
 {
@@ -1245,7 +1278,7 @@ bool ProcessPool::allSum(long int *source, int count, ProcessPool::CommunicatorT
     return true;
 }
 
-// Reduce (sum) double data over processes relevant to specifeid strategy
+// Reduce (sum) double data over processes relevant to specified strategy
 bool ProcessPool::allSum(double *source, int count, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef PARALLEL

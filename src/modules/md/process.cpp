@@ -12,6 +12,7 @@
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
 #include "modules/md/md.h"
+#include "templates/algorithms.h"
 
 // Run main processing
 bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
@@ -106,15 +107,15 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Get temperature from Configuration
         const auto temperature = cfg->temperature();
 
-        // Create force arrays as simple double arrays (easier to sum with MPI) - others are Vec3<double> arrays
-        Array<double> mass(cfg->nAtoms()), fx(cfg->nAtoms()), fy(cfg->nAtoms()), fz(cfg->nAtoms());
-        Array<Vec3<double>> a(cfg->nAtoms());
+        // Create arrays
+        std::vector<double> mass(cfg->nAtoms(), 0.0);
+        std::vector<Vec3<double>> forces(cfg->nAtoms()), accelerations(cfg->nAtoms());
 
         // Variables
-        int n, nCapped = 0;
+        auto nCapped = 0;
         auto &atoms = cfg->atoms();
         double tInstant, ke, tScale, peInter, peIntra;
-        double deltaTSq = deltaT * deltaT;
+        auto deltaTSq = deltaT * deltaT;
 
         /*
          * Calculation Begins
@@ -122,12 +123,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Read in or assign random velocities
         // Realise the velocity array from the moduleData
-        auto [v, status] = dissolve.processingModuleData().realiseIf<Array<Vec3<double>>>(
+        auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
             fmt::format("{}//Velocities", cfg->niceName()), uniqueName(), GenericItem::NoFlags);
         if (status == GenericItem::ItemStatus::Created)
         {
             randomVelocities = true;
-            v.initialise(cfg->nAtoms());
+            velocities.resize(cfg->nAtoms(), Vec3<double>());
         }
         if (randomVelocities)
             Messenger::print("Random initial velocities will be assigned.\n");
@@ -138,41 +139,40 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 
         Vec3<double> vCom;
-        double massSum = 0.0;
-        for (n = 0; n < cfg->nAtoms(); ++n)
+        auto massSum = 0.0;
+        for (auto &&[i, v, m] : zip(atoms, velocities, mass))
         {
             if (randomVelocities)
             {
-                v[n].x = exp(procPool.random() - 0.5) / sqrt(TWOPI);
-                v[n].y = exp(procPool.random() - 0.5) / sqrt(TWOPI);
-                v[n].z = exp(procPool.random() - 0.5) / sqrt(TWOPI);
+                v.x = exp(procPool.random() - 0.5) / sqrt(TWOPI);
+                v.y = exp(procPool.random() - 0.5) / sqrt(TWOPI);
+                v.z = exp(procPool.random() - 0.5) / sqrt(TWOPI);
             }
 
             // Grab atom mass for future use
-            mass[n] = AtomicMass::mass(atoms[n]->speciesAtom()->Z());
+            m = AtomicMass::mass(i->speciesAtom()->Z());
 
             // Calculate total velocity and mass over all atoms
-            vCom += v[n] * mass[n];
-            massSum += mass[n];
+            vCom += v * m;
+            massSum += m;
         }
 
         // Remove any velocity shift
         vCom /= massSum;
-        v -= vCom;
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
 
         // Calculate instantaneous temperature
         // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
         // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
         const auto kb = 0.8314462;
         ke = 0.0;
-        for (n = 0; n < cfg->nAtoms(); ++n)
-            ke += 0.5 * mass[n] * v[n].dp(v[n]);
-        tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
+        for (auto &&[m, v] : zip(mass, velocities))
+            ke += 0.5 * m * v.dp(v);
+        tInstant = ke * 2.0 / (3.0 * atoms.size() * kb);
 
         // Rescale velocities for desired temperature
         tScale = sqrt(temperature / tInstant);
-        for (n = 0; n < cfg->nAtoms(); ++n)
-            v[n] *= tScale;
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
         // Open trajectory file (if requested)
         LineParser trajParser;
@@ -210,14 +210,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (variableTimestep)
         {
             if (restrictToSpecies_.nItems() > 0)
-                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), forces);
             else
-                ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+                ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), forces);
 
             // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-            fx *= 100.0;
-            fy *= 100.0;
-            fz *= 100.0;
+            std::transform(forces.begin(), forces.end(), forces.begin(), [](auto f) { return f * 100.0; });
         }
 
         // Ready to do MD propagation of system
@@ -225,40 +223,35 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Variable timestep?
             if (variableTimestep)
-                deltaT = determineTimeStep(fx, fy, fz);
+                deltaT = determineTimeStep(forces);
 
             // Velocity Verlet first stage (A)
             // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
             // A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
             // B:  a(t+dt) = F(t+dt)/m
             // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
-            for (n = 0; n < cfg->nAtoms(); ++n)
+            for (auto &&[i, v, a] : zip(atoms, velocities, accelerations))
             {
                 // Propagate positions (by whole step)...
-                atoms[n]->translateCoordinates(v[n] * deltaT + a[n] * 0.5 * deltaTSq);
+                i->translateCoordinates(v * deltaT + a * 0.5 * deltaTSq);
 
                 // ...velocities (by half step)...
-                v[n] += a[n] * 0.5 * deltaT;
+                v += a * 0.5 * deltaT;
             }
 
             // Update Cell contents / Atom locations
             cfg->updateCellContents();
 
             // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-            fx = 0.0;
-            fy = 0.0;
-            fz = 0.0;
             if (restrictToSpecies_.nItems() > 0)
-                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), forces);
             else
-                ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
-            fx *= 100.0;
-            fy *= 100.0;
-            fz *= 100.0;
+                ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), forces);
+            std::transform(forces.begin(), forces.end(), forces.begin(), [](auto &f) { return f * 100.0; });
 
             // Cap forces
             if (capForce)
-                nCapped = capForces(cfg, maxForce, fx, fy, fz);
+                nCapped = capForces(maxForce, forces);
 
             // Velocity Verlet second stage (B) and velocity scaling
             // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -266,27 +259,21 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // B:  a(t+dt) = F(t+dt)/m
             // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
             ke = 0.0;
-            for (n = 0; n < cfg->nAtoms(); ++n)
+            for (auto &&[f, v, a, m] : zip(forces, velocities, accelerations, mass))
             {
                 // Determine new accelerations
-                a[n].set(fx[n], fy[n], fz[n]);
-                a[n] /= mass[n];
+                a = f / m;
 
                 // ..and finally velocities again (by second half-step)
-                v[n] += a[n] * 0.5 * deltaT;
+                v += a * 0.5 * deltaT;
 
-                ke += 0.5 * mass[n] * v[n].dp(v[n]);
+                ke += 0.5 * m * v.dp(v);
             }
 
             // Rescale velocities for desired temperature
             tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
             tScale = sqrt(temperature / tInstant);
-            for (n = 0; n < cfg->nAtoms(); ++n)
-            {
-                v[n].x *= tScale;
-                v[n].y *= tScale;
-                v[n].z *= tScale;
-            }
+            std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto &v) { return v * tScale; });
 
             // Convert ke from 10J/mol to kJ/mol
             ke *= 0.01;

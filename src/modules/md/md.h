@@ -62,7 +62,7 @@ class MDModule : public Module
      */
     private:
     // Cap forces in Configuration
-    int capForces(Configuration *cfg, double maxForceSq, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    int capForces(double maxForceSq, std::vector<Vec3<double>> &f);
     // Determine timestep based on maximal force component
-    double determineTimeStep(const Array<double> &fx, const Array<double> &fy, const Array<double> &fz);
+    double determineTimeStep(const std::vector<Vec3<double>> &f);
 };

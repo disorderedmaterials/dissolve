@@ -11,7 +11,7 @@
 
 // Calculate interatomic forces within the supplied Configuration
 void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                     Array<double> &fx, Array<double> &fy, Array<double> &fz)
+                                     std::vector<Vec3<double>> &f)
 {
     /*
      * Calculates the interatomic forces in the supplied Configuration arising from contributions from PairPotential
@@ -24,7 +24,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     const auto &cellArray = cfg->cells();
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, f);
 
     Cell *cell;
 
@@ -57,7 +57,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
 
 // Calculate interatomic forces on specified atoms within the specified Configuration
 void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
-                                     const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+                                     const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
 {
     /*
      * Calculates the interatomic forces in the specified Configuration arising from contributions from PairPotential
@@ -67,7 +67,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
      */
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, f);
 
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
@@ -82,8 +82,8 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
 }
 
 // Calculate interatomic forces within the specified Species
-void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap, Array<double> &fx,
-                                     Array<double> &fy, Array<double> &fz)
+void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
+                                     std::vector<Vec3<double>> &f)
 {
     double scale, r, magjisq;
     const auto cutoffSq = potentialMap.range() * potentialMap.range();
@@ -111,20 +111,15 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const P
             vecij /= r;
 
             vecij *= potentialMap.force(&i, &j, r) * scale;
-            fx[indexI] += vecij.x;
-            fy[indexI] += vecij.y;
-            fz[indexI] += vecij.z;
-            fx[indexJ] -= vecij.x;
-            fy[indexJ] -= vecij.y;
-            fz[indexJ] -= vecij.z;
+            f[indexI] += vecij;
+            f[indexJ] -= vecij;
         }
     }
 }
 
 // Calculate total intramolecular forces acting on specific atoms in Configuration
 void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
-                                        const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy,
-                                        Array<double> &fz)
+                                        const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
 {
     /*
      * Calculate the total intramolecular forces for the specific atoms provided, arising from Bond, Angle, and Torsion
@@ -137,7 +132,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
      */
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, f);
 
     // Set start/stride for parallel loop
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
@@ -174,7 +169,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
 // Calculate total intramolecular forces in Configuration
 void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                        Array<double> &fx, Array<double> &fy, Array<double> &fz)
+                                        std::vector<Vec3<double>> &f)
 {
     /*
      * Calculate the total intramolecular forces within the supplied Configuration, arising from Bond, Angle, and Torsion
@@ -187,7 +182,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
      */
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, f);
 
     // Set start/stride for parallel loop
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
@@ -223,11 +218,11 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 }
 
 // Calculate total intramolecular forces in Species
-void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap, Array<double> &fx,
-                                        Array<double> &fy, Array<double> &fz)
+void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
+                                        std::vector<Vec3<double>> &f)
 {
     NonPeriodicBox box(1.0);
-    ForceKernel kernel(procPool, &box, potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, &box, potentialMap, f);
 
     // Loop over bonds
     for (const auto &b : sp->bonds())
@@ -247,8 +242,8 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, cons
 }
 
 // Calculate total forces within the supplied Configuration
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx,
-                               Array<double> &fy, Array<double> &fz)
+void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                               std::vector<Vec3<double>> &f)
 {
     /*
      * Calculates the total forces within the supplied Configuration, arising from PairPotential interactions
@@ -261,34 +256,28 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     Timer timer;
 
     // Zero force arrays
-    fx = 0.0;
-    fy = 0.0;
-    fz = 0.0;
+    std::fill(f.begin(), f.end(), Vec3<double>());
 
     // Calculate interatomic forces
     timer.start();
-    interAtomicForces(procPool, cfg, potentialMap, fx, fy, fz);
+    interAtomicForces(procPool, cfg, potentialMap, f);
     timer.stop();
     Messenger::printVerbose("Time to do interatomic forces was {}.\n", timer.totalTimeString());
 
     // Calculate intramolecular forces
     timer.start();
-    intraMolecularForces(procPool, cfg, potentialMap, fx, fy, fz);
+    intraMolecularForces(procPool, cfg, potentialMap, f);
     timer.stop();
     Messenger::printVerbose("Time to do intramolecular forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
-    if (!procPool.allSum(fx, cfg->nAtoms()))
-        return;
-    if (!procPool.allSum(fy, cfg->nAtoms()))
-        return;
-    if (!procPool.allSum(fz, cfg->nAtoms()))
+    if (!procPool.allSum(f))
         return;
 }
 
 // Calculate forces acting on specific atoms within the specified Configuration (arising from all atoms)
 void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
-                               const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+                               const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
 {
     /*
      * Calculates the total forces acting on the atom indices in the supplied Configuration, arising from PairPotential
@@ -304,35 +293,29 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     Timer timer;
 
     // Zero force arrays
-    fx = 0.0;
-    fy = 0.0;
-    fz = 0.0;
+    std::fill(f.begin(), f.end(), Vec3<double>());
 
     // Calculate interatomic forces
     timer.start();
-    interAtomicForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
+    interAtomicForces(procPool, cfg, targetIndices, potentialMap, f);
     timer.stop();
     Messenger::printVerbose("Time to do partial interatomic forces was {}.\n", timer.totalTimeString());
 
     // Calculate intramolecular forces
     timer.start();
-    intraMolecularForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
+    intraMolecularForces(procPool, cfg, targetIndices, potentialMap, f);
     timer.stop();
     Messenger::printVerbose("Time to do partial intramolecular forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
-    if (!procPool.allSum(fx, cfg->nAtoms()))
-        return;
-    if (!procPool.allSum(fy, cfg->nAtoms()))
-        return;
-    if (!procPool.allSum(fz, cfg->nAtoms()))
+    if (!procPool.allSum(f))
         return;
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
 void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
                                const Array<std::shared_ptr<Molecule>> &targetMolecules, const PotentialMap &potentialMap,
-                               Array<double> &fx, Array<double> &fy, Array<double> &fz)
+                               std::vector<Vec3<double>> &f)
 {
     /*
      * Calculates the total forces acting on the supplied Molecules, arising from PairPotential interactions
@@ -359,14 +342,14 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Call the atomic index-based function
-    totalForces(procPool, cfg, indices, potentialMap, fx, fy, fz);
+    totalForces(procPool, cfg, indices, potentialMap, f);
 }
 
 // Calculate total forces within the specified Species
-void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap, Array<double> &fx,
-                               Array<double> &fy, Array<double> &fz)
+void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
+                               std::vector<Vec3<double>> &f)
 {
-    interAtomicForces(procPool, sp, potentialMap, fx, fy, fz);
+    interAtomicForces(procPool, sp, potentialMap, f);
 
-    intraMolecularForces(procPool, sp, potentialMap, fx, fy, fz);
+    intraMolecularForces(procPool, sp, potentialMap, f);
 }

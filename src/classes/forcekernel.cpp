@@ -11,9 +11,9 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, Array<double> &fx,
-                         Array<double> &fy, Array<double> &fz, double cutoffDistance)
-    : box_(box), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz), processPool_(procPool)
+ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, std::vector<Vec3<double>> &f,
+                         double cutoffDistance)
+    : box_(box), potentialMap_(potentialMap), f_(f), processPool_(procPool)
 {
     cutoffDistanceSquared_ =
         (cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);
@@ -26,43 +26,31 @@ ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialM
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
 void ForceKernel::forcesWithoutMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale)
 {
-    Vec3<double> force = j->r() - i->r();
-    double distanceSq = force.magnitudeSq();
+    auto force = j->r() - i->r();
+    auto distanceSq = force.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
         return;
-    double r = sqrt(distanceSq);
+    auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
 
-    auto index = i->arrayIndex();
-    fx_[index] += force.x;
-    fy_[index] += force.y;
-    fz_[index] += force.z;
-    index = j->arrayIndex();
-    fx_[index] -= force.x;
-    fy_[index] -= force.y;
-    fz_[index] -= force.z;
+    f_[i->arrayIndex()] += force;
+    f_[j->arrayIndex()] -= force;
 }
 
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
 void ForceKernel::forcesWithMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale)
 {
-    Vec3<double> force = box_->minimumVector(i, j);
-    double distanceSq = force.magnitudeSq();
+    auto force = box_->minimumVector(i, j);
+    auto distanceSq = force.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
         return;
-    double r = sqrt(distanceSq);
+    auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
 
-    auto index = i->arrayIndex();
-    fx_[index] += force.x;
-    fy_[index] += force.y;
-    fz_[index] += force.z;
-    index = j->arrayIndex();
-    fx_[index] -= force.x;
-    fy_[index] -= force.y;
-    fz_[index] -= force.z;
+    f_[i->arrayIndex()] += force;
+    f_[j->arrayIndex()] -= force;
 }
 
 /*
@@ -393,6 +381,42 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
     calculateTorsionParameters(vecji, vecjk, veckl, phi_, dxpj_dij_, dxpj_dkj_, dxpk_dkj_, dxpk_dlk_, dcos_dxpj_, dcos_dxpk_);
 }
 
+// Sum torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
+void ForceKernel::sumTorsionForceI(double du_dphi, int index)
+{
+    f_[index].add(du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0)), du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1)),
+                  du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2)));
+}
+
+// Sum torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index
+void ForceKernel::sumTorsionForceJ(double du_dphi, int index)
+{
+    f_[index].add(du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0))),
+                  du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1))),
+                  du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2))));
+}
+
+// Sum torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index
+void ForceKernel::sumTorsionForceK(double du_dphi, int index)
+{
+    f_[index].add(du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0))),
+                  du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1))),
+                  du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2))));
+}
+
+// Sum torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index
+void ForceKernel::sumTorsionForceL(double du_dphi, int index)
+{
+    f_[index].add(du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0)), du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1)),
+                  du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2)));
+}
+
 // Calculate SpeciesBond forces
 void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
@@ -410,14 +434,8 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
     vecji *= bond.force(distance);
 
     // Calculate forces
-    auto index = i->arrayIndex();
-    fx_[index] -= vecji.x;
-    fy_[index] -= vecji.y;
-    fz_[index] -= vecji.z;
-    index = j->arrayIndex();
-    fx_[index] += vecji.x;
-    fy_[index] += vecji.y;
-    fz_[index] += vecji.z;
+    f_[i->arrayIndex()] -= vecji;
+    f_[j->arrayIndex()] += vecji;
 }
 
 // Calculate SpeciesBond forces for specified Atom only
@@ -440,19 +458,10 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond
     vecji *= bond.force(distance);
 
     // Calculate forces
-    auto index = onlyThis->arrayIndex();
     if (onlyThis == i)
-    {
-        fx_[index] -= vecji.x;
-        fy_[index] -= vecji.y;
-        fz_[index] -= vecji.z;
-    }
+        f_[onlyThis->arrayIndex()] -= vecji;
     else
-    {
-        fx_[index] += vecji.x;
-        fy_[index] += vecji.y;
-        fz_[index] += vecji.z;
-    }
+        f_[onlyThis->arrayIndex()] += vecji;
 }
 
 // Calculate SpeciesBond forces
@@ -467,14 +476,8 @@ void ForceKernel::forces(const SpeciesBond &bond)
     vecji *= bond.force(distance);
 
     // Calculate forces
-    auto index = bond.i()->index();
-    fx_[index] -= vecji.x;
-    fy_[index] -= vecji.y;
-    fz_[index] -= vecji.z;
-    index = bond.j()->index();
-    fx_[index] += vecji.x;
-    fy_[index] += vecji.y;
-    fz_[index] += vecji.z;
+    f_[bond.i()->index()] -= vecji;
+    f_[bond.j()->index()] += vecji;
 }
 
 // Calculate angle force parameters from supplied vectors, storing results in supplied variables
@@ -514,18 +517,9 @@ void ForceKernel::forces(const SpeciesAngle &angle, const std::shared_ptr<Atom> 
     dfk_dtheta_ *= force;
 
     // Store forces
-    auto index = i->arrayIndex();
-    fx_[index] += dfi_dtheta_.x;
-    fy_[index] += dfi_dtheta_.y;
-    fz_[index] += dfi_dtheta_.z;
-    index = j->arrayIndex();
-    fx_[index] -= dfi_dtheta_.x + dfk_dtheta_.x;
-    fy_[index] -= dfi_dtheta_.y + dfk_dtheta_.y;
-    fz_[index] -= dfi_dtheta_.z + dfk_dtheta_.z;
-    index = k->arrayIndex();
-    fx_[index] += dfk_dtheta_.x;
-    fy_[index] += dfk_dtheta_.y;
-    fz_[index] += dfk_dtheta_.z;
+    f_[i->arrayIndex()] += dfi_dtheta_;
+    f_[j->arrayIndex()] -= dfi_dtheta_ + dfk_dtheta_;
+    f_[k->arrayIndex()] += dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces for specified Atom only
@@ -552,25 +546,12 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesAngl
     dfk_dtheta_ *= force;
 
     // Store forces
-    auto index = onlyThis->arrayIndex();
     if (onlyThis == i)
-    {
-        fx_[index] += dfi_dtheta_.x;
-        fy_[index] += dfi_dtheta_.y;
-        fz_[index] += dfi_dtheta_.z;
-    }
+        f_[onlyThis->arrayIndex()] += dfi_dtheta_;
     else if (onlyThis == j)
-    {
-        fx_[index] -= dfi_dtheta_.x + dfk_dtheta_.x;
-        fy_[index] -= dfi_dtheta_.y + dfk_dtheta_.y;
-        fz_[index] -= dfi_dtheta_.z + dfk_dtheta_.z;
-    }
+        f_[onlyThis->arrayIndex()] -= dfi_dtheta_ + dfk_dtheta_;
     else
-    {
-        fx_[index] += dfk_dtheta_.x;
-        fy_[index] += dfk_dtheta_.y;
-        fz_[index] += dfk_dtheta_.z;
-    }
+        f_[onlyThis->arrayIndex()] += dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces
@@ -582,18 +563,9 @@ void ForceKernel::forces(const SpeciesAngle &angle)
     dfk_dtheta_ *= force;
 
     // Store forces
-    auto index = angle.i()->index();
-    fx_[index] += dfi_dtheta_.x;
-    fy_[index] += dfi_dtheta_.y;
-    fz_[index] += dfi_dtheta_.z;
-    index = angle.j()->index();
-    fx_[index] -= dfi_dtheta_.x + dfk_dtheta_.x;
-    fy_[index] -= dfi_dtheta_.y + dfk_dtheta_.y;
-    fz_[index] -= dfi_dtheta_.z + dfk_dtheta_.z;
-    index = angle.k()->index();
-    fx_[index] += dfk_dtheta_.x;
-    fy_[index] += dfk_dtheta_.y;
-    fz_[index] += dfk_dtheta_.z;
+    f_[angle.i()->index()] += dfi_dtheta_;
+    f_[angle.j()->index()] -= dfi_dtheta_ + dfk_dtheta_;
+    f_[angle.k()->index()] += dfk_dtheta_;
 }
 
 // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
@@ -602,8 +574,8 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
                                              Matrix3 &dxpk_dlk, Vec3<double> &dcos_dxpj, Vec3<double> &dcos_dxpk)
 {
     // Calculate cross products and torsion angle formed (in radians)
-    Vec3<double> xpj = vecji * vecjk;
-    Vec3<double> xpk = veckl * vecjk;
+    auto xpj = vecji * vecjk;
+    auto xpk = veckl * vecjk;
     const auto magxpj = xpj.magAndNormalise();
     const auto magxpk = xpk.magAndNormalise();
     auto dp = xpj.dp(xpk);
@@ -660,32 +632,11 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const std::shared_ptr<At
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
 
-    // Calculate forces on atom i
-    auto index = i->arrayIndex();
-    fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
-
-    index = j->arrayIndex();
-    fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
-
-    index = k->arrayIndex();
-    fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
-
-    index = l->arrayIndex();
-    fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
+    // Sum forces on atoms
+    sumTorsionForceI(du_dphi, i->arrayIndex());
+    sumTorsionForceJ(du_dphi, j->arrayIndex());
+    sumTorsionForceK(du_dphi, k->arrayIndex());
+    sumTorsionForceL(du_dphi, l->arrayIndex());
 }
 
 // Calculate SpeciesTorsion forces for specified Atom only
@@ -710,38 +661,15 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTors
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
 
-    // Calculate forces for specified atom
-    auto index = onlyThis->arrayIndex();
+    // Sum forces for specified atom
     if (onlyThis == i)
-    {
-        fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
-        fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
-        fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
-    }
+        sumTorsionForceI(du_dphi, onlyThis->arrayIndex());
     else if (onlyThis == j)
-    {
-        fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
-                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
-        fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
-                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
-        fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
-                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
-    }
+        sumTorsionForceJ(du_dphi, onlyThis->arrayIndex());
     else if (onlyThis == k)
-    {
-        fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
-                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
-        fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
-                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
-        fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
-                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
-    }
+        sumTorsionForceK(du_dphi, onlyThis->arrayIndex());
     else
-    {
-        fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
-        fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
-        fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
-    }
+        sumTorsionForceL(du_dphi, onlyThis->arrayIndex());
 }
 
 // Calculate SpeciesTorsion forces
@@ -754,32 +682,11 @@ void ForceKernel::forces(const SpeciesTorsion &torsion)
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
 
-    // Calculate forces on atom i
-    auto index = torsion.i()->index();
-    fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
-
-    index = torsion.j()->index();
-    fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
-
-    index = torsion.k()->index();
-    fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
-
-    index = torsion.l()->index();
-    fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
+    // Sum forces on atoms
+    sumTorsionForceI(du_dphi, torsion.i()->index());
+    sumTorsionForceJ(du_dphi, torsion.j()->index());
+    sumTorsionForceK(du_dphi, torsion.k()->index());
+    sumTorsionForceL(du_dphi, torsion.l()->index());
 }
 
 // Calculate SpeciesImproper forces
@@ -804,32 +711,11 @@ void ForceKernel::forces(const SpeciesImproper &improper, const std::shared_ptr<
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = improper.force(phi_ * DEGRAD);
 
-    // Calculate forces on atom i
-    auto index = i->arrayIndex();
-    fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
-
-    index = j->arrayIndex();
-    fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
-
-    index = k->arrayIndex();
-    fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
-
-    index = l->arrayIndex();
-    fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
+    // Sum forces on atoms
+    sumTorsionForceI(du_dphi, i->arrayIndex());
+    sumTorsionForceJ(du_dphi, j->arrayIndex());
+    sumTorsionForceK(du_dphi, k->arrayIndex());
+    sumTorsionForceL(du_dphi, l->arrayIndex());
 }
 
 // Calculate SpeciesImproper forces for specified Atom only
@@ -854,74 +740,29 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImpr
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(phi_ * DEGRAD);
 
-    // Calculate forces for specified atom
-    auto index = onlyThis->arrayIndex();
+    // Sum forces for specified atom
     if (onlyThis == i)
-    {
-        fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
-        fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
-        fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
-    }
+        sumTorsionForceI(du_dphi, onlyThis->arrayIndex());
     else if (onlyThis == j)
-    {
-        fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
-                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
-        fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
-                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
-        fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
-                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
-    }
+        sumTorsionForceJ(du_dphi, onlyThis->arrayIndex());
     else if (onlyThis == k)
-    {
-        fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
-                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
-        fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
-                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
-        fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
-                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
-    }
+        sumTorsionForceK(du_dphi, onlyThis->arrayIndex());
     else
-    {
-        fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
-        fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
-        fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
-    }
+        sumTorsionForceL(du_dphi, onlyThis->arrayIndex());
 }
 
 // Calculate SpeciesImproper forces
 void ForceKernel::forces(const SpeciesImproper &imp)
 {
-    // Calculate vectors, ensuring we account for minimum image
-    const Vec3<double> vecji = imp.j()->r() - imp.i()->r(), vecjk = imp.j()->r() - imp.k()->r(),
-                       veckl = imp.k()->r() - imp.l()->r();
+    // Calculate vectors
+    const auto vecji = imp.j()->r() - imp.i()->r(), vecjk = imp.j()->r() - imp.k()->r(), veckl = imp.k()->r() - imp.l()->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(phi_ * DEGRAD);
 
-    // Calculate forces on atom i
-    auto index = imp.i()->index();
-    fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
-
-    index = imp.j()->index();
-    fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
-
-    index = imp.k()->index();
-    fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
-    fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
-    fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
-
-    index = imp.l()->index();
-    fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
-    fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
-    fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
+    // Sum forces on atoms
+    sumTorsionForceI(du_dphi, imp.i()->index());
+    sumTorsionForceJ(du_dphi, imp.j()->index());
+    sumTorsionForceK(du_dphi, imp.k()->index());
+    sumTorsionForceL(du_dphi, imp.l()->index());
 }
