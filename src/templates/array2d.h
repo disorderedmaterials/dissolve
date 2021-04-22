@@ -229,37 +229,21 @@ template <class A> class Array2D
     // Operator+= (matrix addition)
     void operator+=(const Array2D<A> &B)
     {
-        // Check array sizes are compatible
-        if (nColumns_ != B.nRows_)
-        {
-            Messenger::error("Can't add matrices together, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n", nRows_,
-                             nColumns_, B.nRows_, B.nColumns_);
-            return;
-        }
+        assert(nColumns_ == B.nColumns_ && nRows_ == B.nRows_);
+
         std::transform(array_.begin(), array_.end(), B.array_.begin(), array_.begin(), [](auto &a, auto &b) { return a + b; });
     }
     // Operator-= (matrix subtraction)
     void operator-=(const Array2D<A> &B)
     {
-        // Check array sizes are compatible
-        if (nColumns_ != B.nRows_)
-        {
-            Messenger::error("Can't subtract matrices, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n", nRows_,
-                             nColumns_, B.nRows_, B.nColumns_);
-            return;
-        }
+        assert(nColumns_ == B.nColumns_ && nRows_ == B.nRows_);
+
         std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
     }
     // Operator* (matrix multiply)
     Array2D<A> operator*(const Array2D<A> &B) const
     {
-        // Check array sizes are compatible
-        if (nColumns_ != B.nRows_)
-        {
-            Messenger::error("Can't multiply matrices together, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n",
-                             nRows_, nColumns_, B.nRows_, B.nColumns_);
-            return Array2D<A>();
-        }
+        assert(nColumns_ == B.nRows_);
 
         Array2D<A> C(nRows_, B.nColumns_);
         int colB, i;

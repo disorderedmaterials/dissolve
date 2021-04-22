@@ -3,6 +3,8 @@
 
 #include "genericitems/serialisers.h"
 #include "base/lineparser.h"
+#include "classes/braggreflection.h"
+#include "classes/kvector.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/partialsetaccumulator.h"
@@ -120,6 +122,9 @@ GenericItemSerialiser::GenericItemSerialiser()
         return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
     });
     registerSerialiser<XRayWeights>(simpleSerialise<XRayWeights>);
+
+    // Containers of Custom Classes
+    registerSerialiser<std::vector<BraggReflection>>(vectorSerialise<BraggReflection>);
 }
 
 /*
