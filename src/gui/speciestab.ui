@@ -204,7 +204,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QTableWidget" name="AtomTable">
+            <widget class="QTableView" name="AtomTable">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -226,9 +226,6 @@
              <property name="showGrid">
               <bool>true</bool>
              </property>
-             <property name="columnCount">
-              <number>6</number>
-             </property>
              <attribute name="horizontalHeaderVisible">
               <bool>false</bool>
              </attribute>
@@ -241,36 +238,6 @@
              <attribute name="verticalHeaderStretchLastSection">
               <bool>false</bool>
              </attribute>
-             <column>
-              <property name="text">
-               <string>E</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>AtomType</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>X</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Y</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Z</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Charge</string>
-              </property>
-             </column>
             </widget>
            </item>
           </layout>
@@ -326,7 +293,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QTableWidget" name="BondTable">
+            <widget class="QTableView" name="BondTable">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -347,9 +314,6 @@
              </property>
              <property name="showGrid">
               <bool>true</bool>
-             </property>
-             <property name="columnCount">
-              <number>7</number>
              </property>
              <attribute name="horizontalHeaderVisible">
               <bool>false</bool>
@@ -470,7 +434,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableWidget" name="AngleTable">
+             <widget class="QTableView" name="AngleTable">
               <property name="editTriggers">
                <set>QAbstractItemView::AllEditTriggers</set>
               </property>
@@ -485,9 +449,6 @@
               </property>
               <property name="showGrid">
                <bool>true</bool>
-              </property>
-              <property name="columnCount">
-               <number>8</number>
               </property>
               <attribute name="horizontalHeaderVisible">
                <bool>false</bool>
@@ -590,7 +551,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableWidget" name="TorsionTable">
+             <widget class="QTableView" name="TorsionTable">
               <property name="editTriggers">
                <set>QAbstractItemView::AllEditTriggers</set>
               </property>
@@ -606,9 +567,6 @@
               <property name="showGrid">
                <bool>true</bool>
               </property>
-              <property name="columnCount">
-               <number>9</number>
-              </property>
               <attribute name="horizontalHeaderVisible">
                <bool>false</bool>
               </attribute>
@@ -621,51 +579,6 @@
               <attribute name="verticalHeaderStretchLastSection">
                <bool>false</bool>
               </attribute>
-              <column>
-               <property name="text">
-                <string>I</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>J</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>K</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>L</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Form</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 1</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 2</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 3</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 4</string>
-               </property>
-              </column>
              </widget>
             </item>
            </layout>
@@ -715,7 +628,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableWidget" name="ImproperTable">
+             <widget class="QTableView" name="ImproperTable">
               <property name="editTriggers">
                <set>QAbstractItemView::AllEditTriggers</set>
               </property>
@@ -731,9 +644,6 @@
               <property name="showGrid">
                <bool>true</bool>
               </property>
-              <property name="columnCount">
-               <number>9</number>
-              </property>
               <attribute name="horizontalHeaderVisible">
                <bool>false</bool>
               </attribute>
@@ -746,51 +656,6 @@
               <attribute name="verticalHeaderStretchLastSection">
                <bool>false</bool>
               </attribute>
-              <column>
-               <property name="text">
-                <string>I</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>J</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>K</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>L</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Form</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 1</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 2</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 3</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 4</string>
-               </property>
-              </column>
              </widget>
             </item>
            </layout>

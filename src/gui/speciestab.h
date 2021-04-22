@@ -9,6 +9,11 @@
 #include "classes/speciesimproper.h"
 #include "classes/speciestorsion.h"
 #include "gui/maintab.h"
+#include "gui/models/speciesAngleModel.h"
+#include "gui/models/speciesAtomModel.h"
+#include "gui/models/speciesBondModel.h"
+#include "gui/models/speciesImproperModel.h"
+#include "gui/models/speciesTorsionModel.h"
 #include "gui/ui_speciestab.h"
 
 // Forward Declarations
@@ -40,6 +45,11 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     private:
     // Main form declaration
     Ui::SpeciesTab ui_;
+    SpeciesAtomModel atoms_;
+    SpeciesAngleModel angles_;
+    SpeciesBondModel bonds_;
+    SpeciesTorsionModel torsions_;
+    SpeciesImproperModel impropers_;
 
     public slots:
     // Update controls in tab
@@ -79,32 +89,32 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     private:
     // Return valid AtomType names for specified model index in the SpeciesAtomTable
     std::vector<std::string> validAtomTypeNames(const QModelIndex &index);
-    // SpeciesAtomTable row update function
-    void updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems);
-    // SpeciesBondTable row update function
-    void updateBondTableRow(int row, SpeciesBond *speciesBond, bool createItems);
-    // SpeciesAngleTable row update function
-    void updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool createItems);
-    // SpeciesTorsionTable row update function
-    void updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, bool createItems);
-    // SpeciesImproperTable row update function
-    void updateImproperTableRow(int row, SpeciesImproper *speciesImproper, bool createItems);
+    // // SpeciesAtomTable row update function
+    // void updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems);
+    // // SpeciesBondTable row update function
+    // void updateBondTableRow(int row, SpeciesBond *speciesBond, bool createItems);
+    // // SpeciesAngleTable row update function
+    // void updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool createItems);
+    // // SpeciesTorsionTable row update function
+    // void updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, bool createItems);
+    // // SpeciesImproperTable row update function
+    // void updateImproperTableRow(int row, SpeciesImproper *speciesImproper, bool createItems);
 
     private slots:
     // Update atom table selection
-    void updateAtomTableSelection();
+    // void updateAtomTableSelection();
 
-    private slots:
-    void on_AtomTable_itemChanged(QTableWidgetItem *w);
-    void on_AtomTable_itemSelectionChanged();
-    void on_BondTable_itemChanged(QTableWidgetItem *w);
-    void on_AngleTable_itemChanged(QTableWidgetItem *w);
-    void on_TorsionTable_itemChanged(QTableWidgetItem *w);
-    void on_ImproperTable_itemChanged(QTableWidgetItem *w);
+    // private slots:
+    // void on_AtomTable_itemChanged(QTableWidgetItem *w);
+    // void on_AtomTable_itemSelectionChanged();
+    // void on_BondTable_itemChanged(QTableWidgetItem *w);
+    // void on_AngleTable_itemChanged(QTableWidgetItem *w);
+    // void on_TorsionTable_itemChanged(QTableWidgetItem *w);
+    // void on_ImproperTable_itemChanged(QTableWidgetItem *w);
 
-    public slots:
-    // Update Geometry tab
-    void updateGeometryTab();
+    // public slots:
+    // // Update Geometry tab
+    // void updateGeometryTab();
 
     /*
      * Widget Functions - Isotopologues

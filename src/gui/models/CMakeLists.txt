@@ -6,6 +6,11 @@ set(models_MOC_HDRS
     xmlImproperModel.h
     xmlTreeModel.h
     xmlTorsionModel.h
+    speciesAngleModel.h
+    speciesAtomModel.h
+    speciesBondModel.h
+    speciesImproperModel.h
+    speciesTorsionModel.h
 )
 
 qt5_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -18,6 +23,11 @@ set(models_SRCS
     xmlImproperModel.cpp
     xmlTreeModel.cpp
     xmlTorsionModel.cpp
+    speciesAngleModel.cpp
+    speciesAtomModel.cpp
+    speciesBondModel.cpp
+    speciesImproperModel.cpp
+    speciesTorsionModel.cpp
 )
 
 qt_wrap_cpp(
@@ -29,6 +39,11 @@ qt_wrap_cpp(
   xmlImproperModel.h
   xmlTreeModel.h
   xmlTorsionModel.h
+  speciesAngleModel.h
+  speciesAtomModel.h
+  speciesBondModel.h
+  speciesImproperModel.h
+  speciesTorsionModel.h
 )
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})

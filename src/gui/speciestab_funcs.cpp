@@ -51,16 +51,21 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
+    ui_.AtomTable->setModel(&atoms_);
     ui_.AtomTable->horizontalHeader()->setFont(font());
     ui_.AtomTable->horizontalHeader()->setVisible(true);
     ui_.AtomTable->verticalHeader()->setFont(font());
     ui_.AtomTable->verticalHeader()->setVisible(true);
+    ui_.BondTable->setModel(&bonds_);
     ui_.BondTable->horizontalHeader()->setFont(font());
     ui_.BondTable->horizontalHeader()->setVisible(true);
+    ui_.AngleTable->setModel(&angles_);
     ui_.AngleTable->horizontalHeader()->setFont(font());
     ui_.AngleTable->horizontalHeader()->setVisible(true);
+    ui_.TorsionTable->setModel(&torsions_);
     ui_.TorsionTable->horizontalHeader()->setFont(font());
     ui_.TorsionTable->horizontalHeader()->setVisible(true);
+    ui_.ImproperTable->setModel(&impropers_);
     ui_.ImproperTable->horizontalHeader()->setFont(font());
     ui_.ImproperTable->horizontalHeader()->setVisible(true);
 
@@ -100,7 +105,7 @@ void SpeciesTab::updateControls()
     ui_.ViewerWidget->postRedisplay();
 
     // Geometry Tab
-    updateGeometryTab();
+    // updateGeometryTab();
 
     // Isotopologues Tab
     updateIsotopologuesTab();
