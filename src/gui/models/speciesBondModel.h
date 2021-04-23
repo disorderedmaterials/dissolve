@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "classes/masterintra.h"
+#include "classes/speciesbond.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
@@ -10,8 +12,11 @@ class SpeciesBondModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    private:
+    std::vector<SpeciesBond> &bonds_;
+
     public:
-    SpeciesBondModel();
+    SpeciesBondModel(std::vector<SpeciesBond> &bonds);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
