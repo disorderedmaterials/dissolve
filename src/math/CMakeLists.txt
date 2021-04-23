@@ -65,7 +65,6 @@ add_library(
   sampleddata1d.h
   sampleddouble.h
   sampledvector.h
-  sd.h
   svd.h
   transformer.h
   windowfunction.h
