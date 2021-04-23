@@ -14,7 +14,6 @@ class DataManagerSimulationModel : public QAbstractTableModel
     Q_OBJECT
 
     private:
-    // std::vector<Simulation> &referencePoints_;
     GenericList &items_;
     Dissolve &dissolve_;
 
