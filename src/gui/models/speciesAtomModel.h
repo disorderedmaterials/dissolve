@@ -3,15 +3,22 @@
 
 #pragma once
 
+#include "classes/speciesatom.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <list>
+
+Q_DECLARE_METATYPE(SpeciesAtom *)
 
 class SpeciesAtomModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    private:
+    std::list<SpeciesAtom> &atoms_;
+
     public:
-    SpeciesAtomModel();
+    SpeciesAtomModel(std::list<SpeciesAtom> &atoms);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

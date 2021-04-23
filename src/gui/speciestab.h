@@ -22,7 +22,6 @@ class Isotope;
 class Isotopologue;
 class Species;
 
-Q_DECLARE_METATYPE(SpeciesAtom *)
 Q_DECLARE_METATYPE(SpeciesBond *)
 Q_DECLARE_METATYPE(SpeciesAngle *)
 Q_DECLARE_METATYPE(SpeciesTorsion *)
