@@ -152,29 +152,30 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
         // Loop over Bond
         bondEnergy += std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
-                                      [&mol, &kernel](auto const acc, const auto &t) {
-                                          return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()));
-                                      });
+                                      [&mol, &kernel](auto const acc, const auto &t)
+                                      { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
 
         // Loop over Angle
-        angleEnergy += std::accumulate(mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
-                                       [&mol, &kernel](auto const acc, const auto &t) {
-                                           return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
-                                                                      mol->atom(t.indexK()));
-                                       });
+        angleEnergy += std::accumulate(
+            mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
+            [&mol, &kernel](auto const acc, const auto &t)
+            { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
 
         // Loop over Torsions
         torsionEnergy += std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
-                                         [&mol, &kernel](auto const acc, const auto &t) {
-                                             return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
-                                                                        mol->atom(t.indexK()), mol->atom(t.indexL()));
+                                         [&mol, &kernel](auto const acc, const auto &t)
+                                         {
+                                             return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
+                                                                        *mol->atom(t.indexK()), *mol->atom(t.indexL()));
                                          });
 
-        improperEnergy += std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
-                                          [&mol, &kernel](auto const acc, const auto &imp) {
-                                              return acc + kernel.energy(imp, mol->atom(imp.indexI()), mol->atom(imp.indexJ()),
-                                                                         mol->atom(imp.indexK()), mol->atom(imp.indexL()));
-                                          });
+        improperEnergy +=
+            std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
+                            [&mol, &kernel](auto const acc, const auto &imp)
+                            {
+                                return acc + kernel.energy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
+                                                           *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
+                            });
     }
 
     double totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;

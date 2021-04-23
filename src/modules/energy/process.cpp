@@ -125,7 +125,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         if (testAnalytic)
                             correctSelfEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
                         else
-                            correctSelfEnergy += potentialMap.energy(i, j, r) * scale;
+                            correctSelfEnergy += potentialMap.energy(*i, *j, r) * scale;
                     }
                 }
 
@@ -151,7 +151,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             if (testAnalytic)
                                 correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
                             else
-                                correctInterEnergy += potentialMap.energy(i, j, r);
+                                correctInterEnergy += potentialMap.energy(*i, *j, r);
                         }
                     }
                 }
@@ -239,7 +239,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             EnergyKernel energyKernel(procPool, cfg, dissolve.potentialMap(), cutoff);
             auto molecularEnergy = 0.0;
             for (const auto &mol : cfg->molecules())
-                molecularEnergy += energyKernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+                molecularEnergy += energyKernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
             // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
             // pairpotential energy, but exactly the intramolecular pairpotential energy
             if (cfg->nMolecules() > 1)

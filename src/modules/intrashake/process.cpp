@@ -149,7 +149,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 changeStore.add(mol);
 
                 // Calculate reference pairpotential energy for Molecule
-                ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+                ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
 
                 // Loop over defined bonds
                 if (adjustBonds)
@@ -161,7 +161,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                         // Store current energy of this intramolecular term, or the whole Molecule if it
                         // is present in a cycle
-                        intraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(bond, i, j);
+                        intraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(bond, *i, *j);
 
                         // Select random terminus
                         terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -182,8 +182,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-                            newIntraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(bond, i, j);
+                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
+                            newIntraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(bond, *i, *j);
 
                             // Trial the transformed Molecule
                             delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
@@ -215,7 +215,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         k = mol->atom(angle.indexK());
 
                         // Store current energy of this intramolecular term
-                        intraEnergy = angle.inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(angle, i, j, k);
+                        intraEnergy = angle.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(angle, *i, *j, *k);
 
                         // Select random terminus
                         terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -239,8 +239,9 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-                            newIntraEnergy = angle.inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(angle, i, j, k);
+                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
+                            newIntraEnergy =
+                                angle.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(angle, *i, *j, *k);
 
                             // Trial the transformed Molecule
                             delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
@@ -273,7 +274,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         l = mol->atom(torsion.indexL());
 
                         // Store current energy of this intramolecular term
-                        intraEnergy = torsion.inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(torsion, i, j, k, l);
+                        intraEnergy =
+                            torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
 
                         // Select random terminus
                         terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -296,9 +298,9 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
                             newIntraEnergy =
-                                torsion.inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(torsion, i, j, k, l);
+                                torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
 
                             // Trial the transformed Molecule
                             delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);

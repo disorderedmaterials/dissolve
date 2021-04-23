@@ -26,17 +26,17 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     int numAtoms = atoms.size();
     auto i = atoms[5];
     for (auto _ : state)
-        energyKernel.energy(i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
+        energyKernel.energy(*i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateEnergy_MoleculeEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto mol = problemDef.cfg_->molecules().front();
     for (auto _ : state)
     {
-        double molecularEnergy = energyKernel.energy(mol, ProcessPool::PoolStrategy, true);
+        double molecularEnergy = energyKernel.energy(*mol, ProcessPool::PoolStrategy, true);
         benchmark::DoNotOptimize(molecularEnergy);
     }
 }
