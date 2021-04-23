@@ -3,16 +3,29 @@
 #include "benchmark/benchmark.h"
 #include "common/problems.h"
 
-template <ProblemSize problem, RDFModule::PartialsMethod method> static void BM_CalculateGR(benchmark::State &state)
+template <ProblemType problem, Population population, RDFModule::PartialsMethod method>
+static void BM_CalculateGR(benchmark::State &state)
 {
-    Problem<problem> problemDef;
+    Problem<problem, population> problemDef;
     for (auto _ : state)
-        problemDef.template iterateCells<method>();
+        problemDef.template iterateGR<method>();
 }
 
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Small, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Small, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Medium, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Medium, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Large, Method::SimpleMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemSize::Large, Method::CellsMethod)->Iterations(5)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, Method::SimpleMethod)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, Method::CellsMethod)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, Method::SimpleMethod)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, Method::CellsMethod)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, Method::SimpleMethod)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, Method::CellsMethod)
+    ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
