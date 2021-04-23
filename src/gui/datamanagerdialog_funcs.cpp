@@ -34,8 +34,6 @@ DataManagerDialog::~DataManagerDialog() {}
 // Update the specified table of GenericItems, optionally filtering them by name and description
 void DataManagerDialog::filterTable(QString filterText)
 {
-    if (filterText.isEmpty())
-        return;
     simProxy_.setFilterRegExp(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard));
     simProxy_.setFilterKeyColumn(0);
 }
