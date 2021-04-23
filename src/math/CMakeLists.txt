@@ -8,7 +8,6 @@ add_library(
   data3d.cpp
   doubleexp.cpp
   error.cpp
-  extrema.cpp
   filters.cpp
   ft.cpp
   function1d.cpp
@@ -43,7 +42,6 @@ add_library(
   data3dbase.h
   doubleexp.h
   error.h
-  extrema.h
   filters.h
   ft.h
   function1d.h

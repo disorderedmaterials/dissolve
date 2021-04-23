@@ -7,7 +7,6 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data2d.h"
-#include "math/extrema.h"
 #include "templates/array2d.h"
 
 RenderableData2D::RenderableData2D(const Data2D &source)
