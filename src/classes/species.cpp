@@ -211,16 +211,15 @@ int Species::version() const { return version_; }
 void Species::clearCoordinateSets() { coordinateSets_.clear(); }
 
 // Add new coordinate set
-CoordinateSet *Species::addCoordinateSet()
+std::vector<Vec3<double>> &Species::addCoordinateSet()
 {
-    CoordinateSet *coordSet = coordinateSets_.add();
-    coordSet->initialise(atoms_.size());
+    auto &newSet = coordinateSets_.emplace_back(atoms_.size(), Vec3<double>());
 
-    return coordSet;
+    return newSet;
 }
 
 // Return number of defined coordinate sets
-int Species::nCoordinateSets() const { return coordinateSets_.nItems(); }
+int Species::nCoordinateSets() const { return coordinateSets_.size(); }
 
 // Return coordinates sets
-const List<CoordinateSet> &Species::coordinateSets() const { return coordinateSets_; }
+const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }

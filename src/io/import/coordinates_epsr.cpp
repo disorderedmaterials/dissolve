@@ -6,7 +6,7 @@
 #include "io/import/coordinates.h"
 
 // Import EPSR ATO coordinates through specified parser
-bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importEPSR(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     // File header:
     // Either  1   : nmols, box length, temperature   (for cubic systems)
@@ -49,6 +49,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     auto atomOffset = 0;
     int nAtoms, nRestraints, currentArg;
     Vec3<double> com, delta;
+    r.clear();
     for (auto m = 0; m < nMols; m++)
     {
         Messenger::printVerbose("Importing molecule {} from EPSR ato file...\n", m + 1);
@@ -70,7 +71,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
             delta = parser.arg3d(0);
 
             // Add a new atom position to our list
-            r.add(com + delta);
+            r.emplace_back(com + delta);
 
             // Import in number of restraints line
             if (parser.getArgsDelim() != LineParser::Success)

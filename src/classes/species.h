@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/atomtypelist.h"
-#include "classes/coordinateset.h"
 #include "classes/isotopologue.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
@@ -297,7 +296,7 @@ class Species
      */
     private:
     // Available coordinate sets representing conformers, symmetry copies etc.
-    List<CoordinateSet> coordinateSets_;
+    std::vector<std::vector<Vec3<double>>> coordinateSets_;
     // File / format of coordinate sets file, if provided
     CoordinateImportFileFormat coordinateSetInputCoordinates_;
 
@@ -305,11 +304,11 @@ class Species
     // Clear coordinate sets
     void clearCoordinateSets();
     // Add new coordinate set
-    CoordinateSet *addCoordinateSet();
+    std::vector<Vec3<double>> &addCoordinateSet();
     // Return number of defined coordinate sets
     int nCoordinateSets() const;
     // Return coordinates sets
-    const List<CoordinateSet> &coordinateSets() const;
+    const std::vector<std::vector<Vec3<double>>> &coordinateSets() const;
 
     /*
      * File Input / Output

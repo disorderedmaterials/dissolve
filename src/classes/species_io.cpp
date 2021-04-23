@@ -329,12 +329,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     while (!coordinateSetParser.eofOrBlank())
                     {
-                        CoordinateSet *coordSet = addCoordinateSet();
-                        if (!coordinateSetInputCoordinates_.importData(coordinateSetParser, coordSet->coordinates()))
+                        auto &coordSet = addCoordinateSet();
+                        if (!coordinateSetInputCoordinates_.importData(coordinateSetParser, coordSet))
                         {
                             Messenger::error("Failed to read coordinate set {} from file.\n", nCoordinateSets());
                             error = true;
-                            coordinateSets_.remove(coordSet);
                             break;
                         }
                     }
