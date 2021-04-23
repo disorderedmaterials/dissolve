@@ -319,9 +319,6 @@ class ProcessPool
     // Assemble double array on target rank within the specified communicator
     bool assemble(double *array, int nLocalData, double *rootDest, int rootMaxData, int rootRank = 0,
                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Assemble Array<double> on target rank within the specified communicator
-    bool assemble(Array<double> &array, int nData, Array<double> &rootDest, int rootMaxData, int rootRank = 0,
-                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
     /*
      * Decisions

@@ -52,15 +52,6 @@ GenericItemSerialiser::GenericItemSerialiser()
     });
 
     // Custom Classes / Containers
-    registerSerialiser<Array<double>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array<double> &>(a);
-        if (!parser.writeLineF("{}\n", v.nItems()))
-            return false;
-        for (auto n = 0; n < v.nItems(); ++n)
-            if (!parser.writeLineF("{}\n", v.at(n)))
-                return false;
-        return true;
-    });
     registerSerialiser<Array<SampledDouble>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array<SampledDouble> &>(a);
         if (!parser.writeLineF("{}\n", v.nItems()))

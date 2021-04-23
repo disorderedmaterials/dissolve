@@ -1449,28 +1449,6 @@ bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int 
     return true;
 }
 
-// Assemble Array<double> for entire pool on target process
-bool ProcessPool::assemble(Array<double> &array, int nData, Array<double> &rootDest, int rootMaxData, int rootRank,
-                           ProcessPool::CommunicatorType commType)
-{
-    if (poolRank_ == rootRank)
-    {
-        if (rootDest.size() < rootMaxData)
-        {
-            Messenger::error("Destination Array<double> in ProcessPool::assemble() is not large enough.");
-            decideFalse(rootRank, commType);
-            return false;
-        }
-        else
-            decideTrue(rootRank, commType);
-    }
-    else if (!decision(rootRank, commType))
-        return false;
-
-    // Call double* version of routine...
-    return assemble(array.array(), nData, rootDest.array(), rootMaxData, rootRank, commType);
-}
-
 /*
  * Decisions
  */
