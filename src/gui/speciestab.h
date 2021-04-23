@@ -22,7 +22,6 @@ class Isotope;
 class Isotopologue;
 class Species;
 
-Q_DECLARE_METATYPE(SpeciesTorsion *)
 Q_DECLARE_METATYPE(SpeciesImproper *)
 
 // Species Tab

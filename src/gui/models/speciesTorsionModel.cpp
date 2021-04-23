@@ -1,12 +1,13 @@
 #include "gui/models/speciesTorsionModel.h"
+#include "classes/masterintra.h"
 #include <algorithm>
 
-SpeciesTorsionModel::SpeciesTorsionModel() {}
+SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions) : torsions_(torsions) {}
 
 int SpeciesTorsionModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 0;
+    return torsions_.size();
 }
 
 int SpeciesTorsionModel::columnCount(const QModelIndex &parent) const
@@ -20,11 +21,29 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
+    auto &item = torsions_[index.row()];
+
+    if (role == Qt::UserRole)
+        return QVariant::fromValue(&item);
+
     if (role != Qt::DisplayRole)
         return QVariant();
 
     switch (index.column())
     {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            return item.index(index.column()) + 1;
+        case 4:
+            return item.masterParameters() ? ("@" + std::string(item.masterParameters()->name())).c_str()
+                                           : SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()).c_str();
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            return item.parameter(index.column() - 5);
         default:
             return QVariant();
     }
