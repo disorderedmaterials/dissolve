@@ -3,15 +3,21 @@
 
 #pragma once
 
+#include "classes/speciesangle.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
+
+Q_DECLARE_METATYPE(SpeciesAngle *)
 
 class SpeciesAngleModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    private:
+    std::vector<SpeciesAngle> &angles_;
+
     public:
-    SpeciesAngleModel();
+    SpeciesAngleModel(std::vector<SpeciesAngle> &angles);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

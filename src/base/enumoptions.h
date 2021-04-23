@@ -7,6 +7,7 @@
 #include "base/enumoptionsbase.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
+#include <cassert>
 
 // Enum Options
 template <class E> class EnumOptions : public EnumOptionsBase

@@ -8,6 +8,8 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
+Q_DECLARE_METATYPE(SpeciesBond *)
+
 class SpeciesBondModel : public QAbstractTableModel
 {
     Q_OBJECT

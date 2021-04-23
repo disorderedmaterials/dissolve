@@ -1,11 +1,12 @@
 #include "gui/models/speciesAngleModel.h"
+#include "classes/masterintra.h"
 
-SpeciesAngleModel::SpeciesAngleModel() {}
+SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles) : angles_(angles) {}
 
 int SpeciesAngleModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 0;
+    return angles_.size();
 }
 
 int SpeciesAngleModel::columnCount(const QModelIndex &parent) const
@@ -17,27 +18,30 @@ int SpeciesAngleModel::columnCount(const QModelIndex &parent) const
 QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::ToolTipRole)
-        switch (index.column())
-        {
-            case 0:
-                return "AtomI";
-            case 1:
-                return "AtomJ";
-            case 2:
-                return "AtomK";
-            case 3:
-                return "Angle";
-            case 4:
-                return "k";
-            default:
-                return QVariant();
-        }
+        return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
+
+    auto &angle = angles_[index.row()];
+
+    if (role == Qt::UserRole)
+        return QVariant::fromValue(&angle);
 
     if (role != Qt::DisplayRole)
         return QVariant();
 
     switch (index.column())
     {
+        case 0:
+        case 1:
+        case 2:
+            return angle.index(index.column()) + 1;
+        case 3:
+            angle.masterParameters() ? ("@" + std::string(angle.masterParameters()->name())).c_str()
+                                     : SpeciesAngle::angleFunctions().keywordFromInt(angle.form());
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+            return angle.parameter(index.column() - 4);
         default:
             return QVariant();
     }
