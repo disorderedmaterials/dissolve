@@ -376,9 +376,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPoo
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
     const auto nBins = braggPartials[{0, 0}].nValues();
-    Array<int> nAdded(nBins);
-
-    nAdded = 0;
+    std::vector<int> nAdded(nBins, 0);
 
     // Loop over defined Bragg reflections
     // TODO Prune reflections based on intensity to speed-up process?

@@ -182,7 +182,7 @@ double Configuration::temperature() const { return temperature_; }
  */
 
 // Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(const Array<int> &worldRanks)
+bool Configuration::setUpProcessPool(const std::vector<int> &worldRanks)
 {
     // Create pool
     processPool_.setUp(name_, worldRanks);

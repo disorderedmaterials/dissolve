@@ -41,10 +41,10 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
 
     // Cells
     lockedCells_ = std::vector<std::set<Cell *>>(nProcessesOrGroups_);
-    cellStatusFlags_.initialise(cellArray.nCells());
-    cellStatusFlags_ = RegionalDistributor::UnusedFlag;
-    cellLockOwners_.initialise(cellArray.nCells());
-    cellLockOwners_ = -1;
+    cellStatusFlags_.resize(cellArray.nCells());
+    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), RegionalDistributor::UnusedFlag);
+    cellLockOwners_.resize(cellArray.nCells());
+    std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
 
     // Molecules
     assignedMolecules_.resize(nProcessesOrGroups_);
@@ -103,8 +103,8 @@ bool RegionalDistributor::cycle()
     }
 
     // Reset the Cell status flags
-    cellStatusFlags_ = RegionalDistributor::UnusedFlag;
-    cellLockOwners_ = -1;
+    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), RegionalDistributor::UnusedFlag);
+    std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
 
     // Set the process/group numbers for the original parallel strategy before we try to assign Molecules to groups
     // In this way we will always allow the parallel strategy to go 'back up' to the original one specified, if we can.

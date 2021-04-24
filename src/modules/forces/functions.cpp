@@ -58,7 +58,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
 }
 
 // Calculate interatomic forces on specified atoms within the specified Configuration
-void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const std::vector<int> &targetIndices,
                                      const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
 {
     /*
@@ -79,7 +79,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto stride = procPool.interleavedLoopStride(strategy);
 
     // Loop over supplied atom indices
-    auto [begin, end] = chop_range(0, targetIndices.nItems(), stride, start);
+    auto [begin, end] = chop_range(0, (int)targetIndices.size(), stride, start);
     dissolve::counting_iterator<int> countingIterator(begin, end);
     auto unaryOp = [&combinableForces, &kernel, cfg, &targetIndices, strategy](const int n) {
         auto &fLocal = combinableForces.local();
@@ -126,7 +126,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const P
 }
 
 // Calculate total intramolecular forces acting on specific atoms in Configuration
-void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const std::vector<int> &targetIndices,
                                         const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
 {
     /*
@@ -149,7 +149,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
     // Loop over supplied atom indices
     const auto &atoms = cfg->atoms();
-    auto [begin, end] = chop_range(0, targetIndices.nItems(), stride, start);
+    auto [begin, end] = chop_range(0, (int)targetIndices.size(), stride, start);
     dissolve::counting_iterator<int> countingIterator(begin, end);
 
     auto unaryOp = [&](const auto n) {
@@ -290,7 +290,7 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 }
 
 // Calculate forces acting on specific atoms within the specified Configuration (arising from all atoms)
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const std::vector<int> &targetIndices,
                                const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
 {
     /*
@@ -344,15 +344,13 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
     // Convert the Molecule array into an array of atoms
     // TODO Calculating forces for whole molecule at once may be more efficient
     // TODO Partitioning atoms of target molecules into cells and running a distributor may be more efficient
-    Array<int> indices;
+    std::vector<int> indices;
     for (auto n = 0; n < targetMolecules.nItems(); ++n)
     {
         const std::shared_ptr<Molecule> &mol = targetMolecules.at(n);
 
         for (auto i = 0; i < mol->nAtoms(); ++i)
-        {
-            indices.add(mol->atom(i)->arrayIndex());
-        }
+            indices.push_back(mol->atom(i)->arrayIndex());
     }
 
     // Call the atomic index-based function

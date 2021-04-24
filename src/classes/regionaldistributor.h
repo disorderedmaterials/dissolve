@@ -77,9 +77,9 @@ class RegionalDistributor
     // Lists of Cells locked by each process/group
     std::vector<std::set<Cell *>> lockedCells_;
     // Cell process/group owners
-    Array<int> cellLockOwners_;
+    std::vector<int> cellLockOwners_;
     // Cell status flags
-    Array<CellStatusFlag> cellStatusFlags_;
+    std::vector<CellStatusFlag> cellStatusFlags_;
 
     private:
     // Return whether the specified processOrGroup can lock the given Cell index

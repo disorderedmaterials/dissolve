@@ -38,12 +38,12 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
     // Get origin atom indices from site, and grab the Configuration's Box
     auto originAtomIndices = speciesSite->originAtomIndices();
-    if (originAtomIndices.nItems() == 0)
+    if (originAtomIndices.size() == 0)
         return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite->name());
     const auto *box = configuration_->box();
 
     // If the site has axes, grab the atom indices involved
-    Array<int> xAxisAtomIndices, yAxisAtomIndices;
+    std::vector<int> xAxisAtomIndices, yAxisAtomIndices;
     if (sitesHaveOrientation_)
     {
         xAxisAtomIndices = speciesSite->xAxisAtomIndices();
@@ -68,14 +68,14 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         // Calculate origin
         if (speciesSite->originMassWeighted())
         {
-            double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->Z());
-            origin = molecule->atom(originAtomIndices.firstValue())->r() * mass;
+            double mass = AtomicMass::mass(molecule->atom(originAtomIndices.front())->speciesAtom()->Z());
+            origin = molecule->atom(originAtomIndices.front())->r() * mass;
             double massNorm = mass;
-            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < originAtomIndices.size(); ++m)
             {
                 mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->Z());
                 origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
-                                            molecule->atom(originAtomIndices.firstValue())->r()) *
+                                            molecule->atom(originAtomIndices.front())->r()) *
                           mass;
                 massNorm += mass;
             }
@@ -83,33 +83,31 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         }
         else
         {
-            origin = molecule->atom(originAtomIndices.firstValue())->r();
-            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
+            origin = molecule->atom(originAtomIndices.front())->r();
+            for (auto m = 1; m < originAtomIndices.size(); ++m)
                 origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
-                                            molecule->atom(originAtomIndices.firstValue())->r());
-            origin /= originAtomIndices.nItems();
+                                            molecule->atom(originAtomIndices.front())->r());
+            origin /= originAtomIndices.size();
         }
 
         // Calculate axes and store data
         if (sitesHaveOrientation_)
         {
             // Get average position of supplied x-axis atoms
-            v = molecule->atom(xAxisAtomIndices.firstValue())->r();
-            for (auto m = 1; m < xAxisAtomIndices.nItems(); ++m)
-                v += box->minimumImage(molecule->atom(xAxisAtomIndices[m])->r(),
-                                       molecule->atom(xAxisAtomIndices.firstValue())->r());
-            v /= xAxisAtomIndices.nItems();
+            v = molecule->atom(xAxisAtomIndices.front())->r();
+            for (auto m = 1; m < xAxisAtomIndices.size(); ++m)
+                v += box->minimumImage(molecule->atom(xAxisAtomIndices[m])->r(), molecule->atom(xAxisAtomIndices.front())->r());
+            v /= xAxisAtomIndices.size();
 
             // Get vector from site origin and normalise it
             x = box->minimumVector(origin, v);
             x.normalise();
 
             // Get average position of supplied y-axis atoms
-            v = molecule->atom(yAxisAtomIndices.firstValue())->r();
-            for (auto m = 1; m < yAxisAtomIndices.nItems(); ++m)
-                v += box->minimumImage(molecule->atom(yAxisAtomIndices[m])->r(),
-                                       molecule->atom(yAxisAtomIndices.firstValue())->r());
-            v /= yAxisAtomIndices.nItems();
+            v = molecule->atom(yAxisAtomIndices.front())->r();
+            for (auto m = 1; m < yAxisAtomIndices.size(); ++m)
+                v += box->minimumImage(molecule->atom(yAxisAtomIndices[m])->r(), molecule->atom(yAxisAtomIndices.front())->r());
+            v /= yAxisAtomIndices.size();
 
             // Get vector from site origin, normalise it, and orthogonalise
             y = box->minimumVector(origin, v);

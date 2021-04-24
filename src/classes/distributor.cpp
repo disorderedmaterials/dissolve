@@ -10,10 +10,10 @@ Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &
     : cellArray_(cellArray), processPool_(procPool), divisionStrategy_(strategy)
 {
     // Cells
-    cellLocks_.initialise(cellArray_.nCells());
-    cellLocks_ = 0;
-    cellContentsModifiedBy_.initialise(cellArray_.nCells());
-    cellContentsModifiedBy_ = -1;
+    cellLocks_.resize(cellArray_.nCells());
+    std::fill(cellLocks_.begin(), cellLocks_.end(), 0);
+    cellContentsModifiedBy_.resize(cellArray_.nCells());
+    std::fill(cellContentsModifiedBy_.begin(), cellContentsModifiedBy_.end(), -1);
 
     // Distribution
     nObjects_ = nObjects;
@@ -25,8 +25,8 @@ Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &
 
     nProcessesOrGroups_ = processPool_.strategyNDivisions(divisionStrategy_);
     processOrGroupIndex_ = processPool_.strategyProcessIndex(divisionStrategy_);
-    lastObjectDistributed_.initialise(nProcessesOrGroups_);
-    lastObjectDistributed_ = Distributor::NoneAvailable;
+    lastObjectDistributed_.resize(nProcessesOrGroups_);
+    std::fill(lastObjectDistributed_.begin(), lastObjectDistributed_.end(), Distributor::NoneAvailable);
     lastHardLockedCells_ = new Array<Cell *>[nProcessesOrGroups_];
 
     repeatsAllowed_ = allowRepeats;
@@ -285,7 +285,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
     if (nObjectsDistributed_ >= nObjects_)
     {
         Messenger::printVerbose("All objects distributed.\n");
-        lastObjectDistributed_ = Distributor::AllComplete;
+        std::fill(lastObjectDistributed_.begin(), lastObjectDistributed_.end(), Distributor::AllComplete);
         // 		lastHardLockedCells_ = Array<Cell*>();
 
         return Distributor::AllComplete;
@@ -391,7 +391,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 
                             // Reset the modified by flags here - this makes the assumption that the
                             // calling routine will honour the truth of 'changesBroadcastRequired'
-                            cellContentsModifiedBy_ = -1;
+                            std::fill(cellContentsModifiedBy_.begin(), cellContentsModifiedBy_.end(), -1);
                             break;
                         }
                     }

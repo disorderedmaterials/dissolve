@@ -3,6 +3,7 @@
 
 #include "base/processpool.h"
 #include "main/dissolve.h"
+#include <numeric>
 
 // Return a world process pool
 ProcessPool &Dissolve::worldPool()
@@ -14,9 +15,8 @@ ProcessPool &Dissolve::worldPool()
     if (firstRun)
     {
         // Assemble list of (world) process ranks for the pool
-        Array<int> ranks;
-        for (auto n = 0; n < ProcessPool::nWorldProcesses(); ++n)
-            ranks.add(n);
+        std::vector<int> ranks(ProcessPool::nWorldProcesses());
+        std::iota(ranks.begin(), ranks.end(), 0);
         world.setUp("World", ranks);
         firstRun = false;
     }
@@ -29,15 +29,9 @@ bool Dissolve::setUpMPIPools()
 {
     Messenger::print("*** Setting up MPI pools...\n");
 
-    // Get relative atom counts between each configuration
-    Array<int> configSizes;
-    for (auto *cfg = coreData_.configurations().first(); cfg != nullptr; cfg = cfg->next())
-        configSizes.add(cfg->nAtoms());
-
     // Default pool - all world ranks
-    Array<int> allProcesses;
-    for (auto n = 0; n < ProcessPool::nWorldProcesses(); ++n)
-        allProcesses.add(n);
+    std::vector<int> allProcesses(ProcessPool::nWorldProcesses());
+    std::iota(allProcesses.begin(), allProcesses.end(), 0);
 
     // Set up pool based on selected strategy
     auto cfgIndex = 0;

@@ -224,7 +224,7 @@ class Configuration : public ListItem<Configuration>
 
     public:
     // Set up process pool for this Configuration
-    bool setUpProcessPool(const Array<int> &worldRanks);
+    bool setUpProcessPool(const std::vector<int> &worldRanks);
     // Return process pool for this Configuration
     ProcessPool &processPool();
 };

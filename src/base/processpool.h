@@ -124,13 +124,13 @@ class ProcessPool
     // Name of this pool
     std::string name_;
     // Array of world ranks in this pool
-    Array<int> worldRanks_;
+    std::vector<int> worldRanks_;
     // Array of process groups within the pool, referencing pool ranks of processes
     Array<ProcessGroup> processGroups_;
     // Maximum number of simultaneous process groups
     int maxProcessGroups_;
     // Pool ranks of process group leaders
-    Array<int> groupLeaders_;
+    std::vector<int> groupLeaders_;
 #ifdef PARALLEL
     // Group of all processes in this pool
     MPI_Group poolGroup_;
@@ -150,7 +150,7 @@ class ProcessPool
 
     public:
     // Set up pool with processes specified
-    bool setUp(std::string_view name, const Array<int> &worldRanks);
+    bool setUp(std::string_view name, const std::vector<int> &worldRanks);
     // Return name of pool
     std::string_view name() const;
     // Return total number of processes in pool
@@ -168,7 +168,7 @@ class ProcessPool
     // Return number of processes in specified group
     int nProcessesInGroup(int groupId) const;
     // Return array of pool ranks in the specified group
-    const Array<int> &poolRanksInGroup(int groupId) const;
+    const std::vector<int> &poolRanksInGroup(int groupId) const;
     // Return whether group data is modifiable
     bool groupsModifiable() const;
     // Prevent group data from being modified
@@ -280,7 +280,7 @@ class ProcessPool
     // Broadcast bool
     bool broadcast(bool &source, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Broadcast Array<int>
+    // Broadcast std::vector<int>
     bool broadcast(Array<int> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast std::vector<int>

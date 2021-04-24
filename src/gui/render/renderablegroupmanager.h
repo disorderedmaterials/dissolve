@@ -21,7 +21,7 @@ class RenderableGroupManager
     // Vector of current RenderableGroups in use
     std::vector<RenderableGroup> groups_;
     // Usage counters for stock colours
-    Array<int> stockColourUsageCount_;
+    std::vector<int> stockColourUsageCount_;
 
     public:
     // Create named group, or return existing group by the same name

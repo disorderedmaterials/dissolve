@@ -41,9 +41,9 @@ class Distributor
     // Source CellArray
     const CellArray &cellArray_;
     // Cell lock counters
-    Array<int> cellLocks_;
+    std::vector<int> cellLocks_;
     // Cell contents modification indicators
-    Array<int> cellContentsModifiedBy_;
+    std::vector<int> cellContentsModifiedBy_;
 
     private:
     // Add soft lock to specified Cell index
@@ -90,7 +90,7 @@ class Distributor
     // Counter for distributed objects
     int nObjectsDistributed_;
     // Last objects distributed to process or group
-    Array<int> lastObjectDistributed_;
+    std::vector<int> lastObjectDistributed_;
     // Arrays of cells that were hard-locked in the last distribution (per process/group)
     Array<Cell *> *lastHardLockedCells_;
     // Number of instances where no viable object was available

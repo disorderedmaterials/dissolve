@@ -157,24 +157,24 @@ void SpeciesTab::updateSitesTab()
     }
 
     // Set origin atom indices
-    Array<int> originAtoms = site->originAtomIndices();
-    QString originText = originAtoms.nItems() == 0 ? QString() : QString::number(originAtoms.at(0) + 1);
-    for (auto n = 1; n < originAtoms.nItems(); ++n)
+    std::vector<int> originAtoms = site->originAtomIndices();
+    QString originText = originAtoms.empty() ? QString() : QString::number(originAtoms.at(0) + 1);
+    for (auto n = 1; n < originAtoms.size(); ++n)
         originText += QString(" %1").arg(originAtoms.at(n) + 1);
     ui_.SiteOriginAtomsEdit->setText(originText);
     ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
     // Set x axis atom indices
-    Array<int> xAxisAtoms = site->xAxisAtomIndices();
-    QString xAxisText = xAxisAtoms.nItems() == 0 ? QString() : QString::number(xAxisAtoms.at(0) + 1);
-    for (auto n = 1; n < xAxisAtoms.nItems(); ++n)
+    std::vector<int> xAxisAtoms = site->xAxisAtomIndices();
+    QString xAxisText = xAxisAtoms.empty() ? QString() : QString::number(xAxisAtoms.at(0) + 1);
+    for (auto n = 1; n < xAxisAtoms.size(); ++n)
         xAxisText += QString(" %1").arg(xAxisAtoms.at(n) + 1);
     ui_.SiteXAxisAtomsEdit->setText(xAxisText);
 
     // Set y axis atom indices
-    Array<int> yAxisAtoms = site->yAxisAtomIndices();
-    QString yAxisText = yAxisAtoms.nItems() == 0 ? QString() : QString::number(yAxisAtoms.at(0) + 1);
-    for (auto n = 1; n < yAxisAtoms.nItems(); ++n)
+    std::vector<int> yAxisAtoms = site->yAxisAtomIndices();
+    QString yAxisText = yAxisAtoms.empty() ? QString() : QString::number(yAxisAtoms.at(0) + 1);
+    for (auto n = 1; n < yAxisAtoms.size(); ++n)
         yAxisText += QString(" %1").arg(yAxisAtoms.at(n) + 1);
     ui_.SiteYAxisAtomsEdit->setText(yAxisText);
 
