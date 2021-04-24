@@ -199,7 +199,7 @@ int ProcessPool::groupIndex() const { return groupIndex_; }
 // Return local group in which this process exists
 ProcessGroup &ProcessPool::myGroup()
 {
-    assert(groupIndex_ >= 0 && groupIndex_ < processGroups_.nItems());
+    assert(groupIndex_ >= 0 && groupIndex_ < processGroups_.size());
     return processGroups_[groupIndex_];
 }
 
@@ -298,7 +298,7 @@ bool ProcessPool::assignProcessesToGroups()
                 groupIndex_ = n;
         }
         Messenger::printVerbose("Group will contain {} processes (world ranks:{}).\n", group.nProcesses(), rankString);
-        processGroups_.add(group);
+        processGroups_.push_back(group);
     }
 
     // Create local group and communicator - each process will only create and be involved in one group communicator
@@ -321,7 +321,7 @@ bool ProcessPool::assignProcessesToGroups()
         Messenger::printVerbose("Process world rank {} is the master of pool '{}', and will assemble group leaders...\n",
                                 worldRank_, name_);
         // Loop over process groups
-        for (auto group = 0; group < processGroups_.nItems(); ++group)
+        for (auto group = 0; group < processGroups_.size(); ++group)
         {
             // Query each process in the group to see if it is the leader...
             for (auto n = 0; n < nProcessesInGroup(group); ++n)
@@ -360,7 +360,7 @@ bool ProcessPool::assignProcessesToGroups()
     if (!broadcast(groupLeaders_))
         return false;
     Messenger::printVerbose("Group leader processes are :\n");
-    for (auto group = 0; group < processGroups_.nItems(); ++group)
+    for (auto group = 0; group < processGroups_.size(); ++group)
         Messenger::printVerbose("   Group {:3d} : process rank {}\n", group, groupLeaders_[group]);
 
     // Create group leader communicator
@@ -441,28 +441,20 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool &groupsSource)
 }
 
 // Return number of process groups
-int ProcessPool::nProcessGroups() const { return processGroups_.nItems(); }
+int ProcessPool::nProcessGroups() const { return processGroups_.size(); }
 
 // Return nth process group
 ProcessGroup &ProcessPool::processGroup(int n)
 {
-    assert(n >= 0 && n < processGroups_.nItems());
+    assert(n >= 0 && n < processGroups_.size());
     return processGroups_[n];
 }
 
 // Return number of processes in specified group
-int ProcessPool::nProcessesInGroup(int groupId) const
-{
-    assert(groupId >= 0 && groupId < processGroups_.nItems());
-    return processGroups_.at(groupId).nProcesses();
-}
+int ProcessPool::nProcessesInGroup(int groupId) const { return processGroups_[groupId].nProcesses(); }
 
 // Return array of pool ranks in specified group
-const std::vector<int> &ProcessPool::poolRanksInGroup(int groupId) const
-{
-    assert(groupId >= 0 && groupId < processGroups_.nItems());
-    return processGroups_.at(groupId).poolRanks();
-}
+const std::vector<int> &ProcessPool::poolRanksInGroup(int groupId) const { return processGroups_[groupId].poolRanks(); }
 
 // Return whether group data is modifiable
 bool ProcessPool::groupsModifiable() const { return groupsModifiable_; }
@@ -518,7 +510,7 @@ int ProcessPool::interleavedLoopStart(ProcessPool::DivisionStrategy strategy) co
 int ProcessPool::interleavedLoopStride(ProcessPool::DivisionStrategy strategy) const
 {
     if (strategy == ProcessPool::GroupsStrategy)
-        return processGroups_.nItems();
+        return processGroups_.size();
     else if (strategy == ProcessPool::GroupProcessesStrategy)
         return nProcessesInGroup(groupIndex_);
     else if (strategy == ProcessPool::PoolStrategy)

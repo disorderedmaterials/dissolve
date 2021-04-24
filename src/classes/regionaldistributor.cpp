@@ -48,8 +48,8 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
 
     // Molecules
     assignedMolecules_.resize(nProcessesOrGroups_);
-    moleculeStatus_.initialise(moleculeArray_.size());
-    moleculeStatus_ = RegionalDistributor::WaitingFlag;
+    moleculeStatus_.resize(moleculeArray_.size());
+    std::fill(moleculeStatus_.begin(), moleculeStatus_.end(), RegionalDistributor::WaitingFlag);
     nMoleculesToDistribute_ = moleculeArray_.size();
     nMoleculesDistributed_ = 0;
 }
@@ -91,8 +91,7 @@ bool RegionalDistributor::cycle()
     }
 
     std::shared_ptr<Molecule> molecule;
-    Array<bool> allPossibleMoleculesAssigned(nProcessesOrGroups_);
-    allPossibleMoleculesAssigned = false;
+    std::vector<bool> allPossibleMoleculesAssigned(nProcessesOrGroups_, false);
     int processOrGroup, nMoleculesAssigned, allPossibleMoleculesAssignedCount = 0;
 
     // Set Molecule completed flags and clear distribution arrays

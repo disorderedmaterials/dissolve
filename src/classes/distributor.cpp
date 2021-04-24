@@ -17,8 +17,8 @@ Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &
 
     // Distribution
     nObjects_ = nObjects;
-    objectStatus_.initialise(nObjects_);
-    objectStatus_ = Distributor::WaitingFlag;
+    objectStatus_.resize(nObjects_);
+    std::fill(objectStatus_.begin(), objectStatus_.end(), Distributor::WaitingFlag);
     nObjectsDistributed_ = 0;
     nUnavailableInstances_ = 0;
     nChangeBroadcastsRequired_ = 0;

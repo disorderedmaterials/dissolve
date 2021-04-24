@@ -96,7 +96,7 @@ class RegionalDistributor
     // Counter for distributed Molecules
     int nMoleculesDistributed_;
     // Molecule status array
-    Array<MoleculeStatusFlag> moleculeStatus_;
+    std::vector<MoleculeStatusFlag> moleculeStatus_;
     // Arrays of Molecule IDs assigned to each process / group
     std::vector<std::vector<int>> assignedMolecules_;
 

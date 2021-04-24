@@ -86,7 +86,7 @@ class Distributor
     // Number of objects in distribution
     int nObjects_;
     // Object status array
-    Array<ObjectStatusFlag> objectStatus_;
+    std::vector<ObjectStatusFlag> objectStatus_;
     // Counter for distributed objects
     int nObjectsDistributed_;
     // Last objects distributed to process or group

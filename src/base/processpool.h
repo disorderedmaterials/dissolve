@@ -125,8 +125,8 @@ class ProcessPool
     std::string name_;
     // Array of world ranks in this pool
     std::vector<int> worldRanks_;
-    // Array of process groups within the pool, referencing pool ranks of processes
-    Array<ProcessGroup> processGroups_;
+    // Vector of process groups within the pool, referencing pool ranks of processes
+    std::vector<ProcessGroup> processGroups_;
     // Maximum number of simultaneous process groups
     int maxProcessGroups_;
     // Pool ranks of process group leaders
