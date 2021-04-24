@@ -92,19 +92,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
                 return false;
         return true;
     });
-    registerDeserialiser<Array<Vec3<double>>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        auto &v = std::any_cast<Array<Vec3<double>> &>(a);
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        v.createEmpty(parser.argi(0));
-        for (auto n = 0; n < v.nItems(); ++n)
-        {
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            v.add(parser.arg3d(0));
-        }
-        return true;
-    });
     registerDeserialiser<Array2D<char>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         auto &v = std::any_cast<Array2D<char> &>(a);
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

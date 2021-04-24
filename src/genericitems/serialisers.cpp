@@ -61,15 +61,6 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<Array<Vec3<double>>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array<Vec3<double>> &>(a);
-        if (!parser.writeLineF("{}\n", v.nItems()))
-            return false;
-        for (auto n = 0; n < v.nItems(); ++n)
-            if (!parser.writeLineF("{}\n", v.at(n).x, v.at(n).y, v.at(n).z))
-                return false;
-        return true;
-    });
     registerSerialiser<Array2D<char>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array2D<char> &>(a);
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
