@@ -276,7 +276,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         return false;
 
     // Go through the Atoms of the Molecule, assembling a list of primary Cells in which its Atoms are found.
-    Array<Cell *> primaryCells;
+    std::vector<Cell *> primaryCells;
     for (auto i = 0; i < mol->nAtoms(); ++i)
     {
         // Get Cell pointer and index
@@ -304,13 +304,13 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
             Messenger::print(" -- Cell {} can be locked - current owner ({})\n", cellIndex, cellLockOwners_[cellIndex]);
 
         // Add to the primary Cells list
-        primaryCells.add(primaryCell);
+        primaryCells.push_back(primaryCell);
     }
 
     // We are able to lock all Cells that we need to edit, so now construct a list of those within the cutoff range of any
     // primaryCell that we must be able to read (but not modify)
     std::set<const Cell *> readOnlyCells;
-    for (auto c = 0; c < primaryCells.nItems(); ++c)
+    for (auto c = 0; c < primaryCells.size(); ++c)
     {
         // Loop over all cell neighbours for this primary Cell
         for (const auto *neighbour : primaryCells[c]->allCellNeighbours())
@@ -340,7 +340,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     // If we reach this point, we can lock all the necessary Cells for editing, and mark all those necessary for reading.
 
     // Add primary and secondary lock Cells to our list, sanity checking along the way
-    for (auto c = 0; c < primaryCells.nItems(); ++c)
+    for (auto c = 0; c < primaryCells.size(); ++c)
     {
         cellIndex = primaryCells[c]->index();
 
