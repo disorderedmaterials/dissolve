@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/colourscale.h"
+#include <algorithm>
 
 ColourScale::ColourScale()
 {
@@ -39,22 +40,16 @@ void ColourScale::addPoint(double value, QColor colour)
 {
     /*
      * If supplied value is less than that at the start of the list, add it at the beginning.
-     * If larget than the one at the end, then append it to the end of the list.
+     * If larger than the one at the end, then append it to the end of the list.
      * If neither of these, find the first existing value which is larger, and add it before that one.
      */
-    if ((points_.nItems() == 0) || (value > points_.last().value()))
-        points_.add(ColourScalePoint(value, colour));
+    if ((points_.size() == 0) || (value > points_.back().value()))
+        points_.emplace_back(value, colour);
     else
     {
-        // Find a suitable insertion point now, so we don't have to reorder
-        for (auto n = 0; n < points_.nItems(); ++n)
-        {
-            if (points_[n].value() > value)
-            {
-                points_.insert(ColourScalePoint(value, colour), n);
-                break;
-            }
-        }
+        // Find a suitable insertion point
+        auto it = std::find_if(points_.begin(), points_.end(), [value](const auto &point) { return point.value() > value; });
+        points_.insert(it, {value, colour});
     }
 
     // Recalculate colour deltas
@@ -62,29 +57,24 @@ void ColourScale::addPoint(double value, QColor colour)
 }
 
 // Return number of points in ColourScale
-int ColourScale::nPoints() const { return points_.nItems(); }
+int ColourScale::nPoints() const { return points_.size(); }
 
 // Return points in ColourScale
-const Array<ColourScalePoint> &ColourScale::points() const { return points_; }
+const std::vector<ColourScalePoint> &ColourScale::points() const { return points_; }
 
 // Return first point in ColourScale
-const ColourScalePoint &ColourScale::firstPoint() const { return points_.at(0); }
+const ColourScalePoint &ColourScale::firstPoint() const { return points_.front(); }
 
 // Return last point in ColourScale
-const ColourScalePoint &ColourScale::lastPoint() const { return points_.at(points_.nItems() - 1); }
+const ColourScalePoint &ColourScale::lastPoint() const { return points_.back(); }
 
 // Return specific point in ColourScale
-const ColourScalePoint &ColourScale::point(int id) const { return points_.at(id); }
+const ColourScalePoint &ColourScale::point(int id) const { return points_[id]; }
 
 // Set colour and value data for point
 void ColourScale::setPoint(int position, double value, QColor colour)
 {
-    // Check position supplied
-    if ((position < 0) || (position >= points_.nItems()))
-    {
-        Messenger::error("Scale point position to set ({}) is invalid - nItems = {}.\n", position, points_.nItems());
-        return;
-    }
+    assert(position >= 0 && position < points_.size());
 
     points_[position].setColour(colour);
 
@@ -95,23 +85,11 @@ void ColourScale::setPoint(int position, double value, QColor colour)
 // Set value for point
 void ColourScale::setValue(int position, double value)
 {
-    // Store whether the new value is higher or lower than the existing one...
-    auto newValueHigher = value >= points_[position].value();
-
     // Set the new value of the point
     points_[position].setValue(value);
 
-    // Position in list may have changed - check...
-    if (newValueHigher)
-    {
-        while ((position != (nPoints() - 1)) && value > points_[position + 1].value())
-            points_.shiftUp(position++);
-    }
-    else
-    {
-        while ((position != 0) && value < points_[position - 1].value())
-            points_.shiftDown(position--);
-    }
+    // Position in list may have changed...
+    std::sort(points_.begin(), points_.end(), [](const auto &p1, const auto &p2) { return p1.value() < p2.value(); });
 
     // Recalculate colour deltas
     calculateDeltas();
@@ -129,14 +107,9 @@ void ColourScale::setColour(int position, QColor colour)
 // Remove old point from ColourScale
 void ColourScale::removePoint(int position)
 {
-    // Check position supplied
-    if ((position < 0) || (position >= points_.nItems()))
-    {
-        Messenger::error("Scale point position to set ({}) is invalid - nItems = {}.\n", position, points_.nItems());
-        return;
-    }
+    assert(position >= 0 && position < points_.size());
 
-    points_.remove(position);
+    points_.erase(points_.begin() + position);
 
     // Recalculate colour deltas
     calculateDeltas();
@@ -146,89 +119,32 @@ void ColourScale::removePoint(int position)
 QColor ColourScale::colour(double value) const
 {
     // Check for no points being defined
-    if (points_.nItems() == 0)
+    if (points_.empty() == 0)
         return QColor(0, 0, 0);
 
     // Is supplied value less than the value at the first point?
-    if (value < points_.at(0).value())
-        return points_.at(0).colour();
-    else if (value > points_.at(nPoints() - 1).value())
-        return points_.at(nPoints() - 1).colour();
+    if (value < points_.front().value())
+        return points_.front().colour();
+    else if (value > points_.back().value())
+        return points_.back().colour();
 
     // Find the correct delta to use
-    for (auto n = 0; n < deltas_.nItems(); ++n)
-    {
-        if (deltas_.at(n).containsValue(value))
-        {
-            if (interpolated_)
-                return deltas_.at(n).colour(value);
-            else
-                return deltas_.at(n).startColour();
-        }
-    }
+    auto it = std::find_if(deltas_.begin(), deltas_.end(), [value](const auto &delta) { return delta.containsValue(value); });
+    if (it != deltas_.end())
+        return interpolated_ ? it->colour(value) : it->startColour();
 
-    // Should never get here - all cases accounted for
-    return QColor(0, 0, 0, 255);
+    throw(std::runtime_error(fmt::format("Failed to find a colour to return from the ColourScale.\n")));
 }
 
 // Get colour associated with value supplied, setting as GLfloat[4]
 void ColourScale::colour(double value, GLfloat *rgba) const
 {
-    // Check for no points being defined
-    if (points_.nItems() == 0)
-    {
-        rgba[0] = 0.0;
-        rgba[1] = 0.0;
-        rgba[2] = 0.0;
-        rgba[3] = 1.0;
-        return;
-    }
+    auto qcol = colour(value);
 
-    // Is supplied value less than the value at the first point?
-    if (value < points_.at(0).value())
-    {
-        points_.at(0).colour(rgba);
-        return;
-    }
-    else if (value > points_.at(nPoints() - 1).value())
-    {
-        points_.at(nPoints() - 1).colour(rgba);
-        return;
-    }
-
-    // Find the correct delta to use
-    for (auto n = 0; n < deltas_.nItems(); ++n)
-    {
-        if (deltas_.at(n).containsValue(value))
-        {
-            if (interpolated_)
-                return deltas_.at(n).colour(value, rgba);
-            else
-                return deltas_.at(n).startColour(rgba);
-            return;
-        }
-    }
-
-    // Shouldn't ever get here - TODO Raise Exception?
-    rgba[0] = 0.0;
-    rgba[1] = 0.0;
-    rgba[2] = 0.0;
-    rgba[3] = 1.0;
-}
-
-// Set all alpha values to that specified
-void ColourScale::setAllAlpha(double alpha)
-{
-    auto alphai = alpha * 255;
-    if (alphai < 0)
-        alphai = 0;
-    else if (alphai > 255)
-        alphai = 255;
-
-    for (auto n = 0; n < points_.nItems(); ++n)
-        points_[n].setAlpha(alphai);
-
-    calculateDeltas();
+    rgba[0] = qcol.redF();
+    rgba[1] = qcol.greenF();
+    rgba[2] = qcol.blueF();
+    rgba[3] = qcol.alphaF();
 }
 
 /*
@@ -239,8 +155,11 @@ void ColourScale::setAllAlpha(double alpha)
 void ColourScale::calculateDeltas()
 {
     deltas_.clear();
-    for (auto n = 0; n < points_.nItems() - 1; ++n)
-        deltas_.add(ColourScaleDelta(points_[n], points_[n + 1], useHSV_));
+    if (points_.empty())
+        return;
+
+    for (auto n = 0; n < points_.size() - 1; ++n)
+        deltas_.emplace_back(points_[n], points_[n + 1], useHSV_);
 }
 
 /*

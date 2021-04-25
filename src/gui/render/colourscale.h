@@ -5,13 +5,10 @@
 
 #include "gui/render/colourscaledelta.h"
 #include "gui/render/colourscalepoint.h"
-#include "templates/array.h"
 #include "templates/vector4.h"
 #include <QColor>
 #include <QOpenGLFunctions>
-
-// Forward declarations
-/* none */
+#include <vector>
 
 // Colour Scale
 class ColourScale
@@ -27,8 +24,8 @@ class ColourScale
      * Points
      */
     private:
-    // List of points in the ColourScale
-    Array<ColourScalePoint> points_;
+    // Vector of points in the ColourScale
+    std::vector<ColourScalePoint> points_;
 
     public:
     // Add new point to ColourScale
@@ -36,7 +33,7 @@ class ColourScale
     // Return number of points in ColourScale
     int nPoints() const;
     // Return points in ColourScale
-    const Array<ColourScalePoint> &points() const;
+    const std::vector<ColourScalePoint> &points() const;
     // Return first point in ColourScale
     const ColourScalePoint &firstPoint() const;
     // Return last point in ColourScale
@@ -55,15 +52,13 @@ class ColourScale
     QColor colour(double value) const;
     // Get colour associated with value supplied, setting as GLfloat[4]
     void colour(double value, GLfloat *rgba) const;
-    // Set all alpha values to that specified
-    void setAllAlpha(double alpha);
 
     /*
      * Deltas
      */
     private:
-    // List of colour deltas between points in the ColourScale
-    Array<ColourScaleDelta> deltas_;
+    // Vector of colour deltas between points in the ColourScale
+    std::vector<ColourScaleDelta> deltas_;
 
     private:
     // Calculate colour deltas for current list of points
