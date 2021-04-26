@@ -38,10 +38,13 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
-    for_each_pair(cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
-        if (ii != jj)
-            partialSet.fullHistogram(ii->localTypeIndex(), jj->localTypeIndex()).bin(box->minimumDistance(ii->r(), jj->r()));
-    });
+    for_each_pair(cfg->atoms().begin(), cfg->atoms().end(),
+                  [box, &partialSet](auto i, auto ii, auto j, auto jj)
+                  {
+                      if (ii != jj)
+                          partialSet.fullHistogram(ii->localTypeIndex(), jj->localTypeIndex())
+                              .bin(box->minimumDistance(ii->r(), jj->r()));
+                  });
 
     return true;
 }
@@ -99,7 +102,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
         for_each_pair(ri, ri + maxr[typeI], nChunks, offset,
-                      [box, bins, rbin, nPoints, &histogram](int i, auto centre, int j, auto other) {
+                      [box, bins, rbin, nPoints, &histogram](int i, auto centre, int j, auto other)
+                      {
                           if (i == j)
                               return;
                           bins[j] = box->minimumDistance(centre, other) * rbin;
@@ -245,10 +249,11 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
     int end = std::get<1>(range);
     Combinations comb(end - start, 2);
 
-    auto combinableHistograms = algorithms::paralleltbb::combinable<RDFModuleHelpers::PartialHistograms>(
+    auto combinableHistograms = dissolve::combinable<RDFModuleHelpers::PartialHistograms>(
         [&partialSet]() { return RDFModuleHelpers::PartialHistograms(partialSet); });
 
-    auto lambda = [&combinableHistograms, start, cfg, &comb, rdfRange](const auto &range) {
+    auto lambda = [&combinableHistograms, start, cfg, &comb, rdfRange](const auto &range)
+    {
         for (auto i = range.begin(); i < range.end(); ++i)
         {
             auto &histograms = combinableHistograms.local().histograms_;
@@ -282,8 +287,8 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
         }
     };
 
-    auto histograms = algorithms::paralleltbb::parallel_for_reduction(
-        combinableHistograms, algorithms::paralleltbb::blocked_range(0, comb.getNumCombinations()), lambda);
+    auto histograms =
+        dissolve::parallel_for_reduction(combinableHistograms, dissolve::blocked_range(0, comb.getNumCombinations()), lambda);
 
     histograms.addToPartialSet(partialSet);
 
@@ -293,13 +298,15 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
         auto &atomsI = cellI->atoms();
 
         // Add contributions between atoms in cellI
-        for_each_pair(atomsI.begin(), atomsI.end(), [&](const int idx, auto &i, const int jdx, auto &j) {
-            if (idx == jdx)
-                return;
-            // No need to perform MIM since we're in the same cell
-            double distance = (i->r() - j->r()).magnitude();
-            partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-        });
+        for_each_pair(atomsI.begin(), atomsI.end(),
+                      [&](const int idx, auto &i, const int jdx, auto &j)
+                      {
+                          if (idx == jdx)
+                              return;
+                          // No need to perform MIM since we're in the same cell
+                          double distance = (i->r() - j->r()).magnitude();
+                          partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+                      });
     }
 #endif
     return true;
@@ -426,18 +433,20 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     {
         auto &atoms = (*it)->atoms();
 
-        for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
-            // Ignore atom on itself
-            if (index == jndex)
-                return;
+        for_each_pair(atoms.begin(), atoms.end(),
+                      [box, &originalgr](int index, auto &i, int jndex, auto &j)
+                      {
+                          // Ignore atom on itself
+                          if (index == jndex)
+                              return;
 
-            double distance;
-            if (i->cell()->mimRequired(j->cell()))
-                distance = box->minimumDistance(i, j);
-            else
-                distance = (i->r() - j->r()).magnitude();
-            originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-        });
+                          double distance;
+                          if (i->cell()->mimRequired(j->cell()))
+                              distance = box->minimumDistance(i, j);
+                          else
+                              distance = (i->r() - j->r()).magnitude();
+                          originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+                      });
     }
 
     timer.stop();
@@ -452,24 +461,26 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 
     procPool.resetAccumulatedTime();
     timer.start();
-    auto success = for_each_pair_early(
-        0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
-            // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
-            // processes have all data already)
-            if (method != RDFModule::TestMethod)
-            {
-                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-            }
+    auto success =
+        for_each_pair_early(0, originalgr.nAtomTypes(),
+                            [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                            {
+                                // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
+                                // processes have all data already)
+                                if (method != RDFModule::TestMethod)
+                                {
+                                    if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                                        return false;
+                                    if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                                        return false;
+                                }
 
-            // Create unbound histogram from total and bound data
-            originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-            originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+                                // Create unbound histogram from total and bound data
+                                originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+                                originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
 
-            return EarlyReturn<bool>::Continue;
-        });
+                                return EarlyReturn<bool>::Continue;
+                            });
     if (success.has_value() && !success.value())
         return false;
 
@@ -525,29 +536,33 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
     {
         auto &types = unweightedgr.atomTypes();
-        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-            // Set up the broadening function for these AtomTypes
-            BroadeningFunction function = intraBroadening.broadeningFunction(typeI.atomType(), typeJ.atomType());
+        for_each_pair(types.begin(), types.end(),
+                      [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
+                      {
+                          // Set up the broadening function for these AtomTypes
+                          BroadeningFunction function = intraBroadening.broadeningFunction(typeI.atomType(), typeJ.atomType());
 
-            // Convolute the bound partial with the broadening function
-            Filters::convolve(unweightedgr.boundPartial(i, j), function);
-        });
+                          // Convolute the bound partial with the broadening function
+                          Filters::convolve(unweightedgr.boundPartial(i, j), function);
+                      });
     }
 
     // Add broadened bound partials back in to full partials
     auto &types = unweightedgr.atomTypes();
-    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-        unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
-    });
+    for_each_pair(types.begin(), types.end(),
+                  [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
+                  { unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j); });
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
-        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-            Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
-            Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
-            Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
-        });
+        for_each_pair(types.begin(), types.end(),
+                      [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
+                      {
+                          Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
+                          Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
+                          Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
+                      });
     }
 
     // Calculate total
@@ -697,7 +712,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 
     for_each_pair_early(
         atomTypes.begin(), atomTypes.end(),
-        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool> {
+        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
+        {
             // Full partial
             error = Error::percent(setA.partial(n, m), setB.partial(n, m));
             Messenger::print("Test reference full partial '{}-{}' has error of {:7.3f}% with calculated data and is "

@@ -5,7 +5,7 @@
 #include <tbb/combinable.h>
 #include <tbb/parallel_for.h>
 
-namespace algorithms::paralleltbb
+namespace dissolve
 {
 
 // returns a tbb iteration range between begin and end
@@ -18,15 +18,15 @@ template <typename Type, typename Lambda> inline auto combinable(Lambda &&lambda
 }
 
 // runs the tbb parallel_for algorithm
-template <typename... Args> void parallel_for(Args &&... args) { tbb::parallel_for(std::forward<Args>(args)...); }
+template <typename... Args> void parallel_for(Args &&...args) { tbb::parallel_for(std::forward<Args>(args)...); }
 
 // Parallel reduction using tbb::combinable as thread local storage
 // returns the combination (by addition) of the thread local storage instances
 template <typename CombinableType, typename... Args>
-auto parallel_for_reduction(tbb::combinable<CombinableType> &combinable, Args &&... args) -> CombinableType
+auto parallel_for_reduction(tbb::combinable<CombinableType> &combinable, Args &&...args) -> CombinableType
 {
     parallel_for(std::forward<Args>(args)...);
     return combinable.combine(std::plus<CombinableType>());
 }
 
-} // namespace algorithms::paralleltbb
+} // namespace dissolve

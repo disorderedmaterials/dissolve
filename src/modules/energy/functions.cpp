@@ -53,7 +53,8 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
 
     // Double loop over species atoms
     // NOTE PR #334 : use for_each_pair
-    for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
+    dissolve::counting_iterator<int>(loopStart, loopEnd);
+    std::for_each for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
     {
         auto &i = sp->atom(indexI);
         rI = i.r();
