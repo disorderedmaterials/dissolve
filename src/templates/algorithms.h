@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
-
 #pragma once
 
+#include "templates/parallel_defs.h"
 #include <functional>
 #include <optional>
 #include <tuple>
@@ -128,9 +128,11 @@ template <typename... Args> class ZipIterator
     bool operator!=(ZipIterator<Args...> other)
     {
         return std::apply(
-            [&other](auto &a, auto &... as) {
+            [&other](auto &a, auto &...as)
+            {
                 return std::apply(
-                    [&a](auto &b, auto &... bs) {
+                    [&a](auto &b, auto &...bs)
+                    {
                         // Only test the first elements.  We have to make the
                         // assumption that all the containers are the same length,
                         // anyway and this saves us some tests and some code.
@@ -142,11 +144,11 @@ template <typename... Args> class ZipIterator
     }
     void operator++()
     {
-        std::apply([](auto &... item) { (item++, ...); }, source_);
+        std::apply([](auto &...item) { (item++, ...); }, source_);
     }
     auto operator*()
     {
-        return std::apply([](auto &... item) { return std::make_tuple(std::ref(*item)...); }, source_);
+        return std::apply([](auto &...item) { return std::make_tuple(std::ref(*item)...); }, source_);
     }
 
     private:
@@ -156,16 +158,41 @@ template <typename... Args> class ZipIterator
 template <typename... Args> class zip
 {
     public:
-    zip(Args &... args) : sources_(args...) {}
+    zip(Args &...args) : sources_(args...) {}
     auto begin()
     {
-        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.begin()...); }, sources_));
+        return ZipIterator(std::apply([](auto &...item) { return std::make_tuple(item.begin()...); }, sources_));
     }
     auto end()
     {
-        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.end()...); }, sources_));
+        return ZipIterator(std::apply([](auto &...item) { return std::make_tuple(item.end()...); }, sources_));
     }
 
     private:
     std::tuple<Args &...> sources_;
 };
+
+namespace dissolve
+{
+// Base tranform_reduce, no parallel policy
+template <class Iter, typename T, class UnaryOp, class BinaryOp>
+T transform_reduce(Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
+{
+    return std::transform_reduce(begin, end, initialVal, binaryOp, unaryOp);
+}
+// Only enabled if parallelpolicies are fully defined e.g we have compiled with multithreading enabled
+template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
+{
+    return std::transform_reduce(policy, begin, end, initialVal, binaryOp, unaryOp);
+}
+
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading
+template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
+{
+    return dissolve::transform_reduce(begin, end, initialVal, binaryOp, unaryOp);
+}
+} // namespace dissolve
