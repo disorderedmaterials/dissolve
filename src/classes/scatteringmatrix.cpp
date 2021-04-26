@@ -252,7 +252,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
         std::vector<Interpolator> interpolations;
         interpolations.reserve(data_.size());
         for (const auto &ref : data_)
-            interpolations.emplace_back(Interpolator(ref);
+            interpolations.emplace_back(Interpolator(ref));
 
         // Q-dependent terms in the scattering matrix, so need to invert once at each distinct Q value
         const auto &x = estimatedSQ[0].xAxis();

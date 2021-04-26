@@ -312,7 +312,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     for (auto *cell : primaryCells)
     {
         // Loop over all cell neighbours for this primary Cell
-        for (const auto *neighbour : primaryCells[c]->allCellNeighbours())
+        for (const auto *neighbour : cell->allCellNeighbours())
         {
             cellIndex = neighbour->index();
 
@@ -341,7 +341,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     // Add primary and secondary lock Cells to our list, sanity checking along the way
     for (const auto *cell : primaryCells)
     {
-        cellIndex = primaryCells[c]->index();
+        cellIndex = cell->index();
 
         // Set lock index
         if ((cellLockOwners_[cellIndex] == processOrGroup) || (cellLockOwners_[cellIndex] == -1))
