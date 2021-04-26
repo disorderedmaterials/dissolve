@@ -5,6 +5,7 @@ struct FakeParallelPolicy
 {
 };
 #ifdef MULTITHREADING
+#include "tbb-defs.h"
 #if defined(__clang__)
 #include <pstl/algorithm>
 #include <pstl/execution>
@@ -18,6 +19,7 @@ constexpr auto par_unseq = pstl::execution::par_unseq;
 #else
 #include <algorithm>
 #include <execution>
+#include <numeric>
 namespace ParallelPolicies
 {
 constexpr auto par = std::execution::par;
@@ -30,6 +32,9 @@ namespace dissolve::internal
 template <typename T> using is_execution_policy = std::is_execution_policy<T>;
 }
 #else
+#include "tbb-fallbacks.h"
+#include <algorithm>
+#include <numeric>
 namespace dissolve::internal
 {
 template <typename T> struct is_execution_policy : std::false_type

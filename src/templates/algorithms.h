@@ -180,7 +180,7 @@ T transform_reduce(Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryO
 {
     return std::transform_reduce(begin, end, initialVal, binaryOp, unaryOp);
 }
-// Only enabled if parallelpolicies are fully defined e.g we have compiled with multithreading enabled
+// Only enabled if parallelpolicies are fully defined i.e. we have compiled with multithreading enabled
 template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
           std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
 T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
@@ -188,10 +188,12 @@ T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, Bi
     return std::transform_reduce(policy, begin, end, initialVal, binaryOp, unaryOp);
 }
 
-// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
+// parallel policy
 template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
           std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
-T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
+T transform_reduce([[maybe_unused]] ParallelPolicy policy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp,
+                   UnaryOp unaryOp)
 {
     return dissolve::transform_reduce(begin, end, initialVal, binaryOp, unaryOp);
 }

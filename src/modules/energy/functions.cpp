@@ -199,7 +199,7 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
         return localEnergies;
     };
 
-    auto energies = std::transform_reduce(ParallelPolicies::par, begin, end, Energies(), std::plus<Energies>(), unaryOp);
+    auto energies = dissolve::transform_reduce(ParallelPolicies::par, begin, end, Energies(), std::plus<Energies>(), unaryOp);
 
     bondEnergy = energies.bondEnergy;
     angleEnergy = energies.angleEnergy;
