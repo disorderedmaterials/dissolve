@@ -5,10 +5,31 @@
 #include "classes/energykernel.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
+#include "math/combinations.h"
 #include "modules/energy/energy.h"
 #include "templates/algorithms.h"
 #include "templates/parallel_defs.h"
+#include <atomic>
 #include <numeric>
+
+namespace
+{
+// Structure to store energy values
+struct Energies
+{
+    Energies() = default;
+    double bondEnergy;
+    double angleEnergy;
+    double torsionEnergy;
+    double improperEnergy;
+
+    Energies operator+(const Energies &other) const
+    {
+        return {this->bondEnergy + other.bondEnergy, this->angleEnergy + other.angleEnergy,
+                this->torsionEnergy + other.torsionEnergy, this->improperEnergy + other.improperEnergy};
+    }
+};
+} // namespace
 
 // Return total interatomic energy of Configuration
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
@@ -43,39 +64,36 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
 // Return total interatomic energy of Species
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
 {
-    Vec3<double> rI;
-    double r, scale, energy = 0.0;
     const auto cutoff = potentialMap.range();
 
     // Get start/end for loop
     auto loopStart = procPool.twoBodyLoopStart(sp->nAtoms());
     auto loopEnd = procPool.twoBodyLoopEnd(sp->nAtoms());
+    Combinations combinations(loopEnd - loopStart + 1, 2);
+    dissolve::counting_iterator<int> countingIterator(0, combinations.getNumCombinations());
 
-    // Double loop over species atoms
-    // NOTE PR #334 : use for_each_pair
-    dissolve::counting_iterator<int>(loopStart, loopEnd);
-    std::for_each for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
-    {
-        auto &i = sp->atom(indexI);
-        rI = i.r();
+    double energy = dissolve::transform_reduce(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0,
+                                               std::plus<double>(),
+                                               [&](const auto idx)
+                                               {
+                                                   auto [n, m] = combinations.nthCombination(idx);
+                                                   auto &i = sp->atom(n);
+                                                   auto &j = sp->atom(m);
+                                                   auto &rI = i.r();
+                                                   auto &rJ = j.r();
 
-        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
-        {
-            auto &j = sp->atom(indexJ);
+                                                   // Get interatomic distance
+                                                   double r = (rJ - rI).magnitude();
+                                                   if (r > cutoff)
+                                                       return 0.0;
 
-            // Get interatomic distance
-            r = (j.r() - rI).magnitude();
-            if (r > cutoff)
-                continue;
+                                                   // Get intramolecular scaling of atom pair
+                                                   double scale = i.scaling(&j);
+                                                   if (scale < 1.0e-3)
+                                                       return 0.0;
 
-            // Get intramolecular scaling of atom pair
-            scale = i.scaling(&j);
-            if (scale < 1.0e-3)
-                continue;
-
-            energy += potentialMap.energy(&i, &j, r) * scale;
-        }
-    }
+                                                   return potentialMap.energy(&i, &j, r) * scale;
+                                               });
 
     return energy;
 }
@@ -117,22 +135,6 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     return intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 }
-
-// Structure to store energy values
-struct Energies
-{
-    Energies() = default;
-    double bondEnergy;
-    double angleEnergy;
-    double torsionEnergy;
-    double improperEnergy;
-
-    Energies operator+(const Energies &other) const
-    {
-        return {this->bondEnergy + other.bondEnergy, this->angleEnergy + other.angleEnergy,
-                this->torsionEnergy + other.torsionEnergy, this->improperEnergy + other.improperEnergy};
-    }
-};
 
 // Return total intramolecular energy of Configuration, storing components in provided variables
 double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
