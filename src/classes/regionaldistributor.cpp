@@ -309,7 +309,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     // We are able to lock all Cells that we need to edit, so now construct a list of those within the cutoff range of any
     // primaryCell that we must be able to read (but not modify)
     std::set<const Cell *> readOnlyCells;
-    for (auto c = 0; c < primaryCells.size(); ++c)
+    for (auto *cell : primaryCells)
     {
         // Loop over all cell neighbours for this primary Cell
         for (const auto *neighbour : primaryCells[c]->allCellNeighbours())
@@ -339,7 +339,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     // If we reach this point, we can lock all the necessary Cells for editing, and mark all those necessary for reading.
 
     // Add primary and secondary lock Cells to our list, sanity checking along the way
-    for (auto c = 0; c < primaryCells.size(); ++c)
+    for (const auto *cell : primaryCells)
     {
         cellIndex = primaryCells[c]->index();
 

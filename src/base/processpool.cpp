@@ -366,8 +366,8 @@ bool ProcessPool::assignProcessesToGroups()
     // Create group leader communicator
     // Must first convert local pool ranks of the group leaders into world ranks, before passing this to MPI_Group_incl
     std::vector<int> groupLeadersW;
-    for (auto n = 0; n < groupLeaders_.size(); ++n)
-        groupLeadersW.push_back(worldRanks_[groupLeaders_[n]]);
+    for (auto leader : groupLeaders_)
+        groupLeadersW.push_back(worldRanks_[leader]);
     MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
     if (MPI_Group_incl(origGroup, groupLeadersW.size(), groupLeadersW.data(), &leaderGroup_) != MPI_SUCCESS)
         return false;

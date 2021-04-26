@@ -38,7 +38,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
     // Get origin atom indices from site, and grab the Configuration's Box
     auto originAtomIndices = speciesSite->originAtomIndices();
-    if (originAtomIndices.size() == 0)
+    if (originAtomIndices.empty())
         return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite->name());
     const auto *box = configuration_->box();
 

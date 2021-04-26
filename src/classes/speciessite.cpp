@@ -99,7 +99,7 @@ const RefList<SpeciesAtom> &SpeciesSite::originAtoms() { return originAtoms_; }
 std::vector<int> SpeciesSite::originAtomIndices() const
 {
     std::vector<int> indices;
-    for (SpeciesAtom *atom : originAtoms_)
+    std::transform(originAtoms_.begin(), originAtoms_.end(), std::back_inserter(indices), [](auto *atom){ return atom->index();});
         indices.push_back(atom->index());
 
     return indices;
@@ -177,7 +177,7 @@ const RefList<SpeciesAtom> &SpeciesSite::xAxisAtoms() { return xAxisAtoms_; }
 std::vector<int> SpeciesSite::xAxisAtomIndices() const
 {
     std::vector<int> indices;
-    for (SpeciesAtom *atom : xAxisAtoms_)
+    std::transform(xAxisAtoms_.begin(), xAxisAtoms.end(), std::back_inserter(indices), [](auto *atom){ return atom->index();});
         indices.push_back(atom->index());
 
     return indices;
@@ -244,7 +244,7 @@ const RefList<SpeciesAtom> &SpeciesSite::yAxisAtoms() { return yAxisAtoms_; }
 std::vector<int> SpeciesSite::yAxisAtomIndices() const
 {
     std::vector<int> indices;
-    for (SpeciesAtom *atom : yAxisAtoms_)
+    std::transform(yAxisAtoms_.begin(), yAxisAtoms.end(), std::back_inserter(indices), [](auto *atom){ return atom->index();});
         indices.push_back(atom->index());
 
     return indices;
@@ -267,7 +267,7 @@ Site *SpeciesSite::createFromParent() const
 {
     // Get origin atom indices from site
     std::vector<int> originIndices = originAtomIndices();
-    if (originIndices.size() == 0)
+    if (originIndices.empty())
         return nullptr;
 
     Site *site = nullptr;
@@ -278,7 +278,7 @@ Site *SpeciesSite::createFromParent() const
     if (originMassWeighted_)
     {
         double massNorm = 0.0;
-        for (auto m = 0; m < originIndices.size(); ++m)
+        for (const auto &index : originIndices)
         {
             mass = AtomicMass::mass(parent_->atom(originIndices[m]).Z());
             origin += parent_->atom(originIndices[m]).r() * mass;
@@ -288,7 +288,7 @@ Site *SpeciesSite::createFromParent() const
     }
     else
     {
-        for (auto m = 0; m < originIndices.size(); ++m)
+        for (const auto &index : originIndices)
             origin += parent_->atom(originIndices[m]).r();
         origin /= originIndices.size();
     }
@@ -307,7 +307,7 @@ Site *SpeciesSite::createFromParent() const
         Vec3<double> v;
 
         // Get average position of supplied x-axis atoms
-        for (auto m = 0; m < xAxisIndices.size(); ++m)
+        for (const auto &index : xAxisIndices)
             v += parent_->atom(xAxisIndices[m]).r();
         v /= xAxisIndices.size();
 
@@ -317,7 +317,7 @@ Site *SpeciesSite::createFromParent() const
 
         // Get average position of supplied y-axis atoms
         v.zero();
-        for (auto m = 0; m < yAxisIndices.size(); ++m)
+        for (const auto &index : yAxisIndices)
             v += parent_->atom(yAxisIndices[m]).r();
         v /= yAxisIndices.size();
 
@@ -454,7 +454,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         std::vector<int> indices = originAtomIndices();
 
         std::string atomIndices;
-        for (auto n = 0; n < indices.size(); ++n)
+        std::string atomIndices = std::accumulate(indices.begin(), indices.end(), "", [](const auto &acc, const auto &idx){ return acc + format("  {}", idx + 1);}); 
             atomIndices += fmt::format("  {}", indices[n] + 1);
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(OriginKeyword), atomIndices))
@@ -471,7 +471,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         std::vector<int> indices = xAxisAtomIndices();
 
         std::string atomIndices;
-        for (auto n = 0; n < indices.size(); ++n)
+        std::string atomIndices = std::accumulate(indices.begin(), indices.end(), "", [](const auto &acc, const auto &idx){ return acc + format("  {}", idx + 1);}); 
             atomIndices += fmt::format("  {}", indices[n] + 1);
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(XAxisKeyword), atomIndices))
@@ -484,8 +484,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         std::vector<int> indices = yAxisAtomIndices();
 
         std::string atomIndices;
-        for (auto n = 0; n < indices.size(); ++n)
-            atomIndices += fmt::format("  {}", indices[n] + 1);
+        std::string atomIndices = std::accumulate(indices.begin(), indices.end(), "", [](const auto &acc, const auto &idx){ return acc + format("  {}", idx + 1);}); 
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(YAxisKeyword), atomIndices))
             return false;

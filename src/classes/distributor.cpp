@@ -94,7 +94,7 @@ bool Distributor::addHardLocks(std::vector<Cell *> cells)
     Messenger::printVerbose("Hard-locking {} cells and soft-locking {} surrounding ones...\n", cells.size(), softCells.size());
 
     // Loop over Cells to hard-lock
-    for (auto n = 0; n < cells.size(); ++n)
+    for (auto cell : cells)
     {
         cellId = cells.at(n)->index();
 
@@ -116,7 +116,7 @@ bool Distributor::addHardLocks(std::vector<Cell *> cells)
     }
 
     // Must now soft-lock all the surrounding Cells
-    for (auto n = 0; n < softCells.size(); ++n)
+    for (auto &cell : softCells)
     {
         cellId = softCells.at(n)->index();
         if (!addSoftLock(cellId))
@@ -137,7 +137,7 @@ bool Distributor::removeHardLocks(std::vector<Cell *> cells)
                             softCells.size());
 
     // Loop over Cells to hard-unlock
-    for (auto n = 0; n < cells.size(); ++n)
+    for (auto &cell : cells)
     {
         cellId = cells.at(n)->index();
 
@@ -159,7 +159,7 @@ bool Distributor::removeHardLocks(std::vector<Cell *> cells)
     }
 
     // Must now soft-unlock all the surrounding Cells
-    for (auto n = 0; n < softCells.size(); ++n)
+    for (auto &cell : softCells)
     {
         cellId = softCells.at(n)->index();
         if (!removeSoftLock(cellId))
@@ -330,7 +330,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
                     // the search
                     // TODO Should we just broadcast changes instead of continuing the search?
                     hardCellModified = false;
-                    for (auto i = 0; i < hardLocksRequired.size(); ++i)
+                    for (auto *lock : hardLocksRequired)
                     {
                         if (cellContentsModifiedBy_[hardLocksRequired[i]->index()] == -1)
                             continue;
@@ -356,7 +356,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
                     if (!changesBroadcastRequired)
                     {
                         softLocksRequired = surroundingCells(hardLocksRequired);
-                        for (auto i = 0; i < softLocksRequired.size(); ++i)
+                        for (auto *lock : softLocksRequired)
                         {
                             // Get index of surrounding Cell
                             auto cellIndex = softLocksRequired[i]->index();
@@ -442,7 +442,7 @@ bool Distributor::finishedWithObject()
             objectStatus_[objectIndex] = Distributor::CompletedFlag;
 
         // Mark hard-locked Cells as being modified
-        for (auto n = 0; n < lastHardLockedCells_[processOrGroup].size(); ++n)
+        for (auto *cell : lastHardLockedCells_[processOrGroup])
         {
             auto cellIndex = lastHardLockedCells_[processOrGroup].at(n)->index();
 
