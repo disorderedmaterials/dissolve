@@ -1,171 +1,244 @@
+# Input file written by Dissolve v0.8.0 at 10:55:57 on 26-04-2021.
+
+#==============================================================================#
+#                                 Master Terms                                 #
+#==============================================================================#
+
+Master
+  Bond  'CT2-CT3'  Harmonic  2242.620     1.529
+  Bond  'CT3-HC'  Harmonic  2845.120     1.090
+  Bond  'CT2-CT2'  Harmonic  2242.620     1.529
+  Bond  'CT2-HC'  Harmonic  2845.120     1.090
+  Angle  'CT2-CT3-HC'  Harmonic   313.800   110.700
+  Angle  'HC-CT3-HC'  Harmonic   276.144   107.800
+  Angle  'CT2-CT2-CT3'  Harmonic   488.273   112.700
+  Angle  'CT3-CT2-HC'  Harmonic   313.800   110.700
+  Angle  'CT2-CT2-HC'  Harmonic   313.800   110.700
+  Angle  'HC-CT2-HC'  Harmonic   276.144   107.800
+  Angle  'CT2-CT2-CT2'  Harmonic   488.273   112.700
+  Torsion  'CT2-CT2-CT3-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'HC-CT2-CT3-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'CT2-CT2-CT2-CT3'  Cos3     5.439    -0.209     0.837
+  Torsion  'CT2-CT2-CT2-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'CT3-CT2-CT2-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'HC-CT2-CT2-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'CT2-CT2-CT2-CT2'  Cos3     5.439    -0.209     0.837
+  Torsion  'HC-CT3-CT2-HC'  Cos3     0.000     0.000     1.255
+EndMaster
+
+#==============================================================================#
+#                                   Species                                    #
+#==============================================================================#
+
 Species 'Hexane'
   # Atoms
-  Atom    1    C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    2    C    0.0    0.0    0.0    'CT'   -0.18
-  Atom    3    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    4    C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    5    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    6    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    7    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    8    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    9    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    10   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    11   C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    12   C    0.0    0.0    0.0    'CT'   -0.18
-  Atom    13   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    14   C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    15   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    16   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    17   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    18   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    19   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    20   H    0.0    0.0    0.0    'HC'    0.06
+  Atom    1  C    -3.836252e+00  2.491250e-01  -2.790200e-02  'CT3'  -1.800000e-01
+  Atom    2  C    -2.447433e+00  8.971100e-01  -3.765900e-02  'CT2'  -1.200000e-01
+  Atom    3  C    -1.313347e+00  -1.376060e-01  -9.349000e-03  'CT2'  -1.200000e-01
+  Atom    4  C    7.814900e-02  5.118760e-01  2.199000e-03  'CT2'  -1.200000e-01
+  Atom    5  C    1.212449e+00  -5.232900e-01  6.379000e-03  'CT2'  -1.200000e-01
+  Atom    6  C    2.603573e+00  1.256180e-01  4.214700e-02  'CT2'  -1.200000e-01
+  Atom    7  C    3.735792e+00  -9.071390e-01  2.509500e-02  'CT3'  -1.800000e-01
+  Atom    8  H    -3.984620e+00  -3.496810e-01  8.711090e-01  'HC'  6.000000e-02
+  Atom    9  H    -4.618770e+00  1.007645e+00  -5.521700e-02  'HC'  6.000000e-02
+  Atom   10  H    -3.973354e+00  -4.019060e-01  -8.916890e-01  'HC'  6.000000e-02
+  Atom   11  H    -2.349490e+00  1.522431e+00  -9.257470e-01  'HC'  6.000000e-02
+  Atom   12  H    -2.357095e+00  1.563634e+00  8.207340e-01  'HC'  6.000000e-02
+  Atom   13  H    -1.423450e+00  -7.724080e-01  8.707680e-01  'HC'  6.000000e-02
+  Atom   14  H    -1.400932e+00  -7.938040e-01  -8.761910e-01  'HC'  6.000000e-02
+  Atom   15  H    1.835290e-01  1.160189e+00  -8.685770e-01  'HC'  6.000000e-02
+  Atom   16  H    1.698770e-01  1.154625e+00  8.786270e-01  'HC'  6.000000e-02
+  Atom   17  H    1.099078e+00  -1.183150e+00  8.674330e-01  'HC'  6.000000e-02
+  Atom   18  H    1.129310e+00  -1.154443e+00  -8.793040e-01  'HC'  6.000000e-02
+  Atom   19  H    2.717401e+00  7.960630e-01  -8.103780e-01  'HC'  6.000000e-02
+  Atom   20  H    2.695462e+00  7.440460e-01  9.356930e-01  'HC'  6.000000e-02
+  Atom   21  H    3.699968e+00  -1.515207e+00  -8.792120e-01  'HC'  6.000000e-02
+  Atom   22  H    4.708954e+00  -4.169240e-01  5.795600e-02  'HC'  6.000000e-02
+  Atom   23  H    3.671203e+00  -1.576801e+00  8.830850e-01  'HC'  6.000000e-02
 
-  # Intramolecular Terms
-  Bond   1     2  Harmonic   2242.6240   1.5290
-  Bond   1     3  Harmonic   2845.1200   1.0900
-  Bond   1     4  Harmonic   2242.6240   1.5290
-  Bond   1     5  Harmonic   2845.1200   1.0900
-  Bond   2     6  Harmonic   2845.1200   1.0900
-  Bond   2     7  Harmonic   2845.1200   1.0900
-  Bond   2     8  Harmonic   2845.1200   1.0900
-  Bond   4     9  Harmonic   2845.1200   1.0900
-  Bond   4    10  Harmonic   2845.1200   1.0900
-  Bond   4    14  Harmonic   2242.6240   1.5290
-  Bond   11   12  Harmonic   2242.6240   1.5290
-  Bond   11   13  Harmonic   2845.1200   1.0900
-  Bond   11   14  Harmonic   2242.6240   1.5290
-  Bond   11   15  Harmonic   2845.1200   1.0900
-  Bond   12   16  Harmonic   2845.1200   1.0900
-  Bond   12   17  Harmonic   2845.1200   1.0900
-  Bond   12   18  Harmonic   2845.1200   1.0900
-  Bond   14   19  Harmonic   2845.1200   1.0900
-  Bond   14   20  Harmonic   2845.1200   1.0900
-  Angle   2     1     3  Harmonic  313.8000   110.7000
-  Angle   2     1     4  Harmonic  488.2728   112.7000
-  Angle   2     1     5  Harmonic  313.8000   110.7000
-  Angle   3     1     4  Harmonic  313.8000   110.7000
-  Angle   3     1     5  Harmonic  276.1440   107.8000
-  Angle   4     1     5  Harmonic  313.8000   110.7000
-  Angle   1     2     6  Harmonic  313.8000   110.7000
-  Angle   1     2     7  Harmonic  313.8000   110.7000
-  Angle   1     2     8  Harmonic  313.8000   110.7000
-  Angle   6     2     7  Harmonic  276.1440   107.8000
-  Angle   6     2     8  Harmonic  276.1440   107.8000
-  Angle   7     2     8  Harmonic  276.1440   107.8000
-  Angle   1     4     9  Harmonic  313.8000   110.7000
-  Angle   1     4    10  Harmonic  313.8000   110.7000
-  Angle   1     4    14  Harmonic  488.2728   112.7000
-  Angle   9     4    10  Harmonic  276.1440   107.8000
-  Angle   9     4    14  Harmonic  313.8000   110.7000
-  Angle  10     4    14  Harmonic  313.8000   110.7000
-  Angle  12    11    13  Harmonic  313.8000   110.7000
-  Angle  12    11    14  Harmonic  488.2728   112.7000
-  Angle  12    11    15  Harmonic  313.8000   110.7000
-  Angle  13    11    14  Harmonic  313.8000   110.7000
-  Angle  13    11    15  Harmonic  276.1440   107.8000
-  Angle  14    11    15  Harmonic  313.8000   110.7000
-  Angle  11    12    16  Harmonic  313.8000   110.7000
-  Angle  11    12    17  Harmonic  313.8000   110.7000
-  Angle  11    12    18  Harmonic  313.8000   110.7000
-  Angle  16    12    17  Harmonic  276.1440   107.8000
-  Angle  16    12    18  Harmonic  276.1440   107.8000
-  Angle  17    12    18  Harmonic  276.1440   107.8000
-  Angle   4    14    11  Harmonic  488.2728   112.7000
-  Angle   4    14    19  Harmonic  313.8000   110.7000
-  Angle   4    14    20  Harmonic  313.8000   110.7000
-  Angle  11    14    19  Harmonic  313.8000   110.7000
-  Angle  11    14    20  Harmonic  313.8000   110.7000
-  Angle  19    14    20  Harmonic  276.1440   107.8000
-  Torsion     3     1     2     6   Cos3  0.0000     0.0000     1.2552
-  Torsion     3     1     2     7   Cos3  0.0000     0.0000     1.2552
-  Torsion     3     1     2     8   Cos3  0.0000     0.0000     1.2552
-  Torsion     4     1     2     6   Cos3  0.0000     0.0000     1.2552
-  Torsion     4     1     2     7   Cos3  0.0000     0.0000     1.2552
-  Torsion     4     1     2     8   Cos3  0.0000     0.0000     1.2552
-  Torsion     5     1     2     6   Cos3  0.0000     0.0000     1.2552
-  Torsion     5     1     2     7   Cos3  0.0000     0.0000     1.2552
-  Torsion     5     1     2     8   Cos3  0.0000     0.0000     1.2552
-  Torsion     2     1     4     9   Cos3  0.0000     0.0000     1.2552
-  Torsion     2     1     4    10   Cos3  0.0000     0.0000     1.2552
-  Torsion     2     1     4    14   Cos3  5.4392    -0.2092     0.8368
-  Torsion     3     1     4     9   Cos3  0.0000     0.0000     1.2552
-  Torsion     3     1     4    10   Cos3  0.0000     0.0000     1.2552
-  Torsion     3     1     4    14   Cos3  0.0000     0.0000     1.2552
-  Torsion     5     1     4     9   Cos3  0.0000     0.0000     1.2552
-  Torsion     5     1     4    10   Cos3  0.0000     0.0000     1.2552
-  Torsion     5     1     4    14   Cos3  0.0000     0.0000     1.2552
-  Torsion     1     4    14    11   Cos3  5.4392    -0.2092     0.8368
-  Torsion     1     4    14    19   Cos3  0.0000     0.0000     1.2552
-  Torsion     1     4    14    20   Cos3  0.0000     0.0000     1.2552
-  Torsion     9     4    14    11   Cos3  0.0000     0.0000     1.2552
-  Torsion     9     4    14    19   Cos3  0.0000     0.0000     1.2552
-  Torsion     9     4    14    20   Cos3  0.0000     0.0000     1.2552
-  Torsion    10     4    14    11   Cos3  0.0000     0.0000     1.2552
-  Torsion    10     4    14    19   Cos3  0.0000     0.0000     1.2552
-  Torsion    10     4    14    20   Cos3  0.0000     0.0000     1.2552
-  Torsion    13    11    12    16   Cos3  0.0000     0.0000     1.2552
-  Torsion    13    11    12    17   Cos3  0.0000     0.0000     1.2552
-  Torsion    13    11    12    18   Cos3  0.0000     0.0000     1.2552
-  Torsion    14    11    12    16   Cos3  0.0000     0.0000     1.2552
-  Torsion    14    11    12    17   Cos3  0.0000     0.0000     1.2552
-  Torsion    14    11    12    18   Cos3  0.0000     0.0000     1.2552
-  Torsion    15    11    12    16   Cos3  0.0000     0.0000     1.2552
-  Torsion    15    11    12    17   Cos3  0.0000     0.0000     1.2552
-  Torsion    15    11    12    18   Cos3  0.0000     0.0000     1.2552
-  Torsion    12    11    14     4   Cos3  5.4392    -0.2092     0.8368
-  Torsion    12    11    14    19   Cos3  0.0000     0.0000     1.2552
-  Torsion    12    11    14    20   Cos3  0.0000     0.0000     1.2552
-  Torsion    13    11    14     4   Cos3  0.0000     0.0000     1.2552
-  Torsion    13    11    14    19   Cos3  0.0000     0.0000     1.2552
-  Torsion    13    11    14    20   Cos3  0.0000     0.0000     1.2552
-  Torsion    15    11    14     4   Cos3  0.0000     0.0000     1.2552
-  Torsion    15    11    14    19   Cos3  0.0000     0.0000     1.2552
-  Torsion    15    11    14    20   Cos3  0.0000     0.0000     1.2552
+  # Bonds
+  Bond    1    2  @CT2-CT3
+  Bond    1    8  @CT3-HC
+  Bond    1    9  @CT3-HC
+  Bond    1   10  @CT3-HC
+  Bond    2    3  @CT2-CT2
+  Bond    2   11  @CT2-HC
+  Bond    2   12  @CT2-HC
+  Bond    3    4  @CT2-CT2
+  Bond    3   13  @CT2-HC
+  Bond    3   14  @CT2-HC
+  Bond    4    5  @CT2-CT2
+  Bond    4   15  @CT2-HC
+  Bond    4   16  @CT2-HC
+  Bond    5    6  @CT2-CT2
+  Bond    5   17  @CT2-HC
+  Bond    5   18  @CT2-HC
+  Bond    6    7  @CT2-CT3
+  Bond    6   19  @CT2-HC
+  Bond    6   20  @CT2-HC
+  Bond    7   21  @CT3-HC
+  Bond    7   22  @CT3-HC
+  Bond    7   23  @CT3-HC
 
-  # Isotopologues
-  Isotopologue  'Protiated'  HC=0
-  Isotopologue  'Deuteriated'  HC=2
+  # Angles
+  Angle    8    1    2  @CT2-CT3-HC
+  Angle    9    1    2  @CT2-CT3-HC
+  Angle    9    1    8  @HC-CT3-HC
+  Angle   10    1    2  @CT2-CT3-HC
+  Angle   10    1    8  @HC-CT3-HC
+  Angle   10    1    9  @HC-CT3-HC
+  Angle    1    2    3  @CT2-CT2-CT3
+  Angle    1    2   11  @CT3-CT2-HC
+  Angle   11    2    3  @CT2-CT2-HC
+  Angle    1    2   12  @CT3-CT2-HC
+  Angle   12    2    3  @CT2-CT2-HC
+  Angle   12    2   11  @HC-CT2-HC
+  Angle    2    3    4  @CT2-CT2-CT2
+  Angle    2    3   13  @CT2-CT2-HC
+  Angle   13    3    4  @CT2-CT2-HC
+  Angle    2    3   14  @CT2-CT2-HC
+  Angle   14    3    4  @CT2-CT2-HC
+  Angle   14    3   13  @HC-CT2-HC
+  Angle    3    4    5  @CT2-CT2-CT2
+  Angle    3    4   15  @CT2-CT2-HC
+  Angle   15    4    5  @CT2-CT2-HC
+  Angle    3    4   16  @CT2-CT2-HC
+  Angle   16    4    5  @CT2-CT2-HC
+  Angle   16    4   15  @HC-CT2-HC
+  Angle    4    5    6  @CT2-CT2-CT2
+  Angle    4    5   17  @CT2-CT2-HC
+  Angle   17    5    6  @CT2-CT2-HC
+  Angle    4    5   18  @CT2-CT2-HC
+  Angle   18    5    6  @CT2-CT2-HC
+  Angle   18    5   17  @HC-CT2-HC
+  Angle    5    6    7  @CT2-CT2-CT3
+  Angle    5    6   19  @CT2-CT2-HC
+  Angle   19    6    7  @CT3-CT2-HC
+  Angle    5    6   20  @CT2-CT2-HC
+  Angle   20    6    7  @CT3-CT2-HC
+  Angle   20    6   19  @HC-CT2-HC
+  Angle    6    7   21  @CT2-CT3-HC
+  Angle    6    7   22  @CT2-CT3-HC
+  Angle   22    7   21  @HC-CT3-HC
+  Angle    6    7   23  @CT2-CT3-HC
+  Angle   23    7   21  @HC-CT3-HC
+  Angle   23    7   22  @HC-CT3-HC
+
+  # Torsions
+  Torsion    8    1    2    3  @CT2-CT2-CT3-HC
+  Torsion    9    1    2    3  @CT2-CT2-CT3-HC
+  Torsion   10    1    2    3  @CT2-CT2-CT3-HC
+  Torsion    8    1    2   11  @HC-CT2-CT3-HC
+  Torsion    9    1    2   11  @HC-CT2-CT3-HC
+  Torsion   10    1    2   11  @HC-CT2-CT3-HC
+  Torsion    8    1    2   12  @HC-CT2-CT3-HC
+  Torsion    9    1    2   12  @HC-CT2-CT3-HC
+  Torsion   10    1    2   12  @HC-CT2-CT3-HC
+  Torsion    1    2    3    4  @CT2-CT2-CT2-CT3
+  Torsion   11    2    3    4  @CT2-CT2-CT2-HC
+  Torsion   12    2    3    4  @CT2-CT2-CT2-HC
+  Torsion    1    2    3   13  @CT3-CT2-CT2-HC
+  Torsion   11    2    3   13  @HC-CT2-CT2-HC
+  Torsion   12    2    3   13  @HC-CT2-CT2-HC
+  Torsion    1    2    3   14  @CT3-CT2-CT2-HC
+  Torsion   11    2    3   14  @HC-CT2-CT2-HC
+  Torsion   12    2    3   14  @HC-CT2-CT2-HC
+  Torsion   13    3    4    5  @CT2-CT2-CT2-HC
+  Torsion    2    3    4    5  @CT2-CT2-CT2-CT2
+  Torsion   14    3    4    5  @CT2-CT2-CT2-HC
+  Torsion   13    3    4   15  @HC-CT2-CT2-HC
+  Torsion    2    3    4   15  @CT2-CT2-CT2-HC
+  Torsion   14    3    4   15  @HC-CT2-CT2-HC
+  Torsion   13    3    4   16  @HC-CT2-CT2-HC
+  Torsion    2    3    4   16  @CT2-CT2-CT2-HC
+  Torsion   14    3    4   16  @HC-CT2-CT2-HC
+  Torsion    3    4    5    6  @CT2-CT2-CT2-CT2
+  Torsion   15    4    5    6  @CT2-CT2-CT2-HC
+  Torsion   16    4    5    6  @CT2-CT2-CT2-HC
+  Torsion    3    4    5   17  @CT2-CT2-CT2-HC
+  Torsion   15    4    5   17  @HC-CT2-CT2-HC
+  Torsion   16    4    5   17  @HC-CT2-CT2-HC
+  Torsion    3    4    5   18  @CT2-CT2-CT2-HC
+  Torsion   15    4    5   18  @HC-CT2-CT2-HC
+  Torsion   16    4    5   18  @HC-CT2-CT2-HC
+  Torsion    4    5    6    7  @CT2-CT2-CT2-CT3
+  Torsion   17    5    6    7  @CT3-CT2-CT2-HC
+  Torsion   18    5    6    7  @CT3-CT2-CT2-HC
+  Torsion    4    5    6   19  @CT2-CT2-CT2-HC
+  Torsion   17    5    6   19  @HC-CT2-CT2-HC
+  Torsion   18    5    6   19  @HC-CT2-CT2-HC
+  Torsion    4    5    6   20  @CT2-CT2-CT2-HC
+  Torsion   17    5    6   20  @HC-CT2-CT2-HC
+  Torsion   18    5    6   20  @HC-CT2-CT2-HC
+  Torsion    5    6    7   21  @CT2-CT2-CT3-HC
+  Torsion   19    6    7   21  @HC-CT3-CT2-HC
+  Torsion   20    6    7   21  @HC-CT3-CT2-HC
+  Torsion    5    6    7   22  @CT2-CT2-CT3-HC
+  Torsion   19    6    7   22  @HC-CT3-CT2-HC
+  Torsion   20    6    7   22  @HC-CT3-CT2-HC
+  Torsion    5    6    7   23  @CT2-CT2-CT3-HC
+  Torsion   19    6    7   23  @HC-CT3-CT2-HC
+  Torsion   20    6    7   23  @HC-CT3-CT2-HC
 EndSpecies
 
-# Define Configuration
-Configuration  'Hexane10k'
-  Generator
-    Box
-      Lengths  30.769064857500  46.153597286200  30.769064857500
-    EndBox
-    AddSpecies
-      Population  10000
-      Species  'Hexane'
-    EndAddSpecies
-  EndGenerator
-EndConfiguration
+#==============================================================================#
+#                               Pair Potentials                                #
+#==============================================================================#
 
-# Pair Potentials
 PairPotentials
-  Range  12.000000
-  Delta  0.01000
-  Parameters  'CT'  C   0.0       LJGeometric  0.276144      3.500000  
-  Parameters  'HC'  H   0.0       LJGeometric  0.125520      2.500000 
+  # Atom Type Parameters
+  Parameters  CT3  C  -1.800000e-01  LJGeometric  2.761440e-01  3.500000e+00
+  Parameters  CT2  C  -1.200000e-01  LJGeometric  2.761440e-01  3.500000e+00
+  Parameters  HC  H  6.000000e-02  LJGeometric  1.255200e-01  2.500000e+00
+  Range  12.0
+  Delta  0.005
+  IncludeCoulomb  True
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
 EndPairPotentials
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
+#                                Configurations                                #
+#==============================================================================#
+
+Configuration  'Hexane100k'
+  Generator
+    Parameters
+      Parameter  rho  0.6558
+    EndParameters
+    Box
+      Lengths  1.000000e+00  1.500000e+00  1.000000e+00
+      Angles  9.000000e+01  9.000000e+01  9.000000e+01
+      NonPeriodic  False
+    EndBox
+    AddSpecies
+      Species  'Hexane'
+      Population  '100000'
+      Density  'rho'  g/cm3
+      Rotate  True
+      Positioning  Random
+    EndAddSpecies
+  EndGenerator
+
+  Temperature  300.000000
+EndConfiguration
+
+#==============================================================================#
 #                              Processing Layers                               #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Layer  'Benchmark'
   Frequency  1
 
   Module  Benchmark  'Benchmark'
-    Configuration  'Hexane10k'
+    Configuration  'Hexane100k'
   EndModule
 EndLayer
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                  Simulation                                  #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Simulation
   Seed  12345
 EndSimulation
-
