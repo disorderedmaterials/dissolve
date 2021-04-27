@@ -155,6 +155,9 @@ void Histogram1D::add(Histogram1D &other, int factor)
     }
     for (auto n = 0; n < nBins_; ++n)
         bins_[n] += other.bins_[n] * factor;
+
+    nBinned_ += other.nBinned_;
+    nMissed_ += other.nMissed_;
 }
 
 // Return accumulated (averaged) data
@@ -175,6 +178,21 @@ void Histogram1D::operator=(const Histogram1D &source)
     bins_ = source.bins_;
     binCentres_ = source.binCentres_;
     averages_ = source.averages_;
+}
+
+Histogram1D Histogram1D::operator+(const Histogram1D &other) const
+{
+    assert(nBins_ == other.nBins_);
+
+    Histogram1D ret = *this;
+
+    std::transform(other.bins_.cbegin(), other.bins_.cend(), ret.bins_.cbegin(), ret.bins_.begin(), std::plus<>());
+
+    ret.nBinned_ = this->nBinned_ + other.nBinned_;
+    ret.nMissed_ = this->nMissed_ + other.nMissed_;
+    ret.nBins_ = this->nBins_;
+
+    return ret;
 }
 
 /*

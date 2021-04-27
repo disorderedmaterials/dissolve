@@ -11,12 +11,22 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "main/dissolve.h"
+#include "math/combinations.h"
 #include "math/error.h"
 #include "math/filters.h"
 #include "module/group.h"
 #include "modules/rdf/rdf.h"
 #include "templates/algorithms.h"
 #include <iterator>
+#include <tuple>
+
+#ifdef MULTITHREADING
+#include "parallel_helpers.h"
+#include "templates/parallel_tbb.h"
+constexpr bool MULTITHREADED = true;
+#else
+constexpr bool MULTITHREADED = false;
+#endif
 
 /*
  * Private Functions
@@ -145,6 +155,15 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 // Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
+    if constexpr (MULTITHREADED)
+        return calculateGRCellsParallelImpl(procPool, cfg, partialSet, rdfRange);
+    else
+        return calculateGRCellsSingleImpl(procPool, cfg, partialSet, rdfRange);
+}
+
+bool RDFModule::calculateGRCellsSingleImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
+                                           const double rdfRange)
+{
     std::shared_ptr<Atom> i, j;
     int n, m, typeI;
     Cell *cellI, *cellJ;
@@ -207,6 +226,82 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         }
     }
 
+    return true;
+}
+
+bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
+                                             const double rdfRange)
+{
+#ifdef MULTITHREADING
+    // Grab the Box pointer and Cell array
+    const auto *box = cfg->box();
+    auto &cellArray = cfg->cells();
+
+    // Loop context is to use all processes in Pool as one group
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto range = chop_range(0, cellArray.nCells(), nChunks, offset);
+    int start = std::get<0>(range);
+    int end = std::get<1>(range);
+    Combinations comb(end - start, 2);
+
+    auto combinableHistograms = algorithms::paralleltbb::combinable<RDFModuleHelpers::PartialHistograms>(
+        [&partialSet]() { return RDFModuleHelpers::PartialHistograms(partialSet); });
+
+    auto lambda = [&combinableHistograms, start, cfg, &comb, rdfRange](const auto &range) {
+        for (auto i = range.begin(); i < range.end(); ++i)
+        {
+            auto &histograms = combinableHistograms.local().histograms_;
+            const auto *box = cfg->box();
+            auto &cellArray = cfg->cells();
+            auto [n, m] = comb.nthCombination(i);
+            auto *cellI = cellArray.cell(n + start);
+            auto *cellJ = cellArray.cell(m + start);
+
+            if (!cellArray.withinRange(cellI, cellJ, rdfRange))
+                continue;
+
+            // Add contributions between atoms in cellI and cellJ
+            auto &atomsI = cellI->atoms();
+            auto &atomsJ = cellJ->atoms();
+
+            // Perform minimum image calculation on all atom pairs -
+            // quicker than working out if we need to given the absence of a 2D look-up array
+            for (auto &i : atomsI)
+            {
+                auto typeI = i->localTypeIndex();
+                auto &rI = i->r();
+
+                for (auto &j : atomsJ)
+                {
+                    auto &rJ = j->r();
+                    auto distance = box->minimumDistance(rJ, rI);
+                    histograms[{typeI, j->localTypeIndex()}].bin(distance);
+                }
+            }
+        }
+    };
+
+    auto histograms = algorithms::paralleltbb::parallel_for_reduction(
+        combinableHistograms, algorithms::paralleltbb::blocked_range(0, comb.getNumCombinations()), lambda);
+
+    histograms.addToPartialSet(partialSet);
+
+    for (int n = start; n < end; ++n)
+    {
+        auto *cellI = cellArray.cell(n);
+        auto &atomsI = cellI->atoms();
+
+        // Add contributions between atoms in cellI
+        for_each_pair(atomsI.begin(), atomsI.end(), [&](const int idx, auto &i, const int jdx, auto &j) {
+            if (idx == jdx)
+                return;
+            // No need to perform MIM since we're in the same cell
+            double distance = (i->r() - j->r()).magnitude();
+            partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+        });
+    }
+#endif
     return true;
 }
 
