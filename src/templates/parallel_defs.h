@@ -31,12 +31,13 @@ namespace dissolve::internal
 {
 template <typename T> using is_execution_policy = std::is_execution_policy<T>;
 }
-#else
+#else // not multithreading - no tbb libraries
 #include "tbb-fallbacks.h"
 #include <algorithm>
 #include <numeric>
 namespace dissolve::internal
 {
+// create a dummy 'is_execution_policy' that always returns false
 template <typename T> struct is_execution_policy : std::false_type
 {
 };

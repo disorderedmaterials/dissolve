@@ -506,9 +506,7 @@ double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strateg
 double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
     double totalEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, mol.atoms().begin(), mol.atoms().end(), 0.0, std::plus<double>(),
-        [&](const auto &ii)
-        {
+        ParallelPolicies::par, mol.atoms().begin(), mol.atoms().end(), 0.0, std::plus<double>(), [&](const auto &ii) {
             auto *cellI = ii->cell();
 
             // This Atom with its own Cell
@@ -517,14 +515,14 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
             // Cell neighbours not requiring minimum image
             totalEnergy +=
                 std::accumulate(cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(), 0.0,
-                                [&ii, this, &strategy](const auto &acc, const auto *neighbour)
-                                { return acc + energy(*ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false); });
+                                [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
+                                    return acc + energy(*ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+                                });
 
             // Cell neighbours requiring minimum image
             totalEnergy += std::accumulate(
                 cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
-                [&ii, this, &strategy](const auto &acc, const auto *neighbour)
-                {
+                [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
                     return acc + energy(*ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag,
                                         strategy, false);
                 });
@@ -545,18 +543,16 @@ double EnergyKernel::correct(const Atom &i)
     auto &atoms = i.molecule()->atoms();
     const auto &rI = i.r();
 
-    double correctionEnergy =
-        dissolve::transform_reduce(ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0, std::plus<double>(),
-                                   [&](auto &j) -> double
-                                   {
-                                       if (&i == j.get())
-                                           return 0.0;
-                                       double scale = 1.0 - i.scaling(j);
-                                       if (scale <= 1.0e-3)
-                                           return 0.0;
-                                       double r = box_->minimumDistance(rI, j->r());
-                                       return pairPotentialEnergy(i, *j, r) * scale;
-                                   });
+    double correctionEnergy = dissolve::transform_reduce(ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0,
+                                                         std::plus<double>(), [&](auto &j) -> double {
+                                                             if (&i == j.get())
+                                                                 return 0.0;
+                                                             double scale = 1.0 - i.scaling(j);
+                                                             if (scale <= 1.0e-3)
+                                                                 return 0.0;
+                                                             double r = box_->minimumDistance(rI, j->r());
+                                                             return pairPotentialEnergy(i, *j, r) * scale;
+                                                         });
 
     return -correctionEnergy;
 }
@@ -578,9 +574,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     dissolve::counting_iterator<int> countingIterator(begin, end);
 
     totalEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0, std::plus<double>(),
-        [&](int i)
-        {
+        ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0, std::plus<double>(), [&](int i) {
             double localEnergy = 0.0;
             cell = cellArray.cell(i);
 
@@ -723,27 +717,26 @@ double EnergyKernel::intramolecularEnergy(const Molecule &mol, const Atom &i)
 
     // Add energy from SpeciesAngle terms
     intraEnergy += std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesBond &bond)
-                                   { return acc + energy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ())); });
+                                   [this, &mol](const auto acc, const SpeciesBond &bond) {
+                                       return acc + energy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ()));
+                                   });
 
     // Add energy from SpeciesAngle terms
     intraEnergy += std::accumulate(
-        spAtom->angles().begin(), spAtom->angles().end(), 0.0,
-        [this, &mol](const auto acc, const SpeciesAngle &angle)
-        { return acc + energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
+        spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const SpeciesAngle &angle) {
+            return acc + energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK()));
+        });
 
     // Add energy from SpeciesTorsion terms
     intraEnergy += std::accumulate(spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesTorsion &torsion)
-                                   {
+                                   [this, &mol](const auto acc, const SpeciesTorsion &torsion) {
                                        return acc + energy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
                                                            *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
                                    });
 
     // Add energy from SpeciesImproper terms
     intraEnergy += std::accumulate(spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesImproper &improper)
-                                   {
+                                   [this, &mol](const auto acc, const SpeciesImproper &improper) {
                                        return acc + energy(improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
                                                            *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
                                    });
@@ -764,15 +757,14 @@ double EnergyKernel::intramolecularEnergy(const Molecule &mol)
     // Loop over Angles
     intraEnergy = dissolve::transform_reduce(
         ParallelPolicies::seq, mol.species()->angles().begin(), mol.species()->angles().end(), intraEnergy, std::plus<double>(),
-        [&mol, this](const auto &angle) -> double
-        { return energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
+        [&mol, this](const auto &angle) -> double {
+            return energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK()));
+        });
 
     // Loop over Torsions
     intraEnergy =
         dissolve::transform_reduce(ParallelPolicies::par, mol.species()->torsions().begin(), mol.species()->torsions().end(),
-                                   intraEnergy, std::plus<double>(),
-                                   [&mol, this](const auto &torsion) -> double
-                                   {
+                                   intraEnergy, std::plus<double>(), [&mol, this](const auto &torsion) -> double {
                                        return energy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
                                                      *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
                                    });
@@ -780,9 +772,7 @@ double EnergyKernel::intramolecularEnergy(const Molecule &mol)
     // Loop over Impropers
     intraEnergy =
         dissolve::transform_reduce(ParallelPolicies::par, mol.species()->impropers().begin(), mol.species()->impropers().end(),
-                                   intraEnergy, std::plus<double>(),
-                                   [&mol, this](const auto &improper) -> double
-                                   {
+                                   intraEnergy, std::plus<double>(), [&mol, this](const auto &improper) -> double {
                                        return energy(improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
                                                      *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
                                    });
