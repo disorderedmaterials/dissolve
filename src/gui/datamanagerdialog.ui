@@ -117,7 +117,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QTableWidget" name="SimulationDataTable">
+         <widget class="QTableView" name="SimulationDataTable">
           <property name="selectionMode">
            <enum>QAbstractItemView::SingleSelection</enum>
           </property>

@@ -10,11 +10,17 @@
 #include <QMessageBox>
 #include <QRegExp>
 
-DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints)
-    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(dissolve, referencePoints_)
+DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints,
+                                     GenericList &items)
+    : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints), refModel_(dissolve, referencePoints_),
+      simModel_(dissolve, items)
 {
     ui_.setupUi(this);
     ui_.ReferencePointsTable->setModel(&refModel_);
+
+    simProxy_.setSourceModel(&simModel_);
+    ui_.SimulationDataTable->setModel(&simProxy_);
+    ui_.SimulationDataTable->setSortingEnabled(true);
 
     updateControls();
 }
@@ -25,54 +31,11 @@ DataManagerDialog::~DataManagerDialog() {}
  * UI
  */
 
-// Add GenericItems to table
-void DataManagerDialog::addItems(const std::map<std::string, GenericItem::Type> &items)
-{
-    QTableWidgetItem *item;
-    ui_.SimulationDataTable->setRowCount(items.size());
-    auto count = 0;
-    for (auto &[key, value] : items)
-    {
-        // Item name
-        item = new QTableWidgetItem(QString::fromStdString(std::string(key)));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        ui_.SimulationDataTable->setItem(count, 0, item);
-
-        // Item type
-        item = new QTableWidgetItem(QString::fromStdString(std::string(std::get<GenericItem::ClassName>(value))));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        ui_.SimulationDataTable->setItem(count, 1, item);
-
-        // Version
-        item = new QTableWidgetItem(QString::number(std::get<GenericItem::Version>(value)));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        ui_.SimulationDataTable->setItem(count, 2, item);
-
-        ++count;
-    }
-}
-
 // Update the specified table of GenericItems, optionally filtering them by name and description
 void DataManagerDialog::filterTable(QString filterText)
 {
-    // Loop over rows in the table
-    for (auto n = 0; n < ui_.SimulationDataTable->rowCount(); ++n)
-    {
-        QTableWidgetItem *item = ui_.SimulationDataTable->item(n, 0);
-        if (!item)
-            continue;
-
-        // Check filtering
-        if (filterText.isEmpty() || !item->text().contains(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard)))
-            ui_.SimulationDataTable->setRowHidden(n, false);
-        else
-        {
-            if (item->isSelected())
-                ui_.SimulationDataTable->setCurrentItem(nullptr);
-
-            ui_.SimulationDataTable->setRowHidden(n, true);
-        }
-    }
+    simProxy_.setFilterRegExp(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard));
+    simProxy_.setFilterKeyColumn(0);
 }
 
 // Return currently-selected ReferencePoint
@@ -89,8 +52,6 @@ ReferencePoint *DataManagerDialog::currentReferencePoint() const
 void DataManagerDialog::updateControls()
 {
     // Clear and re-populate simulation data table
-    ui_.SimulationDataTable->setRowCount(0);
-    addItems(dissolve_.processingModuleData().items());
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table
@@ -165,12 +126,6 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
         QMessageBox::warning(this, "Error loading reference point", QString((*err).c_str()));
 
     updateControls();
-}
-
-void DataManagerDialog::on_ReferencePointsTable_currentItemChanged(QTableWidgetItem *currentItem,
-                                                                   QTableWidgetItem *previousItem)
-{
-    ui_.ReferencePointRemoveButton->setEnabled(currentItem);
 }
 
 // Dialog

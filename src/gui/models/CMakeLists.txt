@@ -1,5 +1,6 @@
 set(models_MOC_HDRS
     dataManagerReferencePointModel.h
+    dataManagerSimulationModel.h
     xmlAngleModel.h
     xmlAtomModel.h
     xmlBondModel.h
@@ -12,6 +13,7 @@ qt5_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
 set(models_SRCS
     dataManagerReferencePointModel.cpp
+    dataManagerSimulationModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -23,6 +25,7 @@ set(models_SRCS
 qt_wrap_cpp(
   models_SRCS
   dataManagerReferencePointModel.h
+  dataManagerSimulationModel.h
   xmlAngleModel.h
   xmlAtomModel.h
   xmlBondModel.h

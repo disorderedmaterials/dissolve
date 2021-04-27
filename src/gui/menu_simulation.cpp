@@ -78,7 +78,7 @@ void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
-    DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_);
+    DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_, dissolve_.processingModuleData());
     dataManagerDialog.exec();
 }
 
