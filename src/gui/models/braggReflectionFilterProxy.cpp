@@ -21,7 +21,7 @@ bool BraggReflectionFilterProxy::filterAcceptsRow(int row, const QModelIndex &pa
     if (!enabled_)
         return true;
 
-    for (auto col = 2; col < sourceModel()->columnCount(); ++col)
+    for (auto col = 3; col < sourceModel()->columnCount(); ++col)
         if (sourceModel()->data(sourceModel()->index(row, col, parent)).toDouble() > 1.0e-3)
             return true;
 

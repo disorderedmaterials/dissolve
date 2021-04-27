@@ -47,10 +47,15 @@ QVariant BraggReflectionModel::data(const QModelIndex &index, int role) const
         case 0:
             return QString::number(reflections[index.row()].q());
         case 1:
+            return QString("[%1 %2 %3]")
+                .arg(reflections[index.row()].hkl().x)
+                .arg(reflections[index.row()].hkl().y)
+                .arg(reflections[index.row()].hkl().z);
+        case 2:
             return QString::number(reflections[index.row()].nKVectors());
         default:
-            if (index.column() - 2 < reflections[index.row()].intensities().size())
-                return QString::number(reflections[index.row()].intensities()[index.column() - 2]);
+            if (index.column() - 3 < reflections[index.row()].intensities().size())
+                return QString::number(reflections[index.row()].intensities()[index.column() - 3]);
             else
                 return QVariant();
     }
@@ -67,10 +72,12 @@ QVariant BraggReflectionModel::headerData(int section, Qt::Orientation orientati
             case 0:
                 return "Q";
             case 1:
-                return "nKVecs";
+                return "[h k l]";
+            case 2:
+                return "Multiplicity";
             default:
-                if (section - 2 < intensityHeaders_.size())
-                    return QVariant(QString::fromStdString(intensityHeaders_[section - 2]));
+                if (section - 3 < intensityHeaders_.size())
+                    return QVariant(QString::fromStdString(intensityHeaders_[section - 3]));
                 else
                     return QVariant();
         }

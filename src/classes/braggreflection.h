@@ -31,6 +31,8 @@ class BraggReflection
     Array2D<double> intensities_;
     // Number of k-vectors which contributed to the intensity (for normalisation)
     int nKVectors_;
+    // Miller indices of reflection
+    Vec3<int> hkl_;
 
     public:
     // Initialise arrays
@@ -55,6 +57,10 @@ class BraggReflection
     void addKVectors(int count);
     // Return number of k-vectors contributing to this reflection
     int nKVectors() const;
+    // Set Miller indices of reflection
+    void setHKL(int h, int k, int l);
+    // Return Miller indices of reflection
+    Vec3<int> hkl() const;
 
     /*
      * Serialisation

@@ -132,6 +132,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
                         // Note in the reflection that we have found another (h,k,l) that contributes to
                         // it
                         tempReflections[braggIndex].addKVectors(1);
+                        tempReflections[braggIndex].setHKL(h, k, l);
                     }
                 }
             }
@@ -159,7 +160,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
         std::copy_if(tempReflections.begin(), tempReflections.end(), std::back_inserter(braggReflections),
                      [](const auto &reflection) { return reflection.nKVectors() != 0; });
 
-        Messenger::print("Bragg calculation spans {} k-vectors (max HKL = {} x {} x {}) over {} <= Q <= {} ({} elapsed).\n",
+        Messenger::print("Bragg calculation spans {} k-vectors (max HKL = [{} {} {}]) over {} <= Q <= {} ({} elapsed).\n",
                          braggKVectors.size(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax,
                          timer.elapsedTimeString());
         Messenger::print("{} unique Bragg reflections found using a Q resolution of {} Angstroms**-1.\n",
