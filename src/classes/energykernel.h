@@ -48,18 +48,18 @@ class EnergyKernel
      * Internal Routines
      */
     private:
-    // Return PairPotential energy between atoms provided as pointers, at the distance specified
+    // Return PairPotential energy between atoms
     virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r);
-    // Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
+    // Return PairPotential energy between atoms provided
     double energyWithoutMim(const Atom &i, const Atom &j);
-    // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
+    // Return PairPotential energy between atoms provided
     double energyWithMim(const Atom &i, const Atom &j);
 
     /*
      * PairPotential Terms
      */
     public:
-    // Return PairPotential energy between atoms provided (as pointers)
+    // Return PairPotential energy between atoms
     double energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ);
     // Return PairPotential energy between two cells
     double energy(Cell *cell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular,

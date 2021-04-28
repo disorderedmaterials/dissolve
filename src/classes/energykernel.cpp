@@ -24,16 +24,16 @@ EnergyKernel::~EnergyKernel() {}
  * Internal Routines
  */
 
-// Return PairPotential energy between atoms provided as pointers, at the distance specified
+// Return PairPotential energy between atoms
 double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r) { return potentialMap_.energy(i, j, r); }
 
-// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
+// Return PairPotential energy between atoms
 double EnergyKernel::energyWithoutMim(const Atom &i, const Atom &j)
 {
     return pairPotentialEnergy(i, j, (i.r() - j.r()).magnitude());
 }
 
-// Return PairPotential energy between atoms provided as pointers (minimum image calculation)
+// Return PairPotential energy between atoms provided
 double EnergyKernel::energyWithMim(const Atom &i, const Atom &j)
 {
     return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
@@ -43,7 +43,7 @@ double EnergyKernel::energyWithMim(const Atom &i, const Atom &j)
  * PairPotential Terms
  */
 
-// Return PairPotential energy between atoms (provided as pointers)
+// Return PairPotential energy between atoms
 double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ)
 {
     // If Atoms are the same, we refuse to calculate
