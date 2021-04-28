@@ -510,7 +510,7 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
             auto *cellI = ii->cell();
 
             // This Atom with its own Cell
-            double localEnergy = energy(*ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+            auto localEnergy = energy(*ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
             // Cell neighbours not requiring minimum image
             totalEnergy +=
@@ -575,7 +575,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
 
     totalEnergy = dissolve::transform_reduce(
         ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0, std::plus<double>(), [&](int i) {
-            double localEnergy = 0.0;
+            auto localEnergy = 0.0;
             cell = cellArray.cell(i);
 
             // This cell with itself
