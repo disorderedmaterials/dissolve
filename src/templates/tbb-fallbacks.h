@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 #pragma once
+#include <cassert>
 #include <numeric>
 #include <vector>
+
 namespace dissolve
 {
 // A less optimized version of the counting iterator if tbb is not available
