@@ -2,9 +2,9 @@ parameters:
   - name: parallel
     default: false
   - name: ppa
-    default: 'beineri/opt-qt-5.13.2-bionic'
+    default: 'beineri/opt-qt-5.15.2-focal'
   - name: qtver
-    default: 513
+    default: 515
 
 jobs:
   - job:
