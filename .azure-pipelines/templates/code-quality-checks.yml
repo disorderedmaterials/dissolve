@@ -6,7 +6,7 @@ stages:
       - job: 'cpp_checks'
         displayName: 'C++ Checks'
         pool:
-          vmImage: 'ubuntu-18.04'
+          vmImage: 'ubuntu-latest'
         steps:
           - bash: |
               set -ex

@@ -21,9 +21,9 @@ stages:
     displayName: 'Build'
     jobs:
       - job: 'linux_serialgui'
-        displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-latest)'
         pool:
-          vmImage: 'ubuntu-18.04' 
+          vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             fetchDepth: 1
@@ -31,17 +31,15 @@ stages:
           - template: templates/build-linux-serial-gui.yml
             parameters:
               extraflags: '-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug'
-              ppa: 'beineri/opt-qt-5.13.2-bionic'
-              qtver: 513
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
-        displayName: 'Build Linux (Parallel, ubuntu-18.04)'
+        displayName: 'Build Linux (Parallel, ubuntu-latest)'
         pool:
-          vmImage: 'ubuntu-18.04' 
+          vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             fetchDepth: 1
@@ -58,7 +56,7 @@ stages:
         displayName: 'Build OSX (Serial/GUI, macos-latest)'
         timeoutInMinutes: 120
         pool:
-          vmImage: 'macos-latest' 
+          vmImage: 'macos-latest'
         steps:
           - checkout: self
             fetchDepth: 1
@@ -74,7 +72,7 @@ stages:
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
         timeoutInMinutes: 120
         pool:
-          vmImage: 'windows-latest' 
+          vmImage: 'windows-latest'
         steps:
           - checkout: self
             fetchDepth: 1

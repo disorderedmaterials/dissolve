@@ -92,7 +92,6 @@ if(GUI)
   find_package(Qt5Widgets 5.10 REQUIRED)
   find_package(Qt5Core 5.10 REQUIRED)
   find_package(Qt5Gui 5.10 REQUIRED)
-  find_package(Qt5PrintSupport 5.10 REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
@@ -323,7 +322,6 @@ if(GUI)
             antlr4-runtime
             Qt5::Widgets
             Qt5::Core
-            Qt5::PrintSupport
             ${FTGL_LIBRARIES}
             ${OPENGL_LIBRARIES}
             ${FREETYPE_LIBRARIES}
