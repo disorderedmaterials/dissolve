@@ -513,14 +513,14 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
             auto localEnergy = energy(*ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
             // Cell neighbours not requiring minimum image
-            totalEnergy +=
+            localEnergy +=
                 std::accumulate(cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(), 0.0,
                                 [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
                                     return acc + energy(*ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
                                 });
 
             // Cell neighbours requiring minimum image
-            totalEnergy += std::accumulate(
+            localEnergy += std::accumulate(
                 cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
                 [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
                     return acc + energy(*ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag,
@@ -576,7 +576,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     totalEnergy = dissolve::transform_reduce(
         ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0, std::plus<double>(), [&](int i) {
             auto localEnergy = 0.0;
-            cell = cellArray.cell(i);
+            auto *cell = cellArray.cell(i);
 
             // This cell with itself
             localEnergy += energy(cell, cell, false, true, interMolecular, subStrategy, performSum);
