@@ -4,7 +4,7 @@ fmt/7.0.3
 gtest/1.10.0
 pugixml/1.11
 tbb/2020.3
-# onedpl/20200330
+onedpl/20200330
 
 [generators]
 cmake

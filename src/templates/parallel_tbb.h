@@ -5,7 +5,7 @@
 #include <tbb/combinable.h>
 #include <tbb/parallel_for.h>
 
-namespace algorithms::paralleltbb
+namespace dissolve
 {
 
 // returns a tbb iteration range between begin and end
@@ -29,4 +29,4 @@ auto parallel_for_reduction(tbb::combinable<CombinableType> &combinable, Args &&
     return combinable.combine(std::plus<CombinableType>());
 }
 
-} // namespace algorithms::paralleltbb
+} // namespace dissolve

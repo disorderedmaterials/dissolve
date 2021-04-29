@@ -35,8 +35,8 @@ double ScaledEnergyKernel::pairPotentialEnergy(const std::shared_ptr<Atom> i, co
         const auto cogJ = j->molecule()->centreOfGeometry(box_);
         double rIJ = box_->minimumDistance(cogI, cogJ);
 
-        return potentialMap_.energy(i, j, r + (rIJ * interMoleculeRScale_ - rIJ));
+        return potentialMap_.energy(*i, *j, r + (rIJ * interMoleculeRScale_ - rIJ));
     }
 
-    return potentialMap_.energy(i, j, r) * intraMoleculeEScale_;
+    return potentialMap_.energy(*i, *j, r) * intraMoleculeEScale_;
 }

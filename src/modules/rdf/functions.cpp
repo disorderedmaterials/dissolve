@@ -245,7 +245,7 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
     int end = std::get<1>(range);
     Combinations comb(end - start, 2);
 
-    auto combinableHistograms = algorithms::paralleltbb::combinable<RDFModuleHelpers::PartialHistograms>(
+    auto combinableHistograms = dissolve::combinable<RDFModuleHelpers::PartialHistograms>(
         [&partialSet]() { return RDFModuleHelpers::PartialHistograms(partialSet); });
 
     auto lambda = [&combinableHistograms, start, cfg, &comb, rdfRange](const auto &range) {
@@ -282,8 +282,8 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
         }
     };
 
-    auto histograms = algorithms::paralleltbb::parallel_for_reduction(
-        combinableHistograms, algorithms::paralleltbb::blocked_range(0, comb.getNumCombinations()), lambda);
+    auto histograms =
+        dissolve::parallel_for_reduction(combinableHistograms, dissolve::blocked_range(0, comb.getNumCombinations()), lambda);
 
     histograms.addToPartialSet(partialSet);
 

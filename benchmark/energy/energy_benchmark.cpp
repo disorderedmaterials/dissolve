@@ -26,17 +26,30 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     int numAtoms = atoms.size();
     auto i = atoms[5];
     for (auto _ : state)
-        energyKernel.energy(i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
+        energyKernel.energy(*i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
+}
+
+template <ProblemType problem, Population population>
+static void BM_CalculateEnergy_SpeciesInterAtomicEnergy(benchmark::State &state)
+{
+    Problem<problem, population> problemDef;
+    auto &mol = problemDef.cfg_->molecules().front();
+    auto &usedSpecies = problemDef.cfg_->usedSpecies();
+    auto *species = usedSpecies.back().species();
+    auto &procPool = problemDef.dissolve_.worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    for (auto _ : state)
+        EnergyModule::interAtomicEnergy(procPool, species, potentialMap);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateEnergy_MoleculeEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto mol = problemDef.cfg_->molecules().front();
     for (auto _ : state)
     {
-        double molecularEnergy = energyKernel.energy(mol, ProcessPool::PoolStrategy, true);
+        double molecularEnergy = energyKernel.energy(*mol, ProcessPool::PoolStrategy, true);
         benchmark::DoNotOptimize(molecularEnergy);
     }
 }
@@ -115,6 +128,7 @@ static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state
 // Small molecule
 // Benchmarking pairwise energy calculation of an individual atom with another cell
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::smallMolecule, Population::small);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_SpeciesInterAtomicEnergy, ProblemType::smallMolecule, Population::small);
 // Benchmarking individual molecule calculations
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, ProblemType::smallMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, ProblemType::smallMolecule, Population::small);
@@ -133,6 +147,7 @@ BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::small
 // medium molecule
 // Benchmarking pairwise energy calculation of an individual atom with another cell
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::mediumMolecule, Population::small);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_SpeciesInterAtomicEnergy, ProblemType::mediumMolecule, Population::small);
 // Benchmarking individual molecule calculations
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, ProblemType::mediumMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, ProblemType::mediumMolecule, Population::small);

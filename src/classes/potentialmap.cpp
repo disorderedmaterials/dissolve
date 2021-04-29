@@ -76,16 +76,16 @@ double PotentialMap::range() const { return range_; }
  */
 
 // Return energy between Atoms at distance specified
-double PotentialMap::energy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const
+double PotentialMap::energy(const Atom &i, const Atom &j, double r) const
 {
     assert(r >= 0.0);
-    assert(i->speciesAtom() && j->speciesAtom());
+    assert(i.speciesAtom() && j.speciesAtom());
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return pp->energy(r) +
-           (pp->includeCoulomb() ? 0 : pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+           (pp->includeCoulomb() ? 0 : pp->analyticCoulombEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r));
 }
 
 // Return energy between SpeciesAtoms at distance specified
