@@ -24,11 +24,11 @@ class Primitive : public ListItem<Primitive>
      */
     private:
     // Vertex data array
-    Array<GLfloat> vertexData_;
+    std::vector<GLfloat> vertexData_;
     // Number of vertices defined in vertexData_
     int nDefinedVertices_;
     // Index data array
-    Array<GLuint> indexData_;
+    std::vector<GLuint> indexData_;
     // GL primitive type (GL_TRIANGLES, GL_LINES etc.)
     GLenum type_;
     // Number of vertices per primitive type
