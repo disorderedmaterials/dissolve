@@ -99,13 +99,13 @@ bool Species::checkSetUp()
     {
         for (auto [atomType, isotope] : iso->isotopes())
         {
-            if (!isotope)
+            if (isotope == Sears91::Isotope::Unknown)
             {
                 Messenger::error("Isotopologue '{}' does not refer to an elemental Isotope for AtomType '{}'.\n", iso->name(),
                                  atomType->name());
                 ++nErrors;
             }
-            else if (!Isotopes::isotope(atomType->Z(), isotope->A()))
+            else if (Sears91::Z(isotope) != atomType->Z())
             {
                 Messenger::error("Isotopologue '{}' does not refer to a suitable Isotope for AtomType '{}'.\n", iso->name(),
                                  atomType->name());

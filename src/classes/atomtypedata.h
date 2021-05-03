@@ -3,18 +3,14 @@
 
 #pragma once
 
-#include "templates/list.h"
+#include "classes/isotopedata.h"
 #include <memory>
 
 // Forward Declarations
 class AtomType;
 class CoreData;
-class IsotopeData;
-class Isotope;
 
-/*
- * AtomTypeData Definition
- */
+// AtomTypeData Definition
 class AtomTypeData
 {
     public:
@@ -35,7 +31,7 @@ class AtomTypeData
     // Whether the AtomType has been marked as exchangeable
     bool exchangeable_;
     // Isotopes information (if any)
-    List<IsotopeData> isotopes_;
+    std::vector<IsotopeData> isotopes_;
     // Total population
     double population_;
     // World fractional population over all Isotopes
@@ -47,7 +43,9 @@ class AtomTypeData
     // Add to population
     void add(double nAdd);
     // Add to population of Isotope
-    void add(Isotope *tope, double nAdd);
+    void add(Sears91::Isotope tope, double nAdd);
+    // Add/set full isotope data
+    void setIsotope(Sears91::Isotope tope, double pop, double fraction);
     // Zero populations
     void zeroPopulations();
     // Return list index of AtomTypeData in AtomTypeList
@@ -65,11 +63,9 @@ class AtomTypeData
     // Return the number of defined Isotopes
     int nIsotopes() const;
     // Return if specified Isotope is already in the list
-    bool hasIsotope(Isotope *tope);
-    // Set this AtomType to have only the single Isotope provided
-    void setSingleIsotope(Isotope *tope);
-    // Return first IsotopeData
-    IsotopeData *isotopeData() const;
+    bool hasIsotope(Sears91::Isotope tope) const;
+    // Return IsotopeData vector
+    const std::vector<IsotopeData> &isotopeData() const;
     // Return total population over all isotopes
     int population() const;
     // Return total fractional population including all isotopes
@@ -80,11 +76,4 @@ class AtomTypeData
     double boundCoherent() const;
     // Return referenced AtomType name
     std::string_view atomTypeName() const;
-
-    /*
-     * I/O
-     */
-    public:
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
 };

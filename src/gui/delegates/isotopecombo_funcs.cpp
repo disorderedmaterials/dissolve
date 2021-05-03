@@ -6,6 +6,8 @@
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
+Q_DECLARE_METATYPE(Sears91::Isotope);
+
 IsotopeComboDelegate::IsotopeComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
 IsotopeComboDelegate::~IsotopeComboDelegate() {}
@@ -16,17 +18,13 @@ QWidget *IsotopeComboDelegate::createEditor(QWidget *parent, const QStyleOptionV
     // Create editor widget (in this case a combo box) and add the available options
     auto *editor = new QComboBox(parent);
 
-    // Get the data from the model index - it should be an Isotope*
-    Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
-    if (isotope)
-    {
-        // Populate combo with all possible Isotopes for this element
-        ListIterator<Isotope> isotopeIterator(Isotopes::isotopes(isotope->Z()));
-        while (Isotope *tope = isotopeIterator.iterate())
-            editor->addItem(textForIsotope(tope));
-    }
-    else
-        Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
+    // Get the data from the model index
+    auto isotope = index.data(Qt::UserRole).value<Sears91::Isotope>();
+    auto isotopes = Sears91::isotopes(Sears91::Z(isotope));
+
+    // Populate combo with all possible Isotopes for this element
+    for (auto tope : isotopes)
+        editor->addItem(textForIsotope(tope), tope);
 
     return editor;
 }
@@ -37,14 +35,9 @@ void IsotopeComboDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
     // Grab (cast) the QComboBox
     auto *comboBox = static_cast<QComboBox *>(editor);
 
-    // Get the data from the model index - it should be an Isotope*
-    Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
-    if (isotope)
-    {
-        comboBox->setCurrentIndex(isotope->index());
-    }
-    else
-        Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
+    // Get the data from the model index - it should be an Isotope
+    auto isotope = index.data(Qt::UserRole).value<Sears91::Isotope>();
+    comboBox->setCurrentIndex(comboBox->findData(isotope));
 }
 
 // Get value from editing widget, and set back in model
@@ -53,17 +46,12 @@ void IsotopeComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
     // Grab (cast) the QComboBox
     auto *comboBox = static_cast<QComboBox *>(editor);
 
-    // Get existing Isotope
-    Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
-    if (isotope)
-    {
-        // Get parent element, and find index of new Isotope
-        isotope = Isotopes::isotopeAtIndex(isotope->Z(), comboBox->currentIndex());
+    // Get current Isotope in combo
+    auto isotope = comboBox->currentData();
 
-        // Set the Isotope pointer in the model
-        model->setData(index, VariantPointer<Isotope>(isotope), Qt::UserRole);
-        model->setData(index, comboBox->currentText(), Qt::EditRole);
-    }
+    // Set the Isotope pointer in the model
+    model->setData(index, QVariant::fromValue(isotope), Qt::UserRole);
+    model->setData(index, comboBox->currentText(), Qt::EditRole);
 }
 
 // Update widget geometry
@@ -78,13 +66,10 @@ void IsotopeComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpt
  */
 
 // Return text for Isotope specified
-QString IsotopeComboDelegate::textForIsotope(Isotope *isotope)
+QString IsotopeComboDelegate::textForIsotope(Sears91::Isotope isotope)
 {
-    if (!isotope)
-        return "NULL";
-
-    if (isotope->A() == 0)
-        return QString("Natural (bc = %1)").arg(isotope->boundCoherent());
+    if (Sears91::A(isotope) == 0)
+        return QString("Natural (bc = %1)").arg(Sears91::boundCoherent(isotope));
     else
-        return QString("%1 (bc = %2)").arg(isotope->A()).arg(isotope->boundCoherent());
+        return QString("%1 (bc = %2)").arg(Sears91::A(isotope)).arg(Sears91::boundCoherent(isotope));
 }

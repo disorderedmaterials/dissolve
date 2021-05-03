@@ -11,7 +11,6 @@
 
 // Forward Declarations
 class AtomType;
-class Isotope;
 
 // AtomTypeList
 class AtomTypeList
@@ -42,7 +41,7 @@ class AtomTypeList
     // Remove specified AtomType from the list
     void remove(std::shared_ptr<AtomType> atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-    void addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope = nullptr, double popAdd = 0);
+    void addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd = 0);
     // Finalise list, calculating fractional populations etc.
     void finalise();
     // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
@@ -52,7 +51,7 @@ class AtomTypeList
     // Check for presence of AtomType in list
     bool contains(const std::shared_ptr<AtomType> &atomType) const;
     // Check for presence of AtomType/Isotope pair in list
-    bool contains(const std::shared_ptr<AtomType> &atomType, Isotope *tope);
+    bool contains(const std::shared_ptr<AtomType> &atomType, Sears91::Isotope tope) const;
     // Return number of AtomType/Isotopes in list
     int nItems() const;
     // Return first item in list
