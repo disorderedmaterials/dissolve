@@ -11,9 +11,8 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, std::vector<Vec3<double>> &f,
-                         double cutoffDistance)
-    : box_(box), potentialMap_(potentialMap), f_(f), processPool_(procPool)
+ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, double cutoffDistance)
+    : box_(box), potentialMap_(potentialMap), processPool_(procPool)
 {
     cutoffDistanceSquared_ =
         (cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);
@@ -24,23 +23,24 @@ ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialM
  */
 
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
-void ForceKernel::forcesWithoutMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale)
+void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, std::optional<double> scaleOpt, ForceVector &f) const
 {
-    auto force = j->r() - i->r();
+    auto scale = scaleOpt.value_or(1.00);
+    auto force = j.r() - i.r();
     auto distanceSq = force.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
         return;
     auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
-
-    f_[i->arrayIndex()] += force;
-    f_[j->arrayIndex()] -= force;
+    f[i.arrayIndex()] += force;
+    f[j.arrayIndex()] -= force;
 }
 
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
-void ForceKernel::forcesWithMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale)
+void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, std::optional<double> scaleOpt, ForceVector &f) const
 {
+    auto scale = scaleOpt.value_or(1.00);
     auto force = box_->minimumVector(i, j);
     auto distanceSq = force.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
@@ -49,8 +49,8 @@ void ForceKernel::forcesWithMim(const std::shared_ptr<Atom> i, const std::shared
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
 
-    f_[i->arrayIndex()] += force;
-    f_[j->arrayIndex()] -= force;
+    f[i.arrayIndex()] += force;
+    f[j.arrayIndex()] -= force;
 }
 
 /*
@@ -58,36 +58,31 @@ void ForceKernel::forcesWithMim(const std::shared_ptr<Atom> i, const std::shared
  */
 
 // Calculate forces between atoms
-void ForceKernel::forces(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ)
+void ForceKernel::forces(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ, ForceVector &f) const
 {
-    assert(i && j);
-
     // If Atoms are the same, we refuse to calculate
-    if (i == j)
+    if (&i == &j)
         return;
 
     // Check indices of atoms if required
-    if (excludeIgeJ && (i->arrayIndex() >= j->arrayIndex()))
+    if (excludeIgeJ && (i.arrayIndex() >= j.arrayIndex()))
         return;
 
     if (applyMim)
-        forcesWithMim(i, j);
+        forcesWithMim(i, j, std::nullopt, f);
     else
-        forcesWithoutMim(i, j);
+        forcesWithoutMim(i, j, std::nullopt, f);
 }
 
 // Calculate forces between atoms in supplied cells
 void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ,
-                         ProcessPool::DivisionStrategy strategy)
+                         ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
     assert(centralCell && otherCell);
-
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
-    std::shared_ptr<Atom> ii;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
-    double scale;
 
     // Get start/stride for specified loop context
     auto offset = processPool_.interleavedLoopStart(strategy);
@@ -99,12 +94,12 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
         auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
         for (auto indexI = begin; indexI < end; ++indexI)
         {
-            ii = *indexI;
+            auto &ii = *indexI;
             molI = ii->molecule();
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto jj : otherAtoms)
+            for (auto &jj : otherAtoms)
             {
                 // Check exclusion of I >= J
                 if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
@@ -112,12 +107,12 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 
                 // Check for atoms in the same Molecule
                 if (molI != jj->molecule())
-                    forcesWithMim(ii, jj);
+                    forcesWithMim(*ii, *jj, std::nullopt, f);
                 else
                 {
-                    scale = ii->scaling(jj);
+                    double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(ii, jj, scale);
+                        forcesWithMim(*ii, *jj, scale, f);
                 }
             }
         }
@@ -127,12 +122,12 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
         auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), nChunks, offset);
         for (auto indexI = begin; indexI < end; ++indexI)
         {
-            ii = *indexI;
+            auto &ii = *indexI;
             molI = ii->molecule();
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto jj : otherAtoms)
+            for (auto &jj : otherAtoms)
             {
                 // Check exclusion of I >= J
                 if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
@@ -140,12 +135,12 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 
                 // Check for atoms in the same molecule
                 if (molI != jj->molecule())
-                    forcesWithoutMim(ii, jj);
+                    forcesWithoutMim(*ii, *jj, std::nullopt, f);
                 else
                 {
-                    scale = ii->scaling(jj);
+                    double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(ii, jj, scale);
+                        forcesWithoutMim(*ii, *jj, scale, f);
                 }
             }
         }
@@ -153,27 +148,22 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 }
 
 // Calculate forces between Cell and its neighbours
-void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
     // Straight loop over Cells *not* requiring mim
     for (auto *otherCell : cell->cellNeighbours())
-        forces(cell, otherCell, false, excludeIgeJ, strategy);
+        forces(cell, otherCell, false, excludeIgeJ, strategy, f);
 
     // Straight loop over Cells requiring mim
     for (auto *otherCell : cell->mimCellNeighbours())
-        forces(cell, otherCell, true, excludeIgeJ, strategy);
+        forces(cell, otherCell, true, excludeIgeJ, strategy, f);
 }
 
 // Calculate forces between Atom and Cell
-void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
-    assert(i);
-
-    std::shared_ptr<Atom> jj;
-    double scale;
-
     // Grab some information on the supplied atom
-    auto moleculeI = i->molecule();
+    auto moleculeI = i.molecule();
 
     // Grab the array of Atoms in the supplied Cell
     auto &otherAtoms = cell->atoms();
@@ -187,37 +177,37 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
     {
         // Loop over atom neighbours
         if (flags & KernelFlags::ExcludeSelfFlag)
-            for (auto jj : otherAtoms)
+            for (auto &jj : otherAtoms)
             {
                 // Check for same atom
-                if (i == jj)
+                if (&i == jj.get())
                     continue;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, jj);
+                    forcesWithMim(i, *jj, std::nullopt, f);
                 else
                 {
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, jj, scale);
+                        forcesWithMim(i, *jj, std::nullopt, f);
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
             for (auto jj : otherAtoms)
             {
                 // Check for i >= jj
-                if (i->arrayIndex() >= jj->arrayIndex())
+                if (i.arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, jj);
+                    forcesWithMim(i, *jj, std::nullopt, f);
                 else
                 {
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, jj, scale);
+                        forcesWithMim(i, *jj, scale, f);
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
@@ -226,20 +216,20 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
-                jj = *indexJ;
+                auto &jj = *indexJ;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, jj);
+                    forcesWithMim(i, *jj, std::nullopt, f);
                 else
                 {
                     // Check for i >= jj
-                    if (i->arrayIndex() >= jj->arrayIndex())
+                    if (i.arrayIndex() >= jj->arrayIndex())
                         continue;
 
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, jj, scale);
+                        forcesWithMim(i, *jj, scale, f);
                 }
             }
         }
@@ -249,16 +239,16 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
-                jj = *indexJ;
+                auto &jj = *indexJ;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, jj);
+                    forcesWithMim(i, *jj, std::nullopt, f);
                 else
                 {
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, jj, scale);
+                        forcesWithMim(i, *jj, scale, f);
                 }
             }
         }
@@ -271,161 +261,161 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
-                jj = *indexJ;
+                auto &jj = *indexJ;
 
                 // Check for same atom
-                if (i == jj)
+                if (&i == jj.get())
                     continue;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, jj);
+                    forcesWithoutMim(i, *jj, std::nullopt, f);
                 else
                 {
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, jj, scale);
+                        forcesWithoutMim(i, *jj, scale, f);
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
-                jj = *indexJ;
+                auto &jj = *indexJ;
 
                 // Check for i >= jj
-                if (i->arrayIndex() >= jj->arrayIndex())
+                if (i.arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, jj);
+                    forcesWithoutMim(i, *jj, std::nullopt, f);
                 else
                 {
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, jj, scale);
+                        forcesWithoutMim(i, *jj, scale, f);
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
-                jj = *indexJ;
+                auto &jj = *indexJ;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, jj);
+                    forcesWithoutMim(i, *jj, std::nullopt, f);
                 else
                 {
                     // Pointer comparison for i >= jj
-                    if (i >= jj)
+                    if (&i >= jj.get())
                         continue;
 
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, jj, scale);
+                        forcesWithoutMim(i, *jj, scale, f);
                 }
             }
         else
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
-                jj = *indexJ;
+                auto &jj = *indexJ;
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, jj);
+                    forcesWithoutMim(i, *jj, std::nullopt, f);
                 else
                 {
-                    scale = i->scaling(jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, jj, scale);
+                        forcesWithoutMim(i, *jj, scale, f);
                 }
             }
     }
 }
 
 // Calculate forces between atom and world
-void ForceKernel::forces(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(const Atom &i, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
-    assert(i);
-
-    Cell *cellI = i->cell();
+    Cell *cellI = i.cell();
 
     // This Atom with other Atoms in the same Cell
-    forces(i, cellI, KernelFlags::ExcludeSelfFlag, strategy);
+    forces(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, f);
 
     // This Atom with other Atoms in neighbour Cells
     for (auto *neighbour : cellI->cellNeighbours())
-        forces(i, neighbour, KernelFlags::NoFlags, strategy);
+        forces(i, neighbour, KernelFlags::NoFlags, strategy, f);
 
     // This Atom with other Atoms in neighbour Cells which require minimum image
     for (auto *neighbour : cellI->mimCellNeighbours())
-        forces(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy);
+        forces(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy, f);
 }
 
 /*
  * Intramolecular Terms
  */
 
-// Calculate angle force parameters from supplied vectors, storing result in local class variables
-void ForceKernel::calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk)
+// Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index and input vector
+void ForceKernel::addTorsionForceI(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+                                   ForceVector &f) const
 {
-    calculateAngleParameters(vecji, vecjk, theta_, dfi_dtheta_, dfk_dtheta_);
+    auto &dcos_dxpj = torisionParameters.dcos_dxpj_;
+
+    f[index].add(du_dphi * torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dij_.columnAsVec3(0)),
+                 du_dphi * torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dij_.columnAsVec3(1)),
+                 du_dphi * dcos_dxpj.dp(torisionParameters.dxpj_dij_.columnAsVec3(2)));
 }
 
-// Calculate SpeciesTorsion forces parameters from supplied vectors, storing result in local class variables
-void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl)
+// Add torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index and input vector
+void ForceKernel::addTorsionForceJ(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+                                   ForceVector &f) const
 {
-    calculateTorsionParameters(vecji, vecjk, veckl, phi_, dxpj_dij_, dxpj_dkj_, dxpk_dkj_, dxpk_dlk_, dcos_dxpj_, dcos_dxpk_);
+    f[index].add(du_dphi * (torisionParameters.dcos_dxpj_.dp(-torisionParameters.dxpj_dij_.columnAsVec3(0) -
+                                                             torisionParameters.dxpj_dkj_.columnAsVec3(0)) -
+                            torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(0))),
+                 du_dphi * (torisionParameters.dcos_dxpj_.dp(-torisionParameters.dxpj_dij_.columnAsVec3(1) -
+                                                             torisionParameters.dxpj_dkj_.columnAsVec3(1)) -
+                            torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(1))),
+                 du_dphi * (torisionParameters.dcos_dxpj_.dp(-torisionParameters.dxpj_dij_.columnAsVec3(2) -
+                                                             torisionParameters.dxpj_dkj_.columnAsVec3(2)) -
+                            torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(2))));
 }
 
-// Sum torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
-void ForceKernel::sumTorsionForceI(double du_dphi, int index)
+// Add torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index and input vector
+void ForceKernel::addTorsionForceK(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+                                   ForceVector &f) const
 {
-    f_[index].add(du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0)), du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1)),
-                  du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2)));
+    f[index].add(du_dphi * (torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(0) -
+                                                             torisionParameters.dxpk_dlk_.columnAsVec3(0)) +
+                            torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dkj_.columnAsVec3(0))),
+                 du_dphi * (torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(1) -
+                                                             torisionParameters.dxpk_dlk_.columnAsVec3(1)) +
+                            torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dkj_.columnAsVec3(1))),
+                 du_dphi * (torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(2) -
+                                                             torisionParameters.dxpk_dlk_.columnAsVec3(2)) +
+                            torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dkj_.columnAsVec3(2))));
 }
 
-// Sum torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index
-void ForceKernel::sumTorsionForceJ(double du_dphi, int index)
+// Add torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index and input vector
+void ForceKernel::addTorsionForceL(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+                                   ForceVector &f) const
 {
-    f_[index].add(du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0))),
-                  du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1))),
-                  du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
-                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2))));
-}
-
-// Sum torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index
-void ForceKernel::sumTorsionForceK(double du_dphi, int index)
-{
-    f_[index].add(du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0))),
-                  du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1))),
-                  du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
-                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2))));
-}
-
-// Sum torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index
-void ForceKernel::sumTorsionForceL(double du_dphi, int index)
-{
-    f_[index].add(du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0)), du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1)),
-                  du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2)));
+    f[index].add(du_dphi * torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dlk_.columnAsVec3(0)),
+                 du_dphi * torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dlk_.columnAsVec3(1)),
+                 du_dphi * torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dlk_.columnAsVec3(2)));
 }
 
 // Calculate SpeciesBond forces
-void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
+void ForceKernel::forces(const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const
 {
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
-    if (i->cell()->mimRequired(j->cell()))
+    if (i.cell()->mimRequired(j.cell()))
         vecji = box_->minimumVector(i, j);
     else
-        vecji = j->r() - i->r();
+        vecji = j.r() - i.r();
 
     // Get distance and normalise vector ready for force calculation
     auto distance = vecji.magAndNormalise();
@@ -434,22 +424,19 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
     vecji *= bond.force(distance);
 
     // Calculate forces
-    f_[i->arrayIndex()] -= vecji;
-    f_[j->arrayIndex()] += vecji;
+    f[i.arrayIndex()] -= vecji;
+    f[j.arrayIndex()] += vecji;
 }
 
 // Calculate SpeciesBond forces for specified Atom only
-void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond &bond, const std::shared_ptr<Atom> i,
-                         const std::shared_ptr<Atom> j)
+void ForceKernel::forces(const Atom &onlyThis, const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const
 {
-    assert((i != onlyThis) && (j != onlyThis));
-
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
-    if (i->cell()->mimRequired(j->cell()))
+    if (i.cell()->mimRequired(j.cell()))
         vecji = box_->minimumVector(i, j);
     else
-        vecji = j->r() - i->r();
+        vecji = j.r() - i.r();
 
     // Get distance and normalise vector ready for force calculation
     auto distance = vecji.magAndNormalise();
@@ -458,14 +445,14 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond
     vecji *= bond.force(distance);
 
     // Calculate forces
-    if (onlyThis == i)
-        f_[onlyThis->arrayIndex()] -= vecji;
+    if (&onlyThis == &i)
+        f[onlyThis.arrayIndex()] -= vecji;
     else
-        f_[onlyThis->arrayIndex()] += vecji;
+        f[onlyThis.arrayIndex()] += vecji;
 }
 
 // Calculate SpeciesBond forces
-void ForceKernel::forces(const SpeciesBond &bond)
+void ForceKernel::forces(const SpeciesBond &bond, ForceVector &f) const
 {
     auto vecji = bond.j()->r() - bond.i()->r();
 
@@ -476,102 +463,100 @@ void ForceKernel::forces(const SpeciesBond &bond)
     vecji *= bond.force(distance);
 
     // Calculate forces
-    f_[bond.i()->index()] -= vecji;
-    f_[bond.j()->index()] += vecji;
+    f[bond.i()->index()] -= vecji;
+    f[bond.j()->index()] += vecji;
 }
 
 // Calculate angle force parameters from supplied vectors, storing results in supplied variables
-void ForceKernel::calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk, double &theta, Vec3<double> &dfi_dtheta,
-                                           Vec3<double> &dfk_dtheta)
+ForceKernel::AngleParameters ForceKernel::calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk)
 {
     // Calculate angle
+    AngleParameters angleParameters;
     const auto magji = vecji.magAndNormalise();
     const auto magjk = vecjk.magAndNormalise();
     double dp;
-    theta = Box::angleInDegrees(vecji, vecjk, dp);
+    angleParameters.theta_ = Box::angleInDegrees(vecji, vecjk, dp);
 
     // Determine force vectors for atoms
-    dfi_dtheta = (vecjk - vecji * dp) / magji;
-    dfk_dtheta = (vecji - vecjk * dp) / magjk;
+    angleParameters.dfi_dtheta_ = (vecjk - vecji * dp) / magji;
+    angleParameters.dfk_dtheta_ = (vecji - vecjk * dp) / magjk;
+
+    return angleParameters;
 }
 
 // Calculate SpeciesAngle forces
-void ForceKernel::forces(const SpeciesAngle &angle, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                         const std::shared_ptr<Atom> k)
+void ForceKernel::forces(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k, ForceVector &f) const
 {
     Vec3<double> vecji, vecjk;
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-    if (j->cell()->mimRequired(i->cell()))
+    if (j.cell()->mimRequired(i.cell()))
         vecji = box_->minimumVector(j, i);
     else
-        vecji = i->r() - j->r();
-    if (j->cell()->mimRequired(k->cell()))
+        vecji = i.r() - j.r();
+    if (j.cell()->mimRequired(k.cell()))
         vecjk = box_->minimumVector(j, k);
     else
-        vecjk = k->r() - j->r();
+        vecjk = k.r() - j.r();
 
-    calculateAngleParameters(vecji, vecjk);
-    const auto force = angle.force(theta_);
-    dfi_dtheta_ *= force;
-    dfk_dtheta_ *= force;
+    auto angleParameters = calculateAngleParameters(vecji, vecjk);
+    const auto force = angle.force(angleParameters.theta_);
+    angleParameters.dfi_dtheta_ *= force;
+    angleParameters.dfk_dtheta_ *= force;
 
     // Store forces
-    f_[i->arrayIndex()] += dfi_dtheta_;
-    f_[j->arrayIndex()] -= dfi_dtheta_ + dfk_dtheta_;
-    f_[k->arrayIndex()] += dfk_dtheta_;
+    f[i.arrayIndex()] += angleParameters.dfi_dtheta_;
+    f[j.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
+    f[k.arrayIndex()] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces for specified Atom only
-void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesAngle &angle, const std::shared_ptr<Atom> i,
-                         const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k)
+void ForceKernel::forces(const Atom &onlyThis, const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k,
+                         ForceVector &f) const
 {
-    assert((i != onlyThis) && (j != onlyThis) && (k != onlyThis));
-
     Vec3<double> vecji, vecjk;
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-    if (j->cell()->mimRequired(i->cell()))
+    if (j.cell()->mimRequired(i.cell()))
         vecji = box_->minimumVector(j, i);
     else
-        vecji = i->r() - j->r();
-    if (j->cell()->mimRequired(k->cell()))
+        vecji = i.r() - j.r();
+    if (j.cell()->mimRequired(k.cell()))
         vecjk = box_->minimumVector(j, k);
     else
-        vecjk = k->r() - j->r();
+        vecjk = k.r() - j.r();
 
-    calculateAngleParameters(vecji, vecjk);
-    const auto force = angle.force(theta_);
-    dfi_dtheta_ *= force;
-    dfk_dtheta_ *= force;
+    auto angleParameters = calculateAngleParameters(vecji, vecjk);
+    const auto force = angle.force(angleParameters.theta_);
+    angleParameters.dfi_dtheta_ *= force;
+    angleParameters.dfk_dtheta_ *= force;
 
     // Store forces
-    if (onlyThis == i)
-        f_[onlyThis->arrayIndex()] += dfi_dtheta_;
-    else if (onlyThis == j)
-        f_[onlyThis->arrayIndex()] -= dfi_dtheta_ + dfk_dtheta_;
+    if (&onlyThis == &i)
+        f[onlyThis.arrayIndex()] += angleParameters.dfi_dtheta_;
+    else if (&onlyThis == &j)
+        f[onlyThis.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
     else
-        f_[onlyThis->arrayIndex()] += dfk_dtheta_;
+        f[onlyThis.arrayIndex()] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces
-void ForceKernel::forces(const SpeciesAngle &angle)
+void ForceKernel::forces(const SpeciesAngle &angle, ForceVector &f) const
 {
-    calculateAngleParameters(angle.i()->r() - angle.j()->r(), angle.k()->r() - angle.j()->r());
-    const auto force = angle.force(theta_);
-    dfi_dtheta_ *= force;
-    dfk_dtheta_ *= force;
+    auto angleParameters = calculateAngleParameters(angle.i()->r() - angle.j()->r(), angle.k()->r() - angle.j()->r());
+    const auto force = angle.force(angleParameters.theta_);
+    angleParameters.dfi_dtheta_ *= force;
+    angleParameters.dfk_dtheta_ *= force;
 
     // Store forces
-    f_[angle.i()->index()] += dfi_dtheta_;
-    f_[angle.j()->index()] -= dfi_dtheta_ + dfk_dtheta_;
-    f_[angle.k()->index()] += dfk_dtheta_;
+    f[angle.i()->index()] += angleParameters.dfi_dtheta_;
+    f[angle.j()->index()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
+    f[angle.k()->index()] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
-void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl,
-                                             double &phi, Matrix3 &dxpj_dij, Matrix3 &dxpj_dkj, Matrix3 &dxpk_dkj,
-                                             Matrix3 &dxpk_dlk, Vec3<double> &dcos_dxpj, Vec3<double> &dcos_dxpk)
+ForceKernel::TorsionParameters ForceKernel::calculateTorsionParameters(const Vec3<double> &vecji, const Vec3<double> &vecjk,
+                                                                       const Vec3<double> &veckl)
 {
     // Calculate cross products and torsion angle formed (in radians)
     auto xpj = vecji * vecjk;
@@ -579,7 +564,6 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
     const auto magxpj = xpj.magAndNormalise();
     const auto magxpk = xpk.magAndNormalise();
     auto dp = xpj.dp(xpk);
-    phi = atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), dp);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
@@ -600,169 +584,174 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
      *			= (0,rij[z],-rij[y])
      */
 
-    dxpj_dij.makeCrossProductMatrix(vecjk);
-    dxpj_dkj.makeCrossProductMatrix(-vecji);
-    dxpk_dkj.makeCrossProductMatrix(-veckl);
-    dxpk_dlk.makeCrossProductMatrix(vecjk);
+    TorsionParameters torsionParameters;
+    torsionParameters.phi_ = atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), dp);
+    torsionParameters.dxpj_dij_.makeCrossProductMatrix(vecjk);
+    torsionParameters.dxpj_dkj_.makeCrossProductMatrix(-vecji);
+    torsionParameters.dxpk_dkj_.makeCrossProductMatrix(-veckl);
+    torsionParameters.dxpk_dlk_.makeCrossProductMatrix(vecjk);
+    torsionParameters.dcos_dxpj_ = (xpk - xpj * dp) / magxpj;
+    torsionParameters.dcos_dxpk_ = (xpj - xpk * dp) / magxpk;
 
-    // Construct derivatives of cos(phi) w.r.t. perpendicular axes
-    dcos_dxpj = (xpk - xpj * dp) / magxpj;
-    dcos_dxpk = (xpj - xpk * dp) / magxpk;
+    return torsionParameters;
 }
 
 // Calculate SpeciesTorsion forces
-void ForceKernel::forces(const SpeciesTorsion &torsion, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                         const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
+void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
+                         ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
-    Vec3<double> vecji, vecjk, veckl;
-    if (j->cell()->mimRequired(i->cell()))
+    Vec3<double> vecji, vecjk, veckl, dcos_dxpj, dcos_dxpk;
+    Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
+    double phi;
+    if (j.cell()->mimRequired(i.cell()))
         vecji = box_->minimumVector(i, j);
     else
-        vecji = j->r() - i->r();
-    if (j->cell()->mimRequired(k->cell()))
+        vecji = j.r() - i.r();
+    if (j.cell()->mimRequired(k.cell()))
         vecjk = box_->minimumVector(k, j);
     else
-        vecjk = j->r() - k->r();
-    if (k->cell()->mimRequired(l->cell()))
+        vecjk = j.r() - k.r();
+    if (k.cell()->mimRequired(l.cell()))
         veckl = box_->minimumVector(l, k);
     else
-        veckl = k->r() - l->r();
+        veckl = k.r() - l.r();
 
-    calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(phi_ * DEGRAD);
+    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+
+    const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    sumTorsionForceI(du_dphi, i->arrayIndex());
-    sumTorsionForceJ(du_dphi, j->arrayIndex());
-    sumTorsionForceK(du_dphi, k->arrayIndex());
-    sumTorsionForceL(du_dphi, l->arrayIndex());
+    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
+    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
+    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
+    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces for specified Atom only
-void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTorsion &torsion, const std::shared_ptr<Atom> i,
-                         const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
+void ForceKernel::forces(const Atom &onlyThis, const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k,
+                         const Atom &l, ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
-    if (j->cell()->mimRequired(i->cell()))
+    if (j.cell()->mimRequired(i.cell()))
         vecji = box_->minimumVector(i, j);
     else
-        vecji = j->r() - i->r();
-    if (j->cell()->mimRequired(k->cell()))
+        vecji = j.r() - i.r();
+    if (j.cell()->mimRequired(k.cell()))
         vecjk = box_->minimumVector(k, j);
     else
-        vecjk = j->r() - k->r();
-    if (k->cell()->mimRequired(l->cell()))
+        vecjk = j.r() - k.r();
+    if (k.cell()->mimRequired(l.cell()))
         veckl = box_->minimumVector(l, k);
     else
-        veckl = k->r() - l->r();
+        veckl = k.r() - l.r();
 
-    calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(phi_ * DEGRAD);
+    auto torisionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = torsion.force(torisionParameters.phi_ * DEGRAD);
 
     // Sum forces for specified atom
-    if (onlyThis == i)
-        sumTorsionForceI(du_dphi, onlyThis->arrayIndex());
-    else if (onlyThis == j)
-        sumTorsionForceJ(du_dphi, onlyThis->arrayIndex());
-    else if (onlyThis == k)
-        sumTorsionForceK(du_dphi, onlyThis->arrayIndex());
+    if (&onlyThis == &i)
+        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
+    else if (&onlyThis == &j)
+        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
+    else if (&onlyThis == &k)
+        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
     else
-        sumTorsionForceL(du_dphi, onlyThis->arrayIndex());
+        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces
-void ForceKernel::forces(const SpeciesTorsion &torsion)
+void ForceKernel::forces(const SpeciesTorsion &torsion, ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
     const Vec3<double> vecji = torsion.j()->r() - torsion.i()->r(), vecjk = torsion.j()->r() - torsion.k()->r(),
                        veckl = torsion.k()->r() - torsion.l()->r();
 
-    calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(phi_ * DEGRAD);
+    auto torisionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = torsion.force(torisionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    sumTorsionForceI(du_dphi, torsion.i()->index());
-    sumTorsionForceJ(du_dphi, torsion.j()->index());
-    sumTorsionForceK(du_dphi, torsion.k()->index());
-    sumTorsionForceL(du_dphi, torsion.l()->index());
+    addTorsionForceI(du_dphi, torsion.i()->index(), torisionParameters, f);
+    addTorsionForceJ(du_dphi, torsion.j()->index(), torisionParameters, f);
+    addTorsionForceK(du_dphi, torsion.k()->index(), torisionParameters, f);
+    addTorsionForceL(du_dphi, torsion.l()->index(), torisionParameters, f);
 }
 
 // Calculate SpeciesImproper forces
-void ForceKernel::forces(const SpeciesImproper &improper, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                         const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
+void ForceKernel::forces(const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
+                         ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
-    if (j->cell()->mimRequired(i->cell()))
+    if (j.cell()->mimRequired(i.cell()))
         vecji = box_->minimumVector(i, j);
     else
-        vecji = j->r() - i->r();
-    if (j->cell()->mimRequired(k->cell()))
+        vecji = j.r() - i.r();
+    if (j.cell()->mimRequired(k.cell()))
         vecjk = box_->minimumVector(k, j);
     else
-        vecjk = j->r() - k->r();
-    if (k->cell()->mimRequired(l->cell()))
+        vecjk = j.r() - k.r();
+    if (k.cell()->mimRequired(l.cell()))
         veckl = box_->minimumVector(l, k);
     else
-        veckl = k->r() - l->r();
+        veckl = k.r() - l.r();
 
-    calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = improper.force(phi_ * DEGRAD);
+    auto torisionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = improper.force(torisionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    sumTorsionForceI(du_dphi, i->arrayIndex());
-    sumTorsionForceJ(du_dphi, j->arrayIndex());
-    sumTorsionForceK(du_dphi, k->arrayIndex());
-    sumTorsionForceL(du_dphi, l->arrayIndex());
+    addTorsionForceI(du_dphi, i.arrayIndex(), torisionParameters, f);
+    addTorsionForceJ(du_dphi, j.arrayIndex(), torisionParameters, f);
+    addTorsionForceK(du_dphi, k.arrayIndex(), torisionParameters, f);
+    addTorsionForceL(du_dphi, l.arrayIndex(), torisionParameters, f);
 }
 
 // Calculate SpeciesImproper forces for specified Atom only
-void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImproper &imp, const std::shared_ptr<Atom> i,
-                         const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
+void ForceKernel::forces(const Atom &onlyThis, const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k,
+                         const Atom &l, ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
-    if (j->cell()->mimRequired(i->cell()))
+    if (j.cell()->mimRequired(i.cell()))
         vecji = box_->minimumVector(i, j);
     else
-        vecji = j->r() - i->r();
-    if (j->cell()->mimRequired(k->cell()))
+        vecji = j.r() - i.r();
+    if (j.cell()->mimRequired(k.cell()))
         vecjk = box_->minimumVector(k, j);
     else
-        vecjk = j->r() - k->r();
-    if (k->cell()->mimRequired(l->cell()))
+        vecjk = j.r() - k.r();
+    if (k.cell()->mimRequired(l.cell()))
         veckl = box_->minimumVector(l, k);
     else
-        veckl = k->r() - l->r();
+        veckl = k.r() - l.r();
 
-    calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp.force(phi_ * DEGRAD);
+    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = imp.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces for specified atom
-    if (onlyThis == i)
-        sumTorsionForceI(du_dphi, onlyThis->arrayIndex());
-    else if (onlyThis == j)
-        sumTorsionForceJ(du_dphi, onlyThis->arrayIndex());
-    else if (onlyThis == k)
-        sumTorsionForceK(du_dphi, onlyThis->arrayIndex());
+    if (&onlyThis == &i)
+        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+    else if (&onlyThis == &j)
+        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+    else if (&onlyThis == &k)
+        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else
-        sumTorsionForceL(du_dphi, onlyThis->arrayIndex());
+        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces
-void ForceKernel::forces(const SpeciesImproper &imp)
+void ForceKernel::forces(const SpeciesImproper &imp, ForceVector &f) const
 {
     // Calculate vectors
     const auto vecji = imp.j()->r() - imp.i()->r(), vecjk = imp.j()->r() - imp.k()->r(), veckl = imp.k()->r() - imp.l()->r();
 
-    calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp.force(phi_ * DEGRAD);
+    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = imp.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    sumTorsionForceI(du_dphi, imp.i()->index());
-    sumTorsionForceJ(du_dphi, imp.j()->index());
-    sumTorsionForceK(du_dphi, imp.k()->index());
-    sumTorsionForceL(du_dphi, imp.l()->index());
+    addTorsionForceI(du_dphi, imp.i()->index(), torsionParameters, f);
+    addTorsionForceJ(du_dphi, imp.j()->index(), torsionParameters, f);
+    addTorsionForceK(du_dphi, imp.k()->index(), torsionParameters, f);
+    addTorsionForceL(du_dphi, imp.l()->index(), torsionParameters, f);
 }

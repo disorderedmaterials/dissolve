@@ -82,9 +82,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double magjisq, magji, magjk, dp, force, r;
             std::shared_ptr<Atom> i, j, k, l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
-            Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
-            Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-            double phi, du_dphi;
+            Vec3<double> xpj, xpk, temp;
+            double du_dphi;
             std::shared_ptr<Molecule> molN, molM;
             const auto *box = cfg->box();
             double scale;
@@ -229,9 +228,14 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         veckl = box->minimumVector(l, k);
 
                         // Calculate torsion force parameters
-                        ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
-                                                                dxpk_dlk, dcos_dxpj, dcos_dxpk);
-                        du_dphi = torsion.force(phi * DEGRAD);
+                        auto torisionParameters = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
+                        auto dxpj_dij = torisionParameters.dxpj_dij_;
+                        auto dxpj_dkj = torisionParameters.dxpj_dkj_;
+                        auto dxpk_dkj = torisionParameters.dxpk_dkj_;
+                        auto dxpk_dlk = torisionParameters.dxpk_dlk_;
+                        auto dcos_dxpj = torisionParameters.dcos_dxpj_;
+                        auto dcos_dxpk = torisionParameters.dcos_dxpk_;
+                        du_dphi = torsion.force(torisionParameters.phi_ * DEGRAD);
 
                         // Sum forces on Atoms
                         fIntra[i->arrayIndex()].add(du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0)),
@@ -274,9 +278,14 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         veckl = box->minimumVector(l, k);
 
                         // Calculate improper force parameters
-                        ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
-                                                                dxpk_dlk, dcos_dxpj, dcos_dxpk);
-                        du_dphi = imp.force(phi * DEGRAD);
+                        auto torisionParameters = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
+                        auto dxpj_dij = torisionParameters.dxpj_dij_;
+                        auto dxpj_dkj = torisionParameters.dxpj_dkj_;
+                        auto dxpk_dkj = torisionParameters.dxpk_dkj_;
+                        auto dxpk_dlk = torisionParameters.dxpk_dlk_;
+                        auto dcos_dxpj = torisionParameters.dcos_dxpj_;
+                        auto dcos_dxpk = torisionParameters.dcos_dxpk_;
+                        du_dphi = imp.force(torisionParameters.phi_ * DEGRAD);
 
                         // Sum forces on Atoms
                         fIntra[i->arrayIndex()].add(du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0)),
