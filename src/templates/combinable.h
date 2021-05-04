@@ -15,7 +15,7 @@ namespace dissolve
 // - Capture the combinable by reference in the lambda operator of the parallel operation
 // - Within the lambda operator call local() to access a thread local version of the container
 // - After the parallel operation call finaliize to accumulate into the parent container.
-template <class Container> struct CombinableContainer
+template <class Container> class CombinableContainer
 {
     public:
     template <typename Lambda>

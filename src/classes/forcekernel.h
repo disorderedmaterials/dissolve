@@ -26,6 +26,7 @@ class ForceKernel
     ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, double cutoffDistance = -1.0);
     ~ForceKernel() = default;
 
+    // alias for force storage vector
     using ForceVector = std::vector<Vec3<double>>;
     /*
      * Source Data
@@ -120,8 +121,7 @@ class ForceKernel
                 ForceVector &f) const;
 
     // Torsion terms
-    // Calculate SpeciesTorsionforces for given atoms
-
+    // Calculate SpeciesTorsion forces for given atoms
     void forces(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
                 ForceVector &f) const;
     // Calculate SpeciesTorsion forces

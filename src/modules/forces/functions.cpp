@@ -11,6 +11,14 @@
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 
+namespace
+{
+dissolve::CombinableContainer<std::vector<Vec3<double>>> createCombinableForces(std::vector<Vec3<double>> &parentForces)
+{
+    return {parentForces, [&]() { return std::vector<Vec3<double>>(parentForces.size()); }};
+}
+} // namespace
+
 // Calculate interatomic forces within the supplied Configuration
 void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                      std::vector<Vec3<double>> &f)
@@ -26,17 +34,16 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     const auto &cellArray = cfg->cells();
     // Create a ForceKernel
     const auto kernel = ForceKernel(procPool, cfg->box(), potentialMap);
-    dissolve::CombinableContainer<std::vector<Vec3<double>>> combinableForces(
-        f, [&]() { return std::vector<Vec3<double>>(f.size()); });
-
-    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+    auto combinableForces = createCombinableForces(f);
 
     // Set start/stride for parallel loop
+    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
     auto start = procPool.interleavedLoopStart(strategy);
     auto stride = procPool.interleavedLoopStride(strategy);
     auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
+
+    // algorithm parameters
     dissolve::counting_iterator<int> countingIterator(begin, end);
-    // lambda operator
     auto unaryOp = [&combinableForces, &kernel, &cellArray, strategy](const int id) {
         auto *cellI = cellArray.cell(id);
         auto &fLocal = combinableForces.local();
@@ -46,7 +53,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
         kernel.forces(cellI, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
     };
     // Execute lambda operator for each cell
-    dissolve::for_each(ParallelPolicies::par_unseq, countingIterator.begin(), countingIterator.end(), unaryOp);
+    dissolve::for_each(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), unaryOp);
     combinableForces.finalize();
 }
 
@@ -63,6 +70,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
 
     // Create a ForceKernel
     ForceKernel kernel(procPool, cfg->box(), potentialMap);
+    auto combinableForces = createCombinableForces(f);
 
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
@@ -72,8 +80,13 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
 
     // Loop over supplied atom indices
     auto [begin, end] = chop_range(0, targetIndices.nItems(), stride, start);
-    for (auto n = begin; n < end; ++n)
-        kernel.forces(*cfg->atoms()[targetIndices.at(n)], ProcessPool::subDivisionStrategy(strategy), f);
+    dissolve::counting_iterator<int> countingIterator(begin, end);
+    auto unaryOp = [&combinableForces, &kernel, cfg, &targetIndices, strategy](const int n) {
+        auto &fLocal = combinableForces.local();
+        kernel.forces(*cfg->atoms()[targetIndices.at(n)], ProcessPool::subDivisionStrategy(strategy), fLocal);
+    };
+    dissolve::for_each(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), unaryOp);
+    combinableForces.finalize();
 }
 
 // Calculate interatomic forces within the specified Species
@@ -128,6 +141,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
     // Create a ForceKernel
     ForceKernel kernel(procPool, cfg->box(), potentialMap);
+    auto combinableForces = createCombinableForces(f);
 
     // Set start/stride for parallel loop
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
@@ -136,30 +150,35 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
     // Loop over supplied atom indices
     const auto &atoms = cfg->atoms();
     auto [begin, end] = chop_range(0, targetIndices.nItems(), stride, start);
-    for (auto n = begin; n < end; ++n)
-    {
+    dissolve::counting_iterator<int> countingIterator(begin, end);
+
+    auto unaryOp = [&](const auto n) {
         const auto i = atoms[targetIndices.at(n)];
+        auto fLocal = combinableForces.local();
         const SpeciesAtom *spAtom = i->speciesAtom();
-        std::shared_ptr<const Molecule> mol = i->molecule();
+        auto mol = i->molecule();
 
         // Calculate forces from SpeciesBond terms
         for (const SpeciesBond &bond : spAtom->bonds())
-            kernel.forces(*i, bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), f);
+            kernel.forces(*i, bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), fLocal);
 
         // Calculate forces from SpeciesAngle terms
         for (const SpeciesAngle &angle : spAtom->angles())
-            kernel.forces(*i, angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), f);
+            kernel.forces(*i, angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()),
+                          fLocal);
 
         // Calculate forces from SpeciesTorsion terms
         for (const SpeciesTorsion &torsion : spAtom->torsions())
             kernel.forces(*i, torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
-                          *mol->atom(torsion.indexL()), f);
+                          *mol->atom(torsion.indexL()), fLocal);
 
         // Calculate forces from SpeciesImproper terms
         for (const SpeciesImproper &improper : spAtom->impropers())
             kernel.forces(*i, improper, *mol->atom(improper.indexI()), *mol->atom(improper.indexJ()),
-                          *mol->atom(improper.indexK()), *mol->atom(improper.indexL()), f);
-    }
+                          *mol->atom(improper.indexK()), *mol->atom(improper.indexL()), fLocal);
+    };
+    dissolve::for_each(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), unaryOp);
+    combinableForces.finalize();
 }
 
 // Calculate total intramolecular forces in Configuration
@@ -178,39 +197,38 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
     // Create a ForceKernel
     ForceKernel kernel(procPool, cfg->box(), potentialMap);
+    auto combinableForces = createCombinableForces(f);
 
     // Set start/stride for parallel loop
+    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
     auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
-
-    // Loop over Molecules
-    std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
-    std::shared_ptr<const Molecule> mol;
-
     auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
-    for (auto it = begin; it < end; ++it)
-    {
-        // Get Molecule pointer
-        mol = *it;
 
+    // algorithm parameters
+    std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
+    auto unaryOp = [&combinableForces, &kernel, &molecules, strategy](const auto &mol) {
+        auto &fLocal = combinableForces.local();
         // Loop over bonds
         for (const auto &bond : mol->species()->bonds())
-            kernel.forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), f);
+            kernel.forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), fLocal);
 
         // Loop over angles
         for (const auto &angle : mol->species()->angles())
-            kernel.forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), f);
+            kernel.forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), fLocal);
 
         // Loop over torsions
         for (const auto &torsion : mol->species()->torsions())
             kernel.forces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
-                          *mol->atom(torsion.indexL()), f);
+                          *mol->atom(torsion.indexL()), fLocal);
 
         // Loop over impropers
         for (const auto &imp : mol->species()->impropers())
             kernel.forces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()),
-                          *mol->atom(imp.indexL()), f);
-    }
+                          *mol->atom(imp.indexL()), fLocal);
+    };
+    dissolve::for_each(ParallelPolicies::par, begin, end, unaryOp);
+    combinableForces.finalize();
 }
 
 // Calculate total intramolecular forces in Species

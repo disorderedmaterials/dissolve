@@ -196,4 +196,28 @@ T transform_reduce(ParallelPolicy, Iter begin, Iter end, T initialVal, BinaryOp 
 {
     return dissolve::transform_reduce(begin, end, initialVal, binaryOp, unaryOp);
 }
+
+// For each algorithm
+// unaryOp applies to each element in the range
+// Base for_each, no parallel policy
+template <class Iter, class UnaryOp> void for_each(Iter begin, Iter end, UnaryOp unaryOp)
+{
+    std::for_each(begin, end, unaryOp);
+}
+// Only enabled if parallelpolicies are fully defined i.e. we have compiled with multithreading enabled
+template <typename ParallelPolicy, class Iter, class UnaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+void for_each(ParallelPolicy policy, Iter begin, Iter end, UnaryOp unaryOp)
+{
+    std::for_each(policy, begin, end, unaryOp);
+}
+
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
+// parallel policy
+template <typename ParallelPolicy, class Iter, class UnaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
+{
+    dissolve::for_each(begin, end, unaryOp);
+}
 } // namespace dissolve
