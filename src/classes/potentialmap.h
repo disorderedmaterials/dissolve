@@ -51,8 +51,12 @@ class PotentialMap
     double analyticEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const;
     // Return force between Atoms at distance specified
     double force(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const;
+    // Return force between Atoms at distance specified
+    double force(const Atom &i, const Atom &j, double r) const;
     // Return force between SpeciesAtoms at distance specified
     double force(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
+    // Return force between species atoms at distance specified
+    double force(const SpeciesAtom &i, const SpeciesAtom &j, double r) const;
     // Return analytic force between Atom types at distance specified
     double analyticForce(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const;
 };
