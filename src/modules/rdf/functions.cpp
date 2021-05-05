@@ -744,7 +744,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 {
     // We either expect two AtomType names and a target next, or the target 'total'
     auto testResult = false;
-    if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == nullptr) && (target == nullptr))
+    if (DissolveSys::sameString(typeIorTotal, "total") && typeJ.empty() && target.empty())
     {
         double error = Error::percent(partials.total(), testData);
         testResult = (error <= testThreshold);
