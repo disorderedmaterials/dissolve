@@ -23,9 +23,8 @@ ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialM
  */
 
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
-void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, std::optional<double> scaleOpt, ForceVector &f) const
+void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double scale) const
 {
-    auto scale = scaleOpt.value_or(1.00);
     auto force = j.r() - i.r();
     auto distanceSq = force.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
@@ -38,9 +37,8 @@ void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, std::optional<d
 }
 
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
-void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, std::optional<double> scaleOpt, ForceVector &f) const
+void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double scale) const
 {
-    auto scale = scaleOpt.value_or(1.00);
     auto force = box_->minimumVector(i, j);
     auto distanceSq = force.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
@@ -69,9 +67,9 @@ void ForceKernel::forces(const Atom &i, const Atom &j, bool applyMim, bool exclu
         return;
 
     if (applyMim)
-        forcesWithMim(i, j, std::nullopt, f);
+        forcesWithMim(i, j, f);
     else
-        forcesWithoutMim(i, j, std::nullopt, f);
+        forcesWithoutMim(i, j, f);
 }
 
 // Calculate forces between atoms in supplied cells
@@ -107,12 +105,12 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 
                 // Check for atoms in the same Molecule
                 if (molI != jj->molecule())
-                    forcesWithMim(*ii, *jj, std::nullopt, f);
+                    forcesWithMim(*ii, *jj, f);
                 else
                 {
                     double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(*ii, *jj, scale, f);
+                        forcesWithMim(*ii, *jj, f, scale);
                 }
             }
         }
@@ -135,12 +133,12 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 
                 // Check for atoms in the same molecule
                 if (molI != jj->molecule())
-                    forcesWithoutMim(*ii, *jj, std::nullopt, f);
+                    forcesWithoutMim(*ii, *jj, f);
                 else
                 {
                     double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(*ii, *jj, scale, f);
+                        forcesWithoutMim(*ii, *jj, f, scale);
                 }
             }
         }
@@ -185,12 +183,12 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, std::nullopt, f);
+                    forcesWithMim(i, *jj, f);
                 else
                 {
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, std::nullopt, f);
+                        forcesWithMim(i, *jj, f);
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
@@ -202,12 +200,12 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, std::nullopt, f);
+                    forcesWithMim(i, *jj, f);
                 else
                 {
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, scale, f);
+                        forcesWithMim(i, *jj, f, scale);
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
@@ -220,7 +218,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, std::nullopt, f);
+                    forcesWithMim(i, *jj, f);
                 else
                 {
                     // Check for i >= jj
@@ -229,7 +227,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, scale, f);
+                        forcesWithMim(i, *jj, f, scale);
                 }
             }
         }
@@ -243,12 +241,12 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, std::nullopt, f);
+                    forcesWithMim(i, *jj, f);
                 else
                 {
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, scale, f);
+                        forcesWithMim(i, *jj, f, scale);
                 }
             }
         }
@@ -269,12 +267,12 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, std::nullopt, f);
+                    forcesWithoutMim(i, *jj, f);
                 else
                 {
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, scale, f);
+                        forcesWithoutMim(i, *jj, f, scale);
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
@@ -289,12 +287,12 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, std::nullopt, f);
+                    forcesWithoutMim(i, *jj, f);
                 else
                 {
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, scale, f);
+                        forcesWithoutMim(i, *jj, f, scale);
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
@@ -305,7 +303,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, std::nullopt, f);
+                    forcesWithoutMim(i, *jj, f);
                 else
                 {
                     // Pointer comparison for i >= jj
@@ -314,7 +312,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, scale, f);
+                        forcesWithoutMim(i, *jj, f, scale);
                 }
             }
         else
@@ -325,12 +323,12 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
 
                 // Check for atoms in the same species
                 if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, std::nullopt, f);
+                    forcesWithoutMim(i, *jj, f);
                 else
                 {
                     double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, scale, f);
+                        forcesWithoutMim(i, *jj, f, scale);
                 }
             }
     }
@@ -358,53 +356,53 @@ void ForceKernel::forces(const Atom &i, ProcessPool::DivisionStrategy strategy, 
  */
 
 // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index and input vector
-void ForceKernel::addTorsionForceI(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+void ForceKernel::addTorsionForceI(double du_dphi, int index, ForceKernel::TorsionParameters &torsionParameters,
                                    ForceVector &f) const
 {
-    auto &dcos_dxpj = torisionParameters.dcos_dxpj_;
+    auto &dcos_dxpj = torsionParameters.dcos_dxpj_;
 
-    f[index].add(du_dphi * torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dij_.columnAsVec3(0)),
-                 du_dphi * torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dij_.columnAsVec3(1)),
-                 du_dphi * dcos_dxpj.dp(torisionParameters.dxpj_dij_.columnAsVec3(2)));
+    f[index].add(du_dphi * torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dij_.columnAsVec3(0)),
+                 du_dphi * torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dij_.columnAsVec3(1)),
+                 du_dphi * dcos_dxpj.dp(torsionParameters.dxpj_dij_.columnAsVec3(2)));
 }
 
 // Add torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index and input vector
-void ForceKernel::addTorsionForceJ(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+void ForceKernel::addTorsionForceJ(double du_dphi, int index, ForceKernel::TorsionParameters &torsionParameters,
                                    ForceVector &f) const
 {
-    f[index].add(du_dphi * (torisionParameters.dcos_dxpj_.dp(-torisionParameters.dxpj_dij_.columnAsVec3(0) -
-                                                             torisionParameters.dxpj_dkj_.columnAsVec3(0)) -
-                            torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(0))),
-                 du_dphi * (torisionParameters.dcos_dxpj_.dp(-torisionParameters.dxpj_dij_.columnAsVec3(1) -
-                                                             torisionParameters.dxpj_dkj_.columnAsVec3(1)) -
-                            torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(1))),
-                 du_dphi * (torisionParameters.dcos_dxpj_.dp(-torisionParameters.dxpj_dij_.columnAsVec3(2) -
-                                                             torisionParameters.dxpj_dkj_.columnAsVec3(2)) -
-                            torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(2))));
+    f[index].add(du_dphi * (torsionParameters.dcos_dxpj_.dp(-torsionParameters.dxpj_dij_.columnAsVec3(0) -
+                                                            torsionParameters.dxpj_dkj_.columnAsVec3(0)) -
+                            torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(0))),
+                 du_dphi * (torsionParameters.dcos_dxpj_.dp(-torsionParameters.dxpj_dij_.columnAsVec3(1) -
+                                                            torsionParameters.dxpj_dkj_.columnAsVec3(1)) -
+                            torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(1))),
+                 du_dphi * (torsionParameters.dcos_dxpj_.dp(-torsionParameters.dxpj_dij_.columnAsVec3(2) -
+                                                            torsionParameters.dxpj_dkj_.columnAsVec3(2)) -
+                            torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(2))));
 }
 
 // Add torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index and input vector
-void ForceKernel::addTorsionForceK(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+void ForceKernel::addTorsionForceK(double du_dphi, int index, ForceKernel::TorsionParameters &torsionParameters,
                                    ForceVector &f) const
 {
-    f[index].add(du_dphi * (torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(0) -
-                                                             torisionParameters.dxpk_dlk_.columnAsVec3(0)) +
-                            torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dkj_.columnAsVec3(0))),
-                 du_dphi * (torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(1) -
-                                                             torisionParameters.dxpk_dlk_.columnAsVec3(1)) +
-                            torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dkj_.columnAsVec3(1))),
-                 du_dphi * (torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dkj_.columnAsVec3(2) -
-                                                             torisionParameters.dxpk_dlk_.columnAsVec3(2)) +
-                            torisionParameters.dcos_dxpj_.dp(torisionParameters.dxpj_dkj_.columnAsVec3(2))));
+    f[index].add(du_dphi * (torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(0) -
+                                                            torsionParameters.dxpk_dlk_.columnAsVec3(0)) +
+                            torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dkj_.columnAsVec3(0))),
+                 du_dphi * (torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(1) -
+                                                            torsionParameters.dxpk_dlk_.columnAsVec3(1)) +
+                            torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dkj_.columnAsVec3(1))),
+                 du_dphi * (torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(2) -
+                                                            torsionParameters.dxpk_dlk_.columnAsVec3(2)) +
+                            torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dkj_.columnAsVec3(2))));
 }
 
 // Add torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index and input vector
-void ForceKernel::addTorsionForceL(double du_dphi, int index, ForceKernel::TorsionParameters &torisionParameters,
+void ForceKernel::addTorsionForceL(double du_dphi, int index, ForceKernel::TorsionParameters &torsionParameters,
                                    ForceVector &f) const
 {
-    f[index].add(du_dphi * torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dlk_.columnAsVec3(0)),
-                 du_dphi * torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dlk_.columnAsVec3(1)),
-                 du_dphi * torisionParameters.dcos_dxpk_.dp(torisionParameters.dxpk_dlk_.columnAsVec3(2)));
+    f[index].add(du_dphi * torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dlk_.columnAsVec3(0)),
+                 du_dphi * torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dlk_.columnAsVec3(1)),
+                 du_dphi * torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dlk_.columnAsVec3(2)));
 }
 
 // Calculate SpeciesBond forces
@@ -647,18 +645,18 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesTorsion &torsion, co
     else
         veckl = k.r() - l.r();
 
-    auto torisionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(torisionParameters.phi_ * DEGRAD);
+    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces for specified atom
     if (&onlyThis == &i)
-        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
+        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else if (&onlyThis == &j)
-        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
+        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else if (&onlyThis == &k)
-        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
+        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else
-        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torisionParameters, f);
+        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces
@@ -668,14 +666,14 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, ForceVector &f) const
     const Vec3<double> vecji = torsion.j()->r() - torsion.i()->r(), vecjk = torsion.j()->r() - torsion.k()->r(),
                        veckl = torsion.k()->r() - torsion.l()->r();
 
-    auto torisionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(torisionParameters.phi_ * DEGRAD);
+    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, torsion.i()->index(), torisionParameters, f);
-    addTorsionForceJ(du_dphi, torsion.j()->index(), torisionParameters, f);
-    addTorsionForceK(du_dphi, torsion.k()->index(), torisionParameters, f);
-    addTorsionForceL(du_dphi, torsion.l()->index(), torisionParameters, f);
+    addTorsionForceI(du_dphi, torsion.i()->index(), torsionParameters, f);
+    addTorsionForceJ(du_dphi, torsion.j()->index(), torsionParameters, f);
+    addTorsionForceK(du_dphi, torsion.k()->index(), torsionParameters, f);
+    addTorsionForceL(du_dphi, torsion.l()->index(), torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces
@@ -697,14 +695,14 @@ void ForceKernel::forces(const SpeciesImproper &improper, const Atom &i, const A
     else
         veckl = k.r() - l.r();
 
-    auto torisionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = improper.force(torisionParameters.phi_ * DEGRAD);
+    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = improper.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, i.arrayIndex(), torisionParameters, f);
-    addTorsionForceJ(du_dphi, j.arrayIndex(), torisionParameters, f);
-    addTorsionForceK(du_dphi, k.arrayIndex(), torisionParameters, f);
-    addTorsionForceL(du_dphi, l.arrayIndex(), torisionParameters, f);
+    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
+    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
+    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
+    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces for specified Atom only

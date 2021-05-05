@@ -44,9 +44,9 @@ class ForceKernel
      */
     private:
     // Calculate inter-particle forces between Atoms provided (no minimum image calculation)
-    void forcesWithoutMim(const Atom &i, const Atom &j, std::optional<double>, ForceVector &f) const;
+    void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
     // Calculate inter-particle forces between Atoms provided (minimum image calculation)
-    void forcesWithMim(const Atom &i, const Atom &j, std::optional<double>, ForceVector &f) const;
+    void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
 
     /*
      * PairPotential Terms
@@ -94,13 +94,13 @@ class ForceKernel
      */
     private:
     // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
-    void addTorsionForceI(double du_dphi, int index, TorsionParameters &torisionParameters, ForceVector &f) const;
+    void addTorsionForceI(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
     // Sum torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index
-    void addTorsionForceJ(double du_dphi, int index, TorsionParameters &torisionParameters, ForceVector &f) const;
+    void addTorsionForceJ(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
     // Sum torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index
-    void addTorsionForceK(double du_dphi, int index, TorsionParameters &torisionParameters, ForceVector &f) const;
+    void addTorsionForceK(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
     // Sum torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index
-    void addTorsionForceL(double du_dphi, int index, TorsionParameters &torisionParameters, ForceVector &f) const;
+    void addTorsionForceL(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
 
     public:
     // Bond terms
