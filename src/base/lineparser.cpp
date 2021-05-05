@@ -927,6 +927,20 @@ Vec3<double> LineParser::arg3d(int i)
     return Vec3<double>(argd(i), argd(i + 1), argd(i + 2));
 }
 
+// Return a vector of double parameters, starting from the specified argument
+std::vector<double> LineParser::argvd(int i)
+{
+    if ((i < 0) || (i >= nArgs()))
+    {
+        Messenger::warn("LineParser::argvd() - Argument {} is out of range - returning std::vector<double>()...\n", i);
+        return std::vector<double>();
+    }
+    std::vector<double> result;
+    for (auto n = i; n < nArgs(); ++n)
+        result.push_back(argd(n));
+    return result;
+}
+
 // Returns whether the specified argument exists (has been provided)
 bool LineParser::hasArg(int i) const
 {
