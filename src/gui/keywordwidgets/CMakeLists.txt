@@ -9,6 +9,7 @@ set(keywordwidgets_MOC_HDRS
     dropdown.h
     expressionvariablevector.h
     fileandformat.h
+    function1d.h
     isotopologueset.h
     module.h
     modulegroups.h
@@ -47,6 +48,7 @@ set(keywordwidgets_UIS
     dropdown.ui
     expressionvariablevector.ui
     fileandformat.ui
+    function1d.ui
     isotopologueset.ui
     module.ui
     modulegroups.ui
@@ -81,6 +83,7 @@ set(keywordwidgets_SRCS
     enumoptions_funcs.cpp
     expressionvariablevector_funcs.cpp
     fileandformat_funcs.cpp
+    function1d_funcs.cpp
     integer_funcs.cpp
     isotopologueset_funcs.cpp
     module_funcs.cpp

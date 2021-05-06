@@ -48,14 +48,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = boolWidget;
         base = boolWidget;
     }
-    else if (type == KeywordBase::BroadeningFunctionData)
-    {
-        BroadeningFunctionKeywordWidget *broadeningFunctionWidget =
-            new BroadeningFunctionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = broadeningFunctionWidget;
-        base = broadeningFunctionWidget;
-    }
     else if (type == KeywordBase::ConfigurationRefListData)
     {
         ConfigurationRefListKeywordWidget *configurationRefListWidget =
@@ -92,6 +84,13 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         connect(fileAndFormatWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = fileAndFormatWidget;
         base = fileAndFormatWidget;
+    }
+    else if (type == KeywordBase::Function1DData)
+    {
+        Function1DKeywordWidget *function1DWidget = new Function1DKeywordWidget(nullptr, keywordBase, coreData);
+        connect(function1DWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = function1DWidget;
+        base = function1DWidget;
     }
     else if (type == KeywordBase::IntegerData)
     {
