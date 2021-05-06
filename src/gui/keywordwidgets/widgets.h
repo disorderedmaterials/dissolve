@@ -22,7 +22,6 @@
 #include "gui/keywordwidgets/nodereflist.h"
 #include "gui/keywordwidgets/nodevalue.h"
 #include "gui/keywordwidgets/nodevalueenumoptions.h"
-#include "gui/keywordwidgets/pairbroadeningfunction.h"
 #include "gui/keywordwidgets/range.h"
 #include "gui/keywordwidgets/species.hui"
 #include "gui/keywordwidgets/speciesreflist.h"

@@ -4,7 +4,6 @@ add_library(
   atomtypeselection.cpp
   base.cpp
   bool.cpp
-  broadeningfunction.cpp
   configurationreflist.cpp
   data1dstore.cpp
   data2dstore.cpp
@@ -31,7 +30,6 @@ add_library(
   nodebranch.cpp
   nodereflist.cpp
   nodevalue.cpp
-  pairbroadeningfunction.cpp
   procedure.cpp
   range.cpp
   species.cpp
@@ -49,7 +47,6 @@ add_library(
   atomtypeselection.h
   base.h
   bool.h
-  broadeningfunction.h
   configurationreflist.h
   data.h
   data1dstore.h
@@ -79,7 +76,6 @@ add_library(
   nodereflist.h
   nodevalue.h
   nodevalueenumoptions.h
-  pairbroadeningfunction.h
   procedure.h
   range.h
   species.h

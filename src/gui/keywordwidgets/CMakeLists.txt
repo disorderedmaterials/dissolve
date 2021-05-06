@@ -3,7 +3,6 @@
 # Meta-Objects
 set(keywordwidgets_MOC_HDRS
     atomtypeselection.h
-    broadeningfunction.h
     configurationreflist.h
     dialog.h
     dropdown.h
@@ -19,7 +18,6 @@ set(keywordwidgets_MOC_HDRS
     nodereflist.h
     nodevalue.h
     nodevalueenumoptions.h
-    pairbroadeningfunction.h
     range.h
     speciesreflist.h
     speciessite.h
@@ -42,7 +40,6 @@ qt5_wrap_cpp(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 # User Interface Files
 set(keywordwidgets_UIS
     atomtypeselection.ui
-    broadeningfunction.ui
     configurationreflist.ui
     dialog.ui
     dropdown.ui
@@ -58,7 +55,6 @@ set(keywordwidgets_UIS
     nodereflist.ui
     nodevalue.ui
     nodevalueenumoptions.ui
-    pairbroadeningfunction.ui
     range.ui
     speciesreflist.ui
     speciessite.ui
@@ -74,7 +70,6 @@ set(keywordwidgets_SRCS
     base.cpp
     atomtypeselection_funcs.cpp
     bool_funcs.cpp
-    broadeningfunction_funcs.cpp
     configurationreflist_funcs.cpp
     dialog_funcs.cpp
     double_funcs.cpp
@@ -94,7 +89,6 @@ set(keywordwidgets_SRCS
     nodereflist_funcs.cpp
     nodevalue_funcs.cpp
     nodevalueenumoptions_funcs.cpp
-    pairbroadeningfunction_funcs.cpp
     range_funcs.cpp
     species_funcs.cpp
     speciesreflist_funcs.cpp

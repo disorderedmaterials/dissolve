@@ -1,7 +1,6 @@
 add_library(
   math
   averaging.cpp
-  broadeningfunction.cpp
   combinations.cpp
   cuboid.cpp
   data1d.cpp
@@ -23,7 +22,6 @@ add_library(
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
-  pairbroadeningfunction.cpp
   poissonfit.cpp
   range.cpp
   regression.cpp
@@ -34,7 +32,6 @@ add_library(
   transformer.cpp
   windowfunction.cpp
   averaging.h
-  broadeningfunction.h
   combinations.h
   constants.h
   cuboid.h
@@ -63,7 +60,6 @@ add_library(
   matrix4.h
   mc.h
   minimiser.h
-  pairbroadeningfunction.h
   poissonfit.h
   praxis.h
   range.h

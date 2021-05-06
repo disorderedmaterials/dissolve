@@ -5,7 +5,6 @@
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
-#include "math/broadeningfunction.h"
 #include "math/windowfunction.h"
 #include "module/module.h"
 

@@ -8,8 +8,6 @@
 #include "classes/configuration.h"
 #include "classes/kvector.h"
 #include "classes/species.h"
-#include "math/broadeningfunction.h"
-#include "math/filters.h"
 #include "modules/bragg/bragg.h"
 #include "templates/algorithms.h"
 #include "templates/array3d.h"

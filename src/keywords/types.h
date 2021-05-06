@@ -16,7 +16,6 @@
 // Classes
 #include "keywords/atomtypereflist.h"
 #include "keywords/atomtypeselection.h"
-#include "keywords/broadeningfunction.h"
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"
@@ -40,7 +39,6 @@
 #include "keywords/nodereflist.h"
 #include "keywords/nodevalue.h"
 #include "keywords/nodevalueenumoptions.h"
-#include "keywords/pairbroadeningfunction.h"
 #include "keywords/procedure.h"
 #include "keywords/range.h"
 #include "keywords/species.h"

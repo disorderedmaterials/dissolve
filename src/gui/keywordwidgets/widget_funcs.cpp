@@ -163,14 +163,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = nodeValueEnumOptionsWidget;
         base = nodeValueEnumOptionsWidget;
     }
-    else if (type == KeywordBase::PairBroadeningFunctionData)
-    {
-        PairBroadeningFunctionKeywordWidget *pairBroadeningFunctionWidget =
-            new PairBroadeningFunctionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(pairBroadeningFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = pairBroadeningFunctionWidget;
-        base = pairBroadeningFunctionWidget;
-    }
     else if (type == KeywordBase::RangeData)
     {
         RangeKeywordWidget *rangeWidget = new RangeKeywordWidget(nullptr, keywordBase, coreData);

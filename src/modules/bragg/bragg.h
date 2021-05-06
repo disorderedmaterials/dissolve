@@ -5,7 +5,6 @@
 
 #include "classes/braggreflection.h"
 #include "classes/partialset.h"
-#include "math/broadeningfunction.h"
 #include "module/module.h"
 
 // Forward Declarations
