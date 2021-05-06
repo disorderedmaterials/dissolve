@@ -25,9 +25,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("A source RDF module must be provided.\n");
     const auto averaging = keywords_.asInt("Averaging");
     const auto includeBragg = keywords_.asBool("IncludeBragg");
-    const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
+    const auto &braggQBroadening = keywords_.retrieve<Functions::Function1DWrapper>("BraggQBroadening");
     const auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-    const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
+    const auto &qBroadening = keywords_.retrieve<Functions::Function1DWrapper>("QBroadening");
     const auto qDelta = keywords_.asDouble("QDelta");
     const auto qMin = keywords_.asDouble("QMin");
     const auto qMax = keywords_.asDouble("QMax");
@@ -47,21 +47,20 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averaging,
                          Averaging::averagingSchemes().keyword(averagingScheme));
-    if (qBroadening.function() == BroadeningFunction::NoFunction)
+    if (qBroadening.type() == Functions::Function1D::None)
         Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
     else
         Messenger::print("SQ: Broadening to be applied in calculated S(Q) is {} ({}).",
-                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary());
+                         Functions::function1D().keyword(qBroadening.type()), qBroadening.parameterSummary());
     if (includeBragg)
     {
         Messenger::print("SQ: Bragg scattering will be calculated from reflection data in target "
                          "Configurations, if present.\n");
-        if (braggQBroadening.function() == BroadeningFunction::NoFunction)
+        if (braggQBroadening.type() == Functions::Function1D::None)
             Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
         else
             Messenger::print("SQ: Additional broadening to be applied in calculated Bragg S(Q) is {} ({}).",
-                             BroadeningFunction::functionType(braggQBroadening.function()),
-                             braggQBroadening.parameterSummary());
+                             Functions::function1D().keyword(braggQBroadening.type()), braggQBroadening.parameterSummary());
     }
     Messenger::print("SQ: Save data is {}.\n", DissolveSys::onOff(saveData));
     Messenger::print("\n");

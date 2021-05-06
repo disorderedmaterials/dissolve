@@ -493,7 +493,8 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &unweightedgr, PairBroadeningFunction &intraBroadening, int smoothing)
+                                      PartialSet &unweightedgr, const Functions::Function1DWrapper intraBroadening,
+                                      int smoothing)
 {
     // If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to
     // maintain the incremental versioning of the data)
@@ -521,21 +522,12 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
-    if ((intraBroadening.function() == PairBroadeningFunction::GaussianFunction) ||
-        (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
-    {
-        auto &types = unweightedgr.atomTypes();
-        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-            // Set up the broadening function for these AtomTypes
-            BroadeningFunction function = intraBroadening.broadeningFunction(typeI.atomType(), typeJ.atomType());
-
-            // Convolute the bound partial with the broadening function
-            Filters::convolve(unweightedgr.boundPartial(i, j), function);
-        });
-    }
+    auto &types = unweightedgr.atomTypes();
+    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+        Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, false, true);
+    });
 
     // Add broadened bound partials back in to full partials
-    auto &types = unweightedgr.atomTypes();
     for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
         unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
     });

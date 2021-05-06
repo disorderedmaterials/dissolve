@@ -130,11 +130,10 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for (auto *rdfModule : intraBroadeningModules)
         {
             // Retrieve the PairBroadeningFunction
-            auto &broadening =
-                rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+            auto &broadening = rdfModule->keywords().retrieve<Functions::Function1DWrapper>("IntraBroadening");
 
             Messenger::print("Optimal IntraBroadening parameters for '{}' are now: {}\n", rdfModule->uniqueName(),
-                             broadening.summary());
+                             broadening.parameterSummary());
 
             // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
             auto smoothing = rdfModule->keywords().asInt("Smoothing");
@@ -147,9 +146,8 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 RDFModule::calculateUnweightedGR(procPool, cfg, originalGR, unweightedGR, broadening, smoothing);
             }
 
-            // Store the new broadening parameters in the restart file for info only (they won't be read in and
-            // used)
-            dissolve.processingModuleData().realise<PairBroadeningFunction>(
+            // Store the new broadening parameters in the restart file for info only (they won't be read in and used)
+            dissolve.processingModuleData().realise<Functions::Function1DWrapper>(
                 fmt::format("{}-IntraBroadening", rdfModule->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag) =
                 broadening;
         }
@@ -158,8 +156,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
         RefDataListIterator<Module, CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(neutronReferences);
         while (auto *module = neutronModuleIterator.iterate())
         {
-            // Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target
-            // Configurations
+            // Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
             for (Configuration *cfg : module->targetConfigurations())
                 dissolve.processingModuleData().realise<bool>("_ForceNeutronSQ", cfg->niceName()) = true;
 

@@ -10,10 +10,10 @@
 namespace Filters
 {
 // Perform point-wise convolution of data with the supplied BroadeningFunction
-void convolve(Data1D &data, const BroadeningFunction &function, bool variableOmega, bool normalise)
+void convolve(Data1D &data, const Functions::Function1DWrapper function, bool variableOmega, bool applyDKN)
 {
-    // Check for no broadening function specified
-    if (function.function() == BroadeningFunction::NoFunction)
+    // Check for no function specified
+    if (function.type() == Functions::Function1D::None)
         return;
 
     // Grab x and y arrays
@@ -29,8 +29,8 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
     if (variableOmega)
         for (auto &&[xCentre, yn] : zip(x, y))
         {
-            // Get normalisation for this convolution
-            norm = (normalise ? function.discreteKernelNormalisation(xDelta, xCentre) : 1.0);
+            // Get discrete kernel normalisation for this convolution if requested
+            norm = (applyDKN ? function.discreteKernelNormalisation(xDelta, xCentre) : 1.0);
 
             // Inner loop over whole array
             for (auto &&[xm, newYm] : zip(x, newY))
@@ -41,8 +41,8 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
         }
     else
     {
-        // Get normalisation for this convolution
-        norm = (normalise ? function.discreteKernelNormalisation(xDelta) : 1.0);
+        // Get discrete kernel normalisation for this convolution if requested
+        norm = (applyDKN ? function.discreteKernelNormalisation(xDelta) : 1.0);
 
         for (auto &&[xCentre, yn] : zip(x, y))
         {
@@ -58,10 +58,10 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
 }
 
 // Perform convolution of the supplied delta function into the supplied data
-void convolve(double xCentre, double value, const BroadeningFunction &function, Data1D &dest)
+void convolve(double xCentre, double value, const Functions::Function1DWrapper function, Data1D &dest)
 {
-    // Check for no broadening function specified
-    if (function.function() == BroadeningFunction::NoFunction)
+    // Check for no function specified
+    if (function.type() == Functions::Function1D::None)
         return;
 
     // Grab x and y arrays

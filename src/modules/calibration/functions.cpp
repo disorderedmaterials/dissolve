@@ -28,7 +28,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const std::vector<dou
     for (Module *rdfModule : intraBroadeningModules_)
     {
         // Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
-        auto &broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+        auto &broadening = rdfModule->keywords().retrieve<Functions::Function1DWrapper>("IntraBroadening");
 
         // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
         auto smoothing = rdfModule->keywords().asInt("Smoothing");

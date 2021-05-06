@@ -64,7 +64,7 @@ class SQModule : public Module
     // Calculate unweighted S(Q) from unweighted g(r)
     static bool calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
                                       double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
-                                      const BroadeningFunction &broadening);
+                                      Functions::Function1DWrapper broadening);
 
     /*
      * GUI Widget

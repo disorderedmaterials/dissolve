@@ -78,7 +78,7 @@ QMin 0.05
 QBroadening  OmegaDependentGaussian  0.02    # For SLS
 WindowFunction  None
 SourceRDFs  'RDF01'
-# Save  On
+Save  On
 EndModule
 
 Module  NeutronSQ  'D2O'
