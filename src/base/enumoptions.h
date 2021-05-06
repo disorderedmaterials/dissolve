@@ -49,6 +49,8 @@ template <class E> class EnumOptions : public EnumOptionsBase
     std::string name() const override { return name_; }
     // Return number of options available
     int nOptions() const override { return options_.size(); }
+    // Return nth enumerated value in the list
+    E enumerationByIndex(int index) const { return options_[index].enumeration(); }
     // Return nth keyword in the list
     std::string keywordByIndex(int index) const override { return options_[index].keyword(); }
     // Return description for the nth keyword in the list
