@@ -15,6 +15,7 @@ add_library(
   expression.cpp
   expressionvariablevector.cpp
   fileandformat.cpp
+  function1d.cpp
   geometrylist.cpp
   group.cpp
   integer.cpp
@@ -61,6 +62,7 @@ add_library(
   expression.h
   expressionvariablevector.h
   fileandformat.h
+  function1d.h
   geometrylist.h
   group.h
   integer.h

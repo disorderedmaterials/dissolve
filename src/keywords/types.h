@@ -26,6 +26,7 @@
 #include "keywords/expression.h"
 #include "keywords/expressionvariablevector.h"
 #include "keywords/fileandformat.h"
+#include "keywords/function1d.h"
 #include "keywords/geometrylist.h"
 #include "keywords/isotopologueset.h"
 #include "keywords/linkto.h"

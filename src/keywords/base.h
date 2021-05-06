@@ -41,6 +41,7 @@ class KeywordBase : public ListItem<KeywordBase>
         ExpressionData,
         ExpressionVariableVectorData,
         FileAndFormatData,
+        Function1DData,
         GeometryListData,
         IntegerData,
         IsotopologueListData,

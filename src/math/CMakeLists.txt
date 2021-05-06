@@ -12,6 +12,7 @@ add_library(
   extrema.cpp
   filters.cpp
   ft.cpp
+  function1d.cpp
   gaussfit.cpp
   gj.cpp
   histogram1d.cpp
@@ -48,6 +49,7 @@ add_library(
   extrema.h
   filters.h
   ft.h
+  function1d.h
   functionspace.h
   gaussfit.h
   gj.h
