@@ -82,9 +82,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double magjisq, magji, magjk, dp, force, r;
             std::shared_ptr<Atom> i, j, k, l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
-            Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
-            Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-            double phi, du_dphi;
+            Vec3<double> xpj, xpk, temp;
+            double du_dphi;
             std::shared_ptr<Molecule> molN, molM;
             const auto *box = cfg->box();
             double scale;
@@ -129,7 +128,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             if (testAnalytic)
                                 vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r) * scale;
                             else
-                                vecji *= potentialMap.force(molN->atom(ii), molN->atom(jj), r) * scale;
+                                vecji *= potentialMap.force(*molN->atom(ii), *molN->atom(jj), r) * scale;
                             fInter[i->arrayIndex()] += vecji;
                             fInter[j->arrayIndex()] -= vecji;
                         }
@@ -161,7 +160,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 if (testAnalytic)
                                     vecji *= potentialMap.analyticForce(i, j, r);
                                 else
-                                    vecji *= potentialMap.force(i, j, r);
+                                    vecji *= potentialMap.force(*i, *j, r);
 
                                 fInter[i->arrayIndex()] += vecji;
                                 fInter[j->arrayIndex()] -= vecji;
@@ -229,34 +228,33 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         veckl = box->minimumVector(l, k);
 
                         // Calculate torsion force parameters
-                        ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
-                                                                dxpk_dlk, dcos_dxpj, dcos_dxpk);
-                        du_dphi = torsion.force(phi * DEGRAD);
+                        auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
+                        du_dphi = torsion.force(tp.phi_ * DEGRAD);
 
                         // Sum forces on Atoms
-                        fIntra[i->arrayIndex()].add(du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0)),
-                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1)),
-                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2)));
+                        fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                                                    du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
+                                                    du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
                         fIntra[j->arrayIndex()].add(
-                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
-                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0))),
-                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
-                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1))),
-                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
-                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2))));
+                            du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
+                                       tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
+                            du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
+                                       tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1))),
+                            du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
+                                       tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
 
                         fIntra[k->arrayIndex()].add(
-                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
-                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0))),
-                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
-                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1))),
-                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
-                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2))));
+                            du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
+                                       tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
+                            du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
+                                       tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(1))),
+                            du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
+                                       tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
-                        fIntra[l->arrayIndex()].add(du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0)),
-                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1)),
-                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2)));
+                        fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                                                    du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
+                                                    du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                     }
 
                     // Improper forces
@@ -274,34 +272,33 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         veckl = box->minimumVector(l, k);
 
                         // Calculate improper force parameters
-                        ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
-                                                                dxpk_dlk, dcos_dxpj, dcos_dxpk);
-                        du_dphi = imp.force(phi * DEGRAD);
+                        auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
+                        du_dphi = imp.force(tp.phi_ * DEGRAD);
 
                         // Sum forces on Atoms
-                        fIntra[i->arrayIndex()].add(du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0)),
-                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1)),
-                                                    du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2)));
+                        fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                                                    du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
+                                                    du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
                         fIntra[j->arrayIndex()].add(
-                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
-                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0))),
-                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
-                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1))),
-                            du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
-                                       dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2))));
+                            du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
+                                       tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
+                            du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
+                                       tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1))),
+                            du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
+                                       tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
 
                         fIntra[k->arrayIndex()].add(
-                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
-                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0))),
-                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
-                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1))),
-                            du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
-                                       dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2))));
+                            du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
+                                       tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
+                            du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
+                                       tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(1))),
+                            du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
+                                       tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
-                        fIntra[l->arrayIndex()].add(du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0)),
-                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1)),
-                                                    du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2)));
+                        fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                                                    du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
+                                                    du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                     }
                 }
             }

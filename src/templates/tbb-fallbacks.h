@@ -24,4 +24,16 @@ template <typename T> class counting_iterator
     std::vector<T> indices_;
 };
 
+template <typename T> class combinable
+{
+    public:
+    template <typename Lambda> combinable(Lambda init) { data_ = init(); }
+    T &local() { return data_; }
+    template <typename Lambda> T combine(Lambda) { return data_; }
+    template <typename Lambda> void combine_each(Lambda unaryOp) { return unaryOp(data_); }
+
+    private:
+    T data_;
+};
+
 } // namespace dissolve

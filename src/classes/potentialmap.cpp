@@ -114,18 +114,14 @@ double PotentialMap::analyticEnergy(const std::shared_ptr<Atom> i, const std::sh
 }
 
 // Return force between Atoms at distance specified
-double PotentialMap::force(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const
+double PotentialMap::force(const Atom &i, const Atom &j, double r) const
 {
-    assert(r >= 0.0);
-    assert(i && j);
-    assert(i->speciesAtom() && j->speciesAtom());
-
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return pp->includeCoulomb()
                ? pp->force(r)
-               : pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
+               : pp->force(r) + pp->analyticCoulombForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r);
 }
 
 // Return force between SpeciesAtoms at distance specified

@@ -6,6 +6,7 @@
 #include "base/processpool.h"
 #include "classes/cellarray.h"
 #include "classes/kernelflags.h"
+#include <optional>
 
 // Forward Declarations
 class Atom;
@@ -22,10 +23,11 @@ class SpeciesTorsion;
 class ForceKernel
 {
     public:
-    ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, std::vector<Vec3<double>> &f,
-                double cutoffDistance = -1.0);
+    ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, double cutoffDistance = -1.0);
     ~ForceKernel() = default;
 
+    // alias for force storage vector
+    using ForceVector = std::vector<Vec3<double>>;
     /*
      * Source Data
      */
@@ -36,98 +38,107 @@ class ForceKernel
     const PotentialMap &potentialMap_;
     // Squared cutoff distance to use in calculation
     double cutoffDistanceSquared_;
-    // Force vector
-    std::vector<Vec3<double>> &f_;
 
     /*
      * Internal Force Calculation
      */
     private:
     // Calculate inter-particle forces between Atoms provided (no minimum image calculation)
-    void forcesWithoutMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale = 1.0);
+    void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
     // Calculate inter-particle forces between Atoms provided (minimum image calculation)
-    void forcesWithMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale = 1.0);
+    void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
 
     /*
      * PairPotential Terms
      */
     public:
     // Calculate forces between atoms provided
-    void forces(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ);
+    void forces(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ, ForceVector &f) const;
     // Calculate forces between two cells
-    void forces(Cell *cell, Cell *otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy);
+    void forces(Cell *cell, Cell *otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy,
+                ForceVector &f) const;
     // Calculate forces between Cell and its neighbours
-    void forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy);
+    void forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between Atom and Cell
-    void forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy);
+    void forces(const Atom &i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between atom and world
-    void forces(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy);
+    void forces(const Atom &i, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
+
+    struct TorsionParameters
+    {
+        TorsionParameters() = default;
+        double phi_;
+        Matrix3 dxpj_dij_;
+        Matrix3 dxpj_dkj_;
+        Matrix3 dxpk_dkj_;
+        Matrix3 dxpk_dlk_;
+        Vec3<double> dcos_dxpj_;
+        Vec3<double> dcos_dxpk_;
+    };
+
+    struct AngleParameters
+    {
+        AngleParameters() = default;
+        double theta_;
+        Vec3<double> dfi_dtheta_;
+        Vec3<double> dfk_dtheta_;
+    };
+    // Calculate angle force parameters from supplied vectors
+    static AngleParameters calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk);
+    // Calculate torsion force parameters from supplied vectors
+    static TorsionParameters calculateTorsionParameters(const Vec3<double> &vecji, const Vec3<double> &vecjk,
+                                                        const Vec3<double> &veckl);
 
     /*
      * Intramolecular Terms
      */
     private:
-    // Local calculated angle parameters
-    double theta_;
-    Vec3<double> dfi_dtheta_, dfk_dtheta_;
-    // Local calculated torsion parameters
-    double phi_;
-    Matrix3 dxpj_dij_, dxpj_dkj_, dxpk_dkj_, dxpk_dlk_;
-    Vec3<double> dcos_dxpj_, dcos_dxpk_;
-
-    private:
-    // Calculate angle force parameters from supplied vectors, storing result in local class variables
-    void calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk);
-    // Calculate torsion force parameters from supplied vectors, storing result in local class variables
-    void calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl);
-    // Sum torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
-    void sumTorsionForceI(double du_dphi, int index);
+    // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
+    void addTorsionForceI(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
     // Sum torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index
-    void sumTorsionForceJ(double du_dphi, int index);
+    void addTorsionForceJ(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
     // Sum torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index
-    void sumTorsionForceK(double du_dphi, int index);
+    void addTorsionForceK(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
     // Sum torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index
-    void sumTorsionForceL(double du_dphi, int index);
+    void addTorsionForceL(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
 
     public:
+    // Bond terms
+    // Calculate SpeciesBond forces for given atoms
+    void forces(const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
     // Calculate SpeciesBond forces
-    void forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j);
-    // Calculate SpeciesBond forces
-    void forces(const SpeciesBond &bond);
+    void forces(const SpeciesBond &bond, ForceVector &f) const;
     // Calculate SpeciesBond forces for specified Atom only
-    void forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond &bond, const std::shared_ptr<Atom> i,
-                const std::shared_ptr<Atom> j);
-    // Calculate angle force parameters from supplied vectors, storing results in supplied variables
-    static void calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk, double &theta, Vec3<double> &dfi_dtheta,
-                                         Vec3<double> &dfk_dtheta);
+    void forces(const Atom &onlyThis, const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
+
+    // Angle terms
+    // Calculate SpeciesAngle forces for given atoms
+    void forces(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k, ForceVector &f) const;
     // Calculate SpeciesAngle forces
-    void forces(const SpeciesAngle &angle, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                const std::shared_ptr<Atom> k);
-    // Calculate SpeciesAngle forces
-    void forces(const SpeciesAngle &angle);
+    void forces(const SpeciesAngle &angle, ForceVector &f) const;
     // Calculate SpeciesAngle forces for specified Atom only
-    void forces(const std::shared_ptr<Atom> onlyThis, const SpeciesAngle &angle, const std::shared_ptr<Atom> i,
-                const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k);
-    // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
-    static void calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl,
-                                           double &phi, Matrix3 &dxpj_dij, Matrix3 &dxpj_dkj, Matrix3 &dxpk_dkj,
-                                           Matrix3 &dxpk_dlk, Vec3<double> &dcos_dxpj, Vec3<double> &dcos_dxpk);
+    void forces(const Atom &onlyThis, const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k,
+                ForceVector &f) const;
+
+    // Torsion terms
+    // Calculate SpeciesTorsion forces for given atoms
+    void forces(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
+                ForceVector &f) const;
     // Calculate SpeciesTorsion forces
-    void forces(const SpeciesTorsion &torsion, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
-    // Calculate SpeciesTorsion forces
-    void forces(const SpeciesTorsion &torsion);
+    void forces(const SpeciesTorsion &torsion, ForceVector &f) const;
     // Calculate SpeciesTorsion forces for specified Atom only
-    void forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTorsion &torsion, const std::shared_ptr<Atom> i,
-                const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
+    void forces(const Atom &onlyThis, const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
+                ForceVector &f) const;
+
+    // Improper Terms
+    // Calculate SpeciesImproper forces for given atoms
+    void forces(const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
+                ForceVector &f) const;
     // Calculate SpeciesImproper forces
-    void forces(const SpeciesImproper &torsion, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
-    // Calculate SpeciesImproper forces
-    void forces(const SpeciesImproper &torsion);
+    void forces(const SpeciesImproper &improper, ForceVector &f) const;
     // Calculate SpeciesImproper forces for specified Atom only
-    void forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImproper &torsion, const std::shared_ptr<Atom> i,
-                const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
+    void forces(const Atom &onlyThis, const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k,
+                const Atom &l, ForceVector &f) const;
 
     /*
      * Parallel Comms
