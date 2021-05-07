@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
 #include "math/function1d.h"
 #include "templates/algorithms.h"
-#include <cmath>
+#include <math.h>
+
 #include <map>
 
 namespace Functions
