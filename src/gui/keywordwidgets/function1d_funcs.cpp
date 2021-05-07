@@ -8,6 +8,8 @@
 
 Q_DECLARE_METATYPE(Functions::Function1D);
 
+#define MaxParams 6
+
 Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
@@ -110,7 +112,7 @@ void Function1DKeywordWidget::updateWidgetValues(const CoreData &coreData)
     ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.type())));
 
     const auto nParams = function.nParameters();
-    for (auto n = 0; n < 6; ++n)
+    for (auto n = 0; n < MaxParams; ++n)
     {
         spins_[n]->setValue(nParams > n ? function.parameters()[n] : 0.0);
         labels_[n]->setText(nParams > n ? QString::fromStdString(function.parameterName(n)) : "N/A");
