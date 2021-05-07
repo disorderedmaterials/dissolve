@@ -260,7 +260,7 @@ bool Function1DWrapper::set(Function1D func, std::vector<double> params)
         return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n", function1D().keyword(type_),
                                 function_.nParameters(), params.size());
 
-    parameters_ = params;
+    parameters_ = std::move(params);
     calculateInternalParameters();
 
     return true;
