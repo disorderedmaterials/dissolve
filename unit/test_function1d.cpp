@@ -46,19 +46,19 @@ TEST_F(Function1DTest, DKN)
     Data1D xy;
 
     // Gaussian
-    f.set(Functions::Function1D::Gaussian, {0.2});
+    f.setFunctionAndParameters(Functions::Function1D::Gaussian, {0.2});
     xy = generate(f);
     EXPECT_NEAR(1.0, f.discreteKernelNormalisation(0.01) * std::accumulate(xy.values().begin(), xy.values().end(), 0.0),
                 1.0e-10);
 
     // Scaled Gaussian
-    f.set(Functions::Function1D::ScaledGaussian, {4.325215, 0.38});
+    f.setFunctionAndParameters(Functions::Function1D::ScaledGaussian, {4.325215, 0.38});
     xy = generate(f);
     EXPECT_NEAR(1.0, f.discreteKernelNormalisation(0.01) * std::accumulate(xy.values().begin(), xy.values().end(), 0.0),
                 1.0e-10);
 
     // Omega-Dependent Gaussian
-    f.set(Functions::Function1D::OmegaDependentGaussian, {0.189});
+    f.setFunctionAndParameters(Functions::Function1D::OmegaDependentGaussian, {0.189});
     for (auto omega : omegas)
     {
         xy = generate(f, omega);
@@ -76,7 +76,7 @@ TEST_F(Function1DTest, DKN)
     }
 
     // Scaled Gaussian
-    f.set(Functions::Function1D::GaussianC2, {0.1, 0.3});
+    f.setFunctionAndParameters(Functions::Function1D::GaussianC2, {0.1, 0.3});
     for (auto omega : omegas)
     {
         xy = generate(f, omega);

@@ -41,7 +41,7 @@ bool Function1DKeyword::read(LineParser &parser, int startArg, const CoreData &c
             Functions::function1D().keyword(func), name());
 
     // Set function and params
-    auto result = data_.set(func, parser.argvd(startArg + 1));
+    auto result = data_.setFunctionAndParameters(func, parser.argvd(startArg + 1));
     if (result)
         set_ = true;
 

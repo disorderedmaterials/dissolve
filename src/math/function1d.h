@@ -103,7 +103,7 @@ class Function1DWrapper
 
     public:
     // Set function type and parameters
-    bool set(Function1D func, std::vector<double> params);
+    bool setFunctionAndParameters(Function1D func, std::vector<double> params);
     // Set current function type
     void setFunction(Function1D func);
     // Return function type

@@ -251,7 +251,7 @@ Function1DWrapper::Function1DWrapper(Function1D func, std::vector<double> params
 void Function1DWrapper::calculateInternalParameters() { internalParameters_ = function_.setup()(parameters_); }
 
 // Set function type and parameters
-bool Function1DWrapper::set(Function1D func, std::vector<double> params)
+bool Function1DWrapper::setFunctionAndParameters(Function1D func, std::vector<double> params)
 {
     type_ = func;
     function_ = functions1D_.at(type_);
