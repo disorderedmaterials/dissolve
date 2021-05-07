@@ -113,7 +113,7 @@ class Function1DWrapper
     // Set current function parameters
     bool setParameters(std::vector<double> params);
     // Return current parameters
-    const std::vector<double> parameters() const;
+    const std::vector<double> &parameters() const;
     // Return name of nth parameter
     std::string parameterName(int i) const;
     // Return parameter summary ("name = value, ...")

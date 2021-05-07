@@ -294,7 +294,7 @@ bool Function1DWrapper::setParameters(std::vector<double> params)
 int Function1DWrapper::nParameters() const { return function_.nParameters(); }
 
 // Return current parameters
-const std::vector<double> Function1DWrapper::parameters() const { return parameters_; }
+const std::vector<double> &Function1DWrapper::parameters() const { return parameters_; }
 
 // Return name of nth parameter
 std::string Function1DWrapper::parameterName(int i) const { return function_.parameterNames()[i]; }
