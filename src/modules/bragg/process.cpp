@@ -32,6 +32,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto qMin = keywords_.asDouble("QMin");
     const auto multiplicity = keywords_.asVec3Int("Multiplicity");
     const auto saveReflections = keywords_.asBool("SaveReflections");
+    const auto testReflections = keywords_.asString("TestReflections");
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n", qMin,
@@ -84,6 +85,65 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Form partial and total reflection functions
     formReflectionFunctions(dissolve.processingModuleData(), procPool, cfg, qMin, qDelta, qMax);
 
+    // Test reflection data
+    if (!testReflections.empty())
+    {
+        Messenger::print("Testing calculated intensity data against reference...\n");
+
+        // Attempt to load the specified file
+        LineParser reflectionParser(&procPool);
+        if (!reflectionParser.openInput(testReflections))
+            return false;
+
+        // Retrieve BraggReflection data from the Configuration's module data
+        const auto &braggReflections =
+            dissolve.processingModuleData().value<const std::vector<BraggReflection>>("Reflections", uniqueName());
+
+        auto nErrors = 0;
+        while (!reflectionParser.eofOrBlank())
+        {
+            if (reflectionParser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+
+            // Line format is : ArrayIndex  Q     h k l     mult    Intensity(0,0)  Intensity(0,1) ...
+            auto id = reflectionParser.argi(0);
+            if (fabs(reflectionParser.argd(1) - braggReflections[id].q()) > 1.0e-3)
+            {
+                Messenger::print("Q value of reflection {} does not match reference ({} vs {}).\n", id,
+                                 braggReflections[id].q(), reflectionParser.argd(1));
+                ++nErrors;
+            }
+            auto hkl = reflectionParser.arg3i(2);
+            if ((hkl - braggReflections[id].hkl()).absMax() != 0)
+            {
+                Messenger::print("Miller indices of reflection {} do not match reference ({} {} {} vs {} {} {}).\n", id,
+                                 braggReflections[id].hkl().x, braggReflections[id].hkl().y, braggReflections[id].hkl().z,
+                                 hkl.x, hkl.y, hkl.z);
+                ++nErrors;
+            }
+            if (reflectionParser.argi(5) != braggReflections[id].nKVectors())
+            {
+                Messenger::print("Multiplicity of reflection {} does not match reference ({} vs {}).\n", id,
+                                 braggReflections[id].nKVectors(), reflectionParser.argi(5));
+                ++nErrors;
+            }
+            for (auto n = 6; n < reflectionParser.nArgs(); ++n)
+            {
+                if (fabs(reflectionParser.argd(n) - braggReflections[id].intensities()[n - 6]) > 1.0e-3)
+                {
+                    Messenger::print("Intensity value {} of reflection {} does not match reference ({} vs {}).\n", n - 6, id,
+                                     braggReflections[id].intensities()[n - 6], reflectionParser.argd(n));
+                    ++nErrors;
+                }
+            }
+        }
+
+        if (nErrors == 0)
+            Messenger::print("All data match.\n");
+        else
+            return Messenger::error("Calculated and reference data are inconsistent.\n");
+    }
+
     // Save reflection data?
     if (saveReflections)
     {
@@ -95,12 +155,12 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         LineParser braggParser(&procPool);
         if (!braggParser.openOutput(fmt::format("{}-Reflections.txt", uniqueName_)))
             return false;
-        braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
+        braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
         auto count = 0;
         for (const auto &reflxn : braggReflections)
         {
-            if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", ++count, reflxn.q(), reflxn.nKVectors(),
-                                        reflxn.intensity(0, 0)))
+            if (!braggParser.writeLineF("{:6d}  {:10.6f} {} {} {} {:8d}  {:10.6e}\n", ++count, reflxn.q(), reflxn.hkl().x,
+                                        reflxn.hkl().y, reflxn.hkl().z, reflxn.nKVectors(), reflxn.intensity(0, 0)))
                 return false;
         }
         braggParser.closeFiles();
@@ -116,11 +176,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     return false;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                 for (const auto &reflxn : braggReflections)
-                {
                     if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", reflxn.q(), reflxn.intensity(i, j)))
                         return false;
-                    intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
-                }
                 intensityParser.closeFiles();
 
                 return EarlyReturn<bool>::Continue;
