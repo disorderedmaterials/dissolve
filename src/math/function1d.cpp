@@ -15,9 +15,9 @@ namespace Functions
  */
 
 FunctionDefinition1D::FunctionDefinition1D(std::vector<std::string> parameterNames, int properties, FunctionSetup setup,
-                                           Function1DXOmega y, Function1DXOmega yFT, Function1DXOmega dkn)
+                                           Function1DXOmega y, Function1DXOmega yFT, Function1DOmega norm)
     : parameterNames_(parameterNames), properties_(properties), setup_(std::move(setup)), y_(std::move(y)),
-      yFT_(std::move(yFT)), discreteKernelNormaliser_(std::move(dkn))
+      yFT_(std::move(yFT)), normaliser_(std::move(norm))
 {
 }
 
@@ -39,15 +39,15 @@ Function1DXOmega FunctionDefinition1D::y() const { return y_; }
 // Return function for FT of y value at the specified x, omega
 Function1DXOmega FunctionDefinition1D::yFT() const { return yFT_; }
 
-// Return discrete normalisation function
-Function1DXOmega FunctionDefinition1D::dkn() const { return discreteKernelNormaliser_; }
+// Return normalisation function
+Function1DOmega FunctionDefinition1D::normalisation() const { return normaliser_; }
 
 // One-Dimensional Function Definitions
 static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
     // No Function - always returns 1.0
     {Function1D::None,
      {{},
-      FunctionProperties::FourierTransform | FunctionProperties::DiscreteKernelNormalisation,
+      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
       [](std::vector<double> p) { return p; },
       [](double x, double omega, const std::vector<double> &p) { return 1.0; },
       [](double x, double omega, const std::vector<double> &p) { return 1.0; }}},
@@ -61,7 +61,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      */
     {Function1D::Gaussian,
      {{"fwhm"},
-      FunctionProperties::FourierTransform | FunctionProperties::DiscreteKernelNormalisation,
+      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
       [](std::vector<double> p) {
           p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(1.0 / p[1]);
@@ -80,11 +80,11 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
        */
       [](double x, double omega, const std::vector<double> &p) { return exp(-(0.5 * x * x * p[1] * p[1])); },
       /*
-       *            2 * deltaX
-       * DKN = ----------------------
-       *       sqrt(pi / ln 2) * fwhm
+       *             1
+       * Norm = ------------
+       *        c sqrt(2 pi)
        */
-      [](double dx, double omega, const std::vector<double> &p) { return (2.0 * dx) / (sqrt(M_PI / log(2.0)) * p[0]); }}},
+      [](double omega, const std::vector<double> &p) { return p[2] / sqrt(2.0 * M_PI); }}},
     /*
      * Gaussian with prefactor
      *
@@ -96,7 +96,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      */
     {Function1D::ScaledGaussian,
      {{"A", "fwhm"},
-      FunctionProperties::FourierTransform | FunctionProperties::DiscreteKernelNormalisation,
+      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
       [](std::vector<double> p) {
           p.push_back(p[1] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(1.0 / p[2]);
@@ -115,13 +115,11 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
        */
       [](double x, double omega, const std::vector<double> &p) { return p[0] * exp(-(0.5 * x * x * p[2] * p[2])); },
       /*
-       *             2 * deltaX
-       * DKN = --------------------------
-       *       sqrt(pi / ln 2) * fwhm * A
+       *              1
+       * Norm = --------------
+       *        A c sqrt(2 pi)
        */
-      [](double dx, double omega, const std::vector<double> &p) {
-          return (2.0 * dx) / (sqrt(M_PI / log(2.0)) * p[0] * p[1]);
-      }}},
+      [](double omega, const std::vector<double> &p) { return p[3] / (p[0] * sqrt(2.0 * M_PI)); }}},
     /*
      * Gaussian with omega-dependent fwhm
      *
@@ -132,7 +130,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      */
     {Function1D::OmegaDependentGaussian,
      {{"fwhm(x)"},
-      FunctionProperties::FourierTransform | FunctionProperties::DiscreteKernelNormalisation,
+      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
       [](std::vector<double> p) {
           p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(1.0 / p[1]);
@@ -155,13 +153,11 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
           return exp(-(0.5 * x * x * (p[1] * omega) * (p[1] * omega)));
       },
       /*
-       *                2 * deltaX
-       * DKN = ------------------------------
-       *       sqrt(pi / ln 2) * fwhm * omega
+       *                1
+       * Norm = ------------------
+       *        c omega sqrt(2 pi)
        */
-      [](double dx, double omega, const std::vector<double> &p) {
-          return (2.0 * dx) / (sqrt(M_PI / log(2.0)) * p[0] * omega);
-      }}},
+      [](double omega, const std::vector<double> &p) { return 1.0 / (p[1] * omega * sqrt(2.0 * M_PI)); }}},
     /*
      * Gaussian with omega-independent and omega-dependent fwhm
      *
@@ -200,13 +196,11 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
           return exp(-(0.5 * x * x * (p[2] + p[3] * omega) * (p[2] + p[3] * omega)));
       },
       /*
-       *                  2 * deltaX
-       * DKN = ----------------------------------------
-       *       sqrt(pi / ln 2) * (fwhm1 + fwhm2 * omega)
+       *                    1
+       * Norm = --------------------------
+       *        (c1 + c2 omega) sqrt(2 pi)
        */
-      [](double dx, double omega, const std::vector<double> &p) {
-          return (2.0 * dx) / (sqrt(M_PI / log(2.0)) * (p[0] + p[1] * omega));
-      }}}};
+      [](double omega, const std::vector<double> &p) { return 1.0 / ((p[2] + p[3] * omega) * sqrt(2.0 * M_PI)); }}}};
 
 // Return enum option info for AveragingScheme
 EnumOptions<Function1D> function1D()
@@ -317,9 +311,9 @@ double Function1DWrapper::yFT(double x, double omega) const
     return function_.yFT() ? function_.yFT()(x, omega, internalParameters_) : 0.0;
 }
 
-// Return discrete normalisation factor for specified bin width
-double Function1DWrapper::discreteKernelNormalisation(double dx, double omega) const
+// Return normalisation factor at specified omega
+double Function1DWrapper::normalisation(double omega) const
 {
-    return function_.dkn() ? function_.dkn()(dx, omega, internalParameters_) : 1.0;
+    return function_.normalisation() ? function_.normalisation()(omega, internalParameters_) : 1.0;
 }
 } // namespace Functions

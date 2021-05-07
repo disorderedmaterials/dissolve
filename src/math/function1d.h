@@ -15,7 +15,7 @@ enum FunctionProperty
 {
     None = 0,
     FourierTransform = 1,
-    DiscreteKernelNormalisation = 2
+    Normalisation = 2
 };
 };
 
@@ -24,15 +24,17 @@ namespace Functions
 // Function Types
 // -- Setup function parameters, returning vector augmented with any precalculated additional parameters
 using FunctionSetup = std::function<std::vector<double>(std::vector<double> parameters)>;
-// -- Calculate value at specified local x and (optional) omega
+// -- Function taking x and omega arguments and returning a value
 using Function1DXOmega = std::function<double(double x, double omega, const std::vector<double> &parameters)>;
+// -- Function taking omega argument and returning a value
+using Function1DOmega = std::function<double(double omega, const std::vector<double> &parameters)>;
 
 // One-Dimensional Function Definition
 class FunctionDefinition1D
 {
     public:
     FunctionDefinition1D(std::vector<std::string> parameterNames, int properties, FunctionSetup setup, Function1DXOmega y,
-                         Function1DXOmega yFT = {}, Function1DXOmega dkn = {});
+                         Function1DXOmega yFT = {}, Function1DOmega norm = {});
 
     private:
     // Names of parameters defining the function
@@ -41,7 +43,8 @@ class FunctionDefinition1D
     int properties_;
     // Functions
     FunctionSetup setup_;
-    Function1DXOmega y_, yFT_, discreteKernelNormaliser_;
+    Function1DXOmega y_, yFT_;
+    Function1DOmega normaliser_;
 
     public:
     // Return number of parameters the function requires
@@ -56,8 +59,8 @@ class FunctionDefinition1D
     Function1DXOmega y() const;
     // Return function for FT of y value
     Function1DXOmega yFT() const;
-    // Return discrete normalisation function
-    Function1DXOmega dkn() const;
+    // Return normalisation function
+    Function1DOmega normalisation() const;
 };
 
 // Function Types
@@ -122,7 +125,7 @@ class Function1DWrapper
     double y(double x, double omega = 0.0) const;
     // Return Fourier transformed y value at specified x, omega
     double yFT(double x, double omega = 0.0) const;
-    // Return discrete normalisation factor for specified bin width
-    double discreteKernelNormalisation(double dx, double omega = 0.0) const;
+    // Return normalisation factor at specified omega
+    double normalisation(double omega = 0.0) const;
 };
 } // namespace Functions

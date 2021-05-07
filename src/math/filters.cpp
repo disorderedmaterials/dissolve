@@ -10,7 +10,7 @@
 namespace Filters
 {
 // Perform point-wise convolution of data with the supplied BroadeningFunction
-void convolve(Data1D &data, const Functions::Function1DWrapper function, bool variableOmega, bool applyDKN)
+void convolve(Data1D &data, const Functions::Function1DWrapper function, bool variableOmega, bool normalise)
 {
     // Check for no function specified
     if (function.type() == Functions::Function1D::None)
@@ -29,8 +29,8 @@ void convolve(Data1D &data, const Functions::Function1DWrapper function, bool va
     if (variableOmega)
         for (auto &&[xCentre, yn] : zip(x, y))
         {
-            // Get discrete kernel normalisation for this convolution if requested
-            norm = (applyDKN ? function.discreteKernelNormalisation(xDelta, xCentre) : 1.0);
+            // Get normalisation factor for this convolution if requested
+            norm = (normalise ? xDelta * function.normalisation(xCentre) : 1.0);
 
             // Inner loop over whole array
             for (auto &&[xm, newYm] : zip(x, newY))
@@ -41,8 +41,8 @@ void convolve(Data1D &data, const Functions::Function1DWrapper function, bool va
         }
     else
     {
-        // Get discrete kernel normalisation for this convolution if requested
-        norm = (applyDKN ? function.discreteKernelNormalisation(xDelta) : 1.0);
+        // Get normalisation factor for this convolution if requested
+        norm = (normalise ? xDelta * function.normalisation() : 1.0);
 
         for (auto &&[xCentre, yn] : zip(x, y))
         {
