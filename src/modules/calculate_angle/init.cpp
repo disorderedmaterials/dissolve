@@ -287,14 +287,14 @@ void CalculateAngleModule::initialise()
                   "Whether to exclude correlations between A and C sites on the same molecule", "<True|False>");
 
     // Export
-    keywords_.link("Export", processAB_->keywords().find("Save"), "SaveAB", "Whether to save calculated A-B RDF to disk",
-                   "<True|False>");
-    keywords_.link("Export", processBC_->keywords().find("Save"), "SaveBC", "Whether to save calculated B-C RDF to disk",
-                   "<True|False>");
-    keywords_.link("Export", processAngle_->keywords().find("Save"), "SaveAngle",
-                   "Whether to save calculated A-B-C angle histrogram to disk", "<True|False>");
-    keywords_.link("Export", processDAngleAB_->keywords().find("Save"), "SaveDAngleAB",
-                   "Whether to save calculated (A-B)-C distance-angle map to disk", "<True|False>");
-    keywords_.link("Export", processDAngleBC_->keywords().find("Save"), "SaveDAngleBC",
-                   "Whether to save calculated A-(B-C) distance-angle map to disk", "<True|False>");
+    keywords_.link("Export", processAB_->keywords().find("Export"), "ExportAB",
+                   "File format and file name under which to save calculated A-B RDF data");
+    keywords_.link("Export", processBC_->keywords().find("Export"), "ExportBC",
+                   "File format and file name under which to save calculated B-C RDF data");
+    keywords_.link("Export", processAngle_->keywords().find("Export"), "ExportAngle",
+                   "File format and file name under which to save calculated A-B-C angle histogram");
+    keywords_.link("Export", processDAngleAB_->keywords().find("Export"), "ExportDAngleAB",
+                   "File format and file name under which to save calculated (A-B)-C distance-angle map");
+    keywords_.link("Export", processDAngleBC_->keywords().find("Export"), "ExportDAngleBC",
+                   "File format and file name under which to save calculated A-(B-C) distance-angle map");
 }
