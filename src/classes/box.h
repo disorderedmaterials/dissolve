@@ -17,22 +17,21 @@ class Box
 {
     public:
     Box();
-    // Virtual Destructor
-    virtual ~Box();
-    void operator=(const Box &source);
+    virtual ~Box() = default;
+    Box &operator=(const Box &source) = default;
 
     /*
      * Basic Definition
      */
     public:
     // Box Type Enum
-    enum BoxType
+    enum class BoxType
     {
-        NonPeriodicBoxType,  /* Non-periodic system - cubic box, but no minimum image calculation */
-        CubicBoxType,        /* Cubic box with equivalent cell lengths, and right-angles */
-        OrthorhombicBoxType, /* Orthorhombic box with inequivalent cell lengths, and right-angles */
-        MonoclinicBoxType,   /* Monoclinic box with cell angles a != 90, and b == c == 90 */
-        TriclinicBoxType     /* Triclinic box with cell angles a != b != c != 90 */
+        NonPeriodic,  /* Non-periodic system - cubic box, but no minimum image calculation */
+        Cubic,        /* Cubic box with A == B == C, alphe == beta == gamma == 90 */
+        Orthorhombic, /* Orthorhombic box with A != B != C, alphe == beta == gamma = 90 */
+        Monoclinic,   /* Monoclinic box with A != B != C, alpha != 90, and beta == gamma == 90 */
+        Triclinic     /* Triclinic box with A != B != C, alpha != beta != gamma != 90 */
     };
     // Return enum options for BoxType
     static EnumOptions<BoxType> boxTypes();
@@ -179,8 +178,8 @@ class Box
 class NonPeriodicBox : public Box
 {
     public:
-    NonPeriodicBox(double length);
-    ~NonPeriodicBox() override;
+    NonPeriodicBox(double length = 1.0);
+    ~NonPeriodicBox() override = default;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
@@ -236,7 +235,7 @@ class CubicBox : public Box
 {
     public:
     CubicBox(double length);
-    ~CubicBox() override;
+    ~CubicBox() override = default;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
@@ -292,7 +291,7 @@ class OrthorhombicBox : public Box
 {
     public:
     OrthorhombicBox(const Vec3<double> lengths);
-    ~OrthorhombicBox() override;
+    ~OrthorhombicBox() override = default;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
@@ -348,7 +347,7 @@ class MonoclinicBox : public Box
 {
     public:
     MonoclinicBox(const Vec3<double> lengths, double beta);
-    ~MonoclinicBox() override;
+    ~MonoclinicBox() override = default;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
@@ -404,7 +403,7 @@ class TriclinicBox : public Box
 {
     public:
     TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles);
-    ~TriclinicBox() override;
+    ~TriclinicBox() override = default;
 
     /*
      * Minimum Image Routines (Virtual Implementations)

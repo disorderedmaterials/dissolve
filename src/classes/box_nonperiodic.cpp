@@ -8,7 +8,7 @@
 
 NonPeriodicBox::NonPeriodicBox(double length) : Box()
 {
-    type_ = Box::NonPeriodicBoxType;
+    type_ = Box::BoxType::NonPeriodic;
     periodic_.set(false, false, false);
 
     // Construct axes_
@@ -23,8 +23,6 @@ NonPeriodicBox::NonPeriodicBox(double length) : Box()
     // Finalise associated data
     finalise();
 }
-
-NonPeriodicBox::~NonPeriodicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

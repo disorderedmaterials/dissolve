@@ -10,30 +10,9 @@
 
 Box::Box()
 {
-    type_ = Box::CubicBoxType;
+    type_ = Box::BoxType::Cubic;
     periodic_.set(true, true, true);
     volume_ = 0.0;
-}
-
-// Virtual Destructor
-Box::~Box() = default;
-
-void Box::operator=(const Box &source)
-{
-    // Basic Definition
-    type_ = source.type_;
-    a_ = source.a_;
-    b_ = source.b_;
-    c_ = source.c_;
-    ra_ = source.ra_;
-    rb_ = source.rb_;
-    rc_ = source.rc_;
-    alpha_ = source.alpha_;
-    beta_ = source.beta_;
-    gamma_ = source.gamma_;
-    axes_ = source.axes_;
-    inverseAxes_ = source.inverseAxes_;
-    periodic_ = source.periodic_;
 }
 
 /*
@@ -43,11 +22,11 @@ void Box::operator=(const Box &source)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    return EnumOptions<Box::BoxType>("BoxType", {{Box::NonPeriodicBoxType, "NonPeriodic"},
-                                                 {Box::CubicBoxType, "Cubic"},
-                                                 {Box::OrthorhombicBoxType, "Orthorhombic"},
-                                                 {Box::MonoclinicBoxType, "Monoclinic"},
-                                                 {Box::TriclinicBoxType, "Triclinic"}});
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::NonPeriodic, "NonPeriodic"},
+                                                 {Box::BoxType::Cubic, "Cubic"},
+                                                 {Box::BoxType::Orthorhombic, "Orthorhombic"},
+                                                 {Box::BoxType::Monoclinic, "Monoclinic"},
+                                                 {Box::BoxType::Triclinic, "Triclinic"}});
 }
 
 // Return Box type

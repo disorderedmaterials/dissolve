@@ -255,7 +255,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
         {
             // Retrieve Cell pointer
             nbr = this->cell(gridRef.x + nbrIndices.x, gridRef.y + nbrIndices.y, gridRef.z + nbrIndices.z);
-            if (box_->type() == Box::NonPeriodicBoxType)
+            if (box_->type() == Box::BoxType::NonPeriodic)
                 nearNeighbours.emplace_back(nbr);
             else if (minimumImageRequired(cell.get(), nbr, pairPotentialRange))
                 mimNeighbours.emplace_back(nbr);

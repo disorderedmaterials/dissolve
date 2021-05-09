@@ -75,17 +75,17 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
         return false;
 
     // Export keytrj and imcon
-    if (cfg->box()->type() == Box::NonPeriodicBoxType)
+    if (cfg->box()->type() == Box::BoxType::NonPeriodic)
     {
         if (!parser.writeLineF("{:10d}{:10d}\n", 0, 0))
             return false;
     }
-    else if (cfg->box()->type() == Box::CubicBoxType)
+    else if (cfg->box()->type() == Box::BoxType::Cubic)
     {
         if (!parser.writeLineF("{:10d}{:10d}\n", 0, 1))
             return false;
     }
-    else if (cfg->box()->type() == Box::OrthorhombicBoxType)
+    else if (cfg->box()->type() == Box::BoxType::Orthorhombic)
     {
         if (!parser.writeLineF("{:10d}{:10d}\n", 0, 2))
             return false;
@@ -94,7 +94,7 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
         parser.writeLineF("{:10d}{:10d}\n", 0, 3);
 
     // Export Cell
-    if (cfg->box()->type() != Box::NonPeriodicBoxType)
+    if (cfg->box()->type() != Box::BoxType::NonPeriodic)
     {
         Matrix3 axes = cfg->box()->axes();
         if (!parser.writeLineF("{:20.12f}{:20.12f}{:20.12f}\n", axes[0], axes[1], axes[2]))

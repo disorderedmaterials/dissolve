@@ -7,7 +7,7 @@
 
 MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
 {
-    type_ = Box::MonoclinicBoxType;
+    type_ = Box::BoxType::Monoclinic;
 
     // Construct axes
     alpha_ = 90.0;
@@ -33,8 +33,6 @@ MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
     // Finalise associated data
     finalise();
 }
-
-MonoclinicBox::~MonoclinicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

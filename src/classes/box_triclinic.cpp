@@ -7,7 +7,7 @@
 
 TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles) : Box()
 {
-    type_ = Box::TriclinicBoxType;
+    type_ = Box::BoxType::Triclinic;
 
     // Construct axes_
     alpha_ = angles.x;
@@ -39,8 +39,6 @@ TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles
     // Finalise associated data
     finalise();
 }
-
-TriclinicBox::~TriclinicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)
