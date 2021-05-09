@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/atomtypelist.h"
+#include "classes/box.h"
 #include "classes/isotopologue.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
@@ -14,9 +15,9 @@
 #include "io/import/coordinates.h"
 #include <list>
 #include <memory>
+#include <variant>
 
 // Forward Declarations
-class Box;
 class Forcefield;
 
 // Species Definition
@@ -217,6 +218,17 @@ class Species
     void detachFromMasterTerms();
 
     /*
+     * Box Definition (if any)
+     */
+    private:
+    // Periodic Box
+    std::unique_ptr<Box> box_;
+
+    public:
+    // Return periodic box
+    const Box *box() const;
+
+    /*
      * Source Forcefield (if any)
      */
     private:
@@ -334,20 +346,22 @@ class Species
      */
     public:
     // Species Block Keyword Enum
-    enum SpeciesKeyword
+    enum class SpeciesKeyword
     {
-        AngleKeyword,          /* 'Angle' - Defines an Angle joining three atoms */
-        AtomKeyword,           /* 'Atom' - Specifies an Atom in the Species */
-        BondKeyword,           /* 'Bond' - Defines a Bond joining two atoms */
-        BondTypeKeyword,       /* 'BondType' - Sets the type of a specific bond */
-        ChargeKeyword,         /* 'Charge' - Specifies the atomic charge for an individual atom */
-        CoordinateSetsKeyword, /* 'CoordinateSets' - File and format for any associated coordinate sets */
-        EndSpeciesKeyword,     /* 'EndSpecies' - Signals the end of the current Species */
-        ForcefieldKeyword,     /* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
-        ImproperKeyword,       /* 'Improper' - Define an Improper interaction between four atoms */
-        IsotopologueKeyword,   /* 'Isotopologue' - Add an isotopologue to the Species */
-        SiteKeyword,           /* 'Site' - Define an analysis site within the Species */
-        TorsionKeyword         /* 'Torsion' - Define a Torsion interaction between four atoms */
+        Angle,          /* 'Angle' - Defines an Angle joining three atoms */
+        Atom,           /* 'Atom' - Specifies an Atom in the Species */
+        Bond,           /* 'Bond' - Defines a Bond joining two atoms */
+        BondType,       /* 'BondType' - Sets the type of a specific bond */
+        BoxAngles,      /* 'BoxAngles' - Specify unit cell angles for the species */
+        BoxLengths,     /* 'BoxLengths' - Specify unit cell lengths for the species */
+        Charge,         /* 'Charge' - Specifies the atomic charge for an individual atom */
+        CoordinateSets, /* 'CoordinateSets' - File and format for any associated coordinate sets */
+        EndSpecies,     /* 'EndSpecies' - Signals the end of the current Species */
+        Forcefield,     /* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
+        Improper,       /* 'Improper' - Define an Improper interaction between four atoms */
+        Isotopologue,   /* 'Isotopologue' - Add an isotopologue to the Species */
+        Site,           /* 'Site' - Define an analysis site within the Species */
+        Torsion         /* 'Torsion' - Define a Torsion interaction between four atoms */
     };
     // Return enum option info for SpeciesKeyword
     static EnumOptions<Species::SpeciesKeyword> keywords();

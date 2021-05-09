@@ -147,8 +147,8 @@ void Box::scale(double factor)
  * Utility Routines
  */
 
-// Generate a suitable Box given the supplied relative lengths, angles, and volume
-Box *Box::generate(Vec3<double> lengths, Vec3<double> angles)
+// Generate a suitable Box given the supplied relative lengths, angles
+std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
     // Determine box type from supplied lengths / angles
     auto rightAlpha = (fabs(angles.x - 90.0) < 0.001);
@@ -157,24 +157,17 @@ Box *Box::generate(Vec3<double> lengths, Vec3<double> angles)
 
     if (rightAlpha && rightBeta && rightGamma)
     {
-        // Cubic or orthorhombic
         auto abSame = (fabs(lengths.x - lengths.y) < 0.0001);
         auto acSame = (fabs(lengths.x - lengths.z) < 0.0001);
         if (abSame && acSame)
-            return new CubicBox(lengths.x);
+            return std::make_unique<CubicBox>(lengths.x);
         else
-            return new OrthorhombicBox(lengths);
+            return std::make_unique<OrthorhombicBox>(lengths);
     }
     else if (rightAlpha && (!rightBeta) && rightGamma)
-    {
-        // Monoclinic
-        return new MonoclinicBox(lengths, angles.y);
-    }
+        return std::make_unique<MonoclinicBox>(lengths, angles.y);
     else
-    {
-        // Triclinic
-        return new TriclinicBox(lengths, angles);
-    }
+        return std::make_unique<TriclinicBox>(lengths, angles);
 }
 
 // Return radius of largest possible inscribed sphere for box

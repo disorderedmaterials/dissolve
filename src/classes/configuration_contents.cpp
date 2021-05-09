@@ -14,9 +14,7 @@ void Configuration::empty()
     molecules_.clear();
     atoms_.clear();
     usedAtomTypes_.clear();
-    if (box_ != nullptr)
-        delete box_;
-    box_ = new CubicBox(1.0);
+    box_ = std::make_unique<CubicBox>(1.0);
     cells_.clear();
     appliedSizeFactor_ = 1.0;
     requestedSizeFactor_ = 1.0;

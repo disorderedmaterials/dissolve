@@ -45,8 +45,7 @@ bool BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     auto nonPeriodic = keywords_.asBool("NonPeriodic");
 
     // Create a Box in the target Configuration with our lengths and angles
-    if (!cfg->createBox(lengths, angles, nonPeriodic))
-        return false;
+    cfg->createBox(lengths, angles, nonPeriodic);
 
     Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", cfg->box()->volume(),
                      cfg->box()->reciprocalVolume());

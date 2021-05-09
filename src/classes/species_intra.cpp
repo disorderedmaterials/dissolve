@@ -544,3 +544,6 @@ void Species::detachFromMasterTerms()
     for (auto &improper : impropers_)
         improper.detachFromMasterIntra();
 }
+
+// Return periodic box
+const Box *Species::box() const { return box_.get(); }

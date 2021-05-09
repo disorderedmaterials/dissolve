@@ -5,10 +5,9 @@
 #include "classes/atomtype.h"
 #include "data/isotopes.h"
 
-Species::Species()
+Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {
-    forcefield_ = nullptr;
-    attachedAtomListsGenerated_ = false;
+    box_ = std::make_unique<NonPeriodicBox>();
 
     // Set up natural Isotopologue
     naturalIsotopologue_.setName("Natural");

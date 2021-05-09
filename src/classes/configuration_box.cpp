@@ -6,27 +6,14 @@
 #include "classes/configuration.h"
 #include "modules/energy/energy.h"
 
-// Create Box definition with  specifeid lengths and angles
-bool Configuration::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
+// Create Box definition with specified lengths and angles
+void Configuration::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
 {
-    // Remove old box if present
-    if (box_ != nullptr)
-    {
-        Messenger::printVerbose("Removing existing Box definition for Configuration '{}'...\n", niceName());
-        delete box_;
-        box_ = nullptr;
-    }
-
-    if (nonPeriodic)
-        box_ = new NonPeriodicBox(1.0);
-    else
-        box_ = Box::generate(lengths, angles);
-
-    return true;
+    box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
 }
 
 // Return Box
-const Box *Configuration::box() const { return box_; }
+const Box *Configuration::box() const { return box_.get(); }
 
 // Scale Box lengths (and associated Cells) by specified factor
 void Configuration::scaleBox(double factor)

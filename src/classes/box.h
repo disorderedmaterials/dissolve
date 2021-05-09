@@ -126,7 +126,7 @@ class Box
      */
     public:
     // Generate a suitable Box given the supplied relative lengths, angles, and volume
-    static Box *generate(Vec3<double> lengths, Vec3<double> angles);
+    static std::unique_ptr<Box> generate(Vec3<double> lengths, Vec3<double> angles);
     // Return radius of largest possible inscribed sphere for box
     double inscribedSphereRadius() const;
     // Calculate the RDF normalisation for the Box
