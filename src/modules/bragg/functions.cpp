@@ -87,19 +87,19 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
 
         // Clear old arrays, and set a suitable reservation for the k-vectors array
         braggReflections.clear();
+        braggReflections.resize(nBraggBins, BraggReflection());
         braggKVectors.clear();
         braggKVectors.reserve(braggMaximumHKL.x * braggMaximumHKL.y * braggMaximumHKL.z);
 
         // Create temporary 3D array for k-vectors, and linear array for Bragg reflections
         OffsetArray3D<KVector> tempKVectors(0, braggMaximumHKL.x, -braggMaximumHKL.y, braggMaximumHKL.y, -braggMaximumHKL.z,
                                             braggMaximumHKL.z);
-        std::vector<BraggReflection> tempReflections(nBraggBins);
 
         // Initialise Bragg reflections - Q values reflect the centre-bins of the reflection.
-        double q = 0.5 * qDelta;
-        for (auto n = 0; n < nBraggBins; ++n)
+        auto q = 0.5 * qDelta;
+        for (auto &reflxn : braggReflections)
         {
-            tempReflections[n].initialise(q, -1, nTypes);
+            reflxn.initialise(q, -1, nTypes);
             q += qDelta;
         }
         Vec3<double> kVec, v;
@@ -129,36 +129,32 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
                         // Point this (h,k,l) value to this Bragg reflection
                         tempKVectors[{h, k, l}].initialise(h, k, l, braggIndex, nTypes);
 
-                        // Note in the reflection that we have found another (h,k,l) that contributes to
-                        // it
-                        tempReflections[braggIndex].addKVectors(1);
-                        tempReflections[braggIndex].setHKL(h, k, l);
+                        // Note in the reflection that we have found another (h,k,l) that contributes to it
+                        braggReflections[braggIndex].addKVectors(1);
+                        braggReflections[braggIndex].setHKL(h, k, l);
                     }
                 }
             }
         }
 
-        // Renumber reflections in BraggReflection array, assigning an index only if there are KVectors associated with
-        // it
+        // Renumber reflections, assigning an index only if there are KVectors associated with it
         braggIndex = 0;
-        for (auto n = 0; n < nBraggBins; ++n)
-            if (tempReflections[n].nKVectors() > 0)
-                tempReflections[n].setIndex(braggIndex++);
+        for (auto &reflxn : braggReflections)
+            if (reflxn.nKVectors() > 0)
+                reflxn.setIndex(braggIndex++);
 
         // Collapse KVectors into a linear list, excluding any that weren't initialised
-        for (auto &n : tempKVectors.linearArray())
-        {
-            if (n.braggReflectionIndex() == -1)
-                continue;
+        std::copy_if(tempKVectors.begin(), tempKVectors.end(), std::back_inserter(braggKVectors),
+                     [](auto &kv) { return kv.braggReflectionIndex() != -1; });
 
-            // Look up and set the new index of the associated BraggReflection
-            n.setBraggReflectionIndex(tempReflections[n.braggReflectionIndex()].index());
-            braggKVectors.emplace_back(n);
-        }
+        // Set new indices for BraggReflections in our new KVectors
+        for (auto &kv : braggKVectors)
+            kv.setBraggReflectionIndex(braggReflections[kv.braggReflectionIndex()].index());
 
-        // Prune BraggReflections array, putting them into a sequential Array that will reflect their new indexing
-        std::copy_if(tempReflections.begin(), tempReflections.end(), std::back_inserter(braggReflections),
-                     [](const auto &reflection) { return reflection.nKVectors() != 0; });
+        // Prune BraggReflections array, putting them into a sequential vector that will reflect their new indexing
+        braggReflections.erase(std::remove_if(braggReflections.begin(), braggReflections.end(),
+                                              [](const auto &rflxn) { return rflxn.nKVectors() == 0; }),
+                               braggReflections.end());
 
         Messenger::print("Bragg calculation spans {} k-vectors (max HKL = [{} {} {}]) over {} <= Q <= {} ({} elapsed).\n",
                          braggKVectors.size(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax,
