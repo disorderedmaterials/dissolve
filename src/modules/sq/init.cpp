@@ -14,7 +14,7 @@ void SQModule::initialise()
     keywords_.add("Control", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
     keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
     keywords_.add("Control", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-    keywords_.add("Control", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening",
+    keywords_.add("Control", new Function1DKeyword({Functions::Function1D::GaussianC2, {0.0, 0.02}}), "QBroadening",
                   "Instrument broadening function to apply when calculating S(Q)");
     keywords_.add("Control", new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms()), "WindowFunction",
                   "Window function to apply in Fourier-transform of g(r) to S(Q)");
@@ -28,7 +28,7 @@ void SQModule::initialise()
     // Bragg Scattering
     keywords_.add("Bragg Scattering", new BoolKeyword(false), "IncludeBragg",
                   "Include Bragg scattering (if reflection data are present in the Configuration)");
-    keywords_.add("Bragg Scattering", new BroadeningFunctionKeyword(BroadeningFunction()), "BraggQBroadening",
+    keywords_.add("Bragg Scattering", new Function1DKeyword(), "BraggQBroadening",
                   "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
 
     // Export

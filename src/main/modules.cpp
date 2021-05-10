@@ -14,7 +14,6 @@
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_rdf/rdf.h"
 #include "modules/calculate_sdf/sdf.h"
-#include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
 #include "modules/checkspecies/checkspecies.h"
 #include "modules/datatest/datatest.h"
@@ -90,8 +89,6 @@ bool Dissolve::registerMasterModules()
     if (!registerMasterModule(new CalculateRDFModule))
         return false;
     if (!registerMasterModule(new CalculateSDFModule))
-        return false;
-    if (!registerMasterModule(new CalibrationModule))
         return false;
     if (!registerMasterModule(new ChecksModule))
         return false;

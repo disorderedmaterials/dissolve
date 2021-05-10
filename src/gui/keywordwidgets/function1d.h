@@ -5,40 +5,39 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_pairbroadeningfunction.h"
-#include "keywords/pairbroadeningfunction.h"
+#include "gui/keywordwidgets/ui_function1d.h"
+#include "keywords/function1d.h"
 #include <QWidget>
 
-// Forward Declarations
-class QComboBox;
-
-class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class Function1DKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    PairBroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    Function1DKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    PairBroadeningFunctionKeyword *keyword_;
+    Function1DKeyword *keyword_;
 
     /*
      * Widgets
      */
     private:
     // Main form declaration
-    Ui::PairBroadeningFunctionWidget ui_;
+    Ui::Function1DWidget ui_;
+    std::vector<ExponentialSpin *> spins_;
+    std::vector<QLabel *> labels_;
 
     private slots:
-    // Function type radio changed
-    void functionRadioChanged(bool checked);
-    // Function parameter value changed
-    void functionParameterChanged(double value);
+    // Function type combo changed
+    void functionCombo_currentIndexChanged(int index);
+    // Parameter value changed
+    void parameterSpin_valueChanged(double value);
 
     signals:
     // Keyword value changed

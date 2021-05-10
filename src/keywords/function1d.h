@@ -4,17 +4,26 @@
 #pragma once
 
 #include "keywords/data.h"
-#include "math/broadeningfunction.h"
+#include "math/function1d.h"
 
-// Forward Declarations
-/* none */
-
-// Keyword with BroadeningFunction Data
-class BroadeningFunctionKeyword : public KeywordData<BroadeningFunction>
+// Keyword with Function1D Data
+class Function1DKeyword : public KeywordData<Functions::Function1DWrapper>
 {
     public:
-    BroadeningFunctionKeyword(BroadeningFunction value);
-    ~BroadeningFunctionKeyword();
+    Function1DKeyword(Functions::Function1DWrapper value = Functions::Function1DWrapper(Functions::Function1D::None),
+                      int functionProperties = FunctionProperties::None);
+    ~Function1DKeyword() = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Requested function properties
+    int functionProperties_;
+
+    public:
+    // Return requested function properties
+    int functionProperties() const;
 
     /*
      * Arguments

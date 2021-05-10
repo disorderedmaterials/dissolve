@@ -3,15 +3,9 @@
 
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
-#include "classes/braggreflection.h"
 #include "classes/kvector.h"
 #include "classes/neutronweights.h"
-#include "classes/partialset.h"
 #include "classes/species.h"
-#include "math/histogram1d.h"
-#include "math/histogram2d.h"
-#include "math/histogram3d.h"
-#include "math/pairbroadeningfunction.h"
 
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {

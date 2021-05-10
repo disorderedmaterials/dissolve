@@ -28,8 +28,8 @@ where $g_{ij}(r, \Delta r)$ is calculated for a spherical shell with inner radiu
 |`BinWidth`|`delta`|`0.025`|Bin width (spacing in $r$) to use|
 |`Range`|`r`|`15.0`|Maximum $r$ to calculate $g(r)$ out to, unless `UseHalfCellRange` is `true`|
 |`UseHalfCellRange`|`true|false`|`true`|Whether to use the maximal RDF range possible that avoids periodic images. If `true` then the radius of the inscribed sphere for the configuration box is used as the limit.|
-|`IntraBroadening`|[`PairBroadeningFunction`]({{< ref "averagingscheme" >}})|`Gaussian`|Type of broadening to apply to intramolecular $g(r)$|
-|`Method`|[`PartialsMethod`]({{< ref "averagingscheme" >}})|`Auto`|Calculation method to use. All available methods give the same results, but are suited to specific sizes of system.|
+|`IntraBroadening`|[`Function1D`]({{< ref "function1d" >}})|`Gaussian`|Type of broadening to apply to intramolecular $g(r)$|
+|`Method`|`Simple`\|`Cells`\|`Auto`|`Auto`|Calculation method to use. All available methods give the same results, but are suited to specific sizes of system.|
 |`Smoothing`|`n`|`0`|Degree of smoothing $n$ to apply to the calculated $g(r)$, where $2n+1$ controls the length in the applied Spline smooth|
 
 ### Test Keywords

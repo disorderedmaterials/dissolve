@@ -234,6 +234,8 @@ class LineParser
     Vec3<int> arg3i(int i);
     // Return the specified and next two arguments as a Vec3<double>
     Vec3<double> arg3d(int i);
+    // Return a vector of double parameters, starting from the specified argument
+    std::vector<double> argvd(int i);
     // Returns whether the specified argument exists
     bool hasArg(int i) const;
 };

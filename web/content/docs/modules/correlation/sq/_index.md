@@ -39,9 +39,9 @@ Any broadening arising from instrumental effects (i.e. instrumental broadening) 
 |`QDelta`|`qdelta`|`0.01`|Step size in $Q$ for Fourier transform.|
 |`QMax`|`qmax`|`30.0`|$Q_{max}$ limit of Fourier transform.|
 |`QMin`|`qmin`|`0.01`|$Q_{min}$ limit of Fourier transform.|
-|`QBroadening`|[`BroadeningFunction`]({{< ref "averagingscheme" >}})|`None`|Broadening function to convolve in the Fourier transform.|
+|`QBroadening`|[`Function1D`]({{< ref "averagingscheme" >}})|`None`|Broadening function to convolve in the Fourier transform.|
 |`SourceRDFs`|`Module`|--|{{< required-label >}} Source [`RDF`]({{< ref "rdf" >}}) module from which to take $g(r)$ and transform to $S(Q)$.|
-|`WindowFunction`|[`WindowFunction`]({{< ref "averagingscheme" >}})|`None`|Window function to apply in the Fourier transform.|
+|`WindowFunction`|[`WindowFunction`]({{< ref "windowfunction" >}})|`None`|Window function to apply in the Fourier transform.|
 
 ### Export Keywords
 
