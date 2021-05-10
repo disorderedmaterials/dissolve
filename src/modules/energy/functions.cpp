@@ -75,7 +75,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
     dissolve::counting_iterator<int> countingIterator(loopStart, loopEnd);
     double energy = dissolve::transform_reduce(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0,
                                                std::plus<double>(), [&](const auto idx) {
-                                                   auto [n, m] = combinations.nthCombination(idx);
+                                                   auto [n, m] = comb.nthCombination(idx);
                                                    auto &i = sp->atom(n);
                                                    auto &j = sp->atom(m);
                                                    auto &rI = i.r();

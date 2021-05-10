@@ -240,6 +240,17 @@ template <class A> class Array2D
 
         std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
     }
+    Array2D<A> operator+(const Array2D<A> &other) const
+    {
+        assert(nColumns_ == other.nColumns_ && nRows_ == other.nRows_);
+        Array2D<A> ret(nRows_, nColumns_);
+        // Could optimize with transform and zip iterator over this and other
+        for (int i = 0; i < this->array_.size(); i++)
+        {
+            ret.array_[i] = other.array_[i] + this->array_[i];
+        };
+        return ret;
+    }
     // Operator* (matrix multiply)
     Array2D<A> operator*(const Array2D<A> &B) const
     {
