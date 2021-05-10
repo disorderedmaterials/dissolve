@@ -105,6 +105,6 @@ void CalculateRDFModule::initialise()
                   "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 
     // Export
-    keywords_.link("Export", processDistance_->keywords().find("Save"), "Save", "Whether to save calculated RDF to disk",
-                   "<True|False>");
+    keywords_.link("Export", processDistance_->keywords().find("Export"), "Export",
+                   "File format and file name under which to save calculated RDF data");
 }
