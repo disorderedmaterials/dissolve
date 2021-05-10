@@ -155,6 +155,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 // Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
+
     if constexpr (MULTITHREADED)
         return calculateGRCellsParallelImpl(procPool, cfg, partialSet, rdfRange);
     else
@@ -236,27 +237,24 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
     // Grab the Box pointer and Cell array
     const auto *box = cfg->box();
     auto &cellArray = cfg->cells();
-
     // Loop context is to use all processes in Pool as one group
+    Combinations comb(cellArray.nCells(), 2);
     auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
     auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
-    auto range = chop_range(0, cellArray.nCells(), nChunks, offset);
-    int start = std::get<0>(range);
-    int end = std::get<1>(range);
-    Combinations comb(end - start, 2);
+    auto [cStart, cEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
     auto combinableHistograms = dissolve::combinable<RDFModuleHelpers::PartialHistograms>(
         [&partialSet]() { return RDFModuleHelpers::PartialHistograms(partialSet); });
 
-    auto lambda = [&combinableHistograms, start, cfg, &comb, rdfRange](const auto &range) {
+    auto lambda = [&combinableHistograms, cfg, &comb, rdfRange](const auto &range) {
         for (auto i = range.begin(); i < range.end(); ++i)
         {
             auto &histograms = combinableHistograms.local().histograms_;
             const auto *box = cfg->box();
             auto &cellArray = cfg->cells();
             auto [n, m] = comb.nthCombination(i);
-            auto *cellI = cellArray.cell(n + start);
-            auto *cellJ = cellArray.cell(m + start);
+            auto *cellI = cellArray.cell(n);
+            auto *cellJ = cellArray.cell(m);
 
             if (!cellArray.withinRange(cellI, cellJ, rdfRange))
                 continue;
@@ -282,11 +280,10 @@ bool RDFModule::calculateGRCellsParallelImpl(ProcessPool &procPool, Configuratio
         }
     };
 
-    auto histograms =
-        dissolve::parallel_for_reduction(combinableHistograms, dissolve::blocked_range(0, comb.getNumCombinations()), lambda);
+    auto histograms = dissolve::parallel_for_reduction(combinableHistograms, dissolve::blocked_range(cStart, cEnd), lambda);
 
     histograms.addToPartialSet(partialSet);
-
+    auto [start, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
     for (int n = start; n < end; ++n)
     {
         auto *cellI = cellArray.cell(n);
@@ -783,7 +780,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -813,7 +811,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
