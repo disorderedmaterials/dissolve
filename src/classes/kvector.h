@@ -17,10 +17,9 @@ class KVector
     public:
     KVector(int h = 0, int k = 0, int l = 0, int reflectionIndex = -1, int nAtomTypes = 0);
     ~KVector() = default;
-    KVector(const KVector &source);
-    KVector(KVector &&source);
-    KVector(const KVector &&source);
-    KVector &operator=(const KVector &source);
+    KVector(const KVector &source) = default;
+    KVector(KVector &&source) = default;
+    KVector &operator=(const KVector &source) = default;
 
     /*
      * Data

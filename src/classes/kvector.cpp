@@ -7,22 +7,6 @@
 
 KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) { initialise(h, k, l, reflectionIndex, nAtomTypes); }
 
-KVector::KVector(const KVector &source) { (*this) = source; }
-
-KVector::KVector(KVector &&source) { (*this) = source; }
-
-KVector::KVector(const KVector &&source) { (*this) = source; }
-
-KVector &KVector::operator=(const KVector &source)
-{
-    hkl_ = source.hkl_;
-    braggReflectionIndex_ = source.braggReflectionIndex_;
-    cosTerms_ = source.cosTerms_;
-    sinTerms_ = source.sinTerms_;
-
-    return *this;
-}
-
 /*
  * Data
  */
