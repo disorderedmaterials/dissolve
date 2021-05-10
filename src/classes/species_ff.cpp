@@ -16,18 +16,6 @@ void Species::setForcefield(std::shared_ptr<Forcefield> ff) { forcefield_ = ff; 
 // Return Forcefield to source terms from
 std::shared_ptr<Forcefield> Species::forcefield() const { return forcefield_; }
 
-// Set whether to auto-generate missing intramolecular terms, and remove invalid ones
-void Species::setAutoUpdateIntramolecularTerms(bool b)
-{
-    autoUpdateIntramolecularTerms_ = b;
-
-    if (autoUpdateIntramolecularTerms_)
-        updateIntramolecularTerms();
-}
-
-// Return whether to auto-generate missing intramolecular terms, and remove invalid ones
-bool Species::autoUpdateIntramolecularTerms() const { return autoUpdateIntramolecularTerms_; }
-
 // Apply terms from source Forcefield
 bool Species::applyForcefieldTerms(CoreData &coreData)
 {

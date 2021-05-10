@@ -18,8 +18,8 @@ double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
 PairPotential::PairPotential()
     : ListItem<PairPotential>(), shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), includeCoulomb_(true),
-      coulombEnergyAtCutoff_(0.0), coulombForceAtCutoff_(0.0), shortRangeType_(Forcefield::UndefinedType), chargeI_(0.0),
-      chargeJ_(0.0), nPoints_(0), range_(0.0), delta_(-1.0), rDelta_(0.0), uFullInterpolation_(uFull_),
+      coulombEnergyAtCutoff_(0.0), coulombForceAtCutoff_(0.0), shortRangeType_(Forcefield::ShortRangeType::Undefined),
+      chargeI_(0.0), chargeJ_(0.0), nPoints_(0), range_(0.0), delta_(-1.0), rDelta_(0.0), uFullInterpolation_(uFull_),
       dUFullInterpolation_(dUFull_)
 {
 }
@@ -127,12 +127,12 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
         shortRangeType_ = srI;
         switch (shortRangeType_)
         {
-            case (Forcefield::UndefinedType):
+            case (Forcefield::ShortRangeType::Undefined):
                 return Messenger::error("PairPotential between atom types '{}' and '{}' is undefined.\n", atomTypeI_->name(),
                                         atomTypeJ_->name());
-            case (Forcefield::NoInteractionType):
+            case (Forcefield::ShortRangeType::NoInteraction):
                 break;
-            case (Forcefield::LennardJonesType):
+            case (Forcefield::ShortRangeType::LennardJones):
                 /*
                  * Combine parameters (Lorentz-Berthelot):
                  * Parameter 0 = Epsilon
@@ -141,7 +141,7 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                 parameters_.push_back(sqrt(paramsI[0] * paramsJ[0]));
                 parameters_.push_back((paramsI[1] + paramsJ[1]) * 0.5);
                 break;
-            case (Forcefield::LennardJonesGeometricType):
+            case (Forcefield::ShortRangeType::LennardJonesGeometric):
                 /*
                  * Combine parameters (Geometric):
                  * Parameter 0 = Epsilon
@@ -158,14 +158,14 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
     else
     {
         // In the case of combining LJ and LJGeometric, default to standard Lorentz-Berthelot rules
-        auto ljI = srI == Forcefield::LennardJonesType || srI == Forcefield::LennardJonesGeometricType;
-        auto ljJ = srJ == Forcefield::LennardJonesType || srJ == Forcefield::LennardJonesGeometricType;
+        auto ljI = srI == Forcefield::ShortRangeType::LennardJones || srI == Forcefield::ShortRangeType::LennardJonesGeometric;
+        auto ljJ = srJ == Forcefield::ShortRangeType::LennardJones || srJ == Forcefield::ShortRangeType::LennardJonesGeometric;
         if (ljI && ljJ)
         {
             Messenger::warn("Defaulting to Lorentz-Berthelot rules to combine parameters between atom types '{}' and '{}.\n",
                             atomTypeI_->name(), atomTypeJ_->name());
 
-            shortRangeType_ = Forcefield::LennardJonesType;
+            shortRangeType_ = Forcefield::ShortRangeType::LennardJones;
             /*
              * Combine parameters (Lorentz-Berthelot):
              * Parameter 0 = Epsilon
@@ -177,7 +177,7 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
         else
         {
             // Can't mix parameters of different functional forms in general, so complain...
-            shortRangeType_ = Forcefield::UndefinedType;
+            shortRangeType_ = Forcefield::ShortRangeType::Undefined;
             return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
                                     "short-range types {} and {}.\n",
                                     atomTypeI_->name(), atomTypeJ_->name(),
@@ -242,9 +242,9 @@ double PairPotential::chargeJ() const { return chargeJ_; }
 double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeType type,
                                                PairPotential::ShortRangeTruncationScheme truncation)
 {
-    if (type == Forcefield::NoInteractionType)
+    if (type == Forcefield::ShortRangeType::NoInteraction)
         return 0.0;
-    else if ((type == Forcefield::LennardJonesType) || (type == Forcefield::LennardJonesGeometricType))
+    else if ((type == Forcefield::ShortRangeType::LennardJones) || (type == Forcefield::ShortRangeType::LennardJonesGeometric))
     {
         /*
          * Standard Lennard-Jones potential
@@ -286,9 +286,9 @@ double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeT
 double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeType type,
                                               PairPotential::ShortRangeTruncationScheme truncation)
 {
-    if (type == Forcefield::NoInteractionType)
+    if (type == Forcefield::ShortRangeType::NoInteraction)
         return 0.0;
-    else if ((type == Forcefield::LennardJonesType) || (type == Forcefield::LennardJonesGeometricType))
+    else if ((type == Forcefield::ShortRangeType::LennardJones) || (type == Forcefield::ShortRangeType::LennardJonesGeometric))
     {
         /*
          * Standard Lennard-Jones potential

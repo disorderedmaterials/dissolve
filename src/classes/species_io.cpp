@@ -112,9 +112,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     Isotope *tope;
     auto blockDone = false, error = false;
 
-    // Turn off intramolecular term autogeneration while we're reading
-    autoUpdateIntramolecularTerms_ = false;
-
     while (!parser.eofOrBlank())
     {
         // Read in a line, which should contain a keyword and a minimum number of arguments
@@ -543,9 +540,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         if (blockDone)
             break;
     }
-
-    // Turn intramolecular term autogeneration back on
-    autoUpdateIntramolecularTerms_ = true;
 
     // If there's no error and the blockDone flag isn't set, return an error
     if (!error && !blockDone)

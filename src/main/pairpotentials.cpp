@@ -127,7 +127,7 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
             }
 
             // Check the implied short-range form of the potential
-            if (pot->shortRangeType() == Forcefield::UndefinedType)
+            if (pot->shortRangeType() == Forcefield::ShortRangeType::Undefined)
                 ++nUndefined;
             else if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
                 return false;

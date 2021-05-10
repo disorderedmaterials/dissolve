@@ -98,8 +98,7 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
 
     // Apply factor to data
     auto factor = keywords_.asDouble("Factor");
-std:
-    transform(f.begin(), f.end(), f.begin(), [factor](auto &value) { return value * factor; });
+    std::transform(f.begin(), f.end(), f.begin(), [factor](auto &value) { return value * factor; });
 
     return result;
 }

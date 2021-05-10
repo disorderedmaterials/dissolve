@@ -5,7 +5,8 @@
 #include "data/elements.h"
 
 AtomType::AtomType()
-    : name_{"XX"}, Z_(Elements::Unknown), shortRangeType_(Forcefield::UndefinedType), exchangeable_(false), index_(-1)
+    : name_{"XX"}, Z_(Elements::Unknown), shortRangeType_(Forcefield::ShortRangeType::Undefined), exchangeable_(false),
+      index_(-1)
 {
 }
 

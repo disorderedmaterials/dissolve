@@ -8,80 +8,6 @@
 #include <algorithm>
 
 /*
- * Private
- */
-
-// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-void Species::updateIntramolecularTerms()
-{
-    SpeciesAtom *i, *j, *k, *l;
-
-    // Loop over bonds 'jk'
-    for (auto &jk : bonds_)
-    {
-        // Get atoms 'j' and 'k'
-        j = jk.i();
-        k = jk.j();
-
-        // Loop over bonds 'ij'
-        for (SpeciesBond &ij : j->bonds())
-        {
-            // Avoid 'ij' == 'jk'
-            if (&ij == &jk)
-                continue;
-
-            // Get atom 'i'
-            i = ij.partner(j);
-
-            // Attempt to add angle term 'ijk' if 'i' > 'k'
-            if (!hasAngle(i, j, k))
-                addAngle(i, j, k);
-
-            // Loop over bonds 'kl'
-            for (SpeciesBond &kl : k->bonds())
-            {
-                // Avoid 'kl' == 'jk'
-                if (&kl == &jk)
-                    continue;
-
-                // Get atom 'l'
-                l = kl.partner(k);
-
-                // Attempt to add angle term 'jkl'
-                if (!hasAngle(j, k, l))
-                    addAngle(j, k, l);
-
-                // If the torsion i-j-k-l doesn't already exist, add it now.
-                if (!hasTorsion(i, j, k, l))
-                    addTorsion(i, j, k, l);
-            }
-        }
-    }
-    auto atomsContains = [this](const auto *x) {
-        return std::find_if(atoms_.begin(), atoms_.end(), [&x](const auto &p) { return &p == x; }) != atoms_.end();
-    };
-
-    // Check existing angle terms for any that are invalid
-    angles_.erase(std::remove_if(angles_.begin(), angles_.end(),
-                                 [this, &atomsContains](const auto &angle) {
-                                     return ((!atomsContains(angle.i())) || (!atomsContains(angle.j())) ||
-                                             (!atomsContains(angle.k()))) ||
-                                            ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
-                                 }),
-                  angles_.end());
-
-    // remove torsions with invalid atoms or bonds
-    torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(),
-                                   [this, &atomsContains](const auto &torsion) {
-                                       return ((!atomsContains(torsion.i())) || (!atomsContains(torsion.j())) ||
-                                               (!atomsContains(torsion.k())) || (!atomsContains(torsion.l()))) ||
-                                              ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
-                                               (!hasBond(torsion.k(), torsion.l())));
-                                   }),
-                    torsions_.end());
-}
-
-/*
  * Public
  */
 
@@ -99,10 +25,6 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 
     // OK to add new Bond
     bonds_.emplace_back(i, j);
-
-    // Update higher-order connectivity?
-    if (autoUpdateIntramolecularTerms_)
-        updateIntramolecularTerms();
 
     ++version_;
 
@@ -205,10 +127,87 @@ void Species::addMissingBonds(double tolerance)
                 addBond(&i, &j);
         }
     }
+}
 
-    // May now require new higher-order terms
-    if (autoUpdateIntramolecularTerms_)
-        updateIntramolecularTerms();
+// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+void Species::updateIntramolecularTerms()
+{
+    SpeciesAtom *i, *j, *k, *l;
+
+    // Loop over bonds 'jk'
+    for (auto &jk : bonds_)
+    {
+        // Get atoms 'j' and 'k'
+        j = jk.i();
+        k = jk.j();
+
+        // Loop over bonds 'ij'
+        for (SpeciesBond &ij : j->bonds())
+        {
+            // Avoid 'ij' == 'jk'
+            if (&ij == &jk)
+                continue;
+
+            // Get atom 'i'
+            i = ij.partner(j);
+
+            // Attempt to add angle term 'ijk' if 'i' > 'k'
+            if (!hasAngle(i, j, k))
+                addAngle(i, j, k);
+
+            // Loop over bonds 'kl'
+            for (SpeciesBond &kl : k->bonds())
+            {
+                // Avoid 'kl' == 'jk'
+                if (&kl == &jk)
+                    continue;
+
+                // Get atom 'l'
+                l = kl.partner(k);
+
+                // Attempt to add angle term 'jkl'
+                if (!hasAngle(j, k, l))
+                    addAngle(j, k, l);
+
+                // If the torsion i-j-k-l doesn't already exist, add it now.
+                if (!hasTorsion(i, j, k, l))
+                    addTorsion(i, j, k, l);
+            }
+        }
+    }
+    auto atomsContains = [this](const auto *x) {
+        return std::find_if(atoms_.begin(), atoms_.end(), [&x](const auto &p) { return &p == x; }) != atoms_.end();
+    };
+
+    // Check existing angle terms for any that are invalid
+    angles_.erase(std::remove_if(angles_.begin(), angles_.end(),
+                                 [this, &atomsContains](const auto &angle) {
+                                     return ((!atomsContains(angle.i())) || (!atomsContains(angle.j())) ||
+                                             (!atomsContains(angle.k()))) ||
+                                            ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
+                                 }),
+                  angles_.end());
+
+    // Remove torsions with invalid atoms or bonds
+    torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(),
+                                   [this, &atomsContains](const auto &torsion) {
+                                       return ((!atomsContains(torsion.i())) || (!atomsContains(torsion.j())) ||
+                                               (!atomsContains(torsion.k())) || (!atomsContains(torsion.l()))) ||
+                                              ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
+                                               (!hasBond(torsion.k(), torsion.l())));
+                                   }),
+                    torsions_.end());
+
+    // Remove impropers with invalid atoms or bonds
+    impropers_.erase(std::remove_if(impropers_.begin(), impropers_.end(),
+                                    [this, &atomsContains](const auto &improper) {
+                                        return ((!atomsContains(improper.i())) || (!atomsContains(improper.j())) ||
+                                                (!atomsContains(improper.k())) || (!atomsContains(improper.l()))) ||
+                                               ((!hasBond(improper.i(), improper.j())) ||
+                                                (!hasBond(improper.j(), improper.k())) ||
+                                                (!hasBond(improper.k(), improper.l())));
+                                    }),
+                     impropers_.end());
 }
 
 // Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)
