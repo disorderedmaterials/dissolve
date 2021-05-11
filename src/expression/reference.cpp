@@ -2,10 +2,12 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "expression/reference.h"
+
 #include "expression/variable.h"
+#include <utility>
 
 ExpressionReferenceNode::ExpressionReferenceNode(std::shared_ptr<ExpressionVariable> variable)
-    : ExpressionNode(), variable_(variable)
+    : ExpressionNode(), variable_(std::move(variable))
 {
 }
 

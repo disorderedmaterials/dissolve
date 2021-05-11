@@ -12,7 +12,7 @@ template <class T> class MinimiserBase
 {
     public:
     // Cost function pointer typedef
-    typedef double (T::*MinimiserCostFunction)(const std::vector<double> &alpha);
+    using MinimiserCostFunction = double (T::*)(const std::vector<double> &);
     MinimiserBase<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
         : object_(object), costFunction_(costFunction)
     {
@@ -114,8 +114,8 @@ template <class T> class MinimiserBase
         addTarget(&var, minLimit, minValue, maxLimit, maxValue);
     }
     // Add ExpressionVariable as target, with limits specified
-    void addTarget(std::shared_ptr<ExpressionVariable> var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
-                   double maxValue = 0.0)
+    void addTarget(const std::shared_ptr<ExpressionVariable> &var, bool minLimit = false, double minValue = 0.0,
+                   bool maxLimit = false, double maxValue = 0.0)
     {
         addTarget(var->valuePointer()->doublePointer(), minLimit, minValue, maxLimit, maxValue);
     }
@@ -123,8 +123,8 @@ template <class T> class MinimiserBase
     void addTargets(std::vector<double *> vars, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
                     double maxValue = 0.0)
     {
-        for (auto n = 0; n < vars.size(); ++n)
-            addTarget(vars[n], minLimit, minValue, maxLimit, maxValue);
+        for (auto &var : vars)
+            addTarget(var, minLimit, minValue, maxLimit, maxValue);
     }
     // Set penalty power for values outside of set limits
     void setPenaltyPower(int power) { penaltyPower_ = power; }

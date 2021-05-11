@@ -15,7 +15,7 @@ class DoubleKeyword : public KeywordData<double>
     DoubleKeyword(double value);
     DoubleKeyword(double value, double minValue);
     DoubleKeyword(double value, double minValue, double maxValue);
-    ~DoubleKeyword();
+    ~DoubleKeyword() override;
 
     /*
      * Data Validation
@@ -36,7 +36,7 @@ class DoubleKeyword : public KeywordData<double>
     // Return validation maximum limit
     double validationMax();
     // Validate supplied value
-    bool isValid(double value);
+    bool isValid(double value) override;
 
     /*
      * Arguments
@@ -56,11 +56,11 @@ class DoubleKeyword : public KeywordData<double>
      */
     public:
     // Return value (as bool)
-    bool asBool();
+    bool asBool() override;
     // Return value (as int)
-    int asInt();
+    int asInt() override;
     // Return value (as double)
-    double asDouble();
+    double asDouble() override;
     // Return value (as string)
-    std::string asString();
+    std::string asString() override;
 };

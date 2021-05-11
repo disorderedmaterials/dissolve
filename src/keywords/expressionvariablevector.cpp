@@ -15,7 +15,7 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(ProcedureNode *
     parentNode_ = parentNode;
 }
 
-ExpressionVariableVectorKeyword::~ExpressionVariableVectorKeyword() {}
+ExpressionVariableVectorKeyword::~ExpressionVariableVectorKeyword() = default;
 
 /*
  * Parent Node
@@ -80,7 +80,7 @@ bool ExpressionVariableVectorKeyword::read(LineParser &parser, int startArg, con
 bool ExpressionVariableVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of defined ExpressionNode's (ExpressionVariables)
-    for (const auto node : data_)
+    for (const auto &node : data_)
     {
         if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, node->name(), node->value().asString()))
             return false;

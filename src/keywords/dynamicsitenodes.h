@@ -17,7 +17,7 @@ class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureN
     public:
     DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes,
                             bool axesRequired = false);
-    ~DynamicSiteNodesKeyword();
+    ~DynamicSiteNodesKeyword() override;
 
     /*
      * Parent Node

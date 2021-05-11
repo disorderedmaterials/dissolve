@@ -6,7 +6,7 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue() : ListItem<Isotopologue>(), parent_(nullptr) {}
+Isotopologue::Isotopologue() : ListItem<Isotopologue>() {}
 
 /*
  * Basic Information
@@ -50,7 +50,7 @@ void Isotopologue::update()
 // Validate current AtomType/Isotopes against available AtomTypes
 void Isotopologue::checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
 {
-    for (const auto at : atomTypes)
+    for (const auto &at : atomTypes)
         isotopes_.erase(
             std::remove_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; }),
             isotopes_.end());

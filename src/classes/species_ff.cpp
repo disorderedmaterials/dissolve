@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include <utility>
+
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/species.h"
@@ -11,7 +13,7 @@
  */
 
 // Set Forcefield to source terms from
-void Species::setForcefield(std::shared_ptr<Forcefield> ff) { forcefield_ = ff; }
+void Species::setForcefield(std::shared_ptr<Forcefield> ff) { forcefield_ = std::move(ff); }
 
 // Return Forcefield to source terms from
 std::shared_ptr<Forcefield> Species::forcefield() const { return forcefield_; }

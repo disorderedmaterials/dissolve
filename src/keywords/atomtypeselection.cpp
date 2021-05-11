@@ -13,7 +13,7 @@ AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList &selection, cons
 {
 }
 
-AtomTypeSelectionKeyword::~AtomTypeSelectionKeyword() {}
+AtomTypeSelectionKeyword::~AtomTypeSelectionKeyword() = default;
 
 /*
  * Data

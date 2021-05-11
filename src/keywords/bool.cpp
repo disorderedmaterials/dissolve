@@ -7,7 +7,7 @@
 
 BoolKeyword::BoolKeyword(bool value) : KeywordData<bool>(KeywordBase::BoolData, value) {}
 
-BoolKeyword::~BoolKeyword() {}
+BoolKeyword::~BoolKeyword() = default;
 
 /*
  * Arguments

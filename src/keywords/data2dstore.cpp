@@ -9,7 +9,7 @@ Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data2DStore)
 {
 }
 
-Data2DStoreKeyword::~Data2DStoreKeyword() {}
+Data2DStoreKeyword::~Data2DStoreKeyword() = default;
 
 /*
  * Arguments

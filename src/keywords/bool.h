@@ -13,7 +13,7 @@ class BoolKeyword : public KeywordData<bool>
 {
     public:
     BoolKeyword(bool value);
-    ~BoolKeyword();
+    ~BoolKeyword() override;
 
     /*
      * Arguments
@@ -33,11 +33,11 @@ class BoolKeyword : public KeywordData<bool>
      */
     public:
     // Return value (as bool)
-    bool asBool();
+    bool asBool() override;
     // Return value (as int)
-    int asInt();
+    int asInt() override;
     // Return value (as double)
-    double asDouble();
+    double asDouble() override;
     // Return value (as string)
-    std::string asString();
+    std::string asString() override;
 };

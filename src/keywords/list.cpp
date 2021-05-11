@@ -6,9 +6,9 @@
 #include "base/sysfunc.h"
 #include "keywords/linkto.h"
 
-KeywordList::KeywordList() {}
+KeywordList::KeywordList() = default;
 
-KeywordList::~KeywordList() {}
+KeywordList::~KeywordList() = default;
 
 /*
  * Keyword List

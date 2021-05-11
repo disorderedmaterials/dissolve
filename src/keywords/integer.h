@@ -15,7 +15,7 @@ class IntegerKeyword : public KeywordData<int>
     IntegerKeyword(int value);
     IntegerKeyword(int value, int minValue);
     IntegerKeyword(int value, int minValue, int maxValue);
-    ~IntegerKeyword();
+    ~IntegerKeyword() override;
 
     /*
      * Data Validation
@@ -36,7 +36,7 @@ class IntegerKeyword : public KeywordData<int>
     // Return validation maximum limit
     int validationMax();
     // Validate supplied value
-    bool isValid(int value);
+    bool isValid(int value) override;
 
     /*
      * Arguments
@@ -56,11 +56,11 @@ class IntegerKeyword : public KeywordData<int>
      */
     public:
     // Return value (as bool)
-    bool asBool();
+    bool asBool() override;
     // Return value (as int)
-    int asInt();
+    int asInt() override;
     // Return value (as double)
-    double asDouble();
+    double asDouble() override;
     // Return value (as string)
-    std::string asString();
+    std::string asString() override;
 };

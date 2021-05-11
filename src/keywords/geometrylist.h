@@ -16,7 +16,7 @@ class GeometryListKeyword : public KeywordData<List<Geometry> &>
     public:
     GeometryListKeyword(List<Geometry> &, Geometry::GeometryType t);
 
-    ~GeometryListKeyword();
+    ~GeometryListKeyword() override;
 
     /*
      * Data

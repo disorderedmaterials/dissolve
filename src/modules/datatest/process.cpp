@@ -36,8 +36,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, referenceData, true);
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n",
-                         referenceData.tag(), error, isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
-        if (isnan(error) || error > testThreshold)
+                         referenceData.tag(), error, std::isnan(error) || error > testThreshold ? "NOT OK" : "OK",
+                         testThreshold);
+        if (std::isnan(error) || error > testThreshold)
             return false;
     }
 
@@ -59,8 +60,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data1, data2, true);
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e})\n\n", tag1,
-                         error, tag2, isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
-        if (isnan(error) || error > testThreshold)
+                         error, tag2, std::isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
+        if (std::isnan(error) || error > testThreshold)
             return false;
     }
 

@@ -50,9 +50,9 @@ class AtomTypeList
     // Make all AtomTypeData in the list reference only their natural isotope
     void naturalise();
     // Check for presence of AtomType in list
-    bool contains(std::shared_ptr<AtomType> atomType) const;
+    bool contains(const std::shared_ptr<AtomType> &atomType) const;
     // Check for presence of AtomType/Isotope pair in list
-    bool contains(std::shared_ptr<AtomType> atomType, Isotope *tope);
+    bool contains(const std::shared_ptr<AtomType> &atomType, Isotope *tope);
     // Return number of AtomType/Isotopes in list
     int nItems() const;
     // Return first item in list

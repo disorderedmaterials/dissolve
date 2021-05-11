@@ -14,7 +14,7 @@ Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x
     interpolate(scheme);
 }
 
-Interpolator::~Interpolator() {}
+Interpolator::~Interpolator() = default;
 
 /*
  * Interpolation

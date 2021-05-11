@@ -28,7 +28,7 @@ enum Population
     large,
 };
 
-template <Population population> std::string getFileName(std::string systemName)
+template <Population population> std::string getFileName(const std::string &systemName)
 {
     std::stringstream fileName;
     fileName << benchmark_path << systemName;

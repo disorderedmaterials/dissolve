@@ -24,9 +24,9 @@ class Timer
     // Split time
     clock_t splitTime_;
     // Total time
-    clock_t totalTime_;
+    clock_t totalTime_{0};
     // Whether the timer is running or not
-    bool running_;
+    bool running_{false};
 
     private:
     // Return time string based on provided tick count

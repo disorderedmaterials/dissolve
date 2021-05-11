@@ -13,7 +13,7 @@ SpeciesSite::SpeciesSite()
     originMassWeighted_ = false;
 }
 
-SpeciesSite::~SpeciesSite() {}
+SpeciesSite::~SpeciesSite() = default;
 
 /*
  * Basic Information
@@ -76,7 +76,7 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Set origin atoms
-bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> atoms)
+bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> &atoms)
 {
     originAtoms_.clear();
 
@@ -154,7 +154,7 @@ void SpeciesSite::removeXAxisAtom(SpeciesAtom *xAxisAtom)
 }
 
 // Set x-axis atoms
-bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> atoms)
+bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> &atoms)
 {
     xAxisAtoms_.clear();
 
@@ -221,7 +221,7 @@ void SpeciesSite::removeYAxisAtom(SpeciesAtom *yAxisAtom)
 }
 
 // Set y-axis atoms
-bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> atoms)
+bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> &atoms)
 {
     yAxisAtoms_.clear();
 

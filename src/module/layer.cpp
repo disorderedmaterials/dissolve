@@ -13,7 +13,7 @@ ModuleLayer::ModuleLayer() : ModuleList(), ListItem<ModuleLayer>()
     name_ = "Untitled Layer";
 }
 
-ModuleLayer::~ModuleLayer() {}
+ModuleLayer::~ModuleLayer() = default;
 
 /*
  * Layer Definition

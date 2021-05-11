@@ -5,8 +5,8 @@
 
 #include "base/messenger.h"
 #include <cassert>
+#include <cstddef>
 #include <iterator>
-#include <stddef.h>
 
 // Forward Declarations
 template <class T> class RefList;
@@ -197,7 +197,7 @@ template <class T> class RefList
     // Append reference to the list
     RefListItem<T> *append(T *item)
     {
-        RefListItem<T> *newitem = new RefListItem<T>;
+        auto *newitem = new RefListItem<T>;
         // Add the pointer to the list
         listHead_ == nullptr ? listHead_ = newitem : listTail_->next_ = newitem;
         newitem->prev_ = listTail_;
@@ -210,7 +210,7 @@ template <class T> class RefList
     // Prepend reference to the beginning of the list
     RefListItem<T> *prepend(T *item)
     {
-        RefListItem<T> *newitem = new RefListItem<T>;
+        auto *newitem = new RefListItem<T>;
         // Add the pointer to the beginning of the list
         newitem->next_ = listHead_;
         listHead_ == nullptr ? listHead_ = newitem : listHead_->prev_ = newitem;
@@ -226,7 +226,7 @@ template <class T> class RefList
         if (target == nullptr)
             return add(item);
 
-        RefListItem<T> *newitem = new RefListItem<T>;
+        auto *newitem = new RefListItem<T>;
         newitem->prev_ = target;
         newitem->next_ = target->next_;
         if (target->next_ != nullptr)
@@ -256,7 +256,7 @@ template <class T> class RefList
         if (target == nullptr)
             return add(item);
 
-        RefListItem<T> *newitem = new RefListItem<T>;
+        auto *newitem = new RefListItem<T>;
         newitem->next_ = target;
         newitem->prev_ = target->prev_;
         if (target->prev_ != nullptr)

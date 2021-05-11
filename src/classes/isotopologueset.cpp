@@ -125,7 +125,7 @@ bool IsotopologueSet::write(LineParser &parser)
         return false;
 
     // Write details for each set of Isotopologues
-    for (auto topes : isotopologues_)
+    for (const auto &topes : isotopologues_)
         if (!topes.serialise(parser))
             return false;
 

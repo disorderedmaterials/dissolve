@@ -34,7 +34,7 @@ class CellArray
     // Cell array (one-dimensional)
     std::vector<std::unique_ptr<Cell>> cells_;
     // Box associated with this cell division scheme
-    const Box *box_;
+    const Box *box_{nullptr};
 
     public:
     // Generate array for provided Box

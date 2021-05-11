@@ -15,7 +15,7 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 {
     public:
     AtomTypeSelectionKeyword(AtomTypeList &selection_, const RefList<Configuration> &sourceConfigurations);
-    ~AtomTypeSelectionKeyword();
+    ~AtomTypeSelectionKeyword() override;
 
     /*
      * Data
@@ -50,5 +50,5 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
      */
     protected:
     // Prune any references to the supplied AtomType in the contained data
-    void removeReferencesTo(std::shared_ptr<AtomType> at);
+    void removeReferencesTo(std::shared_ptr<AtomType> at) override;
 };

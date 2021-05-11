@@ -17,7 +17,7 @@ SiteStack::SiteStack() : ListItem<SiteStack>()
     sitesHaveOrientation_ = false;
 }
 
-SiteStack::~SiteStack() {}
+SiteStack::~SiteStack() = default;
 
 /*
  * Target

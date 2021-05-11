@@ -10,7 +10,7 @@ FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, std::st
 {
 }
 
-FileAndFormatKeyword::~FileAndFormatKeyword() {}
+FileAndFormatKeyword::~FileAndFormatKeyword() = default;
 
 /*
  * Keyword Options

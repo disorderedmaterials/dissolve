@@ -3,7 +3,7 @@
 
 #include "base/sysfunc.h"
 #include "classes/species.h"
-#include <string.h>
+#include <cstring>
 
 // Add a new SpeciesSite to this Species
 SpeciesSite *Species::addSite(std::string_view name)

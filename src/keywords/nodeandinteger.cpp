@@ -12,7 +12,7 @@ NodeAndIntegerKeywordBase::NodeAndIntegerKeywordBase(ProcedureNode *parentNode, 
     onlyInScope_ = onlyInScope;
 }
 
-NodeAndIntegerKeywordBase::~NodeAndIntegerKeywordBase() {}
+NodeAndIntegerKeywordBase::~NodeAndIntegerKeywordBase() = default;
 
 /*
  * Parent Node

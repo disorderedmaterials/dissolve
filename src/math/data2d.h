@@ -33,7 +33,7 @@ class Data2D : public Data2DBase
     // Values at each xy
     Array2D<double> values_;
     // Whether data has associated errors
-    bool hasError_;
+    bool hasError_{false};
     // Errors of values, if present
     Array2D<double> errors_;
     // Data version

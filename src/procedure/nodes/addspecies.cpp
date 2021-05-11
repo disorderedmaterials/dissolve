@@ -10,7 +10,7 @@
 #include "classes/species.h"
 #include "keywords/types.h"
 
-AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue population, NodeValue density,
+AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, const NodeValue &population, const NodeValue &density,
                                                  Units::DensityUnits densityUnits)
     : ProcedureNode(ProcedureNode::NodeType::AddSpecies)
 {

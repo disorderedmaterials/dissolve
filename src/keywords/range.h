@@ -15,7 +15,7 @@ class RangeKeyword : public KeywordData<Range>
 {
     public:
     RangeKeyword(Range value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    ~RangeKeyword();
+    ~RangeKeyword() override;
 
     /*
      * Label Type

@@ -16,7 +16,7 @@ Box::Box()
 }
 
 // Virtual Destructor
-Box::~Box() {}
+Box::~Box() = default;
 
 void Box::operator=(const Box &source)
 {
@@ -294,7 +294,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
  */
 
 // Return angle (in degrees) between Atoms
-double Box::angleInDegrees(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k) const
+double Box::angleInDegrees(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, const std::shared_ptr<Atom> &k) const
 {
     Vec3<double> vecji, vecjk;
 

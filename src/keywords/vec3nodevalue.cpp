@@ -12,7 +12,7 @@ Vec3NodeValueKeyword::Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<doubl
     labelType_ = labelType;
 }
 
-Vec3NodeValueKeyword::~Vec3NodeValueKeyword() {}
+Vec3NodeValueKeyword::~Vec3NodeValueKeyword() = default;
 
 /*
  * Label Type

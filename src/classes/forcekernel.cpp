@@ -192,7 +192,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
-            for (auto jj : otherAtoms)
+            for (const auto &jj : otherAtoms)
             {
                 // Check for i >= jj
                 if (i.arrayIndex() >= jj->arrayIndex())

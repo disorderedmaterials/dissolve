@@ -14,7 +14,7 @@ class Data2DStoreKeyword : public KeywordData<Data2DStore &>
 {
     public:
     Data2DStoreKeyword(Data2DStore &dataStore);
-    ~Data2DStoreKeyword();
+    ~Data2DStoreKeyword() override;
 
     /*
      * Arguments

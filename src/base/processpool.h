@@ -150,7 +150,7 @@ class ProcessPool
 
     public:
     // Set up pool with processes specified
-    bool setUp(std::string_view name, Array<int> worldRanks);
+    bool setUp(std::string_view name, const Array<int> &worldRanks);
     // Return name of pool
     std::string_view name() const;
     // Return total number of processes in pool

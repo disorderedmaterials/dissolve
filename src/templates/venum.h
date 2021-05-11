@@ -49,7 +49,7 @@ template <class V, class E> class Venum
     // Return enumeration
     E enumeration() const { return enumOptions_.enumeration(); }
     // Return enumeration as string
-    std::string_view enumerationAsString() const { return enumOptions_.keyword(); }
+    std::string enumerationAsString() const { return enumOptions_.keyword(); }
     // Set enumeration by index
     void setEnumerationByIndex(int index) { enumOptions_.setIndex(index); }
     // Set enumeration from string

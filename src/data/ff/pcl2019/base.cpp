@@ -52,7 +52,7 @@ PCL2019BaseForcefield::PCL2019BaseForcefield()
     addParameters("SO", {3.55, 1.04600});
 }
 
-PCL2019BaseForcefield::~PCL2019BaseForcefield() {}
+PCL2019BaseForcefield::~PCL2019BaseForcefield() = default;
 
 /*
  * Definition

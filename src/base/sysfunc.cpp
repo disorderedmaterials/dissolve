@@ -3,8 +3,8 @@
 
 #include "base/sysfunc.h"
 #include "base/messenger.h"
+#include <cctype>
 #include <ctime>
-#include <ctype.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>

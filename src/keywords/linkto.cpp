@@ -7,7 +7,7 @@ LinkToKeyword::LinkToKeyword(KeywordBase *keywordData) : KeywordData<KeywordBase
 {
 }
 
-LinkToKeyword::~LinkToKeyword() {}
+LinkToKeyword::~LinkToKeyword() = default;
 
 /*
  * Base Pointer Return (Overloading KeywordBase virtual)

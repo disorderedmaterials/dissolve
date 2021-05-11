@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/messenger.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 // Forward Declarations
 /* none */

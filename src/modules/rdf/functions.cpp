@@ -212,12 +212,12 @@ bool RDFModule::calculateGRCellsSingleImpl(ProcessPool &procPool, Configuration 
 
             // Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the
             // absence of a 2D look-up array
-            for (auto i : atomsI)
+            for (const auto &i : atomsI)
             {
                 typeI = i->localTypeIndex();
                 rI = i->r();
 
-                for (auto j : atomsJ)
+                for (const auto &j : atomsJ)
                 {
                     distance = box->minimumDistance(j, rI);
                     partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);

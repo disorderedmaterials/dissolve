@@ -45,7 +45,7 @@ class ScatteringMatrix
     // Return number of reference AtomType pairs
     int nPairs() const;
     // Return index of specified AtomType pair
-    int pairIndex(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ) const;
+    int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
     // Return weight of the specified AtomType pair in the inverse matrix
     double pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ, int dataIndex) const;
     // Calculate and return the scattering matrix at the specified Q value
@@ -74,6 +74,6 @@ class ScatteringMatrix
     // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
     bool addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor = 1.0);
     // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-    bool addPartialReferenceData(Data1D &weightedData, std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2,
-                                 double dataWeight, double factor = 1.0);
+    bool addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
+                                 const std::shared_ptr<AtomType> &at2, double dataWeight, double factor = 1.0);
 };

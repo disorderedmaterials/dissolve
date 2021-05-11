@@ -85,7 +85,7 @@ class KeywordList
         }
 
         // Attempt to cast to specified type
-        KeywordData<T> *castItem = dynamic_cast<KeywordData<T> *>(item);
+        auto *castItem = dynamic_cast<KeywordData<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
                 fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
@@ -109,7 +109,7 @@ class KeywordList
         }
 
         // Attempt to cast to specified type
-        KeywordData<T> *castItem = dynamic_cast<KeywordData<T> *>(item);
+        auto *castItem = dynamic_cast<KeywordData<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
                 fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
@@ -130,7 +130,7 @@ class KeywordList
         }
 
         // Attempt to cast to specified type
-        KeywordData<T> *castItem = dynamic_cast<KeywordData<T> *>(item);
+        auto *castItem = dynamic_cast<KeywordData<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
                 fmt::format("KeywordList::set({}) failed, because the target item is of the wrong type.", name));
@@ -152,7 +152,7 @@ class KeywordList
         }
 
         // Attempt to cast to specified type
-        KeywordData<EnumOptions<E>> *castItem = dynamic_cast<KeywordData<EnumOptions<E>> *>(item);
+        auto *castItem = dynamic_cast<KeywordData<EnumOptions<E>> *>(item);
         if (!castItem)
             throw std::runtime_error(
                 fmt::format("KeywordList::setEnumeration({}) failed, because the target enum is of the wrong type.", name));
@@ -176,7 +176,7 @@ class KeywordList
         }
 
         // Attempt to cast to EnumOptionsBase
-        KeywordData<EnumOptions<E>> *castItem = dynamic_cast<KeywordData<EnumOptions<E>> *>(item);
+        auto *castItem = dynamic_cast<KeywordData<EnumOptions<E>> *>(item);
         if (!castItem)
         {
             Messenger::error("Failed to cast keyword '{}' into EnumOptions<E> because it's of a different type.\n", name);

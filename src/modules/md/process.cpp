@@ -314,7 +314,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Write Atoms
-                    for (auto i : atoms)
+                    for (const auto &i : atoms)
                     {
                         if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n",
                                                    Elements::symbol(i->speciesAtom()->Z()), i->r().x, i->r().y, i->r().z))

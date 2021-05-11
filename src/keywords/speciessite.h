@@ -14,7 +14,7 @@ class SpeciesSiteKeyword : public KeywordData<SpeciesSite *>
 {
     public:
     SpeciesSiteKeyword(SpeciesSite *site = nullptr, bool axesRequired = false);
-    ~SpeciesSiteKeyword();
+    ~SpeciesSiteKeyword() override;
 
     /*
      * Specification
@@ -45,7 +45,7 @@ class SpeciesSiteKeyword : public KeywordData<SpeciesSite *>
      */
     protected:
     // Prune any references to the supplied Species in the contained data
-    void removeReferencesTo(Species *sp);
+    void removeReferencesTo(Species *sp) override;
     // Prune any references to the supplied SpeciesSite in the contained data
-    void removeReferencesTo(SpeciesSite *spSite);
+    void removeReferencesTo(SpeciesSite *spSite) override;
 };

@@ -9,10 +9,11 @@
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include <algorithm>
+#include <utility>
 
-AtomTypeList::AtomTypeList() {}
+AtomTypeList::AtomTypeList() = default;
 
-AtomTypeList::~AtomTypeList() {}
+AtomTypeList::~AtomTypeList() = default;
 
 AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 
@@ -86,7 +87,7 @@ void AtomTypeList::remove(std::shared_ptr<AtomType> atomType)
 // Add/increase this AtomType/Isotope pair
 void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope, double popAdd)
 {
-    auto &atd = add(atomType);
+    auto &atd = add(std::move(atomType));
 
     // Add / increase isotope population
     if (tope != nullptr)
@@ -144,7 +145,7 @@ void AtomTypeList::naturalise()
 }
 
 // Check for presence of AtomType in list
-bool AtomTypeList::contains(std::shared_ptr<AtomType> atomType) const
+bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType) const
 {
     for (auto &atd : types_)
         if (atd.atomType() == atomType)
@@ -154,7 +155,7 @@ bool AtomTypeList::contains(std::shared_ptr<AtomType> atomType) const
 }
 
 // Check for presence of AtomType/Isotope pair in list
-bool AtomTypeList::contains(std::shared_ptr<AtomType> atomType, Isotope *tope)
+bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType, Isotope *tope)
 {
     for (auto &atd : types_)
     {

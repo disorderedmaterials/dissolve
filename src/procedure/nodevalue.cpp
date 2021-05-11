@@ -31,7 +31,7 @@ NodeValue::NodeValue(std::string_view expressionText,
     set(expressionText, parameters);
 }
 
-NodeValue::~NodeValue() {}
+NodeValue::~NodeValue() = default;
 
 // Assignment from integer
 void NodeValue::operator=(const int value) { set(value); }

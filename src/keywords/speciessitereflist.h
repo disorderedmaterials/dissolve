@@ -14,7 +14,7 @@ class SpeciesSiteRefListKeyword : public KeywordData<RefList<SpeciesSite> &>
 {
     public:
     SpeciesSiteRefListKeyword(RefList<SpeciesSite> &references, bool axesRequired = false);
-    ~SpeciesSiteRefListKeyword();
+    ~SpeciesSiteRefListKeyword() override;
 
     /*
      * Specification
@@ -45,7 +45,7 @@ class SpeciesSiteRefListKeyword : public KeywordData<RefList<SpeciesSite> &>
      */
     protected:
     // Prune any references to the supplied Species in the contained data
-    void removeReferencesTo(Species *sp);
+    void removeReferencesTo(Species *sp) override;
     // Prune any references to the supplied SpeciesSite in the contained data
-    void removeReferencesTo(SpeciesSite *spSite);
+    void removeReferencesTo(SpeciesSite *spSite) override;
 };

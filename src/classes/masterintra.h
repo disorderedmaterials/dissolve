@@ -18,7 +18,7 @@ class MasterIntra : public SpeciesIntra
     public:
     MasterIntra(const std::string_view, const SpeciesIntra::InteractionType);
     MasterIntra(const MasterIntra &) = default;
-    ~MasterIntra() = default;
+    ~MasterIntra() override = default;
 
     /*
      * Basic Data
@@ -42,9 +42,9 @@ class MasterIntra : public SpeciesIntra
      */
     public:
     // Set up any necessary parameters
-    void setUp();
+    void setUp() override;
     // Calculate and return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const;
+    double fundamentalFrequency(double reducedMass) const override;
     // Return type of this interaction
-    SpeciesIntra::InteractionType type() const;
+    SpeciesIntra::InteractionType type() const override;
 };

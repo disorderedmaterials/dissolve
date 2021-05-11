@@ -102,7 +102,7 @@ class RegionalDistributor
 
     private:
     // Assign Molecule to process/group if possible
-    bool assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup);
+    bool assignMolecule(const std::shared_ptr<const Molecule> &mol, int processOrGroup);
     // Try to assign a Molecule from the specified Cell to the process/group
     std::shared_ptr<Molecule> assignMolecule(Cell *cell, int processOrGroup);
     // Try to find a Molecule target for the process/group

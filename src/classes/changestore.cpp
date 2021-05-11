@@ -8,6 +8,7 @@
 #include "classes/configuration.h"
 #include "classes/molecule.h"
 #include <memory>
+#include <utility>
 
 ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
 
@@ -19,11 +20,11 @@ ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
 void ChangeStore::add(std::shared_ptr<Atom> i)
 {
     targetAtoms_.emplace_back();
-    targetAtoms_.back().setAtom(i);
+    targetAtoms_.back().setAtom(std::move(i));
 }
 
 // Add Molecule to watch
-void ChangeStore::add(std::shared_ptr<Molecule> mol)
+void ChangeStore::add(const std::shared_ptr<Molecule> &mol)
 {
     for (auto n = 0; n < mol->nAtoms(); ++n)
         add(mol->atom(n));

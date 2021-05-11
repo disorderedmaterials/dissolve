@@ -260,7 +260,7 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
     for (auto &topes : isotopologueMixtures_)
     {
         // We must now loop over the Isotopologues in the topesture
-        for (auto isoWeight : topes.mix())
+        for (const auto &isoWeight : topes.mix())
         {
             const Isotopologue *tope = isoWeight.isotopologue();
 

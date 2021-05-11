@@ -23,7 +23,7 @@ Transformer::Transformer()
     valid_ = false;
 }
 
-Transformer::~Transformer() {}
+Transformer::~Transformer() = default;
 
 Transformer::Transformer(const Transformer &source) { (*this) = source; }
 

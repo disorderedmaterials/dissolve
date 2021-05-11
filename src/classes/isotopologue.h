@@ -29,7 +29,7 @@ class Isotopologue : public ListItem<Isotopologue>
      */
     private:
     // Parent Species
-    const Species *parent_;
+    const Species *parent_{nullptr};
     // Descriptive name
     std::string name_;
 

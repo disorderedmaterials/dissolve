@@ -4,7 +4,7 @@
 #include "base/timer.h"
 #include <fmt/core.h>
 
-Timer::Timer() : totalTime_(0), running_(false) { start(); }
+Timer::Timer() { start(); }
 
 /*
  * Timing Routines

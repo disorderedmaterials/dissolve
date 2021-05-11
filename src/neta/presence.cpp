@@ -5,13 +5,14 @@
 #include "classes/speciesatom.h"
 #include "data/ff/atomtype.h"
 #include <algorithm>
+#include <utility>
 
 NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
                                    std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
     : NETANode(parent, NETANode::NodeType::Presence)
 {
-    allowedElements_ = targetElements;
-    allowedAtomTypes_ = targetAtomTypes;
+    allowedElements_ = std::move(targetElements);
+    allowedAtomTypes_ = std::move(targetAtomTypes);
 
     repeatCount_ = 1;
     repeatCountOperator_ = NETANode::ComparisonOperator::EqualTo;
@@ -36,7 +37,7 @@ bool NETAPresenceNode::addElementTarget(Elements::Element Z)
 // Add forcefield type target to node
 bool NETAPresenceNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 {
-    allowedAtomTypes_.push_back(ffType);
+    allowedAtomTypes_.emplace_back(ffType);
 
     return true;
 }

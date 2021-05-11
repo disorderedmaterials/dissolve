@@ -14,7 +14,7 @@ class ModuleGroupsKeyword : public KeywordData<ModuleGroups &>
 {
     public:
     ModuleGroupsKeyword(ModuleGroups &groups);
-    ~ModuleGroupsKeyword() = default;
+    ~ModuleGroupsKeyword() override = default;
 
     /*
      * Arguments
@@ -34,5 +34,5 @@ class ModuleGroupsKeyword : public KeywordData<ModuleGroups &>
      */
     protected:
     // Prune any references to the supplied Module in the contained data
-    void removeReferencesTo(Module *module);
+    void removeReferencesTo(Module *module) override;
 };

@@ -46,7 +46,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
         : ModuleKeywordBase(moduleType), KeywordData<M *>(KeywordBase::ModuleData, module)
     {
     }
-    ~ModuleKeyword() {}
+    ~ModuleKeyword() override = default;
 
     /*
      * Arguments
@@ -57,7 +57,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         Module *module = coreData.findModule(parser.argsv(startArg));
         if (!module)
@@ -84,7 +84,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
      */
     public:
     // Set the target module
-    bool setModule(Module *module)
+    bool setModule(Module *module) override
     {
         if (!module)
             return false;
@@ -103,7 +103,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
         return true;
     }
     // Return the current target module as the base class
-    const Module *baseModule() const { return KeywordData<M *>::data_; }
+    const Module *baseModule() const override { return KeywordData<M *>::data_; }
     // Return the current target module
     M *module() const { return KeywordData<M *>::data_; }
 
@@ -112,14 +112,14 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
      */
     public:
     // Return option mask for keyword
-    int optionMask() const { return KeywordBase::optionMask(); }
+    int optionMask() const override { return KeywordBase::optionMask(); }
 
     /*
      * Object Management
      */
     protected:
     // Prune any references to the supplied Module in the contained data
-    void removeReferencesTo(Module *module)
+    void removeReferencesTo(Module *module) override
     {
         if (KeywordData<M *>::data_ == module)
             KeywordData<M *>::data_ = nullptr;

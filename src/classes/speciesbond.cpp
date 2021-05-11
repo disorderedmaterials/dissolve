@@ -15,7 +15,7 @@ SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 
-SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(source)
+SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
 {
     // Detach source bond referred to by the species atoms
     if (source.i_ && source.j_)
@@ -45,7 +45,7 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
     return *this;
 }
 
-SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source)
+SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
 {
     // Detach any current atoms
     if (i_ && j_)

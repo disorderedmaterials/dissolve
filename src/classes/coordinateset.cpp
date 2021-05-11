@@ -6,7 +6,7 @@
 
 CoordinateSet::CoordinateSet() : ListItem<CoordinateSet>() {}
 
-CoordinateSet::~CoordinateSet() {}
+CoordinateSet::~CoordinateSet() = default;
 
 /*
  * Coordinates

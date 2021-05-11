@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include <utility>
+
 #include "classes/atomtype.h"
 #include "main/dissolve.h"
 
@@ -39,7 +41,7 @@ int Dissolve::nPairPotentials() const { return pairPotentials_.nItems(); }
 PairPotential *Dissolve::addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
     PairPotential *pp = pairPotentials_.add();
-    pp->setUp(at1, at2);
+    pp->setUp(std::move(at1), std::move(at2));
 
     return pp;
 }
@@ -51,7 +53,7 @@ const List<PairPotential> &Dissolve::pairPotentials() const { return pairPotenti
 PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
 
 // Return whether specified PairPotential is defined
-PairPotential *Dissolve::pairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2) const
+PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
 {
     for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
     {
@@ -90,7 +92,7 @@ void Dissolve::regeneratePairPotentials()
 }
 
 // Generate all necessary PairPotentials, adding missing terms where necessary
-bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
+bool Dissolve::generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving)
 {
     // Check current AtomTypes version against the last one we generated at
     if (pairPotentialAtomTypeVersion_ == coreData_.atomTypesVersion())

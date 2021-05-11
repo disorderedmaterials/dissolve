@@ -12,7 +12,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : Spe
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->operator=(source); }
 
-SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
+SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) noexcept : SpeciesIntra(source)
 {
     // Detach source angle referred to by the species atoms
     if (source.i_ && source.j_ && source.k_)
@@ -42,7 +42,7 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &source)
     return *this;
 }
 
-SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
+SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source) noexcept
 {
     // Detach any current atoms
     if (i_ && j_ && k_)

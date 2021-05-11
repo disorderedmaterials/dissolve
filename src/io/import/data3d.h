@@ -21,7 +21,7 @@ class Data3DImportFileFormat : public FileAndFormat
     };
     Data3DImportFileFormat(Data3DImportFormat format = CartesianData3D);
     Data3DImportFileFormat(std::string_view filename, Data3DImportFormat format = CartesianData3D);
-    ~Data3DImportFileFormat();
+    ~Data3DImportFileFormat() override;
     Data3DImportFileFormat(const Data3DImportFileFormat &source);
     void operator=(const Data3DImportFileFormat &source);
 
@@ -41,11 +41,11 @@ class Data3DImportFileFormat : public FileAndFormat
 
     public:
     // Return number of available formats
-    int nFormats() const;
+    int nFormats() const override;
     // Return format keyword for supplied index
-    std::string formatKeyword(int id) const;
+    std::string formatKeyword(int id) const override;
     // Return description string for supplied index
-    std::string formatDescription(int id) const;
+    std::string formatDescription(int id) const override;
     // Return current format as Data3DImportFormat
     Data3DImportFormat data3DFormat() const;
 
@@ -61,7 +61,7 @@ class Data3DImportFileFormat : public FileAndFormat
      */
     public:
     // Return whether the file must exist
-    bool fileMustExist() const { return true; }
+    bool fileMustExist() const override { return true; }
 
     /*
      * Import / Write

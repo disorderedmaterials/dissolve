@@ -14,7 +14,7 @@ class Data3DStoreKeyword : public KeywordData<Data3DStore &>
 {
     public:
     Data3DStoreKeyword(Data3DStore &dataStore);
-    ~Data3DStoreKeyword();
+    ~Data3DStoreKeyword() override;
 
     /*
      * Arguments

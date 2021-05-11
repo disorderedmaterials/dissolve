@@ -44,7 +44,7 @@ bool DynamicSiteProcedureNode::mustBeNamed() const { return false; }
  */
 
 // Generate sites from the specified Molecule
-void DynamicSiteProcedureNode::generateSites(std::shared_ptr<const Molecule> molecule)
+void DynamicSiteProcedureNode::generateSites(const std::shared_ptr<const Molecule> &molecule)
 {
     // Loop over Atoms in the Molecule
     for (auto n = 0; n < molecule->nAtoms(); ++n)
@@ -97,7 +97,7 @@ bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg
     {
         // Loop over Molecules in the target Configuration
         std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
-        for (auto molecule : molecules)
+        for (const auto &molecule : molecules)
         {
             // Check Molecule exclusions
             if (std::find(excludedMolecules.begin(), excludedMolecules.end(), molecule) != excludedMolecules.end())

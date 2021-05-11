@@ -8,7 +8,7 @@
 
 ProcedureKeyword::ProcedureKeyword(Procedure &procedure) : KeywordData<Procedure &>(KeywordBase::ProcedureData, procedure) {}
 
-ProcedureKeyword::~ProcedureKeyword() {}
+ProcedureKeyword::~ProcedureKeyword() = default;
 
 /*
  * Arguments

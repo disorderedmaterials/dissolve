@@ -14,7 +14,7 @@ class Geometry : public ListItem<Geometry>
 {
     public:
     Geometry();
-    ~Geometry();
+    ~Geometry() = default;
     // Type of geometry data passed
     enum GeometryType
     {

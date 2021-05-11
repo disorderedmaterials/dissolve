@@ -67,9 +67,9 @@ TEST(CombinationTest, CheckCombinations)
         combinations.emplace_back(m, n);
     }
 
-    for (int i = 0; i < combinations.size(); ++i)
+    for (auto &combination : combinations)
     {
-        EXPECT_TRUE(combinationInVector(combinations[i], expectedCombinations));
+        EXPECT_TRUE(combinationInVector(combination, expectedCombinations));
     }
     auto it = std::unique(combinations.begin(), combinations.end());
     EXPECT_TRUE(it == std::end(combinations));

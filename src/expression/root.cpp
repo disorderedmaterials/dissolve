@@ -13,7 +13,7 @@ ExpressionRootNode::ExpressionRootNode() : ExpressionNode() {}
 std::shared_ptr<ExpressionNode> ExpressionRootNode::duplicate()
 {
     auto node = std::make_shared<ExpressionRootNode>();
-    for (auto child : children_)
+    for (const auto &child : children_)
         node->addChild(child->duplicate());
 
     return node;

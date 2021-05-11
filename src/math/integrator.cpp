@@ -103,8 +103,8 @@ double Integrator::sum(const Data1D &data)
 
     auto total = 0.0;
 
-    for (auto n = 0; n < values.size(); ++n)
-        total += values[n];
+    for (double value : values)
+        total += value;
 
     return total;
 }
@@ -142,8 +142,8 @@ double Integrator::absSum(const Data1D &data)
 
     auto total = 0.0;
 
-    for (auto n = 0; n < values.size(); ++n)
-        total += fabs(values[n]);
+    for (double value : values)
+        total += fabs(value);
 
     return total;
 }
@@ -181,8 +181,8 @@ double Integrator::sumOfSquares(const Data1D &data)
 
     auto total = 0.0;
 
-    for (auto n = 0; n < values.size(); ++n)
-        total += values[n] * values[n];
+    for (double value : values)
+        total += value * value;
 
     return total;
 }

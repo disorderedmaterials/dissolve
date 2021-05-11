@@ -9,7 +9,7 @@ Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data3DStore)
 {
 }
 
-Data3DStoreKeyword::~Data3DStoreKeyword() {}
+Data3DStoreKeyword::~Data3DStoreKeyword() = default;
 
 /*
  * Arguments

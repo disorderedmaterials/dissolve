@@ -3,9 +3,9 @@
 
 #include "data/ff/oplsaa2005/base.h"
 
-OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield() {}
+OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield() = default;
 
-OPLSAA2005BaseForcefield::~OPLSAA2005BaseForcefield() {}
+OPLSAA2005BaseForcefield::~OPLSAA2005BaseForcefield() = default;
 
 /*
  * Definition

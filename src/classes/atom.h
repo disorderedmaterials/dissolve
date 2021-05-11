@@ -26,7 +26,7 @@ class Atom : public DynamicArrayObject<Atom>
      */
     public:
     // Clear object, ready for re-use
-    void clear();
+    void clear() override;
 
     /*
      * Properties
@@ -104,5 +104,5 @@ class Atom : public DynamicArrayObject<Atom>
      */
     public:
     // Return scaling factor to employ with specified Atom
-    double scaling(std::shared_ptr<Atom> j) const;
+    double scaling(const std::shared_ptr<Atom> &j) const;
 };

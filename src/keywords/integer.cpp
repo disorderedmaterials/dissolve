@@ -26,7 +26,7 @@ IntegerKeyword::IntegerKeyword(int value, int minValue, int maxValue) : KeywordD
     max_ = maxValue;
 }
 
-IntegerKeyword::~IntegerKeyword() {}
+IntegerKeyword::~IntegerKeyword() = default;
 
 /*
  * Data Validation

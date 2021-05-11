@@ -6,7 +6,7 @@
 #include "data/ff/ff.h"
 
 ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, SpeciesBond::BondFunction form,
-                                       const std::vector<double> parameters)
+                                       const std::vector<double> &parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;

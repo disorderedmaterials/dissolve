@@ -64,7 +64,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
         : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N *>(KeywordBase::NodeData, node)
     {
     }
-    ~NodeKeyword() {}
+    ~NodeKeyword() override = default;
 
     /*
      * Arguments
@@ -75,7 +75,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         if (!parentNode())
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
@@ -108,7 +108,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
      */
     public:
     // Set the target node
-    bool setNode(ProcedureNode *node)
+    bool setNode(ProcedureNode *node) override
     {
         if (!node)
             return false;
@@ -125,7 +125,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
         return true;
     }
     // Return the current target node as the base class
-    const ProcedureNode *procedureNode() const { return KeywordData<N *>::data_; }
+    const ProcedureNode *procedureNode() const override { return KeywordData<N *>::data_; }
     // Return the current target node
     N *node() const { return KeywordData<N *>::data_; }
 
@@ -134,7 +134,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
      */
     public:
     // Return option mask for keyword
-    int optionMask() const { return KeywordBase::optionMask(); }
+    int optionMask() const override { return KeywordBase::optionMask(); }
 
     /*
      * Object Management

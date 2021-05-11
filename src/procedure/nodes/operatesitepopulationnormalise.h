@@ -13,7 +13,7 @@ class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeB
 {
     public:
     OperateSitePopulationNormaliseProcedureNode();
-    OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
+    OperateSitePopulationNormaliseProcedureNode(const RefList<const SelectProcedureNode> &selectNodes);
     ~OperateSitePopulationNormaliseProcedureNode() override = default;
 
     /*
@@ -28,9 +28,9 @@ class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeB
      */
     public:
     // Operate on Data1D target
-    bool operateData1D(ProcessPool &procPool, Configuration *cfg);
+    bool operateData1D(ProcessPool &procPool, Configuration *cfg) override;
     // Operate on Data2D target
-    bool operateData2D(ProcessPool &procPool, Configuration *cfg);
+    bool operateData2D(ProcessPool &procPool, Configuration *cfg) override;
     // Operate on Data3D target
-    bool operateData3D(ProcessPool &procPool, Configuration *cfg);
+    bool operateData3D(ProcessPool &procPool, Configuration *cfg) override;
 };

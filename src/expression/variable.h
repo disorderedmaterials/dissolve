@@ -9,8 +9,8 @@
 class ExpressionVariable
 {
     public:
-    ExpressionVariable(ExpressionValue value = ExpressionValue());
-    ExpressionVariable(std::string_view name, ExpressionValue value = ExpressionValue());
+    ExpressionVariable(const ExpressionValue &value = ExpressionValue());
+    ExpressionVariable(std::string_view name, const ExpressionValue &value = ExpressionValue());
     ~ExpressionVariable() = default;
 
     /*
@@ -28,7 +28,7 @@ class ExpressionVariable
     // Get name of variable
     std::string_view name() const;
     // Set value
-    void setValue(ExpressionValue value);
+    void setValue(const ExpressionValue &value);
     // Return value
     const ExpressionValue &value() const;
     // Return pointer to value

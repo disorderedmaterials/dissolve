@@ -15,11 +15,11 @@ class SpeciesBond : public SpeciesIntra
 {
     public:
     SpeciesBond(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr);
-    ~SpeciesBond() = default;
+    ~SpeciesBond() override = default;
     SpeciesBond(SpeciesBond &source);
-    SpeciesBond(SpeciesBond &&source);
+    SpeciesBond(SpeciesBond &&source) noexcept;
     SpeciesBond &operator=(const SpeciesBond &source);
-    SpeciesBond &operator=(SpeciesBond &&source);
+    SpeciesBond &operator=(SpeciesBond &&source) noexcept;
 
     /*
      * SpeciesAtom Information
@@ -103,11 +103,11 @@ class SpeciesBond : public SpeciesIntra
 
     public:
     // Set up any necessary parameters
-    void setUp();
+    void setUp() override;
     // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const;
+    double fundamentalFrequency(double reducedMass) const override;
     // Return type of this interaction
-    SpeciesIntra::InteractionType type() const;
+    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified distance
     double energy(double distance) const;
     // Return force multiplier for specified distance

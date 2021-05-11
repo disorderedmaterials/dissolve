@@ -151,7 +151,7 @@ Data1D PoissonFit::singleFunction(int index, FunctionSpace::SpaceType space, dou
 }
 
 // Set coefficients from supplied values
-void PoissonFit::set(FunctionSpace::SpaceType space, double rMax, std::vector<double> coefficients, double sigmaQ,
+void PoissonFit::set(FunctionSpace::SpaceType space, double rMax, const std::vector<double> &coefficients, double sigmaQ,
                      double sigmaR)
 {
     // Clear any existing data
@@ -399,9 +399,9 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 }
 
 // Construct suitable reciprocal-space representation using provided coefficients as a starting point
-double PoissonFit::constructReciprocal(double rMin, double rMax, std::vector<double> coefficients, double sigmaQ, double sigmaR,
-                                       int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK,
-                                       int smoothingM, bool reFitAtEnd)
+double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ,
+                                       double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold,
+                                       int smoothingK, int smoothingM, bool reFitAtEnd)
 {
     // Set up data
     nPoissons_ = coefficients.size();

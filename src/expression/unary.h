@@ -15,14 +15,14 @@ class ExpressionUnaryOperatorNode : public ExpressionNode
         OperatorNegate
     };
     ExpressionUnaryOperatorNode(UnaryOperator op);
-    ~ExpressionUnaryOperatorNode() = default;
+    ~ExpressionUnaryOperatorNode() override = default;
 
     /*
      * Nodes
      */
     protected:
     // Duplicate this node and its contents
-    std::shared_ptr<ExpressionNode> duplicate();
+    std::shared_ptr<ExpressionNode> duplicate() override;
 
     /*
      * Data
@@ -36,5 +36,5 @@ class ExpressionUnaryOperatorNode : public ExpressionNode
      */
     public:
     // Evaluate node
-    virtual std::optional<ExpressionValue> evaluate() const;
+    std::optional<ExpressionValue> evaluate() const override;
 };

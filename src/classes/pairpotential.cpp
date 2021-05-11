@@ -8,7 +8,7 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 #include "math/constants.h"
-#include <math.h>
+#include <cmath>
 
 // Static members
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
@@ -16,13 +16,7 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
     PairPotential::ShiftedShortRangeTruncation;
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
-PairPotential::PairPotential()
-    : ListItem<PairPotential>(), shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), includeCoulomb_(true),
-      coulombEnergyAtCutoff_(0.0), coulombForceAtCutoff_(0.0), shortRangeType_(Forcefield::ShortRangeType::Undefined),
-      chargeI_(0.0), chargeJ_(0.0), nPoints_(0), range_(0.0), delta_(-1.0), rDelta_(0.0), uFullInterpolation_(uFull_),
-      dUFullInterpolation_(dUFull_)
-{
-}
+PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_) {}
 
 // Return enum option info for CoulombTruncationScheme
 EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTruncationSchemes()
@@ -98,7 +92,7 @@ void PairPotential::setData1DNames()
 }
 
 // Set up PairPotential parameters from specified AtomTypes
-bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ)
+bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ)
 {
     // Check for NULL pointers
     if (typeI == nullptr)
@@ -583,7 +577,7 @@ void PairPotential::setUAdditional(Data1D &newUAdditional)
 }
 
 // Adjust additional potential, and recalculate UFull and dUFull
-void PairPotential::adjustUAdditional(Data1D u, double factor)
+void PairPotential::adjustUAdditional(const Data1D &u, double factor)
 {
     // Interpolate the supplied data 'u' and add it to the additional potential
     Interpolator::addInterpolated(uAdditional_, u, factor);

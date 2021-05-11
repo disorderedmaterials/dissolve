@@ -13,14 +13,14 @@ class LinkToKeyword : public KeywordData<KeywordBase *>
 {
     public:
     LinkToKeyword(KeywordBase *keywordData);
-    ~LinkToKeyword();
+    ~LinkToKeyword() override;
 
     /*
      * Base Pointer Return (Overloading KeywordBase virtual)
      */
     public:
     // Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-    KeywordBase *base();
+    KeywordBase *base() override;
 
     /*
      * Arguments

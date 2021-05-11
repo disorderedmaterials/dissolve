@@ -24,13 +24,13 @@ class BraggReflection
      */
     private:
     // Q-position of reflection
-    double q_;
+    double q_{0.0};
     // Integer index (derived from q_)
-    int index_;
+    int index_{-1};
     // Intensity contributions from atomtype pairs
     Array2D<double> intensities_;
     // Number of k-vectors which contributed to the intensity (for normalisation)
-    int nKVectors_;
+    int nKVectors_{0};
     // Miller indices of reflection
     Vec3<int> hkl_;
 

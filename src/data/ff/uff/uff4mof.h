@@ -10,21 +10,21 @@ class Forcefield_UFF4MOF : public Forcefield_UFF
 {
     public:
     Forcefield_UFF4MOF() = default;
-    ~Forcefield_UFF4MOF() = default;
+    ~Forcefield_UFF4MOF() override = default;
 
     /*
      * Set Up
      */
     protected:
     // Set up / create all forcefield terms
-    bool setUp();
+    bool setUp() override;
 
     /*
      * Definition
      */
     public:
     // Return name of Forcefield
-    std::string_view name() const;
+    std::string_view name() const override;
     // Return description for Forcefield
-    std::string_view description() const;
+    std::string_view description() const override;
 };

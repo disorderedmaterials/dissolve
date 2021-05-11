@@ -260,7 +260,7 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
  */
 
 // Assign Molecule to process/group if possible
-bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup)
+bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &mol, int processOrGroup)
 {
     Cell *primaryCell = nullptr;
     int cellIndex;

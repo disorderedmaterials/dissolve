@@ -9,7 +9,7 @@
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
-#include <string.h>
+#include <cstring>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -248,7 +248,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (auto atomType : atomTypes())
+    for (const auto &atomType : atomTypes())
     {
         std::string line = fmt::format("  {}  {}  {}  {:12.6e}  {}",
                                        PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),

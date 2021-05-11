@@ -15,7 +15,7 @@ Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3D
     setUpKeywords();
 }
 
-Data3DImportFileFormat::~Data3DImportFileFormat() {}
+Data3DImportFileFormat::~Data3DImportFileFormat() = default;
 
 /*
  * Keyword Options

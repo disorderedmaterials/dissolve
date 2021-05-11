@@ -24,7 +24,7 @@ class CoordinateImportFileFormat : public FileAndFormat
     };
     CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
     CoordinateImportFileFormat(std::string_view filename, CoordinateImportFormat format = XYZCoordinates);
-    ~CoordinateImportFileFormat();
+    ~CoordinateImportFileFormat() override;
 
     /*
      * Keyword Options
@@ -42,11 +42,11 @@ class CoordinateImportFileFormat : public FileAndFormat
 
     public:
     // Return number of available formats
-    int nFormats() const;
+    int nFormats() const override;
     // Return format keyword for supplied index
-    std::string formatKeyword(int id) const;
+    std::string formatKeyword(int id) const override;
     // Return description string for supplied index
-    std::string formatDescription(int id) const;
+    std::string formatDescription(int id) const override;
     // Return current format as CoordinateImportFormat
     CoordinateImportFormat coordinateFormat() const;
 
@@ -55,7 +55,7 @@ class CoordinateImportFileFormat : public FileAndFormat
      */
     public:
     // Return whether the file must exist
-    bool fileMustExist() const { return true; }
+    bool fileMustExist() const override { return true; }
 
     /*
      * Import Functions

@@ -10,7 +10,7 @@
 #include <functional>
 #include <numeric>
 
-XRayWeights::XRayWeights() : formFactors_(XRayFormFactors::NoFormFactorData), valid_(false) {}
+XRayWeights::XRayWeights() {}
 
 XRayWeights::XRayWeights(const XRayWeights &source) { (*this) = source; }
 

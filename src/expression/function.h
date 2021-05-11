@@ -27,14 +27,14 @@ class ExpressionFunctionNode : public ExpressionNode
     // Return enum options for NodeTypes
     static EnumOptions<ExpressionFunctionNode::InternalFunction> internalFunctions();
     ExpressionFunctionNode(InternalFunction func);
-    ~ExpressionFunctionNode() = default;
+    ~ExpressionFunctionNode() override = default;
 
     /*
      * Nodes
      */
     protected:
     // Duplicate this node and its contents
-    std::shared_ptr<ExpressionNode> duplicate();
+    std::shared_ptr<ExpressionNode> duplicate() override;
 
     /*
      * Data
@@ -48,5 +48,5 @@ class ExpressionFunctionNode : public ExpressionNode
      */
     public:
     // Evaluate node
-    virtual std::optional<ExpressionValue> evaluate() const;
+    std::optional<ExpressionValue> evaluate() const override;
 };

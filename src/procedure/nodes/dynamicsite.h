@@ -32,7 +32,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
     // Return whether specified context is relevant for this node type
     bool isContextRelevant(ProcedureNode::NodeContext context) override;
     // Return whether a name for the node must be provided
-    bool mustBeNamed() const;
+    bool mustBeNamed() const override;
 
     /*
      * Site Criteria
@@ -58,7 +58,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
 
     private:
     // Generate dynamic sites from the specified Molecule
-    void generateSites(std::shared_ptr<const Molecule> molecule);
+    void generateSites(const std::shared_ptr<const Molecule> &molecule);
 
     public:
     // Return Array of generated sites

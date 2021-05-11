@@ -16,7 +16,7 @@ Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2D
     setUpKeywords();
 }
 
-Data2DImportFileFormat::~Data2DImportFileFormat() {}
+Data2DImportFileFormat::~Data2DImportFileFormat() = default;
 
 /*
  * Keyword Options

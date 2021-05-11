@@ -13,7 +13,7 @@ SpeciesSiteRefListKeyword::SpeciesSiteRefListKeyword(RefList<SpeciesSite> &refer
     axesRequired_ = axesRequired;
 }
 
-SpeciesSiteRefListKeyword::~SpeciesSiteRefListKeyword() {}
+SpeciesSiteRefListKeyword::~SpeciesSiteRefListKeyword() = default;
 
 /*
  * Specification

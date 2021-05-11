@@ -6,7 +6,7 @@
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 
-BraggReflection::BraggReflection() : q_(0.0), index_(-1), nKVectors_(0) {}
+BraggReflection::BraggReflection() {}
 
 void BraggReflection::operator+=(const BraggReflection &source)
 {

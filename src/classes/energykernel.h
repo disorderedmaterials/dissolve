@@ -25,7 +25,7 @@ class EnergyKernel
 {
     public:
     EnergyKernel(ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff = -1.0);
-    ~EnergyKernel();
+    ~EnergyKernel() = default;
     // Clear all data
     void clear();
 

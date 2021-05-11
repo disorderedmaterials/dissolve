@@ -433,11 +433,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(fInter[n].z + fIntra[n].z) > 1.0e-6)
                         totalRatio.z *= 100.0 / (fInter[n].z + fIntra[n].z);
 
-                    if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
+                    if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
-                    else if (isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
+                    else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
                         failed = true;
-                    else if (isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
+                    else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
                         failed = true;
                     else
                         failed = false;
@@ -473,11 +473,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(fInterCheck[n].z + fIntraCheck[n].z) > 1.0e-6)
                         totalRatio.z *= 100.0 / (fInterCheck[n].z + fIntraCheck[n].z);
 
-                    if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
+                    if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
-                    else if (isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
+                    else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
                         failed = true;
-                    else if (isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
+                    else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
                         failed = true;
                     else
                         failed = false;

@@ -12,7 +12,7 @@ class Function1DKeyword : public KeywordData<Functions::Function1DWrapper>
     public:
     Function1DKeyword(Functions::Function1DWrapper value = Functions::Function1DWrapper(Functions::Function1D::None),
                       int functionProperties = FunctionProperties::None);
-    ~Function1DKeyword() = default;
+    ~Function1DKeyword() override = default;
 
     /*
      * Data

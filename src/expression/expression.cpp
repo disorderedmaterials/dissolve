@@ -10,8 +10,8 @@
 #include "expression/ExpressionVisitor.h"
 #include "expression/root.h"
 #include <algorithm>
-#include <stdarg.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstring>
 
 Expression::Expression(std::string_view expressionText) : rootNode_(nullptr) { create(expressionText); }
 

@@ -3,11 +3,12 @@
 
 #include "data/ff/xml/base.h"
 #include <iostream>
+#include <utility>
 
 Forcefield_XML::Forcefield_XML(std::string name, std::vector<ForcefieldAtomType> &&atoms,
                                std::vector<ForcefieldBondTerm> &&bonds, std::vector<ForcefieldAngleTerm> &&angles,
                                std::vector<ForcefieldTorsionTerm> &&torsions, std::vector<ForcefieldImproperTerm> &&impropers)
-    : Forcefield(atoms, bonds, angles, torsions, impropers), name_(name)
+    : Forcefield(atoms, bonds, angles, torsions, impropers), name_(std::move(name))
 {
 }
 

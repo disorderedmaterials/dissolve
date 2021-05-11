@@ -17,7 +17,7 @@ class Vec3IntegerKeyword : public KeywordData<Vec3<int>>
     Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
     Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue,
                        Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    ~Vec3IntegerKeyword();
+    ~Vec3IntegerKeyword() override;
 
     /*
      * Data Validation
@@ -38,7 +38,7 @@ class Vec3IntegerKeyword : public KeywordData<Vec3<int>>
     // Return validation maximum limit for supplied index
     int validationMax(int index);
     // Validate supplied value
-    bool isValid(Vec3<int> value);
+    bool isValid(Vec3<int> value) override;
     // Validate supplied single
     bool isValid(int index, int value);
 
@@ -71,7 +71,7 @@ class Vec3IntegerKeyword : public KeywordData<Vec3<int>>
      */
     public:
     // Return value (as Vec3<int>)
-    Vec3<int> asVec3Int();
+    Vec3<int> asVec3Int() override;
     // Return value (as Vec3<double>)
-    Vec3<double> asVec3Double();
+    Vec3<double> asVec3Double() override;
 };

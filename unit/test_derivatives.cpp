@@ -14,7 +14,7 @@ namespace UnitTest
 class DerivativesTest : public ::testing::Test
 {
     public:
-    DerivativesTest() : bond_(&i_, &j_), angle_(&i_, &j_, &k_), torsion_(&i_, &j_, &k_, &l_), tolerance_(1.0e-6)
+    DerivativesTest() : bond_(&i_, &j_), angle_(&i_, &j_, &k_), torsion_(&i_, &j_, &k_, &l_)
     {
         i_.set(Elements::H, Vec3<double>(-1.0, 1.0, 0.0));
         j_.set(Elements::C, Vec3<double>(-1.0, 0.0, 0.0));
@@ -30,7 +30,7 @@ class DerivativesTest : public ::testing::Test
     SpeciesAngle angle_;
     SpeciesTorsion torsion_;
     // Tolerance for value comparison
-    double tolerance_;
+    double tolerance_{1.0e-6};
 
     protected:
     // Test supplied intramolecular function over the supplied range, comparing numerical and analytical derivatives at each

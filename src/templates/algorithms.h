@@ -6,6 +6,7 @@
 #include <functional>
 #include <optional>
 #include <tuple>
+#include <utility>
 
 // Cut a range into a smaller segment for MPI
 template <typename T> auto chop_range(const T begin, const T end, const int nChunks, const int index)
@@ -124,7 +125,7 @@ template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) ->
 template <typename... Args> class ZipIterator
 {
     public:
-    ZipIterator(std::tuple<Args...> args) : source_(args){};
+    ZipIterator(std::tuple<Args...> args) : source_(std::move(args)){};
     bool operator!=(ZipIterator<Args...> other)
     {
         return std::apply(

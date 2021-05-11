@@ -175,8 +175,8 @@ class GenericList
     // Serialise all objects via the specified LineParser
     bool serialiseAll(LineParser &parser, std::string_view headerPrefix) const;
     // Deserialise an object from the LineParser into our map
-    bool deserialise(LineParser &parser, CoreData &coreData, std::string name, std::string itemClass, int version = 0,
-                     int flags = 0);
+    bool deserialise(LineParser &parser, CoreData &coreData, const std::string &name, const std::string &itemClass,
+                     int version = 0, int flags = 0);
 
     /*
      * Searchers
