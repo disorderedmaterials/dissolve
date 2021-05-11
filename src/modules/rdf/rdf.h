@@ -80,8 +80,6 @@ class RDFModule : public Module
     bool calculateGRSimple(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange);
     // Calculate partial g(r) utilising Cell neighbour lists
     bool calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth);
-    bool calculateGRCellsParallelImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth);
-    bool calculateGRCellsSingleImpl(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth);
 
     public:
     // Calculate and return effective density for based on the target Configurations

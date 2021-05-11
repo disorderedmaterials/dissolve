@@ -67,14 +67,15 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
     const auto cutoff = potentialMap.range();
 
     // Get start/end for loop
-    auto loopStart = procPool.twoBodyLoopStart(sp->nAtoms());
-    auto loopEnd = procPool.twoBodyLoopEnd(sp->nAtoms());
-    Combinations combinations(loopEnd - loopStart + 1, 2);
-    dissolve::counting_iterator<int> countingIterator(0, combinations.getNumCombinations());
+    Combinations comb(sp->nAtoms(), 2);
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto [loopStart, loopEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
+    dissolve::counting_iterator<int> countingIterator(loopStart, loopEnd);
     double energy = dissolve::transform_reduce(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0,
                                                std::plus<double>(), [&](const auto idx) {
-                                                   auto [n, m] = combinations.nthCombination(idx);
+                                                   auto [n, m] = comb.nthCombination(idx);
                                                    auto &i = sp->atom(n);
                                                    auto &j = sp->atom(m);
                                                    auto &rI = i.r();

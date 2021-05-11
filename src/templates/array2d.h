@@ -240,6 +240,19 @@ template <class A> class Array2D
 
         std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
     }
+    Array2D<A> operator+(const Array2D<A> &other) const
+    {
+        assert(nColumns_ == other.nColumns_ && nRows_ == other.nRows_);
+        auto half = this->half_ && other.half_;
+        Array2D<A> ret(nRows_, nColumns_, half);
+        for (int i = 0; i < this->nRows_; i++)
+        {
+            int colStart = i ? half : 0;
+            for (int j = colStart; j < this->nColumns_; ++j)
+                ret[{i, j}] = other[{i, j}] + (*this)[{i, j}];
+        };
+        return ret;
+    }
     // Operator* (matrix multiply)
     Array2D<A> operator*(const Array2D<A> &B) const
     {
