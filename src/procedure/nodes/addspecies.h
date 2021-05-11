@@ -34,9 +34,10 @@ class AddSpeciesProcedureNode : public ProcedureNode
     // Box Action Style
     enum class BoxActionStyle
     {
-        None,       /* Box geometry / volume will remain unchanged */
-        AddVolume,  /* Increase Box volume to accommodate new species, according to supplied density */
-        ScaleVolume /* Scale current Box volume to give, after addition of the current species, the supplied density */
+        None,        /* Box geometry / volume will remain unchanged */
+        AddVolume,   /* Increase Box volume to accommodate new species, according to supplied density */
+        ScaleVolume, /* Scale current Box volume to give, after addition of the current species, the supplied density */
+        Set          /* Set the Box geometry to that specified in the Species */
     };
     // Return enum option info for BoxActionStyle
     static EnumOptions<BoxActionStyle> boxActionStyles();

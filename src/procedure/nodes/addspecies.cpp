@@ -54,7 +54,8 @@ EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::bo
     return EnumOptions<AddSpeciesProcedureNode::BoxActionStyle>(
         "BoxAction", {{AddSpeciesProcedureNode::BoxActionStyle::None, "None"},
                       {AddSpeciesProcedureNode::BoxActionStyle::AddVolume, "AddVolume"},
-                      {AddSpeciesProcedureNode::BoxActionStyle::ScaleVolume, "ScaleVolume"}});
+                      {AddSpeciesProcedureNode::BoxActionStyle::ScaleVolume, "ScaleVolume"},
+                      {AddSpeciesProcedureNode::BoxActionStyle::Set, "Set"}});
 }
 
 // Return enum option info for PositioningType
@@ -77,7 +78,7 @@ bool AddSpeciesProcedureNode::prepare(Configuration *cfg, std::string_view prefi
 bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-    const auto requestedPopulation = keywords_.asInt("Population");
+    auto requestedPopulation = keywords_.asInt("Population");
     auto *sp = keywords_.retrieve<const Species *>("Species");
     if (!sp)
         return Messenger::error("No Species set in AddSpecies node.\n");
@@ -100,10 +101,10 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         Messenger::print("[AddSpecies] Current box volume will be increased to accommodate volume of new species.\n");
 
         // Get current cell volume
-        double currentVolume = cfg->box()->volume();
+        auto currentVolume = cfg->box()->volume();
 
         // Determine volume required to contain the population of the specified Species at the requested density
-        double requiredVolume = 0.0;
+        auto requiredVolume = 0.0;
         if (densityAndUnits.enumeration() == Units::AtomsPerAngstromUnits)
             requiredVolume = nAtomsToAdd / density;
         else
@@ -120,7 +121,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
             Messenger::print("[AddSpecies] Current box is empty, so new volume will be set to exactly {} cubic Angstroms.\n",
                              requiredVolume);
 
-        double scaleFactor = pow(requiredVolume / currentVolume, 1.0 / 3.0);
+        auto scaleFactor = pow(requiredVolume / currentVolume, 1.0 / 3.0);
 
         // Scale centres of geometry of existing contents
         cfg->scaleMoleculeCentres(scaleFactor);
@@ -145,7 +146,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                          existingRequiredVolume);
 
         // Determine volume required to contain the population of the specified Species at the requested density
-        double requiredVolume = 0.0;
+        auto requiredVolume = 0.0;
         if (densityAndUnits.enumeration() == Units::AtomsPerAngstromUnits)
             requiredVolume = nAtomsToAdd / density;
         else
@@ -157,7 +158,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         if (cfg->nAtoms() > 0)
             requiredVolume += existingRequiredVolume;
 
-        double scaleFactor = pow(requiredVolume / cfg->box()->volume(), 1.0 / 3.0);
+        auto scaleFactor = pow(requiredVolume / cfg->box()->volume(), 1.0 / 3.0);
 
         // Scale centres of geometry of existing contents
         cfg->scaleMoleculeCentres(scaleFactor);
@@ -167,6 +168,27 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
 
         Messenger::print("[AddSpecies] Current box scaled by {} - new volume is {:e} cubic Angstroms.\n", scaleFactor,
                          cfg->box()->volume());
+    }
+    else if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::Set)
+    {
+        Messenger::print("[AddSpecies] Box geometry will be set from the species box definition.\n");
+        if (sp->box()->type() == Box::BoxType::NonPeriodic)
+            return Messenger::error("Target species '{}' is not periodic!.\n", sp->name());
+
+        cfg->createBox(sp->box()->axisLengths(), sp->box()->axisAngles());
+
+        Messenger::print("[AddSpecies] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
+                         "{:10.4e} gamma = {:10.4e}\n",
+                         Box::boxTypes().keyword(cfg->box()->type()), cfg->box()->axisLengths().x, cfg->box()->axisLengths().y,
+                         cfg->box()->axisLengths().z, cfg->box()->axisAngles().x, cfg->box()->axisAngles().y,
+                         cfg->box()->axisAngles().z);
+
+        // Check on the requestedPopulation - we can have exactly one copy and no more
+        if (requestedPopulation > 1)
+        {
+            Messenger::warn("Population for species '{}' reset to 1.\n", sp->name());
+            requestedPopulation = 0;
+        }
     }
 
     // Get the positioning type and rotation flag
