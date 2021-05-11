@@ -24,7 +24,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module must be provided.\n");
     const auto averaging = keywords_.asInt("Averaging");
-    const auto includeBragg = keywords_.asBool("IncludeBragg");
+    const auto *braggModule = keywords_.retrieve<const BraggModule *>("IncludeBragg");
     const auto &braggQBroadening = keywords_.retrieve<Functions::Function1DWrapper>("BraggQBroadening");
     const auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     const auto &qBroadening = keywords_.retrieve<Functions::Function1DWrapper>("QBroadening");
@@ -52,14 +52,13 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("SQ: Broadening to be applied in calculated S(Q) is {} ({}).",
                          Functions::function1D().keyword(qBroadening.type()), qBroadening.parameterSummary());
-    if (includeBragg)
+    if (braggModule)
     {
-        Messenger::print("SQ: Bragg scattering will be calculated from reflection data in target "
-                         "Configurations, if present.\n");
+        Messenger::print("SQ: Bragg scattering from module '{}' will be included.\n", braggModule->uniqueName());
         if (braggQBroadening.type() == Functions::Function1D::None)
             Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
         else
-            Messenger::print("SQ: Additional broadening to be applied in calculated Bragg S(Q) is {} ({}).",
+            Messenger::print("SQ: Broadening to be applied in calculated Bragg S(Q) is {} ({}).",
                              Functions::function1D().keyword(braggQBroadening.type()), braggQBroadening.parameterSummary());
     }
     Messenger::print("SQ: Save data is {}.\n", DissolveSys::onOff(saveData));
@@ -85,10 +84,10 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         unweightedsq.setUpPartials(unweightedgr.atomTypes());
 
     // Is the PartialSet already up-to-date?
-    if (DissolveSys::sameString(unweightedsq.fingerprint(),
-                                fmt::format("{}/{}",
-                                            dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
-                                            includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1)))
+    if (DissolveSys::sameString(
+            unweightedsq.fingerprint(),
+            fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
+                        braggModule ? dissolve.processingModuleData().version("Reflections", braggModule->uniqueName()) : -1)))
     {
         Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
         return true;
@@ -99,76 +98,72 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return false;
 
     // Include Bragg scattering?
-    if (includeBragg)
+    if (braggModule)
     {
-        // Get associated BraggModule
-        const auto *braggModule = keywords_.retrieve<const BraggModule *>("SourceReflections", nullptr);
-        if (!braggModule)
-            return Messenger::error("A source Bragg module must be provided.\n");
-
         // Check if reflection data is present
-        if (!dissolve.processingModuleData().contains("BraggReflections", braggModule->uniqueName()))
+        if (!dissolve.processingModuleData().contains("Reflections", braggModule->uniqueName()))
             return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                                     "could not be located.\n",
                                     braggModule->uniqueName());
         const auto &braggReflections =
-            dissolve.processingModuleData().value<std::vector<BraggReflection>>("BraggReflections", braggModule->uniqueName());
+            dissolve.processingModuleData().value<std::vector<BraggReflection>>("Reflections", braggModule->uniqueName());
         const auto nReflections = braggReflections.size();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
-        Messenger::print("Found BraggReflections data for module '{}' (nReflections = {}, QMax = {} "
+        Messenger::print("Found reflections data for module '{}' (nReflections = {}, Q(last) = {} "
                          "Angstroms**-1).\n",
                          braggModule->uniqueName(), nReflections, braggQMax);
+        const auto &braggAtomTypes =
+            dissolve.processingModuleData().value<AtomTypeList>("SummedAtomTypes", braggModule->uniqueName());
+        const auto &v0 = dissolve.processingModuleData().value<double>("V0", braggModule->uniqueName());
 
-        // Create a temporary array into which our broadened Bragg partials will be placed
-        auto braggPartialsObject =
-            dissolve.processingModuleData().realiseIf<Array2D<Data1D>>("BraggPartials", uniqueName_, GenericItem::NoFlags);
-        auto &braggPartials = braggPartialsObject.first;
-        if (braggPartialsObject.second == GenericItem::ItemStatus::Created)
-        {
-            // Initialise the array
-            braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+        // Prepare a temporary object for the Bragg partials
+        Array2D<Data1D> braggPartials;
+        braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+        for (auto &partial : braggPartials)
+            partial.initialise(unweightedsq.partial(0, 0));
 
-            for_each_pair(0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
-                braggPartials[{i, j}] = unweightedsq.partial(0, 0);
+        // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
+        auto result = for_each_pair_early(
+            unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
+            [&braggReflections, &braggAtomTypes, &braggQBroadening, &braggPartials, &qDelta](auto i, auto &at1, auto j,
+                                                                                             auto &at2) -> EarlyReturn<bool> {
+                // Locate the corresponding Bragg intensities for this atom type pair
+                auto pairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
+                if (pairIndex.first == -1 || pairIndex.second == -1)
+                    return Messenger::error(
+                        "SQ data has a partial between {} and {}, but no such intensities exist in the reflection data.\n",
+                        at1.atomTypeName(), at2.atomTypeName());
+
+                // Grab relevant partial and oop over reflections
+                auto &partial = braggPartials[pairIndex];
+                for (const auto &reflxn : braggReflections)
+                {
+                    const auto intensity = reflxn.intensity(pairIndex.first, pairIndex.second);
+                    for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
+                        by += braggQBroadening.y(q - reflxn.q(), q) * intensity * braggQBroadening.normalisation(q) /
+                              (reflxn.q() * q);
+                }
+
+                return EarlyReturn<bool>::Continue;
             });
-        }
-        for_each_pair(0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
-            std::fill(braggPartials[{i, j}].values().begin(), braggPartials[{i, j}].values().end(), 0.0);
-        });
+        if (result && !result.value())
+            return false;
 
-        // First, re-bin the reflection data into the arrays we have just set up
-        // TODO Disabled pending #277
-        //         if (!BraggModule::reBinReflections(procPool, cfg, braggPartials))
-        //             return false;
-        //
-        //         // Apply necessary broadening
-        //         for (auto i = 0; i < unweightedsq.nAtomTypes(); ++i)
-        //         {
-        //             for (auto j = i; j < unweightedsq.nAtomTypes(); ++j)
-        //             {
-        //                 // Bragg-specific broadening
-        //                 Filters::convolve(braggPartials.at(i, j), braggQBroadening, true);
-        //
-        //                 // Local 'QBroadening' term
-        //                 Filters::convolve(braggPartials.at(i, j), qBroadening, true);
-        //             }
-        //         }
-        //
-        //         // Remove self-scattering level from partials between the same atom type and remove normalisation from
-        //         // atomic fractions
-        //         for (auto i = 0; i < unweightedsq.nAtomTypes(); ++i)
-        //         {
-        //             for (auto j = i; j < unweightedsq.nAtomTypes(); ++j)
-        //             {
-        //                 // Subtract self-scattering level if types are equivalent
-        //                 if (i == j)
-        //                     braggPartials.at(i, i) -= cfg->usedAtomTypeData(i).fraction();
-        //
-        //                 // Remove atomic fraction normalisation
-        //                 braggPartials.at(i, j) /= cfg->usedAtomTypeData(i).fraction() *
-        //                 cfg->usedAtomTypeData(j).fraction();
-        //             }
-        //         }
+        // Finalise partials
+        for (auto &partial : braggPartials)
+            std::transform(partial.values().begin(), partial.values().end(), partial.values().begin(),
+                           [v0](auto &val) { return val * 2.0 * pow(M_PI, 2) / v0; });
+
+        // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
+        for_each_pair(unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
+                      [&braggPartials](auto i, auto &atd1, auto j, auto &atd2) {
+                          // Subtract self-scattering level if types are equivalent
+                          if (i == j)
+                              braggPartials[{i, j}] -= atd1.fraction();
+
+                          // Remove atomic fraction normalisation
+                          braggPartials[{i, j}] /= atd1.fraction() * atd2.fraction();
+                      });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
         for_each_pair(0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
@@ -209,9 +204,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Set fingerprint
-    unweightedsq.setFingerprint(fmt::format("{}/{}",
-                                            dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
-                                            includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1));
+    unweightedsq.setFingerprint(
+        fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
+                    braggModule ? dissolve.processingModuleData().version("Reflections", braggModule->uniqueName()) : -1));
     // Save data if requested
     if (saveData && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
         return false;

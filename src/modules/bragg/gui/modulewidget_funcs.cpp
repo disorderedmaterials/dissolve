@@ -16,94 +16,135 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, const GenericList &process
 {
     // Set up user interface
     ui_.setupUi(this);
+    braggFilterProxy_.setSourceModel(&braggModel_);
+    ui_.ReflectionsTable->setModel(&braggFilterProxy_);
 
-    // Set up Bragg reflections graph
-    reflectionsGraph_ = ui_.ReflectionsPlotWidget->dataViewer();
+    // Set up graph
+    graph_ = ui_.PlotWidget->dataViewer();
     // -- Set view
-    reflectionsGraph_->view().setViewType(View::FlatXYView);
-    reflectionsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-    reflectionsGraph_->view().axes().setMax(0, 10.0);
-    reflectionsGraph_->view().axes().setTitle(1, "Intensity");
-    reflectionsGraph_->view().axes().setMin(1, -1.0);
-    reflectionsGraph_->view().axes().setMax(1, 1.0);
-    reflectionsGraph_->view().setAutoFollowType(View::AllAutoFollow);
-
-    // Set up total G(r) graph
-    totalsGraph_ = ui_.TotalsPlotWidget->dataViewer();
-    // -- Set view
-    totalsGraph_->view().setViewType(View::FlatXYView);
-    totalsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-    totalsGraph_->view().axes().setMax(0, 10.0);
-    totalsGraph_->view().axes().setTitle(1, "Intensity");
-    totalsGraph_->view().axes().setMin(1, -1.0);
-    totalsGraph_->view().axes().setMax(1, 1.0);
-    totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
+    graph_->view().setViewType(View::FlatXYView);
+    graph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+    graph_->view().axes().setMax(0, 10.0);
+    graph_->view().axes().setTitle(1, "Intensity");
+    graph_->view().axes().setMin(1, -1.0);
+    graph_->view().axes().setMax(1, 1.0);
+    graph_->view().setAutoFollowType(View::AllAutoFollow);
     // -- Set group styling
-    totalsGraph_->groupManager().setGroupColouring("Totals", RenderableGroup::AutomaticIndividualColouring);
+    graph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
 
     refreshing_ = false;
-
-    currentConfiguration_ = nullptr;
-
-    updateControls(ModuleWidget::UpdateType::Normal);
-
-    setGraphDataTargets();
-}
-
-BraggModuleWidget::~BraggModuleWidget() {}
-
-// Update controls within widget
-void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
-{
-    ui_.ReflectionsPlotWidget->updateToolbar();
-    ui_.TotalsPlotWidget->updateToolbar();
-
-    reflectionsGraph_->postRedisplay();
-    totalsGraph_->postRedisplay();
 }
 
 /*
  * Widgets / Functions
  */
 
-// Set data targets in graphs
-void BraggModuleWidget::setGraphDataTargets()
+// Update controls within widget
+void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
-    if (!module_)
-        return;
+    refreshing_ = true;
 
-    // Add Configuration targets to the combo box
-    ui_.TargetCombo->clear();
-    for (const auto *cfg : module_->targetConfigurations())
-        ui_.TargetCombo->addItem(QString::fromStdString(std::string(cfg->name())), VariantPointer<Configuration>(cfg));
+    // Check / update summed atom types data
+    if (!reflectionAtomTypesData_)
+        reflectionAtomTypesData_ = processingData_.valueIf<const AtomTypeList>("SummedAtomTypes", module_->uniqueName());
 
-    // Loop over Configurations and add total Bragg F(Q)
-    for (const auto *cfg : module_->targetConfigurations())
+    // Need to recreate renderables if requested as the updateType
+    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
     {
-        // Original F(Q)
-        totalsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//Total", cfg->niceName()),
-                                                         cfg->niceName(), "Totals");
+        ui_.PlotWidget->clearRenderableData();
+
+        if (ui_.TotalsButton->isChecked())
+        {
+            graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//Total", module_->uniqueName()), "Total",
+                                                       "Totals");
+        }
+        else if (ui_.PartialsButton->isChecked())
+        {
+            if (reflectionAtomTypesData_)
+                for_each_pair(reflectionAtomTypesData_->get().begin(), reflectionAtomTypesData_->get().end(),
+                              [&](int n, auto &at1, int m, auto &at2) {
+                                  const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+
+                                  graph_->createRenderable<RenderableData1D>(
+                                      fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id), fmt::format("{}", id),
+                                      "Full");
+                              });
+        }
     }
+
+    // Validate renderables if they need it
+    graph_->validateRenderables(processingData_);
+    graph_->postRedisplay();
+    ui_.PlotWidget->updateToolbar();
+
+    // Reflections table
+    if (ui_.ReflectionsButton->isChecked())
+    {
+        auto optReflxns = processingData_.valueIf<const std::vector<BraggReflection>>("Reflections", module_->uniqueName());
+        if (!optReflxns)
+        {
+            reflectionData_ = std::nullopt;
+            reflectionDataDisplayVersion_ = -1;
+            braggModel_.setReflections(std::nullopt);
+        }
+        else if (!reflectionData_ || (&reflectionData_->get() != &optReflxns->get()) ||
+                 (reflectionDataDisplayVersion_ != processingData_.version("Reflections", module_->uniqueName())))
+        {
+            braggModel_.setReflections(optReflxns);
+            reflectionDataDisplayVersion_ = processingData_.version("Reflections", module_->uniqueName());
+
+            // Retrieve the atom types list so we know which reflections correspond to which pairs
+            if (reflectionAtomTypesData_)
+            {
+                const auto &atl = reflectionAtomTypesData_->get();
+                std::vector<std::string> columnHeaders;
+                columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
+                for_each_pair(atl.begin(), atl.end(),
+                              [&columnHeaders](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                                  columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
+                              });
+                braggModel_.setIntensityHeaders(columnHeaders);
+            }
+            else
+                braggModel_.setIntensityHeaders(std::vector<std::string>());
+        }
+    }
+
+    refreshing_ = false;
 }
 
-void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
-{
-    // Remove any current data
-    reflectionsGraph_->clearRenderables();
+/*
+ * Widgets / Functions
+ */
 
-    // Get target Configuration
-    currentConfiguration_ = (Configuration *)VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
-    if (!currentConfiguration_)
+void BraggModuleWidget::on_PartialsButton_clicked(bool checked)
+{
+    if (!checked)
         return;
 
-    auto &types = currentConfiguration_->usedAtomTypesList();
-    for_each_pair(types.begin(), types.end(), [&](int n, const AtomTypeData &atd1, int m, const AtomTypeData &atd2) {
-        const std::string id = fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName());
+    ui_.Stack->setCurrentIndex(0);
 
-        // Original S(Q)
-        reflectionsGraph_->createRenderable<RenderableData1D>(
-            fmt::format("{}//OriginalBragg//{}", currentConfiguration_->niceName(), id), fmt::format("Full//{}", id), "Full");
-    });
-
-    reflectionsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }
+
+void BraggModuleWidget::on_TotalsButton_clicked(bool checked)
+{
+    if (!checked)
+        return;
+
+    ui_.Stack->setCurrentIndex(0);
+
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
+
+void BraggModuleWidget::on_ReflectionsButton_clicked(bool checked)
+{
+    if (!checked)
+        return;
+
+    ui_.Stack->setCurrentIndex(1);
+
+    updateControls(ModuleWidget::UpdateType::Normal);
+}
+
+void BraggModuleWidget::on_HideSmallIntensitiesCheck_clicked(bool checked) { braggFilterProxy_.setEnabled(checked); }

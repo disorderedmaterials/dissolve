@@ -3,6 +3,7 @@
 
 #include "keywords/types.h"
 #include "math/averaging.h"
+#include "modules/bragg/bragg.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 
@@ -26,10 +27,10 @@ void SQModule::initialise()
         "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 
     // Bragg Scattering
-    keywords_.add("Bragg Scattering", new BoolKeyword(false), "IncludeBragg",
-                  "Include Bragg scattering (if reflection data are present in the Configuration)");
-    keywords_.add("Bragg Scattering", new Function1DKeyword(), "BraggQBroadening",
-                  "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
+    keywords_.add("Bragg Scattering", new ModuleKeyword<const BraggModule>("Bragg"), "IncludeBragg",
+                  "Include Bragg scattering from specified module");
+    keywords_.add("Bragg Scattering", new Function1DKeyword, "BraggQBroadening",
+                  "Broadening function to apply to Bragg reflections when generating S(Q)");
 
     // Export
     keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation",

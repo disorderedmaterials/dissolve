@@ -20,6 +20,7 @@ void BraggReflection::operator+=(const BraggReflection &source)
     q_ = source.q_;
     index_ = source.index_;
     nKVectors_ = source.nKVectors_;
+    hkl_ = source.hkl_;
 }
 
 void BraggReflection::operator*=(double factor) { intensities_ *= factor; }
@@ -83,6 +84,12 @@ void BraggReflection::addKVectors(int count) { nKVectors_ += count; }
 
 // Return number of k-vectors contributing to this reflection
 int BraggReflection::nKVectors() const { return nKVectors_; }
+
+// Set Miller indices of reflection
+void BraggReflection::setHKL(int h, int k, int l) { hkl_.set(h, k, l); }
+
+// Return Miller indices of reflection
+const Vec3<int> &BraggReflection::hkl() const { return hkl_; }
 
 /*
  * Serialisation
