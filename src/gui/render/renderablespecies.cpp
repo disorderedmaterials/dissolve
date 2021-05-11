@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/atom.h"
 #include "data/elementcolours.h"
+#include "gui/render/renderableconfiguration.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
@@ -31,6 +32,8 @@ RenderableSpecies::RenderableSpecies(const Species *source, std::string_view nam
     lineSelectionPrimitive_->setNoInstances();
     lineInteractionPrimitive_ = createPrimitive(GL_LINES, true);
     lineInteractionPrimitive_->setNoInstances();
+    unitCellPrimitive_ = createPrimitive(GL_LINES, false);
+    unitCellPrimitive_->wireOrthorhomboid(1.0, 1.0, 1.0, 0.5, 0.5, 0.5);
 
     // Set versions
     selectionPrimitiveVersion_ = -1;
@@ -104,46 +107,18 @@ void RenderableSpecies::transformValues()
  * Rendering Primitives
  */
 
-// Create cylinder bond between supplied atoms in specified assembly
-void RenderableSpecies::createCylinderBond(PrimitiveAssembly &assembly, const SpeciesAtom *i, const SpeciesAtom *j,
-                                           double radialScaling)
-{
-    Matrix4 A;
-
-    // Get vector between Atoms i->j and move to Bond centre
-    Vec3<double> vij = j->r() - i->r();
-    A.setTranslation(i->r() + vij * 0.5);
-    const auto mag = vij.magAndNormalise();
-
-    // Create rotation matrix for Bond
-    A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
-    A.setColumn(0, vij.orthogonal(), 0.0);
-    A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
-    A.columnMultiply(2, 0.5 * mag);
-    A.applyScaling(radialScaling, radialScaling, 1.0);
-
-    // Render half of Bond in colour of Atom j
-    const float *colour = ElementColours::colour(j->Z());
-    assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-
-    // Render half of Bond in colour of Atom i
-    A.columnMultiply(2, -1.0);
-    colour = ElementColours::colour(i->Z());
-    assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-}
-
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
     Matrix4 A;
-    const GLfloat *colour;
-    const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
+    const std::array<float, 4> colourBlack = {0.0, 0.0, 0.0, 1.0};
 
     // Clear existing data
     lineSpeciesPrimitive_->forgetAll();
     lineSelectionPrimitive_->forgetAll();
     speciesAssembly_.clear();
     selectionAssembly_.clear();
+    unitCellAssembly_.clear();
 
     // Check data source
     if (!source_)
@@ -164,11 +139,11 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
                 continue;
 
             const auto r = i.r();
-            colour = ElementColours::colour(i.Z());
+            auto &colour = ElementColours::colour(i.Z());
 
-            lineSpeciesPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
-            lineSpeciesPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
-            lineSpeciesPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
+            lineSpeciesPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour.data());
+            lineSpeciesPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour.data());
+            lineSpeciesPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour.data());
         }
 
         // Draw bonds
@@ -181,9 +156,9 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
 
             // Draw bond halves
             lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(bond.i()->Z()));
+                                        ElementColours::colour(bond.i()->Z()).data());
             lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(bond.j()->Z()));
+                                        ElementColours::colour(bond.j()->Z()).data());
         }
     }
     else if (displayStyle_ == SpheresStyle)
@@ -200,20 +175,36 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
             A.applyScaling(spheresAtomRadius_);
 
             // The atom itself
-            colour = ElementColours::colour(i.Z());
-            speciesAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+            speciesAssembly_.add(atomPrimitive_, A, ElementColours::colour(i.Z()));
 
             // Is the atom selected?
             if (i.isSelected())
             {
-                selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2],
-                                       colourBlack[3]);
+                selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack);
             }
         }
 
         // Draw bonds
+        auto periodic = source_->box()->type() != Box::BoxType::NonPeriodic;
         for (const auto &bond : source_->bonds())
-            createCylinderBond(speciesAssembly_, bond.i(), bond.j(), spheresBondRadius_);
+        {
+            if (periodic)
+                speciesAssembly_.createCylinderBond(
+                    bondPrimitive_, bond.i()->r(), bond.j()->r(), source_->box()->minimumVector(bond.i()->r(), bond.j()->r()),
+                    ElementColours::colour(bond.i()->Z()), ElementColours::colour(bond.j()->Z()), true, spheresBondRadius_);
+            else
+                speciesAssembly_.createCylinderBond(bondPrimitive_, bond.i()->r(), bond.j()->r(), bond.j()->r() - bond.i()->r(),
+                                                    ElementColours::colour(bond.i()->Z()),
+                                                    ElementColours::colour(bond.j()->Z()), false, spheresBondRadius_);
+        }
+
+        // Add unit cell
+        if (source_->box()->type() != Box::BoxType::NonPeriodic)
+        {
+            A.setIdentity();
+            A = source_->box()->axes();
+            unitCellAssembly_.add(unitCellPrimitive_, A, colourBlack);
+        }
     }
 }
 
@@ -231,6 +222,9 @@ const void RenderableSpecies::sendToGL(const double pixelScaling)
     // Selection assembly is always drawn with no lighting as it comprises only of lines
     glDisable(GL_LIGHTING);
     selectionAssembly_.sendToGL(pixelScaling);
+
+    // Draw unit cell
+    unitCellAssembly_.sendToGL(pixelScaling);
 }
 
 // Recreate selection Primitive
@@ -243,7 +237,6 @@ void RenderableSpecies::recreateSelectionPrimitive()
     selectionAssembly_.clear();
     lineSelectionPrimitive_->forgetAll();
 
-    const GLfloat *colour;
     Matrix4 A;
 
     if (displayStyle_ == LinesStyle)
@@ -261,16 +254,19 @@ void RenderableSpecies::recreateSelectionPrimitive()
                 continue;
 
             // Get element colour
-            colour = ElementColours::colour(i.Z());
+            auto &colour = ElementColours::colour(i.Z());
 
             // If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
             if (i.nBonds() == 0)
             {
                 const auto &r = i.r();
 
-                lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
-                lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
-                lineSelectionPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
+                lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z,
+                                              colour.data());
+                lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z,
+                                              colour.data());
+                lineSelectionPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_,
+                                              colour.data());
             }
             else
             {
@@ -281,7 +277,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
                     const auto dij = (bond.partner(&i)->r() - ri) * 0.5;
 
                     // Draw bond halves
-                    lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
+                    lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour.data());
                 }
             }
         }
@@ -336,9 +332,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(fromAtom->Z()));
+                                        ElementColours::colour(fromAtom->Z()).data());
         lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(toAtom->Z()));
+                                        ElementColours::colour(toAtom->Z()).data());
     }
     else if (displayStyle_ == SpheresStyle)
     {
@@ -346,7 +342,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
         interactionAssembly_.add(true, GL_FILL);
 
         // Draw the temporary bond between the atoms
-        createCylinderBond(interactionAssembly_, fromAtom, toAtom, spheresBondRadius_);
+        interactionAssembly_.createCylinderBond(bondPrimitive_, fromAtom->r(), toAtom->r(), toAtom->r() - fromAtom->r(),
+                                                ElementColours::colour(fromAtom->Z()), ElementColours::colour(toAtom->Z()),
+                                                true, spheresBondRadius_);
     }
 }
 
@@ -378,9 +376,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(fromAtom->Z()));
+                                        ElementColours::colour(fromAtom->Z()).data());
         lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(j.Z()));
+                                        ElementColours::colour(j.Z()).data());
     }
     else if (displayStyle_ == SpheresStyle)
     {
@@ -390,11 +388,12 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
         // Draw the temporary atom
         A.setTranslation(j.r());
         A.applyScaling(spheresAtomRadius_);
-        const float *colour = ElementColours::colour(j.Z());
-        interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+        interactionAssembly_.add(atomPrimitive_, A, ElementColours::colour(j.Z()));
 
         // Draw the temporary bond between the atoms
-        createCylinderBond(interactionAssembly_, fromAtom, &j, spheresBondRadius_);
+        interactionAssembly_.createCylinderBond(bondPrimitive_, fromAtom->r(), j.r(), j.r() - fromAtom->r(),
+                                                ElementColours::colour(fromAtom->Z()), ElementColours::colour(j.Z()), true,
+                                                spheresBondRadius_);
     }
 }
 
@@ -428,9 +427,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(i.Z()));
+                                        ElementColours::colour(i.Z()).data());
         lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(j.Z()));
+                                        ElementColours::colour(j.Z()).data());
     }
     else if (displayStyle_ == SpheresStyle)
     {
@@ -440,17 +439,16 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
         // Draw the temporary atoms
         A.setTranslation(i.r());
         A.applyScaling(spheresAtomRadius_);
-        const float *colour = ElementColours::colour(i.Z());
-        interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+        interactionAssembly_.add(atomPrimitive_, A, ElementColours::colour(i.Z()));
 
         A.setIdentity();
         A.setTranslation(j.r());
         A.applyScaling(spheresAtomRadius_);
-        colour = ElementColours::colour(j.Z());
-        interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+        interactionAssembly_.add(atomPrimitive_, A, ElementColours::colour(j.Z()));
 
         // Draw the temporary bond between the atoms
-        createCylinderBond(interactionAssembly_, &i, &j, spheresBondRadius_);
+        interactionAssembly_.createCylinderBond(bondPrimitive_, i.r(), j.r(), j.r() - i.r(), ElementColours::colour(i.Z()),
+                                                ElementColours::colour(j.Z()), true, spheresBondRadius_);
     }
 }
 

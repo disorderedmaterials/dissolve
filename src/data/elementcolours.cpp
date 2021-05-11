@@ -6,15 +6,7 @@
 namespace ElementColours
 {
 
-struct color
-{
-    float red;
-    float green;
-    float blue;
-    float alpha;
-};
-
-constexpr color const colours_[] = {
+constexpr std::array<float, 4> const colours_[] = {
     // R	G	B	A
     {0.5, 0.5, 0.5, 1.0},       // XX
     {0.87, 0.87, 0.87, 1.0},    // H
@@ -137,6 +129,6 @@ constexpr color const colours_[] = {
     {1.0, 1.0, 1.0, 1.0}        // OG
 };
 
-const float *colour(Elements::Element Z) { return reinterpret_cast<const float *>(&colours_[Z]); }
+const std::array<float, 4> &colour(Elements::Element Z) { return colours_[Z]; }
 
 } // namespace ElementColours
