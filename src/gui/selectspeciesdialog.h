@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui/models/speciesFilterProxy.h"
 #include "gui/ui_selectspeciesdialog.h"
 #include "templates/list.h"
 #include <QDialog>
@@ -19,7 +20,7 @@ class SelectSpeciesDialog : public QDialog
 
     public:
     SelectSpeciesDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle);
-    ~SelectSpeciesDialog();
+    ~SelectSpeciesDialog() = default;
 
     private:
     // Main form declaration
@@ -33,7 +34,8 @@ class SelectSpeciesDialog : public QDialog
 
     public:
     // Run the dialog, returning a single selected Species
-    Species *selectSpecies();
+    const Species *selectSingleSpecies(int filterProxyFlags = SpeciesFilterProxy::None);
     // Run the dialog, returning a list of selected Species
-    RefList<Species> selectSpecies(int minSpecies, int maxSpecies);
+    std::vector<const Species *> selectSpecies(int filterProxyFlags = SpeciesFilterProxy::None, int minSpecies = 1,
+                                               std::optional<int> maxSpecies = std::nullopt);
 };

@@ -4,6 +4,8 @@
 #pragma once
 
 #include "data/ff/library.h"
+#include "gui/models/speciesFilterProxy.h"
+#include "gui/models/speciesModel.h"
 #include "gui/ui_selectspecieswidget.h"
 #include "templates/list.h"
 #include <QWidget>
@@ -19,7 +21,7 @@ class SelectSpeciesWidget : public QWidget
 
     public:
     SelectSpeciesWidget(QWidget *parent);
-    ~SelectSpeciesWidget();
+    ~SelectSpeciesWidget() override = default;
 
     /*
      * UI
@@ -29,39 +31,36 @@ class SelectSpeciesWidget : public QWidget
     Ui::SelectSpeciesWidget ui_;
     // Whether the widget is refreshing
     bool refreshing_;
+    // Model for the Species list
+    SpeciesModel speciesModel_;
+    // Filter proxy for the Species model
+    SpeciesFilterProxy speciesFilterProxy_;
 
     /*
      * Data
      */
     private:
-    // CoreData containing available Species
-    const CoreData *coreData_;
     // Minimum number of Species in a valid selection
     int minimumSelectionSize_;
-    // Maximum number of Species in a valid selection (-1 for no limit)
-    int maximumSelectionSize_;
+    // Maximum number of Species in a valid selection (if specified)
+    std::optional<int> maximumSelectionSize_;
 
     public:
-    // Set CoreData containing available Species
-    void setCoreData(const CoreData *coreData);
+    // Set flags for the filter proxy
+    void setFilterProxyFlags(int flags);
+    // Set target Species data
+    void setSpecies(const std::vector<std::unique_ptr<Species>> &species);
     // Reset widget, applying specified min and max limits to selection
-    void reset(int minSize, int maxSize);
-
-    /*
-     * Update
-     */
-    private:
-    // Update the list of Species
-    void updateSpeciesList();
+    void reset(int minSize, std::optional<int> maxSize = std::nullopt);
 
     /*
      * Signals / Slots
      */
     private slots:
+    void selectionChanged(const QItemSelection &, const QItemSelection &);
     void on_SelectNoneButton_clicked(bool checked);
     void on_SelectAllButton_clicked(bool checked);
-    void on_SpeciesList_itemSelectionChanged();
-    void on_SpeciesList_itemDoubleClicked(QListWidgetItem *item);
+    void on_SpeciesList_doubleClicked(const QModelIndex &index);
 
     signals:
     void speciesSelectionChanged(bool isValid);
@@ -75,5 +74,5 @@ class SelectSpeciesWidget : public QWidget
     // Return number of species currently selected
     int nSelected() const;
     // Return the currently-selected Species
-    RefList<Species> currentSpecies() const;
+    std::vector<const Species *> currentSpecies() const;
 };

@@ -13,17 +13,15 @@ SelectSpeciesDialog::SelectSpeciesDialog(QWidget *parent, const CoreData &coreDa
 
     setWindowTitle(dialogTitle);
 
-    ui_.SpeciesWidget->setCoreData(&coreData);
+    ui_.SpeciesWidget->setSpecies(coreData.species());
 }
-
-SelectSpeciesDialog::~SelectSpeciesDialog() {}
 
 void SelectSpeciesDialog::on_SpeciesWidget_speciesSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }
 
 void SelectSpeciesDialog::on_SpeciesWidget_speciesDoubleClicked()
 {
     // Check current selection size for validity
-    if (ui_.SpeciesWidget->currentSpecies().nItems() != 1)
+    if (ui_.SpeciesWidget->currentSpecies().size() != 1)
         return;
 
     accept();
@@ -34,27 +32,30 @@ void SelectSpeciesDialog::on_SelectButton_clicked(bool checked) { accept(); }
 void SelectSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning a single selected Species
-Species *SelectSpeciesDialog::selectSpecies()
+const Species *SelectSpeciesDialog::selectSingleSpecies(int filterProxyFlags)
 {
-    ui_.SpeciesWidget->reset(1, 1);
+    ui_.SpeciesWidget->reset(1);
+    ui_.SpeciesWidget->setFilterProxyFlags(filterProxyFlags);
 
     show();
 
     if (exec() == QDialog::Accepted)
-        return ui_.SpeciesWidget->currentSpecies().firstItem();
+        return ui_.SpeciesWidget->currentSpecies().front();
     else
         return nullptr;
 }
 
 // Run the dialog, returning a list of selected Species
-RefList<Species> SelectSpeciesDialog::selectSpecies(int minSpecies, int maxSpecies)
+std::vector<const Species *> SelectSpeciesDialog::selectSpecies(int filterProxyFlags, int minSpecies,
+                                                                std::optional<int> maxSpecies)
 {
     ui_.SpeciesWidget->reset(minSpecies, maxSpecies);
+    ui_.SpeciesWidget->setFilterProxyFlags(filterProxyFlags);
 
     show();
 
     if (exec() == QDialog::Accepted)
         return ui_.SpeciesWidget->currentSpecies();
     else
-        return RefList<Species>();
+        return {};
 }

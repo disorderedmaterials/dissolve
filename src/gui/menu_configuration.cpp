@@ -27,7 +27,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
 
     auto mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
-    if (mixSpecies.nItems() == 0)
+    if (mixSpecies.empty())
         return;
 
     // Create the Configuration and a suitable generator
@@ -37,10 +37,8 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     paramsNode->addParameter("rho", 0.1);
     generator.addRootSequenceNode(paramsNode);
     generator.addRootSequenceNode(new BoxProcedureNode);
-    for (auto sp : mixSpecies)
-    {
+    for (const auto *sp : mixSpecies)
         generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameters())));
-    }
 
     // Run the generator
     newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
@@ -55,8 +53,8 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     // Create a SpeciesSelectDialog and use it to get the Species to add to the mix
     SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
 
-    RefList<Species> mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
-    if (mixSpecies.nItems() == 0)
+    auto mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
+    if (mixSpecies.empty())
         return;
 
     // Create the Configuration and a suitable generator
