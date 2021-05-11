@@ -65,7 +65,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     {
         parentNode_ = parentNode;
     }
-    ~NodeValueEnumOptionsKeyword() {}
+    ~NodeValueEnumOptionsKeyword() override {}
 
     /*
      * Parent Node
@@ -83,7 +83,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 2; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Check that the parent node has been set
         if (!parentNode_)
@@ -124,7 +124,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
      */
     public:
     // Set node value from expression text, informing KeywordBase
-    bool setValue(std::string_view expressionText)
+    bool setValue(std::string_view expressionText) override
     {
         if (!parentNode_)
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
@@ -140,7 +140,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
         return result;
     }
     // Set new option index, informing KeywordBase
-    void setEnumerationByIndex(int optionIndex)
+    void setEnumerationByIndex(int optionIndex) override
     {
         KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
 
@@ -152,14 +152,14 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
      */
     public:
     // Return option mask for keyword
-    int optionMask() const { return KeywordBase::optionMask(); }
+    int optionMask() const override { return KeywordBase::optionMask(); }
 
     /*
      * Conversion
      */
     public:
     // Return value (as int)
-    int asInt() { return KeywordData<Venum<NodeValue, E>>::data_.value().asInteger(); }
+    int asInt() override { return KeywordData<Venum<NodeValue, E>>::data_.value().asInteger(); }
     // Return value (as double)
-    double asDouble() { return KeywordData<Venum<NodeValue, E>>::data_.value().asDouble(); }
+    double asDouble() override { return KeywordData<Venum<NodeValue, E>>::data_.value().asDouble(); }
 };

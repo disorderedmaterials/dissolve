@@ -55,7 +55,7 @@ class Data3D : public Data3DBase
     // Zero values array
     void zero();
     // Return data version
-    int version() const;
+    int version() const override;
     // Return x axis value specified
     double &xAxis(int index);
     const double &xAxis(int index) const;

@@ -10,7 +10,7 @@ class AccumulateModule : public Module
 {
     public:
     AccumulateModule();
-    ~AccumulateModule() = default;
+    ~AccumulateModule() override = default;
 
     /*
      * Instances

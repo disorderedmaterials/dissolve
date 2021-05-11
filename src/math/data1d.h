@@ -51,7 +51,7 @@ class Data1D : public Data1DBase
     // Zero values array
     void zero();
     // Return data version
-    int version() const;
+    int version() const override;
     // Add new data point
     void addPoint(double x, double value);
     // Add new data point with error
@@ -65,30 +65,30 @@ class Data1D : public Data1DBase
     const double &xAxis(int index) const;
     // Return x axis vector
     std::vector<double> &xAxis();
-    const std::vector<double> &xAxis() const;
+    const std::vector<double> &xAxis() const override;
     // Return value specified
     double &value(int index);
     const double &value(int index) const;
     // Return value Array
     std::vector<double> &values();
-    const std::vector<double> &values() const;
+    const std::vector<double> &values() const override;
     // Return number of values present in whole dataset
-    int nValues() const;
+    int nValues() const override;
     // Return minimum value over all data points
-    double minValue() const;
+    double minValue() const override;
     // Return maximum value over all data points
-    double maxValue() const;
+    double maxValue() const override;
     // Add / initialise errors array
     void addErrors();
     // Return whether the values have associated errors
-    bool valuesHaveErrors() const;
+    bool valuesHaveErrors() const override;
     // Return error value specified
     double &error(int index);
     const double &error(int index) const;
     // Return error Array
     std::vector<double> &errors();
     // Return errors Array
-    const std::vector<double> &errors() const;
+    const std::vector<double> &errors() const override;
 
     /*
      * Operators

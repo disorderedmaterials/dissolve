@@ -16,7 +16,7 @@ class NodeBranchKeyword : public KeywordData<SequenceProcedureNode **>
     public:
     NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer,
                       ProcedureNode::NodeContext branchContext);
-    ~NodeBranchKeyword();
+    ~NodeBranchKeyword() override;
 
     /*
      * Parent Node

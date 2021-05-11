@@ -13,14 +13,14 @@ class ExpressionNumberNode : public ExpressionNode
     ExpressionNumberNode(int i);
     ExpressionNumberNode(double d);
     ExpressionNumberNode(const ExpressionValue &value);
-    ~ExpressionNumberNode() = default;
+    ~ExpressionNumberNode() override = default;
 
     /*
      * Nodes
      */
     protected:
     // Duplicate this node and its contents
-    std::shared_ptr<ExpressionNode> duplicate();
+    std::shared_ptr<ExpressionNode> duplicate() override;
 
     /*
      * Data
@@ -34,5 +34,5 @@ class ExpressionNumberNode : public ExpressionNode
      */
     public:
     // Evaluate node
-    virtual std::optional<ExpressionValue> evaluate() const;
+    std::optional<ExpressionValue> evaluate() const override;
 };

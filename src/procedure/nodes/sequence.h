@@ -75,7 +75,7 @@ class SequenceProcedureNode : public ProcedureNode
 
     public:
     // Return parent Procedure to which this sequence belongs
-    const Procedure *procedure() const;
+    const Procedure *procedure() const override;
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present, and which matches the (optional) type given
@@ -125,7 +125,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Return block termination keyword for current context
     std::string_view blockTerminationKeyword() const;
     // Read structure from specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData) override;
     // Write structure to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix);
+    bool write(LineParser &parser, std::string_view prefix) override;
 };

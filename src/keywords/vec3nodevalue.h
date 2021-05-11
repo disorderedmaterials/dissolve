@@ -15,7 +15,7 @@ class Vec3NodeValueKeyword : public KeywordData<Vec3<NodeValue>>
 {
     public:
     Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    ~Vec3NodeValueKeyword();
+    ~Vec3NodeValueKeyword() override;
 
     /*
      * Parent Node
@@ -60,7 +60,7 @@ class Vec3NodeValueKeyword : public KeywordData<Vec3<NodeValue>>
      */
     public:
     // Return value (as Vec3<int>)
-    Vec3<int> asVec3Int();
+    Vec3<int> asVec3Int() override;
     // Return value (as Vec3<double>)
-    Vec3<double> asVec3Double();
+    Vec3<double> asVec3Double() override;
 };

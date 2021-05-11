@@ -14,7 +14,7 @@ class ProcedureKeyword : public KeywordData<Procedure &>
 {
     public:
     ProcedureKeyword(Procedure &procedure);
-    ~ProcedureKeyword();
+    ~ProcedureKeyword() override;
 
     /*
      * Arguments

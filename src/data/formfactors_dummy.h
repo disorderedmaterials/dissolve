@@ -18,5 +18,5 @@ class FormFactorData_Dummy : public FormFactorData
      */
     public:
     // Return magnitude of form factor at specified Q value
-    double magnitude(double Q = 0.0) const;
+    double magnitude(double Q = 0.0) const override;
 };

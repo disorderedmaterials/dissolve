@@ -54,7 +54,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
         for (auto n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
             validKeywords_.emplace_back(std::string(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n)));
     }
-    ~EnumOptionsKeyword() {}
+    ~EnumOptionsKeyword() override {}
 
     /*
      * Data Validation
@@ -78,7 +78,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         if (parser.hasArg(startArg))
         {
@@ -105,7 +105,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     public:
     // Set new option index, informing KeywordBase
-    void setEnumerationByIndex(int optionIndex)
+    void setEnumerationByIndex(int optionIndex) override
     {
         KeywordData<EnumOptions<E>>::data_.setIndex(optionIndex);
         KeywordData<EnumOptions<E>>::hasBeenSet();
@@ -116,12 +116,12 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     public:
     // Return option mask for keyword
-    int optionMask() const { return KeywordBase::optionMask(); }
+    int optionMask() const override { return KeywordBase::optionMask(); }
 
     /*
      * Conversion
      */
     public:
     // Return value (as string)
-    std::string asString() { return std::string(KeywordData<EnumOptions<E>>::data_.keyword()); }
+    std::string asString() override { return std::string(KeywordData<EnumOptions<E>>::data_.keyword()); }
 };

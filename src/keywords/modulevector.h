@@ -15,7 +15,7 @@ class ModuleVectorKeyword : public KeywordData<std::vector<Module *>>
     public:
     ModuleVectorKeyword(int maxModules = -1);
     ModuleVectorKeyword(const std::vector<std::string> &allowedModuleTypes, int maxModules = -1);
-    ~ModuleVectorKeyword();
+    ~ModuleVectorKeyword() override;
 
     /*
      * Data
@@ -54,5 +54,5 @@ class ModuleVectorKeyword : public KeywordData<std::vector<Module *>>
      */
     protected:
     // Prune any references to the supplied Module in the contained data
-    void removeReferencesTo(Module *module);
+    void removeReferencesTo(Module *module) override;
 };

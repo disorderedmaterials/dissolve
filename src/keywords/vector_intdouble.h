@@ -16,7 +16,7 @@ class IntegerDoubleVectorKeyword : public KeywordData<IntegerDoubleVectorKeyword
     public:
     IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data, int nRequiredIntegers,
                                std::optional<int> nRequiredValues = std::nullopt);
-    ~IntegerDoubleVectorKeyword();
+    ~IntegerDoubleVectorKeyword() override;
 
     /*
      * Data

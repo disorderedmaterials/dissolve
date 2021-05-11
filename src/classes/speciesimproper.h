@@ -18,7 +18,7 @@ class SpeciesImproper : public SpeciesIntra
     SpeciesImproper(SpeciesImproper &source);
     SpeciesImproper(SpeciesImproper &&source);
     SpeciesImproper(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
-    ~SpeciesImproper();
+    ~SpeciesImproper() override;
     SpeciesImproper &operator=(const SpeciesImproper &source);
     SpeciesImproper &operator=(SpeciesImproper &&source);
 
@@ -72,11 +72,11 @@ class SpeciesImproper : public SpeciesIntra
      */
     public:
     // Set up any necessary parameters
-    void setUp();
+    void setUp() override;
     // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const;
+    double fundamentalFrequency(double reducedMass) const override;
     // Return type of this interaction
-    SpeciesIntra::InteractionType type() const;
+    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle

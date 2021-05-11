@@ -82,7 +82,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
                                                                             std::tuple<N *, int>(node, index))
     {
     }
-    ~NodeAndIntegerKeyword() {}
+    ~NodeAndIntegerKeyword() override {}
 
     /*
      * Arguments
@@ -93,7 +93,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         if (!parentNode())
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
@@ -135,7 +135,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
      */
     public:
     // Set the target node
-    bool setNode(ProcedureNode *node)
+    bool setNode(ProcedureNode *node) override
     {
         if (!node)
             return false;
@@ -152,14 +152,14 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
         return true;
     }
     // Return the current target node
-    ProcedureNode *node() const { return std::get<0>(KeywordData<std::tuple<N *, int>>::data_); }
+    ProcedureNode *node() const override { return std::get<0>(KeywordData<std::tuple<N *, int>>::data_); }
 
     /*
      * Associated Index
      */
     public:
     // Set target index
-    void setIndex(int index)
+    void setIndex(int index) override
     {
         std::get<1>(KeywordData<std::tuple<N *, int>>::data_) = index;
 
@@ -167,14 +167,14 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     }
 
     // Return target index
-    int index() const { return std::get<1>(KeywordData<std::tuple<N *, int>>::data_); }
+    int index() const override { return std::get<1>(KeywordData<std::tuple<N *, int>>::data_); }
 
     /*
      * Access to KeywordBase
      */
     public:
     // Return option mask for keyword
-    int optionMask() const { return KeywordBase::optionMask(); }
+    int optionMask() const override { return KeywordBase::optionMask(); }
 
     /*
      * Object Management

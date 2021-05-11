@@ -24,7 +24,7 @@ class Data2DImportFileFormat : public FileAndFormat
     };
     Data2DImportFileFormat(Data2DImportFormat format = CartesianData2D);
     Data2DImportFileFormat(std::string_view filename, Data2DImportFormat format = CartesianData2D);
-    ~Data2DImportFileFormat();
+    ~Data2DImportFileFormat() override;
 
     /*
      * Keyword Options
@@ -42,11 +42,11 @@ class Data2DImportFileFormat : public FileAndFormat
 
     public:
     // Return number of available formats
-    int nFormats() const;
+    int nFormats() const override;
     // Return format keyword for supplied index
-    std::string formatKeyword(int id) const;
+    std::string formatKeyword(int id) const override;
     // Return description string for supplied index
-    std::string formatDescription(int id) const;
+    std::string formatDescription(int id) const override;
     // Return current format as Data2DImportFormat
     Data2DImportFormat data2DFormat() const;
 
@@ -55,7 +55,7 @@ class Data2DImportFileFormat : public FileAndFormat
      */
     public:
     // Return whether the file must exist
-    bool fileMustExist() const { return true; }
+    bool fileMustExist() const override { return true; }
 
     /*
      * Data Import

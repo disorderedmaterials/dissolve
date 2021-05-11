@@ -19,14 +19,14 @@ class ExpressionBinaryOperatorNode : public ExpressionNode
         OperatorSubtract
     };
     ExpressionBinaryOperatorNode(BinaryOperator op);
-    ~ExpressionBinaryOperatorNode() = default;
+    ~ExpressionBinaryOperatorNode() override = default;
 
     /*
      * Nodes
      */
     protected:
     // Duplicate this node and its contents
-    std::shared_ptr<ExpressionNode> duplicate();
+    std::shared_ptr<ExpressionNode> duplicate() override;
 
     /*
      * Data
@@ -40,5 +40,5 @@ class ExpressionBinaryOperatorNode : public ExpressionNode
      */
     public:
     // Evaluate node
-    virtual std::optional<ExpressionValue> evaluate() const;
+    std::optional<ExpressionValue> evaluate() const override;
 };

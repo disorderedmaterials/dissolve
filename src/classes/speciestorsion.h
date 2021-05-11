@@ -18,7 +18,7 @@ class SpeciesTorsion : public SpeciesIntra
     SpeciesTorsion(SpeciesTorsion &source);
     SpeciesTorsion(SpeciesTorsion &&source);
     SpeciesTorsion(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
-    ~SpeciesTorsion();
+    ~SpeciesTorsion() override;
     SpeciesTorsion &operator=(const SpeciesTorsion &source);
     SpeciesTorsion &operator=(SpeciesTorsion &&source);
 
@@ -87,11 +87,11 @@ class SpeciesTorsion : public SpeciesIntra
 
     public:
     // Set up any necessary parameters
-    void setUp();
+    void setUp() override;
     // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const;
+    double fundamentalFrequency(double reducedMass) const override;
     // Return type of this interaction
-    SpeciesIntra::InteractionType type() const;
+    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified angle and functional form, given supplied parameters
     static double energy(double angleInDegrees, int form, const std::vector<double> &params);
     // Return energy for specified angle

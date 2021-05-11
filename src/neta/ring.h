@@ -17,7 +17,7 @@ class NETARingNode : public NETANode
 {
     public:
     NETARingNode(NETADefinition *parent);
-    ~NETARingNode() = default;
+    ~NETARingNode() override = default;
 
     /*
      * Modifiers

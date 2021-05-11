@@ -15,7 +15,7 @@ class StringPairVectorKeyword : public KeywordData<StringPairVectorKeywordData &
 {
     public:
     StringPairVectorKeyword(StringPairVectorKeywordData &data);
-    ~StringPairVectorKeyword();
+    ~StringPairVectorKeyword() override;
 
     /*
      * Arguments

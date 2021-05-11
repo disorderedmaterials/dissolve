@@ -16,7 +16,7 @@ class IntegerStringVectorKeyword : public KeywordData<IntegerStringVectorKeyword
     public:
     IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers,
                                std::optional<int> nRequiredValues = std::nullopt);
-    ~IntegerStringVectorKeyword();
+    ~IntegerStringVectorKeyword() override;
 
     /*
      * Data

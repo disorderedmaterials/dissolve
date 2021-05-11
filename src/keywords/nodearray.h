@@ -92,7 +92,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
                 nodeArray[n] = nullptr;
         }
     }
-    ~NodeArrayKeyword() {}
+    ~NodeArrayKeyword() override {}
 
     /*
      * Arguments
@@ -155,7 +155,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
      */
     public:
     // Add the specified node to the array (only possible if we are a variable size array)
-    bool addNode(ProcedureNode *node)
+    bool addNode(ProcedureNode *node) override
     {
         if (!node)
             return false;
@@ -246,7 +246,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         return -1;
     }
     // Return the current array (as ProcedureNodes)
-    Array<ProcedureNode *> procedureNodes() const
+    Array<ProcedureNode *> procedureNodes() const override
     {
         Array<ProcedureNode *> nodes(KeywordData<Array<N *> &>::data_.nItems());
 
@@ -258,7 +258,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     // Return the current array
     Array<N *> nodes() const { return KeywordData<Array<N *> &>::data_; }
     // Return if the specified node is in the current list
-    bool hasNode(ProcedureNode *node) { return (indexOfNode(node) != -1); }
+    bool hasNode(ProcedureNode *node) override { return (indexOfNode(node) != -1); }
 
     /*
      * Object Management
