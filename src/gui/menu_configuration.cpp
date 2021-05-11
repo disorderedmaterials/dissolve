@@ -93,6 +93,92 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     ui_.MainTabs->setCurrentTab(newConfiguration);
 }
 
+void DissolveWindow::on_ConfigurationCreateEmptyFrameworkAction_triggered(bool checked)
+{
+    // Create a SpeciesSelectDialog and use it to get the framework Species
+    SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select framework species");
+
+    const auto *framework = speciesSelectDialog.selectSingleSpecies(SpeciesFilterProxy::HasPeriodicBox);
+    if (!framework)
+        return;
+
+    // Create the Configuration and a suitable generator
+    auto *newConfiguration = dissolve_.addConfiguration();
+    auto &generator = newConfiguration->generator();
+    auto *node = new AddSpeciesProcedureNode(framework, 1);
+    node->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction", AddSpeciesProcedureNode::BoxActionStyle::Set);
+    node->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
+                                                                   AddSpeciesProcedureNode::PositioningType::Current);
+    node->setKeyword<bool>("Rotate", false);
+    generator.addRootSequenceNode(node);
+
+    // Run the generator
+    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+
+    setModified();
+    fullUpdate();
+    ui_.MainTabs->setCurrentTab(newConfiguration);
+}
+
+void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(bool checked)
+{
+    // Create a SpeciesSelectDialog and use it to get the framework Species
+    SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select framework species");
+
+    const auto *framework = speciesSelectDialog.selectSingleSpecies(SpeciesFilterProxy::HasPeriodicBox);
+    if (!framework)
+        return;
+
+    // Now retrieve adsorbate species
+    const auto adsorbates = speciesSelectDialog.selectSpecies(SpeciesFilterProxy::NoPeriodicBox);
+    if (adsorbates.empty())
+        return;
+
+    // Create the Configuration and a suitable generator
+    auto *newConfiguration = dissolve_.addConfiguration();
+    auto &generator = newConfiguration->generator();
+    auto *node = new AddSpeciesProcedureNode(framework, 1);
+    node->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction", AddSpeciesProcedureNode::BoxActionStyle::Set);
+    node->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
+                                                                   AddSpeciesProcedureNode::PositioningType::Current);
+    node->setKeyword<bool>("Rotate", false);
+    generator.addRootSequenceNode(node);
+
+    // Add a parameters node
+    auto *paramsNode = new ParametersProcedureNode;
+    paramsNode->addParameter("populationA", 100);
+    generator.addRootSequenceNode(paramsNode);
+
+    auto count = 0;
+    for (auto *sp : adsorbates)
+    {
+        // Add a parameter for the ratio of this species to the first (or the population of the first)
+        AddSpeciesProcedureNode *addSpeciesNode = nullptr;
+        if (count == 0)
+            addSpeciesNode = new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameters()));
+        else
+        {
+            auto parameterName = fmt::format("ratio{}", char(65 + count));
+            paramsNode->addParameter(parameterName, 1);
+
+            addSpeciesNode = new AddSpeciesProcedureNode(
+                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
+        }
+        addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction",
+                                                                                AddSpeciesProcedureNode::BoxActionStyle::None);
+        generator.addRootSequenceNode(addSpeciesNode);
+
+        ++count;
+    }
+
+    // Run the generator
+    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+
+    setModified();
+    fullUpdate();
+    ui_.MainTabs->setCurrentTab(newConfiguration);
+}
+
 void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab, then call its rename() function

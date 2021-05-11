@@ -1138,10 +1138,10 @@
     <widget class="QMenu" name="ConfigurationCreateMenu">
      <property name="geometry">
       <rect>
-       <x>642</x>
-       <y>140</y>
-       <width>176</width>
-       <height>135</height>
+       <x>749</x>
+       <y>600</y>
+       <width>218</width>
+       <height>195</height>
       </rect>
      </property>
      <property name="font">
@@ -1160,6 +1160,9 @@
      <addaction name="separator"/>
      <addaction name="ConfigurationCreateSimpleRandomMixAction"/>
      <addaction name="ConfigurationCreateRelativeRandomMixAction"/>
+     <addaction name="separator"/>
+     <addaction name="ConfigurationCreateEmptyFrameworkAction"/>
+     <addaction name="ConfigurationCreateFrameworkAdsorbatesAction"/>
     </widget>
     <widget class="QMenu" name="ConfigurationExportToMenu">
      <property name="font">
@@ -1709,6 +1712,16 @@
    </property>
    <property name="toolTip">
     <string>Regenerate angle and torsion lists from current connectivity</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateEmptyFrameworkAction">
+   <property name="text">
+    <string>&amp;Empty framework</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateFrameworkAdsorbatesAction">
+   <property name="text">
+    <string>&amp;Framework with adsorbates</string>
    </property>
   </action>
  </widget>

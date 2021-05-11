@@ -172,6 +172,8 @@ class DissolveWindow : public QMainWindow
     void on_ConfigurationCreateEmptyAction_triggered(bool checked);
     void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
     void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
+    void on_ConfigurationCreateEmptyFrameworkAction_triggered(bool checked);
+    void on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(bool checked);
     void on_ConfigurationRenameAction_triggered(bool checked);
     void on_ConfigurationDeleteAction_triggered(bool checked);
     void on_ConfigurationExportToXYZAction_triggered(bool checked);
