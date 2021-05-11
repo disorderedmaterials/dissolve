@@ -2,8 +2,10 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atom.h"
+
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
+#include <utility>
 
 Atom::Atom() { clear(); }
 
@@ -70,7 +72,7 @@ void Atom::setSpeciesAtom(const SpeciesAtom *spAtom) { speciesAtom_ = spAtom; }
 const SpeciesAtom *Atom::speciesAtom() const { return speciesAtom_; }
 
 // Set Molecule in which this Atom exists
-void Atom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ = mol; }
+void Atom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ = std::move(mol); }
 
 // Return Molecule in which this Atom exists
 std::shared_ptr<Molecule> Atom::molecule() const { return molecule_; }
@@ -102,7 +104,7 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
  */
 
 // Return scaling factor to employ with specified Atom
-double Atom::scaling(std::shared_ptr<Atom> j) const
+double Atom::scaling(const std::shared_ptr<Atom> &j) const
 {
     assert(speciesAtom_ != nullptr);
     assert(j != nullptr);

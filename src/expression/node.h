@@ -29,7 +29,7 @@ class ExpressionNode
     // Clear all nodes
     void clear();
     // Add child node
-    void addChild(std::shared_ptr<ExpressionNode> node);
+    void addChild(const std::shared_ptr<ExpressionNode> &node);
     // Return number of children
     int nChildren() const;
     // Duplicate this node and its contents

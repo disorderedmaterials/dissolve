@@ -95,7 +95,7 @@ class PairPotential : public ListItem<PairPotential>
 
     public:
     // Set up PairPotential parameters from specified AtomTypes
-    bool setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ);
+    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ);
     // Return short-ranged type
     Forcefield::ShortRangeType shortRangeType() const;
     // Return first AtomType name
@@ -202,5 +202,5 @@ class PairPotential : public ListItem<PairPotential>
     // Set additional potential
     void setUAdditional(Data1D &newUAdditional);
     // Adjust additional potential, and recalculate UFull and dUFull
-    void adjustUAdditional(Data1D deltaU, double factor = 1.0);
+    void adjustUAdditional(const Data1D &deltaU, double factor = 1.0);
 };

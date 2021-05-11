@@ -12,7 +12,7 @@ SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, S
 
 SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) { this->operator=(source); }
 
-SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) : SpeciesIntra(source)
+SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(source)
 {
     // Detach source torsion referred to by the species atoms
     if (source.i_ && source.j_ && source.k_ && source.l_)
@@ -45,7 +45,7 @@ SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
     return *this;
 }
 
-SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source)
+SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source) noexcept
 {
     if (i_ && j_ && k_ && l_)
         detach();

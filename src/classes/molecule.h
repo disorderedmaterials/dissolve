@@ -43,7 +43,7 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Return Species that this Molecule represents
     const Species *species() const;
     // Add Atom to Molecule
-    void addAtom(std::shared_ptr<Atom> i);
+    void addAtom(const std::shared_ptr<Atom> &i);
     // Return size of Atom array
     int nAtoms() const;
     // Return Atoms array

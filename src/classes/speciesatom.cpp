@@ -49,7 +49,7 @@ void SpeciesAtom::setCharge(double charge) { charge_ = charge; }
 double SpeciesAtom::charge() const { return charge_; }
 
 // Set AtomType of SpeciesAtom
-void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
+void SpeciesAtom::setAtomType(const std::shared_ptr<AtomType> &at)
 {
     // Check elements
     if (at && (at->Z() != Z_))

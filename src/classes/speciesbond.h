@@ -17,9 +17,9 @@ class SpeciesBond : public SpeciesIntra
     SpeciesBond(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr);
     ~SpeciesBond() override = default;
     SpeciesBond(SpeciesBond &source);
-    SpeciesBond(SpeciesBond &&source);
+    SpeciesBond(SpeciesBond &&source) noexcept;
     SpeciesBond &operator=(const SpeciesBond &source);
-    SpeciesBond &operator=(SpeciesBond &&source);
+    SpeciesBond &operator=(SpeciesBond &&source) noexcept;
 
     /*
      * SpeciesAtom Information

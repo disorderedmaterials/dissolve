@@ -6,14 +6,15 @@
 #include "data/ff/atomtype.h"
 #include <algorithm>
 #include <map>
+#include <utility>
 
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
                                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
                                        SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::NodeType::Connection)
 {
-    allowedElements_ = targetElements;
-    allowedAtomTypes_ = targetAtomTypes;
+    allowedElements_ = std::move(targetElements);
+    allowedAtomTypes_ = std::move(targetAtomTypes);
     bondType_ = bt;
     geometry_ = SpeciesAtom::AtomGeometry::Unknown;
     geometryOperator_ = NETANode::ComparisonOperator::EqualTo;

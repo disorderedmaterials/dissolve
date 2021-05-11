@@ -92,7 +92,7 @@ void PairPotential::setData1DNames()
 }
 
 // Set up PairPotential parameters from specified AtomTypes
-bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ)
+bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ)
 {
     // Check for NULL pointers
     if (typeI == nullptr)
@@ -577,7 +577,7 @@ void PairPotential::setUAdditional(Data1D &newUAdditional)
 }
 
 // Adjust additional potential, and recalculate UFull and dUFull
-void PairPotential::adjustUAdditional(Data1D u, double factor)
+void PairPotential::adjustUAdditional(const Data1D &u, double factor)
 {
     // Interpolate the supplied data 'u' and add it to the additional potential
     Interpolator::addInterpolated(uAdditional_, u, factor);

@@ -248,7 +248,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (auto atomType : atomTypes())
+    for (const auto &atomType : atomTypes())
     {
         std::string line = fmt::format("  {}  {}  {}  {:12.6e}  {}",
                                        PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),

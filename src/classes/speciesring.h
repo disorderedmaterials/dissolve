@@ -12,7 +12,7 @@ class SpeciesAtom;
 class SpeciesRing
 {
     public:
-    SpeciesRing(const std::vector<const SpeciesAtom *> atoms = {});
+    SpeciesRing(const std::vector<const SpeciesAtom *> &atoms = {});
     ~SpeciesRing() = default;
     bool operator==(const SpeciesRing &other) const;
 

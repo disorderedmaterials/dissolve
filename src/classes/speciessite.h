@@ -67,7 +67,7 @@ class SpeciesSite
     // Remove origin atom
     void removeOriginAtom(SpeciesAtom *originAtom);
     // Set origin atoms
-    bool setOriginAtoms(const RefList<SpeciesAtom> atoms);
+    bool setOriginAtoms(const RefList<SpeciesAtom> &atoms);
     // Return list of origin atoms
     const RefList<SpeciesAtom> &originAtoms();
     // Return integer array of indices from which the origin should be formed
@@ -83,7 +83,7 @@ class SpeciesSite
     // Remove x-axis atom
     void removeXAxisAtom(SpeciesAtom *xAxisAtom);
     // Set x-axis atoms
-    bool setXAxisAtoms(const RefList<SpeciesAtom> atoms);
+    bool setXAxisAtoms(const RefList<SpeciesAtom> &atoms);
     // Return list of x-axis atoms
     const RefList<SpeciesAtom> &xAxisAtoms();
     // Return integer array of indices from which x-axis should be formed
@@ -95,7 +95,7 @@ class SpeciesSite
     // Remove y-axis atom
     void removeYAxisAtom(SpeciesAtom *yAxisAtom);
     // Set y-axis atoms
-    bool setYAxisAtoms(const RefList<SpeciesAtom> atoms);
+    bool setYAxisAtoms(const RefList<SpeciesAtom> &atoms);
     // Return list of y-axis atoms
     const RefList<SpeciesAtom> &yAxisAtoms();
     // Return integer array of indices from which y-axis should be formed

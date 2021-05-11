@@ -63,7 +63,7 @@ class PoissonFit
     Data1D singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep,
                           double xMax) const;
     // Set coefficients from supplied values
-    void set(FunctionSpace::SpaceType space, double rMax, std::vector<double> coefficients, double sigmaQ = 0.02,
+    void set(FunctionSpace::SpaceType space, double rMax, const std::vector<double> &coefficients, double sigmaQ = 0.02,
              double sigmaR = 0.08);
     // Return number of Poisson functions in fit
     int nPoissons() const;
@@ -108,7 +108,7 @@ class PoissonFit
                                int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
                                int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
     // Construct suitable reciprocal-space representation using provided coefficients as a starting point
-    double constructReciprocal(double rMin, double rMax, std::vector<double> coefficients, double sigmaQ = 0.02,
+    double constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ = 0.02,
                                double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
                                int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 

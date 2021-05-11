@@ -32,7 +32,7 @@ void Molecule::setSpecies(const Species *sp) { species_ = sp; }
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(std::shared_ptr<Atom> i)
+void Molecule::addAtom(const std::shared_ptr<Atom> &i)
 {
     atoms_.push_back(i);
 

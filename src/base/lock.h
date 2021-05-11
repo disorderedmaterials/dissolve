@@ -10,7 +10,7 @@ class Lock
 {
     public:
     Lock();
-    ~Lock();
+    ~Lock() = default;
     // Declare Locker to be our friend
     friend class Locker;
 

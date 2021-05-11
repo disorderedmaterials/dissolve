@@ -11,7 +11,7 @@ class VersionCounter
 {
     public:
     VersionCounter();
-    ~VersionCounter();
+    ~VersionCounter() = default;
 
     /*
      * Version Information

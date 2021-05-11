@@ -16,7 +16,7 @@ class SampledValuesTest : public ::testing::Test
     public:
     SampledValuesTest() = default;
 
-    void testDouble(const std::vector<double> values)
+    void testDouble(const std::vector<double> &values)
     {
         auto mean = 0.0, stDev = 0.0;
 
@@ -38,7 +38,7 @@ class SampledValuesTest : public ::testing::Test
         EXPECT_DOUBLE_EQ(x.stDev(), stDev);
     }
 
-    SampledVector testVector(const std::vector<std::vector<double>> values)
+    SampledVector testVector(const std::vector<std::vector<double>> &values)
     {
         // One-pass with SampledVector
         SampledVector v;

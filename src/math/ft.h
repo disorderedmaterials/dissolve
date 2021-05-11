@@ -16,5 +16,5 @@ namespace Fourier
 // functions applied
 bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax,
             WindowFunction windowFunction = WindowFunction(),
-            const Functions::Function1DWrapper broadening = Functions::Function1DWrapper());
+            const Functions::Function1DWrapper &broadening = Functions::Function1DWrapper());
 }; // namespace Fourier

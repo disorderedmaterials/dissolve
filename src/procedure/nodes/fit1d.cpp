@@ -138,9 +138,9 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     // Print equation info
     Messenger::print("Expression to fit is: {}\n", equation_.expressionString());
     Messenger::print("  {:10}                (axis variable)\n", xVariable_->name());
-    for (auto var : fitTargets_)
+    for (const auto &var : fitTargets_)
         Messenger::print("  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble());
-    for (auto var : constants_)
+    for (const auto &var : constants_)
         Messenger::print("  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble());
     Messenger::print("\n");
 
@@ -151,13 +151,13 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
         MonteCarloMinimiser<Fit1DProcedureNode> mcMinimiser(*this, &Fit1DProcedureNode::equationCost, true);
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
-        for (auto var : fitTargets_)
+        for (const auto &var : fitTargets_)
             mcMinimiser.addTarget(var);
 
         mcMinimiser.minimise();
 
         Messenger::print("Optimised values:\n");
-        for (auto var : fitTargets_)
+        for (const auto &var : fitTargets_)
             Messenger::print("  {:10} = {:e}\n", var->name(), var->value().asDouble());
     }
 
@@ -191,10 +191,10 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
                 return procPool.decideFalse();
             if (!parser.writeLineF("#  {:10}                (axis variable)\n", xVariable_->name()))
                 return procPool.decideFalse();
-            for (auto var : fitTargets_)
+            for (const auto &var : fitTargets_)
                 if (!parser.writeLineF("#  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble()))
                     return procPool.decideFalse();
-            for (auto var : constants_)
+            for (const auto &var : constants_)
                 if (!parser.writeLineF("#  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble()))
                     return procPool.decideFalse();
 
@@ -285,14 +285,14 @@ bool Fit1DProcedureNode::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Constants
-    for (auto var : constants_)
+    for (const auto &var : constants_)
         if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix,
                                fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(),
                                var->value().asDouble()))
             return false;
 
     // Fitting targets
-    for (auto var : fitTargets_)
+    for (const auto &var : fitTargets_)
         if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword),
                                var->name(), var->value().asDouble()))
             return false;

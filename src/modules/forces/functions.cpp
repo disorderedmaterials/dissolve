@@ -347,7 +347,7 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
     Array<int> indices;
     for (auto n = 0; n < targetMolecules.nItems(); ++n)
     {
-        std::shared_ptr<Molecule> mol = targetMolecules.at(n);
+        const std::shared_ptr<Molecule> &mol = targetMolecules.at(n);
 
         for (auto i = 0; i < mol->nAtoms(); ++i)
         {

@@ -13,7 +13,7 @@ SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
 
 SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
 
-SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source)
+SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) noexcept : SpeciesIntra(source)
 {
     // Detach source torsion referred to by the species atoms
     if (source.i_ && source.j_ && source.k_ && source.l_)
@@ -46,7 +46,7 @@ SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
     return *this;
 }
 
-SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source)
+SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source) noexcept
 {
     if (i_ && j_ && k_ && l_)
         detach();

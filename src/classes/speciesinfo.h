@@ -15,7 +15,7 @@ class SpeciesInfo
 {
     public:
     SpeciesInfo();
-    ~SpeciesInfo();
+    ~SpeciesInfo() = default;
 
     /*
      * Species Target

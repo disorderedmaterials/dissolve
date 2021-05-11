@@ -10,8 +10,6 @@ SpeciesInfo::SpeciesInfo()
     population_ = 0;
 }
 
-SpeciesInfo::~SpeciesInfo() = default;
-
 /*
  * Species Target
  */

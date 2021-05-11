@@ -70,8 +70,8 @@ class SequenceProcedureNode : public ProcedureNode
     ProcedureNode *searchNodes(std::string_view name, ProcedureNode *excludeNode = nullptr,
                                std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
     // Search through the Procedure for the named parameter
-    std::shared_ptr<ExpressionVariable> searchParameters(std::string_view name,
-                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
+    std::shared_ptr<ExpressionVariable>
+    searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
 
     public:
     // Return parent Procedure to which this sequence belongs
@@ -94,10 +94,10 @@ class SequenceProcedureNode : public ProcedureNode
                               std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(ProcedureNode *queryingNode, std::string_view name,
-                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
+                                                         const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr);
     // Return whether the named parameter exists in this sequence or its children (branches)
-    std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
-                                                        std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
+    std::shared_ptr<ExpressionVariable>
+    parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ProcedureNode *queryingNode);
 

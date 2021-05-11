@@ -43,7 +43,7 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &source)
     charge_ = source.charge_;
 }
 
-ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source)
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source) noexcept
 {
     Z_ = source.Z_;
     index_ = source.index_;

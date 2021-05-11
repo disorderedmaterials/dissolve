@@ -13,7 +13,7 @@ class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBa
 {
     public:
     OperateNumberDensityNormaliseProcedureNode();
-    OperateNumberDensityNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
+    OperateNumberDensityNormaliseProcedureNode(const RefList<const SelectProcedureNode> &selectNodes);
     ~OperateNumberDensityNormaliseProcedureNode() override = default;
 
     /*

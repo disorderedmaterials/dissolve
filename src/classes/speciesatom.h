@@ -67,7 +67,7 @@ class SpeciesAtom
     // Return charge of Atom
     double charge() const;
     // Set AtomType of Atom
-    void setAtomType(std::shared_ptr<AtomType> at);
+    void setAtomType(const std::shared_ptr<AtomType> &at);
     // Return AtomType of Atom
     std::shared_ptr<AtomType> atomType() const;
     // Set index (0->[N-1])

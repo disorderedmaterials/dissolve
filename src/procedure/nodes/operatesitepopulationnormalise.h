@@ -13,7 +13,7 @@ class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeB
 {
     public:
     OperateSitePopulationNormaliseProcedureNode();
-    OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
+    OperateSitePopulationNormaliseProcedureNode(const RefList<const SelectProcedureNode> &selectNodes);
     ~OperateSitePopulationNormaliseProcedureNode() override = default;
 
     /*

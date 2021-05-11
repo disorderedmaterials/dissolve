@@ -132,7 +132,7 @@ class Configuration : public ListItem<Configuration>
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    std::shared_ptr<Atom> addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule,
+    std::shared_ptr<Atom> addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
                                   Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
@@ -189,9 +189,9 @@ class Configuration : public ListItem<Configuration>
     // Update Cell contents
     void updateCellContents();
     // Update Cell location of specified Atom
-    void updateCellLocation(std::shared_ptr<Atom> i);
+    void updateCellLocation(const std::shared_ptr<Atom> &i);
     // Update Cell location of specified Molecule
-    void updateCellLocation(std::shared_ptr<Molecule> mol);
+    void updateCellLocation(const std::shared_ptr<Molecule> &mol);
     // Update Cell location of specified Atom indices
     void updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset);
 
@@ -224,7 +224,7 @@ class Configuration : public ListItem<Configuration>
 
     public:
     // Set up process pool for this Configuration
-    bool setUpProcessPool(Array<int> worldRanks);
+    bool setUpProcessPool(const Array<int> &worldRanks);
     // Return process pool for this Configuration
     ProcessPool &processPool();
 };

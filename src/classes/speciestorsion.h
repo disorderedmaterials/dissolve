@@ -16,11 +16,11 @@ class SpeciesTorsion : public SpeciesIntra
 {
     public:
     SpeciesTorsion(SpeciesTorsion &source);
-    SpeciesTorsion(SpeciesTorsion &&source);
+    SpeciesTorsion(SpeciesTorsion &&source) noexcept;
     SpeciesTorsion(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
     ~SpeciesTorsion() override;
     SpeciesTorsion &operator=(const SpeciesTorsion &source);
-    SpeciesTorsion &operator=(SpeciesTorsion &&source);
+    SpeciesTorsion &operator=(SpeciesTorsion &&source) noexcept;
 
     /*
      * Atom Information

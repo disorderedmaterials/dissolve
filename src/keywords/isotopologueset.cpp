@@ -50,7 +50,7 @@ bool IsotopologueSetKeyword::read(LineParser &parser, int startArg, const CoreDa
 bool IsotopologueSetKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (auto topes : data_.isotopologues())
-        for (auto isoWeight : topes.mix())
+        for (const auto &isoWeight : topes.mix())
         {
             if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, topes.species()->name(),
                                    isoWeight.isotopologue()->name(), isoWeight.weight()))

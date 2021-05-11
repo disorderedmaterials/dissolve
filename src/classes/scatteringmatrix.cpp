@@ -9,6 +9,7 @@
 #include "math/svd.h"
 #include "templates/algorithms.h"
 #include <algorithm>
+#include <utility>
 
 ScatteringMatrix::ScatteringMatrix() = default;
 
@@ -20,7 +21,7 @@ ScatteringMatrix::ScatteringMatrix() = default;
 int ScatteringMatrix::nPairs() const { return typePairs_.size(); }
 
 // Return index of specified AtomType pair
-int ScatteringMatrix::pairIndex(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ) const
+int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
 {
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -44,7 +45,7 @@ double ScatteringMatrix::pairWeightInverse(double q, std::shared_ptr<AtomType> t
      * The required column of the inverse matrix is the original (row) index of the supplied data.
      */
 
-    auto index = pairIndex(typeI, typeJ);
+    auto index = pairIndex(std::move(typeI), std::move(typeJ));
     return inverse(q)[{index, dataIndex}];
 }
 
@@ -249,6 +250,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     {
         // Generate interpolations for each dataset
         std::vector<Interpolator> interpolations;
+        interpolations.reserve(data_.nItems());
         for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
             interpolations.emplace_back(Interpolator(data_[refDataIndex]));
 
@@ -404,8 +406,8 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared_ptr<AtomType> at1,
-                                               std::shared_ptr<AtomType> at2, double dataWeight, double factor)
+bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
+                                               const std::shared_ptr<AtomType> &at2, double dataWeight, double factor)
 {
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());

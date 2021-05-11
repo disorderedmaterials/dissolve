@@ -149,7 +149,7 @@ double Isotopologues::totalRelative() const
 {
     double total = 0.0;
 
-    for (auto isoWeight : mix_)
+    for (const auto &isoWeight : mix_)
         total += isoWeight.weight();
 
     return total;
@@ -211,7 +211,7 @@ bool Isotopologues::serialise(LineParser &parser) const
         return false;
 
     // Write Isotopologues
-    for (auto isoWeight : mix_)
+    for (const auto &isoWeight : mix_)
         if (!parser.writeLineF("{}  {}\n", isoWeight.isotopologue()->name(), isoWeight.weight()))
             return false;
 

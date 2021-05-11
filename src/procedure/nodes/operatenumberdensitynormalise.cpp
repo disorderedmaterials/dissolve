@@ -20,7 +20,7 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
 }
 
 OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(
-    RefList<const SelectProcedureNode> selectNodes)
+    const RefList<const SelectProcedureNode> &selectNodes)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise)
 {
     // Create keywords - store the pointers to the superclasses for later use

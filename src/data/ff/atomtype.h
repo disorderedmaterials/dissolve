@@ -20,7 +20,7 @@ class ForcefieldAtomType
                        std::string_view equivalentName = "");
     virtual ~ForcefieldAtomType() = default;
     ForcefieldAtomType(const ForcefieldAtomType &source);
-    ForcefieldAtomType(const ForcefieldAtomType &&source);
+    ForcefieldAtomType(const ForcefieldAtomType &&source) noexcept;
 
     /*
      * Identity

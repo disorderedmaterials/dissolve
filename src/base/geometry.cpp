@@ -15,8 +15,6 @@ Geometry::Geometry()
     value_ = 0.0;
 }
 
-Geometry::~Geometry() = default;
-
 /*
  * Data
  */

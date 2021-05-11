@@ -17,9 +17,9 @@ class SpeciesAngle : public SpeciesIntra
     SpeciesAngle(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr);
     ~SpeciesAngle() override = default;
     SpeciesAngle(SpeciesAngle &source);
-    SpeciesAngle(SpeciesAngle &&source);
+    SpeciesAngle(SpeciesAngle &&source) noexcept;
     SpeciesAngle &operator=(SpeciesAngle &source);
-    SpeciesAngle &operator=(SpeciesAngle &&source);
+    SpeciesAngle &operator=(SpeciesAngle &&source) noexcept;
 
     /*
      * SpeciesAtom Information

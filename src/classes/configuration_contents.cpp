@@ -144,7 +144,8 @@ std::deque<std::shared_ptr<Molecule>> &Configuration::molecules() { return molec
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
+std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
+                                             Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
     auto newAtom = std::make_shared<Atom>();

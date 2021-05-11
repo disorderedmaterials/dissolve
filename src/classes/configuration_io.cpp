@@ -52,7 +52,7 @@ bool Configuration::serialise(LineParser &parser) const
     // Write all Atoms - for each write index and coordinates
     if (!parser.writeLineF("{}  # nAtoms\n", atoms_.size()))
         return false;
-    for (const auto i : atoms_)
+    for (const auto &i : atoms_)
     {
         if (!parser.writeLineF("{} {:e} {:e} {:e}\n", i->molecule()->arrayIndex(), i->x(), i->y(), i->z()))
             return false;

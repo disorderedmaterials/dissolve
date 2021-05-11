@@ -18,8 +18,6 @@ EnergyKernel::EnergyKernel(ProcessPool &procPool, Configuration *config, const P
     cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
 }
 
-EnergyKernel::~EnergyKernel() = default;
-
 /*
  * Internal Routines
  */
@@ -89,7 +87,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto jj : otherAtoms)
+            for (const auto &jj : otherAtoms)
             {
                 // Check exclusion of I >= J
                 if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
@@ -122,7 +120,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto jj : otherAtoms)
+            for (const auto &jj : otherAtoms)
             {
                 // Check exclusion of I >= J
                 if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
@@ -173,7 +171,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     {
         auto &otherAtoms = otherCell->atoms();
 
-        for (auto jj : otherAtoms)
+        for (const auto &jj : otherAtoms)
         {
             molJ = jj->molecule();
             rJ = jj->r();
@@ -211,7 +209,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     {
         auto &otherAtoms = otherCell->atoms();
 
-        for (auto jj : otherAtoms)
+        for (const auto &jj : otherAtoms)
         {
             molJ = jj->molecule();
             rJ = jj->r();

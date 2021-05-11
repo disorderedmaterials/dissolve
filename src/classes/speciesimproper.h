@@ -16,11 +16,11 @@ class SpeciesImproper : public SpeciesIntra
 {
     public:
     SpeciesImproper(SpeciesImproper &source);
-    SpeciesImproper(SpeciesImproper &&source);
+    SpeciesImproper(SpeciesImproper &&source) noexcept;
     SpeciesImproper(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
     ~SpeciesImproper() override;
     SpeciesImproper &operator=(const SpeciesImproper &source);
-    SpeciesImproper &operator=(SpeciesImproper &&source);
+    SpeciesImproper &operator=(SpeciesImproper &&source) noexcept;
 
     /*
      * Atom Information

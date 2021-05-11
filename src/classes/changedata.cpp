@@ -13,7 +13,7 @@ ChangeData::ChangeData() : atom_(nullptr) {}
  */
 
 // Set target atom
-void ChangeData::setAtom(std::shared_ptr<Atom> i)
+void ChangeData::setAtom(const std::shared_ptr<Atom> &i)
 {
     assert(i != nullptr);
 

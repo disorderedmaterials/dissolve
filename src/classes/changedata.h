@@ -32,7 +32,7 @@ class ChangeData
 
     public:
     // Set target Atom
-    void setAtom(std::shared_ptr<Atom> i);
+    void setAtom(const std::shared_ptr<Atom> &i);
     // Return target Atom
     std::shared_ptr<Atom> atom();
     // Return array index of stored Atom

@@ -202,28 +202,28 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
 
 // Add bond term
 void Forcefield::addBondTerm(std::string_view typeI, std::string_view typeJ, SpeciesBond::BondFunction form,
-                             const std::vector<double> parameters)
+                             const std::vector<double> &parameters)
 {
     bondTerms_.emplace_back(typeI, typeJ, form, parameters);
 }
 
 // Add angle term
 void Forcefield::addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                              SpeciesAngle::AngleFunction form, const std::vector<double> parameters)
+                              SpeciesAngle::AngleFunction form, const std::vector<double> &parameters)
 {
     angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameters);
 }
 
 // Add torsion term
 void Forcefield::addTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters)
+                                SpeciesTorsion::TorsionFunction form, const std::vector<double> &parameters)
 {
     torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
 
 // Add improper term
 void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                 SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters)
+                                 SpeciesTorsion::TorsionFunction form, const std::vector<double> &parameters)
 {
     improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }

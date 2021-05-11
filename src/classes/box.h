@@ -152,7 +152,7 @@ class Box
      */
     public:
     // Return angle (in degrees, no MIM) between Atoms
-    double angleInDegrees(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k) const;
+    double angleInDegrees(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, const std::shared_ptr<Atom> &k) const;
     // Return angle (in degrees) between coordinates
     double angleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k) const;
     // Return angle (in degrees) between supplied normalised vectors

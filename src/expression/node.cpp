@@ -15,7 +15,7 @@ ExpressionNode::~ExpressionNode() { clear(); }
 void ExpressionNode::clear() { children_.clear(); }
 
 // Add child node
-void ExpressionNode::addChild(std::shared_ptr<ExpressionNode> node) { children_.emplace_back(node); }
+void ExpressionNode::addChild(const std::shared_ptr<ExpressionNode> &node) { children_.emplace_back(node); }
 
 // Return number of children
 int ExpressionNode::nChildren() const { return children_.size(); }

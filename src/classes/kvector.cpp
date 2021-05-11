@@ -9,9 +9,9 @@ KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) { ini
 
 KVector::KVector(const KVector &source) { (*this) = source; }
 
-KVector::KVector(KVector &&source) { (*this) = source; }
+KVector::KVector(KVector &&source) noexcept { (*this) = source; }
 
-KVector::KVector(const KVector &&source) { (*this) = source; }
+KVector::KVector(const KVector &&source) noexcept { (*this) = source; }
 
 KVector &KVector::operator=(const KVector &source) = default;
 

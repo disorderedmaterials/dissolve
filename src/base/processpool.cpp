@@ -217,7 +217,7 @@ bool ProcessPool::groupLeader() const { return (groupRank_ == 0); }
  */
 
 // Set up pool with world ranks specified
-bool ProcessPool::setUp(std::string_view name, Array<int> worldRanks)
+bool ProcessPool::setUp(std::string_view name, const Array<int> &worldRanks)
 {
     clear();
 

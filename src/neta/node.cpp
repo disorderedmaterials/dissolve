@@ -195,7 +195,7 @@ int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atom
     auto totalScore = 0;
 
     // Loop over branch nodes in sequence
-    for (auto node : branch_)
+    for (const auto &node : branch_)
     {
         // Get the score from the node, returning early if NoMatch is encountered
         auto nodeScore = node->score(i, atomData);
