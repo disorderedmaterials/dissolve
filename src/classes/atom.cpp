@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atom.h"
-
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
 #include <utility>
