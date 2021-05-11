@@ -63,6 +63,8 @@ class AtomTypeList
     std::vector<AtomTypeData>::const_iterator end() const;
     // Return index of AtomType in list
     int indexOf(const std::shared_ptr<AtomType> &atomtype) const;
+    // Return indices of AtomType pair in list
+    std::pair<int, int> indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
     // Return index of names AtomType in list
     int indexOf(std::string_view name) const;
     // Return total population of all types in list
@@ -70,7 +72,7 @@ class AtomTypeList
     // Return nth referenced AtomType
     const std::shared_ptr<AtomType> atomType(int n) const;
     // Return AtomTypeData for specified AtomType
-    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(std::shared_ptr<AtomType> atomType);
+    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(const std::shared_ptr<AtomType> &atomType);
     // Print AtomType populations
     void print() const;
 

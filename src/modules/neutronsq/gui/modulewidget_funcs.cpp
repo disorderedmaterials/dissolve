@@ -29,7 +29,6 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, const GenericList 
     graph_->view().axes().setTitle(1, "F(Q)");
     graph_->view().axes().setMin(1, -1.0);
     graph_->view().axes().setMax(1, 1.0);
-    graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     graph_->view().setAutoFollowType(View::AllAutoFollow);
     // -- Set group styling
     graph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);

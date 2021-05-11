@@ -209,6 +209,32 @@ int AtomTypeList::indexOf(std::string_view name) const
     return -1;
 }
 
+// Return indices of AtomType pair in list
+std::pair<int, int> AtomTypeList::indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
+{
+    auto count = 0, index = -1;
+    for (auto &atd : types_)
+    {
+        if (atd.atomType() == at1)
+        {
+            if (index == -1)
+                index = count;
+            else
+                return {count, index};
+        }
+        if (atd.atomType() == at2)
+        {
+            if (index == -1)
+                index = count;
+            else
+                return {index, count};
+        }
+        ++count;
+    }
+
+    return {-1, -1};
+}
+
 // Return total population of all types in list
 double AtomTypeList::totalPopulation() const
 {
@@ -227,7 +253,7 @@ const std::shared_ptr<AtomType> AtomTypeList::atomType(int n) const
 }
 
 // Return AtomTypeData for specified AtomType
-OptionalReferenceWrapper<const AtomTypeData> AtomTypeList::atomTypeData(std::shared_ptr<AtomType> atomType)
+OptionalReferenceWrapper<const AtomTypeData> AtomTypeList::atomTypeData(const std::shared_ptr<AtomType> &atomType)
 {
     auto it = std::find_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return atomType == atd.atomType(); });
     if (it == types_.end())

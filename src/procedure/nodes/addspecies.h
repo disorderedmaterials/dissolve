@@ -32,22 +32,20 @@ class AddSpeciesProcedureNode : public ProcedureNode
      */
     public:
     // Box Action Style
-    enum BoxActionStyle
+    enum class BoxActionStyle
     {
-        None,        /* Box geometry / volume will remain unchanged */
-        AddVolume,   /* Increase Box volume to accommodate new species, according to supplied density */
-        ScaleVolume, /* Scale current Box volume to give, after addition of the current species, the supplied density */
-        nBoxActionStyles
+        None,       /* Box geometry / volume will remain unchanged */
+        AddVolume,  /* Increase Box volume to accommodate new species, according to supplied density */
+        ScaleVolume /* Scale current Box volume to give, after addition of the current species, the supplied density */
     };
     // Return enum option info for BoxActionStyle
     static EnumOptions<BoxActionStyle> boxActionStyles();
     // Positioning Type
-    enum PositioningType
+    enum class PositioningType
     {
-        CentralPositioning, /* Position the Species at the centre of the Box */
-        CurrentPositioning, /* Use current Species coordinates */
-        RandomPositioning,  /* Set position randomly */
-        nPositioningTypes
+        Central, /* Position the Species at the centre of the Box */
+        Current, /* Use current Species coordinates */
+        Random   /* Set position randomly */
     };
     // Return enum option info for PositioningType
     static EnumOptions<PositioningType> positioningTypes();
