@@ -60,7 +60,7 @@ class BraggReflection
     // Set Miller indices of reflection
     void setHKL(int h, int k, int l);
     // Return Miller indices of reflection
-    Vec3<int> hkl() const;
+    const Vec3<int> &hkl() const;
 
     /*
      * Serialisation

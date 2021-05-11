@@ -89,7 +89,7 @@ int BraggReflection::nKVectors() const { return nKVectors_; }
 void BraggReflection::setHKL(int h, int k, int l) { hkl_.set(h, k, l); }
 
 // Return Miller indices of reflection
-Vec3<int> BraggReflection::hkl() const { return hkl_; }
+const Vec3<int> &BraggReflection::hkl() const { return hkl_; }
 
 /*
  * Serialisation

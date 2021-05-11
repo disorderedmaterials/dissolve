@@ -96,8 +96,9 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             // Retrieve the atom types list so we know which reflections correspond to which pairs
             if (reflectionAtomTypesData_)
             {
-                std::vector<std::string> columnHeaders;
                 const auto &atl = reflectionAtomTypesData_->get();
+                std::vector<std::string> columnHeaders;
+                columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
                 for_each_pair(atl.begin(), atl.end(),
                               [&columnHeaders](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
                                   columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));

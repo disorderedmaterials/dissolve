@@ -3,6 +3,8 @@
 
 #include "gui/models/braggReflectionFilterProxy.h"
 
+#define FIRST_INTENSITY_COLUMN 3
+
 BraggReflectionFilterProxy::BraggReflectionFilterProxy() : enabled_(true) {}
 
 // Set whether the filter is enabled
@@ -21,7 +23,7 @@ bool BraggReflectionFilterProxy::filterAcceptsRow(int row, const QModelIndex &pa
     if (!enabled_)
         return true;
 
-    for (auto col = 3; col < sourceModel()->columnCount(); ++col)
+    for (auto col = FIRST_INTENSITY_COLUMN; col < sourceModel()->columnCount(); ++col)
         if (sourceModel()->data(sourceModel()->index(row, col, parent)).toDouble() > 1.0e-3)
             return true;
 
