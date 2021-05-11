@@ -243,11 +243,13 @@ template <class A> class Array2D
     Array2D<A> operator+(const Array2D<A> &other) const
     {
         assert(nColumns_ == other.nColumns_ && nRows_ == other.nRows_);
-        Array2D<A> ret(nRows_, nColumns_);
-        // Could optimize with transform and zip iterator over this and other
-        for (int i = 0; i < this->array_.size(); i++)
+        auto half = this->half_ && other.half_;
+        Array2D<A> ret(nRows_, nColumns_, half);
+        for (int i = 0; i < this->nRows_; i++)
         {
-            ret.array_[i] = other.array_[i] + this->array_[i];
+            int colStart = i ? half : 0;
+            for (int j = colStart; j < this->nColumns_; ++j)
+                ret[{i, j}] = other[{i, j}] + (*this)[{i, j}];
         };
         return ret;
     }

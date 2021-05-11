@@ -171,9 +171,9 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
 
     auto combinableHistograms = dissolve::CombinableValue<Array2D<Histogram1D>>([&partialSet]() {
         Array2D<Histogram1D> histograms;
-        histograms.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes());
+        histograms.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes(), true);
         for (auto i = 0; i < partialSet.nAtomTypes(); ++i)
-            for (auto j = 0; j < partialSet.nAtomTypes(); ++j)
+            for (auto j = i; j < partialSet.nAtomTypes(); ++j)
                 histograms[{i, j}] = partialSet.fullHistogram(i, j);
         return histograms;
     });
