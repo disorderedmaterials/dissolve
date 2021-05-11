@@ -16,7 +16,7 @@ ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImp
     setUpKeywords();
 }
 
-ForceImportFileFormat::~ForceImportFileFormat() {}
+ForceImportFileFormat::~ForceImportFileFormat() = default;
 
 /*
  * Keyword Options

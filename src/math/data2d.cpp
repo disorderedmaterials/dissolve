@@ -9,7 +9,7 @@
 #include "math/histogram2d.h"
 #include <algorithm>
 
-Data2D::Data2D() : hasError_(false) {}
+Data2D::Data2D() {}
 
 Data2D::Data2D(const Data2D &source) { (*this) = source; }
 

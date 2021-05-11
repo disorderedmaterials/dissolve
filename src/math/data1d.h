@@ -31,7 +31,7 @@ class Data1D : public Data1DBase
     // Values at each x
     std::vector<double> values_;
     // Whether data has associated errors
-    bool hasError_;
+    bool hasError_{false};
     // Errors of values, if present
     std::vector<double> errors_;
     // Data version

@@ -10,9 +10,9 @@
 #include "data/isotopes.h"
 #include <algorithm>
 
-AtomTypeList::AtomTypeList() {}
+AtomTypeList::AtomTypeList() = default;
 
-AtomTypeList::~AtomTypeList() {}
+AtomTypeList::~AtomTypeList() = default;
 
 AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 

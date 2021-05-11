@@ -11,7 +11,7 @@ AtomTypeRefListKeyword::AtomTypeRefListKeyword(std::vector<std::shared_ptr<AtomT
 {
 }
 
-AtomTypeRefListKeyword::~AtomTypeRefListKeyword() {}
+AtomTypeRefListKeyword::~AtomTypeRefListKeyword() = default;
 
 /*
  * Arguments

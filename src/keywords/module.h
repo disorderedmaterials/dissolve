@@ -46,7 +46,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
         : ModuleKeywordBase(moduleType), KeywordData<M *>(KeywordBase::ModuleData, module)
     {
     }
-    ~ModuleKeyword() override {}
+    ~ModuleKeyword() override = default;
 
     /*
      * Arguments

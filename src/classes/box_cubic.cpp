@@ -22,7 +22,7 @@ CubicBox::CubicBox(double length) : Box()
     finalise();
 }
 
-CubicBox::~CubicBox() {}
+CubicBox::~CubicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

@@ -9,7 +9,7 @@
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
-#include <string.h>
+#include <cstring>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)

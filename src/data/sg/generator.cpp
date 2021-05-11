@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "data/sg/sginfo.h"
-#include <string.h>
+#include <cstring>
 
 // Set partial element of matrix or translation vector
 void SymmetryGenerator::setMatrixPart(int row, std::string_view part)

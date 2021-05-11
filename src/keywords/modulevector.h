@@ -14,7 +14,7 @@ class ModuleVectorKeyword : public KeywordData<std::vector<Module *>>
 {
     public:
     ModuleVectorKeyword(int maxModules = -1);
-    ModuleVectorKeyword(const std::vector<std::string> &allowedModuleTypes, int maxModules = -1);
+    ModuleVectorKeyword(std::vector<std::string> allowedModuleTypes, int maxModules = -1);
     ~ModuleVectorKeyword() override;
 
     /*

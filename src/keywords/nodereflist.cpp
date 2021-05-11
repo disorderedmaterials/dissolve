@@ -11,7 +11,7 @@ NodeRefListKeywordBase::NodeRefListKeywordBase(ProcedureNode *parentNode, Proced
     onlyInScope_ = onlyInScope;
 }
 
-NodeRefListKeywordBase::~NodeRefListKeywordBase() {}
+NodeRefListKeywordBase::~NodeRefListKeywordBase() = default;
 
 /*
  * Parent Node

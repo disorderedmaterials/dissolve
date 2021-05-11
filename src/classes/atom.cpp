@@ -7,7 +7,7 @@
 
 Atom::Atom() { clear(); }
 
-Atom::~Atom() {}
+Atom::~Atom() = default;
 
 /*
  * DynamicArrayObject Virtuals

@@ -30,10 +30,10 @@ bool Configuration::serialise(LineParser &parser) const
     // Write Molecule types - write sequential Molecules with same type as single line
     auto moleculeCount = 0;
     const Species *lastType = nullptr;
-    for (int n = 0; n < molecules_.size(); ++n)
+    for (const auto &molecule : molecules_)
     {
         // If the last Molecule's Species is the same as this one, increment counter and move on
-        if (lastType == molecules_[n]->species())
+        if (lastType == molecule->species())
         {
             ++moleculeCount;
             continue;
@@ -43,7 +43,7 @@ bool Configuration::serialise(LineParser &parser) const
         if (lastType && (!parser.writeLineF("{}  '{}'\n", moleculeCount, lastType->name())))
             return false;
         moleculeCount = 1;
-        lastType = molecules_[n]->species();
+        lastType = molecule->species();
     }
     // Write final molecule count / type
     if ((moleculeCount > 0) && (!parser.writeLineF("{}  '{}'\n", moleculeCount, lastType->name())))

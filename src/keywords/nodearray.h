@@ -92,7 +92,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
                 nodeArray[n] = nullptr;
         }
     }
-    ~NodeArrayKeyword() override {}
+    ~NodeArrayKeyword() override = default;
 
     /*
      * Arguments

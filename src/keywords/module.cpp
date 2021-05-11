@@ -6,7 +6,7 @@
 
 ModuleKeywordBase::ModuleKeywordBase(std::string_view moduleType) { moduleType_ = moduleType; }
 
-ModuleKeywordBase::~ModuleKeywordBase() {}
+ModuleKeywordBase::~ModuleKeywordBase() = default;
 
 /*
  * Target Module Type

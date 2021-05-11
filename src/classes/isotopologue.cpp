@@ -6,7 +6,7 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue() : ListItem<Isotopologue>(), parent_(nullptr) {}
+Isotopologue::Isotopologue() : ListItem<Isotopologue>() {}
 
 /*
  * Basic Information

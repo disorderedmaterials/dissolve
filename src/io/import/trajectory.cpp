@@ -16,7 +16,7 @@ TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename
     setUpKeywords();
 }
 
-TrajectoryImportFileFormat::~TrajectoryImportFileFormat() {}
+TrajectoryImportFileFormat::~TrajectoryImportFileFormat() = default;
 
 /*
  * Keyword Options

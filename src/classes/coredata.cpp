@@ -14,7 +14,7 @@
 
 CoreData::CoreData() { moduleInstances_ = nullptr; }
 
-CoreData::~CoreData() {}
+CoreData::~CoreData() = default;
 
 // Clear all data
 void CoreData::clear()

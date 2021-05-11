@@ -12,8 +12,8 @@
 #include "neta/neta.h"
 #include "neta/node.h"
 #include <antlr4-runtime.h>
-#include <stdarg.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstring>
 
 NETADefinition::NETADefinition() : rootNode_(nullptr) {}
 

@@ -9,13 +9,13 @@
 #include "classes/pairpotential.h"
 #include "classes/species.h"
 #include "math/constants.h"
-#include <math.h>
+#include <cmath>
 #include <new>
 using namespace std;
 
-PotentialMap::PotentialMap() {}
+PotentialMap::PotentialMap() = default;
 
-PotentialMap::~PotentialMap() {}
+PotentialMap::~PotentialMap() = default;
 
 // Clear all data
 void PotentialMap::clear() { potentialMatrix_.clear(); }

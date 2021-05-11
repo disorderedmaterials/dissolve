@@ -446,9 +446,9 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          */
         auto dU_dphi = 0.0;
         auto c = 1;
-        for (auto n = 0; n < params.size(); ++n)
+        for (double param : params)
         {
-            dU_dphi -= params[n] * (c * sin(c * phi));
+            dU_dphi -= param * (c * sin(c * phi));
             ++c;
         }
         return -dU_dphi * dphi_dcosphi;

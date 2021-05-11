@@ -7,7 +7,7 @@
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 
-PartialSetAccumulator::PartialSetAccumulator() : nAccumulated_(0) {}
+PartialSetAccumulator::PartialSetAccumulator() {}
 
 void PartialSetAccumulator::operator+=(const PartialSet &source)
 {

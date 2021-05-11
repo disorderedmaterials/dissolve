@@ -35,17 +35,17 @@ class SpeciesAtom
     // Parent Species
     Species *parent_;
     // Atomic element
-    Elements::Element Z_;
+    Elements::Element Z_{Elements::Unknown};
     // Coordinates
     Vec3<double> r_;
     // Charge (if contained in file)
-    double charge_;
+    double charge_{0.0};
     // Assigned AtomType
     std::shared_ptr<AtomType> atomType_;
     // Index in Species
-    int index_;
+    int index_{-1};
     // Whether the atom is currently selected
-    bool selected_;
+    bool selected_{false};
 
     public:
     // Set Species parent

@@ -14,7 +14,7 @@ Site::Site(std::shared_ptr<const Molecule> molecule, Vec3<double> origin)
     origin_ = origin;
 }
 
-Site::~Site() {}
+Site::~Site() = default;
 
 // Return site origin
 const Vec3<double> &Site::origin() const { return origin_; }
@@ -46,7 +46,7 @@ OrientedSite::OrientedSite(std::shared_ptr<const Molecule> molecule, Vec3<double
     axes_.setColumn(2, zAxis);
 }
 
-OrientedSite::~OrientedSite() {}
+OrientedSite::~OrientedSite() = default;
 
 // Return whether local axes are present
 bool OrientedSite::hasAxes() const { return true; }

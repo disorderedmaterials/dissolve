@@ -24,11 +24,11 @@ class ChangeData
     // Atom
     std::shared_ptr<Atom> atom_;
     // Flag indicating whether Atom has moved
-    bool moved_;
+    bool moved_{false};
     // Stored coordinates of Atom
     Vec3<double> r_;
     // Stored Cell of Atom
-    Cell *cell_;
+    Cell *cell_{nullptr};
 
     public:
     // Set target Atom

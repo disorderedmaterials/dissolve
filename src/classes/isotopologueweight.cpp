@@ -5,7 +5,7 @@
 
 IsotopologueWeight::IsotopologueWeight(const Isotopologue *iso, double weight) : isotopologue_(iso), weight_(weight) {}
 
-IsotopologueWeight::~IsotopologueWeight() {}
+IsotopologueWeight::~IsotopologueWeight() = default;
 
 /*
  * Isotopologue and Weight

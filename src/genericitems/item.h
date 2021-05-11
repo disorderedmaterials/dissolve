@@ -9,7 +9,7 @@
 namespace GenericItem
 {
 // Item Data Typedef
-typedef std::tuple<std::any, std::string, int, int> Type;
+using Type = std::tuple<std::any, std::string, int, int>;
 // Item Data Tuple Indices
 enum ItemData
 {

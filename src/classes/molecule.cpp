@@ -7,7 +7,7 @@
 
 Molecule::Molecule() { species_ = nullptr; }
 
-Molecule::~Molecule() {}
+Molecule::~Molecule() = default;
 
 /*
  * DynamicArrayObject Virtuals

@@ -4,4 +4,4 @@
 #include "modules/xraysq/xraysq.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *XRaySQModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *XRaySQModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

@@ -8,7 +8,7 @@
 
 SpeciesKeyword::SpeciesKeyword(Species *sp) : KeywordData<Species *>(KeywordBase::SpeciesData, sp) {}
 
-SpeciesKeyword::~SpeciesKeyword() {}
+SpeciesKeyword::~SpeciesKeyword() = default;
 
 /*
  * Arguments

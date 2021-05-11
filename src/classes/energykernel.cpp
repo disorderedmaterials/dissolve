@@ -18,7 +18,7 @@ EnergyKernel::EnergyKernel(ProcessPool &procPool, Configuration *config, const P
     cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
 }
 
-EnergyKernel::~EnergyKernel() {}
+EnergyKernel::~EnergyKernel() = default;
 
 /*
  * Internal Routines

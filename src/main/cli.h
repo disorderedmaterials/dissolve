@@ -20,9 +20,9 @@ class CLIOptions
     // Input file to load
     std::optional<std::string> inputFile_;
     // Number of iterations to perform
-    int nIterations_;
+    int nIterations_{0};
     // Frequency at which to write restart file
-    int restartFileFrequency_;
+    int restartFileFrequency_{10};
     // Redirection basename (for per-process output)
     std::optional<std::string> redirectionBasename_;
     // Restart file to load, overriding default
@@ -30,11 +30,11 @@ class CLIOptions
     // New input file to write (after reading supplied file)
     std::optional<std::string> writeInputFilename_;
     // Whether to ignore restart file (if it exists)
-    bool ignoreRestartFile_;
+    bool ignoreRestartFile_{false};
     // Whether to ignore GUI state file (if it exists)
-    bool ignoreStateFile_;
+    bool ignoreStateFile_{false};
     // Whether to prevent writing of all output files
-    bool writeNoFiles_;
+    bool writeNoFiles_{false};
 
     public:
     // Parse Result enum

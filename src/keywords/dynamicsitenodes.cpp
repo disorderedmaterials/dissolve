@@ -15,7 +15,7 @@ DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode *parentNode
     axesRequired_ = axesRequired;
 }
 
-DynamicSiteNodesKeyword::~DynamicSiteNodesKeyword() {}
+DynamicSiteNodesKeyword::~DynamicSiteNodesKeyword() = default;
 
 /*
  * Parent Node

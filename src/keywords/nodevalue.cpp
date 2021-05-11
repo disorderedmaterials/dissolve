@@ -11,7 +11,7 @@ NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, NodeValue value)
     parentNode_ = parentNode;
 }
 
-NodeValueKeyword::~NodeValueKeyword() {}
+NodeValueKeyword::~NodeValueKeyword() = default;
 
 /*
  * Arguments

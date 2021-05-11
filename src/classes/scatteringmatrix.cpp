@@ -10,7 +10,7 @@
 #include "templates/algorithms.h"
 #include <algorithm>
 
-ScatteringMatrix::ScatteringMatrix() {}
+ScatteringMatrix::ScatteringMatrix() = default;
 
 /*
  * Data

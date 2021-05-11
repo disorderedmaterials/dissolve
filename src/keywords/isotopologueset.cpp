@@ -11,7 +11,7 @@ IsotopologueSetKeyword::IsotopologueSetKeyword(IsotopologueSet &set)
 {
 }
 
-IsotopologueSetKeyword::~IsotopologueSetKeyword() {}
+IsotopologueSetKeyword::~IsotopologueSetKeyword() = default;
 
 /*
  * Arguments

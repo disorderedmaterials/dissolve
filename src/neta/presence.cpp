@@ -36,7 +36,7 @@ bool NETAPresenceNode::addElementTarget(Elements::Element Z)
 // Add forcefield type target to node
 bool NETAPresenceNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 {
-    allowedAtomTypes_.push_back(ffType);
+    allowedAtomTypes_.emplace_back(ffType);
 
     return true;
 }

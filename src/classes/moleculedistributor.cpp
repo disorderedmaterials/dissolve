@@ -10,7 +10,7 @@ MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecu
 {
 }
 
-MoleculeDistributor::~MoleculeDistributor() {}
+MoleculeDistributor::~MoleculeDistributor() = default;
 
 /*
  * Cells

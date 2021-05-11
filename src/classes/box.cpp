@@ -16,7 +16,7 @@ Box::Box()
 }
 
 // Virtual Destructor
-Box::~Box() {}
+Box::~Box() = default;
 
 void Box::operator=(const Box &source)
 {

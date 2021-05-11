@@ -5,11 +5,12 @@
 #include "data/formfactors.h"
 #include <algorithm>
 #include <functional>
+#include <utility>
 #include <vector>
 
 FormFactorData_WK1995::FormFactorData_WK1995(Elements::Element Z, int formalCharge, std::vector<double> a,
                                              std::vector<double> b, double c)
-    : FormFactorData(Z, formalCharge), a_(a), b_(b), c_(c)
+    : FormFactorData(Z, formalCharge), a_(std::move(a)), b_(std::move(b)), c_(c)
 {
 }
 

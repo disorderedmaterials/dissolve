@@ -35,7 +35,7 @@ class Data3D : public Data3DBase
     // Values at each xyz
     Array3D<double> values_;
     // Whether data has associated errors
-    bool hasError_;
+    bool hasError_{false};
     // Errors of values, if present
     Array3D<double> errors_;
     // Data version

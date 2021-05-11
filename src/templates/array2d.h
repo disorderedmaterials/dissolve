@@ -13,7 +13,7 @@
 template <class A> class Array2D
 {
     public:
-    Array2D(int nrows = 0, int ncolumns = 0, bool half = false) : nRows_(0), nColumns_(0), half_(half)
+    Array2D(int nrows = 0, int ncolumns = 0, bool half = false) : half_(half)
     {
         if ((nrows > 0) && (ncolumns > 0))
             resize(nrows, ncolumns);
@@ -44,7 +44,7 @@ template <class A> class Array2D
     // Linear array of objects
     std::vector<A> array_;
     // Array dimensions
-    int nRows_, nColumns_;
+    int nRows_{0}, nColumns_{0};
     // Half-matrix mode
     bool half_;
     // Row offsets

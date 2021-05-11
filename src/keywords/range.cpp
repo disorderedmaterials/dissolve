@@ -9,7 +9,7 @@ RangeKeyword::RangeKeyword(Range value, Vec3Labels::LabelType labelType) : Keywo
     labelType_ = labelType;
 }
 
-RangeKeyword::~RangeKeyword() {}
+RangeKeyword::~RangeKeyword() = default;
 
 /*
  * Label Type

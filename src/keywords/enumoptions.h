@@ -54,7 +54,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
         for (auto n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
             validKeywords_.emplace_back(std::string(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n)));
     }
-    ~EnumOptionsKeyword() override {}
+    ~EnumOptionsKeyword() override = default;
 
     /*
      * Data Validation

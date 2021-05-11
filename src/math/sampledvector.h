@@ -21,7 +21,7 @@ class SampledVector
      */
     private:
     // Sample size contributing to averages etc.
-    int count_;
+    int count_{0};
     // Mean of sampled data (i.e. current values)
     std::vector<double> mean_;
     // Aggregate of squared distance from mean values

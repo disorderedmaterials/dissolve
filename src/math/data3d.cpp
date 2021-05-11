@@ -7,7 +7,7 @@
 #include "base/sysfunc.h"
 #include "math/histogram3d.h"
 
-Data3D::Data3D() : hasError_(false) {}
+Data3D::Data3D() {}
 
 Data3D::Data3D(const Data3D &source) { (*this) = source; }
 

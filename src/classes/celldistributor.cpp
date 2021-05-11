@@ -10,7 +10,7 @@ CellDistributor::CellDistributor(const CellArray &cellArray, ProcessPool &procPo
 {
 }
 
-CellDistributor::~CellDistributor() {}
+CellDistributor::~CellDistributor() = default;
 
 /*
  * Cells

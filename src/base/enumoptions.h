@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "base/enumoption.h"
 #include "base/enumoptionsbase.h"
 #include "base/messenger.h"
@@ -13,7 +15,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() = default;
-    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options) : name_(name), options_(options)
+    EnumOptions(std::string_view name, std::vector<EnumOption<E>> options) : name_(name), options_(std::move(options))
     {
         currentOption_ = options_.cbegin();
     }

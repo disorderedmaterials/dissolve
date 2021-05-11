@@ -5,7 +5,7 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "main/dissolve.h"
-#include <string.h>
+#include <cstring>
 
 // Add a new Species to the list
 Species *Dissolve::addSpecies()

@@ -13,7 +13,7 @@ SpeciesSite::SpeciesSite()
     originMassWeighted_ = false;
 }
 
-SpeciesSite::~SpeciesSite() {}
+SpeciesSite::~SpeciesSite() = default;
 
 /*
  * Basic Information

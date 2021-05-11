@@ -7,7 +7,7 @@
 #include "base/sysfunc.h"
 #include "templates/algorithms.h"
 
-Data1D::Data1D() : hasError_(false) {}
+Data1D::Data1D() {}
 
 Data1D::Data1D(const Data1D &source) { (*this) = source; }
 

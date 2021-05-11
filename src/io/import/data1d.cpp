@@ -16,7 +16,7 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
     setUpKeywords();
 }
 
-Data1DImportFileFormat::~Data1DImportFileFormat() {}
+Data1DImportFileFormat::~Data1DImportFileFormat() = default;
 
 /*
  * Keyword Options

@@ -13,7 +13,7 @@ Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
 {
 }
 
-Isotopologues::~Isotopologues() {}
+Isotopologues::~Isotopologues() = default;
 
 /*
  * Isotopologue Mix

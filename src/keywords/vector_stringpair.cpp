@@ -9,7 +9,7 @@ StringPairVectorKeyword::StringPairVectorKeyword(StringPairVectorKeywordData &da
 {
 }
 
-StringPairVectorKeyword::~StringPairVectorKeyword() {}
+StringPairVectorKeyword::~StringPairVectorKeyword() = default;
 
 // Return minimum number of arguments accepted
 int StringPairVectorKeyword::minArguments() const { return 2; }

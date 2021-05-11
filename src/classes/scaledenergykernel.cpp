@@ -15,7 +15,7 @@ ScaledEnergyKernel::ScaledEnergyKernel(double interMoleculeRScale, double intraM
     intraMoleculeEScale_ = intraMoleculeEScale;
 }
 
-ScaledEnergyKernel::~ScaledEnergyKernel() {}
+ScaledEnergyKernel::~ScaledEnergyKernel() = default;
 
 /*
  * Internal Routines

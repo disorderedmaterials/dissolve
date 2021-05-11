@@ -15,7 +15,7 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(ProcedureNode *
     parentNode_ = parentNode;
 }
 
-ExpressionVariableVectorKeyword::~ExpressionVariableVectorKeyword() {}
+ExpressionVariableVectorKeyword::~ExpressionVariableVectorKeyword() = default;
 
 /*
  * Parent Node

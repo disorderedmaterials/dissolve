@@ -40,7 +40,7 @@ TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles
     finalise();
 }
 
-TriclinicBox::~TriclinicBox() {}
+TriclinicBox::~TriclinicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

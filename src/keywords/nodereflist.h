@@ -62,7 +62,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
                                                                                                nodeRefList)
     {
     }
-    ~NodeRefListKeyword() override {}
+    ~NodeRefListKeyword() override = default;
 
     /*
      * Arguments

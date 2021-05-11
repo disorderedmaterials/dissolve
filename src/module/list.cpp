@@ -6,9 +6,9 @@
 #include "base/sysfunc.h"
 #include "module/module.h"
 
-ModuleList::ModuleList() {}
+ModuleList::ModuleList() = default;
 
-ModuleList::~ModuleList() {}
+ModuleList::~ModuleList() = default;
 
 ModuleList::operator List<Module> &() { return modules_; }
 

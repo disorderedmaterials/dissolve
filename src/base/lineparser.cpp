@@ -402,7 +402,7 @@ bool LineParser::eofOrBlank() const
             }
             result = false;
             break;
-        } while (1);
+        } while (true);
         inputStream()->seekg(pos);
     }
 

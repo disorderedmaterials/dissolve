@@ -9,10 +9,7 @@
 #include "data/elements.h"
 #include <algorithm>
 
-SpeciesAtom::SpeciesAtom() : Z_(Elements::Unknown), charge_(0.0), atomType_(nullptr), index_(-1), selected_(false)
-{
-    r_.zero();
-}
+SpeciesAtom::SpeciesAtom() : atomType_(nullptr) { r_.zero(); }
 
 // Set Species parent
 void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
@@ -93,7 +90,7 @@ bool SpeciesAtom::isSelected() const { return selected_; }
 void SpeciesAtom::addBond(SpeciesBond &bond)
 {
     if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b) { return &b == &bond; }) == bonds_.end())
-        bonds_.push_back(bond);
+        bonds_.emplace_back(bond);
 }
 
 // Remove Bond reference
@@ -126,7 +123,7 @@ OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::hasBond(SpeciesAtom *partner)
 // Add specified SpeciesAngle to Atom
 void SpeciesAtom::addAngle(SpeciesAngle &angle)
 {
-    angles_.push_back(angle);
+    angles_.emplace_back(angle);
 
     // Insert the pointers to the other Atoms into the exclusions_ list
     if (angle.i() != this)
@@ -155,7 +152,7 @@ const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesAtom::angles() c
 // Add specified SpeciesTorsion to Atom
 void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double scaling14)
 {
-    torsions_.push_back(torsion);
+    torsions_.emplace_back(torsion);
 
     // Insert the pointers to the other Atoms into the exclusions_ list
     if (torsion.i() == this)
@@ -198,7 +195,7 @@ SpeciesTorsion &SpeciesAtom::torsion(int index) { return torsions_.at(index); }
 const std::vector<std::reference_wrapper<SpeciesTorsion>> &SpeciesAtom::torsions() const { return torsions_; }
 
 // Add specified SpeciesImproper to Atom
-void SpeciesAtom::addImproper(SpeciesImproper &improper) { impropers_.push_back(improper); }
+void SpeciesAtom::addImproper(SpeciesImproper &improper) { impropers_.emplace_back(improper); }
 
 // Remove improper reference
 void SpeciesAtom::removeImproper(SpeciesImproper &improper)

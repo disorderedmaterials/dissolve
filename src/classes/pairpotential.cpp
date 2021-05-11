@@ -8,7 +8,7 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 #include "math/constants.h"
-#include <math.h>
+#include <cmath>
 
 // Static members
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
@@ -16,13 +16,7 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
     PairPotential::ShiftedShortRangeTruncation;
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
-PairPotential::PairPotential()
-    : ListItem<PairPotential>(), shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), includeCoulomb_(true),
-      coulombEnergyAtCutoff_(0.0), coulombForceAtCutoff_(0.0), shortRangeType_(Forcefield::ShortRangeType::Undefined),
-      chargeI_(0.0), chargeJ_(0.0), nPoints_(0), range_(0.0), delta_(-1.0), rDelta_(0.0), uFullInterpolation_(uFull_),
-      dUFullInterpolation_(dUFull_)
-{
-}
+PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_) {}
 
 // Return enum option info for CoulombTruncationScheme
 EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTruncationSchemes()

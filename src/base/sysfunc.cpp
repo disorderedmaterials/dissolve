@@ -3,8 +3,8 @@
 
 #include "base/sysfunc.h"
 #include "base/messenger.h"
+#include <cctype>
 #include <ctime>
-#include <ctype.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -215,7 +215,8 @@ std::string DissolveSys::niceName(std::string_view original)
 {
     std::string s{original};
 
-    std::replace_if(s.begin(), s.end(), [](auto &c) { return " /\\#*$"sv.find(c) != std::string::npos; }, '_');
+    std::replace_if(
+        s.begin(), s.end(), [](auto &c) { return " /\\#*$"sv.find(c) != std::string::npos; }, '_');
 
     return s;
 }

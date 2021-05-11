@@ -22,7 +22,7 @@ class NETASyntaxException : public std::exception
     std::string message_;
 
     public:
-    const char *what() const throw() override { return message_.c_str(); }
+    const char *what() const noexcept override { return message_.c_str(); }
 };
 
 // NETA Internal Error Exception
@@ -36,7 +36,7 @@ class NETAInternalErrorException : public std::exception
     std::string message_;
 
     public:
-    const char *what() const throw() override { return message_.c_str(); }
+    const char *what() const noexcept override { return message_.c_str(); }
 };
 } // namespace NETAExceptions
 

@@ -10,7 +10,7 @@ GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(List<Geometry> &da
 {
 }
 
-GeometryListKeyword::~GeometryListKeyword() {}
+GeometryListKeyword::~GeometryListKeyword() = default;
 
 // Return minimum number of arguments accepted
 int GeometryListKeyword::minArguments() const

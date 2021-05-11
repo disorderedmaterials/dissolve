@@ -4,7 +4,7 @@
 #include "data/elements.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include <ctype.h>
+#include <cctype>
 
 namespace Elements
 {

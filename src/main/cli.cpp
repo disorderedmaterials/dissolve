@@ -8,10 +8,7 @@
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
 
-CLIOptions::CLIOptions()
-    : nIterations_(0), restartFileFrequency_(10), ignoreRestartFile_(false), ignoreStateFile_(false), writeNoFiles_(false)
-{
-}
+CLIOptions::CLIOptions() {}
 
 // Parse CLI options
 int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)

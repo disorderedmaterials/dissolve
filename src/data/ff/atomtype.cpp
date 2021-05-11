@@ -2,13 +2,15 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/atomtype.h"
+
 #include "data/ff/ff.h"
+#include <utility>
 
 ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                                       std::string_view description, double q, const std::vector<double> &parameters,
+                                       std::string_view description, double q, std::vector<double> parameters,
                                        std::string_view equivalentName)
-    : Z_(Z), index_(index), name_(name), equivalentName_(equivalentName), description_(description), parameters_{parameters},
-      charge_(q)
+    : Z_(Z), index_(index), name_(name), equivalentName_(equivalentName),
+      description_(description), parameters_{std::move(parameters)}, charge_(q)
 {
     neta_.setDefinitionString(netaDefinition);
 }

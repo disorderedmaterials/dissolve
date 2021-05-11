@@ -12,7 +12,7 @@ ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> 
     maxListSize_ = maxListSize;
 }
 
-ConfigurationRefListKeyword::~ConfigurationRefListKeyword() {}
+ConfigurationRefListKeyword::~ConfigurationRefListKeyword() = default;
 
 /*
  * Data

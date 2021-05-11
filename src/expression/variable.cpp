@@ -3,7 +3,7 @@
 
 #include "expression/variable.h"
 #include "base/messenger.h"
-#include <string.h>
+#include <cstring>
 
 ExpressionVariable::ExpressionVariable(ExpressionValue value)
 {

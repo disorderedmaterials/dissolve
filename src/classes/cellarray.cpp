@@ -5,9 +5,9 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-CellArray::CellArray() : box_(nullptr) {}
+CellArray::CellArray() {}
 
-CellArray::~CellArray() {}
+CellArray::~CellArray() = default;
 
 /*
  * Cell Data
@@ -241,10 +241,10 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     Messenger::print("Constructing neighbour lists for individual Cells...\n");
     std::vector<Cell *> nearNeighbours, mimNeighbours;
     Vec3<int> gridRef, delta;
-    for (auto n = 0; n < cells_.size(); ++n)
+    for (auto &cell : cells_)
     {
         // Grab grid reference of central cell
-        gridRef = cells_[n]->gridReference();
+        gridRef = cell->gridReference();
 
         // Clear neighbour lists
         nearNeighbours.clear();
@@ -254,17 +254,17 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
         for (auto nbrIndices : neighbourIndices)
         {
             // Retrieve Cell pointer
-            nbr = cell(gridRef.x + nbrIndices.x, gridRef.y + nbrIndices.y, gridRef.z + nbrIndices.z);
+            nbr = this->cell(gridRef.x + nbrIndices.x, gridRef.y + nbrIndices.y, gridRef.z + nbrIndices.z);
             if (box_->type() == Box::NonPeriodicBoxType)
                 nearNeighbours.emplace_back(nbr);
-            else if (minimumImageRequired(cells_[n].get(), nbr, pairPotentialRange))
+            else if (minimumImageRequired(cell.get(), nbr, pairPotentialRange))
                 mimNeighbours.emplace_back(nbr);
             else
                 nearNeighbours.emplace_back(nbr);
         }
 
         // Set up lists in the cell
-        cells_[n]->addCellNeighbours(nearNeighbours, mimNeighbours);
+        cell->addCellNeighbours(nearNeighbours, mimNeighbours);
     }
 
     return true;

@@ -13,15 +13,7 @@ KVector::KVector(KVector &&source) { (*this) = source; }
 
 KVector::KVector(const KVector &&source) { (*this) = source; }
 
-KVector &KVector::operator=(const KVector &source)
-{
-    hkl_ = source.hkl_;
-    braggReflectionIndex_ = source.braggReflectionIndex_;
-    cosTerms_ = source.cosTerms_;
-    sinTerms_ = source.sinTerms_;
-
-    return *this;
-}
+KVector &KVector::operator=(const KVector &source) = default;
 
 /*
  * Data

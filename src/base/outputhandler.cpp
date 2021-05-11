@@ -3,6 +3,6 @@
 
 #include "base/outputhandler.h"
 
-OutputHandler::OutputHandler() {}
+OutputHandler::OutputHandler() = default;
 
-OutputHandler::~OutputHandler() {}
+OutputHandler::~OutputHandler() = default;

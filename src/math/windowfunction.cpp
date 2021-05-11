@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "math/data1d.h"
 
-WindowFunction::WindowFunction(WindowFunction::Form function) : form_(function), xMax_(0.0) {}
+WindowFunction::WindowFunction(WindowFunction::Form function) : form_(function) {}
 
 // Return EnumOptions for FunctionType
 EnumOptions<WindowFunction::Form> WindowFunction::forms()

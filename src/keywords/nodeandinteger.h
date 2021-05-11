@@ -82,7 +82,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
                                                                             std::tuple<N *, int>(node, index))
     {
     }
-    ~NodeAndIntegerKeyword() override {}
+    ~NodeAndIntegerKeyword() override = default;
 
     /*
      * Arguments

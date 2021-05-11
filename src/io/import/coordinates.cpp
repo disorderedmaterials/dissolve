@@ -17,7 +17,7 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
     setUpKeywords();
 }
 
-CoordinateImportFileFormat::~CoordinateImportFileFormat() {}
+CoordinateImportFileFormat::~CoordinateImportFileFormat() = default;
 
 /*
  * Keyword Options

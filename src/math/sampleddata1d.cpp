@@ -7,7 +7,7 @@
 #include "math/histogram1d.h"
 #include "templates/algorithms.h"
 
-SampledData1D::SampledData1D() {}
+SampledData1D::SampledData1D() = default;
 
 SampledData1D::SampledData1D(const SampledData1D &source) { (*this) = source; }
 

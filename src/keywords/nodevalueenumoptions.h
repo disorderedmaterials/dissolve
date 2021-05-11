@@ -65,7 +65,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     {
         parentNode_ = parentNode;
     }
-    ~NodeValueEnumOptionsKeyword() override {}
+    ~NodeValueEnumOptionsKeyword() override = default;
 
     /*
      * Parent Node

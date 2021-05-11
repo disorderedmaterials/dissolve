@@ -31,7 +31,7 @@ Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3
     max_ = maxValue;
 }
 
-Vec3IntegerKeyword::~Vec3IntegerKeyword() {}
+Vec3IntegerKeyword::~Vec3IntegerKeyword() = default;
 
 /*
  * Label Type

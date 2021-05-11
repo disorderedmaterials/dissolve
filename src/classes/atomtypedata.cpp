@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include <utility>
+
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
@@ -10,7 +12,8 @@
 #include "data/isotopes.h"
 
 AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
-    : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
+    : atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(fraction),
+      boundCoherent_(boundCoherent)
 {
     isotopes_.clear();
     for (auto n = 0; n < nIso; ++n)
@@ -23,7 +26,8 @@ AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listI
 }
 
 AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
-    : listIndex_(listIndex), atomType_(type), exchangeable_(false), population_(population), fraction_(0.0), boundCoherent_(0.0)
+    : listIndex_(listIndex), atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(0.0),
+      boundCoherent_(0.0)
 {
 }
 

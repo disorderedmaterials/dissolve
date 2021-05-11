@@ -64,7 +64,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
         : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N *>(KeywordBase::NodeData, node)
     {
     }
-    ~NodeKeyword() override {}
+    ~NodeKeyword() override = default;
 
     /*
      * Arguments

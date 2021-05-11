@@ -10,7 +10,7 @@
 
 Lock::Lock() { lockCounter_ = 0; }
 
-Lock::~Lock() {}
+Lock::~Lock() = default;
 
 // Increase lock count
 void Lock::addLockLevel() { ++lockCounter_; }
