@@ -35,10 +35,13 @@ if(PARALLEL)
   set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${MPI_LIBRARIES})
 endif(PARALLEL)
 
-if(MULTI_THREADING)
+
+option(DISSOLVE_MULTI_THREADING "Enable threading using tbb" ON)
+
+if(DISSOLVE_MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
   set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::tbb)
-endif(MULTI_THREADING)
+endif(DISSOLVE_MULTI_THREADING)
 
 # Add local Modules dir to cmake search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
