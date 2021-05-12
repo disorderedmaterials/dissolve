@@ -111,10 +111,10 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
             z = x * y;
 
             // Store data
-            orientedSites_.add(OrientedSite(molecule, origin, x, y, z));
+            orientedSites_.emplace_back(molecule, origin, x, y, z);
         }
         else
-            sites_.add(Site(molecule, origin));
+            sites_.emplace_back(molecule, origin);
     }
 
     return true;
@@ -131,7 +131,7 @@ SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
  */
 
 // Return number of sites in the stack
-int SiteStack::nSites() const { return (sitesHaveOrientation_ ? orientedSites_.nItems() : sites_.nItems()); }
+int SiteStack::nSites() const { return (sitesHaveOrientation_ ? orientedSites_.size() : sites_.size()); }
 
 // Return whether the stack contains associate Molecule information
 bool SiteStack::sitesInMolecules() const { return sitesInMolecules_; }

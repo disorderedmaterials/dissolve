@@ -158,7 +158,7 @@ class ColourDefinition
     // Return number of points in custom gradient
     int nCustomGradientPoints() const;
     // Return custom gradient points
-    const Array<ColourScalePoint> &customGradientPoints() const;
+    const std::vector<ColourScalePoint> &customGradientPoints() const;
     // Remove specified colourscale point with index specified
     void removeCustomGradientPoint(int id);
 
