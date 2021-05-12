@@ -55,7 +55,7 @@ stages:
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-              ./ci/scripts/update-release -r disorderedmaterials/dissolve -t develop -n "Continuous Build (${VERSION} @ ${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+              ./ci/scripts/update-release -r disorderedmaterials/dissolve -t continuous -n "Continuous Build (${VERSION} @ ${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
             condition: eq('${{ parameters.continuous }}', true)
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
