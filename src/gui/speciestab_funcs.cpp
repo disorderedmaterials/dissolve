@@ -18,7 +18,8 @@
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
     : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this),
-      atoms_(species->atoms()), bonds_(species->bonds()), angles_(species->angles()), torsions_(species->torsions())
+      atoms_(species->atoms()), bonds_(species->bonds()), angles_(species->angles()), torsions_(species->torsions()),
+      impropers_(species->impropers())
 {
     ui_.setupUi(this);
 

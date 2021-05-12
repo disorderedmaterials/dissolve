@@ -3,16 +3,23 @@
 
 #pragma once
 
+#include "classes/speciesimproper.h"
 #include "data/ff/improperterm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <vector>
+
+Q_DECLARE_METATYPE(SpeciesImproper *)
 
 class SpeciesImproperModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    private:
+    std::vector<SpeciesImproper> &impropers_;
+
     public:
-    SpeciesImproperModel();
+    SpeciesImproperModel(std::vector<SpeciesImproper> &impropers);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

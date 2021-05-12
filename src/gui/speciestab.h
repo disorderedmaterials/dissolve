@@ -6,7 +6,6 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
-#include "classes/speciesimproper.h"
 #include "classes/speciestorsion.h"
 #include "gui/maintab.h"
 #include "gui/models/speciesAngleModel.h"
@@ -21,8 +20,6 @@ class AtomType;
 class Isotope;
 class Isotopologue;
 class Species;
-
-Q_DECLARE_METATYPE(SpeciesImproper *)
 
 // Species Tab
 class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
