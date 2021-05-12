@@ -43,7 +43,6 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
 
     // algorithm parameters
-    dissolve::counting_iterator<int> countingIterator(begin, end);
     auto unaryOp = [&combinableForces, &kernel, &cellArray, strategy](const int id) {
         auto *cellI = cellArray.cell(id);
         auto &fLocal = combinableForces.local();
@@ -53,7 +52,8 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
         kernel.forces(cellI, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
     };
     // Execute lambda operator for each cell
-    dissolve::for_each(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), unaryOp);
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
+                       unaryOp);
     combinableForces.finalize();
 }
 
@@ -79,13 +79,13 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto stride = procPool.interleavedLoopStride(strategy);
 
     // Loop over supplied atom indices
-    auto [begin, end] = chop_range(0, (int)targetIndices.size(), stride, start);
-    dissolve::counting_iterator<int> countingIterator(begin, end);
+    auto [begin, end] = chop_range(0, static_cast<int>(targetIndices.size()), stride, start);
     auto unaryOp = [&combinableForces, &kernel, cfg, &targetIndices, strategy](const int n) {
         auto &fLocal = combinableForces.local();
         kernel.forces(*cfg->atoms()[targetIndices.at(n)], ProcessPool::subDivisionStrategy(strategy), fLocal);
     };
-    dissolve::for_each(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), unaryOp);
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
+                       unaryOp);
     combinableForces.finalize();
 }
 
@@ -149,8 +149,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
     // Loop over supplied atom indices
     const auto &atoms = cfg->atoms();
-    auto [begin, end] = chop_range(0, (int)targetIndices.size(), stride, start);
-    dissolve::counting_iterator<int> countingIterator(begin, end);
+    auto [begin, end] = chop_range(0, static_cast<int>(targetIndices.size()), stride, start);
 
     auto unaryOp = [&](const auto n) {
         const auto i = atoms[targetIndices.at(n)];
@@ -177,7 +176,8 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
             kernel.forces(*i, improper, *mol->atom(improper.indexI()), *mol->atom(improper.indexJ()),
                           *mol->atom(improper.indexK()), *mol->atom(improper.indexL()), fLocal);
     };
-    dissolve::for_each(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), unaryOp);
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
+                       unaryOp);
     combinableForces.finalize();
 }
 
