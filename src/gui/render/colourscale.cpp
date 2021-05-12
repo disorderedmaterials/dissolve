@@ -158,8 +158,8 @@ void ColourScale::calculateDeltas()
     if (points_.empty())
         return;
 
-    for (auto n = 0; n < points_.size() - 1; ++n)
-        deltas_.emplace_back(points_[n], points_[n + 1], useHSV_);
+    for (auto n = points_.begin(); std::next(n) != points_.end(); ++n)
+        deltas_.emplace_back(*n, *std::next(n), useHSV_);
 }
 
 /*
