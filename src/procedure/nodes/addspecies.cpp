@@ -179,21 +179,24 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
     // Now we add the molecules
     procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
     Vec3<double> r, cog, newCentre, fr;
-    CoordinateSet *coordSet = sp->coordinateSets().first();
+    auto coordSetIt = sp->coordinateSets().begin();
     Matrix3 transform;
     const auto *box = cfg->box();
     for (auto n = 0; n < requestedPopulation; ++n)
     {
-        // Add the Molecule
-        std::shared_ptr<Molecule> mol = cfg->addMolecule(sp, coordSet);
-
-        // Move to next coordinate set if available
-        if (coordSet)
+        // Add the Molecule - use coordinate set if one is available
+        std::shared_ptr<Molecule> mol;
+        if (coordSetIt != sp->coordinateSets().end())
         {
-            coordSet = coordSet->next();
-            if (!coordSet)
-                coordSet = sp->coordinateSets().first();
+            mol = cfg->addMolecule(sp, *coordSetIt);
+
+            // Move to next coordinate set
+            ++coordSetIt;
+            if (coordSetIt == sp->coordinateSets().end())
+                coordSetIt = sp->coordinateSets().begin();
         }
+        else
+            mol = cfg->addMolecule(sp);
 
         // Set / generate position of Molecule
         switch (positioning)

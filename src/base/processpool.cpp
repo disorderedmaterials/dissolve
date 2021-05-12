@@ -190,10 +190,7 @@ bool ProcessPool::isMe(int poolIndex) const { return (poolRank_ == poolIndex); }
 // Return whether this pool involves this process
 bool ProcessPool::involvesMe() const
 {
-    for (auto n = 0; n < worldRanks_.nItems(); ++n)
-        if (worldRanks_.at(n) == worldRank_)
-            return true;
-    return false;
+    return std::find(worldRanks_.begin(), worldRanks_.end(), worldRank_) != worldRanks_.end();
 }
 
 // Return group index in which this process exists
@@ -202,7 +199,7 @@ int ProcessPool::groupIndex() const { return groupIndex_; }
 // Return local group in which this process exists
 ProcessGroup &ProcessPool::myGroup()
 {
-    assert(groupIndex_ >= 0 && groupIndex_ < processGroups_.nItems());
+    assert(groupIndex_ >= 0 && groupIndex_ < processGroups_.size());
     return processGroups_[groupIndex_];
 }
 
@@ -217,7 +214,7 @@ bool ProcessPool::groupLeader() const { return (groupRank_ == 0); }
  */
 
 // Set up pool with world ranks specified
-bool ProcessPool::setUp(std::string_view name, const Array<int> &worldRanks)
+bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRanks)
 {
     clear();
 
@@ -229,7 +226,7 @@ bool ProcessPool::setUp(std::string_view name, const Array<int> &worldRanks)
     worldRanks_ = worldRanks;
 
     // See if our rank is in the list
-    for (auto n = 0; n < worldRanks_.nItems(); ++n)
+    for (auto n = 0; n < worldRanks_.size(); ++n)
     {
         if (worldRank_ == worldRanks_[n])
         {
@@ -240,16 +237,15 @@ bool ProcessPool::setUp(std::string_view name, const Array<int> &worldRanks)
     }
 
     // Set default maximum number of groups
-    maxProcessGroups_ = worldRanks_.nItems();
+    maxProcessGroups_ = worldRanks_.size();
 
-    Messenger::print("There are {} processes in pool '{}' (max groups = {}).\n", worldRanks_.nItems(), name_,
-                     maxProcessGroups_);
+    Messenger::print("There are {} processes in pool '{}' (max groups = {}).\n", worldRanks_.size(), name_, maxProcessGroups_);
 
 #ifdef PARALLEL
     // Create pool group and communicator
     MPI_Group origGroup;
     MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-    if (MPI_Group_incl(origGroup, worldRanks_.nItems(), worldRanks_.array(), &poolGroup_) != MPI_SUCCESS)
+    if (MPI_Group_incl(origGroup, worldRanks_.size(), worldRanks_.data(), &poolGroup_) != MPI_SUCCESS)
         return false;
     if (MPI_Comm_create(MPI_COMM_WORLD, poolGroup_, &poolCommunicator_) != MPI_SUCCESS)
         return false;
@@ -262,7 +258,7 @@ bool ProcessPool::setUp(std::string_view name, const Array<int> &worldRanks)
 std::string_view ProcessPool::name() const { return name_; }
 
 // Return total number of processes in pool
-int ProcessPool::nProcesses() const { return worldRanks_.nItems(); }
+int ProcessPool::nProcesses() const { return worldRanks_.size(); }
 
 // Return root (first) world rank of this pool
 int ProcessPool::rootWorldRank() const { return worldRanks_.at(0); }
@@ -277,14 +273,14 @@ bool ProcessPool::assignProcessesToGroups()
      * Afterwards, an MPI communicator is constructed for each group.
      */
 #ifdef PARALLEL
-    int baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
-    int remainder = worldRanks_.nItems() % maxProcessGroups_;
+    int baseAlloc = worldRanks_.size() / maxProcessGroups_;
+    int remainder = worldRanks_.size() % maxProcessGroups_;
     std::string rankString;
     for (auto n = 0; n < maxProcessGroups_; ++n)
     {
         // Create nth process group and add a (currently null) entry to the groupLeaders_ array
         ProcessGroup group;
-        groupLeaders_.add(-1);
+        groupLeaders_.push_back(-1);
         Messenger::printVerbose("Created process group {}\n", n);
 
         // Create array of ranks to put in new group
@@ -302,14 +298,14 @@ bool ProcessPool::assignProcessesToGroups()
                 groupIndex_ = n;
         }
         Messenger::printVerbose("Group will contain {} processes (world ranks:{}).\n", group.nProcesses(), rankString);
-        processGroups_.add(group);
+        processGroups_.push_back(group);
     }
 
     // Create local group and communicator - each process will only create and be involved in one group communicator
     // (groupGroup_)
     MPI_Group origGroup;
     MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-    if (MPI_Group_incl(origGroup, myGroup().nProcesses(), myGroup().worldRanks().array(), &groupGroup_) != MPI_SUCCESS)
+    if (MPI_Group_incl(origGroup, myGroup().nProcesses(), myGroup().worldRanks().data(), &groupGroup_) != MPI_SUCCESS)
         return false;
     if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS)
         return false;
@@ -325,7 +321,7 @@ bool ProcessPool::assignProcessesToGroups()
         Messenger::printVerbose("Process world rank {} is the master of pool '{}', and will assemble group leaders...\n",
                                 worldRank_, name_);
         // Loop over process groups
-        for (auto group = 0; group < processGroups_.nItems(); ++group)
+        for (auto group = 0; group < processGroups_.size(); ++group)
         {
             // Query each process in the group to see if it is the leader...
             for (auto n = 0; n < nProcessesInGroup(group); ++n)
@@ -364,16 +360,16 @@ bool ProcessPool::assignProcessesToGroups()
     if (!broadcast(groupLeaders_))
         return false;
     Messenger::printVerbose("Group leader processes are :\n");
-    for (auto group = 0; group < processGroups_.nItems(); ++group)
+    for (auto group = 0; group < processGroups_.size(); ++group)
         Messenger::printVerbose("   Group {:3d} : process rank {}\n", group, groupLeaders_[group]);
 
     // Create group leader communicator
     // Must first convert local pool ranks of the group leaders into world ranks, before passing this to MPI_Group_incl
-    Array<int> groupLeadersW;
-    for (auto n = 0; n < groupLeaders_.nItems(); ++n)
-        groupLeadersW.add(worldRanks_[groupLeaders_[n]]);
+    std::vector<int> groupLeadersW;
+    for (auto leader : groupLeaders_)
+        groupLeadersW.push_back(worldRanks_[leader]);
     MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-    if (MPI_Group_incl(origGroup, groupLeadersW.nItems(), groupLeadersW.array(), &leaderGroup_) != MPI_SUCCESS)
+    if (MPI_Group_incl(origGroup, groupLeadersW.size(), groupLeadersW.data(), &leaderGroup_) != MPI_SUCCESS)
         return false;
     if (MPI_Comm_create(MPI_COMM_WORLD, leaderGroup_, &leaderCommunicator_) != MPI_SUCCESS)
         return false;
@@ -381,7 +377,7 @@ bool ProcessPool::assignProcessesToGroups()
     // No MPI, but must still set up a dummy process group
     ProcessGroup group;
     group.addProcess(0, 0);
-    processGroups_.add(group);
+    processGroups_.emplace_back(group);
     groupIndex_ = 0;
     groupRank_ = 0;
 #endif
@@ -445,28 +441,20 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool &groupsSource)
 }
 
 // Return number of process groups
-int ProcessPool::nProcessGroups() const { return processGroups_.nItems(); }
+int ProcessPool::nProcessGroups() const { return processGroups_.size(); }
 
 // Return nth process group
 ProcessGroup &ProcessPool::processGroup(int n)
 {
-    assert(n >= 0 && n < processGroups_.nItems());
+    assert(n >= 0 && n < processGroups_.size());
     return processGroups_[n];
 }
 
 // Return number of processes in specified group
-int ProcessPool::nProcessesInGroup(int groupId) const
-{
-    assert(groupId >= 0 && groupId < processGroups_.nItems());
-    return processGroups_.at(groupId).nProcesses();
-}
+int ProcessPool::nProcessesInGroup(int groupId) const { return processGroups_[groupId].nProcesses(); }
 
 // Return array of pool ranks in specified group
-const Array<int> &ProcessPool::poolRanksInGroup(int groupId) const
-{
-    assert(groupId >= 0 && groupId < processGroups_.nItems());
-    return processGroups_.at(groupId).poolRanks();
-}
+const std::vector<int> &ProcessPool::poolRanksInGroup(int groupId) const { return processGroups_[groupId].poolRanks(); }
 
 // Return whether group data is modifiable
 bool ProcessPool::groupsModifiable() const { return groupsModifiable_; }
@@ -522,11 +510,11 @@ int ProcessPool::interleavedLoopStart(ProcessPool::DivisionStrategy strategy) co
 int ProcessPool::interleavedLoopStride(ProcessPool::DivisionStrategy strategy) const
 {
     if (strategy == ProcessPool::GroupsStrategy)
-        return processGroups_.nItems();
+        return processGroups_.size();
     else if (strategy == ProcessPool::GroupProcessesStrategy)
         return nProcessesInGroup(groupIndex_);
     else if (strategy == ProcessPool::PoolStrategy)
-        return worldRanks_.nItems();
+        return worldRanks_.size();
 
     // PoolProcessesStrategy
     return 1;
@@ -573,7 +561,7 @@ int ProcessPool::strategyProcessIndex(ProcessPool::DivisionStrategy strategy) co
 // Return best strategy (by process or by pool) for this process pool
 ProcessPool::DivisionStrategy ProcessPool::bestStrategy() const
 {
-    return (worldRanks_.nItems() > maxProcessGroups_ ? ProcessPool::GroupsStrategy : ProcessPool::PoolStrategy);
+    return (worldRanks_.size() > maxProcessGroups_ ? ProcessPool::GroupsStrategy : ProcessPool::PoolStrategy);
 }
 
 // Return starting outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
@@ -587,14 +575,14 @@ int ProcessPool::twoBodyLoopStart(int nItems) const
 #endif
 
     // Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
-    double rnproc = 1.0 / worldRanks_.nItems(), area = 1.0;
+    double rnproc = 1.0 / worldRanks_.size(), area = 1.0;
     int startAtom = 0, finishAtom = -1;
 
     // Loop over processes
-    for (auto process = 0; process < worldRanks_.nItems(); ++process)
+    for (auto process = 0; process < worldRanks_.size(); ++process)
     {
         // If this is the last process, make sure we avoid doing sqrt of zero or delta-neg value
-        if (process == (worldRanks_.nItems() - 1))
+        if (process == (worldRanks_.size() - 1))
             finishAtom = nItems - 1;
         else
             finishAtom = (1.0 - sqrt(area - rnproc)) * nItems - 1;
@@ -626,14 +614,14 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
 #endif
 
     // Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
-    double rnproc = 1.0 / worldRanks_.nItems(), area = 1.0;
+    double rnproc = 1.0 / worldRanks_.size(), area = 1.0;
     int finishAtom;
 
     // Loop over processes
-    for (auto process = 0; process < worldRanks_.nItems(); ++process)
+    for (auto process = 0; process < worldRanks_.size(); ++process)
     {
         // If this is the last process, make sure we avoid doing sqrt of zero or delta-neg value
-        if (process == (worldRanks_.nItems() - 1))
+        if (process == (worldRanks_.size() - 1))
             finishAtom = nItems - 1;
         else
             finishAtom = (1.0 - sqrt(area - rnproc)) * nItems - 1;
@@ -1036,7 +1024,7 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
     return true;
 }
 
-// Broadcast Array<int>
+// Broadcast std::vector<int>
 bool ProcessPool::broadcast(Array<int> &array, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
@@ -1049,7 +1037,7 @@ bool ProcessPool::broadcast(Array<int> &array, int rootRank, ProcessPool::Commun
         length = array.nItems();
         if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
         {
-            Messenger::print("Failed to broadcast Array<int> size from root rank {} (world rank {}).\n", rootRank,
+            Messenger::print("Failed to broadcast std::vector<int> size from root rank {} (world rank {}).\n", rootRank,
                              worldRanks_[rootRank]);
             return false;
         }
@@ -1059,7 +1047,7 @@ bool ProcessPool::broadcast(Array<int> &array, int rootRank, ProcessPool::Commun
         {
             if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
             {
-                Messenger::print("Failed to broadcast Array<int> data from root rank {} (world rank {}).\n", rootRank,
+                Messenger::print("Failed to broadcast std::vector<int> data from root rank {} (world rank {}).\n", rootRank,
                                  worldRanks_[rootRank]);
                 return false;
             }
@@ -1071,7 +1059,7 @@ bool ProcessPool::broadcast(Array<int> &array, int rootRank, ProcessPool::Commun
         // Length first...
         if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
         {
-            Messenger::print("Slave {} (world rank {}) failed to receive Array<int> size from root rank {}.\n", poolRank_,
+            Messenger::print("Slave {} (world rank {}) failed to receive std::vector<int> size from root rank {}.\n", poolRank_,
                              worldRank_, rootRank);
             return false;
         }
@@ -1083,8 +1071,8 @@ bool ProcessPool::broadcast(Array<int> &array, int rootRank, ProcessPool::Commun
 
             if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
             {
-                Messenger::print("Slave {} (world rank {}) failed to receive Array<int> data from root rank {}.\n", poolRank_,
-                                 worldRank_, rootRank);
+                Messenger::print("Slave {} (world rank {}) failed to receive std::vector<int> data from root rank {}.\n",
+                                 poolRank_, worldRank_, rootRank);
                 return false;
             }
         }
@@ -1358,7 +1346,7 @@ bool ProcessPool::assemble(int *array, int nData, int *rootDest, int rootMaxData
 
         // Now get data from other processes, appending each chunk to the rootDest array
         int slaveNData;
-        for (auto n = 0; n < worldRanks_.nItems(); ++n)
+        for (auto n = 0; n < worldRanks_.size(); ++n)
         {
             if (poolRank_ == n)
                 continue;
@@ -1413,7 +1401,7 @@ bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int 
 
         // Now get data from other processes, appending each chunk to the rootDest array
         int slaveNData;
-        for (auto n = 0; n < worldRanks_.nItems(); ++n)
+        for (auto n = 0; n < worldRanks_.size(); ++n)
         {
             if (poolRank_ == n)
                 continue;
@@ -1447,28 +1435,6 @@ bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int 
     timer_.accumulate();
 #endif
     return true;
-}
-
-// Assemble Array<double> for entire pool on target process
-bool ProcessPool::assemble(Array<double> &array, int nData, Array<double> &rootDest, int rootMaxData, int rootRank,
-                           ProcessPool::CommunicatorType commType)
-{
-    if (poolRank_ == rootRank)
-    {
-        if (rootDest.size() < rootMaxData)
-        {
-            Messenger::error("Destination Array<double> in ProcessPool::assemble() is not large enough.");
-            decideFalse(rootRank, commType);
-            return false;
-        }
-        else
-            decideTrue(rootRank, commType);
-    }
-    else if (!decision(rootRank, commType))
-        return false;
-
-    // Call double* version of routine...
-    return assemble(array.array(), nData, rootDest.array(), rootMaxData, rootRank, commType);
 }
 
 /*
@@ -1518,7 +1484,7 @@ bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
     if (!allSum(&summedResult, 1, commType))
         return false;
     if (commType == ProcessPool::GroupLeadersCommunicator)
-        return (summedResult == groupLeaders_.nItems());
+        return (summedResult == groupLeaders_.size());
     else
         return (summedResult == nProcesses());
 #endif

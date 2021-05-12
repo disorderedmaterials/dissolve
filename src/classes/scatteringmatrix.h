@@ -37,7 +37,7 @@ class ScatteringMatrix
     // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
     Array2D<double> A_;
     // Reference data (B) (n * 1)
-    Array<Data1D> data_;
+    std::vector<Data1D> data_;
     // X-ray specification for reference data (if relevant)
     std::vector<std::tuple<bool, std::optional<XRayWeights>, StructureFactors::NormalisationType>> xRayData_;
 

@@ -22,10 +22,10 @@ class ProcessGroup : public ListItem<ProcessGroup>
      * Group Data
      */
     private:
-    // List of world ranks of processes in this group
-    Array<int> worldRanks_;
-    // List of corresponding pool ranks of world processes in this group
-    Array<int> poolRanks_;
+    // Vector of world ranks of processes in this group
+    std::vector<int> worldRanks_;
+    // Vector of corresponding pool ranks of world processes in this group
+    std::vector<int> poolRanks_;
     // World rank of the group leader process
     int leaderWorldRank_;
     // Pool rank of the group leader process
@@ -37,11 +37,11 @@ class ProcessGroup : public ListItem<ProcessGroup>
     // Return total number of processes in group
     int nProcesses() const;
     // Return world ranks of group processes
-    Array<int> &worldRanks();
+    std::vector<int> &worldRanks();
     // Return nth world rank of group processes
     int worldRank(int n) const;
     // Return pool ranks of group processes
-    const Array<int> &poolRanks() const;
+    const std::vector<int> &poolRanks() const;
     // Return nth pool rank of group processes
     int poolRank(int n) const;
 };

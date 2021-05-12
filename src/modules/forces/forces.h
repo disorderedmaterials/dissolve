@@ -78,13 +78,13 @@ class ForcesModule : public Module
     static void interAtomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                   std::vector<Vec3<double>> &f);
     // Calculate interatomic forces on specified atoms within the specified Configuration
-    static void interAtomicForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+    static void interAtomicForces(ProcessPool &procPool, Configuration *cfg, const std::vector<int> &targetIndices,
                                   const PotentialMap &potentialMap, std::vector<Vec3<double>> &f);
     // Calculate interatomic forces within the specified Species
     static void interAtomicForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
                                   std::vector<Vec3<double>> &f);
     // Calculate total intramolecular forces acting on specific atoms in the Configuration
-    static void intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+    static void intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const std::vector<int> &targetIndices,
                                      const PotentialMap &potentialMap, std::vector<Vec3<double>> &f);
     // Calculate total intramolecular forces in Configuration
     static void intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
@@ -96,7 +96,7 @@ class ForcesModule : public Module
     static void totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                             std::vector<Vec3<double>> &f);
     // Calculate forces acting on specific atoms within the specified Configuration (arising from all atoms)
-    static void totalForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+    static void totalForces(ProcessPool &procPool, Configuration *cfg, const std::vector<int> &targetIndices,
                             const PotentialMap &potentialMap, std::vector<Vec3<double>> &f);
     // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
     static void totalForces(ProcessPool &procPool, Configuration *cfg, const Array<std::shared_ptr<Molecule>> &targetMolecules,

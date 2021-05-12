@@ -5,7 +5,7 @@
 #include "io/import/coordinates.h"
 
 // Import xyz coordinates through specified parser
-bool CoordinateImportFileFormat::importXYZ(LineParser &parser, Array<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importXYZ(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     Messenger::print(" --> Importing coordinates in xyz format...\n");
 
@@ -24,7 +24,7 @@ bool CoordinateImportFileFormat::importXYZ(LineParser &parser, Array<Vec3<double
     {
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
-        r.add(parser.arg3d(1));
+        r.emplace_back(parser.arg3d(1));
     }
 
     return true;

@@ -8,6 +8,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
+class Box;
 class Configuration;
 class SpeciesSite;
 class Molecule;
@@ -17,7 +18,7 @@ class SiteStack : public ListItem<SiteStack>
 {
     public:
     SiteStack();
-    ~SiteStack();
+    ~SiteStack() = default;
 
     /*
      * Target
@@ -29,6 +30,12 @@ class SiteStack : public ListItem<SiteStack>
     int configurationIndex_;
     // Target SpeciesSite
     SpeciesSite *speciesSite_;
+
+    private:
+    // Calculate geometric centre of atoms in the given molecule
+    Vec3<double> centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices);
+    // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
+    Vec3<double> centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices);
 
     public:
     // Create stack for specified Configuration and site

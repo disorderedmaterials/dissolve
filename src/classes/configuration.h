@@ -25,7 +25,6 @@
 // Forward Declarations
 class Box;
 class Cell;
-class CoordinateSet;
 class PotentialMap;
 class ProcessPool;
 class Species;
@@ -124,7 +123,8 @@ class Configuration : public ListItem<Configuration>
     // Increment version of current contents
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
-    std::shared_ptr<Molecule> addMolecule(Species *sp, CoordinateSet *sourceCoordinates = nullptr);
+    std::shared_ptr<Molecule>
+    addMolecule(Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
     // Return number of Molecules in Configuration
     int nMolecules() const;
     // Return array of Molecules
@@ -224,7 +224,7 @@ class Configuration : public ListItem<Configuration>
 
     public:
     // Set up process pool for this Configuration
-    bool setUpProcessPool(const Array<int> &worldRanks);
+    bool setUpProcessPool(const std::vector<int> &worldRanks);
     // Return process pool for this Configuration
     ProcessPool &processPool();
 };

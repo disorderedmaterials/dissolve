@@ -134,7 +134,7 @@ void ScatteringMatrix::print(double q) const
     Messenger::print("{}", line);
 
     // Loop over reference data
-    for (auto row = 0; row < data_.nItems(); ++row)
+    for (auto row = 0; row < data_.size(); ++row)
     {
         line.clear();
         for (auto n = 0; n < m.nColumns(); ++n)
@@ -218,10 +218,10 @@ void ScatteringMatrix::printInverse(double q) const
 bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
 {
     // Check that we have the correct number of reference data to be able to invert the matrix
-    if (data_.nItems() < A_.nColumns())
+    if (data_.size() < A_.nColumns())
         return Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data ({}) "
                                 "compared to rows in the matrix ({}).\n",
-                                data_.nItems(), A_.nColumns());
+                                data_.size(), A_.nColumns());
 
     /*
      * Currently our scattering matrix / data look as follows:
@@ -250,9 +250,9 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     {
         // Generate interpolations for each dataset
         std::vector<Interpolator> interpolations;
-        interpolations.reserve(data_.nItems());
-        for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
-            interpolations.emplace_back(Interpolator(data_[refDataIndex]));
+        interpolations.reserve(data_.size());
+        for (const auto &ref : data_)
+            interpolations.emplace_back(Interpolator(ref));
 
         // Q-dependent terms in the scattering matrix, so need to invert once at each distinct Q value
         const auto &x = estimatedSQ[0].xAxis();
@@ -268,7 +268,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
             // Sum in contributions from each dataset at this Q value, provided it is within the range of the dataset
             for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
             {
-                for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
+                for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
                 {
                     if ((q < data_[refDataIndex].xAxis().front()) || (q > data_[refDataIndex].xAxis().back()))
                         continue;
@@ -289,7 +289,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
         for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
         {
             // Add in contribution from each datset (row).
-            for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
+            for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
                 Interpolator::addInterpolated(estimatedSQ[partialIndex], data_[refDataIndex],
                                               inverseA[{partialIndex, refDataIndex}]);
         }
@@ -299,7 +299,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
 }
 
 // Return if the scattering matrix is underdetermined
-bool ScatteringMatrix::underDetermined() const { return (data_.nItems() < A_.nColumns()); }
+bool ScatteringMatrix::underDetermined() const { return (data_.size() < A_.nColumns()); }
 
 // Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
 Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse(q) * matrix(q); }
@@ -356,8 +356,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
     }
 
     // Add reference data and apply the associated factor
-    data_.add(weightedData);
-    data_.last() *= factor;
+    data_.emplace_back(weightedData) *= factor;
 
     // Neutron data, so store dummy XRay form factor data indicator
     xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);
@@ -396,8 +395,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
     }
 
     // Add reference data and apply the associated factor
-    data_.add(weightedData);
-    data_.last() *= factor;
+    data_.emplace_back(weightedData) *= factor;
 
     // Store XRay form factor data indicator
     xRayData_.emplace_back(true, dataWeights, StructureFactors::AverageOfSquaresNormalisation);
@@ -424,8 +422,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::
     A_[{rowIndex, colIndex}] = dataWeight * factor;
 
     // Add reference data and its associated factor
-    data_.add(weightedData);
-    data_.last() *= factor;
+    data_.emplace_back(weightedData) *= factor;
 
     // Simulated partial data, so store dummy XRay form factor data indicator
     xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);

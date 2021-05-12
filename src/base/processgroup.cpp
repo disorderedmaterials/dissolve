@@ -13,21 +13,21 @@ ProcessGroup::ProcessGroup() : ListItem<ProcessGroup>() {}
 // Add process to group
 void ProcessGroup::addProcess(int poolRank, int worldRank)
 {
-    poolRanks_.add(poolRank);
-    worldRanks_.add(worldRank);
+    poolRanks_.push_back(poolRank);
+    worldRanks_.push_back(worldRank);
 }
 
 // Return total number of processes in group
-int ProcessGroup::nProcesses() const { return poolRanks_.nItems(); }
+int ProcessGroup::nProcesses() const { return poolRanks_.size(); }
 
 // Return world ranks of group processes
-Array<int> &ProcessGroup::worldRanks() { return worldRanks_; }
+std::vector<int> &ProcessGroup::worldRanks() { return worldRanks_; }
 
 // Return nth world rank of group processes
 int ProcessGroup::worldRank(int n) const { return worldRanks_.at(n); }
 
 // Return pool ranks of group processes
-const Array<int> &ProcessGroup::poolRanks() const { return poolRanks_; }
+const std::vector<int> &ProcessGroup::poolRanks() const { return poolRanks_; }
 
 // Return nth pool rank of group processes
 int ProcessGroup::poolRank(int n) const { return poolRanks_.at(n); }

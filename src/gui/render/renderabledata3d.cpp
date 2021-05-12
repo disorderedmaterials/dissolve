@@ -7,7 +7,6 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data3d.h"
-#include "math/extrema.h"
 #include "templates/array2d.h"
 #include "templates/array3d.h"
 

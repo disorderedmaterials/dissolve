@@ -7,6 +7,7 @@
 #include "classes/speciesatom.h"
 #include "classes/speciessite.h"
 #include "data/atomicmasses.h"
+#include <numeric>
 
 SiteStack::SiteStack() : ListItem<SiteStack>()
 {
@@ -17,7 +18,30 @@ SiteStack::SiteStack() : ListItem<SiteStack>()
     sitesHaveOrientation_ = false;
 }
 
-SiteStack::~SiteStack() = default;
+// Calculate geometric centre of atoms in the given molecule
+Vec3<double> SiteStack::centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices)
+{
+    const auto ref = mol.atom(indices.front())->r();
+    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
+                           [&ref, &mol, box](const auto &acc, const auto idx) {
+                               return acc + box->minimumImage(mol.atom(idx)->r(), ref);
+                           }) /
+           indices.size();
+}
+
+// Calculate (mass-weighted) coordinate centre of atoms in the given molecule
+Vec3<double> SiteStack::centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices)
+{
+    auto mass = AtomicMass::mass(mol.atom(indices.front())->speciesAtom()->Z());
+    const auto ref = mol.atom(indices.front())->r();
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+                                [&ref, &mol, box](const auto &acc, const auto idx) {
+                                    auto mass = AtomicMass::mass(mol.atom(idx)->speciesAtom()->Z());
+                                    return std::pair<Vec3<double>, double>(
+                                        acc.first + box->minimumImage(mol.atom(idx)->r(), ref) * mass, acc.second + mass);
+                                });
+    return sums.first / sums.second;
+}
 
 /*
  * Target
@@ -38,12 +62,12 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
     // Get origin atom indices from site, and grab the Configuration's Box
     auto originAtomIndices = speciesSite->originAtomIndices();
-    if (originAtomIndices.nItems() == 0)
+    if (originAtomIndices.empty())
         return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite->name());
     const auto *box = configuration_->box();
 
     // If the site has axes, grab the atom indices involved
-    Array<int> xAxisAtomIndices, yAxisAtomIndices;
+    std::vector<int> xAxisAtomIndices, yAxisAtomIndices;
     if (sitesHaveOrientation_)
     {
         xAxisAtomIndices = speciesSite->xAxisAtomIndices();
@@ -58,7 +82,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
     // Get Molecule array from Configuration and search for the target Species
     std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
     auto *targetSpecies = speciesSite->parent();
-    Vec3<double> origin, v, x, y, z;
+    Vec3<double> origin, x, y, z;
     Matrix3 axes;
     for (const auto &molecule : molecules)
     {
@@ -67,52 +91,19 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
         // Calculate origin
         if (speciesSite->originMassWeighted())
-        {
-            double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->Z());
-            origin = molecule->atom(originAtomIndices.firstValue())->r() * mass;
-            double massNorm = mass;
-            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
-            {
-                mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->Z());
-                origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
-                                            molecule->atom(originAtomIndices.firstValue())->r()) *
-                          mass;
-                massNorm += mass;
-            }
-            origin /= massNorm;
-        }
+            origin = centreOfMass(*molecule, box, originAtomIndices);
         else
-        {
-            origin = molecule->atom(originAtomIndices.firstValue())->r();
-            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
-                origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
-                                            molecule->atom(originAtomIndices.firstValue())->r());
-            origin /= originAtomIndices.nItems();
-        }
+            origin = centreOfGeometry(*molecule, box, originAtomIndices);
 
         // Calculate axes and store data
         if (sitesHaveOrientation_)
         {
-            // Get average position of supplied x-axis atoms
-            v = molecule->atom(xAxisAtomIndices.firstValue())->r();
-            for (auto m = 1; m < xAxisAtomIndices.nItems(); ++m)
-                v += box->minimumImage(molecule->atom(xAxisAtomIndices[m])->r(),
-                                       molecule->atom(xAxisAtomIndices.firstValue())->r());
-            v /= xAxisAtomIndices.nItems();
-
-            // Get vector from site origin and normalise it
-            x = box->minimumVector(origin, v);
+            // Get vector from site origin to x-axis reference point and normalise it
+            x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAxisAtomIndices));
             x.normalise();
 
-            // Get average position of supplied y-axis atoms
-            v = molecule->atom(yAxisAtomIndices.firstValue())->r();
-            for (auto m = 1; m < yAxisAtomIndices.nItems(); ++m)
-                v += box->minimumImage(molecule->atom(yAxisAtomIndices[m])->r(),
-                                       molecule->atom(yAxisAtomIndices.firstValue())->r());
-            v /= yAxisAtomIndices.nItems();
-
-            // Get vector from site origin, normalise it, and orthogonalise
-            y = box->minimumVector(origin, v);
+            // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
+            y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAxisAtomIndices));
             y.orthogonalise(x);
             y.normalise();
 

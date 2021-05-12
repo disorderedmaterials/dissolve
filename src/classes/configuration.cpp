@@ -8,7 +8,6 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/masterintra.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
@@ -107,15 +106,15 @@ CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoor
 bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileFormat::CoordinateImportFormat format)
 {
     // Load coordinates into temporary array
-    Array<Vec3<double>> r;
+    std::vector<Vec3<double>> r;
     CoordinateImportFileFormat coordinateFormat(format);
     if (!coordinateFormat.importData(parser, r))
         return false;
 
     // Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
-    if (atoms_.size() != r.nItems())
+    if (atoms_.size() != r.size())
         return Messenger::error(
-            "Number of atoms read from initial coordinates file ({}) does not match that in Configuration ({}).\n", r.nItems(),
+            "Number of atoms read from initial coordinates file ({}) does not match that in Configuration ({}).\n", r.size(),
             atoms_.size());
 
     // All good, so copy atom coordinates over into our array
@@ -183,7 +182,7 @@ double Configuration::temperature() const { return temperature_; }
  */
 
 // Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(const Array<int> &worldRanks)
+bool Configuration::setUpProcessPool(const std::vector<int> &worldRanks)
 {
     // Create pool
     processPool_.setUp(name_, worldRanks);

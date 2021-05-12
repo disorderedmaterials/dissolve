@@ -62,17 +62,17 @@ class CoordinateImportFileFormat : public FileAndFormat
      */
     private:
     // Import DL_POLY coordinates through specified parser
-    bool importDLPOLY(LineParser &parser, Array<Vec3<double>> &r);
+    bool importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &r);
     // Import EPSR ATO coordinates through specified parser
-    bool importEPSR(LineParser &parser, Array<Vec3<double>> &r);
+    bool importEPSR(LineParser &parser, std::vector<Vec3<double>> &r);
     // Import Moscito coordinates through specified parser
-    bool importMoscito(LineParser &parser, Array<Vec3<double>> &r);
+    bool importMoscito(LineParser &parser, std::vector<Vec3<double>> &r);
     // Import xyz coordinates through specified parser
-    bool importXYZ(LineParser &parser, Array<Vec3<double>> &r);
+    bool importXYZ(LineParser &parser, std::vector<Vec3<double>> &r);
 
     public:
     // Import coordinates using current filename and format
-    bool importData(Array<Vec3<double>> &r, ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vec3<double>> &r, ProcessPool *procPool = nullptr);
     // Import coordinates using supplied parser and current format
-    bool importData(LineParser &parser, Array<Vec3<double>> &r);
+    bool importData(LineParser &parser, std::vector<Vec3<double>> &r);
 };

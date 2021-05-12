@@ -17,11 +17,7 @@ CellDistributor::~CellDistributor() = default;
  */
 
 // Return array of Cells that we must hard lock in order to modify the object with index specified
-Array<Cell *> CellDistributor::cellsToBeModifiedForObject(int objectId)
+std::vector<Cell *> CellDistributor::cellsToBeModifiedForObject(int objectId)
 {
-    Array<Cell *> cells;
-
-    cells.add(cells_.cell(objectId));
-
-    return cells;
+    return std::vector<Cell *>({cells_.cell(objectId)});
 }

@@ -37,8 +37,7 @@ bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double
     // Check for nRows >= nCols
     if (nRows < nCols)
         return Messenger::error("DissolveMath::svd() - nRows must be greater than nCols.\n");
-    Array<double> rv1(nCols);
-    rv1 = 0.0;
+    std::vector<double> rv1(nCols, 0.0);
     S.initialise(nCols, nCols);
     S = 0.0;
     Vt.initialise(nCols, nCols);
