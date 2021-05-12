@@ -312,67 +312,6 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
 //     }
 // }
 
-// void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
-// {
-//     if (refreshLock_.isLocked())
-//         return;
-
-//     // Get target SpeciesAtom from the passed widget
-//     SpeciesAtom *speciesAtom = w ? ui_.AtomTable->item(w->row(), 0)->data(Qt::UserRole).value<SpeciesAtom *>() : nullptr;
-//     if (!speciesAtom)
-//         return;
-//     Vec3<double> r = speciesAtom->r();
-
-//     // Column of passed item tells us the type of data we need to change
-//     std::shared_ptr<AtomType> atomType;
-//     switch (w->column())
-//     {
-//         // Element
-//         case (0):
-//             break;
-//         // AtomType
-//         case (1):
-//             // Check the text to see if it is an existing AtomType - if not, we should create it
-//             atomType = dissolve_.findAtomType(qPrintable(w->text()));
-//             if (!atomType)
-//             {
-//                 atomType = dissolve_.addAtomType(speciesAtom->Z());
-//                 atomType->setName(qPrintable(w->text()));
-//             }
-//             speciesAtom->setAtomType(atomType);
-//             updateIsotopologuesTab();
-//             dissolveWindow_->setModified();
-//             break;
-//         // Coordinates
-//         case (2):
-//         case (3):
-//         case (4):
-//             switch (w->column())
-//             {
-//                 case 2:
-//                     r.x = w->text().toDouble();
-//                     break;
-//                 case 3:
-//                     r.y = w->text().toDouble();
-//                     break;
-//                 case 4:
-//                     r.z = w->text().toDouble();
-//                     break;
-//             }
-//             species_->setAtomCoordinates(speciesAtom, r);
-//             dissolveWindow_->setModified();
-//             break;
-//         // Charge
-//         case (5):
-//             speciesAtom->setCharge(w->text().toDouble());
-//             dissolveWindow_->setModified();
-//             break;
-//         default:
-//             Messenger::error("Don't know what to do with data from column {} of SpeciesAtom table.\n", w->column());
-//             break;
-//     }
-// }
-
 // void SpeciesTab::on_AtomTable_itemSelectionChanged()
 // {
 //     if (refreshLock_.isLocked())

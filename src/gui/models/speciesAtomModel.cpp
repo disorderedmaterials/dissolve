@@ -1,7 +1,7 @@
 #include "gui/models/speciesAtomModel.h"
 #include "classes/atomtype.h"
 
-SpeciesAtomModel::SpeciesAtomModel(std::list<SpeciesAtom> &atoms) : atoms_(atoms) {}
+SpeciesAtomModel::SpeciesAtomModel(std::list<SpeciesAtom> &atoms, Dissolve &dissolve) : dissolve_(dissolve), atoms_(atoms) {}
 
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {
@@ -68,6 +68,44 @@ QVariant SpeciesAtomModel::headerData(int section, Qt::Orientation orientation, 
         default:
             return QVariant();
     }
+}
+
+Qt::ItemFlags SpeciesAtomModel::flags(const QModelIndex &index) const
+{
+    if (index.column() == 0)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
+bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role != Qt::EditRole)
+        return false;
+    SpeciesAtom &item = *std::next(atoms_.begin(), index.row());
+    switch (index.column())
+    {
+        case 0:
+            return false;
+        case 1:
+            // TODO
+            {
+                auto atomType = dissolve_.findAtomType(value.toString().toStdString());
+                if (!atomType)
+                    return false;
+                item.setAtomType(atomType);
+                emit updateIsotopologuesTab();
+            }
+            break;
+        case 2:
+        case 3:
+        case 4:
+            item.setCoordinate(index.column() - 2, value.toDouble());
+            break;
+        case 5:
+            item.setCharge(value.toDouble());
+    }
+    emit dataChanged(index, index);
+    return true;
 }
 
 void SpeciesAtomModel::clear()

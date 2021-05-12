@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/speciesatom.h"
+#include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <list>
@@ -16,9 +17,13 @@ class SpeciesAtomModel : public QAbstractTableModel
 
     private:
     std::list<SpeciesAtom> &atoms_;
+    Dissolve &dissolve_;
+
+    signals:
+    void updateIsotopologuesTab();
 
     public:
-    SpeciesAtomModel(std::list<SpeciesAtom> &atoms);
+    SpeciesAtomModel(std::list<SpeciesAtom> &atoms, Dissolve &dissolve);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -27,6 +32,10 @@ class SpeciesAtomModel : public QAbstractTableModel
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
     void clear();
 };

@@ -18,7 +18,7 @@
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
     : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this),
-      atoms_(species->atoms()), bonds_(species->bonds()), angles_(species->angles()), torsions_(species->torsions()),
+      atoms_(species->atoms(), dissolve), bonds_(species->bonds()), angles_(species->angles()), torsions_(species->torsions()),
       impropers_(species->impropers())
 {
     ui_.setupUi(this);
@@ -86,6 +86,13 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
     connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+
+    connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&atoms_, SIGNAL(updateIsotopologuesTab()), this, SLOT(updateIsotopologuesTab()));
+    connect(&bonds_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
 }
 
 SpeciesTab::~SpeciesTab()
