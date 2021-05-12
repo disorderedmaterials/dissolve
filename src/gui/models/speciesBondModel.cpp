@@ -1,6 +1,6 @@
 #include "gui/models/speciesBondModel.h"
 
-SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds) : bonds_(bonds) {}
+SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, Dissolve &dissolve) : bonds_(bonds), dissolve_(dissolve) {}
 
 int SpeciesBondModel::rowCount(const QModelIndex &parent) const
 {
@@ -65,4 +65,54 @@ QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, 
         default:
             return QVariant();
     }
+}
+
+Qt::ItemFlags SpeciesBondModel::flags(const QModelIndex &index) const
+{
+    if (index.column() < 2)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    if (index.column() > 2 && bonds_[index.row()].masterParameters())
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
+bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    Messenger::error("Edit");
+    auto &item = bonds_[index.row()];
+    switch (index.column())
+    {
+        case 0:
+        case 1:
+            return false;
+        case 2:
+            if (value.toString().at(0) == '@')
+            {
+                auto master = dissolve_.coreData().getMasterBond(value.toString().toStdString());
+                if (master)
+                    item.setMasterParameters(&master->get());
+                else
+                    return false;
+            }
+            else
+            {
+                SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
+                item.detachFromMasterIntra();
+                item.setForm(bf);
+                return false;
+            }
+            break;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            if (item.masterParameters())
+                return false;
+            item.setParameter(index.column() - 3, value.toDouble());
+            break;
+        default:
+            return false;
+    }
+    emit dataChanged(index, index);
+    return true;
 }

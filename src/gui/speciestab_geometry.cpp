@@ -337,65 +337,6 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
 //     ui_.ViewerWidget->updateStatusBar();
 // }
 
-// void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
-// {
-//     if (refreshLock_.isLocked() || (!species_))
-//         return;
-
-//     // Get target SpeciesBond from the passed widget
-//     SpeciesBond *speciesBond = w ? w->data(Qt::UserRole).value<SpeciesBond *>() : nullptr;
-//     if (!speciesBond)
-//         return;
-
-//     // Column of passed item tells us the type of data we need to change
-//     auto updateRow = false;
-//     switch (w->column())
-//     {
-//         // Atom Indices
-//         case (0):
-//         case (1):
-//             Messenger::error("Atom indices in intramolecular interactions are not editable.\n");
-//             break;
-//         // Functional Form
-//         case (2):
-//             // If the text starts with an '@' then its a reference to a master term
-//             if (w->text().at(0) == '@')
-//             {
-//                 auto master = dissolve_.coreData().getMasterBond(qPrintable(w->text()));
-//                 speciesBond->setMasterParameters(&master->get());
-//             }
-//             else
-//             {
-//                 SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(qPrintable(w->text()));
-//                 speciesBond->setMasterParameters(nullptr);
-//                 speciesBond->setForm(bf);
-//             }
-//             updateRow = true;
-//             dissolveWindow_->setModified();
-//             break;
-//         // Parameters
-//         case (3):
-//         case (4):
-//         case (5):
-//         case (6):
-//             if (speciesBond->masterParameters())
-//                 Messenger::error("Refusing to set bond parameter since it belongs to a master term.\n");
-//             else
-//                 speciesBond->setParameter(w->column() - 3, w->text().toDouble());
-//             break;
-//         default:
-//             Messenger::error("Don't know what to do with data from column {} of Bond table.\n", w->column());
-//             break;
-//     }
-
-//     // Update the row if necessary
-//     if (updateRow)
-//     {
-//         Locker refreshLocker(refreshLock_);
-//         updateBondTableRow(w->row(), speciesBond, false);
-//     }
-// }
-
 // void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
 // {
 //     if (refreshLock_.isLocked() || (!species_))
