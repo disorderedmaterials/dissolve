@@ -259,7 +259,7 @@ void AtomTypeList::print() const
         char exch = atd.exchangeable() ? 'E' : ' ';
 
         // If there are isotopes defined, print them
-        if (atd.nIsotopes() > 0)
+        if (!atd.isotopeData().empty())
         {
             Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
                              Elements::symbol(atd.atomType()->Z()), atd.population(), atd.fraction(), atd.boundCoherent());
@@ -332,7 +332,7 @@ bool AtomTypeList::serialise(LineParser &parser) const
                                atd.isotopeData().size()))
             return false;
         // For each isotope write A, population, and fraction
-        for (auto &topeData : atd.isotopeData())
+        for (const auto &topeData : atd.isotopeData())
             if (!parser.writeLineF("{} {} {}\n", Sears91::A(topeData.isotope()), topeData.population(), topeData.fraction()))
                 return false;
     }
