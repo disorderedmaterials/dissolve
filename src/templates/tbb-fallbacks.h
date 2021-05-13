@@ -2,26 +2,71 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 #pragma once
 #include <cassert>
-#include <numeric>
-#include <vector>
+#include <iterator>
+#include <type_traits>
 
 namespace dissolve
 {
-// A less optimized version of the counting iterator if tbb is not available
-template <typename T> class counting_iterator
+template <typename IntType> class counting_iterator
 {
     public:
-    counting_iterator(int N, int M)
+    using value_type = IntType;
+    using difference_type = std::make_signed_t<IntType>;
+    using reference = IntType &;
+    using pointer = IntType *;
+    using iterator_category = std::random_access_iterator_tag;
+
+    // Operators : Constructors
+    counting_iterator() = default;
+    explicit counting_iterator(IntType value) : counter_(value) {}
+
+    // Operators : misc
+    reference operator*() { return counter_; }
+    value_type operator[](difference_type i) const { return *(*this + i); };
+    difference_type operator-(const counting_iterator &it) const { return counter_ - it.counter_; };
+    counting_iterator &operator+=(difference_type forward)
     {
-        assert(M > N);
-        indices_.resize(M - N, T{});
-        std::iota(indices_.begin(), indices_.end(), N);
+        counter_ += forward;
+        return *this;
     }
-    auto begin() { return indices_.begin(); }
-    auto end() { return indices_.end(); }
+    counting_iterator &operator-=(difference_type backward) { return *this += -backward; };
+
+    // Operators : arithmetic
+    counting_iterator &operator++()
+    {
+        counter_ += 1;
+        return *this;
+    }
+    counting_iterator &operator--()
+    {
+        counter_ -= 1;
+        return *this;
+    }
+    counting_iterator operator++(int)
+    {
+        counting_iterator temp = (*this);
+        ++(*this);
+        return temp;
+    }
+    counting_iterator operator--(int)
+    {
+        counting_iterator temp = (*this);
+        --(*this);
+        return temp;
+    }
+    counting_iterator operator+(difference_type forward) const { return counting_iterator(counter_ + forward); };
+    counting_iterator operator-(difference_type backward) const { return counting_iterator(counter_ - backward); };
+
+    // Operators : comparison
+    bool operator==(const counting_iterator &other) const { return this->counter_ == other.counter_; };
+    bool operator!=(const counting_iterator &other) const { return !(*this == other); };
+    bool operator<(const counting_iterator &other) const { return *this - other < 0; };
+    bool operator>(const counting_iterator &other) const { return other < *this; };
+    bool operator<=(const counting_iterator &other) const { return !(*this > other); };
+    bool operator>=(const counting_iterator &other) const { return !(*this < other); };
 
     private:
-    std::vector<T> indices_;
+    IntType counter_;
 };
 
 template <typename T> class combinable

@@ -178,7 +178,6 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         return histograms;
     });
 
-    dissolve::counting_iterator<int> countingIterator(cStart, cEnd);
     auto unaryOp = [&combinableHistograms, cfg, &comb, rdfRange](const auto idx) {
         // auto &histograms = combinableHistograms.local().histograms_;
         auto &histograms = combinableHistograms.local();
@@ -212,7 +211,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     };
 
     // Execute lambda operator for each cell
-    dissolve::for_each(ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), unaryOp);
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(cStart), dissolve::counting_iterator<int>(cEnd),
+                       unaryOp);
     auto histograms = combinableHistograms.finalize();
     addHistogramsToPartialSet(histograms, partialSet);
 

@@ -5,17 +5,8 @@
 #include "tbb/iterators.h"
 namespace dissolve
 {
-template <typename T> class counting_iterator
-{
-    public:
-    counting_iterator(int N, int M) : N_(N), M_(M) { assert(M > N); }
-    auto begin() { return tbb::counting_iterator<int>(N_); }
-    auto end() { return tbb::counting_iterator<int>(M_); }
 
-    private:
-    int N_;
-    int M_;
-};
+template <typename T> using counting_iterator = tbb::counting_iterator<T>;
 
 template <typename T> using combinable = tbb::combinable<T>;
 

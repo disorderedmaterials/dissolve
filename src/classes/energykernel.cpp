@@ -569,21 +569,21 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     auto totalEnergy = 0.0;
     Cell *cell;
     auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
-    dissolve::counting_iterator<int> countingIterator(begin, end);
 
-    totalEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, countingIterator.begin(), countingIterator.end(), 0.0, std::plus<double>(), [&](int i) {
-            auto localEnergy = 0.0;
-            auto *cell = cellArray.cell(i);
+    totalEnergy = dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(begin),
+                                             dissolve::counting_iterator<int>(end), 0.0, std::plus<double>(), [&](int i) {
+                                                 auto localEnergy = 0.0;
+                                                 auto *cell = cellArray.cell(i);
 
-            // This cell with itself
-            localEnergy += energy(cell, cell, false, true, interMolecular, subStrategy, performSum);
+                                                 // This cell with itself
+                                                 localEnergy +=
+                                                     energy(cell, cell, false, true, interMolecular, subStrategy, performSum);
 
-            // Interatomic interactions between atoms in this cell and its neighbours
-            localEnergy += energy(cell, true, interMolecular, subStrategy, performSum);
+                                                 // Interatomic interactions between atoms in this cell and its neighbours
+                                                 localEnergy += energy(cell, true, interMolecular, subStrategy, performSum);
 
-            return localEnergy;
-        });
+                                                 return localEnergy;
+                                             });
 
     return totalEnergy;
 }
