@@ -205,3 +205,11 @@ Requests that the parallel version of Dissolve be built. This option is mutually
 Usage: `-DPARALLEL:bool=true`
 
 Default: `false`
+
+#### `MULTI_THREADING`
+
+Requests that the multithreaded version of Dissolve be built. Intel thread building blocks (tbb) must be present on the path. By default this option is enabled.
+
+Usage: `-DMULTI_THREADING=ON`
+
+Default: `ON`
