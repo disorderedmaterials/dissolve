@@ -93,7 +93,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Ensure that the Species used in the present Configuration have attached atom lists
         for (auto &spInfo : cfg->usedSpecies())
         {
-            Species *sp = spInfo.species();
+            auto *sp = spInfo.species();
             if (!sp->attachedAtomListsGenerated())
             {
                 Messenger::print("Performing one-time generation of attached atom lists for intramolecular "

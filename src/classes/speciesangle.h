@@ -54,7 +54,7 @@ class SpeciesAngle : public SpeciesIntra
     // Return index (in parent Species) of nth SpeciesAtom
     int index(int n) const;
     // Return whether SpeciesAtom match those specified
-    bool matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
+    bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const;
     // Return whether all atoms in the interaction are currently selected
     bool isSelected() const;
 

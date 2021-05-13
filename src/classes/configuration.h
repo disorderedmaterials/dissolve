@@ -105,13 +105,13 @@ class Configuration : public ListItem<Configuration>
     // Return number of atom types used in this Configuration
     int nUsedAtomTypes() const;
     // Add Species to list of those used by the Configuration, setting/adding the population specified
-    SpeciesInfo *addUsedSpecies(Species *sp, int population);
+    SpeciesInfo *addUsedSpecies(const Species *sp, int population);
     // Return SpeciesInfo for specified Species
-    OptionalReferenceWrapper<SpeciesInfo> usedSpeciesInfo(Species *sp);
+    OptionalReferenceWrapper<SpeciesInfo> usedSpeciesInfo(const Species *sp);
     // Return list of SpeciesInfo for the Configuration
     std::vector<SpeciesInfo> &usedSpecies();
     // Return if the specified Species is present in the usedSpecies list
-    bool hasUsedSpecies(Species *sp);
+    bool hasUsedSpecies(const Species *sp);
     // Return the total atomic mass present in the Configuration
     double atomicMass() const;
     // Return the atomic density of the Configuration
@@ -124,7 +124,7 @@ class Configuration : public ListItem<Configuration>
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
     // Return number of Molecules in Configuration
     int nMolecules() const;
     // Return array of Molecules

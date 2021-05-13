@@ -241,7 +241,7 @@ void Species::clearAtomTypes()
 }
 
 // Return total charge of species from local/atomtype atomic charges
-double Species::totalCharge(bool useAtomTypes)
+double Species::totalCharge(bool useAtomTypes) const
 {
     double totalQ = 0.0;
     if (useAtomTypes)

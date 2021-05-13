@@ -112,7 +112,7 @@ class SpeciesAtom
     // Return bonds list
     const std::vector<std::reference_wrapper<SpeciesBond>> &bonds() const;
     // Return whether bond to specified atom exists
-    OptionalReferenceWrapper<SpeciesBond> hasBond(SpeciesAtom *j);
+    OptionalReferenceWrapper<SpeciesBond> getBond(const SpeciesAtom *j);
     // Add specified Angle to Atom
     void addAngle(SpeciesAngle &angle);
     // Remove angle reference

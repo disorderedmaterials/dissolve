@@ -112,7 +112,7 @@ SpeciesBond &SpeciesAtom::bond(int index) { return bonds_.at(index); }
 const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() const { return bonds_; }
 
 // Return whether Bond to specified Atom exists
-OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::hasBond(SpeciesAtom *partner)
+OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *partner)
 {
     auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner; });
     if (result == bonds_.end())

@@ -43,9 +43,9 @@ class Species
     // Return the name of the Species
     std::string_view name() const;
     // Check set-up of Species
-    bool checkSetUp();
+    bool checkSetUp() const;
     // Print Species information
-    void print();
+    void print() const;
     // Return version
     int version() const;
 
@@ -114,7 +114,7 @@ class Species
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Return total charge of species from local/atomtype atomic charges
-    double totalCharge(bool useAtomTypes);
+    double totalCharge(bool useAtomTypes) const;
 
     /*
      * Intramolecular Data
@@ -144,12 +144,13 @@ class Species
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
-    bool hasBond(SpeciesAtom *i, SpeciesAtom *j) const;
+    bool getBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
-    OptionalReferenceWrapper<const SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j) const;
+    OptionalReferenceWrapper<const SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
+    OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
     // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
@@ -167,8 +168,11 @@ class Species
     bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
     // Return the SpeciesAngle between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesAngle> getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
+    OptionalReferenceWrapper<const SpeciesAngle> getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                          const SpeciesAtom *k) const;
     // Return the SpeciesAngle between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesAngle> getAngle(int i, int j, int k);
+    OptionalReferenceWrapper<const SpeciesAngle> getAngle(int i, int j, int k) const;
     // Add new SpeciesTorsion definition (from SpeciesAtom*)
     SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesTorsion definition
@@ -182,8 +186,11 @@ class Species
     bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesTorsion between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesTorsion> getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
+                                                              const SpeciesAtom *l) const;
     // Return the SpeciesTorsion between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int i, int j, int k, int l);
+    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(int i, int j, int k, int l) const;
     // Add new SpeciesImproper definition (from SpeciesAtom*)
     SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition
@@ -197,8 +204,11 @@ class Species
     bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
     OptionalReferenceWrapper<SpeciesImproper> getImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    OptionalReferenceWrapper<const SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                                const SpeciesAtom *k, const SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesImproper> getImproper(int i, int j, int k, int l);
+    OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
     // Generate attached Atom lists for all intramolecular terms

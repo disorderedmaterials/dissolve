@@ -41,7 +41,7 @@ const AtomTypeList &Configuration::usedAtomTypesList() const { return usedAtomTy
 int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 
 // Add Species to list of those used by the Configuration, setting/adding the population specified
-SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
+SpeciesInfo *Configuration::addUsedSpecies(const Species *sp, int population)
 {
     // Check if we have an existing info for this Species
     auto spInfo = usedSpeciesInfo(sp);
@@ -59,7 +59,7 @@ SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 }
 
 // Return SpeciesInfo for specified Species
-OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(Species *sp)
+OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(const Species *sp)
 {
     for (auto &spInfo : usedSpecies_)
         if (spInfo.species() == sp)
@@ -72,7 +72,7 @@ OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(Species *sp
 std::vector<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 
 // Return if the specified Species is present in the usedSpecies list
-bool Configuration::hasUsedSpecies(Species *sp)
+bool Configuration::hasUsedSpecies(const Species *sp)
 {
     for (auto &spInfo : usedSpecies_)
         if (spInfo.species() == sp)
@@ -108,7 +108,7 @@ void Configuration::incrementContentsVersion() { ++contentsVersion_; }
 
 // Add Molecule to Configuration based on the supplied Species
 std::shared_ptr<Molecule>
-Configuration::addMolecule(Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
+Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
     std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();

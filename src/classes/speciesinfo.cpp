@@ -15,10 +15,10 @@ SpeciesInfo::SpeciesInfo()
  */
 
 // Set target Species
-void SpeciesInfo::setSpecies(Species *sp) { species_ = sp; }
+void SpeciesInfo::setSpecies(const Species *sp) { species_ = sp; }
 
 // Return target Species
-Species *SpeciesInfo::species() { return species_; }
+const Species *SpeciesInfo::species() { return species_; }
 
 // Zero the population of the Species
 void SpeciesInfo::zeroPopulation() { population_ = 0; }

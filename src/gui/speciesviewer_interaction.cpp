@@ -198,7 +198,7 @@ void SpeciesViewer::endInteraction()
                         j = &species_->addAtom(drawElement_, drawCoordinateCurrent_);
 
                     // Create a bond between the two atoms, if one doesn't currently exist
-                    if ((i != j) && (!species_->hasBond(i, j)))
+                    if ((i != j) && (!species_->getBond(i, j)))
                         species_->addBond(i, j);
 
                     // Clear the interaction Primitive
@@ -229,7 +229,7 @@ void SpeciesViewer::endInteraction()
                     // If there is an atom 'j', search for the bond to delete. Otherwise, delete clickedAtom_
                     if (!j)
                         species_->removeAtom(clickedAtom_);
-                    else if (species_->hasBond(clickedAtom_, j))
+                    else if (species_->getBond(clickedAtom_, j))
                         species_->removeBond(clickedAtom_, j);
 
                     // Clear the interaction Primitive

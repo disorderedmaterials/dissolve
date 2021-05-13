@@ -60,7 +60,7 @@ class CheckSpeciesModule : public Module
     private:
     // Check parameters for the supplied intramolecular term against those supplied
     template <class T>
-    bool parametersDiffer(std::string_view intraType, OptionalReferenceWrapper<T> term, const std::vector<int> &indices,
+    bool parametersDiffer(std::string_view intraType, OptionalReferenceWrapper<const T> term, const std::vector<int> &indices,
                           const std::vector<double> &refParams, const double tolerance) const
     {
         // Format indices string - do this outside of print() and error() calls as the ref would need to be forwarded

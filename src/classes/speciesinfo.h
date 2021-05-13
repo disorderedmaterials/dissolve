@@ -22,15 +22,15 @@ class SpeciesInfo
      */
     private:
     // Target Species
-    Species *species_;
+    const Species *species_;
     // Population of the Species
     int population_;
 
     public:
     // Set target Species
-    void setSpecies(Species *sp);
+    void setSpecies(const Species *sp);
     // Return target Species
-    Species *species();
+    const Species *species();
     // Zero the population of the Species
     void zeroPopulation();
     // Add to population of the Species
