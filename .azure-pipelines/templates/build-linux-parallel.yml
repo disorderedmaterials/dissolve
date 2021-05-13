@@ -1,6 +1,8 @@
 parameters:
   - name: extraflags
     default: ''
+  - name: threading
+    default: 'OFF'
 
 steps:
   - bash: |
@@ -18,7 +20,7 @@ steps:
       set -ex
       mkdir build
       cd build
-      conan install ../ -s compiler.libcxx=libstdc++11
-      cmake -G "Ninja" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
+      conan install ../ -s compiler.libcxx=libstdc++11 --build missing
+      cmake -G "Ninja" -DMULTI_THREADING=${{ parameters.threading }} -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'
