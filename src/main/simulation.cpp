@@ -56,10 +56,10 @@ bool Dissolve::prepare()
         }
 
         // Check total charge of Configuration
-        auto totalQ =
-            std::accumulate(cfg->usedSpecies().begin(), cfg->usedSpecies().end(), 0.0, [&](const auto &acc, auto &spInfo) {
-                return acc + spInfo.species()->totalCharge(pairPotentialsIncludeCoulomb_) * spInfo.population();
-            });
+        auto totalQ = std::accumulate(cfg->speciesPopulations().begin(), cfg->speciesPopulations().end(), 0.0,
+                                      [&](const auto &acc, auto &spPop) {
+                                          return acc + spPop.first->totalCharge(pairPotentialsIncludeCoulomb_) * spPop.second;
+                                      });
         if (fabs(totalQ) > 1.0e-5)
             return Messenger::error("Total charge for Configuration '{}' is non-zero ({:e}). Refusing to proceed!\n",
                                     cfg->name(), totalQ);
@@ -92,7 +92,7 @@ bool Dissolve::prepare()
         for (auto *module : intraShakeModules)
             for (auto *cfg : module->targetConfigurations())
                 for (auto &sp : coreData_.species())
-                    if (cfg->hasUsedSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
+                    if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
                     {
                         Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
                                          "terms in Species '{}'...\n",

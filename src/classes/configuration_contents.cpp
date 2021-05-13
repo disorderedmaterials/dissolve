@@ -20,7 +20,7 @@ void Configuration::empty()
     cells_.clear();
     appliedSizeFactor_ = 1.0;
     requestedSizeFactor_ = 1.0;
-    usedSpecies_.clear();
+    speciesPopulations_.clear();
 
     ++contentsVersion_;
 }
@@ -40,45 +40,25 @@ const AtomTypeList &Configuration::usedAtomTypesList() const { return usedAtomTy
 // Return number of atom types used in this Configuration
 int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 
-// Add Species to list of those used by the Configuration, setting/adding the population specified
-SpeciesInfo *Configuration::addUsedSpecies(const Species *sp, int population)
+// Increase population of specified Species in the Configuration
+void Configuration::increaseSpeciesPopulation(const Species *sp, int population)
 {
-    // Check if we have an existing info for this Species
-    auto spInfo = usedSpeciesInfo(sp);
-    if (!spInfo)
-    {
-        auto &spIn = usedSpecies_.emplace_back();
-        spIn.setSpecies(sp);
-        spInfo = spIn;
-    }
-
-    // Increase the population
-    spInfo->get().addPopulation(population);
-
-    return &spInfo->get();
+    auto it = std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
+                           [sp](const auto &data) { return data.first == sp; });
+    if (it == speciesPopulations_.end())
+        speciesPopulations_.emplace_back(sp, population);
+    else
+        it->second += population;
 }
 
-// Return SpeciesInfo for specified Species
-OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(const Species *sp)
+// Return Species populations within the Configuration
+const std::vector<std::pair<const Species *, int>> &Configuration::speciesPopulations() const { return speciesPopulations_; }
+
+// Return if the specified Species is present in the Configuration
+bool Configuration::containsSpecies(const Species *sp)
 {
-    for (auto &spInfo : usedSpecies_)
-        if (spInfo.species() == sp)
-            return spInfo;
-
-    return std::nullopt;
-}
-
-// Return list of SpeciesInfo for the Configuration
-std::vector<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
-
-// Return if the specified Species is present in the usedSpecies list
-bool Configuration::hasUsedSpecies(const Species *sp)
-{
-    for (auto &spInfo : usedSpecies_)
-        if (spInfo.species() == sp)
-            return true;
-
-    return false;
+    return std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
+                        [sp](const auto &data) { return data.first == sp; }) != speciesPopulations_.end();
 }
 
 // Return the total atomic mass present in the Configuration
@@ -87,8 +67,8 @@ double Configuration::atomicMass() const
     double mass = 0.0;
 
     // Get total molar mass in configuration
-    for (auto spInfo : usedSpecies_)
-        mass += spInfo.species()->mass() * spInfo.population();
+    for (const auto &spPop : speciesPopulations_)
+        mass += spPop.first->mass() * spPop.second;
 
     // Convert to absolute mass
     return mass / AVOGADRO;
@@ -116,8 +96,8 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     molecules_.push_back(newMolecule);
     newMolecule->setSpecies(sp);
 
-    // Update the relevant SpeciesInfo population
-    addUsedSpecies(sp, 1);
+    // Update the relevant Species population
+    increaseSpeciesPopulation(sp, 1);
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
     if (sourceCoordinates)

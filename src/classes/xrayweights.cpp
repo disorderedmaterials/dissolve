@@ -5,7 +5,6 @@
 #include "base/lineparser.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
-#include "classes/speciesinfo.h"
 #include "templates/algorithms.h"
 #include <functional>
 #include <numeric>
@@ -61,21 +60,17 @@ void XRayWeights::clear()
 }
 
 // Set-up from supplied SpeciesInfo list
-bool XRayWeights::setUp(std::vector<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors)
+bool XRayWeights::setUp(std::vector<std::pair<const Species *, int>> &speciesPopulations,
+                        XRayFormFactors::XRayFormFactorData formFactors)
 {
     valid_ = false;
 
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
-    for (auto &spInfo : speciesInfoList)
-    {
-        const Species *sp = spInfo.species();
-
-        // Loop over Atoms in the Species
-        for (const auto &i : sp->atoms())
-            atomTypes_.add(i.atomType(), spInfo.population());
-    }
+    for (auto &spPop : speciesPopulations)
+        for (const auto &i : spPop.first->atoms())
+            atomTypes_.add(i.atomType(), spPop.second);
 
     // Perform final setup based on now-completed atomtypes list
     return finalise(formFactors);

@@ -3,11 +3,9 @@
 
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "gui/delegates/combolist.hui"
 #include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/null.h"
-#include "gui/delegates/usedspeciescombo.hui"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/isotopologueset.h"
 #include "module/module.h"
