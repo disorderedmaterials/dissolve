@@ -35,7 +35,7 @@ TEST_F(SpeciesTabTest, DataManger)
 
     SpeciesAtomModel atom(species->atoms(), dissolve);
     SpeciesBondModel bond(species->bonds(), dissolve);
-    SpeciesAngleModel angle(species->angles());
+    SpeciesAngleModel angle(species->angles(), dissolve);
     SpeciesTorsionModel torsion(species->torsions());
     SpeciesImproperModel improper(species->impropers());
 
@@ -104,8 +104,42 @@ TEST_F(SpeciesTabTest, DataManger)
     EXPECT_NEAR(bond.data(bond.index(3, 5)).toDouble(), 0, 1e-100);
     EXPECT_NEAR(bond.data(bond.index(3, 6)).toDouble(), 0, 1e-100);
 
+    // Test Angles
     EXPECT_EQ(angle.columnCount(), 8);
     EXPECT_EQ(angle.rowCount(), 18);
+    EXPECT_EQ(angle.data(angle.index(3, 0)).toInt(), 4);
+    EXPECT_EQ(angle.data(angle.index(3, 1)).toInt(), 5);
+    EXPECT_EQ(angle.data(angle.index(3, 2)).toInt(), 6);
+    EXPECT_EQ(angle.data(angle.index(3, 3)).toString().toStdString(), "@CA-CA-CA");
+    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 4)).toDouble(), 527.184);
+    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 5)).toDouble(), 120);
+    EXPECT_EQ(angle.data(angle.index(3, 6)).toDouble(), 0);
+    EXPECT_EQ(angle.data(angle.index(3, 7)).toDouble(), 0);
+
+    // Mutate angle
+    EXPECT_FALSE(angle.setData(angle.index(3, 0), 5));
+    EXPECT_FALSE(angle.setData(angle.index(3, 1), 6));
+    EXPECT_FALSE(angle.setData(angle.index(3, 2), 7));
+    for (auto i = 4; i < 6; ++i)
+	EXPECT_FALSE(angle.setData(angle.index(3, i), 6));
+
+    EXPECT_FALSE(angle.setData(angle.index(3, 3), "Undefined"));
+    EXPECT_TRUE(angle.setData(angle.index(3, 3), "Harmonic"));
+    for (auto i = 4; i < 6; ++i)
+    {
+	EXPECT_TRUE(angle.setData(angle.index(3, i), i));
+	EXPECT_DOUBLE_EQ(angle.data(angle.index(3, i)).toDouble(), i);
+    }
+    for (auto i = 6; i < 8; ++i)
+    {
+	EXPECT_FALSE(angle.setData(angle.index(3, i), i));
+	EXPECT_EQ(angle.data(angle.index(3, i)).toDouble(), 0);
+    }
+    EXPECT_TRUE(angle.setData(angle.index(3, 3), "@CA-CA-CA"));
+    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 4)).toDouble(), 527.184);
+    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 5)).toDouble(), 120);
+    EXPECT_EQ(angle.data(angle.index(3, 6)).toDouble(), 0);
+    EXPECT_EQ(angle.data(angle.index(3, 7)).toDouble(), 0);
 
     EXPECT_EQ(torsion.columnCount(), 9);
     EXPECT_EQ(torsion.rowCount(), 24);
