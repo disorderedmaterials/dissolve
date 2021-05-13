@@ -84,6 +84,23 @@ stages:
               PathtoPublish: "packages/"
               ArtifactName: 'windows-artifacts'
             displayName: 'Publish Windows Artifacts'
+      - job: 'windows_threadinggui'
+        displayName: 'Build Windows (Threading/GUI, windows-latest)'
+        timeoutInMinutes: 120
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
+          - template: templates/build-windows-serial-gui.yml
+            parameters:
+              threading: 'ON'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "build/"
+              ArtifactName: 'windows-threading-artifacts'
+            displayName: 'Publish Windows Threading Artifacts'   
 
   # Run System Tests
   - stage: 'system_tests_serial'
