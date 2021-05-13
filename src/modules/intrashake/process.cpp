@@ -95,16 +95,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             auto *sp = spInfo.species();
             if (!sp->attachedAtomListsGenerated())
-            {
-                Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
-                                 "terms in Species '{}'...\n",
-                                 sp->name());
-                if (sp->nAtoms() > 500)
-                    Messenger::warn("'{}' is a large molecule - this might take a while! Consider using a "
-                                    "different evolution module.\n",
-                                    sp->name());
-                sp->generateAttachedAtomLists();
-            }
+                return Messenger::error("Species '{}' has no attached atom lists, so module can't proceed.\n", sp->name());
         }
 
         int shake, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0,

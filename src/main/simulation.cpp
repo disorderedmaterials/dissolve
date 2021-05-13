@@ -84,6 +84,27 @@ bool Dissolve::prepare()
             return false;
     }
 
+    // Generate attached atom lists if IntraShake modules are present and enabled
+    auto intraShakeModules = findModuleInstances("IntraShake");
+    if (!intraShakeModules.empty())
+    {
+        Messenger::print("Generating attached atom lists for required species...");
+        for (auto *module : intraShakeModules)
+            for (auto *cfg : module->targetConfigurations())
+                for (auto &sp : coreData_.species())
+                    if (cfg->hasUsedSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
+                    {
+                        Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
+                                         "terms in Species '{}'...\n",
+                                         sp->name());
+                        if (sp->nAtoms() > 500)
+                            Messenger::warn("'{}' is a large molecule - this might take a while! Consider using a "
+                                            "different evolution module.\n",
+                                            sp->name());
+                        sp->generateAttachedAtomLists();
+                    }
+    }
+
     // Set up parallel comms / limits etc.
     if (!setUpMPIPools())
         return Messenger::error("Failed to set up parallel communications.\n");
