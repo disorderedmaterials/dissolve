@@ -174,7 +174,7 @@ TEST_F(SpeciesTabTest, Torsions)
     dissolve.loadInput("restart/benzene.txt");
     auto &species = dissolve.species()[0];
 
-    SpeciesTorsionModel torsion(species->torsions());
+    SpeciesTorsionModel torsion(species->torsions(), dissolve);
     SpeciesImproperModel improper(species->impropers());
 
     // Test Torsions
@@ -198,19 +198,16 @@ TEST_F(SpeciesTabTest, Torsions)
     for (auto i = 5; i < 9; ++i)
 	EXPECT_FALSE(torsion.setData(torsion.index(3, i), 6));
 
-    EXPECT_FALSE(torsion.setData(torsion.index(3, 3), "Undefined"));
-    // EXPECT_TRUE(torsion.setData(torsion.index(3, 3), "Harmonic"));
-    // for (auto i = 4; i < 6; ++i)
-    // {
-    //	EXPECT_TRUE(torsion.setData(torsion.index(3, i), i));
-    //	EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, i)).toDouble(), i);
-    // }
-    for (auto i = 7; i < 9; ++i)
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 4), "Undefined"));
+    EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "Cos3"));
+    for (auto i = 5; i < 8; ++i)
     {
-	EXPECT_FALSE(torsion.setData(torsion.index(3, i), i));
-	EXPECT_EQ(torsion.data(torsion.index(3, i)).toDouble(), 0);
+	EXPECT_TRUE(torsion.setData(torsion.index(3, i), i));
+	EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, i)).toDouble(), i);
     }
-    // EXPECT_TRUE(torsion.setData(torsion.index(3, 3), "@CA-CA-CA"));
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 8), 8));
+    EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
+    EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "@CA-CA-CA-CA"));
     EXPECT_EQ(torsion.data(torsion.index(3, 5)).toDouble(), 0);
     EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6)).toDouble(), 30.334);
     EXPECT_EQ(torsion.data(torsion.index(3, 7)).toDouble(), 0);
