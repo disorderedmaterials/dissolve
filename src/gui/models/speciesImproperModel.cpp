@@ -1,7 +1,7 @@
 #include "gui/models/speciesImproperModel.h"
 #include "classes/masterintra.h"
 
-SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers) : impropers_(impropers) {}
+SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, Dissolve &dissolve) : impropers_(impropers), dissolve_(dissolve) {}
 
 int SpeciesImproperModel::rowCount(const QModelIndex &parent) const
 {
@@ -78,4 +78,65 @@ QVariant SpeciesImproperModel::headerData(int section, Qt::Orientation orientati
         default:
             return QVariant();
     }
+}
+
+Qt::ItemFlags SpeciesImproperModel::flags(const QModelIndex &index) const
+{
+    if (index.column() < 4)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    if (index.column() > 4 && impropers_[index.row()].masterParameters())
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
+bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    auto &item = impropers_[index.row()];
+    switch (index.column())
+    {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            return false;
+        case 4:
+            if (value.toString().at(0) == '@')
+            {
+                auto master = dissolve_.coreData().getMasterImproper(value.toString().toStdString());
+                if (master)
+                    item.setMasterParameters(&master->get());
+                else
+                    return false;
+            }
+            else
+            {
+                try
+                {
+                    SpeciesTorsion::TorsionFunction bf =
+                        SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
+                    item.detachFromMasterIntra();
+                    item.setForm(bf);
+                    return true;
+                }
+                catch (std::runtime_error e)
+                {
+                    return false;
+                }
+            }
+            break;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            if (item.masterParameters())
+                return false;
+            if (item.parameters().size() <= index.column() - 5)
+                return false;
+            item.setParameter(index.column() - 5, value.toDouble());
+            break;
+        default:
+            return false;
+    }
+    emit dataChanged(index, index);
+    return true;
 }

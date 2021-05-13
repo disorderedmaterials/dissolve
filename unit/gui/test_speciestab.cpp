@@ -175,7 +175,6 @@ TEST_F(SpeciesTabTest, Torsions)
     auto &species = dissolve.species()[0];
 
     SpeciesTorsionModel torsion(species->torsions(), dissolve);
-    SpeciesImproperModel improper(species->impropers());
 
     // Test Torsions
     EXPECT_EQ(torsion.columnCount(), 9);
@@ -212,6 +211,53 @@ TEST_F(SpeciesTabTest, Torsions)
     EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6)).toDouble(), 30.334);
     EXPECT_EQ(torsion.data(torsion.index(3, 7)).toDouble(), 0);
     EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
+}
+
+TEST_F(SpeciesTabTest, Impropers)
+{
+
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    dissolve.clear();
+    dissolve.loadInput("energyforce4/py5-ntf2.txt");
+    auto &species = dissolve.species()[0];
+
+    SpeciesImproperModel improper(species->impropers(), dissolve);
+
+    // Test Torsions
+    EXPECT_EQ(improper.columnCount(), 9);
+    EXPECT_EQ(improper.rowCount(), 6);
+    EXPECT_EQ(improper.data(improper.index(3, 0)).toInt(), 4);
+    EXPECT_EQ(improper.data(improper.index(3, 1)).toInt(), 3);
+    EXPECT_EQ(improper.data(improper.index(3, 2)).toInt(), 5);
+    EXPECT_EQ(improper.data(improper.index(3, 3)).toInt(), 9);
+    EXPECT_EQ(improper.data(improper.index(3, 4)).toString().toStdString(), "@impgeneral");
+    EXPECT_EQ(improper.data(improper.index(3, 5)).toDouble(), 4.606);
+    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 6)).toDouble(), 2.0);
+    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 7)).toDouble(), 180.0);
+    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 8)).toDouble(), 1.00);
+
+    // Mutate improper
+    EXPECT_FALSE(improper.setData(improper.index(3, 0), 5));
+    EXPECT_FALSE(improper.setData(improper.index(3, 1), 6));
+    EXPECT_FALSE(improper.setData(improper.index(3, 2), 7));
+    EXPECT_FALSE(improper.setData(improper.index(3, 3), 8));
+    for (auto i = 5; i < 9; ++i)
+	EXPECT_FALSE(improper.setData(improper.index(3, i), 6));
+
+    EXPECT_FALSE(improper.setData(improper.index(3, 4), "Undefined"));
+    EXPECT_TRUE(improper.setData(improper.index(3, 4), "Cos3"));
+    for (auto i = 5; i < 9; ++i)
+    {
+	EXPECT_TRUE(improper.setData(improper.index(3, i), i));
+	EXPECT_DOUBLE_EQ(improper.data(improper.index(3, i)).toDouble(), i);
+    }
+    EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
+    EXPECT_EQ(improper.data(improper.index(3, 5)).toDouble(), 4.606);
+    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 6)).toDouble(), 2.0);
+    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 7)).toDouble(), 180.0);
+    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 8)).toDouble(), 1.00);
 }
 
 } // namespace UnitTest
