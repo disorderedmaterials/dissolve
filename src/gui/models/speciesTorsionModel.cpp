@@ -43,6 +43,8 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
         case 6:
         case 7:
         case 8:
+            if (item.nParameters() <= index.column() - 5)
+                return 0;
             return item.parameter(index.column() - 5);
         default:
             return QVariant();

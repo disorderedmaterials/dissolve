@@ -23,7 +23,7 @@ class SpeciesTabTest : public ::testing::Test
     void SetUp() override {}
 };
 
-TEST_F(SpeciesTabTest, DataManger)
+TEST_F(SpeciesTabTest, Atoms)
 {
 
     CoreData coreData;
@@ -34,10 +34,6 @@ TEST_F(SpeciesTabTest, DataManger)
     auto &species = dissolve.species()[0];
 
     SpeciesAtomModel atom(species->atoms(), dissolve);
-    SpeciesBondModel bond(species->bonds(), dissolve);
-    SpeciesAngleModel angle(species->angles(), dissolve);
-    SpeciesTorsionModel torsion(species->torsions());
-    SpeciesImproperModel improper(species->impropers());
 
     // Test Atoms
     EXPECT_EQ(atom.columnCount(), 6);
@@ -69,6 +65,19 @@ TEST_F(SpeciesTabTest, DataManger)
     EXPECT_TRUE(atom.setData(atom.index(6, 5), 5.0));
     for (auto i = 3; i < 6; ++i)
 	EXPECT_EQ(atom.data(atom.index(6, i)).toDouble(), i);
+}
+
+TEST_F(SpeciesTabTest, Bonds)
+{
+
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    dissolve.clear();
+    dissolve.loadInput("restart/benzene.txt");
+    auto &species = dissolve.species()[0];
+
+    SpeciesBondModel bond(species->bonds(), dissolve);
 
     // Test Bonds
     EXPECT_EQ(bond.columnCount(), 7);
@@ -103,6 +112,19 @@ TEST_F(SpeciesTabTest, DataManger)
     EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 4)).toDouble(), 1.4);
     EXPECT_NEAR(bond.data(bond.index(3, 5)).toDouble(), 0, 1e-100);
     EXPECT_NEAR(bond.data(bond.index(3, 6)).toDouble(), 0, 1e-100);
+}
+
+TEST_F(SpeciesTabTest, Angles)
+{
+
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    dissolve.clear();
+    dissolve.loadInput("restart/benzene.txt");
+    auto &species = dissolve.species()[0];
+
+    SpeciesAngleModel angle(species->angles(), dissolve);
 
     // Test Angles
     EXPECT_EQ(angle.columnCount(), 8);
@@ -140,9 +162,59 @@ TEST_F(SpeciesTabTest, DataManger)
     EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 5)).toDouble(), 120);
     EXPECT_EQ(angle.data(angle.index(3, 6)).toDouble(), 0);
     EXPECT_EQ(angle.data(angle.index(3, 7)).toDouble(), 0);
+}
 
+TEST_F(SpeciesTabTest, Torsions)
+{
+
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    dissolve.clear();
+    dissolve.loadInput("restart/benzene.txt");
+    auto &species = dissolve.species()[0];
+
+    SpeciesTorsionModel torsion(species->torsions());
+    SpeciesImproperModel improper(species->impropers());
+
+    // Test Torsions
     EXPECT_EQ(torsion.columnCount(), 9);
     EXPECT_EQ(torsion.rowCount(), 24);
+    EXPECT_EQ(torsion.data(torsion.index(3, 0)).toInt(), 6);
+    EXPECT_EQ(torsion.data(torsion.index(3, 1)).toInt(), 1);
+    EXPECT_EQ(torsion.data(torsion.index(3, 2)).toInt(), 2);
+    EXPECT_EQ(torsion.data(torsion.index(3, 3)).toInt(), 3);
+    EXPECT_EQ(torsion.data(torsion.index(3, 4)).toString().toStdString(), "@CA-CA-CA-CA");
+    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toDouble(), 0);
+    EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6)).toDouble(), 30.334);
+    EXPECT_EQ(torsion.data(torsion.index(3, 7)).toDouble(), 0);
+    EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
+
+    // Mutate torsion
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 0), 5));
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 1), 6));
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 2), 7));
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 3), 8));
+    for (auto i = 5; i < 9; ++i)
+	EXPECT_FALSE(torsion.setData(torsion.index(3, i), 6));
+
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 3), "Undefined"));
+    // EXPECT_TRUE(torsion.setData(torsion.index(3, 3), "Harmonic"));
+    // for (auto i = 4; i < 6; ++i)
+    // {
+    //	EXPECT_TRUE(torsion.setData(torsion.index(3, i), i));
+    //	EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, i)).toDouble(), i);
+    // }
+    for (auto i = 7; i < 9; ++i)
+    {
+	EXPECT_FALSE(torsion.setData(torsion.index(3, i), i));
+	EXPECT_EQ(torsion.data(torsion.index(3, i)).toDouble(), 0);
+    }
+    // EXPECT_TRUE(torsion.setData(torsion.index(3, 3), "@CA-CA-CA"));
+    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toDouble(), 0);
+    EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6)).toDouble(), 30.334);
+    EXPECT_EQ(torsion.data(torsion.index(3, 7)).toDouble(), 0);
+    EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
 }
 
 } // namespace UnitTest
