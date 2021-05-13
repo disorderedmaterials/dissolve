@@ -36,6 +36,8 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
         case 4:
         case 5:
         case 6:
+            if (bond.parameters().size() <= index.column() - 3)
+                return 0;
             return bond.parameter(index.column() - 3);
         default:
             return QVariant();
@@ -78,7 +80,6 @@ Qt::ItemFlags SpeciesBondModel::flags(const QModelIndex &index) const
 
 bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    Messenger::error("Edit");
     auto &item = bonds_[index.row()];
     switch (index.column())
     {
@@ -96,10 +97,17 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             }
             else
             {
-                SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
-                item.detachFromMasterIntra();
-                item.setForm(bf);
-                return false;
+                try
+                {
+                    SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
+                    item.detachFromMasterIntra();
+                    item.setForm(bf);
+                    return true;
+                }
+                catch (std::runtime_error e)
+                {
+                    return false;
+                }
             }
             break;
         case 3:
@@ -107,6 +115,8 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
         case 5:
         case 6:
             if (item.masterParameters())
+                return false;
+            if (item.parameters().size() <= index.column() - 3)
                 return false;
             item.setParameter(index.column() - 3, value.toDouble());
             break;

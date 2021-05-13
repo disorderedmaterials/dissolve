@@ -46,18 +46,18 @@ TEST_F(SpeciesTabTest, DataManger)
     // Test Carbon atom
     EXPECT_EQ(atom.data(atom.index(0, 0)).toString().toStdString(), "Carbon");
     EXPECT_EQ(atom.data(atom.index(0, 1)).toString().toStdString(), "CA");
-    EXPECT_EQ(atom.data(atom.index(0, 2)).toDouble(), -1.399);
-    EXPECT_EQ(atom.data(atom.index(0, 3)).toDouble(), 0.1600);
-    EXPECT_EQ(atom.data(atom.index(0, 4)).toDouble(), 0.000);
-    EXPECT_EQ(atom.data(atom.index(0, 5)).toDouble(), -0.115);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 2)).toDouble(), -1.399);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 3)).toDouble(), 0.1600);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 4)).toDouble(), 0.000);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 5)).toDouble(), -0.115);
 
     // Test Hydrogen Atom
     EXPECT_EQ(atom.data(atom.index(6, 0)).toString().toStdString(), "Hydrogen");
     EXPECT_EQ(atom.data(atom.index(6, 1)).toString().toStdString(), "HA");
-    EXPECT_EQ(atom.data(atom.index(6, 2)).toDouble(), 1.483);
-    EXPECT_EQ(atom.data(atom.index(6, 3)).toDouble(), 2.001);
-    EXPECT_EQ(atom.data(atom.index(6, 4)).toDouble(), 0.000);
-    EXPECT_EQ(atom.data(atom.index(6, 5)).toDouble(), 0.115);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 2)).toDouble(), 1.483);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 3)).toDouble(), 2.001);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 4)).toDouble(), 0.000);
+    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 5)).toDouble(), 0.115);
 
     // Mutate Hydrogen
     EXPECT_FALSE(atom.setData(atom.index(6, 0), "Carbon"));
@@ -70,18 +70,45 @@ TEST_F(SpeciesTabTest, DataManger)
     for (auto i = 3; i < 6; ++i)
 	EXPECT_EQ(atom.data(atom.index(6, i)).toDouble(), i);
 
+    // Test Bonds
     EXPECT_EQ(bond.columnCount(), 7);
     EXPECT_EQ(bond.rowCount(), 12);
+    EXPECT_EQ(bond.data(bond.index(3, 0)).toInt(), 4);
+    EXPECT_EQ(bond.data(bond.index(3, 1)).toInt(), 5);
+    EXPECT_EQ(bond.data(bond.index(3, 2)).toString().toStdString(), "@CA-CA");
+    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 3)).toDouble(), 3924.59);
+    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 4)).toDouble(), 1.4);
+    EXPECT_EQ(bond.data(bond.index(3, 5)).toDouble(), 0);
+    EXPECT_EQ(bond.data(bond.index(3, 6)).toDouble(), 0);
+
+    // Mutate bond
+    EXPECT_FALSE(bond.setData(bond.index(3, 0), 5));
+    EXPECT_FALSE(bond.setData(bond.index(3, 1), 6));
+    for (auto i = 3; i < 7; ++i)
+	EXPECT_FALSE(bond.setData(bond.index(3, i), 6));
+    EXPECT_FALSE(bond.setData(bond.index(3, 2), "Undefined"));
+    EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
+    for (auto i = 3; i < 5; ++i)
+    {
+	EXPECT_TRUE(bond.setData(bond.index(3, i), i));
+	EXPECT_DOUBLE_EQ(bond.data(bond.index(3, i)).toDouble(), i);
+    }
+    for (auto i = 5; i < 7; ++i)
+    {
+	EXPECT_FALSE(bond.setData(bond.index(3, i), i));
+	EXPECT_EQ(bond.data(bond.index(3, i)).toDouble(), 0);
+    }
+    EXPECT_TRUE(bond.setData(bond.index(3, 2), "@CA-CA"));
+    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 3)).toDouble(), 3924.59);
+    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 4)).toDouble(), 1.4);
+    EXPECT_NEAR(bond.data(bond.index(3, 5)).toDouble(), 0, 1e-100);
+    EXPECT_NEAR(bond.data(bond.index(3, 6)).toDouble(), 0, 1e-100);
 
     EXPECT_EQ(angle.columnCount(), 8);
     EXPECT_EQ(angle.rowCount(), 18);
 
     EXPECT_EQ(torsion.columnCount(), 9);
     EXPECT_EQ(torsion.rowCount(), 24);
-
-    // EXPECT_EQ(model.rowCount(), 1);
-    // EXPECT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "benzene");
-    // EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "restart/benzene.txt.restart.test");
 }
 
 } // namespace UnitTest
