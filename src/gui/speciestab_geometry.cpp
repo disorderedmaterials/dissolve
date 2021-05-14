@@ -52,30 +52,27 @@ void SpeciesTab::updateAtomTableSelection()
     ui_.AtomTable->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
-// void SpeciesTab::on_AtomTable_itemSelectionChanged()
-// {
-//     if (refreshLock_.isLocked())
-//         return;
+void SpeciesTab::on_AtomTable_itemSelectionChanged()
+{
+    if (refreshLock_.isLocked())
+        return;
 
-//     QTableWidgetItem *item;
-//     SpeciesAtom *i;
+    SpeciesAtom *i;
 
-//     // Set atom selection in viewer to be same as the table
-//     for (auto n = 0; n < ui_.AtomTable->rowCount(); ++n)
-//     {
-//         item = ui_.AtomTable->item(n, 0);
-//         i = item->data(Qt::UserRole).value<SpeciesAtom *>();
+    // Set atom selection in viewer to be same as the table
+    for (auto n = 0; n < atoms_.rowCount(); ++n)
+    {
+        i = atoms_.data(atoms_.index(n, 0), Qt::UserRole).value<SpeciesAtom *>();
+        if (ui_.AtomTable->selectionModel()->isSelected(atoms_.index(n, 0)))
+            species_->selectAtom(i);
+        else
+            species_->deselectAtom(i);
+    }
 
-//         if (item->isSelected())
-//             species_->selectAtom(i);
-//         else
-//             species_->deselectAtom(i);
-//     }
-
-//     // Recreate selection primitive and update viewer
-//     ui_.ViewerWidget->speciesViewer()->recreateSelectionPrimitive();
-//     ui_.ViewerWidget->updateStatusBar();
-// }
+    // Recreate selection primitive and update viewer
+    ui_.ViewerWidget->speciesViewer()->recreateSelectionPrimitive();
+    ui_.ViewerWidget->updateStatusBar();
+}
 
 /*
  * Public Functions
