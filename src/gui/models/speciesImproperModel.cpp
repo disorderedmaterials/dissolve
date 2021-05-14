@@ -1,7 +1,10 @@
 #include "gui/models/speciesImproperModel.h"
 #include "classes/masterintra.h"
 
-SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, Dissolve &dissolve) : impropers_(impropers), dissolve_(dissolve) {}
+SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, Dissolve &dissolve)
+    : impropers_(impropers), dissolve_(dissolve)
+{
+}
 
 int SpeciesImproperModel::rowCount(const QModelIndex &parent) const
 {

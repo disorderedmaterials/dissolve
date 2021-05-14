@@ -64,7 +64,7 @@ TEST_F(SpeciesTabTest, Atoms)
     EXPECT_TRUE(atom.setData(atom.index(6, 4), 4.0));
     EXPECT_TRUE(atom.setData(atom.index(6, 5), 5.0));
     for (auto i = 3; i < 6; ++i)
-	EXPECT_EQ(atom.data(atom.index(6, i)).toDouble(), i);
+        EXPECT_EQ(atom.data(atom.index(6, i)).toDouble(), i);
 }
 
 TEST_F(SpeciesTabTest, Bonds)
@@ -94,18 +94,18 @@ TEST_F(SpeciesTabTest, Bonds)
     EXPECT_FALSE(bond.setData(bond.index(3, 0), 5));
     EXPECT_FALSE(bond.setData(bond.index(3, 1), 6));
     for (auto i = 3; i < 7; ++i)
-	EXPECT_FALSE(bond.setData(bond.index(3, i), 6));
+        EXPECT_FALSE(bond.setData(bond.index(3, i), 6));
     EXPECT_FALSE(bond.setData(bond.index(3, 2), "Undefined"));
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
     for (auto i = 3; i < 5; ++i)
     {
-	EXPECT_TRUE(bond.setData(bond.index(3, i), i));
-	EXPECT_DOUBLE_EQ(bond.data(bond.index(3, i)).toDouble(), i);
+        EXPECT_TRUE(bond.setData(bond.index(3, i), i));
+        EXPECT_DOUBLE_EQ(bond.data(bond.index(3, i)).toDouble(), i);
     }
     for (auto i = 5; i < 7; ++i)
     {
-	EXPECT_FALSE(bond.setData(bond.index(3, i), i));
-	EXPECT_EQ(bond.data(bond.index(3, i)).toDouble(), 0);
+        EXPECT_FALSE(bond.setData(bond.index(3, i), i));
+        EXPECT_EQ(bond.data(bond.index(3, i)).toDouble(), 0);
     }
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "@CA-CA"));
     EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 3)).toDouble(), 3924.59);
@@ -143,19 +143,19 @@ TEST_F(SpeciesTabTest, Angles)
     EXPECT_FALSE(angle.setData(angle.index(3, 1), 6));
     EXPECT_FALSE(angle.setData(angle.index(3, 2), 7));
     for (auto i = 4; i < 6; ++i)
-	EXPECT_FALSE(angle.setData(angle.index(3, i), 6));
+        EXPECT_FALSE(angle.setData(angle.index(3, i), 6));
 
     EXPECT_FALSE(angle.setData(angle.index(3, 3), "Undefined"));
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "Harmonic"));
     for (auto i = 4; i < 6; ++i)
     {
-	EXPECT_TRUE(angle.setData(angle.index(3, i), i));
-	EXPECT_DOUBLE_EQ(angle.data(angle.index(3, i)).toDouble(), i);
+        EXPECT_TRUE(angle.setData(angle.index(3, i), i));
+        EXPECT_DOUBLE_EQ(angle.data(angle.index(3, i)).toDouble(), i);
     }
     for (auto i = 6; i < 8; ++i)
     {
-	EXPECT_FALSE(angle.setData(angle.index(3, i), i));
-	EXPECT_EQ(angle.data(angle.index(3, i)).toDouble(), 0);
+        EXPECT_FALSE(angle.setData(angle.index(3, i), i));
+        EXPECT_EQ(angle.data(angle.index(3, i)).toDouble(), 0);
     }
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "@CA-CA-CA"));
     EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 4)).toDouble(), 527.184);
@@ -195,14 +195,14 @@ TEST_F(SpeciesTabTest, Torsions)
     EXPECT_FALSE(torsion.setData(torsion.index(3, 2), 7));
     EXPECT_FALSE(torsion.setData(torsion.index(3, 3), 8));
     for (auto i = 5; i < 9; ++i)
-	EXPECT_FALSE(torsion.setData(torsion.index(3, i), 6));
+        EXPECT_FALSE(torsion.setData(torsion.index(3, i), 6));
 
     EXPECT_FALSE(torsion.setData(torsion.index(3, 4), "Undefined"));
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "Cos3"));
     for (auto i = 5; i < 8; ++i)
     {
-	EXPECT_TRUE(torsion.setData(torsion.index(3, i), i));
-	EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, i)).toDouble(), i);
+        EXPECT_TRUE(torsion.setData(torsion.index(3, i), i));
+        EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, i)).toDouble(), i);
     }
     EXPECT_FALSE(torsion.setData(torsion.index(3, 8), 8));
     EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
@@ -244,14 +244,14 @@ TEST_F(SpeciesTabTest, Impropers)
     EXPECT_FALSE(improper.setData(improper.index(3, 2), 7));
     EXPECT_FALSE(improper.setData(improper.index(3, 3), 8));
     for (auto i = 5; i < 9; ++i)
-	EXPECT_FALSE(improper.setData(improper.index(3, i), 6));
+        EXPECT_FALSE(improper.setData(improper.index(3, i), 6));
 
     EXPECT_FALSE(improper.setData(improper.index(3, 4), "Undefined"));
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "Cos3"));
     for (auto i = 5; i < 9; ++i)
     {
-	EXPECT_TRUE(improper.setData(improper.index(3, i), i));
-	EXPECT_DOUBLE_EQ(improper.data(improper.index(3, i)).toDouble(), i);
+        EXPECT_TRUE(improper.setData(improper.index(3, i), i));
+        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, i)).toDouble(), i);
     }
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
     EXPECT_EQ(improper.data(improper.index(3, 5)).toDouble(), 4.606);
