@@ -7,7 +7,7 @@
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 
-PartialSetAccumulator::PartialSetAccumulator() : nAccumulated_(0) {}
+PartialSetAccumulator::PartialSetAccumulator() {}
 
 void PartialSetAccumulator::operator+=(const PartialSet &source)
 {
@@ -103,8 +103,8 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
         parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Error", "Bound",
                           "Error", "Unbound", "Error");
         for (auto n = 0; n < full.nValues(); ++n)
-            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), full.error(n),
-                              bound.value(n), bound.error(n), unbound.value(n), unbound.error(n));
+            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n),
+                              full.value(n), full.error(n), bound.value(n), bound.error(n), unbound.value(n), unbound.error(n));
         parser.closeFiles();
     }
 

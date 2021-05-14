@@ -14,7 +14,7 @@ class SpeciesKeyword : public KeywordData<Species *>
 {
     public:
     SpeciesKeyword(Species *sp = nullptr);
-    ~SpeciesKeyword();
+    ~SpeciesKeyword() override;
 
     /*
      * Arguments
@@ -34,5 +34,5 @@ class SpeciesKeyword : public KeywordData<Species *>
      */
     protected:
     // Prune any references to the supplied Species in the contained data
-    void removeReferencesTo(Species *sp);
+    void removeReferencesTo(Species *sp) override;
 };

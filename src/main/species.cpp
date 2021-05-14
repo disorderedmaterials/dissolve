@@ -5,7 +5,7 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "main/dissolve.h"
-#include <string.h>
+#include <cstring>
 
 // Add a new Species to the list
 Species *Dissolve::addSpecies()
@@ -130,9 +130,6 @@ Species *Dissolve::copySpecies(const Species *species)
     // Create our new Species
     Species *newSpecies = addSpecies();
     newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
-
-    // Turn off autoupdate of intramolecular terms, since we want an exact copy of the Species contents
-    newSpecies->setAutoUpdateIntramolecularTerms(false);
 
     // Duplicate atoms
     for (auto &i : species->atoms())

@@ -4,10 +4,7 @@
 #include "classes/atomtype.h"
 #include "data/elements.h"
 
-AtomType::AtomType()
-    : name_{"XX"}, Z_(Elements::Unknown), shortRangeType_(Forcefield::UndefinedType), exchangeable_(false), index_(-1)
-{
-}
+AtomType::AtomType() : name_{"XX"} {}
 
 /*
  * Character

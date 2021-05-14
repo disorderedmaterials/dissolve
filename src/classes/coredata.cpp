@@ -14,7 +14,7 @@
 
 CoreData::CoreData() { moduleInstances_ = nullptr; }
 
-CoreData::~CoreData() {}
+CoreData::~CoreData() = default;
 
 // Clear all data
 void CoreData::clear()
@@ -51,7 +51,7 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
 }
 
 // Remove specified AtomType
-void CoreData::removeAtomType(std::shared_ptr<AtomType> at)
+void CoreData::removeAtomType(const std::shared_ptr<AtomType> &at)
 {
     atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at));
 }
@@ -449,7 +449,7 @@ RefList<Module> CoreData::findModules(std::string_view moduleType) const
 }
 
 // Search for and return any instance(s) of the specified Module type
-RefList<Module> CoreData::findModules(const std::vector<std::string> moduleTypes) const
+RefList<Module> CoreData::findModules(const std::vector<std::string> &moduleTypes) const
 {
     RefList<Module> modules;
 

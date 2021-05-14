@@ -5,13 +5,13 @@
 #include "base/lineparser.h"
 #include "procedure/nodes/node.h"
 
-NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, NodeValue value)
+NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, const NodeValue &value)
     : KeywordData<NodeValue>(KeywordData::NodeValueData, value)
 {
     parentNode_ = parentNode;
 }
 
-NodeValueKeyword::~NodeValueKeyword() {}
+NodeValueKeyword::~NodeValueKeyword() = default;
 
 /*
  * Arguments

@@ -8,6 +8,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
+class Box;
 class Configuration;
 class SpeciesSite;
 class Molecule;
@@ -17,7 +18,7 @@ class SiteStack : public ListItem<SiteStack>
 {
     public:
     SiteStack();
-    ~SiteStack();
+    ~SiteStack() = default;
 
     /*
      * Target
@@ -29,6 +30,12 @@ class SiteStack : public ListItem<SiteStack>
     int configurationIndex_;
     // Target SpeciesSite
     SpeciesSite *speciesSite_;
+
+    private:
+    // Calculate geometric centre of atoms in the given molecule
+    Vec3<double> centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices);
+    // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
+    Vec3<double> centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices);
 
     public:
     // Create stack for specified Configuration and site
@@ -47,9 +54,9 @@ class SiteStack : public ListItem<SiteStack>
     // Whether the current stack contains local axes information
     bool sitesHaveOrientation_;
     // Basic site array (if no local axes are defined)
-    Array<Site> sites_;
+    std::vector<Site> sites_;
     // Oriented site array (if local axes are defined)
-    Array<OrientedSite> orientedSites_;
+    std::vector<OrientedSite> orientedSites_;
 
     public:
     // Return number of sites in the stack

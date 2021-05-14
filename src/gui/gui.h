@@ -166,6 +166,7 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesRenameAction_triggered(bool checked);
     void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
     void on_ImportForcefieldAction_triggered(bool checked);
+    void on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked);
     void on_SpeciesDeleteAction_triggered(bool checked);
     // Configuration
     void on_ConfigurationCreateEmptyAction_triggered(bool checked);

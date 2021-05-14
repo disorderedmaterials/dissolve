@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/atomtypelist.h"
-#include "classes/coordinateset.h"
 #include "classes/isotopologue.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
@@ -25,7 +24,7 @@ class Species
 {
     public:
     Species();
-    ~Species();
+    ~Species() = default;
     // Clear Data
     void clear();
 
@@ -132,10 +131,6 @@ class Species
     // Whether the attached atoms lists have been created
     bool attachedAtomListsGenerated_;
 
-    private:
-    // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-    void updateIntramolecularTerms();
-
     public:
     // Add new SpeciesBond definition (from SpeciesAtom*)
     SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
@@ -157,6 +152,8 @@ class Species
     OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
+    // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+    void updateIntramolecularTerms();
     // Add new SpeciesAngle definition
     SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Add new SpeciesAngle dedefinitionfinition
@@ -215,18 +212,12 @@ class Species
     private:
     // Forcefield to source terms from
     std::shared_ptr<Forcefield> forcefield_;
-    // Auto-generate missing intramolecular terms, and remove invalid ones
-    bool autoUpdateIntramolecularTerms_;
 
     public:
     // Set Forcefield to source terms from
     void setForcefield(std::shared_ptr<Forcefield> ff);
     // Return Forcefield to source terms from
     std::shared_ptr<Forcefield> forcefield() const;
-    // Set whether to auto-generate missing intramolecular terms, and remove invalid ones
-    void setAutoUpdateIntramolecularTerms(bool b);
-    // Return whether to auto-generate missing intramolecular terms, and remove invalid ones
-    bool autoUpdateIntramolecularTerms() const;
     // Apply terms from source Forcefield
     bool applyForcefieldTerms(CoreData &coreData);
 
@@ -305,7 +296,7 @@ class Species
      */
     private:
     // Available coordinate sets representing conformers, symmetry copies etc.
-    List<CoordinateSet> coordinateSets_;
+    std::vector<std::vector<Vec3<double>>> coordinateSets_;
     // File / format of coordinate sets file, if provided
     CoordinateImportFileFormat coordinateSetInputCoordinates_;
 
@@ -313,11 +304,11 @@ class Species
     // Clear coordinate sets
     void clearCoordinateSets();
     // Add new coordinate set
-    CoordinateSet *addCoordinateSet();
+    std::vector<Vec3<double>> &addCoordinateSet();
     // Return number of defined coordinate sets
     int nCoordinateSets() const;
     // Return coordinates sets
-    const List<CoordinateSet> &coordinateSets() const;
+    const std::vector<std::vector<Vec3<double>>> &coordinateSets() const;
 
     /*
      * File Input / Output

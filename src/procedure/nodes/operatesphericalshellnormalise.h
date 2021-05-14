@@ -20,5 +20,5 @@ class OperateSphericalShellNormaliseProcedureNode : public OperateProcedureNodeB
      */
     public:
     // Operate on Data1D target
-    bool operateData1D(ProcessPool &procPool, Configuration *cfg);
+    bool operateData1D(ProcessPool &procPool, Configuration *cfg) override;
 };

@@ -15,7 +15,7 @@ class ExpressionKeyword : public KeywordData<Expression &>
 {
     public:
     ExpressionKeyword(Expression &expression, const std::vector<std::shared_ptr<ExpressionVariable>> &variables);
-    ~ExpressionKeyword();
+    ~ExpressionKeyword() override;
 
     /*
      * Data
@@ -49,9 +49,9 @@ class ExpressionKeyword : public KeywordData<Expression &>
      */
     public:
     // Return value (as int)
-    int asInt();
+    int asInt() override;
     // Return value (as double)
-    double asDouble();
+    double asDouble() override;
 
     /*
      * Object Management

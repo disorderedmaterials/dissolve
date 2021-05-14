@@ -41,15 +41,15 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
 
     // Cells
     lockedCells_ = std::vector<std::set<Cell *>>(nProcessesOrGroups_);
-    cellStatusFlags_.initialise(cellArray.nCells());
-    cellStatusFlags_ = RegionalDistributor::UnusedFlag;
-    cellLockOwners_.initialise(cellArray.nCells());
-    cellLockOwners_ = -1;
+    cellStatusFlags_.resize(cellArray.nCells());
+    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), RegionalDistributor::UnusedFlag);
+    cellLockOwners_.resize(cellArray.nCells());
+    std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
 
     // Molecules
     assignedMolecules_.resize(nProcessesOrGroups_);
-    moleculeStatus_.initialise(moleculeArray_.size());
-    moleculeStatus_ = RegionalDistributor::WaitingFlag;
+    moleculeStatus_.resize(moleculeArray_.size());
+    std::fill(moleculeStatus_.begin(), moleculeStatus_.end(), RegionalDistributor::WaitingFlag);
     nMoleculesToDistribute_ = moleculeArray_.size();
     nMoleculesDistributed_ = 0;
 }
@@ -91,8 +91,7 @@ bool RegionalDistributor::cycle()
     }
 
     std::shared_ptr<Molecule> molecule;
-    Array<bool> allPossibleMoleculesAssigned(nProcessesOrGroups_);
-    allPossibleMoleculesAssigned = false;
+    std::vector<bool> allPossibleMoleculesAssigned(nProcessesOrGroups_, false);
     int processOrGroup, nMoleculesAssigned, allPossibleMoleculesAssignedCount = 0;
 
     // Set Molecule completed flags and clear distribution arrays
@@ -103,8 +102,8 @@ bool RegionalDistributor::cycle()
     }
 
     // Reset the Cell status flags
-    cellStatusFlags_ = RegionalDistributor::UnusedFlag;
-    cellLockOwners_ = -1;
+    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), RegionalDistributor::UnusedFlag);
+    std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
 
     // Set the process/group numbers for the original parallel strategy before we try to assign Molecules to groups
     // In this way we will always allow the parallel strategy to go 'back up' to the original one specified, if we can.
@@ -260,7 +259,7 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
  */
 
 // Assign Molecule to process/group if possible
-bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup)
+bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &mol, int processOrGroup)
 {
     Cell *primaryCell = nullptr;
     int cellIndex;
@@ -276,7 +275,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
         return false;
 
     // Go through the Atoms of the Molecule, assembling a list of primary Cells in which its Atoms are found.
-    Array<Cell *> primaryCells;
+    std::vector<Cell *> primaryCells;
     for (auto i = 0; i < mol->nAtoms(); ++i)
     {
         // Get Cell pointer and index
@@ -304,16 +303,16 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
             Messenger::print(" -- Cell {} can be locked - current owner ({})\n", cellIndex, cellLockOwners_[cellIndex]);
 
         // Add to the primary Cells list
-        primaryCells.add(primaryCell);
+        primaryCells.push_back(primaryCell);
     }
 
     // We are able to lock all Cells that we need to edit, so now construct a list of those within the cutoff range of any
     // primaryCell that we must be able to read (but not modify)
     std::set<const Cell *> readOnlyCells;
-    for (auto c = 0; c < primaryCells.nItems(); ++c)
+    for (auto *cell : primaryCells)
     {
         // Loop over all cell neighbours for this primary Cell
-        for (const auto *neighbour : primaryCells[c]->allCellNeighbours())
+        for (const auto *neighbour : cell->allCellNeighbours())
         {
             cellIndex = neighbour->index();
 
@@ -340,9 +339,9 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
     // If we reach this point, we can lock all the necessary Cells for editing, and mark all those necessary for reading.
 
     // Add primary and secondary lock Cells to our list, sanity checking along the way
-    for (auto c = 0; c < primaryCells.nItems(); ++c)
+    for (const auto *cell : primaryCells)
     {
-        cellIndex = primaryCells[c]->index();
+        cellIndex = cell->index();
 
         // Set lock index
         if ((cellLockOwners_[cellIndex] == processOrGroup) || (cellLockOwners_[cellIndex] == -1))

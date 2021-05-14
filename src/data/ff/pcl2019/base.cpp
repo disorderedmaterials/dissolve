@@ -52,7 +52,7 @@ PCL2019BaseForcefield::PCL2019BaseForcefield()
     addParameters("SO", {3.55, 1.04600});
 }
 
-PCL2019BaseForcefield::~PCL2019BaseForcefield() {}
+PCL2019BaseForcefield::~PCL2019BaseForcefield() = default;
 
 /*
  * Definition
@@ -62,4 +62,7 @@ PCL2019BaseForcefield::~PCL2019BaseForcefield() {}
 std::string_view PCL2019BaseForcefield::publicationReferences() const { return "TODO!"; }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType PCL2019BaseForcefield::shortRangeType() const { return Forcefield::LennardJonesGeometricType; }
+Forcefield::ShortRangeType PCL2019BaseForcefield::shortRangeType() const
+{
+    return Forcefield::ShortRangeType::LennardJonesGeometric;
+}

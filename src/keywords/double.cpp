@@ -27,7 +27,7 @@ DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue)
     max_ = maxValue;
 }
 
-DoubleKeyword::~DoubleKeyword() {}
+DoubleKeyword::~DoubleKeyword() = default;
 
 /*
  * Data Validation

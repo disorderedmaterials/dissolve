@@ -24,7 +24,7 @@ NonPeriodicBox::NonPeriodicBox(double length) : Box()
     finalise();
 }
 
-NonPeriodicBox::~NonPeriodicBox() {}
+NonPeriodicBox::~NonPeriodicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

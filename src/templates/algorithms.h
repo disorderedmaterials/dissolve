@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
-
 #pragma once
 
+#include "templates/parallel_defs.h"
 #include <functional>
 #include <optional>
 #include <tuple>
+#include <utility>
 
 // Cut a range into a smaller segment for MPI
 template <typename T> auto chop_range(const T begin, const T end, const int nChunks, const int index)
@@ -124,7 +125,7 @@ template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) ->
 template <typename... Args> class ZipIterator
 {
     public:
-    ZipIterator(std::tuple<Args...> args) : source_(args){};
+    ZipIterator(std::tuple<Args...> args) : source_(std::move(args)){};
     bool operator!=(ZipIterator<Args...> other)
     {
         return std::apply(
@@ -169,3 +170,55 @@ template <typename... Args> class zip
     private:
     std::tuple<Args &...> sources_;
 };
+
+namespace dissolve
+{
+// Transform reduce algorithms
+// unaryOp transform container element into type T, which is reduced (summed) by the binaryOp
+// Base tranform_reduce, no parallel policy
+template <class Iter, typename T, class UnaryOp, class BinaryOp>
+T transform_reduce(Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
+{
+    return std::transform_reduce(begin, end, initialVal, binaryOp, unaryOp);
+}
+// Only enabled if parallelpolicies are fully defined i.e. we have compiled with multithreading enabled
+template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
+{
+    return std::transform_reduce(policy, begin, end, initialVal, binaryOp, unaryOp);
+}
+
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
+// parallel policy
+template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+T transform_reduce(ParallelPolicy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
+{
+    return dissolve::transform_reduce(begin, end, initialVal, binaryOp, unaryOp);
+}
+
+// For each algorithm
+// unaryOp applies to each element in the range
+// Base for_each, no parallel policy
+template <class Iter, class UnaryOp> void for_each(Iter begin, Iter end, UnaryOp unaryOp)
+{
+    std::for_each(begin, end, unaryOp);
+}
+// Only enabled if parallelpolicies are fully defined i.e. we have compiled with multithreading enabled
+template <typename ParallelPolicy, class Iter, class UnaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+void for_each(ParallelPolicy policy, Iter begin, Iter end, UnaryOp unaryOp)
+{
+    std::for_each(policy, begin, end, unaryOp);
+}
+
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
+// parallel policy
+template <typename ParallelPolicy, class Iter, class UnaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
+{
+    dissolve::for_each(begin, end, unaryOp);
+}
+} // namespace dissolve

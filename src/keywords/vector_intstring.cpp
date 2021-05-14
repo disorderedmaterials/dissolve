@@ -12,7 +12,7 @@ IntegerStringVectorKeyword::IntegerStringVectorKeyword(IntegerStringVectorKeywor
 {
 }
 
-IntegerStringVectorKeyword::~IntegerStringVectorKeyword() {}
+IntegerStringVectorKeyword::~IntegerStringVectorKeyword() = default;
 
 // Return minimum number of arguments accepted
 int IntegerStringVectorKeyword::minArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(1)); }

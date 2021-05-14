@@ -10,6 +10,7 @@
 #include "gui/selectelementdialog.h"
 #include "gui/speciestab.h"
 #include <QFileDialog>
+#include <QMessageBox>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -20,7 +21,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
         return;
 
     // Create the new Species, and add a single atom at {0,0,0}
-    Species *newSpecies = dissolve_.addSpecies();
+    auto *newSpecies = dissolve_.addSpecies();
     newSpecies->addAtom(Z, Vec3<double>());
     newSpecies->setName(dissolve_.coreData().uniqueSpeciesName(Elements::symbol(Z)));
 
@@ -31,13 +32,14 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
 void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 {
-    Species *newSpecies = dissolve_.addSpecies();
+    auto *newSpecies = dissolve_.addSpecies();
 
     EditSpeciesDialog editSpeciesDialog(this, newSpecies);
     if (editSpeciesDialog.editSpecies())
     {
         // Renumber the atoms so they are sequential
         newSpecies->renumberAtoms();
+        newSpecies->updateIntramolecularTerms();
 
         setModified();
         fullUpdate();
@@ -55,7 +57,7 @@ void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 
     if (importSpeciesDialog.exec() == QDialog::Accepted)
     {
-        Species *sp = importSpeciesDialog.importSpecies(dissolve_);
+        auto *sp = importSpeciesDialog.importSpecies(dissolve_);
 
         // Fully update GUI
         setModified();
@@ -74,7 +76,7 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
         return;
 
     // Add new species, load from the xyz, and create intramolecular terms
-    Species *sp = dissolve_.addSpecies();
+    auto *sp = dissolve_.addSpecies();
     sp->loadFromXYZ(qPrintable(xyzFile));
     sp->addMissingBonds();
 
@@ -86,6 +88,9 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
         return;
     }
 
+    // Add higher-order connectivity
+    sp->updateIntramolecularTerms();
+
     // Fully update GUI
     setModified();
     fullUpdate();
@@ -96,7 +101,7 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab, then call its rename() function
-    MainTab *tab = ui_.MainTabs->currentTab();
+    auto *tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
         return;
     tab->rename();
@@ -105,7 +110,7 @@ void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
-    Species *species = ui_.MainTabs->currentSpecies();
+    auto *species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
 
@@ -139,15 +144,41 @@ void DissolveWindow::on_ImportForcefieldAction_triggered(bool checked)
     }
 }
 
+void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto *species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    // Confirm with the user
+    QMessageBox queryBox;
+    queryBox.setText(
+        "This will delete and regenerate all angle and torsion terms, and any defined improper terms.\nThis cannot be undone!");
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+    auto ret = queryBox.exec();
+
+    if (ret != QMessageBox::Yes)
+        return;
+
+    species->updateIntramolecularTerms();
+
+    setModified();
+    updateWindowTitle();
+    ui_.MainTabs->currentTab()->updateControls();
+}
+
 void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab
-    MainTab *tab = ui_.MainTabs->currentTab();
+    auto *tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
         return;
 
     // Cast up the tab to a SpeciesTab
-    SpeciesTab *spTab = dynamic_cast<SpeciesTab *>(tab);
+    auto *spTab = dynamic_cast<SpeciesTab *>(tab);
     if (!spTab)
         return;
 

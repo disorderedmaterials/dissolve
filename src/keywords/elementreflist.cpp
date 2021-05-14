@@ -10,7 +10,7 @@ ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &targe
 {
 }
 
-ElementVectorKeyword::~ElementVectorKeyword() {}
+ElementVectorKeyword::~ElementVectorKeyword() = default;
 
 /*
  * Arguments

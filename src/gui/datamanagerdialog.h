@@ -6,9 +6,11 @@
 #include "classes/referencepoint.h"
 #include "genericitems/list.h"
 #include "gui/models/dataManagerReferencePointModel.h"
+#include "gui/models/dataManagerSimulationModel.h"
 #include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
 #include <QDialog>
+#include <QSortFilterProxyModel>
 #include <vector>
 
 Q_DECLARE_METATYPE(const ReferencePoint *)
@@ -22,7 +24,7 @@ class DataManagerDialog : public QDialog
     Q_OBJECT
 
     public:
-    DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints);
+    DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints, GenericList &items);
     ~DataManagerDialog();
 
     private:
@@ -32,6 +34,10 @@ class DataManagerDialog : public QDialog
     std::vector<ReferencePoint> &referencePoints_;
     // ReferencePoint Model
     DataManagerReferencePointModel refModel_;
+    // Simulation Model
+    DataManagerSimulationModel simModel_;
+    // Simulation Proxy
+    QSortFilterProxyModel simProxy_;
 
     /*
      * UI
@@ -41,8 +47,6 @@ class DataManagerDialog : public QDialog
     Ui::DataManagerDialog ui_;
 
     private:
-    // Add GenericItems to table
-    void addItems(const std::map<std::string, GenericItem::Type> &items);
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QString filterText);
     // Update ReferencePoint table row
@@ -59,7 +63,6 @@ class DataManagerDialog : public QDialog
     void on_ReferencePointRemoveButton_clicked(bool checked);
     void on_ReferencePointCreateButton_clicked(bool checked);
     void on_ReferencePointOpenButton_clicked(bool checked);
-    void on_ReferencePointsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *previousItem);
 
     // Dialog
     void on_CloseButton_clicked(bool checked);

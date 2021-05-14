@@ -6,6 +6,7 @@
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
+#include <numeric>
 
 SpeciesSite::SpeciesSite()
 {
@@ -13,7 +14,7 @@ SpeciesSite::SpeciesSite()
     originMassWeighted_ = false;
 }
 
-SpeciesSite::~SpeciesSite() {}
+SpeciesSite::~SpeciesSite() = default;
 
 /*
  * Basic Information
@@ -76,7 +77,7 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Set origin atoms
-bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> atoms)
+bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> &atoms)
 {
     originAtoms_.clear();
 
@@ -96,11 +97,11 @@ bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> atoms)
 const RefList<SpeciesAtom> &SpeciesSite::originAtoms() { return originAtoms_; }
 
 // Return integer array of indices from which the origin should be formed
-Array<int> SpeciesSite::originAtomIndices() const
+std::vector<int> SpeciesSite::originAtomIndices() const
 {
-    Array<int> indices;
-    for (SpeciesAtom *atom : originAtoms_)
-        indices.add(atom->index());
+    std::vector<int> indices;
+    std::transform(originAtoms_.begin(), originAtoms_.end(), std::back_inserter(indices),
+                   [](auto *atom) { return atom->index(); });
 
     return indices;
 }
@@ -154,7 +155,7 @@ void SpeciesSite::removeXAxisAtom(SpeciesAtom *xAxisAtom)
 }
 
 // Set x-axis atoms
-bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> atoms)
+bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> &atoms)
 {
     xAxisAtoms_.clear();
 
@@ -174,12 +175,11 @@ bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> atoms)
 const RefList<SpeciesAtom> &SpeciesSite::xAxisAtoms() { return xAxisAtoms_; }
 
 // Return integer array of indices from which x-axis should be formed
-Array<int> SpeciesSite::xAxisAtomIndices() const
+std::vector<int> SpeciesSite::xAxisAtomIndices() const
 {
-    Array<int> indices;
-    for (SpeciesAtom *atom : xAxisAtoms_)
-        indices.add(atom->index());
-
+    std::vector<int> indices;
+    std::transform(xAxisAtoms_.begin(), xAxisAtoms_.end(), std::back_inserter(indices),
+                   [](auto *atom) { return atom->index(); });
     return indices;
 }
 
@@ -221,7 +221,7 @@ void SpeciesSite::removeYAxisAtom(SpeciesAtom *yAxisAtom)
 }
 
 // Set y-axis atoms
-bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> atoms)
+bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> &atoms)
 {
     yAxisAtoms_.clear();
 
@@ -241,12 +241,11 @@ bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> atoms)
 const RefList<SpeciesAtom> &SpeciesSite::yAxisAtoms() { return yAxisAtoms_; }
 
 // Return integer array of indices from which y-axis should be formed
-Array<int> SpeciesSite::yAxisAtomIndices() const
+std::vector<int> SpeciesSite::yAxisAtomIndices() const
 {
-    Array<int> indices;
-    for (SpeciesAtom *atom : yAxisAtoms_)
-        indices.add(atom->index());
-
+    std::vector<int> indices;
+    std::transform(yAxisAtoms_.begin(), yAxisAtoms_.end(), std::back_inserter(indices),
+                   [](auto *atom) { return atom->index(); });
     return indices;
 }
 
@@ -266,8 +265,8 @@ bool SpeciesSite::hasAxes() const
 Site *SpeciesSite::createFromParent() const
 {
     // Get origin atom indices from site
-    Array<int> originIndices = originAtomIndices();
-    if (originIndices.nItems() == 0)
+    std::vector<int> originIndices = originAtomIndices();
+    if (originIndices.empty())
         return nullptr;
 
     Site *site = nullptr;
@@ -278,26 +277,26 @@ Site *SpeciesSite::createFromParent() const
     if (originMassWeighted_)
     {
         double massNorm = 0.0;
-        for (auto m = 0; m < originIndices.nItems(); ++m)
+        for (const auto &index : originIndices)
         {
-            mass = AtomicMass::mass(parent_->atom(originIndices[m]).Z());
-            origin += parent_->atom(originIndices[m]).r() * mass;
+            mass = AtomicMass::mass(parent_->atom(index).Z());
+            origin += parent_->atom(index).r() * mass;
             massNorm += mass;
         }
         origin /= massNorm;
     }
     else
     {
-        for (auto m = 0; m < originIndices.nItems(); ++m)
-            origin += parent_->atom(originIndices[m]).r();
-        origin /= originIndices.nItems();
+        for (const auto &index : originIndices)
+            origin += parent_->atom(index).r();
+        origin /= originIndices.size();
     }
 
     // Calculate axes and store data if required
     if (hasAxes())
     {
         // If the site has axes, grab the atom indices involved
-        Array<int> xAxisIndices, yAxisIndices;
+        std::vector<int> xAxisIndices, yAxisIndices;
         if (hasAxes())
         {
             xAxisIndices = xAxisAtomIndices();
@@ -307,9 +306,9 @@ Site *SpeciesSite::createFromParent() const
         Vec3<double> v;
 
         // Get average position of supplied x-axis atoms
-        for (auto m = 0; m < xAxisIndices.nItems(); ++m)
-            v += parent_->atom(xAxisIndices[m]).r();
-        v /= xAxisIndices.nItems();
+        for (const auto &index : xAxisIndices)
+            v += parent_->atom(index).r();
+        v /= xAxisIndices.size();
 
         // Get vector from site origin and normalise it
         auto x = v - origin;
@@ -317,9 +316,9 @@ Site *SpeciesSite::createFromParent() const
 
         // Get average position of supplied y-axis atoms
         v.zero();
-        for (auto m = 0; m < yAxisIndices.nItems(); ++m)
-            v += parent_->atom(yAxisIndices[m]).r();
-        v /= yAxisIndices.nItems();
+        for (const auto &index : yAxisIndices)
+            v += parent_->atom(index).r();
+        v /= yAxisIndices.size();
 
         // Get vector from site origin, normalise it, and orthogonalise
         auto y = v - origin;
@@ -451,11 +450,11 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     // Origin atom indices
     if (originAtoms_.nItems() > 0)
     {
-        Array<int> indices = originAtomIndices();
+        std::vector<int> indices = originAtomIndices();
 
-        std::string atomIndices;
-        for (auto n = 0; n < indices.nItems(); ++n)
-            atomIndices += fmt::format("  {}", indices[n] + 1);
+        std::string atomIndices =
+            std::accumulate(indices.begin(), indices.end(), std::string(),
+                            [](const auto &acc, const auto &idx) { return acc + fmt::format("  {}", idx + 1); });
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(OriginKeyword), atomIndices))
             return false;
@@ -468,11 +467,11 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     // X-Axis atom indices
     if (xAxisAtoms_.nItems() > 0)
     {
-        Array<int> indices = xAxisAtomIndices();
+        std::vector<int> indices = xAxisAtomIndices();
 
-        std::string atomIndices;
-        for (auto n = 0; n < indices.nItems(); ++n)
-            atomIndices += fmt::format("  {}", indices[n] + 1);
+        std::string atomIndices =
+            std::accumulate(indices.begin(), indices.end(), std::string(),
+                            [](const auto &acc, const auto &idx) { return acc + fmt::format("  {}", idx + 1); });
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(XAxisKeyword), atomIndices))
             return false;
@@ -481,11 +480,11 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     // Y-Axis atom indices
     if (yAxisAtoms_.nItems() > 0)
     {
-        Array<int> indices = yAxisAtomIndices();
+        std::vector<int> indices = yAxisAtomIndices();
 
-        std::string atomIndices;
-        for (auto n = 0; n < indices.nItems(); ++n)
-            atomIndices += fmt::format("  {}", indices[n] + 1);
+        std::string atomIndices =
+            std::accumulate(indices.begin(), indices.end(), std::string(),
+                            [](const auto &acc, const auto &idx) { return acc + fmt::format("  {}", idx + 1); });
 
         if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(YAxisKeyword), atomIndices))
             return false;

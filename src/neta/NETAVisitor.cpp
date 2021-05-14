@@ -114,7 +114,7 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
                 "No associated forcefield, so can't use atom type targets in NETA definition."));
 
         // Search for the atom type with the name specified (after removing leading '&' from string)
-        const auto &at = associatedForcefield_->atomTypeByName(context->FFTypeName()->getText().substr(1));
+        auto at = associatedForcefield_->atomTypeByName(context->FFTypeName()->getText().substr(1));
         if (!at)
             throw(NETAExceptions::NETASyntaxException(
                 fmt::format("No forcefield atom type with name {} exists in forcefield '{}', so can't add it as a target.",
@@ -131,7 +131,7 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
 
         // Search for the atom type with the index specified (after removing leading '&' from string)
         auto id = std::stoi(context->FFTypeIndex()->getText().substr(1));
-        const auto &at = associatedForcefield_->atomTypeById(id);
+        auto at = associatedForcefield_->atomTypeById(id);
         if (!at)
             throw(NETAExceptions::NETASyntaxException(
                 fmt::format("No forcefield atom type with id {} exists in forcefield '{}', so can't add it as a target.", id,

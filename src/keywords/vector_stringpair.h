@@ -8,14 +8,14 @@
 #include <tuple>
 #include <vector>
 
-typedef std::vector<std::pair<std::string, std::string>> StringPairVectorKeywordData;
+using StringPairVectorKeywordData = std::vector<std::pair<std::string, std::string>>;
 
 // Keyword with list of pairs of std::string
 class StringPairVectorKeyword : public KeywordData<StringPairVectorKeywordData &>
 {
     public:
     StringPairVectorKeyword(StringPairVectorKeywordData &data);
-    ~StringPairVectorKeyword();
+    ~StringPairVectorKeyword() override;
 
     /*
      * Arguments

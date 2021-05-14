@@ -4,8 +4,8 @@
 #pragma once
 
 #include "templates/vector3.h"
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 
 // 4D vector
 template <class T> class Vec4

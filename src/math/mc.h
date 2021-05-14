@@ -104,7 +104,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
     // Target acceptance ratio
     void setTargetAcceptanceRatio(double ratio) { targetAcceptanceRatio_ = ratio; }
     // Perform minimisation
-    double execute(std::vector<double> &values)
+    double execute(std::vector<double> &values) override
     {
         // Get initial error of input parameters
         double currentError = MinimiserBase<T>::cost(values);

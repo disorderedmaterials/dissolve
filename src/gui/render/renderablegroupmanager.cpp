@@ -7,7 +7,7 @@
 
 RenderableGroupManager::RenderableGroupManager()
 {
-    stockColourUsageCount_.initialise(StockColours::nStockColours);
+    stockColourUsageCount_.resize(StockColours::nStockColours, 0);
 
     clear();
 }
@@ -15,7 +15,7 @@ RenderableGroupManager::RenderableGroupManager()
 // Clear all groups
 void RenderableGroupManager::clear()
 {
-    stockColourUsageCount_ = 0;
+    std::fill(stockColourUsageCount_.begin(), stockColourUsageCount_.end(), 0);
     verticalShiftAmount_ = NoVerticalShift;
 
     emptyGroups();

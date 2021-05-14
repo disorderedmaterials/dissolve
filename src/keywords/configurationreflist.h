@@ -15,7 +15,7 @@ class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
 {
     public:
     ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize);
-    ~ConfigurationRefListKeyword();
+    ~ConfigurationRefListKeyword() override;
 
     /*
      * Data
@@ -50,5 +50,5 @@ class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
      */
     protected:
     // Prune any references to the supplied Configuration in the contained data
-    void removeReferencesTo(Configuration *cfg);
+    void removeReferencesTo(Configuration *cfg) override;
 };

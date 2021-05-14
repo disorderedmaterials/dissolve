@@ -13,14 +13,14 @@ class ExpressionReferenceNode : public ExpressionNode
 {
     public:
     ExpressionReferenceNode(std::shared_ptr<ExpressionVariable> variable);
-    ~ExpressionReferenceNode() = default;
+    ~ExpressionReferenceNode() override = default;
 
     /*
      * Nodes
      */
     protected:
     // Duplicate this node and its contents
-    std::shared_ptr<ExpressionNode> duplicate();
+    std::shared_ptr<ExpressionNode> duplicate() override;
 
     /*
      * Data
@@ -34,5 +34,5 @@ class ExpressionReferenceNode : public ExpressionNode
      */
     public:
     // Evaluate node
-    virtual std::optional<ExpressionValue> evaluate() const;
+    std::optional<ExpressionValue> evaluate() const override;
 };

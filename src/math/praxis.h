@@ -34,7 +34,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 
     private:
     // Perform minimisation
-    double execute(std::vector<double> &values) { return praxis(tolerance_, maxStep_, values, printLevel_); }
+    double execute(std::vector<double> &values) override { return praxis(tolerance_, maxStep_, values, printLevel_); }
 
     public:
     // Set maximum step size
@@ -79,7 +79,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     private:
     //****************************************************************************80
 
-    double flin(const std::vector<double> alpha, int jsearch, double l, int &nf, double v[], double q0[], double q1[],
+    double flin(const std::vector<double> &alpha, int jsearch, double l, int &nf, double v[], double q0[], double q1[],
                 double &qd0, double &qd1, double &qa, double &qb, double &qc)
 
     //****************************************************************************80

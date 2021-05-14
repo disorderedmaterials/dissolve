@@ -17,7 +17,7 @@ class Forcefield_XML : public Forcefield
     Forcefield_XML(std::string name, std::vector<ForcefieldAtomType> &&atoms, std::vector<ForcefieldBondTerm> &&bonds,
                    std::vector<ForcefieldAngleTerm> &&angles, std::vector<ForcefieldTorsionTerm> &&torsions,
                    std::vector<ForcefieldImproperTerm> &&impropers);
-    ~Forcefield_XML() = default;
+    ~Forcefield_XML() override = default;
 
     private:
     std::string name_;
@@ -27,15 +27,15 @@ class Forcefield_XML : public Forcefield
      */
     public:
     // Prepare the forcefield
-    bool setUp();
+    bool setUp() override;
     // The name of the forcefield
-    std::string_view name() const;
+    std::string_view name() const override;
     // A description of the forcefield
-    std::string_view description() const;
+    std::string_view description() const override;
     // Return formatted publication references
     std::string_view publicationReferences() const;
     // Return short-range interaction style for AtomTypes
-    Forcefield::ShortRangeType shortRangeType() const;
+    Forcefield::ShortRangeType shortRangeType() const override;
 
     /*
      * Atom Type Data

@@ -14,8 +14,8 @@ class ProcedureNode;
 class NodeValueKeyword : public KeywordData<NodeValue>
 {
     public:
-    NodeValueKeyword(ProcedureNode *parentNode, NodeValue value);
-    ~NodeValueKeyword();
+    NodeValueKeyword(ProcedureNode *parentNode, const NodeValue &value);
+    ~NodeValueKeyword() override;
 
     /*
      * Parent Node
@@ -49,9 +49,9 @@ class NodeValueKeyword : public KeywordData<NodeValue>
      */
     public:
     // Return value (as int)
-    int asInt();
+    int asInt() override;
     // Return value (as double)
-    double asDouble();
+    double asDouble() override;
 
     /*
      * Object Management

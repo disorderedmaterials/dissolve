@@ -6,7 +6,7 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue() : ListItem<Isotopologue>(), parent_(nullptr) {}
+Isotopologue::Isotopologue() : ListItem<Isotopologue>() {}
 
 /*
  * Basic Information
@@ -43,29 +43,23 @@ void Isotopologue::update()
         auto it = std::find_if(isotopes_.begin(), isotopes_.end(),
                                [&atd](auto value) { return std::get<0>(value) == atd.atomType(); });
         if (it == isotopes_.end())
-            isotopes_.emplace_back(atd.atomType(), Isotopes::naturalIsotope(atd.atomType()->Z()));
+            isotopes_.emplace_back(atd.atomType(), Sears91::naturalIsotope(atd.atomType()->Z()));
     }
 }
 
 // Validate current AtomType/Isotopes against available AtomTypes
 void Isotopologue::checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
 {
-    for (const auto at : atomTypes)
+    for (const auto &at : atomTypes)
         isotopes_.erase(
             std::remove_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; }),
             isotopes_.end());
 }
 
 // Set Isotope associated to AtomType
-void Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope)
+void Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Sears91::Isotope isotope)
 {
-    // Check for NULL pointer
-    if (!at)
-    {
-        // TODO Use assertion
-        Messenger::error("NULL_POINTER - NULL AtomType pointer passed to Isotopologue::setAtomTypeIsotope().\n");
-        return;
-    }
+    assert(at);
 
     // Find the requested AtomType in the list
     auto it = std::find_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; });
@@ -76,14 +70,14 @@ void Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *iso
 }
 
 // Return Isotope for specified AtomType
-Isotope *Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
+Sears91::Isotope Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
 {
     auto it = std::find_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; });
     if (it == isotopes_.end())
-        return Isotopes::naturalIsotope(at->Z());
+        return Sears91::naturalIsotope(at->Z());
 
     return std::get<1>(*it);
 }
 
 // Return AtomType/Isotope pairs list
-const std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> &Isotopologue::isotopes() const { return isotopes_; }
+const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isotopologue::isotopes() const { return isotopes_; }

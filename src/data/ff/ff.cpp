@@ -47,10 +47,11 @@ bool Forcefield::prepare()
 // Return enum options for ShortRangeType
 EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 {
-    return EnumOptions<Forcefield::ShortRangeType>("ShortRangeType", {{Forcefield::UndefinedType, "Undefined"},
-                                                                      {Forcefield::NoInteractionType, "None"},
-                                                                      {Forcefield::LennardJonesType, "LJ"},
-                                                                      {Forcefield::LennardJonesGeometricType, "LJGeometric"}});
+    return EnumOptions<Forcefield::ShortRangeType>("ShortRangeType",
+                                                   {{Forcefield::ShortRangeType::Undefined, "Undefined"},
+                                                    {Forcefield::ShortRangeType::NoInteraction, "None"},
+                                                    {Forcefield::ShortRangeType::LennardJones, "LJ", 2, 2},
+                                                    {Forcefield::ShortRangeType::LennardJonesGeometric, "LJGeometric", 2, 2}});
 }
 
 /*
@@ -201,28 +202,28 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
 
 // Add bond term
 void Forcefield::addBondTerm(std::string_view typeI, std::string_view typeJ, SpeciesBond::BondFunction form,
-                             const std::vector<double> parameters)
+                             const std::vector<double> &parameters)
 {
     bondTerms_.emplace_back(typeI, typeJ, form, parameters);
 }
 
 // Add angle term
 void Forcefield::addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                              SpeciesAngle::AngleFunction form, const std::vector<double> parameters)
+                              SpeciesAngle::AngleFunction form, const std::vector<double> &parameters)
 {
     angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameters);
 }
 
 // Add torsion term
 void Forcefield::addTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters)
+                                SpeciesTorsion::TorsionFunction form, const std::vector<double> &parameters)
 {
     torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
 
 // Add improper term
 void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                 SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters)
+                                 SpeciesTorsion::TorsionFunction form, const std::vector<double> &parameters)
 {
     improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
@@ -301,8 +302,12 @@ bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpec
     else
         Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
 
-    // Copy parameters from the Forcefield's atom type
-    at->setShortRangeParameters(assignedType.parameters());
+    // Copy parameters from the assigned atom type - we take only the required number for the specified shortRangeType.
+    // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
+    std::vector<double> params;
+    params.insert(params.begin(), assignedType.parameters().begin(),
+                  assignedType.parameters().begin() + Forcefield::shortRangeTypes().minArgs(shortRangeType()).value_or(0));
+    at->setShortRangeParameters(params);
     at->setShortRangeType(shortRangeType());
     at->setCharge(assignedType.charge());
 

@@ -152,7 +152,7 @@ class Box
      */
     public:
     // Return angle (in degrees, no MIM) between Atoms
-    double angleInDegrees(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k) const;
+    double angleInDegrees(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, const std::shared_ptr<Atom> &k) const;
     // Return angle (in degrees) between coordinates
     double angleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k) const;
     // Return angle (in degrees) between supplied normalised vectors
@@ -180,55 +180,55 @@ class NonPeriodicBox : public Box
 {
     public:
     NonPeriodicBox(double length);
-    ~NonPeriodicBox();
+    ~NonPeriodicBox() override;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
+    Vec3<double> minimumVector(const Atom &i, const Atom &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image distance from 'i' to 'j' (references)
-    double minimumDistance(const Atom &i, const Atom &j) const;
+    double minimumDistance(const Atom &i, const Atom &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j' (pointers)
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image squared distance from 'i' to 'j' (references)
-    double minimumDistanceSquared(const Atom &i, const Atom &j) const;
+    double minimumDistanceSquared(const Atom &i, const Atom &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
      */
     public:
     // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const;
+    Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const;
+    Vec3<double> fold(const Vec3<double> &i) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const;
+    Vec3<double> foldFrac(const Vec3<double> &i) const override;
     // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const;
+    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
 
 // Cubic Box Definition
@@ -236,55 +236,55 @@ class CubicBox : public Box
 {
     public:
     CubicBox(double length);
-    ~CubicBox();
+    ~CubicBox() override;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
+    Vec3<double> minimumVector(const Atom &i, const Atom &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image distance from 'i' to 'j' (references)
-    double minimumDistance(const Atom &i, const Atom &j) const;
+    double minimumDistance(const Atom &i, const Atom &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j' (pointers)
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image squared distance from 'i' to 'j' (references)
-    double minimumDistanceSquared(const Atom &i, const Atom &j) const;
+    double minimumDistanceSquared(const Atom &i, const Atom &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
      */
     public:
     // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const;
+    Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const;
+    Vec3<double> fold(const Vec3<double> &i) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const;
+    Vec3<double> foldFrac(const Vec3<double> &i) const override;
     // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const;
+    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
 
 // Orthorhombic Box Definition
@@ -292,55 +292,55 @@ class OrthorhombicBox : public Box
 {
     public:
     OrthorhombicBox(const Vec3<double> lengths);
-    ~OrthorhombicBox();
+    ~OrthorhombicBox() override;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
+    Vec3<double> minimumVector(const Atom &i, const Atom &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image distance from 'i' to 'j' (references)
-    double minimumDistance(const Atom &i, const Atom &j) const;
+    double minimumDistance(const Atom &i, const Atom &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j' (pointers)
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image squared distance from 'i' to 'j' (references)
-    double minimumDistanceSquared(const Atom &i, const Atom &j) const;
+    double minimumDistanceSquared(const Atom &i, const Atom &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
      */
     public:
     // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const;
+    Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const;
+    Vec3<double> fold(const Vec3<double> &i) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const;
+    Vec3<double> foldFrac(const Vec3<double> &i) const override;
     // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const;
+    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
 
 // Monoclinic Box Definition
@@ -348,55 +348,55 @@ class MonoclinicBox : public Box
 {
     public:
     MonoclinicBox(const Vec3<double> lengths, double beta);
-    ~MonoclinicBox();
+    ~MonoclinicBox() override;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
+    Vec3<double> minimumVector(const Atom &i, const Atom &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image distance from 'i' to 'j' (references)
-    double minimumDistance(const Atom &i, const Atom &j) const;
+    double minimumDistance(const Atom &i, const Atom &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j' (pointers)
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image squared distance from 'i' to 'j' (references)
-    double minimumDistanceSquared(const Atom &i, const Atom &j) const;
+    double minimumDistanceSquared(const Atom &i, const Atom &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
      */
     public:
     // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const;
+    Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const;
+    Vec3<double> fold(const Vec3<double> &i) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const;
+    Vec3<double> foldFrac(const Vec3<double> &i) const override;
     // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const;
+    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
 
 // Triclinic Box Definition
@@ -404,53 +404,53 @@ class TriclinicBox : public Box
 {
     public:
     TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles);
-    ~TriclinicBox();
+    ~TriclinicBox() override;
 
     /*
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const override;
     // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
+    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
+    Vec3<double> minimumVector(const Atom &i, const Atom &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
+    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image distance from 'i' to 'j' (references)
-    double minimumDistance(const Atom &i, const Atom &j) const;
+    double minimumDistance(const Atom &i, const Atom &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j' (pointers)
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const override;
     // Return minimum image squared distance from 'i' to 'j' (references)
-    double minimumDistanceSquared(const Atom &i, const Atom &j) const;
+    double minimumDistanceSquared(const Atom &i, const Atom &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const override;
     // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
+    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
      */
     public:
     // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const;
+    Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const;
+    Vec3<double> fold(const Vec3<double> &i) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const;
+    Vec3<double> foldFrac(const Vec3<double> &i) const override;
     // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const;
+    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };

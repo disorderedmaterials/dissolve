@@ -16,7 +16,7 @@ void ModuleGroups::addAllowedModuleType(std::string_view moduleType)
     if (moduleTypeIsAllowed(moduleType))
         return;
 
-    allowedModuleTypes_.push_back(std::string(moduleType));
+    allowedModuleTypes_.emplace_back(moduleType);
 }
 
 // Set list of allowed Module types

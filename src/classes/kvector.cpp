@@ -3,29 +3,17 @@
 
 #include "classes/kvector.h"
 #include "classes/braggreflection.h"
+#include "templates/algorithms.h"
 
-KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes)
-{
-    hkl_.set(h, k, l);
-    braggReflectionIndex_ = reflectionIndex;
-
-    // Create atomtype contribution arrays
-    cosTerms_.initialise(nAtomTypes);
-    sinTerms_.initialise(nAtomTypes);
-}
-
-KVector::~KVector() {}
+KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) { initialise(h, k, l, reflectionIndex, nAtomTypes); }
 
 KVector::KVector(const KVector &source) { (*this) = source; }
 
-// Operator=
-void KVector::operator=(const KVector &source)
-{
-    hkl_ = source.hkl_;
-    braggReflectionIndex_ = source.braggReflectionIndex_;
-    cosTerms_ = source.cosTerms_;
-    sinTerms_ = source.sinTerms_;
-}
+KVector::KVector(KVector &&source) noexcept { (*this) = source; }
+
+KVector::KVector(const KVector &&source) noexcept { (*this) = source; }
+
+KVector &KVector::operator=(const KVector &source) = default;
 
 /*
  * Data
@@ -38,8 +26,8 @@ void KVector::initialise(int h, int k, int l, int reflectionIndex, int nAtomType
     braggReflectionIndex_ = reflectionIndex;
 
     // Create atomtype contribution arrays
-    cosTerms_.initialise(nAtomTypes);
-    sinTerms_.initialise(nAtomTypes);
+    cosTerms_.resize(nAtomTypes, 0);
+    sinTerms_.resize(nAtomTypes, 0);
 }
 
 // Return integer hkl indices
@@ -63,8 +51,8 @@ int KVector::braggReflectionIndex() const { return braggReflectionIndex_; }
 // Zero cos/sin term arrays
 void KVector::zeroCosSinTerms()
 {
-    cosTerms_ = 0.0;
-    sinTerms_ = 0.0;
+    std::fill(cosTerms_.begin(), cosTerms_.end(), 0.0);
+    std::fill(sinTerms_.begin(), sinTerms_.end(), 0.0);
 }
 
 // Add value to cosTerm index specified
@@ -74,26 +62,18 @@ void KVector::addCosTerm(int atomTypeIndex, double value) { cosTerms_[atomTypeIn
 void KVector::addSinTerm(int atomTypeIndex, double value) { sinTerms_[atomTypeIndex] += value; }
 
 // Calculate intensities from stored cos and sin term arrays
-void KVector::calculateIntensities(BraggReflection *reflectionArray)
+void KVector::calculateIntensities(std::vector<BraggReflection> &reflections)
 {
-    assert(reflectionArray);
-
     // Calculate final intensities from stored cos/sin terms
     // Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
-    // Do *not* multiply cross-terms (i != j) by 2 - we want to generate the unmultiplied intensity for consistency with
+    // Do *not* multiply cross-terms (i != j) by 2 - we want to generate the un-multiplied intensity for consistency with
     // other objects
-    int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
-    double intensity;
-    BraggReflection &braggReflection = reflectionArray[braggReflectionIndex_];
+    auto halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
+    auto &braggReflection = reflections[braggReflectionIndex_];
     braggReflection.addKVectors(halfSphereNorm);
-    for (i = 0; i < nTypes; ++i)
-    {
-        for (j = i; j < nTypes; ++j)
-        {
-            intensity = (cosTerms_[i] * cosTerms_[j] + sinTerms_[i] * sinTerms_[j]);
-            braggReflection.addIntensity(i, j, intensity * halfSphereNorm);
-        }
-    }
+    for_each_pair(0, cosTerms_.size(), [&](auto i, auto j) {
+        braggReflection.addIntensity(i, j, (cosTerms_[i] * cosTerms_[j] + sinTerms_[i] * sinTerms_[j]) * halfSphereNorm);
+    });
 }
 
 // Return specified intensity

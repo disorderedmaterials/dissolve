@@ -32,7 +32,7 @@ Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, 
     max_ = maxValue;
 }
 
-Vec3DoubleKeyword::~Vec3DoubleKeyword() {}
+Vec3DoubleKeyword::~Vec3DoubleKeyword() = default;
 
 /*
  * Label Type

@@ -109,11 +109,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesAngle::AngleFunction af;
     SpeciesTorsion::TorsionFunction tf;
     SpeciesBond::BondType bt;
-    Isotope *tope;
     auto blockDone = false, error = false;
-
-    // Turn off intramolecular term autogeneration while we're reading
-    autoUpdateIntramolecularTerms_ = false;
 
     while (!parser.eofOrBlank())
     {
@@ -332,12 +328,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     while (!coordinateSetParser.eofOrBlank())
                     {
-                        CoordinateSet *coordSet = addCoordinateSet();
-                        if (!coordinateSetInputCoordinates_.importData(coordinateSetParser, coordSet->coordinates()))
+                        auto &coordSet = addCoordinateSet();
+                        if (!coordinateSetInputCoordinates_.importData(coordinateSetParser, coordSet))
                         {
                             Messenger::error("Failed to read coordinate set {} from file.\n", nCoordinateSets());
                             error = true;
-                            coordinateSets_.remove(coordSet);
                             break;
                         }
                     }
@@ -443,8 +438,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     // Is the supplied isotope valid for the AtomType's element?
                     auto A = std::stoi(std::string(arg2));
-                    tope = Isotopes::isotope(at->Z(), A);
-                    if (tope == nullptr)
+                    if (!Sears91::hasIsotope(at->Z(), A))
                     {
                         Messenger::error("No such Isotope ({}) for element {} (AtomType '{}') in Isotopologue "
                                          "'{}', Species '{}'\n",
@@ -454,7 +448,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    iso->setAtomTypeIsotope(at, tope);
+                    iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
                 }
                 break;
             case (Species::SiteKeyword):
@@ -543,9 +537,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         if (blockDone)
             break;
     }
-
-    // Turn intramolecular term autogeneration back on
-    autoUpdateIntramolecularTerms_ = true;
 
     // If there's no error and the blockDone flag isn't set, return an error
     if (!error && !blockDone)
@@ -752,10 +743,10 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             for (auto [atomType, isotope] : iso->isotopes())
             {
                 // No need to write anything that's the natural isotope...
-                if (isotope->A() == 0)
+                if (Sears91::A(isotope) == 0)
                     continue;
 
-                if (!parser.writeLineF("  {}={}", atomType->name(), isotope->A()))
+                if (!parser.writeLineF("  {}={}", atomType->name(), Sears91::A(isotope)))
                     return false;
             }
             if (!parser.writeLineF("\n"))

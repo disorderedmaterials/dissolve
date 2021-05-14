@@ -2,11 +2,12 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "genericitems/producers.h"
+#include "classes/braggreflection.h"
+#include "classes/kvector.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/partialsetaccumulator.h"
 #include "classes/xrayweights.h"
-#include "genericitems/list.h"
 #include "math/data1d.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
@@ -22,15 +23,15 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<double>("double");
     registerProducer<int>("int");
 
-    // stdlib
+    // Standard Classes / Containers
     registerProducer<std::string>("std::string");
     registerProducer<std::streampos>("streampos");
     registerProducer<std::vector<double>>("std::vector<double>");
+    registerProducer<std::vector<Vec3<double>>>("std::vector<Vec3<double>>");
 
-    // Custom Classes
-    registerProducer<Array<double>>("Array<double>");
+    // Custom Classes / Containers
     registerProducer<Array<SampledDouble>>("Array<SampledDouble>");
-    registerProducer<Array<Vec3<double>>>("Array<Vec3<double>>");
+    registerProducer<Array2D<double>>("Array2D<double>");
     registerProducer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>");
     registerProducer<Array2D<Data1D>>("Array2D<Data1D>");
     registerProducer<AtomTypeList>("AtomTypeList");
@@ -47,6 +48,10 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Vec3<int>>("Vec3<int>");
     registerProducer<Vec3<double>>("Vec3<double>");
     registerProducer<XRayWeights>("XRayWeights");
+
+    // Containers of Custom Classes
+    registerProducer<std::vector<BraggReflection>>("std::vector<BraggReflection>");
+    registerProducer<std::vector<KVector>>("std::vector<KVector>");
 }
 
 /*

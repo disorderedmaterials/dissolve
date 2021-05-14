@@ -14,7 +14,7 @@ class OPLSAA2005BaseForcefield : public Forcefield
 {
     public:
     OPLSAA2005BaseForcefield();
-    virtual ~OPLSAA2005BaseForcefield();
+    ~OPLSAA2005BaseForcefield() override;
 
     /*
      * Definition
@@ -38,18 +38,18 @@ class OPLSAA2005BaseForcefield : public Forcefield
     public:
     // Return bond term for the supplied atom type pair (if it exists)
     OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
-                                                                   const ForcefieldAtomType &j) const;
+                                                                   const ForcefieldAtomType &j) const override;
     // Return angle term for the supplied atom type trio (if it exists)
     OptionalReferenceWrapper<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
-                                                                     const ForcefieldAtomType &k) const;
+                                                                     const ForcefieldAtomType &k) const override;
     // Return torsion term for the supplied atom type quartet (if it exists)
     OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i,
                                                                          const ForcefieldAtomType &j,
                                                                          const ForcefieldAtomType &k,
-                                                                         const ForcefieldAtomType &l) const;
+                                                                         const ForcefieldAtomType &l) const override;
     // Return improper term for the supplied atom type quartet (if it exists)
     OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i,
                                                                            const ForcefieldAtomType &j,
                                                                            const ForcefieldAtomType &k,
-                                                                           const ForcefieldAtomType &l) const;
+                                                                           const ForcefieldAtomType &l) const override;
 };

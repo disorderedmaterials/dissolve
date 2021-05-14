@@ -22,7 +22,6 @@ add_library(
   configuration_io.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
-  coordinateset.cpp
   coredata.cpp
   data1dstore.cpp
   data2dstore.cpp
@@ -81,7 +80,6 @@ add_library(
   changedata.h
   changestore.h
   configuration.h
-  coordinateset.h
   coredata.h
   data1dstore.h
   data2dstore.h
@@ -126,4 +124,4 @@ add_library(
 )
 
 include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(classes PRIVATE base)
+target_link_libraries(classes PRIVATE base ${THREADING_LINK_LIBS})

@@ -3,6 +3,8 @@
 
 #include "genericitems/serialisers.h"
 #include "base/lineparser.h"
+#include "classes/braggreflection.h"
+#include "classes/kvector.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/partialsetaccumulator.h"
@@ -25,7 +27,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<int>(
         [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<int>(a)); });
 
-    // stdlib
+    // Standard Classes / Containers
     registerSerialiser<std::string>(
         [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<std::string>(a)); });
     registerSerialiser<std::streampos>(
@@ -39,32 +41,23 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-
-    // Custom Classes
-    registerSerialiser<Array<double>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array<double> &>(a);
-        if (!parser.writeLineF("{}\n", v.nItems()))
+    registerSerialiser<std::vector<Vec3<double>>>([](const std::any &a, LineParser &parser) {
+        const auto &v = std::any_cast<const std::vector<Vec3<double>> &>(a);
+        if (!parser.writeLineF("{}\n", v.size()))
             return false;
-        for (auto n = 0; n < v.nItems(); ++n)
-            if (!parser.writeLineF("{}\n", v.at(n)))
+        for (auto &n : v)
+            if (!parser.writeLineF("{} {} {}\n", n.x, n.y, n.z))
                 return false;
         return true;
     });
+
+    // Custom Classes / Containers
     registerSerialiser<Array<SampledDouble>>([](const std::any &a, LineParser &parser) {
         const auto &v = std::any_cast<const Array<SampledDouble> &>(a);
         if (!parser.writeLineF("{}\n", v.nItems()))
             return false;
         for (auto n = 0; n < v.nItems(); ++n)
             if (!v.at(n).serialise(parser))
-                return false;
-        return true;
-    });
-    registerSerialiser<Array<Vec3<double>>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array<Vec3<double>> &>(a);
-        if (!parser.writeLineF("{}\n", v.nItems()))
-            return false;
-        for (auto n = 0; n < v.nItems(); ++n)
-            if (!parser.writeLineF("{}\n", v.at(n).x, v.at(n).y, v.at(n).z))
                 return false;
         return true;
     });
@@ -120,6 +113,9 @@ GenericItemSerialiser::GenericItemSerialiser()
         return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
     });
     registerSerialiser<XRayWeights>(simpleSerialise<XRayWeights>);
+
+    // Containers of Custom Classes
+    registerSerialiser<std::vector<BraggReflection>>(vectorSerialise<BraggReflection>);
 }
 
 /*

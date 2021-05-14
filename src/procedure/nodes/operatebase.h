@@ -17,7 +17,7 @@ class OperateProcedureNodeBase : public ProcedureNode
 {
     public:
     OperateProcedureNodeBase(ProcedureNode::NodeType nodeType);
-    virtual ~OperateProcedureNodeBase() override = default;
+    ~OperateProcedureNodeBase() override = default;
 
     /*
      * Identity
@@ -26,7 +26,7 @@ class OperateProcedureNodeBase : public ProcedureNode
     // Return whether specified context is relevant for this node type
     bool isContextRelevant(ProcedureNode::NodeContext context) override;
     // Return whether a name for the node must be provided
-    bool mustBeNamed() const;
+    bool mustBeNamed() const override;
 
     /*
      * Data Target

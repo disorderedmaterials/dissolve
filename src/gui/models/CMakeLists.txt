@@ -1,5 +1,8 @@
 set(models_MOC_HDRS
+    braggReflectionFilterProxy.h
+    braggReflectionModel.h
     dataManagerReferencePointModel.h
+    dataManagerSimulationModel.h
     xmlAngleModel.h
     xmlAtomModel.h
     xmlBondModel.h
@@ -16,7 +19,10 @@ set(models_MOC_HDRS
 qt5_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
 set(models_SRCS
+    braggReflectionFilterProxy.cpp
+    braggReflectionModel.cpp
     dataManagerReferencePointModel.cpp
+    dataManagerSimulationModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -32,7 +38,9 @@ set(models_SRCS
 
 qt_wrap_cpp(
   models_SRCS
+  braggReflectionModel.h
   dataManagerReferencePointModel.h
+  dataManagerSimulationModel.h
   xmlAngleModel.h
   xmlAtomModel.h
   xmlBondModel.h

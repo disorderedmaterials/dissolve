@@ -3,15 +3,18 @@
 
 #pragma once
 
+#include "classes/braggreflection.h"
+#include "gui/models/braggReflectionFilterProxy.h"
+#include "gui/models/braggReflectionModel.h"
 #include "gui/modulewidget.h"
 #include "modules/bragg/gui/ui_modulewidget.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
+class AtomTypeList;
 class BraggModule;
 class Configuration;
 class Dissolve;
-class Module;
-class PartialSet;
 class DataViewer;
 
 // Module Widget
@@ -22,13 +25,11 @@ class BraggModuleWidget : public ModuleWidget
 
     public:
     BraggModuleWidget(QWidget *parent, const GenericList &processingData, BraggModule *module);
-    ~BraggModuleWidget();
+    ~BraggModuleWidget() = default;
 
     private:
     // Associated Module
     BraggModule *module_;
-    // DataViewers contained within this widget
-    DataViewer *reflectionsGraph_, *totalsGraph_;
 
     /*
      * UI
@@ -36,6 +37,18 @@ class BraggModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::BraggModuleWidget ui_;
+    // DataViewer contained within this widget
+    DataViewer *graph_;
+    // Model for BraggReflection data
+    BraggReflectionModel braggModel_;
+    // Filter proxy for BreggReflection data
+    BraggReflectionFilterProxy braggFilterProxy_;
+    // Reflection data to display
+    OptionalReferenceWrapper<const std::vector<BraggReflection>> reflectionData_;
+    // Reflection atom types data
+    OptionalReferenceWrapper<const AtomTypeList> reflectionAtomTypesData_;
+    // Last version of reflection data displayed
+    int reflectionDataDisplayVersion_;
 
     public:
     // Update controls within widget
@@ -44,14 +57,9 @@ class BraggModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private:
-    // Current Configuration whose data is being displayed
-    Configuration *currentConfiguration_;
-
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets();
-
     private slots:
-    void on_TargetCombo_currentIndexChanged(int index);
+    void on_PartialsButton_clicked(bool checked);
+    void on_TotalsButton_clicked(bool checked);
+    void on_ReflectionsButton_clicked(bool checked);
+    void on_HideSmallIntensitiesCheck_clicked(bool checked);
 };

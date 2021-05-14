@@ -16,7 +16,7 @@ class IsotopologueSetKeyword : public KeywordData<IsotopologueSet &>
 {
     public:
     IsotopologueSetKeyword(IsotopologueSet &set);
-    ~IsotopologueSetKeyword();
+    ~IsotopologueSetKeyword() override;
 
     /*
      * Arguments
@@ -36,7 +36,7 @@ class IsotopologueSetKeyword : public KeywordData<IsotopologueSet &>
      */
     protected:
     // Prune any references to the supplied Species in the contained data
-    void removeReferencesTo(Species *sp);
+    void removeReferencesTo(Species *sp) override;
     // Prune any references to the supplied Isotopologue in the contained data
-    void removeReferencesTo(Isotopologue *iso);
+    void removeReferencesTo(Isotopologue *iso) override;
 };

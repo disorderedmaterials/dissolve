@@ -12,7 +12,7 @@ Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockT
     context_ = context;
 }
 
-Procedure::~Procedure() {}
+Procedure::~Procedure() = default;
 
 /*
  * Data

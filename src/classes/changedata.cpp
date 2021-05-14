@@ -6,14 +6,14 @@
 #include "classes/atom.h"
 #include "classes/cell.h"
 
-ChangeData::ChangeData() : atom_(nullptr), moved_(false), cell_(nullptr) {}
+ChangeData::ChangeData() : atom_(nullptr) {}
 
 /*
  * Target Data
  */
 
 // Set target atom
-void ChangeData::setAtom(std::shared_ptr<Atom> i)
+void ChangeData::setAtom(const std::shared_ptr<Atom> &i)
 {
     assert(i != nullptr);
 

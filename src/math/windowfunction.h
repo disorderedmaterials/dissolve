@@ -36,7 +36,7 @@ class WindowFunction
     // Functional Form
     Form form_;
     // Maximal x value for current data target
-    double xMax_;
+    double xMax_{0.0};
 
     public:
     // Set functional form

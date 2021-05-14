@@ -2,8 +2,9 @@
 enable_testing()
 
 function(dissolve_system_test directory file_name count)
+  message(STATUS "... System test '${file_name}' in directory '${directory}'")
   if(PARALLEL)
-    foreach(nproc 1 2 3 4)
+    foreach(nproc 1 2)
       set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
       add_test(
         NAME ${directory}-${file_name}-${nproc}
@@ -24,23 +25,20 @@ function(dissolve_system_test directory file_name count)
   endif()
 endfunction()
 
-add_subdirectory(atomshake)
-add_subdirectory(broadening)
-add_subdirectory(calculate_avgmol)
-add_subdirectory(calculate_cn)
-add_subdirectory(calculate_dangle)
-add_subdirectory(calculate_rdf)
-add_subdirectory(calculate_sdf)
-add_subdirectory(correlations)
-add_subdirectory(energyforce1)
-add_subdirectory(energyforce2)
-add_subdirectory(energyforce3)
-add_subdirectory(energyforce4)
-add_subdirectory(epsr)
-add_subdirectory(exchangeable)
-add_subdirectory(ff)
-add_subdirectory(md)
-add_subdirectory(molshake)
-add_subdirectory(rdfmethod)
-add_subdirectory(restart)
-add_subdirectory(xray)
+# System test subdirectories
+message(STATUS "Looking for system tests in ${CMAKE_CURRENT_SOURCE_DIR}...")
+file(
+  GLOB children
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  "*"
+)
+set(SYSTEM_TEST_DIRS "")
+foreach(child ${children})
+  if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${child} AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${child}/CMakeLists.txt)
+    list(APPEND SYSTEM_TEST_DIRS ${child})
+  endif()
+endforeach()
+
+foreach(subdir ${SYSTEM_TEST_DIRS})
+  add_subdirectory(${subdir})
+endforeach()

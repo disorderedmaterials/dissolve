@@ -16,7 +16,7 @@ void Configuration::updateCellContents()
 }
 
 // Update Cell location of specified Atom
-void Configuration::updateCellLocation(std::shared_ptr<Atom> i)
+void Configuration::updateCellLocation(const std::shared_ptr<Atom> &i)
 {
     // Fold Atom coordinates into Box
     i->setCoordinates(box_->fold(i->r()));
@@ -34,7 +34,7 @@ void Configuration::updateCellLocation(std::shared_ptr<Atom> i)
 }
 
 // Update Cell location of specified Molecule
-void Configuration::updateCellLocation(std::shared_ptr<Molecule> mol)
+void Configuration::updateCellLocation(const std::shared_ptr<Molecule> &mol)
 {
     for (auto n = 0; n < mol->nAtoms(); ++n)
         updateCellLocation(mol->atom(n));

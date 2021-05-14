@@ -19,7 +19,7 @@ class NETAPresenceNode : public NETANode
     public:
     NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
                      std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
-    ~NETAPresenceNode() = default;
+    ~NETAPresenceNode() override = default;
 
     /*
      * Atom Targets
@@ -73,5 +73,5 @@ class NETAPresenceNode : public NETANode
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &availableAtoms) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &availableAtoms) const override;
 };

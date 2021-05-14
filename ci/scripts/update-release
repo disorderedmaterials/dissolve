@@ -15,6 +15,7 @@ DELETE_ALL_ASSETS="false"
 UPDATE_TAG_SHA="false"
 ARTIFACTS=""
 NARTIFACTS=0
+CURL_OPTS="-H 'Accept: application/vnd.github.v3+json' --silent --show-error"
 
 usage()
 {
@@ -142,7 +143,7 @@ i=0
 while (( i < 3 ))
 do
 	# Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
-	RELEASES=$(curl --silent --show-error -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
+	RELEASES=$(curl ${CURL_OPTS} -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
 
 	# Check for error or no data
 	if [[ $RELEASES =~ "documentation_url" ]]
@@ -184,7 +185,7 @@ then
 		if [ "$TAG_HASH" != "$HEAD_HASH" ] || [ "$DELETE_EXISTING_ALWAYS" = "true" ]
 		then
 			echo " -- Removing existing release..."
-			curl --silent --show-error -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" $CURRENT_URL
+			curl ${CURL_OPTS} -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" $CURRENT_URL
 
 			# Reset url so it gets recreated
 			CURRENT_URL="x"
@@ -199,9 +200,9 @@ then
 		# Update tag SHA?
 		if [ "$UPDATE_TAG_SHA" = "true" ]
 		then
-			TAG_HASH=`git rev-parse --short HEAD`
+			TAG_HASH=`git rev-parse HEAD`
 			echo " -- Updating tag hash to that of the current HEAD (${TAG_HASH})"
-			RESULT=$(curl --silent --show-error -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${TAG_HASH}'" }' ${REPO_URL}/git/refs/tags/${RELEASE_TAG})
+			RESULT=$(curl ${CURL_OPTS} -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${TAG_HASH}'" }' ${REPO_URL}/git/refs/tags/${RELEASE_TAG})
 		fi
 
 		# Construct release information
@@ -216,17 +217,17 @@ then
 
 		# Patch release
 		echo " -- Patching existing release info..."
-		RESULT=$(curl --silent --show-error -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
+		RESULT=$(curl ${CURL_OPTS} -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
 
 		# Delete existing assets?
 		if [ "$DELETE_ALL_ASSETS" = "true" ]
 		then
-			ASSETS=$(curl --silent --show-error -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${CURRENT_URL}/assets)
+			ASSETS=$(curl ${CURL_OPTS} -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${CURRENT_URL}/assets)
 			ASSET_IDS=$(echo $ASSETS | jq ".[] | .id")
 			for id in $ASSET_IDS
 			do
 				echo "  -- Removing release asset id ${id}..."
-				RESULT=$(curl --silent --show-error -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id})
+				RESULT=$(curl ${CURL_OPTS} -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id})
 			done
 		fi
 	fi
@@ -252,7 +253,7 @@ then
 	echo $RELEASE_DATA
 
 	# Create release
-	CURRENT_RELEASEINFO=$(curl --silent --show-error --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPO_URL}/releases)
+	CURRENT_RELEASEINFO=$(curl ${CURL_OPTS} --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPO_URL}/releases)
 
 	# Extract url
 	CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
@@ -280,7 +281,7 @@ then
 		BASENAME=$(basename "${file}")
 		echo "... $file (basename=$BASENAME)"
 
-		ARTIFACT_DATA=$(curl --silent --show-error --header "Authorization: token ${GITHUB_TOKEN}" \
+		ARTIFACT_DATA=$(curl ${CURL_OPTS} --header "Authorization: token ${GITHUB_TOKEN}" \
 		     --header "Accept: application/vnd.github.manifold-preview" \
 		     --header "Content-Type: application/octet-stream" \
 		     --data-binary @$file \

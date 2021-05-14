@@ -5,7 +5,7 @@
 #include "io/import/forces.h"
 
 // Read simple formatted forces from specified file
-bool ForceImportFileFormat::importSimple(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+bool ForceImportFileFormat::importSimple(LineParser &parser, std::vector<Vec3<double>> &f)
 {
     /*
      * Read force information through the specified line parser.
@@ -23,17 +23,13 @@ bool ForceImportFileFormat::importSimple(LineParser &parser, Array<double> &fx, 
         return false;
     auto nAtoms = parser.argi(0);
     Messenger::print(" --> Expecting forces for {} atoms.\n", nAtoms);
-    fx.initialise(nAtoms);
-    fy.initialise(nAtoms);
-    fz.initialise(nAtoms);
+    f.resize(nAtoms, Vec3<double>());
 
     for (auto n = 0; n < nAtoms; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        fx[n] = parser.argd(1);
-        fy[n] = parser.argd(2);
-        fz[n] = parser.argd(3);
+        f[n] = parser.arg3d(1);
     }
 
     return true;

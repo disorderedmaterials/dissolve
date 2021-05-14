@@ -11,13 +11,29 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "main/dissolve.h"
+#include "math/combinations.h"
 #include "math/error.h"
 #include "math/filters.h"
 #include "module/group.h"
 #include "modules/rdf/rdf.h"
 #include "templates/algorithms.h"
+#include "templates/combinable.h"
 #include <iterator>
+#include <tuple>
 
+namespace
+{
+
+void addHistogramsToPartialSet(Array2D<Histogram1D> &histograms, PartialSet &target)
+{
+    for (auto k = 0; k < target.nAtomTypes(); ++k)
+        for (auto j = 0; j < target.nAtomTypes(); ++j)
+        {
+            auto &histo = target.fullHistogram(k, j);
+            histo = std::move(histograms[{k, j}]);
+        }
+}
+} // namespace
 /*
  * Private Functions
  */
@@ -142,71 +158,79 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     return true;
 }
 
-// Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
-    std::shared_ptr<Atom> i, j;
-    int n, m, typeI;
-    Cell *cellI, *cellJ;
-    double distance;
-    Vec3<double> rI;
-
     // Grab the Box pointer and Cell array
     const auto *box = cfg->box();
     auto &cellArray = cfg->cells();
-
     // Loop context is to use all processes in Pool as one group
+    Combinations comb(cellArray.nCells(), 2);
     auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
     auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto [cStart, cEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
-    auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
-    for (n = begin; n < end; ++n)
+    auto combinableHistograms = dissolve::CombinableValue<Array2D<Histogram1D>>([&partialSet]() {
+        Array2D<Histogram1D> histograms;
+        histograms.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes(), true);
+        for (auto i = 0; i < partialSet.nAtomTypes(); ++i)
+            for (auto j = i; j < partialSet.nAtomTypes(); ++j)
+                histograms[{i, j}] = partialSet.fullHistogram(i, j);
+        return histograms;
+    });
+
+    auto unaryOp = [&combinableHistograms, cfg, &comb, rdfRange](const auto idx) {
+        // auto &histograms = combinableHistograms.local().histograms_;
+        auto &histograms = combinableHistograms.local();
+        const auto *box = cfg->box();
+        auto &cellArray = cfg->cells();
+        auto [n, m] = comb.nthCombination(idx);
+        auto *cellI = cellArray.cell(n);
+        auto *cellJ = cellArray.cell(m);
+
+        if (!cellArray.withinRange(cellI, cellJ, rdfRange))
+            return;
+
+        // Add contributions between atoms in cellI and cellJ
+        auto &atomsI = cellI->atoms();
+        auto &atomsJ = cellJ->atoms();
+
+        // Perform minimum image calculation on all atom pairs -
+        // quicker than working out if we need to given the absence of a 2D look-up array
+        for (auto &i : atomsI)
+        {
+            auto typeI = i->localTypeIndex();
+            auto &rI = i->r();
+
+            for (auto &j : atomsJ)
+            {
+                auto &rJ = j->r();
+                auto distance = box->minimumDistance(rJ, rI);
+                histograms[{typeI, j->localTypeIndex()}].bin(distance);
+            }
+        }
+    };
+
+    // Execute lambda operator for each cell
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(cStart), dissolve::counting_iterator<int>(cEnd),
+                       unaryOp);
+    auto histograms = combinableHistograms.finalize();
+    addHistogramsToPartialSet(histograms, partialSet);
+
+    auto [start, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
+    for (int n = start; n < end; ++n)
     {
-        cellI = cellArray.cell(n);
+        auto *cellI = cellArray.cell(n);
         auto &atomsI = cellI->atoms();
 
         // Add contributions between atoms in cellI
-        for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
-        {
-            i = *iter;
-            typeI = i->localTypeIndex();
-
-            for (auto jter = std::next(iter, 1); jter != atomsI.end(); ++jter)
-            {
-                j = *jter;
-
-                // No need to perform MIM since we're in the same cell
-                distance = (i->r() - j->r()).magnitude();
-                partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
-            }
-        }
-
-        // Add contributions between atoms in cellI and cellJ
-        for (m = n + 1; m < cellArray.nCells(); ++m)
-        {
-            // Grab cell J and check that we need to consider it (i.e. it is within range)
-            cellJ = cellArray.cell(m);
-            if (!cellArray.withinRange(cellI, cellJ, rdfRange))
-                continue;
-
-            auto &atomsJ = cellJ->atoms();
-
-            // Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the
-            // absence of a 2D look-up array
-            for (auto i : atomsI)
-            {
-                typeI = i->localTypeIndex();
-                rI = i->r();
-
-                for (auto j : atomsJ)
-                {
-                    distance = box->minimumDistance(j, rI);
-                    partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
-                }
-            }
-        }
+        for_each_pair(atomsI.begin(), atomsI.end(), [&](const int idx, auto &i, const int jdx, auto &j) {
+            if (idx == jdx)
+                return;
+            // No need to perform MIM since we're in the same cell
+            double distance = (i->r() - j->r()).magnitude();
+            partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+        });
     }
-
     return true;
 }
 
@@ -398,7 +422,8 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &unweightedgr, PairBroadeningFunction &intraBroadening, int smoothing)
+                                      PartialSet &unweightedgr, const Functions::Function1DWrapper intraBroadening,
+                                      int smoothing)
 {
     // If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to
     // maintain the incremental versioning of the data)
@@ -426,21 +451,12 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
-    if ((intraBroadening.function() == PairBroadeningFunction::GaussianFunction) ||
-        (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
-    {
-        auto &types = unweightedgr.atomTypes();
-        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-            // Set up the broadening function for these AtomTypes
-            BroadeningFunction function = intraBroadening.broadeningFunction(typeI.atomType(), typeJ.atomType());
-
-            // Convolute the bound partial with the broadening function
-            Filters::convolve(unweightedgr.boundPartial(i, j), function);
-        });
-    }
+    auto &types = unweightedgr.atomTypes();
+    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+        Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, false, true);
+    });
 
     // Add broadened bound partials back in to full partials
-    auto &types = unweightedgr.atomTypes();
     for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
         unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
     });
@@ -649,7 +665,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 {
     // We either expect two AtomType names and a target next, or the target 'total'
     auto testResult = false;
-    if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == nullptr) && (target == nullptr))
+    if (DissolveSys::sameString(typeIorTotal, "total") && typeJ.empty() && target.empty())
     {
         double error = Error::percent(partials.total(), testData);
         testResult = (error <= testThreshold);

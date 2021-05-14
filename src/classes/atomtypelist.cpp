@@ -9,10 +9,11 @@
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include <algorithm>
+#include <utility>
 
-AtomTypeList::AtomTypeList() {}
+AtomTypeList::AtomTypeList() = default;
 
-AtomTypeList::~AtomTypeList() {}
+AtomTypeList::~AtomTypeList() = default;
 
 AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 
@@ -54,9 +55,7 @@ AtomTypeData &AtomTypeList::add(std::shared_ptr<AtomType> atomType, double popul
         return *atd;
     }
 
-    types_.emplace_back(types_.size(), atomType, 0);
-    types_.back().add(population);
-    return types_.back();
+    return types_.emplace_back(types_.size(), atomType, population);
 }
 
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
@@ -71,8 +70,8 @@ void AtomTypeList::add(const AtomTypeList &source)
         if (otherType.nIsotopes() == 0)
             atd.add(otherType.population());
         else
-            for (auto *topeData = otherType.isotopeData(); topeData != nullptr; topeData = topeData->next())
-                atd.add(topeData->isotope(), topeData->population());
+            for (auto &topeData : otherType.isotopeData())
+                atd.add(topeData.isotope(), topeData.population());
     }
 }
 
@@ -84,13 +83,10 @@ void AtomTypeList::remove(std::shared_ptr<AtomType> atomType)
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope, double popAdd)
+void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd)
 {
-    auto &atd = add(atomType);
-
-    // Add / increase isotope population
-    if (tope != nullptr)
-        atd.add(tope, popAdd);
+    auto &atd = add(std::move(atomType));
+    atd.add(tope, popAdd);
 }
 
 // Finalise list, calculating fractional populations etc.
@@ -112,7 +108,7 @@ void AtomTypeList::finalise(const AtomTypeList &exchangeable)
     double totalFraction = 0.0, boundCoherent = 0.0;
     for (auto &atd : types_)
     {
-        // If this type is not exchangable, move on
+        // If this type is not exchangeable, move on
         if (!exchangeable.contains(atd.atomType()))
             continue;
 
@@ -144,7 +140,7 @@ void AtomTypeList::naturalise()
 }
 
 // Check for presence of AtomType in list
-bool AtomTypeList::contains(std::shared_ptr<AtomType> atomType) const
+bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType) const
 {
     for (auto &atd : types_)
         if (atd.atomType() == atomType)
@@ -154,18 +150,11 @@ bool AtomTypeList::contains(std::shared_ptr<AtomType> atomType) const
 }
 
 // Check for presence of AtomType/Isotope pair in list
-bool AtomTypeList::contains(std::shared_ptr<AtomType> atomType, Isotope *tope)
+bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType, Sears91::Isotope tope) const
 {
-    for (auto &atd : types_)
-    {
-        if (atd.atomType() != atomType)
-            continue;
-        if (!atd.hasIsotope(tope))
-            continue;
-        return true;
-    }
-
-    return false;
+    return std::find_if(types_.begin(), types_.end(), [&atomType, tope](const auto &typeData) {
+               return typeData.atomType() == atomType && typeData.hasIsotope(tope);
+           }) != types_.end();
 }
 
 // Return number of AtomType/Isotopes in list
@@ -181,7 +170,7 @@ std::vector<AtomTypeData>::const_iterator AtomTypeList::begin() const { return t
 std::vector<AtomTypeData>::const_iterator AtomTypeList::end() const { return types_.end(); }
 
 // Return index of AtomType in list
-int AtomTypeList::indexOf(std::shared_ptr<AtomType> atomtype) const
+int AtomTypeList::indexOf(const std::shared_ptr<AtomType> &atomtype) const
 {
     auto count = 0;
     for (auto &atd : types_)
@@ -208,6 +197,32 @@ int AtomTypeList::indexOf(std::string_view name) const
     return -1;
 }
 
+// Return indices of AtomType pair in list
+std::pair<int, int> AtomTypeList::indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
+{
+    auto count = 0, index = -1;
+    for (auto &atd : types_)
+    {
+        if (atd.atomType() == at1)
+        {
+            if (index == -1)
+                index = count;
+            else
+                return {count, index};
+        }
+        if (atd.atomType() == at2)
+        {
+            if (index == -1)
+                index = count;
+            else
+                return {index, count};
+        }
+        ++count;
+    }
+
+    return {-1, -1};
+}
+
 // Return total population of all types in list
 double AtomTypeList::totalPopulation() const
 {
@@ -226,7 +241,7 @@ const std::shared_ptr<AtomType> AtomTypeList::atomType(int n) const
 }
 
 // Return AtomTypeData for specified AtomType
-OptionalReferenceWrapper<const AtomTypeData> AtomTypeList::atomTypeData(std::shared_ptr<AtomType> atomType)
+OptionalReferenceWrapper<const AtomTypeData> AtomTypeList::atomTypeData(const std::shared_ptr<AtomType> &atomType)
 {
     auto it = std::find_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return atomType == atd.atomType(); });
     if (it == types_.end())
@@ -244,16 +259,16 @@ void AtomTypeList::print() const
         char exch = atd.exchangeable() ? 'E' : ' ';
 
         // If there are isotopes defined, print them
-        if (atd.isotopeData())
+        if (!atd.isotopeData().empty())
         {
             Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
                              Elements::symbol(atd.atomType()->Z()), atd.population(), atd.fraction(), atd.boundCoherent());
 
-            for (const auto *topeData = atd.isotopeData(); topeData != nullptr; topeData = topeData->next())
+            for (auto &topeData : atd.isotopeData())
             {
                 Messenger::print("                   {:<3d}   {:<10.6e}  {:10.6f} (of type)  {:6.3f}\n",
-                                 topeData->isotope()->A(), topeData->population(), topeData->fraction(),
-                                 topeData->isotope()->boundCoherent());
+                                 Sears91::A(topeData.isotope()), topeData.population(), topeData.fraction(),
+                                 Sears91::boundCoherent(topeData.isotope()));
             }
         }
         else
@@ -278,6 +293,7 @@ bool AtomTypeList::deserialise(LineParser &parser, const CoreData &coreData)
     auto nItems = parser.argi(0);
     for (auto n = 0; n < nItems; ++n)
     {
+        // Line Contains: AtomType name, population, fraction, boundCoherent, and nIsotopes
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
         auto atomType = coreData.findAtomType(parser.argsv(0));
@@ -288,15 +304,16 @@ bool AtomTypeList::deserialise(LineParser &parser, const CoreData &coreData)
         auto boundCoherent = parser.argd(3);
         auto nIsotopes = parser.argi(4);
 
-        types_.emplace_back(atomType, population, fraction, boundCoherent);
-        auto &atd = types_.back();
+        // Create AtomTypeData
+        auto &atd = types_.emplace_back(atomType, population, fraction, boundCoherent);
+
+        // For each of the nIsotopes, read (and check) A, population, and fraction
         for (auto i = 0; i < nIsotopes; ++i)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            auto Z = Elements::element(parser.argi(0));
-            auto isotope = Isotopes::isotope(Z, parser.argi(1));
-            atd.add(isotope, parser.argd(2));
+            auto isotope = Sears91::isotope(atomType->Z(), parser.argi(0));
+            atd.setIsotope(isotope, parser.argd(1), parser.argd(2));
         }
     }
 
@@ -309,8 +326,16 @@ bool AtomTypeList::serialise(LineParser &parser) const
     if (!parser.writeLineF("{}  # nItems\n", types_.size()))
         return false;
     for (auto &atd : types_)
-        if (!atd.serialise(parser))
+    {
+        // Line Contains: AtomType name, population, fraction, boundCoherent, and nIsotopes
+        if (!parser.writeLineF("{} {} {} {} {}\n", atd.atomTypeName(), atd.population(), atd.fraction(), atd.boundCoherent(),
+                               atd.isotopeData().size()))
             return false;
+        // For each isotope write A, population, and fraction
+        for (const auto &topeData : atd.isotopeData())
+            if (!parser.writeLineF("{} {} {}\n", Sears91::A(topeData.isotope()), topeData.population(), topeData.fraction()))
+                return false;
+    }
 
     return true;
 }

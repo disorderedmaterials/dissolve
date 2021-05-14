@@ -25,7 +25,7 @@ NodeArrayKeywordBase::NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureN
     nodesAreUnique_ = uniqueNodes;
 }
 
-NodeArrayKeywordBase::~NodeArrayKeywordBase() {}
+NodeArrayKeywordBase::~NodeArrayKeywordBase() = default;
 
 /*
  * Parent Node

@@ -33,5 +33,5 @@ class ScaledEnergyKernel : public EnergyKernel
      */
     private:
     // Return PairPotential energy between atoms provided as pointers, at the distance specified
-    double pairPotentialEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r);
+    double pairPotentialEnergy(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, double r);
 };

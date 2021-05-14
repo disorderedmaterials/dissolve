@@ -100,7 +100,8 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
 
 // Search through the Procedure for the named parameter
 std::shared_ptr<ExpressionVariable>
-SequenceProcedureNode::searchParameters(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter) const
+SequenceProcedureNode::searchParameters(std::string_view name,
+                                        const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
@@ -242,7 +243,7 @@ ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, Procedur
 // Return the named parameter if it is currently in scope
 std::shared_ptr<ExpressionVariable>
 SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
-                                        std::shared_ptr<ExpressionVariable> excludeParameter)
+                                        const std::shared_ptr<ExpressionVariable> &excludeParameter)
 {
     if (queryingNode)
         assert(sequence_.contains(queryingNode));
@@ -265,7 +266,7 @@ SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string
 
 // Return whether the named parameter exists in this sequence or its children (branches)
 std::shared_ptr<ExpressionVariable>
-SequenceProcedureNode::parameterExists(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter) const
+SequenceProcedureNode::parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)

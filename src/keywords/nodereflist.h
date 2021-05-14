@@ -62,7 +62,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
                                                                                                nodeRefList)
     {
     }
-    ~NodeRefListKeyword() {}
+    ~NodeRefListKeyword() override = default;
 
     /*
      * Arguments
@@ -73,7 +73,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 99; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         if (!parentNode())
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
@@ -115,7 +115,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
      */
     public:
     // Add the specified node to the list
-    bool addNode(ProcedureNode *node)
+    bool addNode(ProcedureNode *node) override
     {
         if (!node)
             return false;
@@ -143,7 +143,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
         return true;
     }
     // Return the current list (as ProcedureNodes)
-    RefList<const ProcedureNode> nodes() const
+    RefList<const ProcedureNode> nodes() const override
     {
         RefList<const ProcedureNode> nodes;
 
@@ -153,7 +153,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
         return nodes;
     }
     // Return if the specified node is in the current list
-    bool hasNode(ProcedureNode *node)
+    bool hasNode(ProcedureNode *node) override
     {
         for (auto existingNode : KeywordData<RefList<N> &>::data_)
             if (existingNode == node)
@@ -162,7 +162,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
         return false;
     }
     // Remove the specified node from the list
-    bool removeNode(ProcedureNode *node)
+    bool removeNode(ProcedureNode *node) override
     {
         if (!node)
             return false;
@@ -193,7 +193,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(ProcedureNode *node)
+    void removeReferencesTo(ProcedureNode *node) override
     {
         // Check the node type
         if (node->type() != nodeType())

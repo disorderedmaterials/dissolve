@@ -13,7 +13,7 @@ IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeywo
 {
 }
 
-IntegerDoubleVectorKeyword::~IntegerDoubleVectorKeyword() {}
+IntegerDoubleVectorKeyword::~IntegerDoubleVectorKeyword() = default;
 
 // Return minimum number of arguments accepted
 int IntegerDoubleVectorKeyword::minArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(1)); }

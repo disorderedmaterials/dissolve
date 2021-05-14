@@ -5,7 +5,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
-#include <string.h>
+#include <cstring>
 
 // Add new Configuration
 Configuration *Dissolve::addConfiguration()

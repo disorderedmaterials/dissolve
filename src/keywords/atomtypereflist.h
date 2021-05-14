@@ -17,7 +17,7 @@ class AtomTypeRefListKeyword : public KeywordData<std::vector<std::shared_ptr<At
 {
     public:
     AtomTypeRefListKeyword(std::vector<std::shared_ptr<AtomType>> &targetRefList);
-    ~AtomTypeRefListKeyword();
+    ~AtomTypeRefListKeyword() override;
 
     /*
      * Arguments
@@ -37,5 +37,5 @@ class AtomTypeRefListKeyword : public KeywordData<std::vector<std::shared_ptr<At
      */
     protected:
     // Prune any references to the supplied AtomType in the contained data
-    void removeReferencesTo(std::shared_ptr<AtomType> at);
+    void removeReferencesTo(std::shared_ptr<AtomType> at) override;
 };

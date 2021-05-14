@@ -3,9 +3,9 @@
 
 #include "math/doubleexp.h"
 #include "base/sysfunc.h"
+#include <cmath>
 #include <fmt/core.h>
 #include <limits>
-#include <math.h>
 
 DoubleExp::DoubleExp()
 {

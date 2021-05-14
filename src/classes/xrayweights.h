@@ -27,13 +27,13 @@ class XRayWeights
      */
     private:
     // X-Ray form factors to use
-    XRayFormFactors::XRayFormFactorData formFactors_;
+    XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::NoFormFactorData};
     // Type list derived from supplied Species
     AtomTypeList atomTypes_;
     // Form factor data for atom types
     std::vector<std::reference_wrapper<const FormFactorData>> formFactorData_;
     // Whether the structure is valid (i.e. has been finalised)
-    bool valid_;
+    bool valid_{false};
 
     private:
     // Initialise form factor data for the current atom types

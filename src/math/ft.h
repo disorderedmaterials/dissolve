@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "math/broadeningfunction.h"
+#include "math/function1d.h"
 #include "math/windowfunction.h"
 
 // Forward Declarations
@@ -15,5 +15,6 @@ namespace Fourier
 // Perform Fourier sine transform of supplied data, over range specified, and with specified window and broadening
 // functions applied
 bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax,
-            WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction());
+            WindowFunction windowFunction = WindowFunction(),
+            const Functions::Function1DWrapper &broadening = Functions::Function1DWrapper());
 }; // namespace Fourier

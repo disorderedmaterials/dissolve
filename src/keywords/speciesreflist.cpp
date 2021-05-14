@@ -11,7 +11,7 @@ SpeciesRefListKeyword::SpeciesRefListKeyword(RefList<Species> &references)
 {
 }
 
-SpeciesRefListKeyword::~SpeciesRefListKeyword() {}
+SpeciesRefListKeyword::~SpeciesRefListKeyword() = default;
 
 /*
  * Data

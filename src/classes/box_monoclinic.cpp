@@ -34,7 +34,7 @@ MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
     finalise();
 }
 
-MonoclinicBox::~MonoclinicBox() {}
+MonoclinicBox::~MonoclinicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

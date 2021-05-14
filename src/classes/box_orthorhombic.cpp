@@ -26,7 +26,7 @@ OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
     finalise();
 }
 
-OrthorhombicBox::~OrthorhombicBox() {}
+OrthorhombicBox::~OrthorhombicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

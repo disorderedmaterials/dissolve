@@ -17,7 +17,7 @@ class MoleculeDistributor : public Distributor
     public:
     MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
                         ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
-    ~MoleculeDistributor();
+    ~MoleculeDistributor() override;
 
     /*
      * Data
@@ -31,5 +31,5 @@ class MoleculeDistributor : public Distributor
      */
     private:
     // Return array of Cells that we must hard lock in order to modify the object with index specified
-    Array<Cell *> cellsToBeModifiedForObject(int objectId);
+    std::vector<Cell *> cellsToBeModifiedForObject(int objectId) override;
 };

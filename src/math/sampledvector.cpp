@@ -4,9 +4,9 @@
 #include "math/sampledvector.h"
 #include "base/lineparser.h"
 #include "templates/algorithms.h"
-#include <math.h>
+#include <cmath>
 
-SampledVector::SampledVector() : count_(0) {}
+SampledVector::SampledVector() {}
 
 /*
  * Data

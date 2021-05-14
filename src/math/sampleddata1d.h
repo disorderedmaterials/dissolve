@@ -47,7 +47,7 @@ class SampledData1D : public Data1DBase
     // Zero values array
     void zero();
     // Return data version
-    int version() const;
+    int version() const override;
     // Return x axis value specified
     const double &xAxis(int index) const;
     // Return x axis vector

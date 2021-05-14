@@ -8,7 +8,7 @@
 #include <tuple>
 #include <vector>
 
-typedef std::vector<std::tuple<std::vector<int>, std::vector<double>>> IntegerDoubleVectorKeywordData;
+using IntegerDoubleVectorKeywordData = std::vector<std::tuple<std::vector<int>, std::vector<double>>>;
 
 // Keyword with list of Tuples of Vectors
 class IntegerDoubleVectorKeyword : public KeywordData<IntegerDoubleVectorKeywordData &>
@@ -16,7 +16,7 @@ class IntegerDoubleVectorKeyword : public KeywordData<IntegerDoubleVectorKeyword
     public:
     IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data, int nRequiredIntegers,
                                std::optional<int> nRequiredValues = std::nullopt);
-    ~IntegerDoubleVectorKeyword();
+    ~IntegerDoubleVectorKeyword() override;
 
     /*
      * Data

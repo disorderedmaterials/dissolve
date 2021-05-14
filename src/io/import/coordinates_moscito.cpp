@@ -5,7 +5,7 @@
 #include "io/import/coordinates.h"
 
 // Import Moscito coordinates through specified parser
-bool CoordinateImportFileFormat::importMoscito(LineParser &parser, Array<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importMoscito(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     /*
      * Import Moscito coordinate information through the specified line parser.
@@ -60,8 +60,8 @@ bool CoordinateImportFileFormat::importMoscito(LineParser &parser, Array<Vec3<do
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
             std::string coords{parser.line()};
-            r.add(Vec3<double>(std::stof(coords.substr(0, 15)) * 10.0, std::stof(coords.substr(15, 15)) * 10.0,
-                               std::stof(coords.substr(30)) * 10.0));
+            r.emplace_back(Vec3<double>(std::stof(coords.substr(0, 15)) * 10.0, std::stof(coords.substr(15, 15)) * 10.0,
+                                        std::stof(coords.substr(30)) * 10.0));
 
             // Skip velocity and force lines
             if (parser.skipLines(2) != LineParser::Success)

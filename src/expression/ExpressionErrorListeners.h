@@ -22,7 +22,7 @@ class ExpressionSyntaxException : public std::exception
     std::string message_;
 
     public:
-    virtual const char *what() const throw() { return message_.c_str(); }
+    const char *what() const noexcept override { return message_.c_str(); }
 };
 
 // Expression Internal Error Exception
@@ -36,7 +36,7 @@ class ExpressionInternalErrorException : public std::exception
     std::string message_;
 
     public:
-    virtual const char *what() const throw() { return message_.c_str(); }
+    const char *what() const noexcept override { return message_.c_str(); }
 };
 } // namespace ExpressionExceptions
 
@@ -55,7 +55,7 @@ class ExpressionLexerErrorListener : public antlr4::BaseErrorListener
      */
     public:
     void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *, size_t line, size_t charPositionInLine,
-                     const std::string &, std::exception_ptr ep);
+                     const std::string &, std::exception_ptr ep) override;
 };
 
 // Expression Parser Error Listener
@@ -73,5 +73,5 @@ class ExpressionParserErrorListener : public antlr4::BaseErrorListener
      */
     public:
     void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *, size_t line, size_t charPositionInLine,
-                     const std::string &, std::exception_ptr ep);
+                     const std::string &, std::exception_ptr ep) override;
 };

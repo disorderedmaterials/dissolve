@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "io/export/data1d.h"
 #include "procedure/nodes/node.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class Collect1DProcedureNode;
@@ -34,6 +34,8 @@ class Process1DProcedureNode : public ProcedureNode
     const Collect1DProcedureNode *collectNode_;
     // Pointer to processed data (stored in processing data list)
     Data1D *processedData_;
+    // Export file and format for processed data
+    Data1DExportFileFormat exportFileAndFormat_;
 
     public:
     // Return whether processed data exists

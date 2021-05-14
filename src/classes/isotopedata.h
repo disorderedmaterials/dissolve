@@ -3,29 +3,23 @@
 
 #pragma once
 
+#include "data/isotopes.h"
 #include "templates/listitem.h"
 
-// Forward Declarations
-class CoreData;
-class Isotope;
-class LineParser;
-
-/*
- * IsotopeData Definition
- */
+// sotopeData Definition
 class IsotopeData : public ListItem<IsotopeData>
 {
     public:
-    IsotopeData();
-    IsotopeData(const IsotopeData &source);
-    void operator=(const IsotopeData &source);
+    IsotopeData(Sears91::Isotope isotope = Sears91::Isotope::Unknown, double population = 0.0, double fraction = 0.0);
+    IsotopeData(const IsotopeData &source) = default;
+    IsotopeData &operator=(const IsotopeData &source) = default;
 
     /*
      * Properties
      */
     private:
     // Reference Isotope
-    Isotope *isotope_;
+    Sears91::Isotope isotope_;
     // Population of Isotope
     double population_;
     // Local fractional population (e.g. within an AtomTypeData)
@@ -33,26 +27,17 @@ class IsotopeData : public ListItem<IsotopeData>
 
     public:
     // Initialise
-    bool initialise(Isotope *isotope);
+    void initialise(Sears91::Isotope isotope);
     // Add to population of Isotope
     void add(double nAdd);
     // Finalise, calculating local fractional population (e.g. within an AtomTypeData)
     void finalise(double totalAtoms);
     // Zero population and fraction
     void zeroPopulation();
-    // Return reference Isotope
-    Isotope *isotope() const;
+    // Return referenced Isotope
+    Sears91::Isotope isotope() const;
     // Return total population
     double population() const;
     // Return local fractional population (e.g. within an AtomTypeData)
     double fraction() const;
-
-    /*
-     * I/O
-     */
-    public:
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser);
 };

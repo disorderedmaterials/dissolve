@@ -14,7 +14,7 @@ NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedur
     branchContext_ = branchContext;
 }
 
-NodeBranchKeyword::~NodeBranchKeyword() {}
+NodeBranchKeyword::~NodeBranchKeyword() = default;
 
 /*
  * Data

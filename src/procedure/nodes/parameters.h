@@ -24,7 +24,7 @@ class ParametersProcedureNode : public ProcedureNode
     // Return whether specified context is relevant for this node type
     bool isContextRelevant(ProcedureNode::NodeContext context) override;
     // Return whether a name for the node must be provided
-    bool mustBeNamed() const;
+    bool mustBeNamed() const override;
 
     /*
      * Parameters
@@ -38,9 +38,9 @@ class ParametersProcedureNode : public ProcedureNode
     void addParameter(std::string_view name, ExpressionValue initialValue);
     // Return whether this node has the named parameter specified
     std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
-                                                     std::shared_ptr<ExpressionVariable> excludeParameter);
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter) override;
     // Return vector of all parameters for this node
-    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const;
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
 
     /*
      * Execute

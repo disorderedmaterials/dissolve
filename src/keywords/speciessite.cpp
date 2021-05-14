@@ -12,7 +12,7 @@ SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite *site, bool axesRequired)
     axesRequired_ = axesRequired;
 }
 
-SpeciesSiteKeyword::~SpeciesSiteKeyword() {}
+SpeciesSiteKeyword::~SpeciesSiteKeyword() = default;
 
 /*
  * Specification

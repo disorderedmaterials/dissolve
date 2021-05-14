@@ -42,8 +42,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         if (normType != StructureFactors::NoNormalisation)
         {
             // We need the x-ray weights in order to do the normalisation
-            XRayFormFactors::XRayFormFactorData formFactors =
-                keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
+            auto formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
             XRayWeights weights;
             calculateWeights(rdfModule, weights, formFactors);
 
@@ -122,7 +121,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
-    XRayFormFactors::XRayFormFactorData formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
+    auto formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
     auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");

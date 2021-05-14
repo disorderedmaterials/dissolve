@@ -57,4 +57,4 @@ std::string_view Forcefield_SPCFw::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_SPCFw::shortRangeType() const { return Forcefield::LennardJonesType; }
+Forcefield::ShortRangeType Forcefield_SPCFw::shortRangeType() const { return Forcefield::ShortRangeType::LennardJones; }

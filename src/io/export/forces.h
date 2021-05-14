@@ -27,11 +27,11 @@ class ForceExportFileFormat : public FileAndFormat
     // Return enum options for ForceExportFormat
     static EnumOptions<ForceExportFileFormat::ForceExportFormat> forceExportFormats();
     // Return number of available formats
-    int nFormats() const;
+    int nFormats() const override;
     // Return format keyword for supplied index
-    std::string formatKeyword(int id) const;
+    std::string formatKeyword(int id) const override;
     // Return description string for supplied index
-    std::string formatDescription(int id) const;
+    std::string formatDescription(int id) const override;
     // Return current format as ForceExportFormat
     ForceExportFormat forceFormat() const;
 
@@ -40,16 +40,16 @@ class ForceExportFileFormat : public FileAndFormat
      */
     public:
     // Return whether the file must exist
-    bool fileMustExist() const { return false; }
+    bool fileMustExist() const override { return false; }
 
     /*
      * Export Functions
      */
     private:
     // Export supplied forces in simple format
-    bool exportSimple(LineParser &parser, const Array<double> &fx, const Array<double> &fy, const Array<double> &fz);
+    bool exportSimple(LineParser &parser, const std::vector<Vec3<double>> &f);
 
     public:
     // Export supplied forces using current filename and format
-    bool exportData(const Array<double> &fx, const Array<double> &fy, const Array<double> &fz);
+    bool exportData(const std::vector<Vec3<double>> &f);
 };

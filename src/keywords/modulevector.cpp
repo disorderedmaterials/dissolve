@@ -2,23 +2,25 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/modulevector.h"
+
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "module/list.h"
 #include "module/module.h"
+#include <utility>
 
 ModuleVectorKeyword::ModuleVectorKeyword(int maxModules)
     : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {}), maxModules_(maxModules)
 {
 }
 
-ModuleVectorKeyword::ModuleVectorKeyword(const std::vector<std::string> &allowedModuleTypes, int maxModules)
-    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {}), moduleTypes_(allowedModuleTypes),
+ModuleVectorKeyword::ModuleVectorKeyword(std::vector<std::string> allowedModuleTypes, int maxModules)
+    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {}), moduleTypes_(std::move(allowedModuleTypes)),
       maxModules_(maxModules)
 {
 }
 
-ModuleVectorKeyword::~ModuleVectorKeyword() {}
+ModuleVectorKeyword::~ModuleVectorKeyword() = default;
 
 /*
  * Data

@@ -107,7 +107,8 @@ int Configuration::contentsVersion() const { return contentsVersion_; }
 void Configuration::incrementContentsVersion() { ++contentsVersion_; }
 
 // Add Molecule to Configuration based on the supplied Species
-std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet *sourceCoordinates)
+std::shared_ptr<Molecule>
+Configuration::addMolecule(Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
     std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
@@ -120,16 +121,15 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet 
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
     if (sourceCoordinates)
+    {
+        auto r = sourceCoordinates->get();
         for (auto n = 0; n < sp->nAtoms(); ++n)
-        {
-            addAtom(&sp->atom(n), newMolecule, sourceCoordinates->r(n));
-        }
+            addAtom(&sp->atom(n), newMolecule, r[n]);
+    }
     else
     {
         for (auto n = 0; n < sp->nAtoms(); ++n)
-        {
             addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
-        }
     }
     return newMolecule;
 }
@@ -144,7 +144,8 @@ std::deque<std::shared_ptr<Molecule>> &Configuration::molecules() { return molec
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
+std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
+                                             Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
     auto newAtom = std::make_shared<Atom>();

@@ -16,7 +16,7 @@ class ExpressionVariableVectorKeyword : public KeywordData<std::vector<std::shar
 {
     public:
     ExpressionVariableVectorKeyword(ProcedureNode *parentNode, std::vector<std::shared_ptr<ExpressionVariable>> &variables);
-    ~ExpressionVariableVectorKeyword();
+    ~ExpressionVariableVectorKeyword() override;
 
     /*
      * Parent Node

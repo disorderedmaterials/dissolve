@@ -16,6 +16,9 @@ class Site
     public:
     Site(std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>());
     virtual ~Site();
+    Site &operator=(const Site &source) = default;
+    Site(const Site &source) = default;
+    Site(Site &&source) = default;
 
     /*
      * Site Definition
@@ -43,7 +46,10 @@ class OrientedSite : public Site
     public:
     OrientedSite(std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>(),
                  Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
-    ~OrientedSite();
+    ~OrientedSite() override;
+    OrientedSite &operator=(const OrientedSite &source) = default;
+    OrientedSite(const OrientedSite &source) = default;
+    OrientedSite(OrientedSite &&source) = default;
 
     /*
      * Site Definition
@@ -63,7 +69,7 @@ class OrientedSite : public Site
     // Return enum options for SiteAxis
     static EnumOptions<OrientedSite::SiteAxis> siteAxis();
     // Return whether local axes are present
-    bool hasAxes() const;
+    bool hasAxes() const override;
     // Return local axes
-    const Matrix3 &axes() const;
+    const Matrix3 &axes() const override;
 };

@@ -1007,7 +1007,7 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -1123,6 +1123,8 @@
     <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
     <addaction name="ImportForcefieldAction"/>
+    <addaction name="separator"/>
+    <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
    <widget class="QMenu" name="ConfigurationMenu">
     <property name="font">
@@ -1138,8 +1140,8 @@
       <rect>
        <x>642</x>
        <y>140</y>
-       <width>184</width>
-       <height>158</height>
+       <width>176</width>
+       <height>135</height>
       </rect>
      </property>
      <property name="font">
@@ -1696,6 +1698,17 @@
   <action name="ImportForcefieldAction">
    <property name="text">
     <string>Import Forcefield...</string>
+   </property>
+  </action>
+  <action name="SpeciesRegenerateIntraFromConnectivityAction">
+   <property name="text">
+    <string>Re&amp;generate Angles/Torsions from Connectivity</string>
+   </property>
+   <property name="iconText">
+    <string>Regenerate Angles/Torsions from Connectivity</string>
+   </property>
+   <property name="toolTip">
+    <string>Regenerate angle and torsion lists from current connectivity</string>
    </property>
   </action>
  </widget>

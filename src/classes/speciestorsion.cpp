@@ -12,7 +12,7 @@ SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, S
 
 SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) { this->operator=(source); }
 
-SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) : SpeciesIntra(source)
+SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(source)
 {
     // Detach source torsion referred to by the species atoms
     if (source.i_ && source.j_ && source.k_ && source.l_)
@@ -45,7 +45,7 @@ SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
     return *this;
 }
 
-SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source)
+SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source) noexcept
 {
     if (i_ && j_ && k_ && l_)
         detach();
@@ -446,9 +446,9 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          */
         auto dU_dphi = 0.0;
         auto c = 1;
-        for (auto n = 0; n < params.size(); ++n)
+        for (double param : params)
         {
-            dU_dphi -= params[n] * (c * sin(c * phi));
+            dU_dphi -= param * (c * sin(c * phi));
             ++c;
         }
         return -dU_dphi * dphi_dcosphi;

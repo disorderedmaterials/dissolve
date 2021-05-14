@@ -46,24 +46,24 @@ ForceExportFileFormat::ForceExportFormat ForceExportFileFormat::forceFormat() co
  */
 
 // Export simple forces
-bool ForceExportFileFormat::exportSimple(LineParser &parser, const Array<double> &fx, const Array<double> &fy,
-                                         const Array<double> &fz)
+bool ForceExportFileFormat::exportSimple(LineParser &parser, const std::vector<Vec3<double>> &f)
 {
     if (!parser.writeLine("# Atom        FX            FY            FZ"))
         return false;
 
-    if (!parser.writeLineF("{}\n", fx.nItems()))
+    if (!parser.writeLineF("{}\n", f.size()))
         return false;
 
-    for (auto n = 0; n < fx.nItems(); ++n)
-        if (!parser.writeLineF("  {:10d}  {:15.8e}  {:15.8e}  {:15.8e}\n", n + 1, fx.at(n), fy.at(n), fz.at(n)))
+    auto count = 1;
+    for (auto &fxyz : f)
+        if (!parser.writeLineF("  {:10d}  {:15.8e}  {:15.8e}  {:15.8e}\n", count++, fxyz.x, fxyz.y, fxyz.z))
             return false;
 
     return true;
 }
 
 // Export forces using current filename and format
-bool ForceExportFileFormat::exportData(const Array<double> &fx, const Array<double> &fy, const Array<double> &fz)
+bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
 {
     // Open the file
     LineParser parser;
@@ -76,7 +76,7 @@ bool ForceExportFileFormat::exportData(const Array<double> &fx, const Array<doub
     // Write data
     auto result = false;
     if (forceFormat() == ForceExportFileFormat::SimpleForces)
-        result = exportSimple(parser, fx, fy, fz);
+        result = exportSimple(parser, f);
     else
     {
         Messenger::error("Unrecognised force format.\nKnown formats are:\n");

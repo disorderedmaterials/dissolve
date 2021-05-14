@@ -11,7 +11,6 @@
 
 // Forward Declarations
 class AtomType;
-class Isotope;
 
 // AtomTypeList
 class AtomTypeList
@@ -42,7 +41,7 @@ class AtomTypeList
     // Remove specified AtomType from the list
     void remove(std::shared_ptr<AtomType> atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-    void addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope = nullptr, double popAdd = 0);
+    void addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd = 0);
     // Finalise list, calculating fractional populations etc.
     void finalise();
     // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
@@ -50,9 +49,9 @@ class AtomTypeList
     // Make all AtomTypeData in the list reference only their natural isotope
     void naturalise();
     // Check for presence of AtomType in list
-    bool contains(std::shared_ptr<AtomType> atomType) const;
+    bool contains(const std::shared_ptr<AtomType> &atomType) const;
     // Check for presence of AtomType/Isotope pair in list
-    bool contains(std::shared_ptr<AtomType> atomType, Isotope *tope);
+    bool contains(const std::shared_ptr<AtomType> &atomType, Sears91::Isotope tope) const;
     // Return number of AtomType/Isotopes in list
     int nItems() const;
     // Return first item in list
@@ -62,7 +61,9 @@ class AtomTypeList
     // Return opening iterator
     std::vector<AtomTypeData>::const_iterator end() const;
     // Return index of AtomType in list
-    int indexOf(std::shared_ptr<AtomType> atomtype) const;
+    int indexOf(const std::shared_ptr<AtomType> &atomtype) const;
+    // Return indices of AtomType pair in list
+    std::pair<int, int> indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
     // Return index of names AtomType in list
     int indexOf(std::string_view name) const;
     // Return total population of all types in list
@@ -70,7 +71,7 @@ class AtomTypeList
     // Return nth referenced AtomType
     const std::shared_ptr<AtomType> atomType(int n) const;
     // Return AtomTypeData for specified AtomType
-    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(std::shared_ptr<AtomType> atomType);
+    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(const std::shared_ptr<AtomType> &atomType);
     // Print AtomType populations
     void print() const;
 

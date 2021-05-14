@@ -107,8 +107,8 @@ Module  CalculateSDF  'SDF(O)'
   RangeX  -10.0  10.5  0.5
   RangeY  -10.0  10.5  0.5
   RangeZ  -10.0  10.5  0.5
-  ExportSDF  pdens  'test.pdens'
-  EndExportSDF
+  #ExportSDF  pdens  'test.pdens'
+  #EndExportSDF
 EndModule
 
 EndLayer

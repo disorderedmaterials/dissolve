@@ -6,34 +6,61 @@
 #include "classes/box.h"
 #include "classes/coredata.h"
 #include "main/dissolve.h"
+#include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
+#include <string>
 
-enum ProblemSize
+namespace
 {
-    Small,
-    Medium,
-    Large
+const char *FILEEXTENSION = ".txt";
+}
+enum ProblemType
+{
+    atomic,
+    smallMolecule,
+    mediumMolecule,
 };
 
-template <ProblemSize problem> std::string benchmarkFilePath()
+enum Population
 {
-    if constexpr (problem == ProblemSize::Small)
+    small,
+    medium,
+    large,
+};
+
+template <Population population> std::string getFileName(const std::string &systemName)
+{
+    std::stringstream fileName;
+    fileName << benchmark_path << systemName;
+    if constexpr (population == Population::small)
     {
-        std::string filename = "small_benchmark.txt";
-        std::string fullPath = benchmark_path + filename;
-        return fullPath;
+        fileName << "1k";
     }
-    else if constexpr (problem == ProblemSize::Medium)
+    else if constexpr (population == Population::medium)
     {
-        std::string filename = "medium_benchmark.txt";
-        std::string fullPath = benchmark_path + filename;
-        return fullPath;
+        fileName << "5k";
     }
-    else if constexpr (problem == ProblemSize::Large)
+    else if constexpr (population == Population::large)
     {
-        std::string filename = "large_benchmark.txt";
-        std::string fullPath = benchmark_path + filename;
-        return fullPath;
+        fileName << "10k";
+    }
+    fileName << FILEEXTENSION;
+    return fileName.str();
+}
+
+template <ProblemType problem, Population population> std::string benchmarkFilePath()
+{
+    if constexpr (problem == ProblemType::atomic)
+    {
+        return getFileName<population>("argon");
+    }
+    else if constexpr (problem == ProblemType::smallMolecule)
+    {
+        return getFileName<population>("water");
+    }
+    else if constexpr (problem == ProblemType::mediumMolecule)
+    {
+        return getFileName<population>("hexane");
     }
     else
         return {};
@@ -45,30 +72,28 @@ constexpr auto CellsMethod = RDFModule::PartialsMethod::CellsMethod;
 constexpr auto SimpleMethod = RDFModule::PartialsMethod::SimpleMethod;
 } // namespace Method
 
-template <ProblemSize problem> struct Problem
+template <ProblemType problem, Population population> struct Problem
 {
     Problem() : dissolve_(coredata_)
     {
         Messenger::setQuiet(true);
         dissolve_.registerMasterModules();
-        auto file = benchmarkFilePath<problem>();
+        auto file = benchmarkFilePath<problem, population>();
         dissolve_.loadInput(file);
         dissolve_.prepare();
-        setUp();
-    }
-
-    void setUp()
-    {
         cfg_ = dissolve_.configurations().first();
         auto &procPool = dissolve_.worldPool();
         procPool.assignProcessesToGroups(cfg_->processPool());
-        // create the rdf module
-        rdfmodule_ = std::make_unique<RDFModule>();
-        rdfmodule_->addTargetConfiguration(cfg_);
-        cfg_->incrementContentsVersion();
+        setUpRDF();
     }
 
-    template <RDFModule::PartialsMethod method> void iterateCells()
+    void setUpRDF()
+    {
+        rdfmodule_ = std::make_unique<RDFModule>();
+        rdfmodule_->addTargetConfiguration(cfg_);
+    }
+
+    template <RDFModule::PartialsMethod method> void iterateGR()
     {
         double rdfRange = cfg_->box()->inscribedSphereRadius();
         bool upToDate = false;
@@ -76,8 +101,11 @@ template <ProblemSize problem> struct Problem
                                 upToDate);
         dissolve_.processingModuleData().clearAll();
     }
+
     CoreData coredata_;
     Dissolve dissolve_;
     std::unique_ptr<RDFModule> rdfmodule_;
+    std::unique_ptr<EnergyModule> energymodule_;
+
     Configuration *cfg_;
 };

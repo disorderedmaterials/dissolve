@@ -5,8 +5,6 @@
 
 VersionCounter::VersionCounter() { version_ = 0; }
 
-VersionCounter::~VersionCounter() {}
-
 /*
  * Version Information
  */

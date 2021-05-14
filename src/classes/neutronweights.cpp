@@ -194,11 +194,7 @@ void NeutronWeights::calculateWeightingMatrices()
                 if (localI.exchangeable())
                     bi = localI.boundCoherent();
                 else
-                {
-                    // Get the Isotope associated to this AtomType in the current Isotopologue
-                    Isotope *isotope = tope->atomTypeIsotope(atd1->atomType());
-                    bi = isotope->boundCoherent();
-                }
+                    bi = Sears91::boundCoherent(tope->atomTypeIsotope(atd1->atomType()));
                 bi *= 0.1;
 
                 // Inner loop
@@ -217,11 +213,7 @@ void NeutronWeights::calculateWeightingMatrices()
                     if (localJ.exchangeable())
                         bj = localJ.boundCoherent();
                     else
-                    {
-                        // Get the Isotope associated to this AtomType in the current Isotopologue
-                        Isotope *isotope = tope->atomTypeIsotope(atd2->atomType());
-                        bj = isotope->boundCoherent();
-                    }
+                        bj = Sears91::boundCoherent(tope->atomTypeIsotope(atd2->atomType()));
                     bj *= 0.1;
 
                     intramolecularWeights_[{typeI, typeJ}] += weight * bi * bj;
@@ -259,18 +251,15 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
     atomTypes_.clear();
     for (auto &topes : isotopologueMixtures_)
     {
-        // We must now loop over the Isotopologues in the topesture
-        for (auto isoWeight : topes.mix())
+        // Loop over the Isotopologues in the mixture
+        for (const auto &isoWeight : topes.mix())
         {
-            const Isotopologue *tope = isoWeight.isotopologue();
+            const auto *top = isoWeight.isotopologue();
 
-            // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
-            // Isotopologue
+            // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
             for (const auto &i : topes.species()->atoms())
-            {
-                Isotope *iso = tope->atomTypeIsotope(i.atomType());
-                atomTypes_.addIsotope(i.atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
-            }
+                atomTypes_.addIsotope(i.atomType(), top->atomTypeIsotope(i.atomType()),
+                                      isoWeight.weight() * topes.speciesPopulation());
         }
     }
     atomTypes_.finalise(exchangeableTypes);

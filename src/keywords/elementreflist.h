@@ -15,7 +15,7 @@ class ElementVectorKeyword : public KeywordData<std::vector<Elements::Element> &
 {
     public:
     ElementVectorKeyword(std::vector<Elements::Element> &targetData);
-    ~ElementVectorKeyword();
+    ~ElementVectorKeyword() override;
 
     /*
      * Arguments

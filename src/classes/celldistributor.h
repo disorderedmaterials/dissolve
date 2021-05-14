@@ -14,7 +14,7 @@ class CellDistributor : public Distributor
     public:
     CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
                     bool repeatsAllowed);
-    ~CellDistributor();
+    ~CellDistributor() override;
 
     /*
      * Data
@@ -28,5 +28,5 @@ class CellDistributor : public Distributor
      */
     private:
     // Return array of Cells that we must hard lock in order to modify the object with index specified
-    Array<Cell *> cellsToBeModifiedForObject(int objectId);
+    std::vector<Cell *> cellsToBeModifiedForObject(int objectId) override;
 };

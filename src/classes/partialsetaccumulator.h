@@ -20,7 +20,7 @@ class PartialSetAccumulator
      */
     private:
     // Number of accumulated points
-    int nAccumulated_;
+    int nAccumulated_{0};
     // Full matrix, containing sampling of full atom-atom partial
     Array2D<SampledData1D> partials_;
     // Bound matrix, containing sampling of atom-atom partial of bound pairs

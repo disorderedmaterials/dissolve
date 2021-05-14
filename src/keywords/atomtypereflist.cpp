@@ -11,7 +11,7 @@ AtomTypeRefListKeyword::AtomTypeRefListKeyword(std::vector<std::shared_ptr<AtomT
 {
 }
 
-AtomTypeRefListKeyword::~AtomTypeRefListKeyword() {}
+AtomTypeRefListKeyword::~AtomTypeRefListKeyword() = default;
 
 /*
  * Arguments
@@ -56,7 +56,7 @@ bool AtomTypeRefListKeyword::write(LineParser &parser, std::string_view keywordN
 
     // Loop over the AtomType selection list
     std::string atomTypes;
-    for (auto at : data_)
+    for (const auto &at : data_)
         atomTypes += fmt::format("  {}", at->name());
 
     if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, atomTypes))

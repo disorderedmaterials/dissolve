@@ -21,7 +21,7 @@ class ForcefieldLibrary
     // Register Forcefields for use
     static void registerForcefields();
     // Set up supplied forcefield for use, and add to internal list with no safety checks
-    static bool registerForcefield_(std::shared_ptr<Forcefield> ff);
+    static bool registerForcefield_(const std::shared_ptr<Forcefield> &ff);
 
     public:
     // Set up supplied forcefield for use, and add to internal list

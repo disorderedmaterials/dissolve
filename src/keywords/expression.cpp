@@ -10,7 +10,7 @@ ExpressionKeyword::ExpressionKeyword(Expression &expression, const std::vector<s
 {
 }
 
-ExpressionKeyword::~ExpressionKeyword() {}
+ExpressionKeyword::~ExpressionKeyword() = default;
 
 /*
  * Arguments

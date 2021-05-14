@@ -17,7 +17,7 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
     setUpKeywords();
 }
 
-CoordinateImportFileFormat::~CoordinateImportFileFormat() {}
+CoordinateImportFileFormat::~CoordinateImportFileFormat() = default;
 
 /*
  * Keyword Options
@@ -63,7 +63,7 @@ CoordinateImportFileFormat::CoordinateImportFormat CoordinateImportFileFormat::c
  */
 
 // Import coordinates using current filename and format
-bool CoordinateImportFileFormat::importData(Array<Vec3<double>> &r, ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
@@ -79,7 +79,7 @@ bool CoordinateImportFileFormat::importData(Array<Vec3<double>> &r, ProcessPool 
 }
 
 // Import coordinates using supplied parser and current format
-bool CoordinateImportFileFormat::importData(LineParser &parser, Array<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     // Import the data
     auto result = false;

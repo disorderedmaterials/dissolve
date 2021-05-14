@@ -42,7 +42,7 @@ class CoreData
     // Add new AtomType
     std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
     // Remove specified AtomType
-    void removeAtomType(std::shared_ptr<AtomType> at);
+    void removeAtomType(const std::shared_ptr<AtomType> &at);
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return core AtomTypes list
@@ -179,7 +179,7 @@ class CoreData
     // Search for and return any instance(s) of the specified Module type
     RefList<Module> findModules(std::string_view moduleType) const;
     // Search for and return any instance(s) of the specified List of Module types
-    RefList<Module> findModules(const std::vector<std::string> moduleTypes) const;
+    RefList<Module> findModules(const std::vector<std::string> &moduleTypes) const;
     // Search for and return any instance(s) of the templated module class
     template <class M> RefList<M> findModulesByClass() const
     {

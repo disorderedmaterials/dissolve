@@ -16,10 +16,11 @@ class KVector
 {
     public:
     KVector(int h = 0, int k = 0, int l = 0, int reflectionIndex = -1, int nAtomTypes = 0);
-    ~KVector();
+    ~KVector() = default;
     KVector(const KVector &source);
-    // Operator=
-    void operator=(const KVector &source);
+    KVector(KVector &&source) noexcept;
+    KVector(const KVector &&source) noexcept;
+    KVector &operator=(const KVector &source);
 
     /*
      * Data
@@ -29,8 +30,8 @@ class KVector
     Vec3<int> hkl_;
     // Associated BraggReflection index
     int braggReflectionIndex_;
-    // Contributions to this kvector from individual atom types
-    Array<double> cosTerms_, sinTerms_;
+    // Contributions to this k-vector from individual atom types
+    std::vector<double> cosTerms_, sinTerms_;
 
     public:
     // Initialise
@@ -53,8 +54,8 @@ class KVector
     void addCosTerm(int atomTypeIndex, double value);
     // Add value to sinTerm index specified
     void addSinTerm(int atomTypeIndex, double value);
-    // Calculate intensities and sum into associated BraggReflection
-    void calculateIntensities(BraggReflection *reflectionArray);
+    // Calculate intensities and sum into associated BraggReflections
+    void calculateIntensities(std::vector<BraggReflection> &reflections);
     // Return specified intensity
     double intensity(int typeI, int typeJ);
 };

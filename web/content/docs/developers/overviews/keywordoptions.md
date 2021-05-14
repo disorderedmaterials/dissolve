@@ -205,14 +205,14 @@ bool DummyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 }
 ```
 
-For opaque classes stored as `data_` and for which no simple conversion to a POD is possible, the `KeywordListHelper<T>` template class must be used. For the `BroadeningFunction` class and its associated `BroadeningFunctionModuleKeyword` the code is as follows:
+For opaque classes stored as `data_` and for which no simple conversion to a POD is possible, the `KeywordListHelper<T>` template class must be used. For the `Function1D` class and its associated `Function1DModuleKeyword` the code is as follows:
 
 ```cpp
 // Set up keywords for Module
 void DummyModule::setUpKeywords()
 {
 	ModuleKeywordGroup* group = addKeywordGroup("Flags");
-	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "Broadening", "Broadening function to apply to data")
+	group->add(new Function1DModuleKeyword(Function1D()), "Broadening", "Broadening function to apply to data")
 	...
 }
 
@@ -221,7 +221,7 @@ void DummyModule::setUpKeywords()
 // Run main processing
 bool DummyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-	const BroadeningFunction &broadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "Broadening", BroadeningFunction());
+	const Function1D &broadening = KeywordListHelper<Function1D>::retrieve(keywords_, "Broadening", Function1D());
 	...
 }
 ```

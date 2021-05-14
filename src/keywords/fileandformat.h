@@ -13,7 +13,7 @@ class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
 {
     public:
     FileAndFormatKeyword(FileAndFormat &fileAndFormat, std::string_view endKeyword);
-    ~FileAndFormatKeyword();
+    ~FileAndFormatKeyword() override;
 
     /*
      * End Keyword
@@ -40,5 +40,5 @@ class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const;
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
 };

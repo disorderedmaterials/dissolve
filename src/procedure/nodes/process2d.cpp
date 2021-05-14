@@ -22,7 +22,8 @@ Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *tar
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
-    keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
+    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
+                  "File format and file name under which to save processed data");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 
@@ -138,12 +139,11 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Save data?
-    if (keywords_.asBool("Save"))
+    if (exportFileAndFormat_.hasValidFileAndFormat())
     {
         if (procPool.isMaster())
         {
-            Data2DExportFileFormat exportFormat(fmt::format("{}_{}.txt", name(), cfg->name()));
-            if (exportFormat.exportData(data))
+            if (exportFileAndFormat_.exportData(data))
                 procPool.decideTrue();
             else
             {

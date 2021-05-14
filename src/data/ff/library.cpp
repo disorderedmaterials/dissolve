@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/library.h"
+
 #include "base/sysfunc.h"
 #include "data/ff/kulmala2010/kulmala2010.h"
 #include "data/ff/ludwig/ntf2.h"
@@ -19,7 +20,9 @@
 #include "data/ff/spcfw/spcfw.h"
 #include "data/ff/strader2002/dmso.h"
 #include "data/ff/uff/uff.h"
+#include "data/ff/uff/uff4mof.h"
 #include "data/ff/xml/base.h"
+#include <utility>
 
 // Static Members
 std::vector<std::shared_ptr<Forcefield>> ForcefieldLibrary::forcefields_;
@@ -33,11 +36,11 @@ bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
 {
     if (forcefields_.empty())
         registerForcefields();
-    return registerForcefield_(ff);
+    return registerForcefield_(std::move(ff));
 }
 
 // Set up supplied forcefield for use, and add to internal list
-bool ForcefieldLibrary::registerForcefield_(std::shared_ptr<Forcefield> ff)
+bool ForcefieldLibrary::registerForcefield_(const std::shared_ptr<Forcefield> &ff)
 {
     // Set up the forcefield, returning if not successful
     if (!ff->prepare())
@@ -72,6 +75,7 @@ void ForcefieldLibrary::registerForcefields()
     registerForcefield_(std::make_shared<Forcefield_SPCFw>());
     registerForcefield_(std::make_shared<Forcefield_Strader2002>());
     registerForcefield_(std::make_shared<Forcefield_UFF>());
+    registerForcefield_(std::make_shared<Forcefield_UFF4MOF>());
 }
 
 /*
@@ -91,8 +95,9 @@ std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 // Return named Forcefield, if it exists
 std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(std::string_view name)
 {
-    auto it = std::find_if(forcefields().begin(), forcefields().end(),
-                           [&name](const std::shared_ptr<Forcefield> ff) { return DissolveSys::sameString(ff->name(), name); });
+    auto it = std::find_if(forcefields().begin(), forcefields().end(), [&name](const std::shared_ptr<Forcefield> &ff) {
+        return DissolveSys::sameString(ff->name(), name);
+    });
     if (it == forcefields().end())
         return nullptr;
 

@@ -3,7 +3,7 @@
 
 #include "math/sampleddouble.h"
 #include "base/lineparser.h"
-#include <math.h>
+#include <cmath>
 
 SampledDouble::SampledDouble() { clear(); }
 
@@ -56,14 +56,7 @@ SampledDouble &SampledDouble::operator=(double x)
     return *this;
 }
 
-SampledDouble &SampledDouble::operator=(const SampledDouble &source)
-{
-    count_ = source.count_;
-    mean_ = source.mean_;
-    m2_ = source.m2_;
-
-    return *this;
-}
+SampledDouble &SampledDouble::operator=(const SampledDouble &source) = default;
 
 void SampledDouble::operator+=(double x)
 {

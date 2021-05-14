@@ -25,7 +25,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     const auto averaging = keywords_.asInt("Averaging");
     auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-    auto &intraBroadening = keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+    auto &intraBroadening = keywords_.retrieve<Functions::Function1DWrapper>("IntraBroadening");
     auto method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
     const auto useHalfCellRange = keywords_.asBool("UseHalfCellRange");
     const auto specifiedRange = keywords_.asDouble("Range");
@@ -45,10 +45,11 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averaging,
                          Averaging::averagingSchemes().keyword(averagingScheme));
-    if (intraBroadening.function() == PairBroadeningFunction::NoFunction)
+    if (intraBroadening.type() == Functions::Function1D::None)
         Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
     else
-        Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is {}.", intraBroadening.summary());
+        Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is {} ({}).",
+                         Functions::function1D().keyword(intraBroadening.type()), intraBroadening.parameterSummary());
     Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(method));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(saveData));
     Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {} ({}).\n", smoothing,

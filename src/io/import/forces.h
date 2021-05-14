@@ -23,7 +23,7 @@ class ForceImportFileFormat : public FileAndFormat
     };
     ForceImportFileFormat(ForceImportFormat format = SimpleForces);
     ForceImportFileFormat(std::string_view filename, ForceImportFormat format = SimpleForces);
-    ~ForceImportFileFormat();
+    ~ForceImportFileFormat() override;
 
     /*
      * Keyword Options
@@ -41,11 +41,11 @@ class ForceImportFileFormat : public FileAndFormat
 
     public:
     // Return number of available formats
-    int nFormats() const;
+    int nFormats() const override;
     // Return format keyword for supplied index
-    std::string formatKeyword(int id) const;
+    std::string formatKeyword(int id) const override;
     // Return description string for supplied index
-    std::string formatDescription(int id) const;
+    std::string formatDescription(int id) const override;
     // Return current format as ForceImportFormat
     ForceImportFormat forceFormat() const;
 
@@ -54,22 +54,22 @@ class ForceImportFileFormat : public FileAndFormat
      */
     public:
     // Return whether the file must exist
-    bool fileMustExist() const { return true; }
+    bool fileMustExist() const override { return true; }
 
     /*
      * Import Functions
      */
     private:
     // Import DL_POLY forces through specified parser
-    bool importDLPOLY(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    bool importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &f);
     // Import Moscito forces through specified parser
-    bool importMoscito(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    bool importMoscito(LineParser &parser, std::vector<Vec3<double>> &f);
     // Import simple formatted forces through specified parser
-    bool importSimple(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    bool importSimple(LineParser &parser, std::vector<Vec3<double>> &f);
 
     public:
     // Import forces using current filename and format
-    bool importData(Array<double> &fx, Array<double> &fy, Array<double> &fz, ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vec3<double>> &f, ProcessPool *procPool = nullptr);
     // Import forces using supplied parser and current format
-    bool importData(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    bool importData(LineParser &parser, std::vector<Vec3<double>> &f);
 };

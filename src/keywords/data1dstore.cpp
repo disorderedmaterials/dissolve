@@ -11,7 +11,7 @@ Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data1DStore)
 {
 }
 
-Data1DStoreKeyword::~Data1DStoreKeyword() {}
+Data1DStoreKeyword::~Data1DStoreKeyword() = default;
 
 /*
  * Arguments

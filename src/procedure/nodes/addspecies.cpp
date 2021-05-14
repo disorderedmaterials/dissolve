@@ -10,24 +10,24 @@
 #include "classes/species.h"
 #include "keywords/types.h"
 
-AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue population, NodeValue density,
+AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, const NodeValue &population, const NodeValue &density,
                                                  Units::DensityUnits densityUnits)
     : ProcedureNode(ProcedureNode::NodeType::AddSpecies)
 {
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
     keywords_.add("Control", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
-    keywords_.add(
-        "Control",
-        new EnumOptionsKeyword<AddSpeciesProcedureNode::BoxActionStyle>(boxActionStyles() = AddSpeciesProcedureNode::AddVolume),
-        "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
+    keywords_.add("Control",
+                  new EnumOptionsKeyword<AddSpeciesProcedureNode::BoxActionStyle>(
+                      boxActionStyles() = AddSpeciesProcedureNode::BoxActionStyle::AddVolume),
+                  "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
     keywords_.add("Control",
                   new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
                   "Density", "Density at which to add the target species");
     keywords_.add("Control", new BoolKeyword(true), "Rotate", "Whether to randomly rotate molecules on insertion");
     keywords_.add("Control",
                   new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(
-                      positioningTypes() = AddSpeciesProcedureNode::RandomPositioning),
+                      positioningTypes() = AddSpeciesProcedureNode::PositioningType::Random),
                   "Positioning", "Positioning type for individual molecules");
 }
 
@@ -51,19 +51,19 @@ bool AddSpeciesProcedureNode::mustBeNamed() const { return false; }
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::boxActionStyles()
 {
-    return EnumOptions<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction",
-                                                                {{AddSpeciesProcedureNode::None, "None"},
-                                                                 {AddSpeciesProcedureNode::AddVolume, "AddVolume"},
-                                                                 {AddSpeciesProcedureNode::ScaleVolume, "ScaleVolume"}});
+    return EnumOptions<AddSpeciesProcedureNode::BoxActionStyle>(
+        "BoxAction", {{AddSpeciesProcedureNode::BoxActionStyle::None, "None"},
+                      {AddSpeciesProcedureNode::BoxActionStyle::AddVolume, "AddVolume"},
+                      {AddSpeciesProcedureNode::BoxActionStyle::ScaleVolume, "ScaleVolume"}});
 }
 
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::positioningTypes()
 {
-    return EnumOptions<AddSpeciesProcedureNode::PositioningType>("PositioningType",
-                                                                 {{AddSpeciesProcedureNode::CentralPositioning, "Central"},
-                                                                  {AddSpeciesProcedureNode::CurrentPositioning, "Current"},
-                                                                  {AddSpeciesProcedureNode::RandomPositioning, "Random"}});
+    return EnumOptions<AddSpeciesProcedureNode::PositioningType>(
+        "PositioningType", {{AddSpeciesProcedureNode::PositioningType::Central, "Central"},
+                            {AddSpeciesProcedureNode::PositioningType::Current, "Current"},
+                            {AddSpeciesProcedureNode::PositioningType::Random, "Random"}});
 }
 
 /*
@@ -93,9 +93,9 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
     auto &densityAndUnits = keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
     double density = densityAndUnits.value().asDouble();
     auto boxAction = keywords_.enumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction");
-    if (boxAction == AddSpeciesProcedureNode::None)
+    if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::None)
         Messenger::print("[AddSpecies] Current box geometry / volume will remain as-is.\n");
-    else if (boxAction == AddSpeciesProcedureNode::AddVolume)
+    else if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::AddVolume)
     {
         Messenger::print("[AddSpecies] Current box volume will be increased to accommodate volume of new species.\n");
 
@@ -131,7 +131,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         Messenger::print("[AddSpecies] New box volume is {:e} cubic Angstroms (scale factor was {}).\n", cfg->box()->volume(),
                          scaleFactor);
     }
-    else if (boxAction == AddSpeciesProcedureNode::ScaleVolume)
+    else if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::ScaleVolume)
     {
         Messenger::print("[AddSpecies] Box volume will be set to give supplied density.\n");
 
@@ -179,36 +179,39 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
     // Now we add the molecules
     procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
     Vec3<double> r, cog, newCentre, fr;
-    CoordinateSet *coordSet = sp->coordinateSets().first();
+    auto coordSetIt = sp->coordinateSets().begin();
     Matrix3 transform;
     const auto *box = cfg->box();
     for (auto n = 0; n < requestedPopulation; ++n)
     {
-        // Add the Molecule
-        std::shared_ptr<Molecule> mol = cfg->addMolecule(sp, coordSet);
-
-        // Move to next coordinate set if available
-        if (coordSet)
+        // Add the Molecule - use coordinate set if one is available
+        std::shared_ptr<Molecule> mol;
+        if (coordSetIt != sp->coordinateSets().end())
         {
-            coordSet = coordSet->next();
-            if (!coordSet)
-                coordSet = sp->coordinateSets().first();
+            mol = cfg->addMolecule(sp, *coordSetIt);
+
+            // Move to next coordinate set
+            ++coordSetIt;
+            if (coordSetIt == sp->coordinateSets().end())
+                coordSetIt = sp->coordinateSets().begin();
         }
+        else
+            mol = cfg->addMolecule(sp);
 
         // Set / generate position of Molecule
         switch (positioning)
         {
-            case (AddSpeciesProcedureNode::RandomPositioning):
+            case (AddSpeciesProcedureNode::PositioningType::Random):
                 fr.set(procPool.random(), procPool.random(), procPool.random());
                 newCentre = box->fracToReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
-            case (AddSpeciesProcedureNode::CentralPositioning):
+            case (AddSpeciesProcedureNode::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);
                 newCentre = box->fracToReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
-            case (AddSpeciesProcedureNode::CurrentPositioning):
+            case (AddSpeciesProcedureNode::PositioningType::Current):
                 break;
             default:
                 Messenger::error("Unrecognised positioning type.\n");

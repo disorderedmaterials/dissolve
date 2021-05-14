@@ -44,9 +44,9 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     updateArrays(dissolve);
 
     // Retrieve data arrays
-    Array<SampledDouble> &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
-    Array<SampledDouble> &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
-    Array<SampledDouble> &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
+    auto &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
+    auto &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
+    auto &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
 
     // Update our Species
     updateSpecies(x, y, z);
@@ -85,9 +85,9 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto *stack = cfg->siteStack(site);
 
     // Retrieve data arrays
-    Array<SampledDouble> &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
-    Array<SampledDouble> &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
-    Array<SampledDouble> &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
+    auto &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
+    auto &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
+    auto &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
 
     // Loop over sites
     Vec3<double> r;

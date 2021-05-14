@@ -10,19 +10,19 @@ class ExpressionRootNode : public ExpressionNode
 {
     public:
     ExpressionRootNode();
-    ~ExpressionRootNode() = default;
+    ~ExpressionRootNode() override = default;
 
     /*
      * Nodes
      */
     public:
     // Duplicate this node and its contents
-    std::shared_ptr<ExpressionNode> duplicate();
+    std::shared_ptr<ExpressionNode> duplicate() override;
 
     /*
      * Evaluation
      */
     public:
     // Evaluate node
-    virtual std::optional<ExpressionValue> evaluate() const;
+    std::optional<ExpressionValue> evaluate() const override;
 };

@@ -80,6 +80,7 @@ class Histogram1D
      */
     public:
     void operator=(const Histogram1D &source);
+    Histogram1D operator+(const Histogram1D &other) const;
 
     /*
      * Serialisation

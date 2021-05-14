@@ -16,7 +16,7 @@ class IsotopologueWeight
 {
     public:
     IsotopologueWeight(const Isotopologue *iso = nullptr, double weight = 1.0);
-    ~IsotopologueWeight();
+    ~IsotopologueWeight() = default;
 
     /*
      * Isotopologue and Weight

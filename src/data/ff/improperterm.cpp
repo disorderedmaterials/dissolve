@@ -7,7 +7,7 @@
 
 ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                                std::string_view typeL, SpeciesTorsion::TorsionFunction form,
-                                               const std::vector<double> parameters)
+                                               const std::vector<double> &parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;

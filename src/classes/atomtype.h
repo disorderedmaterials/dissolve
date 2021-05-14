@@ -20,7 +20,7 @@ class AtomType
     // Name
     std::string name_;
     // Associated chemical element
-    Elements::Element Z_;
+    Elements::Element Z_{Elements::Unknown};
 
     public:
     // Set name of AtomType
@@ -37,15 +37,15 @@ class AtomType
      */
     private:
     // Short-range interaction type
-    Forcefield::ShortRangeType shortRangeType_;
+    Forcefield::ShortRangeType shortRangeType_{Forcefield::ShortRangeType::Undefined};
     // Vector of parameters for short-range potential
     std::vector<double> parameters_;
     // Atomic charge
     double charge_;
     // Whether this AtomType is exchangeable
-    bool exchangeable_;
+    bool exchangeable_{false};
     // Index of this type in the master type index
-    int index_;
+    int index_{-1};
 
     public:
     // Set short-range interaction type

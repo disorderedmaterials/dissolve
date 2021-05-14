@@ -24,7 +24,7 @@ class ExpressionTest : public ::testing::Test
         variables.emplace_back(std::make_shared<ExpressionVariable>("bee", 100.0));
     }
 
-    void exprTest(std::string_view expr, ExpressionValue val, bool fail)
+    void exprTest(std::string_view expr, const ExpressionValue &val, bool fail)
     {
         auto generationResult = expression.create(expr, variables);
         ASSERT_NE(bool(generationResult), fail);

@@ -13,7 +13,7 @@
 template <class A> class Array2D
 {
     public:
-    Array2D(int nrows = 0, int ncolumns = 0, bool half = false) : nRows_(0), nColumns_(0), half_(half)
+    Array2D(int nrows = 0, int ncolumns = 0, bool half = false) : half_(half)
     {
         if ((nrows > 0) && (ncolumns > 0))
             resize(nrows, ncolumns);
@@ -44,7 +44,7 @@ template <class A> class Array2D
     // Linear array of objects
     std::vector<A> array_;
     // Array dimensions
-    int nRows_, nColumns_;
+    int nRows_{0}, nColumns_{0};
     // Half-matrix mode
     bool half_;
     // Row offsets
@@ -229,37 +229,34 @@ template <class A> class Array2D
     // Operator+= (matrix addition)
     void operator+=(const Array2D<A> &B)
     {
-        // Check array sizes are compatible
-        if (nColumns_ != B.nRows_)
-        {
-            Messenger::error("Can't add matrices together, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n", nRows_,
-                             nColumns_, B.nRows_, B.nColumns_);
-            return;
-        }
+        assert(nColumns_ == B.nColumns_ && nRows_ == B.nRows_);
+
         std::transform(array_.begin(), array_.end(), B.array_.begin(), array_.begin(), [](auto &a, auto &b) { return a + b; });
     }
     // Operator-= (matrix subtraction)
     void operator-=(const Array2D<A> &B)
     {
-        // Check array sizes are compatible
-        if (nColumns_ != B.nRows_)
-        {
-            Messenger::error("Can't subtract matrices, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n", nRows_,
-                             nColumns_, B.nRows_, B.nColumns_);
-            return;
-        }
+        assert(nColumns_ == B.nColumns_ && nRows_ == B.nRows_);
+
         std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
+    }
+    Array2D<A> operator+(const Array2D<A> &other) const
+    {
+        assert(nColumns_ == other.nColumns_ && nRows_ == other.nRows_);
+        auto half = this->half_ && other.half_;
+        Array2D<A> ret(nRows_, nColumns_, half);
+        for (int i = 0; i < this->nRows_; i++)
+        {
+            int colStart = i ? half : 0;
+            for (int j = colStart; j < this->nColumns_; ++j)
+                ret[{i, j}] = other[{i, j}] + (*this)[{i, j}];
+        };
+        return ret;
     }
     // Operator* (matrix multiply)
     Array2D<A> operator*(const Array2D<A> &B) const
     {
-        // Check array sizes are compatible
-        if (nColumns_ != B.nRows_)
-        {
-            Messenger::error("Can't multiply matrices together, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n",
-                             nRows_, nColumns_, B.nRows_, B.nColumns_);
-            return Array2D<A>();
-        }
+        assert(nColumns_ == B.nRows_);
 
         Array2D<A> C(nRows_, B.nColumns_);
         int colB, i;

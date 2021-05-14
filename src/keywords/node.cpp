@@ -11,7 +11,7 @@ NodeKeywordBase::NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeT
     onlyInScope_ = onlyInScope;
 }
 
-NodeKeywordBase::~NodeKeywordBase() {}
+NodeKeywordBase::~NodeKeywordBase() = default;
 
 /*
  * Parent Node

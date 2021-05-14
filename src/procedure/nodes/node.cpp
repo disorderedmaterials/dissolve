@@ -2,12 +2,14 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/node.h"
+
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "classes/site.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/procedure.h"
+#include <utility>
 
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
@@ -178,7 +180,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::parameterInScope(std::string_
     if (!scope_)
         return nullptr;
 
-    return scope_->parameterInScope(this, name, excludeParameter);
+    return scope_->parameterInScope(this, name, std::move(excludeParameter));
 }
 
 // Return the named parameter if it exists anywhere in the same Procedure
@@ -188,7 +190,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::parameterExists(std::string_v
     if (!scope_)
         return nullptr;
 
-    return scope_->parameterExists(name, excludeParameter);
+    return scope_->parameterExists(name, std::move(excludeParameter));
 }
 
 // Create and return reference list of parameters in scope

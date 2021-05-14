@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include <utility>
+
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
@@ -10,11 +12,10 @@
 #include "data/isotopes.h"
 
 AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
-    : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
+    : atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(fraction),
+      boundCoherent_(boundCoherent)
 {
-    isotopes_.clear();
-    for (auto n = 0; n < nIso; ++n)
-        isotopes_.add();
+    isotopes_.resize(nIso, IsotopeData());
 }
 
 AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listIndex()), atomType_(source.atomType_)
@@ -23,7 +24,8 @@ AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listI
 }
 
 AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
-    : listIndex_(listIndex), atomType_(type), exchangeable_(false), population_(population), fraction_(0.0), boundCoherent_(0.0)
+    : listIndex_(listIndex), atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(0.0),
+      boundCoherent_(0.0)
 {
 }
 
@@ -45,32 +47,40 @@ void AtomTypeData::operator=(const AtomTypeData &source)
 void AtomTypeData::add(double nAdd) { population_ += nAdd; }
 
 // Add to population of Isotope
-void AtomTypeData::add(Isotope *tope, double nAdd)
+void AtomTypeData::add(Sears91::Isotope tope, double nAdd)
 {
     // Has this isotope already been added to the list?
-    IsotopeData *topeData = nullptr;
-    for (topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
-        if (topeData->isotope() == tope)
-            break;
-    if (topeData == nullptr)
-    {
-        topeData = isotopes_.add();
-        topeData->initialise(tope);
-    }
-
-    // Increase Isotope population
-    topeData->add(nAdd);
+    auto it =
+        std::find_if(isotopes_.begin(), isotopes_.end(), [tope](const auto &topeData) { return topeData.isotope() == tope; });
+    if (it == isotopes_.end())
+        isotopes_.emplace_back(tope, nAdd);
+    else
+        it->add(nAdd);
 
     // Increase total population
     population_ += nAdd;
+}
+
+// Add/set full isotope data
+void AtomTypeData::setIsotope(Sears91::Isotope tope, double pop, double fraction)
+{
+    if (std::find_if(isotopes_.begin(), isotopes_.end(), [tope](const auto &topeData) { return topeData.isotope() == tope; }) !=
+        isotopes_.end())
+        throw(std::runtime_error(fmt::format(
+            "Tried to set IsotopeData for isotope A = {} in AtomTypeData for AtomType '{}', but existing data is present.\n",
+            tope, Sears91::A(tope), atomTypeName())));
+
+    isotopes_.emplace_back(tope, pop, fraction);
+
+    population_ += pop;
 }
 
 // Zero populations
 void AtomTypeData::zeroPopulations()
 {
     // Zero individual isotope counts
-    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
-        topeData->zeroPopulation();
+    for (auto &topeData : isotopes_)
+        topeData.zeroPopulation();
 
     // Zero totals
     population_ = 0.0;
@@ -96,13 +106,13 @@ void AtomTypeData::finalise(double totalAtoms)
     fraction_ = population_ / totalAtoms;
 
     // Calculate isotope fractional populations (of AtomType)
-    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
-        topeData->finalise(population_);
+    for (auto &topeData : isotopes_)
+        topeData.finalise(population_);
 
     // Determine bound coherent scattering for AtomType, based on Isotope populations
     boundCoherent_ = 0.0;
-    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
-        boundCoherent_ += topeData->fraction() * topeData->isotope()->boundCoherent();
+    for (auto &topeData : isotopes_)
+        boundCoherent_ += topeData.fraction() * Sears91::boundCoherent(topeData.isotope());
 }
 
 // Remove any existing isotopes, and add only the natural isotope
@@ -110,39 +120,23 @@ void AtomTypeData::naturalise()
 {
     // Clear the isotopes list and add on the natural isotope, keeping the current population
     isotopes_.clear();
-    IsotopeData *topeData = isotopes_.add();
-    topeData->initialise(Isotopes::naturalIsotope(atomType_->Z()));
-    topeData->add(population_);
-    topeData->finalise(population_);
-    boundCoherent_ = topeData->isotope()->boundCoherent();
+    auto &topeData = isotopes_.emplace_back(Sears91::naturalIsotope(atomType_->Z()), population_);
+    topeData.finalise(population_);
+    boundCoherent_ = Sears91::boundCoherent(topeData.isotope());
 }
 
 // Return the number of defined Isotopes
-int AtomTypeData::nIsotopes() const { return isotopes_.nItems(); }
+int AtomTypeData::nIsotopes() const { return isotopes_.size(); }
 
 // Return if specified Isotope is already in the list
-bool AtomTypeData::hasIsotope(Isotope *tope)
+bool AtomTypeData::hasIsotope(Sears91::Isotope tope) const
 {
-    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
-        if (topeData->isotope() == tope)
-            return true;
-
-    return false;
+    return std::find_if(isotopes_.begin(), isotopes_.end(),
+                        [tope](const auto &topeData) { return topeData.isotope() == tope; }) != isotopes_.end();
 }
 
-// Set this AtomType to have only the single Isotope provided
-void AtomTypeData::setSingleIsotope(Isotope *tope)
-{
-    isotopes_.clear();
-    IsotopeData *topeData = isotopes_.add();
-    topeData->initialise(tope);
-    topeData->add(population_);
-    topeData->finalise(population_);
-    boundCoherent_ = topeData->isotope()->boundCoherent();
-}
-
-// Return Isotope
-IsotopeData *AtomTypeData::isotopeData() const { return isotopes_.first(); }
+// Return IsotopeData vector
+const std::vector<IsotopeData> &AtomTypeData::isotopeData() const { return isotopes_; };
 
 // Return total population over all isotopes
 int AtomTypeData::population() const { return population_; }
@@ -158,20 +152,3 @@ double AtomTypeData::boundCoherent() const { return boundCoherent_; }
 
 // Return referenced AtomType name
 std::string_view AtomTypeData::atomTypeName() const { return atomType_->name(); }
-
-/*
- * I/O
- */
-
-// Write data through specified LineParser
-bool AtomTypeData::serialise(LineParser &parser) const
-{
-    // Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-    if (!parser.writeLineF("{} {} {} {} {}\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
-        return false;
-    ListIterator<IsotopeData> isotopeIterator(isotopes_);
-    while (IsotopeData *topeData = isotopeIterator.iterate())
-        if (!topeData->serialise(parser))
-            return false;
-    return true;
-}

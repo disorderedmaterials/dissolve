@@ -77,9 +77,9 @@ class RegionalDistributor
     // Lists of Cells locked by each process/group
     std::vector<std::set<Cell *>> lockedCells_;
     // Cell process/group owners
-    Array<int> cellLockOwners_;
+    std::vector<int> cellLockOwners_;
     // Cell status flags
-    Array<CellStatusFlag> cellStatusFlags_;
+    std::vector<CellStatusFlag> cellStatusFlags_;
 
     private:
     // Return whether the specified processOrGroup can lock the given Cell index
@@ -96,13 +96,13 @@ class RegionalDistributor
     // Counter for distributed Molecules
     int nMoleculesDistributed_;
     // Molecule status array
-    Array<MoleculeStatusFlag> moleculeStatus_;
+    std::vector<MoleculeStatusFlag> moleculeStatus_;
     // Arrays of Molecule IDs assigned to each process / group
     std::vector<std::vector<int>> assignedMolecules_;
 
     private:
     // Assign Molecule to process/group if possible
-    bool assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup);
+    bool assignMolecule(const std::shared_ptr<const Molecule> &mol, int processOrGroup);
     // Try to assign a Molecule from the specified Cell to the process/group
     std::shared_ptr<Molecule> assignMolecule(Cell *cell, int processOrGroup);
     // Try to find a Molecule target for the process/group

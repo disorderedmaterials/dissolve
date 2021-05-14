@@ -13,7 +13,7 @@ class Data1DStoreKeyword : public KeywordData<Data1DStore &>
 {
     public:
     Data1DStoreKeyword(Data1DStore &dataStore);
-    ~Data1DStoreKeyword();
+    ~Data1DStoreKeyword() override;
 
     /*
      * Arguments

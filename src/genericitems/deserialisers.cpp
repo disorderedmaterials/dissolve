@@ -3,6 +3,7 @@
 
 #include "genericitems/deserialisers.h"
 #include "base/lineparser.h"
+#include "classes/braggreflection.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/partialsetaccumulator.h"
@@ -36,7 +37,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         return true;
     });
 
-    // stdlib
+    // Standard Classes / Containers
     registerDeserialiser<std::streampos>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         // NOTE Can't implicit cast streampos into the arg for readArg(), so assume long long int for now.
         long long int pos;
@@ -65,21 +66,22 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         }
         return true;
     });
-
-    // Custom Classes
-    registerDeserialiser<Array<double>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        auto &v = std::any_cast<Array<double> &>(a);
+    registerDeserialiser<std::vector<Vec3<double>>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
+        auto &v = std::any_cast<std::vector<Vec3<double>> &>(a);
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        v.createEmpty(parser.argi(0));
-        for (auto n = 0; n < v.nItems(); ++n)
+        v.clear();
+        v.resize(parser.argi(0));
+        for (auto &n : v)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            v.add(parser.argd(0));
+            n = parser.arg3d(0);
         }
         return true;
     });
+
+    // Custom Classes
     registerDeserialiser<Array<SampledDouble>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         auto &v = std::any_cast<Array<SampledDouble> &>(a);
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -88,19 +90,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         for (auto n = 0; n < v.nItems(); ++n)
             if (!v[n].deserialise(parser))
                 return false;
-        return true;
-    });
-    registerDeserialiser<Array<Vec3<double>>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        auto &v = std::any_cast<Array<Vec3<double>> &>(a);
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        v.createEmpty(parser.argi(0));
-        for (auto n = 0; n < v.nItems(); ++n)
-        {
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            v.add(parser.arg3d(0));
-        }
         return true;
     });
     registerDeserialiser<Array2D<char>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
@@ -179,6 +168,9 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         return true;
     });
     registerDeserialiser<XRayWeights>(simpleDeserialiseCore<XRayWeights>);
+
+    // Containers of Custom Classes
+    registerDeserialiser<std::vector<BraggReflection>>(vectorDeserialise<BraggReflection>);
 }
 
 /*

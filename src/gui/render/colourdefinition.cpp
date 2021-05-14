@@ -279,7 +279,7 @@ void ColourDefinition::addCustomGradientPoint(double value, QColor colour)
 int ColourDefinition::nCustomGradientPoints() const { return customGradient_.nPoints(); }
 
 // Return custom gradient points
-const Array<ColourScalePoint> &ColourDefinition::customGradientPoints() const { return customGradient_.points(); }
+const std::vector<ColourScalePoint> &ColourDefinition::customGradientPoints() const { return customGradient_.points(); }
 
 // Remove specified colourscale point with index specified
 void ColourDefinition::removeCustomGradientPoint(int id)

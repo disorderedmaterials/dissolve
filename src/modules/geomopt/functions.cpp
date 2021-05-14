@@ -6,70 +6,43 @@
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 #include "modules/geomopt/geomopt.h"
+#include "templates/algorithms.h"
+#include <numeric>
 
 // Copy coordinates from supplied Configuration into reference arrays
 template <> void GeometryOptimisationModule::setReferenceCoordinates(Configuration *cfg)
 {
-    for (auto n = 0; n < cfg->nAtoms(); ++n)
-    {
-        auto r = cfg->atom(n)->r();
-        xRef_[n] = r.x;
-        yRef_[n] = r.y;
-        zRef_[n] = r.z;
-    }
+    std::transform(cfg->atoms().begin(), cfg->atoms().end(), rRef_.begin(), [](const auto i) { return i->r(); });
 }
 
 // Copy coordinates from supplied Species into reference arrays
 template <> void GeometryOptimisationModule::setReferenceCoordinates(Species *sp)
 {
-    for (auto n = 0; n < sp->nAtoms(); ++n)
-    {
-        auto r = sp->atom(n).r();
-        xRef_[n] = r.x;
-        yRef_[n] = r.y;
-        zRef_[n] = r.z;
-    }
+    std::transform(sp->atoms().begin(), sp->atoms().end(), rRef_.begin(), [](const auto i) { return i.r(); });
 }
 
 // Revert Configuration to reference coordinates
 template <> void GeometryOptimisationModule::revertToReferenceCoordinates(Configuration *cfg)
 {
-    for (auto n = 0; n < cfg->nAtoms(); ++n)
-        cfg->atom(n)->setCoordinates(xRef_[n], yRef_[n], zRef_[n]);
+    for (auto &&[ref, i] : zip(rRef_, cfg->atoms()))
+        i->setCoordinates(ref);
 }
 
 // Revert Species to reference coordinates
 template <> void GeometryOptimisationModule::revertToReferenceCoordinates(Species *sp)
 {
-    for (auto n = 0; n < sp->nAtoms(); ++n)
-        sp->setAtomCoordinates(n, xRef_[n], yRef_[n], zRef_[n]);
+    for (auto &&[ref, i] : zip(rRef_, sp->atoms()))
+        sp->setAtomCoordinates(&i, ref);
 }
 
 // Return current RMS force
 double GeometryOptimisationModule::rmsForce() const
 {
-    auto rmsf = 0.0;
+    auto msf = std::accumulate(f_.begin(), f_.end(), 0.0,
+                               [](auto &acc, const auto &f) { return acc + f.x * f.x + f.y * f.y + f.z * f.z; }) /
+               f_.size();
 
-    for (auto n = 0; n < xForce_.nItems(); ++n)
-        rmsf += xForce_.at(n) * xForce_.at(n) + yForce_.at(n) * yForce_.at(n) + zForce_.at(n) * zForce_.at(n);
-    rmsf /= xForce_.nItems();
-
-    return sqrt(rmsf);
-}
-
-// Determine suitable step size from current forces
-double GeometryOptimisationModule::gradientStepSize()
-{
-    auto fMax = xForce_.maxAbs();
-    auto fTemp = yForce_.maxAbs();
-    if (fTemp > fMax)
-        fMax = fTemp;
-    fTemp = zForce_.maxAbs();
-    if (fTemp > fMax)
-        fMax = fTemp;
-
-    return 1.0e-5;
-    return 1.0 / fMax;
+    return sqrt(msf);
 }
 
 // Sort bounds / energies so that minimum energy is in the central position
@@ -92,9 +65,8 @@ template <>
 double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg,
                                                          const PotentialMap &potentialMap, double delta)
 {
-    auto &atoms = cfg->atoms();
-    for (auto n = 0; n < cfg->nAtoms(); ++n)
-        atoms[n]->setCoordinates(xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta, zRef_[n] + zForce_[n] * delta);
+    for (auto &&[i, r, f] : zip(cfg->atoms(), rRef_, f_))
+        i->setCoordinates(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta);
     cfg->updateCellContents();
 
     return EnergyModule::totalEnergy(procPool, cfg, potentialMap);
@@ -105,8 +77,8 @@ template <>
 double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
                                                          double delta)
 {
-    for (auto n = 0; n < sp->nAtoms(); ++n)
-        sp->setAtomCoordinates(n, xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta, zRef_[n] + zForce_[n] * delta);
+    for (auto &&[i, r, f] : zip(sp->atoms(), rRef_, f_))
+        sp->setAtomCoordinates(&i, Vec3<double>(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta));
 
     return EnergyModule::totalEnergy(procPool, sp, potentialMap);
 }
@@ -130,15 +102,9 @@ bool GeometryOptimisationModule::optimiseSpecies(Dissolve &dissolve, ProcessPool
     Messenger::print("\n");
 
     // Initialise working arrays for coordinates and forces
-    xRef_.initialise(sp->nAtoms());
-    yRef_.initialise(sp->nAtoms());
-    zRef_.initialise(sp->nAtoms());
-    xTemp_.initialise(sp->nAtoms());
-    yTemp_.initialise(sp->nAtoms());
-    zTemp_.initialise(sp->nAtoms());
-    xForce_.initialise(sp->nAtoms());
-    yForce_.initialise(sp->nAtoms());
-    zForce_.initialise(sp->nAtoms());
+    rRef_.resize(sp->nAtoms());
+    rTemp_.resize(sp->nAtoms());
+    f_.resize(sp->nAtoms());
 
     optimise<Species>(dissolve, procPool, sp);
 

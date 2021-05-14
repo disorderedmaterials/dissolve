@@ -3,8 +3,8 @@
 
 #include "math/mathfunc.h"
 #include "math/constants.h"
+#include <cmath>
 #include <cstdlib>
-#include <math.h>
 
 namespace DissolveMath
 {

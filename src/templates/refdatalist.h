@@ -4,9 +4,9 @@
 #pragma once
 
 #include <cassert>
+#include <cstddef>
+#include <cstdio>
 #include <fmt/core.h>
-#include <stddef.h>
-#include <stdio.h>
 
 // Forward Declarations
 template <class T, class D> class RefDataList;
@@ -157,7 +157,7 @@ template <class T, class D> class RefDataList
     // Append reference to the list
     RefDataItem<T, D> *append(T *item)
     {
-        RefDataItem<T, D> *newitem = new RefDataItem<T, D>;
+        auto *newitem = new RefDataItem<T, D>;
         // Add the pointer to the list
         listHead_ == nullptr ? listHead_ = newitem : listTail_->next_ = newitem;
         newitem->prev_ = listTail_;
@@ -170,7 +170,7 @@ template <class T, class D> class RefDataList
     // Append reference to the list with data
     RefDataItem<T, D> *append(T *item, D data)
     {
-        RefDataItem<T, D> *newitem = new RefDataItem<T, D>;
+        auto *newitem = new RefDataItem<T, D>;
         // Add the pointer to the list
         listHead_ == nullptr ? listHead_ = newitem : listTail_->next_ = newitem;
         newitem->prev_ = listTail_;
@@ -184,7 +184,7 @@ template <class T, class D> class RefDataList
     // Prepend reference to the beginning of the list
     RefDataItem<T, D> *prepend(T *item, D data)
     {
-        RefDataItem<T, D> *newitem = new RefDataItem<T, D>;
+        auto *newitem = new RefDataItem<T, D>;
         // Add the pointer to the beginning of the list
         newitem->next_ = listHead_;
         listHead_ == nullptr ? listHead_ = newitem : listHead_->prev_ = newitem;
@@ -201,7 +201,7 @@ template <class T, class D> class RefDataList
         if (target == nullptr)
             return add(item);
 
-        RefDataItem<T, D> *newitem = new RefDataItem<T, D>;
+        auto *newitem = new RefDataItem<T, D>;
         newitem->prev_ = target;
         newitem->next_ = target->next_;
         if (target->next_ != nullptr)
@@ -231,7 +231,7 @@ template <class T, class D> class RefDataList
         if (target == nullptr)
             return add(item);
 
-        RefDataItem<T, D> *newitem = new RefDataItem<T, D>;
+        auto *newitem = new RefDataItem<T, D>;
         newitem->next_ = target;
         newitem->prev_ = target->prev_;
         if (target->prev_ != nullptr)

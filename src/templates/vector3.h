@@ -5,8 +5,8 @@
 
 #include "math/constants.h"
 #include "math/mathfunc.h"
+#include <cmath>
 #include <fmt/core.h>
-#include <math.h>
 
 // 3D vector
 template <class T> class Vec3

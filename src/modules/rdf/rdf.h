@@ -5,7 +5,6 @@
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
-#include "math/pairbroadeningfunction.h"
 #include "module/module.h"
 
 // Forward Declarations
@@ -92,7 +91,8 @@ class RDFModule : public Module
                      const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     static bool calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &weightedgr, PairBroadeningFunction &intraBroadening, int smoothing);
+                                      PartialSet &weightedgr, const Functions::Function1DWrapper intraBroadening,
+                                      int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
     static bool sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, Module *parentModule,
                                 const RDFModule *rdfModule, PartialSet &summedUnweightedGR);

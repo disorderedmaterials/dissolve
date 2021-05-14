@@ -1,16 +1,16 @@
 add_library(
   math
   averaging.cpp
-  broadeningfunction.cpp
+  combinations.cpp
   cuboid.cpp
   data1d.cpp
   data2d.cpp
   data3d.cpp
   doubleexp.cpp
   error.cpp
-  extrema.cpp
   filters.cpp
   ft.cpp
+  function1d.cpp
   gaussfit.cpp
   gj.cpp
   histogram1d.cpp
@@ -21,7 +21,6 @@ add_library(
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
-  pairbroadeningfunction.cpp
   poissonfit.cpp
   range.cpp
   regression.cpp
@@ -32,7 +31,7 @@ add_library(
   transformer.cpp
   windowfunction.cpp
   averaging.h
-  broadeningfunction.h
+  combinations.h
   constants.h
   cuboid.h
   data1d.h
@@ -43,9 +42,9 @@ add_library(
   data3dbase.h
   doubleexp.h
   error.h
-  extrema.h
   filters.h
   ft.h
+  function1d.h
   functionspace.h
   gaussfit.h
   gj.h
@@ -59,7 +58,6 @@ add_library(
   matrix4.h
   mc.h
   minimiser.h
-  pairbroadeningfunction.h
   poissonfit.h
   praxis.h
   range.h
@@ -67,7 +65,6 @@ add_library(
   sampleddata1d.h
   sampleddouble.h
   sampledvector.h
-  sd.h
   svd.h
   transformer.h
   windowfunction.h

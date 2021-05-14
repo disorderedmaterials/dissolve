@@ -31,11 +31,11 @@ class Data1DExportFileFormat : public FileAndFormat
 
     public:
     // Return number of available formats
-    int nFormats() const;
+    int nFormats() const override;
     // Return format keyword for supplied index
-    std::string formatKeyword(int id) const;
+    std::string formatKeyword(int id) const override;
     // Return description string for supplied index
-    std::string formatDescription(int id) const;
+    std::string formatDescription(int id) const override;
     // Return current format as Data1DExportFormat
     Data1DExportFormat data1DFormat() const;
 
@@ -44,7 +44,7 @@ class Data1DExportFileFormat : public FileAndFormat
      */
     public:
     // Return whether the file must exist
-    bool fileMustExist() const { return false; }
+    bool fileMustExist() const override { return false; }
 
     /*
      * Export Functions

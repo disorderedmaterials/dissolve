@@ -15,7 +15,7 @@ std::shared_ptr<ExpressionNode> ExpressionBinaryOperatorNode::duplicate()
 {
     auto node = std::make_shared<ExpressionBinaryOperatorNode>(operator_);
 
-    for (auto child : children_)
+    for (const auto &child : children_)
         node->addChild(child->duplicate());
 
     return node;

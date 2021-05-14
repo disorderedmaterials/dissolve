@@ -20,7 +20,7 @@ OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProce
 }
 
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(
-    RefList<const SelectProcedureNode> selectNodes)
+    const RefList<const SelectProcedureNode> &selectNodes)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateSitePopulationNormalise)
 {
     // Create keywords - store the pointers to the superclasses for later use

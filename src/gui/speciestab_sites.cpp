@@ -157,26 +157,20 @@ void SpeciesTab::updateSitesTab()
     }
 
     // Set origin atom indices
-    Array<int> originAtoms = site->originAtomIndices();
-    QString originText = originAtoms.nItems() == 0 ? QString() : QString::number(originAtoms.at(0) + 1);
-    for (auto n = 1; n < originAtoms.nItems(); ++n)
-        originText += QString(" %1").arg(originAtoms.at(n) + 1);
-    ui_.SiteOriginAtomsEdit->setText(originText);
+    ui_.SiteOriginAtomsEdit->setText(
+        std::accumulate(site->originAtomIndices().begin(), site->originAtomIndices().end(), QString(),
+                        [](auto &val, auto idx) { return val + QString("%1%2").arg(val.isEmpty() ? "" : " ").arg(idx + 1); }));
     ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
     // Set x axis atom indices
-    Array<int> xAxisAtoms = site->xAxisAtomIndices();
-    QString xAxisText = xAxisAtoms.nItems() == 0 ? QString() : QString::number(xAxisAtoms.at(0) + 1);
-    for (auto n = 1; n < xAxisAtoms.nItems(); ++n)
-        xAxisText += QString(" %1").arg(xAxisAtoms.at(n) + 1);
-    ui_.SiteXAxisAtomsEdit->setText(xAxisText);
+    ui_.SiteXAxisAtomsEdit->setText(
+        std::accumulate(site->xAxisAtomIndices().begin(), site->xAxisAtomIndices().end(), QString(),
+                        [](auto &val, auto idx) { return val + QString("%1%2").arg(val.isEmpty() ? "" : " ").arg(idx + 1); }));
 
     // Set y axis atom indices
-    Array<int> yAxisAtoms = site->yAxisAtomIndices();
-    QString yAxisText = yAxisAtoms.nItems() == 0 ? QString() : QString::number(yAxisAtoms.at(0) + 1);
-    for (auto n = 1; n < yAxisAtoms.nItems(); ++n)
-        yAxisText += QString(" %1").arg(yAxisAtoms.at(n) + 1);
-    ui_.SiteYAxisAtomsEdit->setText(yAxisText);
+    ui_.SiteYAxisAtomsEdit->setText(
+        std::accumulate(site->yAxisAtomIndices().begin(), site->yAxisAtomIndices().end(), QString(),
+                        [](auto &val, auto idx) { return val + QString("%1%2").arg(val.isEmpty() ? "" : " ").arg(idx + 1); }));
 
     // If the current site has changed, also regenerate the SpeciesSite renderable
     if (current != site)

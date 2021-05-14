@@ -29,9 +29,9 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
      */
     public:
     // Return number of sites required to calculate observable
-    int nSitesRequired() const;
+    int nSitesRequired() const override;
     // Return dimensionality of calculated observable
-    int dimensionality() const;
+    int dimensionality() const override;
 
     /*
      * Execute

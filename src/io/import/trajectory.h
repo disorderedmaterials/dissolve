@@ -20,7 +20,7 @@ class TrajectoryImportFileFormat : public FileAndFormat
     };
     TrajectoryImportFileFormat(TrajectoryImportFormat format = XYZTrajectory);
     TrajectoryImportFileFormat(std::string_view filename, TrajectoryImportFormat format = XYZTrajectory);
-    ~TrajectoryImportFileFormat();
+    ~TrajectoryImportFileFormat() override;
 
     /*
      * Keyword Options
@@ -38,11 +38,11 @@ class TrajectoryImportFileFormat : public FileAndFormat
 
     public:
     // Return number of available formats
-    int nFormats() const;
+    int nFormats() const override;
     // Return format keyword for supplied index
-    std::string formatKeyword(int id) const;
+    std::string formatKeyword(int id) const override;
     // Return description string for supplied index
-    std::string formatDescription(int id) const;
+    std::string formatDescription(int id) const override;
     // Return current format as TrajectoryImportFormat
     TrajectoryImportFormat trajectoryFormat() const;
 
@@ -51,5 +51,5 @@ class TrajectoryImportFileFormat : public FileAndFormat
      */
     public:
     // Return whether the file must exist
-    bool fileMustExist() const { return true; }
+    bool fileMustExist() const override { return true; }
 };

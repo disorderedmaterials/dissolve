@@ -14,7 +14,7 @@ class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
 {
     public:
     SpeciesRefListKeyword(RefList<Species> &references);
-    ~SpeciesRefListKeyword();
+    ~SpeciesRefListKeyword() override;
 
     /*
      * Data
@@ -41,5 +41,5 @@ class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
      */
     protected:
     // Prune any references to the supplied Species in the contained data
-    void removeReferencesTo(Species *sp);
+    void removeReferencesTo(Species *sp) override;
 };

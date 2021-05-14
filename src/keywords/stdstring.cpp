@@ -7,7 +7,7 @@
 
 StringKeyword::StringKeyword(std::string_view value) : KeywordData<std::string>(KeywordBase::StringData, std::string(value)) {}
 
-StringKeyword::~StringKeyword() {}
+StringKeyword::~StringKeyword() = default;
 
 /*
  * Arguments

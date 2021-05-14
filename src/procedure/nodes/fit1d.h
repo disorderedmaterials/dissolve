@@ -98,7 +98,7 @@ class Fit1DProcedureNode : public ProcedureNode
      */
     public:
     // Read structure from specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData) override;
     // Write structure to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix);
+    bool write(LineParser &parser, std::string_view prefix) override;
 };
