@@ -37,26 +37,20 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
  */
 
 // Update atom table selection
-// void SpeciesTab::updateAtomTableSelection()
-// {
-//     Locker refreshLocker(refreshLock_);
+void SpeciesTab::updateAtomTableSelection()
+{
+    SpeciesAtom *i;
 
-//     QTableWidgetItem *item;
-//     SpeciesAtom *i;
-
-//     // Set atom selection in table to reflect the atom data
-//     for (auto n = 0; n < ui_.AtomTable->rowCount(); ++n)
-//     {
-//         item = ui_.AtomTable->item(n, 0);
-//         i = item->data(Qt::UserRole).value<SpeciesAtom *>();
-//         if (i->isSelected())
-//             for (auto m = 0; m < 6; ++m)
-//                 ui_.AtomTable->item(n, m)->setSelected(true);
-//         else
-//             for (auto m = 0; m < 6; ++m)
-//                 ui_.AtomTable->item(n, m)->setSelected(false);
-//     }
-// }
+    auto selection = QItemSelection();
+    // Set atom selection in table to reflect the atom data
+    for (auto n = 0; n < atoms_.rowCount(); ++n)
+    {
+        i = atoms_.data(atoms_.index(n, 0), Qt::UserRole).value<SpeciesAtom *>();
+        if (i->isSelected())
+            selection.select(atoms_.index(n, 0), atoms_.index(n, 5));
+    }
+    ui_.AtomTable->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+}
 
 // void SpeciesTab::on_AtomTable_itemSelectionChanged()
 // {

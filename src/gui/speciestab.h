@@ -85,7 +85,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
     private slots:
     // Update atom table selection
-    // void updateAtomTableSelection();
+    void updateAtomTableSelection();
 
     // private slots:
     // void on_AtomTable_itemSelectionChanged();
