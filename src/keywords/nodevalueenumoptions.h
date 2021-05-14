@@ -104,7 +104,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
             if (!KeywordData<Venum<NodeValue, E>>::data_.setEnumeration(parser.argsv(startArg + 1)))
                 return false;
 
-            KeywordData<Venum<NodeValue, E>>::hasBeenSet();
+            KeywordData<Venum<NodeValue, E>>::setAsModified();
 
             return true;
         }
@@ -135,7 +135,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
 
         bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, vars);
 
-        KeywordData<Venum<NodeValue, E>>::hasBeenSet();
+        KeywordData<Venum<NodeValue, E>>::setAsModified();
 
         return result;
     }
@@ -144,7 +144,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     {
         KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
 
-        KeywordData<Venum<NodeValue, E>>::hasBeenSet();
+        KeywordData<Venum<NodeValue, E>>::setAsModified();
     }
 
     /*

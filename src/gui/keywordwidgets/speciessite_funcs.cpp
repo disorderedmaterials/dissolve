@@ -47,7 +47,7 @@ void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
         return;
 
     keyword_->data() = site;
-    keyword_->hasBeenSet();
+    keyword_->setAsModified();
 
     updateSummaryText();
 

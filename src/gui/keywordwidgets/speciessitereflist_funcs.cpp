@@ -55,7 +55,7 @@ void SpeciesSiteRefListKeywordWidget::siteCheckBox_clicked(bool checked)
     else
         keyword_->data().remove(site);
 
-    keyword_->hasBeenSet();
+    keyword_->setAsModified();
 
     updateSummaryText();
 

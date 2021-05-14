@@ -32,7 +32,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Test?
     const auto testThreshold = keywords_.asDouble("TestThreshold");
-    if (keywords_.isSet("TestRangeA"))
+    if (keywords_.hasBeenSet("TestRangeA"))
     {
         const auto delta = keywords_.asDouble("TestRangeA") - coordinationNumber(0).value();
 
@@ -42,7 +42,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (!procPool.allTrue(fabs(delta) < testThreshold))
             return false;
     }
-    if (keywords_.isSet("TestRangeB"))
+    if (keywords_.hasBeenSet("TestRangeB"))
     {
         // Is range B enabled?
         if (!isRangeBEnabled())
@@ -57,7 +57,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (!procPool.allTrue(fabs(delta) < testThreshold))
             return false;
     }
-    if (keywords_.isSet("TestRangeC"))
+    if (keywords_.hasBeenSet("TestRangeC"))
     {
         // Is range B enabled?
         if (!isRangeBEnabled())

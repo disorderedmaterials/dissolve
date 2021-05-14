@@ -37,7 +37,7 @@ void SpeciesVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, co
     if (refreshing_)
         return;
 
-    keyword_->hasBeenSet();
+    keyword_->setAsModified();
 
     updateSummaryText();
 

@@ -87,7 +87,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
                 return KeywordData<EnumOptions<E>>::data_.errorAndPrintValid(parser.argsv(startArg));
 
             KeywordData<EnumOptions<E>>::data_.set(parser.argsv(startArg));
-            KeywordData<EnumOptions<E>>::hasBeenSet();
+            KeywordData<EnumOptions<E>>::setAsModified();
 
             return true;
         }
@@ -108,7 +108,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     void setEnumerationByIndex(int optionIndex) override
     {
         KeywordData<EnumOptions<E>>::data_.setIndex(optionIndex);
-        KeywordData<EnumOptions<E>>::hasBeenSet();
+        KeywordData<EnumOptions<E>>::setAsModified();
     }
 
     /*

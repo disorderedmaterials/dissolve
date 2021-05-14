@@ -174,7 +174,7 @@ void IsotopologueSetKeywordWidget::addButton_clicked(bool checked)
     }
 
     // Manually flag that the keyword data has changed
-    keyword_->hasBeenSet();
+    keyword_->setAsModified();
 
     updateWidgetValues(coreData_);
 
@@ -220,7 +220,7 @@ void IsotopologueSetKeywordWidget::removeButton_clicked(bool checked)
     }
 
     // Manually flag that the keyword data has changed
-    keyword_->hasBeenSet();
+    keyword_->setAsModified();
 
     updateWidgetValues(coreData_);
 
@@ -269,7 +269,7 @@ void IsotopologueSetKeywordWidget::isotopologueTree_itemChanged(QTreeWidgetItem 
         weight.setIsotopologue(iso);
 
         // Manually flag that the keyword data has changed
-        keyword_->hasBeenSet();
+        keyword_->setAsModified();
 
         emit(keywordValueChanged(keyword_->optionMask()));
     }
@@ -278,7 +278,7 @@ void IsotopologueSetKeywordWidget::isotopologueTree_itemChanged(QTreeWidgetItem 
         weight.setWeight(item->text(column).toDouble());
 
         // Manually flag that the keyword data has changed
-        keyword_->hasBeenSet();
+        keyword_->setAsModified();
 
         emit(keywordValueChanged(keyword_->optionMask()));
     }

@@ -53,7 +53,7 @@ bool GeometryListKeyword::read(LineParser &parser, int startArg, const CoreData 
         g->set(parser.argd(4 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
                parser.argi(2 + startArg) - 1, parser.argi(3 + startArg) - 1);
 
-    hasBeenSet();
+    setAsModified();
 
     return true;
 }

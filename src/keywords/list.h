@@ -206,10 +206,10 @@ class KeywordList
     Vec3<int> asVec3Int(std::string_view name) const;
     // Return simple keyword value (as Vec3<double>)
     Vec3<double> asVec3Double(std::string_view name) const;
-    // Return whether the specified keyword data has ever been set
-    bool isSet(std::string_view name) const;
+    // Return whether the keyword has been set, and is not currently empty (if relevant)
+    bool hasBeenSet(std::string_view name) const;
     // Flag that the specified keyword has been set by some external means
-    void hasBeenSet(std::string_view name);
+    void setAsModified(std::string_view name);
 
     /*
      * Read / Write

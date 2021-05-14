@@ -52,7 +52,7 @@ bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, const Co
     // Add tuple to vector
     data_.emplace_back(i, s);
 
-    hasBeenSet();
+    setAsModified();
 
     return true;
 }

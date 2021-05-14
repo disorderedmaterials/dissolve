@@ -137,5 +137,5 @@ void Function1DKeywordWidget::updateKeywordData()
 
     // Set new data
     function.setFunctionAndParameters(func, newParams);
-    keyword_->hasBeenSet();
+    keyword_->setAsModified();
 }
