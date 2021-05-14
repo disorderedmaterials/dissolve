@@ -91,7 +91,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
     // public slots:
     // // Update Geometry tab
-    // void updateGeometryTab();
+    void updateGeometryTab();
 
     /*
      * Widget Functions - Isotopologues

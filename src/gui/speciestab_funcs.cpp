@@ -116,7 +116,7 @@ void SpeciesTab::updateControls()
     ui_.ViewerWidget->postRedisplay();
 
     // Geometry Tab
-    // updateGeometryTab();
+    updateGeometryTab();
 
     // Isotopologues Tab
     updateIsotopologuesTab();

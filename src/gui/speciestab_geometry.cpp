@@ -79,37 +79,12 @@ void SpeciesTab::updateUnderlyingAtomSelection()
  */
 
 // Update Geometry tab
-// void SpeciesTab::updateGeometryTab()
-// {
-//     Locker refreshLocker(refreshLock_);
+void SpeciesTab::updateGeometryTab()
+{
+    Locker refreshLocker(refreshLock_);
 
-//     if (!species_)
-//         ui_.AtomTable->clearContents();
-//     else
-//         TableWidgetUpdater<SpeciesTab, SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this,
-//                                                                        &SpeciesTab::updateAtomTableRow);
-
-//     // -- Intramolecular terms
-//     if (!species_)
-//     {
-//         ui_.BondTable->clearContents();
-//         ui_.AngleTable->clearContents();
-//         ui_.TorsionTable->clearContents();
-//         ui_.ImproperTable->clearContents();
-//     }
-//     else
-//     {
-//         TableWidgetUpdater<SpeciesTab, SpeciesBond> bondUpdater(ui_.BondTable, species_->bonds(), this,
-//                                                                 &SpeciesTab::updateBondTableRow);
-//         TableWidgetUpdater<SpeciesTab, SpeciesAngle> angleUpdater(ui_.AngleTable, species_->angles(), this,
-//                                                                   &SpeciesTab::updateAngleTableRow);
-//         TableWidgetUpdater<SpeciesTab, SpeciesTorsion> torsionUpdater(ui_.TorsionTable, species_->torsions(), this,
-//                                                                       &SpeciesTab::updateTorsionTableRow);
-//         TableWidgetUpdater<SpeciesTab, SpeciesImproper> improperUpdater(ui_.ImproperTable, species_->impropers(), this,
-//                                                                         &SpeciesTab::updateImproperTableRow);
-//     }
-//     ui_.BondTable->resizeColumnsToContents();
-//     ui_.AngleTable->resizeColumnsToContents();
-//     ui_.TorsionTable->resizeColumnsToContents();
-//     ui_.ImproperTable->resizeColumnsToContents();
-// }
+    ui_.BondTable->resizeColumnsToContents();
+    ui_.AngleTable->resizeColumnsToContents();
+    ui_.TorsionTable->resizeColumnsToContents();
+    ui_.ImproperTable->resizeColumnsToContents();
+}
