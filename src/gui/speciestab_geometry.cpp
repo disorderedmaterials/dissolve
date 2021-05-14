@@ -52,7 +52,7 @@ void SpeciesTab::updateAtomTableSelection()
     ui_.AtomTable->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
-void SpeciesTab::on_AtomTable_itemSelectionChanged()
+void SpeciesTab::updateUnderlyingAtomSelection()
 {
     if (refreshLock_.isLocked())
         return;

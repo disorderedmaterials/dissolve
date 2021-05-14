@@ -84,11 +84,10 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     std::vector<std::string> validAtomTypeNames(const QModelIndex &index);
 
     private slots:
-    // Update atom table selection
+    // Respond to changes in the Atom Table
     void updateAtomTableSelection();
-
-    // private slots:
-    void on_AtomTable_itemSelectionChanged();
+    // Respond to selection in the underlying model
+    void updateUnderlyingAtomSelection();
 
     // public slots:
     // // Update Geometry tab
