@@ -327,9 +327,8 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
-                               const Array<std::shared_ptr<Molecule>> &targetMolecules, const PotentialMap &potentialMap,
-                               std::vector<Vec3<double>> &f)
+void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const std::vector<const Molecule *> &targetMolecules,
+                               const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
 {
     /*
      * Calculates the total forces acting on the supplied Molecules, arising from PairPotential interactions
@@ -345,10 +344,8 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
     // TODO Calculating forces for whole molecule at once may be more efficient
     // TODO Partitioning atoms of target molecules into cells and running a distributor may be more efficient
     std::vector<int> indices;
-    for (auto n = 0; n < targetMolecules.nItems(); ++n)
+    for (const auto *mol : targetMolecules)
     {
-        const std::shared_ptr<Molecule> &mol = targetMolecules.at(n);
-
         for (auto i = 0; i < mol->nAtoms(); ++i)
             indices.push_back(mol->atom(i)->arrayIndex());
     }

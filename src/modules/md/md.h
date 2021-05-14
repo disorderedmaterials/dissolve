@@ -42,10 +42,6 @@ class MDModule : public Module
     /*
      * Initialisation
      */
-    private:
-    // Species types to restrict calculation to (if any)
-    RefList<Species> restrictToSpecies_;
-
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;
