@@ -36,9 +36,7 @@ foreach(SRCFILE ${tests_SRC})
            ${NO_WHOLE_ARCHIVE_FLAG}
            Qt5::Core
            Qt5::Widgets
-           ${GTEST_LIBRARIES}
-           ${GTEST_MAIN_LIBRARIES}
-    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS}
+    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
   )
 
