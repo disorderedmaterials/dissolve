@@ -19,9 +19,9 @@ set(keywordwidgets_MOC_HDRS
     nodevalue.h
     nodevalueenumoptions.h
     range.h
-    speciesreflist.h
     speciessite.h
     speciessitereflist.h
+    speciesvector.h
     vec3double.h
     vec3integer.h
     vec3labels.h
@@ -56,9 +56,9 @@ set(keywordwidgets_UIS
     nodevalue.ui
     nodevalueenumoptions.ui
     range.ui
-    speciesreflist.ui
     speciessite.ui
     speciessitereflist.ui
+    speciesvector.ui
     vec3double.ui
     vec3integer.ui
     vec3nodevalue.ui
@@ -91,9 +91,9 @@ set(keywordwidgets_SRCS
     nodevalueenumoptions_funcs.cpp
     range_funcs.cpp
     species_funcs.cpp
-    speciesreflist_funcs.cpp
     speciessite_funcs.cpp
     speciessitereflist_funcs.cpp
+    speciesvector_funcs.cpp
     stdstring_funcs.cpp
     widget_funcs.cpp
     vec3double_funcs.cpp

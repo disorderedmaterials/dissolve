@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SpeciesRefListWidget</class>
- <widget class="QWidget" name="SpeciesRefListWidget">
+ <class>SpeciesVectorWidget</class>
+ <widget class="QWidget" name="SpeciesVectorWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>144</width>
-    <height>218</height>
+    <height>85</height>
    </rect>
   </property>
   <property name="font">
@@ -35,7 +35,7 @@
     <number>4</number>
    </property>
    <item row="0" column="0">
-    <widget class="QListWidget" name="SelectionList"/>
+    <widget class="QListView" name="SpeciesList"/>
    </item>
   </layout>
  </widget>

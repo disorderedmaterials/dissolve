@@ -33,9 +33,9 @@ add_library(
   procedure.cpp
   range.cpp
   species.cpp
-  speciesreflist.cpp
   speciessite.cpp
   speciessitereflist.cpp
+  speciesvector.cpp
   stdstring.cpp
   vec3double.cpp
   vec3integer.cpp
@@ -79,9 +79,9 @@ add_library(
   procedure.h
   range.h
   species.h
-  speciesreflist.h
   speciessite.h
   speciessitereflist.h
+  speciesvector.h
   stdstring.h
   vec3double.h
   vec3integer.h
