@@ -31,5 +31,5 @@ class IsotopeComboDelegate : public QItemDelegate
      */
     public:
     // Return text for Isotope specified
-    static QString textForIsotope(Isotope *isotope);
+    static QString textForIsotope(Sears91::Isotope isotope);
 };

@@ -4,10 +4,10 @@ Keyword  MolShake01  TranslationStepSize     2.73659e-01
 Processing  5050//FullWeights  NeutronWeights  1  1
 2  # nItems
 CA 2400.0 0.5 6.646 1
-6 0 2400.0 1.0
+0 2400.0 1.0
 HA 2400.0 0.5 1.4660000000000002 2
-1 0 1200.0 0.5
-1 2 1200.0 0.5
+0 1200.0 0.5
+2 1200.0 0.5
 1  # nItems
 'Benzene'  200  2
 Natural  1.0
@@ -12586,9 +12586,9 @@ False
 Processing  C6D6//FullWeights  NeutronWeights  1  1
 2  # nItems
 CA 1200.0 0.5 6.646 1
-6 0 1200.0 1.0
+0 1200.0 1.0
 HA 1200.0 0.5 6.671 1
-1 2 1200.0 1.0
+2 1200.0 1.0
 1  # nItems
 'Benzene'  200  1
 Deuterated  1.0
@@ -25162,9 +25162,9 @@ F
 Processing  C6H6//FullWeights  NeutronWeights  1  1
 2  # nItems
 CA 1200.0 0.5 6.646 1
-6 0 1200.0 1.0
+0 1200.0 1.0
 HA 1200.0 0.5 -3.739 1
-1 0 1200.0 1.0
+0 1200.0 1.0
 1  # nItems
 'Benzene'  200  1
 Natural  1.0

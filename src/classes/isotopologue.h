@@ -4,6 +4,7 @@
 #pragma once
 
 #include "data/elements.h"
+#include "data/isotopes.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 #include <memory>
@@ -12,7 +13,6 @@
 
 // Forward Declarations
 class AtomType;
-class Isotope;
 class Species;
 
 /*
@@ -48,7 +48,7 @@ class Isotopologue : public ListItem<Isotopologue>
      */
     private:
     // AtomType references and their assigned Isotopes
-    std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> isotopes_;
+    std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> isotopes_;
 
     public:
     // Update current AtomType/Isotopes against parent Species
@@ -56,9 +56,9 @@ class Isotopologue : public ListItem<Isotopologue>
     // Validate current AtomType/Isotopes against available AtomTypes
     void checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
     // Set AtomType/Isotope pair in list
-    void setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
+    void setAtomTypeIsotope(std::shared_ptr<AtomType> at, Sears91::Isotope tope);
     // Return Isotope for specified AtomType
-    Isotope *atomTypeIsotope(std::shared_ptr<AtomType> at) const;
+    Sears91::Isotope atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
-    const std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> &isotopes() const;
+    const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
 };

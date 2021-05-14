@@ -109,7 +109,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesAngle::AngleFunction af;
     SpeciesTorsion::TorsionFunction tf;
     SpeciesBond::BondType bt;
-    Isotope *tope;
     auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
@@ -439,8 +438,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     // Is the supplied isotope valid for the AtomType's element?
                     auto A = std::stoi(std::string(arg2));
-                    tope = Isotopes::isotope(at->Z(), A);
-                    if (tope == nullptr)
+                    if (!Sears91::hasIsotope(at->Z(), A))
                     {
                         Messenger::error("No such Isotope ({}) for element {} (AtomType '{}') in Isotopologue "
                                          "'{}', Species '{}'\n",
@@ -450,7 +448,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    iso->setAtomTypeIsotope(at, tope);
+                    iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
                 }
                 break;
             case (Species::SiteKeyword):
@@ -745,10 +743,10 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             for (auto [atomType, isotope] : iso->isotopes())
             {
                 // No need to write anything that's the natural isotope...
-                if (isotope->A() == 0)
+                if (Sears91::A(isotope) == 0)
                     continue;
 
-                if (!parser.writeLineF("  {}={}", atomType->name(), isotope->A()))
+                if (!parser.writeLineF("  {}={}", atomType->name(), Sears91::A(isotope)))
                     return false;
             }
             if (!parser.writeLineF("\n"))

@@ -13,7 +13,6 @@
 
 // Forward Declarations
 class AtomType;
-class Isotope;
 class Isotopologue;
 class Species;
 
@@ -115,7 +114,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
                                              bool createItem);
     // IsotopologuesTree item update function
     void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<AtomType> item,
-                                          Isotope *data, bool createItem);
+                                          Sears91::Isotope tope, bool createItem);
     // Return currently-selected Isotopologue
     Isotopologue *currentIsotopologue();
 

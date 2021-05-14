@@ -19,9 +19,8 @@ class DataManagerTest : public ::testing::Test
     void SetUp() override {}
 };
 
-TEST_F(DataManagerTest, DataManger)
+TEST_F(DataManagerTest, DataManager)
 {
-
     CoreData coreData;
     Dissolve dissolve(coreData);
     std::vector<ReferencePoint> points;
