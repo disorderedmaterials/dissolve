@@ -27,4 +27,6 @@ void MolShakeModule::initialise()
                   "Minimum step size for translations (Angstroms)", "<stepsize>");
     keywords_.add("Control", new DoubleKeyword(3.0), "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)",
                   "<stepsize>");
+    keywords_.add("Control", new SpeciesVectorKeyword(), "RestrictToSpecies",
+                  "Restrict the calculation to the specified Species");
 }
