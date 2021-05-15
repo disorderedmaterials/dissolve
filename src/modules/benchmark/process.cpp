@@ -150,8 +150,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (auto n = 0; n < N; ++n)
             {
                 // Create a Molecule distributor
-                auto &moleculeArray = cfg->molecules();
-                RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
+                RegionalDistributor distributor(cfg->nMolecules(), cfg->cells(), procPool, strategy);
 
                 Timer timer;
                 Messenger::mute();

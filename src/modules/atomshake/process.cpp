@@ -53,8 +53,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
         // Create a Molecule distributor
-        std::deque<std::shared_ptr<Molecule>> &moleculeArray = cfg->molecules();
-        RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
+        RegionalDistributor distributor(cfg->nMolecules(), cfg->cells(), procPool, strategy);
 
         // Create a local ChangeStore and EnergyKernel
         ChangeStore changeStore(procPool);
