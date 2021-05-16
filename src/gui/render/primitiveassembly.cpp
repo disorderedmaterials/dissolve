@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/primitiveassembly.h"
+#include <array>
 
 PrimitiveAssembly::PrimitiveAssembly() : ListItem<PrimitiveAssembly>() {}
 

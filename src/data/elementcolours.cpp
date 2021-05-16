@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/elementcolours.h"
+#include <array>
 
 namespace ElementColours
 {
