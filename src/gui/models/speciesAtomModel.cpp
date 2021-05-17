@@ -93,7 +93,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
                 if (!atomType)
                     return false;
                 item.setAtomType(atomType);
-                emit updateIsotopologuesTab();
+                emit atomTypeChanged();
             }
             break;
         case 2:

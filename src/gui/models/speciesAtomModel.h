@@ -20,7 +20,7 @@ class SpeciesAtomModel : public QAbstractTableModel
     Dissolve &dissolve_;
 
     signals:
-    void updateIsotopologuesTab();
+    void atomTypeChanged();
 
     public:
     SpeciesAtomModel(std::list<SpeciesAtom> &atoms, Dissolve &dissolve);
