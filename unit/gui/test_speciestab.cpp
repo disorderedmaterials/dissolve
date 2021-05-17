@@ -23,6 +23,8 @@ class SpeciesTabTest : public ::testing::Test
     void SetUp() override {}
 };
 
+std::vector<Qt::ItemDataRole> roles = {Qt::DisplayRole, Qt::EditRole};
+
 TEST_F(SpeciesTabTest, Atoms)
 {
 
@@ -40,20 +42,23 @@ TEST_F(SpeciesTabTest, Atoms)
     EXPECT_EQ(atom.rowCount(), 12);
 
     // Test Carbon atom
-    EXPECT_EQ(atom.data(atom.index(0, 0)).toString().toStdString(), "Carbon");
-    EXPECT_EQ(atom.data(atom.index(0, 1)).toString().toStdString(), "CA");
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 2)).toDouble(), -1.399);
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 3)).toDouble(), 0.1600);
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 4)).toDouble(), 0.000);
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 5)).toDouble(), -0.115);
+    for (auto role : roles)
+    {
+        EXPECT_EQ(atom.data(atom.index(0, 0), role).toString().toStdString(), "Carbon");
+        EXPECT_EQ(atom.data(atom.index(0, 1), role).toString().toStdString(), "CA");
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 2), role).toDouble(), -1.399);
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 3), role).toDouble(), 0.1600);
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 4), role).toDouble(), 0.000);
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 5), role).toDouble(), -0.115);
 
-    // Test Hydrogen Atom
-    EXPECT_EQ(atom.data(atom.index(6, 0)).toString().toStdString(), "Hydrogen");
-    EXPECT_EQ(atom.data(atom.index(6, 1)).toString().toStdString(), "HA");
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 2)).toDouble(), 1.483);
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 3)).toDouble(), 2.001);
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 4)).toDouble(), 0.000);
-    EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 5)).toDouble(), 0.115);
+        // Test Hydrogen Atom
+        EXPECT_EQ(atom.data(atom.index(6, 0), role).toString().toStdString(), "Hydrogen");
+        EXPECT_EQ(atom.data(atom.index(6, 1), role).toString().toStdString(), "HA");
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 2), role).toDouble(), 1.483);
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 3), role).toDouble(), 2.001);
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 4), role).toDouble(), 0.000);
+        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 5), role).toDouble(), 0.115);
+    }
 
     // Mutate Hydrogen
     EXPECT_FALSE(atom.setData(atom.index(6, 0), "Carbon"));
@@ -82,13 +87,17 @@ TEST_F(SpeciesTabTest, Bonds)
     // Test Bonds
     EXPECT_EQ(bond.columnCount(), 7);
     EXPECT_EQ(bond.rowCount(), 12);
-    EXPECT_EQ(bond.data(bond.index(3, 0)).toInt(), 4);
-    EXPECT_EQ(bond.data(bond.index(3, 1)).toInt(), 5);
-    EXPECT_EQ(bond.data(bond.index(3, 2)).toString().toStdString(), "@CA-CA");
-    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 3)).toDouble(), 3924.59);
-    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 4)).toDouble(), 1.4);
-    EXPECT_EQ(bond.data(bond.index(3, 5)).toDouble(), 0);
-    EXPECT_EQ(bond.data(bond.index(3, 6)).toDouble(), 0);
+
+    for (auto role : roles)
+    {
+        EXPECT_EQ(bond.data(bond.index(3, 0), role).toInt(), 4);
+        EXPECT_EQ(bond.data(bond.index(3, 1), role).toInt(), 5);
+        EXPECT_EQ(bond.data(bond.index(3, 2), role).toString().toStdString(), "@CA-CA");
+        EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 3), role).toDouble(), 3924.59);
+        EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 4), role).toDouble(), 1.4);
+        EXPECT_EQ(bond.data(bond.index(3, 5), role).toDouble(), 0);
+        EXPECT_EQ(bond.data(bond.index(3, 6), role).toDouble(), 0);
+    }
 
     // Mutate bond
     EXPECT_FALSE(bond.setData(bond.index(3, 0), 5));
@@ -129,14 +138,17 @@ TEST_F(SpeciesTabTest, Angles)
     // Test Angles
     EXPECT_EQ(angle.columnCount(), 8);
     EXPECT_EQ(angle.rowCount(), 18);
-    EXPECT_EQ(angle.data(angle.index(3, 0)).toInt(), 4);
-    EXPECT_EQ(angle.data(angle.index(3, 1)).toInt(), 5);
-    EXPECT_EQ(angle.data(angle.index(3, 2)).toInt(), 6);
-    EXPECT_EQ(angle.data(angle.index(3, 3)).toString().toStdString(), "@CA-CA-CA");
-    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 4)).toDouble(), 527.184);
-    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 5)).toDouble(), 120);
-    EXPECT_EQ(angle.data(angle.index(3, 6)).toDouble(), 0);
-    EXPECT_EQ(angle.data(angle.index(3, 7)).toDouble(), 0);
+    for (auto role : roles)
+    {
+        EXPECT_EQ(angle.data(angle.index(3, 0), role).toInt(), 4);
+        EXPECT_EQ(angle.data(angle.index(3, 1), role).toInt(), 5);
+        EXPECT_EQ(angle.data(angle.index(3, 2), role).toInt(), 6);
+        EXPECT_EQ(angle.data(angle.index(3, 3), role).toString().toStdString(), "@CA-CA-CA");
+        EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 4), role).toDouble(), 527.184);
+        EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 5), role).toDouble(), 120);
+        EXPECT_EQ(angle.data(angle.index(3, 6), role).toDouble(), 0);
+        EXPECT_EQ(angle.data(angle.index(3, 7), role).toDouble(), 0);
+    }
 
     // Mutate angle
     EXPECT_FALSE(angle.setData(angle.index(3, 0), 5));
@@ -179,15 +191,18 @@ TEST_F(SpeciesTabTest, Torsions)
     // Test Torsions
     EXPECT_EQ(torsion.columnCount(), 9);
     EXPECT_EQ(torsion.rowCount(), 24);
-    EXPECT_EQ(torsion.data(torsion.index(3, 0)).toInt(), 6);
-    EXPECT_EQ(torsion.data(torsion.index(3, 1)).toInt(), 1);
-    EXPECT_EQ(torsion.data(torsion.index(3, 2)).toInt(), 2);
-    EXPECT_EQ(torsion.data(torsion.index(3, 3)).toInt(), 3);
-    EXPECT_EQ(torsion.data(torsion.index(3, 4)).toString().toStdString(), "@CA-CA-CA-CA");
-    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toDouble(), 0);
-    EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6)).toDouble(), 30.334);
-    EXPECT_EQ(torsion.data(torsion.index(3, 7)).toDouble(), 0);
-    EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
+    for (auto role : roles)
+    {
+        EXPECT_EQ(torsion.data(torsion.index(3, 0), role).toInt(), 6);
+        EXPECT_EQ(torsion.data(torsion.index(3, 1), role).toInt(), 1);
+        EXPECT_EQ(torsion.data(torsion.index(3, 2), role).toInt(), 2);
+        EXPECT_EQ(torsion.data(torsion.index(3, 3), role).toInt(), 3);
+        EXPECT_EQ(torsion.data(torsion.index(3, 4), role).toString().toStdString(), "@CA-CA-CA-CA");
+        EXPECT_EQ(torsion.data(torsion.index(3, 5), role).toDouble(), 0);
+        EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6), role).toDouble(), 30.334);
+        EXPECT_EQ(torsion.data(torsion.index(3, 7), role).toDouble(), 0);
+        EXPECT_EQ(torsion.data(torsion.index(3, 8), role).toDouble(), 0);
+    }
 
     // Mutate torsion
     EXPECT_FALSE(torsion.setData(torsion.index(3, 0), 5));
@@ -228,15 +243,18 @@ TEST_F(SpeciesTabTest, Impropers)
     // Test Torsions
     EXPECT_EQ(improper.columnCount(), 9);
     EXPECT_EQ(improper.rowCount(), 6);
-    EXPECT_EQ(improper.data(improper.index(3, 0)).toInt(), 4);
-    EXPECT_EQ(improper.data(improper.index(3, 1)).toInt(), 3);
-    EXPECT_EQ(improper.data(improper.index(3, 2)).toInt(), 5);
-    EXPECT_EQ(improper.data(improper.index(3, 3)).toInt(), 9);
-    EXPECT_EQ(improper.data(improper.index(3, 4)).toString().toStdString(), "@impgeneral");
-    EXPECT_EQ(improper.data(improper.index(3, 5)).toDouble(), 4.606);
-    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 6)).toDouble(), 2.0);
-    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 7)).toDouble(), 180.0);
-    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 8)).toDouble(), 1.00);
+    for (auto role : roles)
+    {
+        EXPECT_EQ(improper.data(improper.index(3, 0), role).toInt(), 4);
+        EXPECT_EQ(improper.data(improper.index(3, 1), role).toInt(), 3);
+        EXPECT_EQ(improper.data(improper.index(3, 2), role).toInt(), 5);
+        EXPECT_EQ(improper.data(improper.index(3, 3), role).toInt(), 9);
+        EXPECT_EQ(improper.data(improper.index(3, 4), role).toString().toStdString(), "@impgeneral");
+        EXPECT_EQ(improper.data(improper.index(3, 5), role).toDouble(), 4.606);
+        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 6), role).toDouble(), 2.0);
+        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 7), role).toDouble(), 180.0);
+        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 8), role).toDouble(), 1.00);
+    }
 
     // Mutate improper
     EXPECT_FALSE(improper.setData(improper.index(3, 0), 5));
