@@ -170,10 +170,10 @@ void CalculateAxisAngleModule::initialise()
                   "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
 
     // Export
-    keywords_.link("Export", processDistance_->keywords().find("Exporot"), "ExportRDF",
+    keywords_.link("Export", processDistance_->keywords().find("Export"), "ExportRDF",
                    "File format and file name under which to save calculated B-C RDF");
-    keywords_.link("Export", processAngle_->keywords().find("Exporot"), "ExportAngle",
+    keywords_.link("Export", processAngle_->keywords().find("Export"), "ExportAngle",
                    "File format and file name under which to save calculated A-B...C angle histrogram to disk");
-    keywords_.link("Export", processDAngle_->keywords().find("Exporot"), "ExportDAngle",
+    keywords_.link("Export", processDAngle_->keywords().find("Export"), "ExportDAngle",
                    "File format and file name under which to save calculated A-B...C angle map to disk");
 }
