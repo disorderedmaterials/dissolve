@@ -81,8 +81,6 @@ void SpeciesTab::updateUnderlyingAtomSelection()
 // Update Geometry tab
 void SpeciesTab::updateGeometryTab()
 {
-    Locker refreshLocker(refreshLock_);
-
     ui_.BondTable->resizeColumnsToContents();
     ui_.AngleTable->resizeColumnsToContents();
     ui_.TorsionTable->resizeColumnsToContents();
