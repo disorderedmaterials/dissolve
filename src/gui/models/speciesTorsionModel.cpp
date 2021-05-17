@@ -29,7 +29,7 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
     if (role == Qt::UserRole)
         return QVariant::fromValue(&item);
 
-    if (role != Qt::DisplayRole)
+    if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
     switch (index.column())

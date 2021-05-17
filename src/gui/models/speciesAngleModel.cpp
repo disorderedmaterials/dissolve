@@ -28,7 +28,7 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
     if (role == Qt::UserRole)
         return QVariant::fromValue(&angle);
 
-    if (role != Qt::DisplayRole)
+    if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
     switch (index.column())
