@@ -30,8 +30,9 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
         case 1:
             return bond.index(index.column()) + 1;
         case 2:
-            return bond.masterParameters() ? ("@" + std::string(bond.masterParameters()->name())).c_str()
-                                           : std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())).c_str();
+            return bond.masterParameters()
+                       ? QString::fromStdString("@" + std::string(bond.masterParameters()->name()))
+                       : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())));
         case 3:
         case 4:
         case 5:

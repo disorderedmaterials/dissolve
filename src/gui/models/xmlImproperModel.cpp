@@ -89,13 +89,13 @@ QVariant XmlImproperModel::data(const QModelIndex &index, int role) const
     switch (index.column())
     {
         case 0:
-            return std::get<0>(impropers_[index.row()]).c_str();
+            return QString::fromStdString(std::get<0>(impropers_[index.row()]));
         case 1:
-            return std::get<1>(impropers_[index.row()]).c_str();
+            return QString::fromStdString(std::get<1>(impropers_[index.row()]));
         case 2:
-            return std::get<2>(impropers_[index.row()]).c_str();
+            return QString::fromStdString(std::get<2>(impropers_[index.row()]));
         case 3:
-            return std::get<3>(impropers_[index.row()]).c_str();
+            return QString::fromStdString(std::get<3>(impropers_[index.row()]));
 
         case 4:
             return std::get<4>(impropers_[index.row()]);

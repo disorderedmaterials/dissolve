@@ -40,8 +40,9 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
         case 3:
             return item.index(index.column()) + 1;
         case 4:
-            return item.masterParameters() ? ("@" + std::string(item.masterParameters()->name())).c_str()
-                                           : SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()).c_str();
+            return item.masterParameters()
+                       ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
+                       : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
         case 5:
         case 6:
         case 7:

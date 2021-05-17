@@ -33,9 +33,9 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
     switch (index.column())
     {
         case 0:
-            return std::string(Elements::name(item.Z())).c_str();
+            return QString::fromStdString(std::string(Elements::name(item.Z())));
         case 1:
-            return item.atomType() ? std::string(item.atomType()->name()).c_str() : "";
+            return item.atomType() ? QString::fromStdString(std::string(item.atomType()->name())) : "";
         case 2:
         case 3:
         case 4:

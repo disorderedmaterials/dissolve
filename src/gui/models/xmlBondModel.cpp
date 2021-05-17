@@ -55,13 +55,13 @@ QVariant XmlBondModel::data(const QModelIndex &index, int role) const
     switch (index.column())
     {
         case 0:
-            return QVariant(QString(std::get<0>(bonds_[index.row()]).c_str()));
+            return QString::fromStdString(std::get<0>(bonds_[index.row()]));
         case 1:
-            return QVariant(QString(std::get<1>(bonds_[index.row()]).c_str()));
+            return QString::fromStdString(std::get<1>(bonds_[index.row()]));
         case 2:
-            return QVariant(std::get<2>(bonds_[index.row()]));
+            return std::get<2>(bonds_[index.row()]);
         case 3:
-            return QVariant(std::get<3>(bonds_[index.row()]));
+            return std::get<3>(bonds_[index.row()]);
         default:
             return QVariant();
     }

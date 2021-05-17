@@ -38,9 +38,9 @@ QVariant DataManagerSimulationModel::data(const QModelIndex &index, int role) co
             switch (index.column())
             {
                 case 0:
-                    return key.c_str();
+                    return QString::fromStdString(key);
                 case 1:
-                    return std::string(std::get<GenericItem::ClassName>(value)).c_str();
+                    return QString::fromStdString(std::string(std::get<GenericItem::ClassName>(value)));
                 case 2:
                     return std::get<GenericItem::Version>(value);
                 default:
