@@ -41,7 +41,7 @@
     <number>4</number>
    </property>
    <item>
-    <widget class="QListWidget" name="NodeList"/>
+    <widget class="QListView" name="NodeList"/>
    </item>
   </layout>
  </widget>
