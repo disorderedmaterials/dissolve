@@ -88,8 +88,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     // Respond to selection in the underlying model
     void updateUnderlyingAtomSelection();
 
-    // public slots:
-    // // Update Geometry tab
+    public slots:
+    // Update Geometry tab
     void updateGeometryTab();
 
     /*
