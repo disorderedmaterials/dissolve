@@ -16,7 +16,7 @@ class NodeScopeStack;
 class Process1DProcedureNode : public ProcedureNode
 {
     public:
-    Process1DProcedureNode(const Collect1DProcedureNode *target = nullptr);
+    Process1DProcedureNode(Collect1DProcedureNode *target = nullptr);
     ~Process1DProcedureNode() override = default;
 
     /*

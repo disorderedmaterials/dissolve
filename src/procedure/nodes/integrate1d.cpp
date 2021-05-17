@@ -14,12 +14,11 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode *target)
+Integrate1DProcedureNode::Integrate1DProcedureNode(Process1DProcedureNode *target)
     : ProcedureNode(ProcedureNode::NodeType::Integrate1D)
 {
-    keywords_.add("Control",
-                  new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::NodeType::Process1D, false, target),
-                  "SourceData", "Process1D node containing the data to integrate");
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
+                  "Process1D node containing the data to integrate");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first integration region");
     keywords_.add("Control", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
@@ -53,7 +52,7 @@ const SampledDouble &Integrate1DProcedureNode::integral(int index) const { retur
 bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Process1D node target
-    processNode_ = keywords_.retrieve<const Process1DProcedureNode *>("SourceData");
+    processNode_ = dynamic_cast<const Process1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
     if (!processNode_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
 

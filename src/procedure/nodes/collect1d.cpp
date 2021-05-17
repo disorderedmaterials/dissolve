@@ -14,9 +14,7 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
                                                double binWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect1D)
 {
-    keywords_.add("Control",
-                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
-                                                                        observable, 0),
+    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, observable, 0),
                   "QuantityX", "Calculated observable to collect");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
@@ -104,7 +102,9 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     histogram_ = target;
 
     // Retrieve the observable
-    std::tie(xObservable_, xObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
+    const ProcedureNode *node;
+    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityX");
+    xObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
 

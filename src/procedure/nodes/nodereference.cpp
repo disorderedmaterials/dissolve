@@ -8,7 +8,7 @@
 #include "module/list.h"
 #include "modules/analyse/analyse.h"
 
-ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<ProcedureNodeReference>()
+ProcedureNodeReference::ProcedureNodeReference(const ProcedureNode *node) : ListItem<ProcedureNodeReference>()
 {
     node_ = node;
 
@@ -20,7 +20,7 @@ ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<P
  */
 
 // Return target node
-ProcedureNode *ProcedureNodeReference::node() { return node_; }
+const ProcedureNode *ProcedureNodeReference::node() { return node_; }
 
 // Return node type
 ProcedureNode::NodeType ProcedureNodeReference::type() const
@@ -39,7 +39,7 @@ bool ProcedureNodeReference::isNull() const { return (node_ == nullptr); }
  * Operators
  */
 
-void ProcedureNodeReference::operator=(ProcedureNode *node) { node_ = node; }
+void ProcedureNodeReference::operator=(const ProcedureNode *node) { node_ = node; }
 
 void ProcedureNodeReference::operator=(const ProcedureNodeReference &nodeRef)
 {

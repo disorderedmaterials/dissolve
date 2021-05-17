@@ -86,8 +86,7 @@ void CalculateAxisAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = new SelectProcedureNode(nullptr, true);
     selectB_->setName("B");
-    RefList<SelectProcedureNode> sameMoleculeExclusions(selectA_);
-    selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", sameMoleculeExclusions);
+    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
     SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -119,10 +118,8 @@ void CalculateAxisAngleModule::initialise()
     processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
 
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
-    RefList<const SelectProcedureNode> sitePopulationNormalisers;
-    sitePopulationNormalisers.append(selectA_);
-    rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));
-    rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
+    rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_}));
+    rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectB_}));
     rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processDistance_);
 

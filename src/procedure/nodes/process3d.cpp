@@ -11,12 +11,11 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *target)
+Process3DProcedureNode::Process3DProcedureNode(Collect3DProcedureNode *target)
     : ProcedureNode(ProcedureNode::NodeType::Process3D)
 {
-    keywords_.add("Control",
-                  new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::NodeType::Collect3D, false, target),
-                  "SourceData", "Collect3D node containing the histogram data to process");
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect3D, false, target), "SourceData",
+                  "Collect3D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
@@ -99,7 +98,7 @@ SequenceProcedureNode *Process3DProcedureNode::branch() { return normalisationBr
 bool Process3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Collect1D node target
-    collectNode_ = keywords_.retrieve<const Collect3DProcedureNode *>("SourceData");
+    collectNode_ = dynamic_cast<const Collect3DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
     if (!collectNode_)
         return Messenger::error("No source Collect3D node set in '{}'.\n", name());
 

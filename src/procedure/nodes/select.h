@@ -49,17 +49,17 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-    RefList<SelectProcedureNode> sameMoleculeExclusions_;
+    std::vector<const SelectProcedureNode *> sameMoleculeExclusions_;
     // List of Molecules currently excluded from selection
     std::vector<std::shared_ptr<const Molecule>> excludedMolecules_;
     // List of other sites (nodes) which will exclude one of our sites if it is the same site
-    RefList<SelectProcedureNode> sameSiteExclusions_;
+    std::vector<const SelectProcedureNode *> sameSiteExclusions_;
     // List of Sites currently excluded from selection
     RefList<const Site> excludedSites_;
     // Molecule (from site) in which the site must exist (retrieved from keyword data)
-    SelectProcedureNode *sameMolecule_;
+    const SelectProcedureNode *sameMolecule_;
     // Site to use for distance check
-    SelectProcedureNode *distanceReferenceSite_;
+    const SelectProcedureNode *distanceReferenceSite_;
     // Range of distance to allow from distance reference site (if limiting)
     Range inclusiveDistanceRange_;
 

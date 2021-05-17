@@ -112,15 +112,14 @@ void CalculateDAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = new SelectProcedureNode;
     selectB_->setName("B");
-    selectB_->setKeyword<SelectProcedureNode *>("SameMoleculeAsSite", selectA_);
+    selectB_->setKeyword<const ProcedureNode *>("SameMoleculeAsSite", selectA_);
     SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Select: Site 'C'
     selectC_ = new SelectProcedureNode;
     selectC_->setName("C");
-    RefList<SelectProcedureNode> sameMoleculeExclusions(selectA_);
-    selectC_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", sameMoleculeExclusions);
+    selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
     SequenceProcedureNode *forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(selectC_);
 
@@ -152,11 +151,8 @@ void CalculateDAngleModule::initialise()
     processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
 
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
-    RefList<const SelectProcedureNode> sitePopulationNormalisers;
-    sitePopulationNormalisers.append(selectA_);
-    sitePopulationNormalisers.append(selectB_);
-    rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));
-    rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectC_));
+    rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_, selectB_}));
+    rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectC_}));
     rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processDistance_);
 

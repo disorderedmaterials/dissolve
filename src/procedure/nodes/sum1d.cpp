@@ -14,11 +14,10 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::NodeType::Sum1D)
+Sum1DProcedureNode::Sum1DProcedureNode(Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::NodeType::Sum1D)
 {
-    keywords_.add("Control",
-                  new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::NodeType::Process1D, false, target),
-                  "SourceData", "Process1D node containing the data to sum");
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
+                  "Process1D node containing the data to sum");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first summation region");
     keywords_.add("Control", new BoolKeyword(false), "RangeBEnabled", "Whether the second summation region is enabled");
@@ -60,7 +59,7 @@ bool Sum1DProcedureNode::isRangeCEnabled() const { return keywords_.asBool("Rang
 bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Process1D node target
-    processNode_ = keywords_.retrieve<const Process1DProcedureNode *>("SourceData");
+    processNode_ = dynamic_cast<const Process1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
     if (!processNode_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
 

@@ -13,12 +13,11 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *target)
+Process2DProcedureNode::Process2DProcedureNode(Collect2DProcedureNode *target)
     : ProcedureNode(ProcedureNode::NodeType::Process2D)
 {
-    keywords_.add("Control",
-                  new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::NodeType::Collect2D, false, target),
-                  "SourceData", "Collect2D node containing the histogram data to process");
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect2D, false, target), "SourceData",
+                  "Collect2D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
@@ -97,7 +96,7 @@ SequenceProcedureNode *Process2DProcedureNode::branch() { return normalisationBr
 bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Collect2D node target
-    collectNode_ = keywords_.retrieve<const Collect2DProcedureNode *>("SourceData");
+    collectNode_ = dynamic_cast<const Collect2DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
     if (!collectNode_)
         return Messenger::error("No source Collect2D node set in '{}'.\n", name());
 
