@@ -11,6 +11,14 @@
 #include "procedure/procedure.h"
 #include <utility>
 
+// Return enum option info for NodeClass
+EnumOptions<ProcedureNode::NodeClass> ProcedureNode::nodeClasses()
+{
+    return EnumOptions<ProcedureNode::NodeClass>("NodeClass", {{ProcedureNode::NodeClass::None, "None"},
+                                                               {ProcedureNode::NodeClass::Calculate, "Calculate"},
+                                                               {ProcedureNode::NodeClass::Operate, "Operate"}});
+}
+
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
@@ -20,7 +28,6 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::CalculateAngle, "CalculateAngle"},
                      {ProcedureNode::NodeType::CalculateAxisAngle, "CalculateAxisAngle"},
                      {ProcedureNode::NodeType::CalculateDistance, "CalculateDistance"},
-                     {ProcedureNode::NodeType::CalculateBase, "Calculate(Any)"},
                      {ProcedureNode::NodeType::CalculateVector, "CalculateVector"},
                      {ProcedureNode::NodeType::Collect1D, "Collect1D"},
                      {ProcedureNode::NodeType::Collect2D, "Collect2D"},
@@ -28,7 +35,6 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::Fit1D, "Fit1D"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
-                     {ProcedureNode::NodeType::OperateBase, "Operate(Any)"},
                      {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},
                      {ProcedureNode::NodeType::OperateExpression, "OperateExpression"},
                      {ProcedureNode::NodeType::OperateMultiply, "OperateMultiply"},
@@ -54,11 +60,9 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
                                                                    {ProcedureNode::OperateContext, "Operate"}});
 }
 
-ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<ProcedureNode>()
+ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, ProcedureNode::NodeClass classType)
+    : ListItem<ProcedureNode>(), type_(nodeType), class_(classType), scope_(nullptr)
 {
-    type_ = nodeType;
-    scope_ = nullptr;
-
     // Assign default, unique name to the node
     static int nodeCount = 0;
     name_ = fmt::format("Node{:04d}", ++nodeCount);
@@ -71,17 +75,8 @@ ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<Proced
 // Return node type
 ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
 
-// Return whether the node is of the specified type (detecting derived node classes as well)
-bool ProcedureNode::isType(ProcedureNode::NodeType thisType) const
-{
-    // Handle derived node types
-    if (thisType == ProcedureNode::NodeType::CalculateBase)
-        return ((type_ > ProcedureNode::NodeType::BEGINCalculateNodes) && (type_ < ProcedureNode::NodeType::ENDCalculateNodes));
-    else if (thisType == ProcedureNode::NodeType::OperateBase)
-        return ((type_ > ProcedureNode::NodeType::BEGINOperateNodes) && (type_ < ProcedureNode::NodeType::ENDOperateNodes));
-
-    return (thisType == type_);
-}
+// Return whether the node is of the specified class
+ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
@@ -136,41 +131,45 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
     return scope_->sequenceContext();
 }
 
-// Return named node if it is currently in scope, and optionally matches the type given
-ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType)
+// Return named node if it is currently in scope (and matches the type / class given)
+const ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
         return nullptr;
 
-    return scope_->nodeInScope(this, name, optNodeType);
+    return scope_->nodeInScope(this, name, optNodeType, optNodeClass);
 }
 
-// Return list of nodes of optional specified type present in this node's scope
-RefList<ProcedureNode> ProcedureNode::nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType)
+// Return list of nodes in this node's scope (and matches the type / class given)
+std::vector<const ProcedureNode *> ProcedureNode::nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType,
+                                                               std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
-        return RefList<ProcedureNode>();
+        return {};
 
-    return scope_->nodesInScope(this, optNodeType);
+    return scope_->nodesInScope(this, optNodeType, optNodeClass);
 }
 
-// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
-                                         std::optional<ProcedureNode::NodeType> optNodeType) const
+// Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
+const ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
+                                               std::optional<ProcedureNode::NodeType> optNodeType,
+                                               std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
         return nullptr;
 
-    return scope_->nodeExists(name, excludeNode, optNodeType);
+    return scope_->nodeExists(name, excludeNode, optNodeType, optNodeClass);
 }
 
-// Return list of nodes of specified type present in the Procedure
-RefList<ProcedureNode> ProcedureNode::nodes(ProcedureNode::NodeType nt)
+// Return list of nodes (of specified type / class) present in the Procedure
+std::vector<const ProcedureNode *> ProcedureNode::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
+                                                        std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
-        return RefList<ProcedureNode>();
+        return {};
 
-    return scope_->nodes(this, nt);
+    return scope_->nodes(optNodeType, optNodeClass);
 }
 
 // Return the named parameter if it is currently in scope

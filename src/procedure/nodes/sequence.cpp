@@ -70,7 +70,8 @@ int SequenceProcedureNode::nNodes() const { return sequence_.nItems(); }
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
 ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, ProcedureNode *excludeNode,
-                                                  std::optional<ProcedureNode::NodeType> optNodeType) const
+                                                  std::optional<ProcedureNode::NodeType> optNodeType,
+                                                  std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
@@ -80,8 +81,9 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
         {
             if (DissolveSys::sameString(node->name(), name))
             {
-                // Check type
-                if (!optNodeType || optNodeType.value() == node->type())
+                // Check type / class
+                if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
+                    (optNodeClass && optNodeClass.value() == node->nodeClass()))
                     return node;
             }
         }
@@ -89,7 +91,7 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
         // If the node has a branch, descend into it
         if (node->hasBranch())
         {
-            ProcedureNode *result = node->branch()->searchNodes(name, excludeNode, optNodeType);
+            ProcedureNode *result = node->branch()->searchNodes(name, excludeNode, optNodeType, optNodeClass);
             if (result)
                 return result;
         }
@@ -130,22 +132,24 @@ const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const { return context_; }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType) const
+ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+                                           std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
     {
         if (DissolveSys::sameString(node->name(), name))
         {
-            // Check type
-            if (!optNodeType || optNodeType.value() == node->type())
+            // Check type / class
+            if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
+                (optNodeClass && optNodeClass.value() == node->nodeClass()))
                 return node;
         }
 
         // If the node has a branch, recurse in to that
         if (node->hasBranch())
         {
-            ProcedureNode *branchNode = node->branch()->node(name, optNodeType);
+            ProcedureNode *branchNode = node->branch()->node(name, optNodeType, optNodeClass);
             if (branchNode)
                 return branchNode;
         }
@@ -154,33 +158,36 @@ ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::optional<
     return nullptr;
 }
 
-// Return list of nodes of specified type present in the Procedure
-RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode *queryingNode,
-                                                    std::optional<ProcedureNode::NodeType> optNodeType)
+// Return list of nodes (of specified type / class) present in the Procedure
+std::vector<ProcedureNode *> SequenceProcedureNode::nodes(ProcedureNode *queryingNode,
+                                                          std::optional<ProcedureNode::NodeType> optNodeType,
+                                                          std::optional<ProcedureNode::NodeClass> optNodeClass)
 {
-    RefList<ProcedureNode> matches;
+    std::vector<ProcedureNode *> matches;
 
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
     {
-        // Check type
-        if (!optNodeType || optNodeType.value() == node->type())
-            matches.append(node);
+        // Check type / class
+        if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
+            (optNodeClass && optNodeClass.value() == node->nodeClass()))
+            matches.push_back(node);
 
         // If the node has a branch, recurse in to that
         if (node->hasBranch())
         {
-            RefList<ProcedureNode> branchNodes = node->branch()->nodes(node, optNodeType);
-            matches += branchNodes;
+            auto branchNodes = node->branch()->nodes(node, optNodeType, optNodeClass);
+            std::copy(branchNodes.begin(), branchNodes.end(), std::back_inserter(matches));
         }
     }
 
     return matches;
 }
 
-// Return named node if it is currently in scope, and optionally matches the type given
+// Return named node if it is currently in scope (and matches the type / class given)
 ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, std::string_view name,
-                                                  std::optional<ProcedureNode::NodeType> optNodeType)
+                                                  std::optional<ProcedureNode::NodeType> optNodeType,
+                                                  std::optional<ProcedureNode::NodeClass> optNodeClass)
 {
     if (queryingNode)
         assert(sequence_.contains(queryingNode));
@@ -190,54 +197,61 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, s
     {
         if (DissolveSys::sameString(node->name(), name))
         {
-            // Check type
-            if (!optNodeType || optNodeType.value() == node->type())
+            // Check type / class
+            if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
+                (optNodeClass && optNodeClass.value() == node->nodeClass()))
                 return node;
         }
     }
 
     // Not in our list. Recursively check our parent(s)
     if (parentNode_)
-        return parentNode_->nodeInScope(name, optNodeType);
+        return parentNode_->nodeInScope(name, optNodeType, optNodeClass);
 
     // Not found
     return nullptr;
 }
 
-// Return list of nodes of optional specified type present in scope
-RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryingNode,
-                                                           std::optional<ProcedureNode::NodeType> optNodeType)
+// Return list of nodes in scope (and matching the type / class given)
+std::vector<ProcedureNode *> SequenceProcedureNode::nodesInScope(ProcedureNode *queryingNode,
+                                                                 std::optional<ProcedureNode::NodeType> optNodeType,
+                                                                 std::optional<ProcedureNode::NodeClass> optNodeClass)
 {
     if (queryingNode)
         assert(sequence_.contains(queryingNode));
 
-    RefList<ProcedureNode> matches;
+    std::vector<ProcedureNode *> matches;
 
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
-        // Check type
-        if (!optNodeType || optNodeType.value() == node->type())
-            matches.append(node);
+        // Check type / class
+        if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
+            (optNodeClass && optNodeClass.value() == node->nodeClass()))
+            matches.push_back(node);
     }
 
     // Not in our list. Recursively check our parent(s)
     if (parentNode_)
-        matches += parentNode_->nodesInScope(optNodeType);
+    {
+        auto parentMatches = parentNode_->nodesInScope(optNodeType, optNodeClass);
+        std::copy(parentMatches.begin(), parentMatches.end(), std::back_inserter(matches));
+    }
 
     return matches;
 }
 
-// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
+// Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
 ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
-                                                 std::optional<ProcedureNode::NodeType> optNodeType) const
+                                                 std::optional<ProcedureNode::NodeType> optNodeType,
+                                                 std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)
-        return parentNode_->scope()->nodeExists(name, excludeNode, optNodeType);
+        return parentNode_->scope()->nodeExists(name, excludeNode, optNodeType, optNodeClass);
 
     // No parent node, so we must be the topmost sequence - run the search from here
-    return searchNodes(name, excludeNode, optNodeType);
+    return searchNodes(name, excludeNode, optNodeType, optNodeClass);
 }
 
 // Return the named parameter if it is currently in scope
@@ -408,11 +422,6 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::CalculateDistance):
                 newNode = new CalculateDistanceProcedureNode();
                 break;
-            case (ProcedureNode::NodeType::CalculateBase):
-                /* This should never be called */
-                return Messenger::error("Can't create a node of CalculateBase type directly - create the "
-                                        "parent node instead.\n");
-                break;
             case (ProcedureNode::NodeType::CalculateVector):
                 newNode = new CalculateVectorProcedureNode();
                 break;
@@ -427,10 +436,6 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
                 break;
             case (ProcedureNode::NodeType::Fit1D):
                 newNode = new Fit1DProcedureNode();
-                break;
-            case (ProcedureNode::NodeType::OperateBase):
-                /* This should never be called */
-                return Messenger::error("Can't create a node of OperateBase type directly - create the parent node instead.\n");
                 break;
             case (ProcedureNode::NodeType::OperateDivide):
                 newNode = new OperateDivideProcedureNode();

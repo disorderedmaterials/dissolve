@@ -34,10 +34,11 @@ const SequenceProcedureNode &Procedure::rootSequence() const { return rootSequen
 // Return the block termination keyword for the Procedure
 std::string_view Procedure::blockTerminationKeyword() const { return rootSequence_.blockTerminationKeyword(); }
 
-// Return named node if present, and which matches the (optional) type given
-ProcedureNode *Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType) const
+// Return named node if present (and matches the type / class given)
+ProcedureNode *Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+                               std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    return rootSequence_.node(name, optNodeType);
+    return rootSequence_.node(name, optNodeType, optNodeClass);
 }
 
 /*

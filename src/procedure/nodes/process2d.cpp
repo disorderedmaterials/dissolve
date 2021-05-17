@@ -126,7 +126,7 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
         ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
         while (ProcedureNode *node = nodeIterator.iterate())
         {
-            if (!node->isType(ProcedureNode::NodeType::OperateBase))
+            if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
                 continue;
 
             // Cast the node

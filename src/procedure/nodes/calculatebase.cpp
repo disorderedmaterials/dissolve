@@ -9,7 +9,7 @@
 CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0,
                                                        SelectProcedureNode *site1, SelectProcedureNode *site2,
                                                        SelectProcedureNode *site3)
-    : ProcedureNode(nodeType)
+    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Calculate)
 {
     sites_[0] = site0;
     sites_[1] = site1;
