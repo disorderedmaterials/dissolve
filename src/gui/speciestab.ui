@@ -211,9 +211,6 @@
                <verstretch>1</verstretch>
               </sizepolicy>
              </property>
-             <property name="editTriggers">
-              <set>QAbstractItemView::AllEditTriggers</set>
-             </property>
              <property name="showDropIndicator" stdset="0">
               <bool>false</bool>
              </property>
@@ -299,9 +296,6 @@
                <horstretch>0</horstretch>
                <verstretch>1</verstretch>
               </sizepolicy>
-             </property>
-             <property name="editTriggers">
-              <set>QAbstractItemView::AllEditTriggers</set>
              </property>
              <property name="showDropIndicator" stdset="0">
               <bool>false</bool>
@@ -435,9 +429,6 @@
             </item>
             <item>
              <widget class="QTableView" name="AngleTable">
-              <property name="editTriggers">
-               <set>QAbstractItemView::AllEditTriggers</set>
-              </property>
               <property name="showDropIndicator" stdset="0">
                <bool>false</bool>
               </property>
@@ -552,9 +543,6 @@
             </item>
             <item>
              <widget class="QTableView" name="TorsionTable">
-              <property name="editTriggers">
-               <set>QAbstractItemView::AllEditTriggers</set>
-              </property>
               <property name="showDropIndicator" stdset="0">
                <bool>false</bool>
               </property>
@@ -629,9 +617,6 @@
             </item>
             <item>
              <widget class="QTableView" name="ImproperTable">
-              <property name="editTriggers">
-               <set>QAbstractItemView::AllEditTriggers</set>
-              </property>
               <property name="showDropIndicator" stdset="0">
                <bool>false</bool>
               </property>
@@ -806,9 +791,6 @@
        </item>
        <item>
         <widget class="QTreeWidget" name="IsotopologuesTree">
-         <property name="editTriggers">
-          <set>QAbstractItemView::AllEditTriggers</set>
-         </property>
          <column>
           <property name="text">
            <string>Isotopologue</string>
