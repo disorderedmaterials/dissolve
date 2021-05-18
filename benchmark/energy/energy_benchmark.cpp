@@ -34,8 +34,8 @@ static void BM_CalculateEnergy_SpeciesInterAtomicEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
     auto &mol = problemDef.cfg_->molecules().front();
-    auto &usedSpecies = problemDef.cfg_->usedSpecies();
-    auto *species = usedSpecies.back().species();
+    auto &usedSpecies = problemDef.cfg_->speciesPopulations();
+    auto *species = usedSpecies.back().first;
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
