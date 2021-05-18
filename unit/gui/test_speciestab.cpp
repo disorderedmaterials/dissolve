@@ -93,23 +93,23 @@ TEST_F(SpeciesTabTest, Bonds)
         EXPECT_EQ(bond.data(bond.index(3, 0), role).toInt(), 4);
         EXPECT_EQ(bond.data(bond.index(3, 1), role).toInt(), 5);
         EXPECT_EQ(bond.data(bond.index(3, 2), role).toString().toStdString(), "@CA-CA");
-        EXPECT_EQ(bond.data(bond.index(3, 3), role).toString().toStdString(), "3924.590000,1.400000");
+        EXPECT_EQ(bond.data(bond.index(3, 3), role).toString().toStdString(), "3924.59,1.4");
     }
 
     // Mutate bond
     EXPECT_FALSE(bond.setData(bond.index(3, 0), 5));
     EXPECT_FALSE(bond.setData(bond.index(3, 1), 6));
 
-    EXPECT_FALSE(bond.setData(bond.index(3, 3), "4.000000,5.000000"));
+    EXPECT_FALSE(bond.setData(bond.index(3, 3), "4,5"));
 
     EXPECT_FALSE(bond.setData(bond.index(3, 2), "Undefined"));
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
 
     EXPECT_TRUE(bond.setData(bond.index(3, 3), "4.0,5.0"));
-    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "4.000000,5.000000");
+    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "4,5");
 
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "@CA-CA"));
-    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "3924.590000,1.400000");
+    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "3924.59,1.4");
 }
 
 TEST_F(SpeciesTabTest, Angles)
@@ -133,7 +133,7 @@ TEST_F(SpeciesTabTest, Angles)
         EXPECT_EQ(angle.data(angle.index(3, 1), role).toInt(), 5);
         EXPECT_EQ(angle.data(angle.index(3, 2), role).toInt(), 6);
         EXPECT_EQ(angle.data(angle.index(3, 3), role).toString().toStdString(), "@CA-CA-CA");
-        EXPECT_EQ(angle.data(angle.index(3, 4), role).toString().toStdString(), "527.184000,120.000000");
+        EXPECT_EQ(angle.data(angle.index(3, 4), role).toString().toStdString(), "527.184,120");
     }
 
     // Mutate angle
@@ -146,10 +146,10 @@ TEST_F(SpeciesTabTest, Angles)
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "Harmonic"));
 
     EXPECT_TRUE(angle.setData(angle.index(3, 4), "4.0,5.0"));
-    EXPECT_EQ(angle.data(angle.index(3, 4)).toString().toStdString(), "4.000000,5.000000");
+    EXPECT_EQ(angle.data(angle.index(3, 4)).toString().toStdString(), "4,5");
 
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "@CA-CA-CA"));
-    EXPECT_EQ(angle.data(angle.index(3, 4)).toString().toStdString(), "527.184000,120.000000");
+    EXPECT_EQ(angle.data(angle.index(3, 4)).toString().toStdString(), "527.184,120");
 }
 
 TEST_F(SpeciesTabTest, Torsions)
@@ -174,7 +174,7 @@ TEST_F(SpeciesTabTest, Torsions)
         EXPECT_EQ(torsion.data(torsion.index(3, 2), role).toInt(), 2);
         EXPECT_EQ(torsion.data(torsion.index(3, 3), role).toInt(), 3);
         EXPECT_EQ(torsion.data(torsion.index(3, 4), role).toString().toStdString(), "@CA-CA-CA-CA");
-        EXPECT_EQ(torsion.data(torsion.index(3, 5), role).toString().toStdString(), "0.000000,30.334000,0.000000");
+        EXPECT_EQ(torsion.data(torsion.index(3, 5), role).toString().toStdString(), "0,30.334,0");
     }
 
     // Mutate torsion
@@ -190,12 +190,12 @@ TEST_F(SpeciesTabTest, Torsions)
 
     EXPECT_FALSE(torsion.setData(torsion.index(3, 5), "4.0,5.0"));
     EXPECT_TRUE(torsion.setData(torsion.index(3, 5), "4.0,5.0,6.0"));
-    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toString().toStdString(), "4.000000,5.000000,6.000000");
+    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toString().toStdString(), "4,5,6");
 
     EXPECT_FALSE(torsion.setData(torsion.index(3, 8), 8));
     EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "@CA-CA-CA-CA"));
-    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toString().toStdString(), "0.000000,30.334000,0.000000");
+    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toString().toStdString(), "0,30.334,0");
 }
 
 TEST_F(SpeciesTabTest, Impropers)
@@ -220,7 +220,7 @@ TEST_F(SpeciesTabTest, Impropers)
         EXPECT_EQ(improper.data(improper.index(3, 2), role).toInt(), 5);
         EXPECT_EQ(improper.data(improper.index(3, 3), role).toInt(), 9);
         EXPECT_EQ(improper.data(improper.index(3, 4), role).toString().toStdString(), "@impgeneral");
-        EXPECT_EQ(improper.data(improper.index(3, 5), role).toString().toStdString(), "4.606000,2.000000,180.000000,1.000000");
+        EXPECT_EQ(improper.data(improper.index(3, 5), role).toString().toStdString(), "4.606,2,180,1");
     }
 
     // Mutate improper
@@ -236,10 +236,10 @@ TEST_F(SpeciesTabTest, Impropers)
 
     EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0,4.0,5.0"));
     EXPECT_TRUE(improper.setData(improper.index(3, 5), "3.0,4.0,5.0,6.0"));
-    EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "3.000000,4.000000,5.000000,6.000000");
+    EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "3,4,5,6");
 
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
-    EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "4.606000,2.000000,180.000000,1.000000");
+    EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "4.606,2,180,1");
 }
 
 } // namespace UnitTest
