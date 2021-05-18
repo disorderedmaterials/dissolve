@@ -165,7 +165,7 @@ TEST_F(SpeciesTabTest, Torsions)
     SpeciesTorsionModel torsion(species->torsions(), dissolve);
 
     // Test Torsions
-    EXPECT_EQ(torsion.columnCount(), 9);
+    EXPECT_EQ(torsion.columnCount(), 6);
     EXPECT_EQ(torsion.rowCount(), 24);
     for (auto role : roles)
     {
@@ -174,10 +174,7 @@ TEST_F(SpeciesTabTest, Torsions)
         EXPECT_EQ(torsion.data(torsion.index(3, 2), role).toInt(), 2);
         EXPECT_EQ(torsion.data(torsion.index(3, 3), role).toInt(), 3);
         EXPECT_EQ(torsion.data(torsion.index(3, 4), role).toString().toStdString(), "@CA-CA-CA-CA");
-        EXPECT_EQ(torsion.data(torsion.index(3, 5), role).toDouble(), 0);
-        EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6), role).toDouble(), 30.334);
-        EXPECT_EQ(torsion.data(torsion.index(3, 7), role).toDouble(), 0);
-        EXPECT_EQ(torsion.data(torsion.index(3, 8), role).toDouble(), 0);
+        EXPECT_EQ(torsion.data(torsion.index(3, 5), role).toString().toStdString(), "0.000000,30.334000,0.000000");
     }
 
     // Mutate torsion
@@ -185,23 +182,20 @@ TEST_F(SpeciesTabTest, Torsions)
     EXPECT_FALSE(torsion.setData(torsion.index(3, 1), 6));
     EXPECT_FALSE(torsion.setData(torsion.index(3, 2), 7));
     EXPECT_FALSE(torsion.setData(torsion.index(3, 3), 8));
-    for (auto i = 5; i < 9; ++i)
-        EXPECT_FALSE(torsion.setData(torsion.index(3, i), 6));
+
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 5), "4.0,5.0,6.0"));
 
     EXPECT_FALSE(torsion.setData(torsion.index(3, 4), "Undefined"));
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "Cos3"));
-    for (auto i = 5; i < 8; ++i)
-    {
-        EXPECT_TRUE(torsion.setData(torsion.index(3, i), i));
-        EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, i)).toDouble(), i);
-    }
+
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 5), "4.0,5.0"));
+    EXPECT_TRUE(torsion.setData(torsion.index(3, 5), "4.0,5.0,6.0"));
+    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toString().toStdString(), "4.000000,5.000000,6.000000");
+
     EXPECT_FALSE(torsion.setData(torsion.index(3, 8), 8));
     EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "@CA-CA-CA-CA"));
-    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toDouble(), 0);
-    EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6)).toDouble(), 30.334);
-    EXPECT_EQ(torsion.data(torsion.index(3, 7)).toDouble(), 0);
-    EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
+    EXPECT_EQ(torsion.data(torsion.index(3, 5)).toString().toStdString(), "0.000000,30.334000,0.000000");
 }
 
 TEST_F(SpeciesTabTest, Impropers)

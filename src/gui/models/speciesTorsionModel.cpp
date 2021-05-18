@@ -1,5 +1,6 @@
 #include "gui/models/speciesTorsionModel.h"
 #include "classes/masterintra.h"
+#include "gui/models/speciesModelUtils.h"
 #include <algorithm>
 
 SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, Dissolve &dissolve)
@@ -16,7 +17,7 @@ int SpeciesTorsionModel::rowCount(const QModelIndex &parent) const
 int SpeciesTorsionModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 9;
+    return 6;
 }
 
 QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
@@ -44,12 +45,7 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
                        ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
                        : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
         case 5:
-        case 6:
-        case 7:
-        case 8:
-            if (item.nParameters() <= index.column() - 5)
-                return 0;
-            return item.parameter(index.column() - 5);
+            return joinParameters(item);
         default:
             return QVariant();
     }
@@ -74,13 +70,7 @@ QVariant SpeciesTorsionModel::headerData(int section, Qt::Orientation orientatio
             return "Form";
 
         case 5:
-            return "Parameter 1";
-        case 6:
-            return "Parameter 2";
-        case 7:
-            return "Parameter 3";
-        case 8:
-            return "Parameter 4";
+            return "Parameters";
 
         default:
             return QVariant();
@@ -132,14 +122,8 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             }
             break;
         case 5:
-        case 6:
-        case 7:
-        case 8:
-            if (item.masterParameters())
+            if (!splitParameters(value.toString(), item))
                 return false;
-            if (item.parameters().size() <= index.column() - 5)
-                return false;
-            item.setParameter(index.column() - 5, value.toDouble());
             break;
         default:
             return false;
