@@ -161,9 +161,9 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, const Configura
     auto start = procPool.interleavedLoopStart(strategy);
     auto stride = procPool.interleavedLoopStride(strategy);
 
-    std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
+    const auto &molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+    auto [begin, end] = chop_range(molecules.begin(), molecules.end(), stride, start);
 
     auto unaryOp = [&](const auto &mol) -> Energies {
         Energies localEnergies{0.0, 0.0, 0.0, 0.0};
