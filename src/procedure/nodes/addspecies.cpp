@@ -139,8 +139,8 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
 
         auto scaleFactor = pow(requiredVolume / currentVolume, 1.0 / 3.0);
 
-        // Scale centres of geometry of existing contents
-        cfg->scaleMoleculeCentres(scaleFactor);
+        // Scale existing contents
+        cfg->scaleContents(scaleFactor);
 
         // Scale the current Box so there is enough space for our new species
         cfg->scaleBox(scaleFactor);
@@ -176,8 +176,8 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
 
         auto scaleFactor = pow(requiredVolume / cfg->box()->volume(), 1.0 / 3.0);
 
-        // Scale centres of geometry of existing contents
-        cfg->scaleMoleculeCentres(scaleFactor);
+        // Scale existing contents
+        cfg->scaleContents(scaleFactor);
 
         // Scale the current Box so there is enough space for our new species
         cfg->scaleBox(scaleFactor);

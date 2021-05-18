@@ -161,27 +161,29 @@ std::shared_ptr<Atom> Configuration::atom(int n)
     return atoms_[n];
 }
 
-// Scale geometric centres of molecules within box
-void Configuration::scaleMoleculeCentres(double factor)
+// Scale contents of the box by the specified factor
+void Configuration::scaleContents(double factor)
 {
     Vec3<double> oldCog, newCog, newPos;
     for (auto &mol : molecules_)
     {
-        // First, work out the centre of geometry of the Molecule, and fold it into the Box
-        oldCog = box()->fold(mol->centreOfGeometry(box()));
-
-        // Scale centre of geometry by supplied factor
-        newCog = oldCog * factor;
-
-        // Loop over Atoms in Molecule, setting new coordinates as we go
-        for (auto m = 0; m < mol->nAtoms(); ++m)
+        // If the related species has a periodic box, scale atom positions rather than COG position
+        if (mol->species()->box()->type() != Box::BoxType::NonPeriodic)
         {
-            // Get Atom pointer
-            auto i = mol->atom(m);
+            for (auto &i : mol->atoms())
+                i->setCoordinates(i->r() * factor);
+        }
+        else
+        {
+            // First, work out the centre of geometry of the Molecule, and fold it into the Box
+            oldCog = box()->fold(mol->centreOfGeometry(box()));
 
-            // Calculate and set new position
-            newPos = newCog + box()->minimumVector(i->r(), oldCog);
-            i->setCoordinates(newPos);
+            // Scale centre of geometry by supplied factor
+            newCog = oldCog * factor;
+
+            // Loop over Atoms in Molecule, setting new coordinates as we go
+            for (auto &i : mol->atoms())
+                i->setCoordinates(newCog + box()->minimumVector(i->r(), oldCog));
         }
     }
 }

@@ -139,8 +139,8 @@ class Configuration : public ListItem<Configuration>
     const std::vector<std::shared_ptr<Atom>> &atoms() const;
     // Return nth Atom
     std::shared_ptr<Atom> atom(int n);
-    // Scale geometric centres of molecules within box
-    void scaleMoleculeCentres(double factor);
+    // Scale contents of the box by the specified factor
+    void scaleContents(double factor);
 
     /*
      * Periodic Box and Cells
