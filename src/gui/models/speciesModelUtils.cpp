@@ -7,7 +7,7 @@ QString joinParameters(const SpeciesIntra &source)
 {
     std::vector<QString> vec(source.parameters().size());
     std::transform(source.parameters().begin(), source.parameters().end(), vec.begin(),
-		   [](const double value) { return QString::number(value); });
+                   [](const double value) { return QString::number(value); });
     QStringList terms(vec.begin(), vec.end());
     return terms.join(",");
 }
@@ -15,11 +15,11 @@ QString joinParameters(const SpeciesIntra &source)
 bool splitParameters(const QString &params, SpeciesIntra &destination)
 {
     if (destination.masterParameters())
-	return false;
+        return false;
     auto terms = params.split(",");
     if (terms.size() != destination.parameters().size())
-	return false;
+        return false;
     for (int i = 0; i < terms.size(); ++i)
-	destination.setParameter(i, terms[i].toDouble());
+        destination.setParameter(i, terms[i].toDouble());
     return true;
 }
