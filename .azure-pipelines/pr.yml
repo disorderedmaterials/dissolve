@@ -36,22 +36,39 @@ stages:
               PathtoPublish: "build/"
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
-      - job: 'linux_parallel'
-        displayName: 'Build Linux (Parallel, ubuntu-latest)'
+      - job: 'linux_threadsgui'
+        displayName: 'Build Linux (Serial/Threads/GUI, ubuntu-latest)'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-linux-parallel.yml
+          - template: templates/build-linux-serial-gui.yml
             parameters:
               extraflags: '-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug'
+              threading: 'ON'
           - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "build/"
-              ArtifactName: 'linux-tests-parallel'
-            displayName: 'Publish Parallel Test Artifacts'
+              inputs:
+                PathtoPublish: "build/"
+                ArtifactName: 'linux-tests-serial-threads'
+              displayName: 'Publish Serial/Threaded Test Artifacts'
+        - job: 'linux_parallel'
+          displayName: 'Build Linux (Parallel, ubuntu-latest)'
+          pool:
+            vmImage: 'ubuntu-latest'
+          steps:
+            - checkout: self
+              fetchDepth: 1
+            - template: templates/set-short-hash.yml
+            - template: templates/build-linux-parallel.yml
+              parameters:
+                extraflags: '-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug'
+            - task: PublishBuildArtifacts@1
+              inputs:
+                PathtoPublish: "build/"
+                ArtifactName: 'linux-tests-parallel'
+              displayName: 'Publish Parallel Test Artifacts'
       - job: 'osx_serialgui'
         displayName: 'Build OSX (Serial/GUI, macos-latest)'
         timeoutInMinutes: 120
