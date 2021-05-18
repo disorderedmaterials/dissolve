@@ -121,7 +121,7 @@ int SpeciesAngle::index(int n) const
 }
 
 // Return whether Atoms in Angle match those specified
-bool SpeciesAngle::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
+bool SpeciesAngle::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const
 {
     if (j_ != j)
         return false;

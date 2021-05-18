@@ -61,7 +61,7 @@ class SpeciesTorsion : public SpeciesIntra
     // Return index (in parent Species) of nth SpeciesAtom in interaction
     int index(int n) const;
     // Return whether SpeciesAtoms match those specified
-    bool matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
+    bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const;
     // Return whether all atoms in the interaction are currently selected
     bool isSelected() const;
 

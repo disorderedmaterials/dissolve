@@ -56,10 +56,10 @@ bool Dissolve::prepare()
         }
 
         // Check total charge of Configuration
-        auto totalQ =
-            std::accumulate(cfg->usedSpecies().begin(), cfg->usedSpecies().end(), 0.0, [&](const auto &acc, auto &spInfo) {
-                return acc + spInfo.species()->totalCharge(pairPotentialsIncludeCoulomb_) * spInfo.population();
-            });
+        auto totalQ = std::accumulate(cfg->speciesPopulations().begin(), cfg->speciesPopulations().end(), 0.0,
+                                      [&](const auto &acc, auto &spPop) {
+                                          return acc + spPop.first->totalCharge(pairPotentialsIncludeCoulomb_) * spPop.second;
+                                      });
         if (fabs(totalQ) > 1.0e-5)
             return Messenger::error("Total charge for Configuration '{}' is non-zero ({:e}). Refusing to proceed!\n",
                                     cfg->name(), totalQ);
@@ -82,6 +82,27 @@ bool Dissolve::prepare()
 
         if (!module->hasValidNTargetConfigurations(true))
             return false;
+    }
+
+    // Generate attached atom lists if IntraShake modules are present and enabled
+    auto intraShakeModules = findModuleInstances("IntraShake");
+    if (!intraShakeModules.empty())
+    {
+        Messenger::print("Generating attached atom lists for required species...");
+        for (auto *module : intraShakeModules)
+            for (auto *cfg : module->targetConfigurations())
+                for (auto &sp : coreData_.species())
+                    if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
+                    {
+                        Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
+                                         "terms in Species '{}'...\n",
+                                         sp->name());
+                        if (sp->nAtoms() > 500)
+                            Messenger::warn("'{}' is a large molecule - this might take a while! Consider using a "
+                                            "different evolution module.\n",
+                                            sp->name());
+                        sp->generateAttachedAtomLists();
+                    }
     }
 
     // Set up parallel comms / limits etc.

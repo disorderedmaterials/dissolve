@@ -9,7 +9,6 @@
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
 #include "classes/sitestack.h"
-#include "classes/speciesinfo.h"
 #include "genericitems/list.h"
 #include "io/import/coordinates.h"
 #include "math/data1d.h"
@@ -80,8 +79,8 @@ class Configuration : public ListItem<Configuration>
      * Content
      */
     private:
-    // List of Species used by the Configuration and their populations
-    std::vector<SpeciesInfo> usedSpecies_;
+    // Species populations present in the Configuration
+    std::vector<std::pair<const Species *, int>> speciesPopulations_;
     // AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
     AtomTypeList usedAtomTypes_;
     // Contents version, incremented whenever Configuration content or Atom positions change
@@ -104,14 +103,12 @@ class Configuration : public ListItem<Configuration>
     const AtomTypeList &usedAtomTypesList() const;
     // Return number of atom types used in this Configuration
     int nUsedAtomTypes() const;
-    // Add Species to list of those used by the Configuration, setting/adding the population specified
-    SpeciesInfo *addUsedSpecies(Species *sp, int population);
-    // Return SpeciesInfo for specified Species
-    OptionalReferenceWrapper<SpeciesInfo> usedSpeciesInfo(Species *sp);
-    // Return list of SpeciesInfo for the Configuration
-    std::vector<SpeciesInfo> &usedSpecies();
-    // Return if the specified Species is present in the usedSpecies list
-    bool hasUsedSpecies(Species *sp);
+    // Increase population of specified Species in the Configuration
+    void increaseSpeciesPopulation(const Species *sp, int population);
+    // Return Species populations within the Configuration
+    const std::vector<std::pair<const Species *, int>> &speciesPopulations() const;
+    // Return if the specified Species is present in the Configuration
+    bool containsSpecies(const Species *sp);
     // Return the total atomic mass present in the Configuration
     double atomicMass() const;
     // Return the atomic density of the Configuration
@@ -124,7 +121,7 @@ class Configuration : public ListItem<Configuration>
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
     // Return number of Molecules in Configuration
     int nMolecules() const;
     // Return array of Molecules

@@ -6,7 +6,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesKeyword::SpeciesKeyword(Species *sp) : KeywordData<Species *>(KeywordBase::SpeciesData, sp) {}
+SpeciesKeyword::SpeciesKeyword(const Species *sp) : KeywordData<const Species *>(KeywordBase::SpeciesData, sp) {}
 
 SpeciesKeyword::~SpeciesKeyword() = default;
 

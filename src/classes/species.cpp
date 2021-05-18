@@ -39,7 +39,7 @@ void Species::setName(std::string_view name) { name_ = name; }
 std::string_view Species::name() const { return name_; }
 
 // Check set-up of Species
-bool Species::checkSetUp()
+bool Species::checkSetUp() const
 {
     auto nErrors = 0;
 
@@ -81,7 +81,7 @@ bool Species::checkSetUp()
         for (const SpeciesBond &bond : i.bonds())
         {
             auto *partner = bond.partner(&i);
-            if (!partner->hasBond(&i))
+            if (!partner->getBond(&i))
             {
                 Messenger::error("SpeciesAtom {} references a Bond to SpeciesAtom {}, but SpeciesAtom {} does not.\n",
                                  i.userIndex(), partner->userIndex(), partner->userIndex());
@@ -118,7 +118,7 @@ bool Species::checkSetUp()
 }
 
 // Print Species information
-void Species::print()
+void Species::print() const
 {
     Messenger::print("  Atoms:\n");
     Messenger::print("      ID   El  Type (ID)        X             Y             Z             Q\n");

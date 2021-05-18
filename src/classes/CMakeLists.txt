@@ -62,7 +62,6 @@ add_library(
   species_site.cpp
   species_transform.cpp
   speciesimproper.cpp
-  speciesinfo.cpp
   speciesintra.cpp
   speciesring.cpp
   speciessite.cpp
@@ -115,7 +114,6 @@ add_library(
   speciesatom.h
   speciesbond.h
   speciesimproper.h
-  speciesinfo.h
   speciesintra.h
   speciesring.h
   speciessite.h

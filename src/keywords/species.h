@@ -10,10 +10,10 @@
 class Species;
 
 // Keyword with Species Data
-class SpeciesKeyword : public KeywordData<Species *>
+class SpeciesKeyword : public KeywordData<const Species *>
 {
     public:
-    SpeciesKeyword(Species *sp = nullptr);
+    SpeciesKeyword(const Species *sp = nullptr);
     ~SpeciesKeyword() override;
 
     /*

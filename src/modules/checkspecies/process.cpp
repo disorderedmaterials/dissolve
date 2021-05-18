@@ -12,7 +12,7 @@
 bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Retrieve necessary keyword values
-    Species *sp = keywords_.retrieve<Species *>("Species");
+    auto *sp = keywords_.retrieve<const Species *>("Species");
     if (!sp)
         return Messenger::error("No target species provided.\n");
     const auto tolerance = keywords_.asDouble("Tolerance");
@@ -22,7 +22,7 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check atom types
     auto nAtomTypesFailed = 0;
-    if (atomTypes_.size() != 0)
+    if (!atomTypes_.empty())
     {
         Messenger::print("\nChecking atom types...\n");
 
@@ -82,8 +82,8 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         nBondsFailed =
             std::accumulate(bondParameters_.begin(), bondParameters_.end(), 0, [&](const auto &acc, const auto &bond) {
                 auto &indices = std::get<0>(bond);
-                return acc + parametersDiffer<SpeciesBond>("bond", sp->getBond(indices.at(0) - 1, indices.at(1) - 1), indices,
-                                                           std::get<1>(bond), tolerance);
+                return acc + parametersDiffer<const SpeciesBond>("bond", sp->getBond(indices.at(0) - 1, indices.at(1) - 1),
+                                                                 indices, std::get<1>(bond), tolerance);
             });
     }
 

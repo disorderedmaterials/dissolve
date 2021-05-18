@@ -14,7 +14,7 @@ class Species;
 class AddSpeciesProcedureNode : public ProcedureNode
 {
     public:
-    AddSpeciesProcedureNode(Species *sp = nullptr, const NodeValue &population = 0, const NodeValue &density = 0.1,
+    AddSpeciesProcedureNode(const Species *sp = nullptr, const NodeValue &population = 0, const NodeValue &density = 0.1,
                             Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
     ~AddSpeciesProcedureNode() override = default;
 

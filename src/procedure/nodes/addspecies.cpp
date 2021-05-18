@@ -10,7 +10,7 @@
 #include "classes/species.h"
 #include "keywords/types.h"
 
-AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, const NodeValue &population, const NodeValue &density,
+AddSpeciesProcedureNode::AddSpeciesProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                                  Units::DensityUnits densityUnits)
     : ProcedureNode(ProcedureNode::NodeType::AddSpecies)
 {
@@ -78,7 +78,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                       GenericList &targetList)
 {
     const auto requestedPopulation = keywords_.asInt("Population");
-    auto *sp = keywords_.retrieve<Species *>("Species");
+    auto *sp = keywords_.retrieve<const Species *>("Species");
     if (!sp)
         return Messenger::error("No Species set in AddSpecies node.\n");
     const auto nAtomsToAdd = requestedPopulation * sp->nAtoms();
