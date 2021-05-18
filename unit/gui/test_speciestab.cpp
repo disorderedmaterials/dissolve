@@ -100,7 +100,7 @@ TEST_F(SpeciesTabTest, Bonds)
     EXPECT_FALSE(bond.setData(bond.index(3, 0), 5));
     EXPECT_FALSE(bond.setData(bond.index(3, 1), 6));
 
-    EXPECT_FALSE(bond.setData(bond.index(3, 3), 6));
+    EXPECT_FALSE(bond.setData(bond.index(3, 3), "4.000000,5.000000"));
 
     EXPECT_FALSE(bond.setData(bond.index(3, 2), "Undefined"));
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
@@ -125,7 +125,7 @@ TEST_F(SpeciesTabTest, Angles)
     SpeciesAngleModel angle(species->angles(), dissolve);
 
     // Test Angles
-    EXPECT_EQ(angle.columnCount(), 8);
+    EXPECT_EQ(angle.columnCount(), 5);
     EXPECT_EQ(angle.rowCount(), 18);
     for (auto role : roles)
     {
@@ -133,36 +133,23 @@ TEST_F(SpeciesTabTest, Angles)
         EXPECT_EQ(angle.data(angle.index(3, 1), role).toInt(), 5);
         EXPECT_EQ(angle.data(angle.index(3, 2), role).toInt(), 6);
         EXPECT_EQ(angle.data(angle.index(3, 3), role).toString().toStdString(), "@CA-CA-CA");
-        EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 4), role).toDouble(), 527.184);
-        EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 5), role).toDouble(), 120);
-        EXPECT_EQ(angle.data(angle.index(3, 6), role).toDouble(), 0);
-        EXPECT_EQ(angle.data(angle.index(3, 7), role).toDouble(), 0);
+        EXPECT_EQ(angle.data(angle.index(3, 4), role).toString().toStdString(), "527.184000,120.000000");
     }
 
     // Mutate angle
     EXPECT_FALSE(angle.setData(angle.index(3, 0), 5));
     EXPECT_FALSE(angle.setData(angle.index(3, 1), 6));
     EXPECT_FALSE(angle.setData(angle.index(3, 2), 7));
-    for (auto i = 4; i < 6; ++i)
-        EXPECT_FALSE(angle.setData(angle.index(3, i), 6));
+    EXPECT_FALSE(angle.setData(angle.index(3, 4), 6));
 
     EXPECT_FALSE(angle.setData(angle.index(3, 3), "Undefined"));
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "Harmonic"));
-    for (auto i = 4; i < 6; ++i)
-    {
-        EXPECT_TRUE(angle.setData(angle.index(3, i), i));
-        EXPECT_DOUBLE_EQ(angle.data(angle.index(3, i)).toDouble(), i);
-    }
-    for (auto i = 6; i < 8; ++i)
-    {
-        EXPECT_FALSE(angle.setData(angle.index(3, i), i));
-        EXPECT_EQ(angle.data(angle.index(3, i)).toDouble(), 0);
-    }
+
+    EXPECT_TRUE(angle.setData(angle.index(3, 4), "4.0,5.0"));
+    EXPECT_EQ(angle.data(angle.index(3, 4)).toString().toStdString(), "4.000000,5.000000");
+
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "@CA-CA-CA"));
-    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 4)).toDouble(), 527.184);
-    EXPECT_DOUBLE_EQ(angle.data(angle.index(3, 5)).toDouble(), 120);
-    EXPECT_EQ(angle.data(angle.index(3, 6)).toDouble(), 0);
-    EXPECT_EQ(angle.data(angle.index(3, 7)).toDouble(), 0);
+    EXPECT_EQ(angle.data(angle.index(3, 4)).toString().toStdString(), "527.184000,120.000000");
 }
 
 TEST_F(SpeciesTabTest, Torsions)

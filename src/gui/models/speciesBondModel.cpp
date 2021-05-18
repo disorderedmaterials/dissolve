@@ -1,4 +1,5 @@
 #include "gui/models/speciesBondModel.h"
+#include "gui/models/speciesModelUtils.h"
 
 SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, Dissolve &dissolve) : bonds_(bonds), dissolve_(dissolve) {}
 
@@ -34,14 +35,7 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
                        ? QString::fromStdString("@" + std::string(bond.masterParameters()->name()))
                        : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())));
         case 3:
-            if (bond.parameters().empty())
-                return "";
-            {
-                std::string result = std::to_string(bond.parameters().front());
-                std::for_each(std::next(bond.parameters().begin()), bond.parameters().end(),
-                              [&result](const auto value) { result += "," + std::to_string(value); });
-                return QString::fromStdString(result);
-            }
+            return joinParameters(bond);
         default:
             return QVariant();
     }
@@ -108,19 +102,8 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             }
             break;
         case 3:
-            if (item.masterParameters())
+            if (!splitParameters(value.toString(), item))
                 return false;
-            if (item.parameters().size() <= index.column() - 3)
-                return false;
-            {
-                auto terms = value.toString().split(",");
-                if (terms.size() != item.parameters().size())
-                    return false;
-                for (int i = 0; i < terms.size(); ++i)
-                {
-                    item.setParameter(i, terms[i].toDouble());
-                }
-            }
             break;
         default:
             return false;
