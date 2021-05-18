@@ -17,7 +17,9 @@
 
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
-    : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this)
+    : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this),
+      atoms_(species->atoms(), dissolve), angles_(species->angles(), dissolve), bonds_(species->bonds(), dissolve),
+      torsions_(species->torsions(), dissolve), impropers_(species->impropers(), dissolve)
 {
     ui_.setupUi(this);
 
@@ -51,16 +53,21 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
+    ui_.AtomTable->setModel(&atoms_);
     ui_.AtomTable->horizontalHeader()->setFont(font());
     ui_.AtomTable->horizontalHeader()->setVisible(true);
     ui_.AtomTable->verticalHeader()->setFont(font());
     ui_.AtomTable->verticalHeader()->setVisible(true);
+    ui_.BondTable->setModel(&bonds_);
     ui_.BondTable->horizontalHeader()->setFont(font());
     ui_.BondTable->horizontalHeader()->setVisible(true);
+    ui_.AngleTable->setModel(&angles_);
     ui_.AngleTable->horizontalHeader()->setFont(font());
     ui_.AngleTable->horizontalHeader()->setVisible(true);
+    ui_.TorsionTable->setModel(&torsions_);
     ui_.TorsionTable->horizontalHeader()->setFont(font());
     ui_.TorsionTable->horizontalHeader()->setVisible(true);
+    ui_.ImproperTable->setModel(&impropers_);
     ui_.ImproperTable->horizontalHeader()->setFont(font());
     ui_.ImproperTable->horizontalHeader()->setVisible(true);
 
@@ -79,6 +86,15 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
     connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+
+    connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&atoms_, SIGNAL(atomTypeChanged()), this, SLOT(updateIsotopologuesTab()));
+    connect(ui_.AtomTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(updateUnderlyingAtomSelection()));
+    connect(&bonds_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
 }
 
 SpeciesTab::~SpeciesTab()

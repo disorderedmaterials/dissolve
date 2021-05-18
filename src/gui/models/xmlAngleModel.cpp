@@ -58,11 +58,11 @@ QVariant XmlAngleModel::data(const QModelIndex &index, int role) const
     switch (index.column())
     {
         case 0:
-            return QVariant(QString(std::get<0>(angles_[index.row()]).c_str()));
+            return QString::fromStdString(std::get<0>(angles_[index.row()]));
         case 1:
-            return QVariant(QString(std::get<1>(angles_[index.row()]).c_str()));
+            return QString::fromStdString(std::get<1>(angles_[index.row()]));
         case 2:
-            return QVariant(QString(std::get<2>(angles_[index.row()]).c_str()));
+            return QString::fromStdString(std::get<2>(angles_[index.row()]));
         case 3:
             return QVariant(std::get<3>(angles_[index.row()]));
         case 4:

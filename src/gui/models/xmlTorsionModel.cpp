@@ -90,13 +90,13 @@ QVariant XmlTorsionModel::data(const QModelIndex &index, int role) const
     switch (index.column())
     {
         case 0:
-            return std::get<0>(torsions_[index.row()]).c_str();
+            return QString::fromStdString(std::get<0>(torsions_[index.row()]));
         case 1:
-            return std::get<1>(torsions_[index.row()]).c_str();
+            return QString::fromStdString(std::get<1>(torsions_[index.row()]));
         case 2:
-            return std::get<2>(torsions_[index.row()]).c_str();
+            return QString::fromStdString(std::get<2>(torsions_[index.row()]));
         case 3:
-            return std::get<3>(torsions_[index.row()]).c_str();
+            return QString::fromStdString(std::get<3>(torsions_[index.row()]));
 
         case 4:
             return std::get<4>(torsions_[index.row()]);
