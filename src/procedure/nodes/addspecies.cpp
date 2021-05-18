@@ -9,6 +9,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "keywords/types.h"
+#include "procedure/nodes/regionbase.h"
 
 AddSpeciesProcedureNode::AddSpeciesProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                                  Units::DensityUnits densityUnits)
@@ -29,6 +30,8 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(const Species *sp, const NodeVa
                   new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(
                       positioningTypes() = AddSpeciesProcedureNode::PositioningType::Random),
                   "Positioning", "Positioning type for individual molecules");
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Region, true), "Region",
+                  "Region into which to add the species");
 }
 
 /*
@@ -64,7 +67,8 @@ EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::p
     return EnumOptions<AddSpeciesProcedureNode::PositioningType>(
         "PositioningType", {{AddSpeciesProcedureNode::PositioningType::Central, "Central"},
                             {AddSpeciesProcedureNode::PositioningType::Current, "Current"},
-                            {AddSpeciesProcedureNode::PositioningType::Random, "Random"}});
+                            {AddSpeciesProcedureNode::PositioningType::Random, "Random"},
+                            {AddSpeciesProcedureNode::PositioningType::Region, "Region"}});
 }
 
 /*
@@ -72,7 +76,19 @@ EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::p
  */
 
 // Prepare any necessary data, ready for execution
-bool AddSpeciesProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
+bool AddSpeciesProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+{
+    // If positioning type is 'Region', must have a suitable node defined
+    auto positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
+    auto *regionNode = keywords_.retrieve<const ProcedureNode *>("Region");
+    if (positioning == AddSpeciesProcedureNode::PositioningType::Region && !regionNode)
+        return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
+    else if (positioning != AddSpeciesProcedureNode::PositioningType::Region && regionNode)
+        Messenger::warn("A region has been specified ({}) but the positioning type is set to '{}'\n", regionNode->name(),
+                        AddSpeciesProcedureNode::positioningTypes().keyword(positioning));
+
+    return true;
+}
 
 // Execute node, targetting the supplied Configuration
 bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
@@ -193,6 +209,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
 
     // Get the positioning type and rotation flag
     auto positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
+    auto *regionNode = dynamic_cast<const RegionProcedureNodeBase *>(keywords_.retrieve<const ProcedureNode *>("Region"));
     auto rotate = keywords_.asBool("Rotate");
 
     Messenger::print("[AddSpecies] Positioning type is '{}' and rotation is {}.\n",
@@ -227,6 +244,9 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                 fr.set(procPool.random(), procPool.random(), procPool.random());
                 newCentre = box->fracToReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
+                break;
+            case (AddSpeciesProcedureNode::PositioningType::Region):
+                mol->setCentreOfGeometry(box, box->fracToReal(regionNode->randomFractionalCoordinate()));
                 break;
             case (AddSpeciesProcedureNode::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);
