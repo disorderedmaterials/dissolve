@@ -85,7 +85,7 @@ TEST_F(SpeciesTabTest, Bonds)
     SpeciesBondModel bond(species->bonds(), dissolve);
 
     // Test Bonds
-    EXPECT_EQ(bond.columnCount(), 7);
+    EXPECT_EQ(bond.columnCount(), 4);
     EXPECT_EQ(bond.rowCount(), 12);
 
     for (auto role : roles)
@@ -93,34 +93,23 @@ TEST_F(SpeciesTabTest, Bonds)
         EXPECT_EQ(bond.data(bond.index(3, 0), role).toInt(), 4);
         EXPECT_EQ(bond.data(bond.index(3, 1), role).toInt(), 5);
         EXPECT_EQ(bond.data(bond.index(3, 2), role).toString().toStdString(), "@CA-CA");
-        EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 3), role).toDouble(), 3924.59);
-        EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 4), role).toDouble(), 1.4);
-        EXPECT_EQ(bond.data(bond.index(3, 5), role).toDouble(), 0);
-        EXPECT_EQ(bond.data(bond.index(3, 6), role).toDouble(), 0);
+        EXPECT_EQ(bond.data(bond.index(3, 3), role).toString().toStdString(), "3924.590000,1.400000");
     }
 
     // Mutate bond
     EXPECT_FALSE(bond.setData(bond.index(3, 0), 5));
     EXPECT_FALSE(bond.setData(bond.index(3, 1), 6));
-    for (auto i = 3; i < 7; ++i)
-        EXPECT_FALSE(bond.setData(bond.index(3, i), 6));
+
+    EXPECT_FALSE(bond.setData(bond.index(3, 3), 6));
+
     EXPECT_FALSE(bond.setData(bond.index(3, 2), "Undefined"));
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
-    for (auto i = 3; i < 5; ++i)
-    {
-        EXPECT_TRUE(bond.setData(bond.index(3, i), i));
-        EXPECT_DOUBLE_EQ(bond.data(bond.index(3, i)).toDouble(), i);
-    }
-    for (auto i = 5; i < 7; ++i)
-    {
-        EXPECT_FALSE(bond.setData(bond.index(3, i), i));
-        EXPECT_EQ(bond.data(bond.index(3, i)).toDouble(), 0);
-    }
+
+    EXPECT_TRUE(bond.setData(bond.index(3, 3), "4.0,5.0"));
+    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "4.000000,5.000000");
+
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "@CA-CA"));
-    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 3)).toDouble(), 3924.59);
-    EXPECT_DOUBLE_EQ(bond.data(bond.index(3, 4)).toDouble(), 1.4);
-    EXPECT_NEAR(bond.data(bond.index(3, 5)).toDouble(), 0, 1e-100);
-    EXPECT_NEAR(bond.data(bond.index(3, 6)).toDouble(), 0, 1e-100);
+    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "3924.590000,1.400000");
 }
 
 TEST_F(SpeciesTabTest, Angles)

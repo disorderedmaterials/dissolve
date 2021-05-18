@@ -11,7 +11,7 @@ int SpeciesBondModel::rowCount(const QModelIndex &parent) const
 int SpeciesBondModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 7;
+    return 4;
 }
 
 QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
@@ -34,12 +34,14 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
                        ? QString::fromStdString("@" + std::string(bond.masterParameters()->name()))
                        : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())));
         case 3:
-        case 4:
-        case 5:
-        case 6:
-            if (bond.parameters().size() <= index.column() - 3)
-                return 0;
-            return bond.parameter(index.column() - 3);
+            if (bond.parameters().empty())
+                return "";
+            {
+                std::string result = std::to_string(bond.parameters().front());
+                std::for_each(std::next(bond.parameters().begin()), bond.parameters().end(),
+                              [&result](const auto value) { result += "," + std::to_string(value); });
+                return QString::fromStdString(result);
+            }
         default:
             return QVariant();
     }
@@ -58,13 +60,7 @@ QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, 
         case 2:
             return "Form";
         case 3:
-            return "Parameter 1";
-        case 4:
-            return "Parameter 2";
-        case 5:
-            return "Parameter 3";
-        case 6:
-            return "Parameter 4";
+            return "Parameters";
         default:
             return QVariant();
     }
@@ -112,14 +108,19 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             }
             break;
         case 3:
-        case 4:
-        case 5:
-        case 6:
             if (item.masterParameters())
                 return false;
             if (item.parameters().size() <= index.column() - 3)
                 return false;
-            item.setParameter(index.column() - 3, value.toDouble());
+            {
+                auto terms = value.toString().split(",");
+                if (terms.size() != item.parameters().size())
+                    return false;
+                for (int i = 0; i < terms.size(); ++i)
+                {
+                    item.setParameter(i, terms[i].toDouble());
+                }
+            }
             break;
         default:
             return false;
