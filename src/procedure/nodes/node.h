@@ -29,7 +29,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
     {
         None,
         Calculate,
-        Operate
+        Operate,
+        Region
 
     };
     // Return enum option info for NodeClass
@@ -48,6 +49,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Collect3D,
         DynamicSite,
         Fit1D,
+        GeneralRegion,
         Integrate1D,
         OperateDivide,
         OperateExpression,

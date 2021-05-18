@@ -436,6 +436,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::Fit1D):
                 newNode = new Fit1DProcedureNode();
                 break;
+            case (ProcedureNode::NodeType::GeneralRegion):
+                newNode = new GeneralRegionProcedureNode();
+                break;
             case (ProcedureNode::NodeType::OperateDivide):
                 newNode = new OperateDivideProcedureNode();
                 break;
