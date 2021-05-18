@@ -126,6 +126,7 @@ class Configuration : public ListItem<Configuration>
     int nMolecules() const;
     // Return array of Molecules
     std::deque<std::shared_ptr<Molecule>> &molecules();
+    const std::deque<std::shared_ptr<Molecule>> &molecules() const;
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
