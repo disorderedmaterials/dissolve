@@ -65,7 +65,7 @@ std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 const std::vector<SpeciesBond> &Species::bonds() const { return bonds_; }
 
 // Return whether SpeciesBond between specified SpeciesAtoms exists
-bool Species::getBond(SpeciesAtom *i, SpeciesAtom *j) const
+bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
 {
     auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
 
@@ -178,7 +178,7 @@ void Species::updateIntramolecularTerms()
                                  [this, &atomsContains](const auto &angle) {
                                      return ((!atomsContains(angle.i())) || (!atomsContains(angle.j())) ||
                                              (!atomsContains(angle.k()))) ||
-                                            ((!getBond(angle.i(), angle.j())) || (!getBond(angle.j(), angle.k())));
+                                            ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
                                  }),
                   angles_.end());
 
@@ -187,8 +187,8 @@ void Species::updateIntramolecularTerms()
                                    [this, &atomsContains](const auto &torsion) {
                                        return ((!atomsContains(torsion.i())) || (!atomsContains(torsion.j())) ||
                                                (!atomsContains(torsion.k())) || (!atomsContains(torsion.l()))) ||
-                                              ((!getBond(torsion.i(), torsion.j())) || (!getBond(torsion.j(), torsion.k())) ||
-                                               (!getBond(torsion.k(), torsion.l())));
+                                              ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
+                                               (!hasBond(torsion.k(), torsion.l())));
                                    }),
                     torsions_.end());
 
@@ -197,9 +197,9 @@ void Species::updateIntramolecularTerms()
                                     [this, &atomsContains](const auto &improper) {
                                         return ((!atomsContains(improper.i())) || (!atomsContains(improper.j())) ||
                                                 (!atomsContains(improper.k())) || (!atomsContains(improper.l()))) ||
-                                               ((!getBond(improper.i(), improper.j())) ||
-                                                (!getBond(improper.j(), improper.k())) ||
-                                                (!getBond(improper.k(), improper.l())));
+                                               ((!hasBond(improper.i(), improper.j())) ||
+                                                (!hasBond(improper.j(), improper.k())) ||
+                                                (!hasBond(improper.k(), improper.l())));
                                     }),
                      impropers_.end());
 }
