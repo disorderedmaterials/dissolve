@@ -211,7 +211,7 @@ TEST_F(SpeciesTabTest, Impropers)
     SpeciesImproperModel improper(species->impropers(), dissolve);
 
     // Test Torsions
-    EXPECT_EQ(improper.columnCount(), 9);
+    EXPECT_EQ(improper.columnCount(), 6);
     EXPECT_EQ(improper.rowCount(), 6);
     for (auto role : roles)
     {
@@ -220,10 +220,7 @@ TEST_F(SpeciesTabTest, Impropers)
         EXPECT_EQ(improper.data(improper.index(3, 2), role).toInt(), 5);
         EXPECT_EQ(improper.data(improper.index(3, 3), role).toInt(), 9);
         EXPECT_EQ(improper.data(improper.index(3, 4), role).toString().toStdString(), "@impgeneral");
-        EXPECT_EQ(improper.data(improper.index(3, 5), role).toDouble(), 4.606);
-        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 6), role).toDouble(), 2.0);
-        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 7), role).toDouble(), 180.0);
-        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 8), role).toDouble(), 1.00);
+        EXPECT_EQ(improper.data(improper.index(3, 5), role).toString().toStdString(), "4.606000,2.000000,180.000000,1.000000");
     }
 
     // Mutate improper
@@ -231,21 +228,18 @@ TEST_F(SpeciesTabTest, Impropers)
     EXPECT_FALSE(improper.setData(improper.index(3, 1), 6));
     EXPECT_FALSE(improper.setData(improper.index(3, 2), 7));
     EXPECT_FALSE(improper.setData(improper.index(3, 3), 8));
-    for (auto i = 5; i < 9; ++i)
-        EXPECT_FALSE(improper.setData(improper.index(3, i), 6));
+
+    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0,4.0,5.0,6.0"));
 
     EXPECT_FALSE(improper.setData(improper.index(3, 4), "Undefined"));
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "Cos3"));
-    for (auto i = 5; i < 9; ++i)
-    {
-        EXPECT_TRUE(improper.setData(improper.index(3, i), i));
-        EXPECT_DOUBLE_EQ(improper.data(improper.index(3, i)).toDouble(), i);
-    }
+
+    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0,4.0,5.0"));
+    EXPECT_TRUE(improper.setData(improper.index(3, 5), "3.0,4.0,5.0,6.0"));
+    EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "3.000000,4.000000,5.000000,6.000000");
+
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
-    EXPECT_EQ(improper.data(improper.index(3, 5)).toDouble(), 4.606);
-    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 6)).toDouble(), 2.0);
-    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 7)).toDouble(), 180.0);
-    EXPECT_DOUBLE_EQ(improper.data(improper.index(3, 8)).toDouble(), 1.00);
+    EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "4.606000,2.000000,180.000000,1.000000");
 }
 
 } // namespace UnitTest
