@@ -72,15 +72,15 @@ class AddForcefieldTermsWizard : public WizardWidget
 
     protected:
     // Go to specified page index in the controls widget
-    bool displayControlPage(int index);
+    bool displayControlPage(int index) override;
     // Return whether progression to the next page from the current page is allowed
-    bool progressionAllowed(int index) const;
+    bool progressionAllowed(int index) const override;
     // Perform any necessary actions before moving to the next page
-    bool prepareForNextPage(int currentIndex);
+    bool prepareForNextPage(int currentIndex) override;
     // Determine next page for the current page, based on current data
-    int determineNextPage(int currentIndex);
+    int determineNextPage(int currentIndex) override;
     // Perform any necessary actions before moving to the previous page
-    bool prepareForPreviousPage(int currentIndex);
+    bool prepareForPreviousPage(int currentIndex) override;
 
     public:
     // Reset, ready for adding new forcefield terms
