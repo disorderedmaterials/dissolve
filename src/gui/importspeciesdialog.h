@@ -3,7 +3,11 @@
 
 #pragma once
 
+#include "gui/models/atomTypeModel.h"
+#include "gui/models/speciesModel.h"
 #include "gui/ui_importspeciesdialog.h"
+#include "gui/wizard.hui"
+#include "main/dissolve.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -11,21 +15,107 @@ class Dissolve;
 class Species;
 
 // Import Species Dialog
-class ImportSpeciesDialog : public QDialog
+class ImportSpeciesDialog : public WizardDialog
 {
     Q_OBJECT
 
     public:
-    ImportSpeciesDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
-    ~ImportSpeciesDialog();
+    ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve);
+    ~ImportSpeciesDialog() = default;
 
     private:
     // Main form declaration
     Ui::ImportSpeciesDialog ui_;
+    // Model for species list
+    SpeciesModel speciesModel_;
+    // Model for atom types list
+    AtomTypeModel atomTypesModel_;
 
-    public:
-    // Reset, ready for adding a new Species
-    void reset();
-    // Copy imported Species over to the specified Dissolve object
-    Species *importSpecies(Dissolve &dissolve);
+    /*
+     * Data
+     */
+    private:
+    // Main Dissolve object
+    Dissolve &dissolve_;
+    // Temporary core data for creating / importing new Species
+    CoreData temporaryCoreData_;
+    // Temporary Dissolve reference for creating / importing new Species
+    Dissolve temporaryDissolve_;
+    // Target Species (in temporaryCoreData_) for import
+    const Species *importTarget_;
+
+    /*
+     * Wizard
+     */
+    private:
+    // Pages Enum
+    enum WizardPage
+    {
+        SelectFilePage,    /* Select File (Dissolve input or species file) */
+        SelectSpeciesPage, /* Choose Species */
+        AtomTypesPage,     /* AtomTypes page - check / re-map AtomTypes */
+        MasterTermsPage,   /* MasterTerms page - check / re-map MasterTerms */
+        SpeciesNamePage    /* Final page, setting name for Species */
+    };
+
+    protected:
+    // Return whether progression to the next page from the current page is allowed
+    bool progressionAllowed(int index) const override;
+    // Perform any necessary actions before moving to the next page
+    bool prepareForNextPage(int currentIndex) override;
+    // Determine next page for the current page, based on current data
+    std::optional<int> determineNextPage(int currentIndex) override;
+    // Perform any necessary actions before moving to the previous page
+    bool prepareForPreviousPage(int currentIndex) override;
+    // Perform any final actions before the wizard is closed
+    void finalise() override;
+
+    /*
+     * Select File Page
+     */
+    private slots:
+    void on_InputFileEdit_textChanged(const QString text);
+    void on_InputFileSelectButton_clicked(bool checked);
+
+    /*
+     * Select Species Page
+     */
+    private slots:
+    void speciesSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+
+    /*
+     * AtomTypes Page
+     */
+    private:
+    // Update page with AtomTypes in our temporary Dissolve reference
+    void updateAtomTypesPage();
+
+    private slots:
+    void atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+    void on_AtomTypesPrefixButton_clicked(bool checked);
+    void on_AtomTypesSuffixButton_clicked(bool checked);
+
+    /*
+     * MasterTerms Page
+     */
+    private:
+    // Parental tree widgets for master terms
+    QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
+
+    private:
+    // Row update function for MasterTermsTree
+    void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra, bool createItem);
+    void updateMasterTermsPage();
+
+    private slots:
+    void on_MasterTermsTree_itemSelectionChanged();
+    void masterTermsTreeEdited(QWidget *lineEdit);
+    void on_MasterTermsPrefixButton_clicked(bool checked);
+    void on_MasterTermsSuffixButton_clicked(bool checked);
+
+    /*
+     * Species Name Page (final page)
+     */
+    private slots:
+    void on_SpeciesNameEdit_textChanged(const QString text);
 };

@@ -51,19 +51,15 @@ void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 {
-    static ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
-
-    importSpeciesDialog.reset();
+    ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
 
     if (importSpeciesDialog.exec() == QDialog::Accepted)
     {
-        auto *sp = importSpeciesDialog.importSpecies(dissolve_);
-
         // Fully update GUI
         setModified();
         fullUpdate();
 
-        ui_.MainTabs->setCurrentTab(sp);
+        ui_.MainTabs->setCurrentTab(dissolve_.species().back().get());
     }
 }
 
