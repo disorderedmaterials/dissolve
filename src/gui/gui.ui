@@ -42,7 +42,7 @@
     <item>
      <widget class="SuperStackedWidget" name="MainStack">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="StartPage">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1115,6 +1115,7 @@
      </property>
      <addaction name="SpeciesImportFromDissolveAction"/>
      <addaction name="SpeciesImportFromXYZAction"/>
+     <addaction name="SpeciesImportLigParGenAction"/>
     </widget>
     <addaction name="SpeciesCreateMenu"/>
     <addaction name="SpeciesImportMenu"/>
@@ -1122,7 +1123,6 @@
     <addaction name="SpeciesDeleteAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
-    <addaction name="ImportForcefieldAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
@@ -1698,11 +1698,6 @@
     <string>Atomic (MC only)</string>
    </property>
   </action>
-  <action name="ImportForcefieldAction">
-   <property name="text">
-    <string>Import Forcefield...</string>
-   </property>
-  </action>
   <action name="SpeciesRegenerateIntraFromConnectivityAction">
    <property name="text">
     <string>Re&amp;generate Angles/Torsions from Connectivity</string>
@@ -1722,6 +1717,19 @@
   <action name="ConfigurationCreateFrameworkAdsorbatesAction">
    <property name="text">
     <string>&amp;Framework with adsorbates</string>
+   </property>
+  </action>
+  <action name="ImportOpenMMAction">
+   <property name="text">
+    <string>OpenMM (XML)</string>
+   </property>
+  </action>
+  <action name="SpeciesImportLigParGenAction">
+   <property name="text">
+    <string>From &amp;LigParGen...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import coordinates and forcefield from LigParGen output</string>
    </property>
   </action>
  </widget>
