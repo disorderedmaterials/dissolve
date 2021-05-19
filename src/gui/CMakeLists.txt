@@ -29,6 +29,7 @@ set(components_MOC_HDRS
     selectconfigurationwidget.h
     selectforcefieldwidget.h
     selectspecieswidget.h
+    wizard.hui
     wizardwidget.hui
     wizardwidgetfooter.h
     wizardwidgetheader.h
@@ -143,6 +144,7 @@ set(components_SRCS
     selectconfigurationwidget_funcs.cpp
     selectforcefieldwidget_funcs.cpp
     selectspecieswidget_funcs.cpp
+    wizard_funcs.cpp
     wizardwidget_funcs.cpp
     wizardwidgethighlight.cpp
     wizardwidgetpageinfo.cpp
