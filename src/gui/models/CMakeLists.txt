@@ -3,6 +3,8 @@ set(models_MOC_HDRS
     braggReflectionModel.h
     dataManagerReferencePointModel.h
     dataManagerSimulationModel.h
+    speciesFilterProxy.h
+    speciesModel.h
     xmlAngleModel.h
     xmlAtomModel.h
     xmlBondModel.h
@@ -23,6 +25,8 @@ set(models_SRCS
     braggReflectionModel.cpp
     dataManagerReferencePointModel.cpp
     dataManagerSimulationModel.cpp
+    speciesFilterProxy.cpp
+    speciesModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -41,6 +45,7 @@ qt_wrap_cpp(
   braggReflectionModel.h
   dataManagerReferencePointModel.h
   dataManagerSimulationModel.h
+  speciesModel.h
   xmlAngleModel.h
   xmlAtomModel.h
   xmlBondModel.h

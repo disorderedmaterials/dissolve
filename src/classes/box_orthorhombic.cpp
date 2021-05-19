@@ -7,7 +7,7 @@
 
 OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
 {
-    type_ = Box::OrthorhombicBoxType;
+    type_ = Box::BoxType::Orthorhombic;
 
     // Construct axes_
     axes_.setColumn(0, lengths.x, 0.0, 0.0);
@@ -25,8 +25,6 @@ OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
     // Finalise associated data
     finalise();
 }
-
-OrthorhombicBox::~OrthorhombicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

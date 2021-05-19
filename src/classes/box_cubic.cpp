@@ -7,7 +7,7 @@
 
 CubicBox::CubicBox(double length) : Box()
 {
-    type_ = Box::CubicBoxType;
+    type_ = Box::BoxType::Cubic;
 
     // Construct axes_
     axes_.setColumn(0, length, 0.0, 0.0);
@@ -21,8 +21,6 @@ CubicBox::CubicBox(double length) : Box()
     // Finalise associated data
     finalise();
 }
-
-CubicBox::~CubicBox() = default;
 
 /*
  * Minimum Image Routines (virtual implementations)

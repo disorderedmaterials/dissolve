@@ -6,6 +6,7 @@
 #include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomtypelist.h"
+#include "classes/box.h"
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
 #include "classes/sitestack.h"
@@ -22,7 +23,6 @@
 #include <memory>
 
 // Forward Declarations
-class Box;
 class Cell;
 class PotentialMap;
 class ProcessPool;
@@ -150,8 +150,8 @@ class Configuration : public ListItem<Configuration>
     double requestedSizeFactor_;
     // Size factor currently applied to Box / Cells
     double appliedSizeFactor_;
-    // Periodic Box definition for the Configuration
-    Box *box_;
+    // Periodic Box
+    std::unique_ptr<Box> box_;
     // Requested side length for individual Cell
     double requestedCellDivisionLength_;
     // Cell array
@@ -159,7 +159,7 @@ class Configuration : public ListItem<Configuration>
 
     public:
     // Create Box definition with specified lengths and angles
-    bool createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+    void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
     // Return Box
     const Box *box() const;
     // Scale Box (and associated Cells) by specified factor

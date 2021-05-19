@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/primitiveassembly.h"
+#include <array>
 
 PrimitiveAssembly::PrimitiveAssembly() : ListItem<PrimitiveAssembly>() {}
 
@@ -23,7 +24,7 @@ void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix)
 }
 
 // Add Primitive with colour to the assembly
-void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, const GLfloat *rgba)
+void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, const std::array<float, 4> &rgba)
 {
     ColouredPrimitiveInfo *pi = colouredPrimitiveFactory_.produce();
     (*pi) = ColouredPrimitiveInfo(primitive, matrix, rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -52,6 +53,52 @@ void PrimitiveAssembly::add(LineStyle lineStyle)
     LineStylePrimitiveInfo *pi = lineStylePrimitiveFactory_.produce();
     (*pi) = LineStylePrimitiveInfo(lineStyle);
     assembly_.add(pi);
+}
+
+/*
+ * Object
+ */
+
+// Create cylinder bond between supplied atoms in specified assembly
+void PrimitiveAssembly::createCylinderBond(Primitive *bondPrimitive, Vec3<double> rI, Vec3<double> rJ, Vec3<double> vij,
+                                           const std::array<float, 4> &colI, const std::array<float, 4> &colJ,
+                                           bool drawFromAtoms, double radialScaling)
+{
+    Matrix4 A;
+    auto unit = vij;
+    const auto mag = unit.magAndNormalise();
+
+    // Create rotation matrix for Bond
+    A.setColumn(2, unit.x, unit.y, unit.z, 0.0);
+    A.setColumn(0, unit.orthogonal(), 0.0);
+    A.setColumn(1, unit * A.columnAsVec3(0), 0.0);
+    A.columnMultiply(2, 0.5 * mag);
+    A.applyScaling(radialScaling, radialScaling, 1.0);
+
+    // If drawing from individual Atoms, locate on each Atom and draw the bond halves from there. If not, locate to the bond
+    // centre.
+    if (drawFromAtoms)
+    {
+        // Render half of Bond in colour of Atom j
+        A.setTranslation(rI);
+        add(bondPrimitive, A, colJ);
+
+        // Render half of Bond in colour of Atom i
+        A.setTranslation(rJ);
+        A.columnMultiply(2, -1.0);
+        add(bondPrimitive, A, colI);
+    }
+    else
+    {
+        A.setTranslation(rI + vij * 0.5);
+
+        // Render half of Bond in colour of Atom j
+        add(bondPrimitive, A, colJ);
+
+        // Render half of Bond in colour of Atom i
+        A.columnMultiply(2, -1.0);
+        add(bondPrimitive, A, colI);
+    }
 }
 
 /*

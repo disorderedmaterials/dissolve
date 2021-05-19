@@ -45,11 +45,6 @@ class RenderableConfiguration : public Renderable
     // Main assemblies
     PrimitiveAssembly configurationAssembly_, interactionAssembly_, unitCellAssembly_;
 
-    private:
-    // Create cylinder bond between supplied atoms in specified assembly
-    void createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                            const Vec3<double> vij, bool drawFromAtoms, double radialScaling);
-
     protected:
     // Recreate necessary primitives / primitive assemblies for the data
     void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);

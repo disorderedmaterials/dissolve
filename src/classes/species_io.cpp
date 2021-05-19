@@ -76,18 +76,20 @@ bool Species::loadFromXYZ(std::string_view filename)
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
     return EnumOptions<Species::SpeciesKeyword>(
-        "SpeciesKeyword", {{Species::AngleKeyword, "Angle", 3, OptionArguments::AnyNumber},
-                           {Species::AtomKeyword, "Atom", 6, 7},
-                           {Species::BondKeyword, "Bond", 2, OptionArguments::AnyNumber},
-                           {Species::BondTypeKeyword, "BondType", 3},
-                           {Species::ChargeKeyword, "Charge", 2},
-                           {Species::CoordinateSetsKeyword, "CoordinateSets", 2, OptionArguments::AnyNumber},
-                           {Species::EndSpeciesKeyword, "EndSpecies"},
-                           {Species::ForcefieldKeyword, "Forcefield", 1},
-                           {Species::ImproperKeyword, "Improper", 5, OptionArguments::AnyNumber},
-                           {Species::IsotopologueKeyword, "Isotopologue", OptionArguments::OneOrMore},
-                           {Species::SiteKeyword, "Site", 1},
-                           {Species::TorsionKeyword, "Torsion", 4, OptionArguments::AnyNumber}});
+        "SpeciesKeyword", {{Species::SpeciesKeyword::Angle, "Angle", 3, OptionArguments::AnyNumber},
+                           {Species::SpeciesKeyword::Atom, "Atom", 6, 7},
+                           {Species::SpeciesKeyword::Bond, "Bond", 2, OptionArguments::AnyNumber},
+                           {Species::SpeciesKeyword::BondType, "BondType", 3},
+                           {Species::SpeciesKeyword::BoxAngles, "BoxAngles", 3},
+                           {Species::SpeciesKeyword::BoxLengths, "BoxLengths", 3},
+                           {Species::SpeciesKeyword::Charge, "Charge", 2},
+                           {Species::SpeciesKeyword::CoordinateSets, "CoordinateSets", 2, OptionArguments::AnyNumber},
+                           {Species::SpeciesKeyword::EndSpecies, "EndSpecies"},
+                           {Species::SpeciesKeyword::Forcefield, "Forcefield", 1},
+                           {Species::SpeciesKeyword::Improper, "Improper", 5, OptionArguments::AnyNumber},
+                           {Species::SpeciesKeyword::Isotopologue, "Isotopologue", OptionArguments::OneOrMore},
+                           {Species::SpeciesKeyword::Site, "Site", 1},
+                           {Species::SpeciesKeyword::Torsion, "Torsion", 4, OptionArguments::AnyNumber}});
 }
 
 // Read Species definition from specified LineParser
@@ -109,6 +111,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesAngle::AngleFunction af;
     SpeciesTorsion::TorsionFunction tf;
     SpeciesBond::BondType bt;
+    Vec3<double> boxAngles(90.0, 90.0, 90.0);
+    std::optional<Vec3<double>> boxLengths;
     auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
@@ -127,7 +131,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         // All OK, so process the keyword
         switch (kwd)
         {
-            case (Species::AngleKeyword):
+            case (Species::SpeciesKeyword::Angle):
                 // Create a new angle definition between the specified atoms
                 a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
                 if (!a)
@@ -183,13 +187,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Perform any final setup on the Angle
                 a->get().setUp();
                 break;
-            case (Species::AtomKeyword):
+            case (Species::SpeciesKeyword::Atom):
             {
                 Z = Elements::element(parser.argsv(2));
                 if (Z == Elements::Unknown)
                 {
                     Messenger::error("Unrecognised element symbol '{}' found in {} keyword.\n", parser.argsv(2),
-                                     Species::keywords().keyword(Species::AtomKeyword));
+                                     Species::keywords().keyword(Species::SpeciesKeyword::Atom));
                     error = true;
                     break;
                 }
@@ -215,7 +219,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 i.setAtomType(at);
                 break;
             }
-            case (Species::BondKeyword):
+            case (Species::SpeciesKeyword::Bond):
                 // Create a new bond definition between the specified atoms
                 b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
                 if (!b)
@@ -272,7 +276,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Perform any final setup on the Bond
                 b->get().setUp();
                 break;
-            case (Species::BondTypeKeyword):
+            case (Species::SpeciesKeyword::BondType):
                 // Find the specified bond
                 b = getBond(parser.argi(1) - 1, parser.argi(2) - 1);
                 if (!b)
@@ -294,7 +298,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 b->get().setBondType(bt);
                 break;
-            case (Species::ChargeKeyword):
+            case (Species::SpeciesKeyword::BoxAngles):
+                boxAngles = parser.arg3d(1);
+                break;
+            case (Species::SpeciesKeyword::BoxLengths):
+                boxLengths = parser.arg3d(1);
+                break;
+            case (Species::SpeciesKeyword::Charge):
             {
                 auto index = parser.argi(1) - 1;
                 if (index >= nAtoms())
@@ -306,9 +316,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 i.setCharge(parser.argd(2));
                 break;
             }
-            case (Species::CoordinateSetsKeyword):
+            case (Species::SpeciesKeyword::CoordinateSets):
                 if (!coordinateSetInputCoordinates_.read(
-                        parser, 1, fmt::format("End{}", keywords().keyword(Species::CoordinateSetsKeyword)), coreData))
+                        parser, 1, fmt::format("End{}", keywords().keyword(Species::SpeciesKeyword::CoordinateSets)), coreData))
                 {
                     Messenger::error("Failed to set coordinate sets file / format.\n");
                     error = true;
@@ -340,7 +350,18 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     Messenger::print("{} coordinate sets read in for Species '{}'.\n", nCoordinateSets(), name());
                 }
                 break;
-            case (Species::EndSpeciesKeyword):
+            case (Species::SpeciesKeyword::EndSpecies):
+                // Set periodic box?
+                if (boxLengths)
+                {
+                    // Generate Box
+                    box_ = Box::generate(*boxLengths, boxAngles);
+
+                    // Fold atoms
+                    for (auto &i : atoms_)
+                        setAtomCoordinates(&i, box_->fold(i.r()));
+                }
+                // Apply Forcefield?
                 if (forcefield_ && !applyForcefieldTerms(coreData))
                 {
                     error = true;
@@ -349,7 +370,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 Messenger::print("Found end of Species '{}'.\n", name());
                 blockDone = true;
                 break;
-            case (Species::ForcefieldKeyword):
+            case (Species::SpeciesKeyword::Forcefield):
                 forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1));
                 if (!forcefield_)
                 {
@@ -358,7 +379,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     break;
                 }
                 break;
-            case (Species::ImproperKeyword):
+            case (Species::SpeciesKeyword::Improper):
                 // Check the functional form specified - if it starts with '@' it is a reference to master
                 // parameters
                 if (parser.argsv(5)[0] == '@')
@@ -416,7 +437,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Perform any final setup on the Improper
                 imp->get().setUp();
                 break;
-            case (Species::IsotopologueKeyword):
+            case (Species::SpeciesKeyword::Isotopologue):
                 iso = addIsotopologue(uniqueIsotopologueName(parser.argsv(1)));
                 Messenger::printVerbose("Added Isotopologue '{}' to Species '{}'\n", iso->name(), name());
                 // Each parser argument is a string of the form ATOMTYPE=ISO
@@ -451,7 +472,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
                 }
                 break;
-            case (Species::SiteKeyword):
+            case (Species::SpeciesKeyword::Site):
                 // First argument is the name of the site to create - make sure it doesn't exist already
                 speciesSite = findSite(parser.argsv(1));
                 if (speciesSite)
@@ -466,7 +487,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (!site->read(parser))
                     error = true;
                 break;
-            case (Species::TorsionKeyword):
+            case (Species::SpeciesKeyword::Torsion):
                 // Create a new angle definition between the specified atoms
                 torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
                 if (!torsion)
@@ -563,8 +584,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     for (const auto &i : atoms_)
     {
         if (!parser.writeLineF("{}{}  {:3d}  {:3}  {:12.6e}  {:12.6e}  {:12.6e}  '{}'  {:12.6e}\n", newPrefix,
-                               keywords().keyword(Species::AtomKeyword), ++count, Elements::symbol(i.Z()), i.r().x, i.r().y,
-                               i.r().z, i.atomType() == nullptr ? "None" : i.atomType()->name(), i.charge()))
+                               keywords().keyword(Species::SpeciesKeyword::Atom), ++count, Elements::symbol(i.Z()), i.r().x,
+                               i.r().y, i.r().z, i.atomType() == nullptr ? "None" : i.atomType()->name(), i.charge()))
             return false;
     }
 
@@ -578,20 +599,21 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         {
             if (bond.form() == SpeciesBond::NoForm)
             {
-                if (!parser.writeLineF("{}{}  {:3d}  {:3d}\n", newPrefix, keywords().keyword(Species::BondKeyword),
+                if (!parser.writeLineF("{}{}  {:3d}  {:3d}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Bond),
                                        bond.indexI() + 1, bond.indexJ() + 1))
                     return false;
             }
             else if (bond.masterParameters())
             {
-                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  @{}\n", newPrefix, keywords().keyword(Species::BondKeyword),
-                                       bond.indexI() + 1, bond.indexJ() + 1, bond.masterParameters()->name()))
+                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  @{}\n", newPrefix,
+                                       keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
+                                       bond.masterParameters()->name()))
                     return false;
             }
             else
             {
                 std::string line =
-                    fmt::format("{}{}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::BondKeyword),
+                    fmt::format("{}{}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::SpeciesKeyword::Bond),
                                 bond.indexI() + 1, bond.indexJ() + 1, SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
                 for (const auto param : bond.parameters())
                     line += fmt::format("  {:.4f}", param);
@@ -618,9 +640,9 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                     bondTypeHeaderWritten = true;
                 }
                 for (const auto *bond : bondTypes[bt])
-                    if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {}\n", newPrefix, keywords().keyword(Species::BondTypeKeyword),
-                                           bond->indexI() + 1, bond->indexJ() + 1,
-                                           SpeciesBond::bondType((SpeciesBond::BondType)bt)))
+                    if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {}\n", newPrefix,
+                                           keywords().keyword(Species::SpeciesKeyword::BondType), bond->indexI() + 1,
+                                           bond->indexJ() + 1, SpeciesBond::bondType((SpeciesBond::BondType)bt)))
                         return false;
             }
     }
@@ -634,22 +656,24 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         {
             if (angle.form() == SpeciesAngle::NoForm)
             {
-                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}\n", newPrefix, keywords().keyword(Species::AngleKeyword),
-                                       angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1))
+                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}\n", newPrefix,
+                                       keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
+                                       angle.indexJ() + 1, angle.indexK() + 1))
                     return false;
             }
             else if (angle.masterParameters())
             {
-                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix, keywords().keyword(Species::AngleKeyword),
-                                       angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
-                                       angle.masterParameters()->name()))
+                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
+                                       keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
+                                       angle.indexJ() + 1, angle.indexK() + 1, angle.masterParameters()->name()))
                     return false;
             }
             else
             {
-                std::string line = fmt::format(
-                    "{}{}  {:3d}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::AngleKeyword), angle.indexI() + 1,
-                    angle.indexJ() + 1, angle.indexK() + 1, SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
+                std::string line =
+                    fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::SpeciesKeyword::Angle),
+                                angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
+                                SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
                 for (const auto param : angle.parameters())
                     line += fmt::format("  {:.4f}", param);
                 if (!parser.writeLine(line))
@@ -668,23 +692,24 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             if (torsion.form() == SpeciesTorsion::NoForm)
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}\n", newPrefix,
-                                       keywords().keyword(Species::TorsionKeyword), torsion.indexI() + 1, torsion.indexJ() + 1,
-                                       torsion.indexK() + 1, torsion.indexL() + 1))
+                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1))
                     return false;
             }
             else if (torsion.masterParameters())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
-                                       keywords().keyword(Species::TorsionKeyword), torsion.indexI() + 1, torsion.indexJ() + 1,
-                                       torsion.indexK() + 1, torsion.indexL() + 1, torsion.masterParameters()->name()))
+                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                       torsion.masterParameters()->name()))
                     return false;
             }
             else
             {
-                std::string line =
-                    fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::TorsionKeyword),
-                                torsion.indexI() + 1, torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
+                std::string line = fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}", newPrefix,
+                                               keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                               torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                               SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
                 for (const auto param : torsion.parameters())
                     line += fmt::format("  {:.4f}", param);
                 if (!parser.writeLine(line))
@@ -703,16 +728,16 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             if (imp.masterParameters())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
-                                       keywords().keyword(Species::ImproperKeyword), imp.indexI() + 1, imp.indexJ() + 1,
-                                       imp.indexK() + 1, imp.indexL() + 1, imp.masterParameters()->name()))
+                                       keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
+                                       imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1, imp.masterParameters()->name()))
                     return false;
             }
             else
             {
-                std::string line =
-                    fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::ImproperKeyword),
-                                imp.indexI() + 1, imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
-                                SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
+                std::string line = fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}", newPrefix,
+                                               keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
+                                               imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
+                                               SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
                 for (const auto param : imp.parameters())
                     line += fmt::format("  {:.4f}", param);
                 if (!parser.writeLine(line))
@@ -721,12 +746,24 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         }
     }
 
+    // Box
+    if (box_->type() != Box::BoxType::NonPeriodic)
+    {
+        if (!parser.writeLineF("{}{}  {}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::BoxAngles),
+                               box_->axisAngles().x, box_->axisAngles().y, box_->axisAngles().z))
+            return false;
+        if (!parser.writeLineF("{}{}  {}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::BoxLengths),
+                               box_->axisLengths().x, box_->axisLengths().y, box_->axisLengths().z))
+            return false;
+    }
+
     // Forcefield
     if (forcefield_)
     {
         if (!parser.writeLineF("\n{}# Forcefield\n", newPrefix))
             return false;
-        if (!parser.writeLineF("{}{}  '{}'\n", newPrefix, keywords().keyword(Species::ForcefieldKeyword), forcefield_->name()))
+        if (!parser.writeLineF("{}{}  '{}'\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Forcefield),
+                               forcefield_->name()))
             return false;
     }
 
@@ -738,7 +775,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
 
         for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
         {
-            if (!parser.writeLineF("{}{}  '{}'", newPrefix, keywords().keyword(Species::IsotopologueKeyword), iso->name()))
+            if (!parser.writeLineF("{}{}  '{}'", newPrefix, keywords().keyword(Species::SpeciesKeyword::Isotopologue),
+                                   iso->name()))
                 return false;
             for (auto [atomType, isotope] : iso->isotopes())
             {
@@ -769,16 +807,16 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     if (coordinateSetInputCoordinates_.hasValidFileAndFormat())
     {
         if (!coordinateSetInputCoordinates_.writeFilenameAndFormat(
-                parser, fmt::format("\n{}{}  ", newPrefix, keywords().keyword(Species::CoordinateSetsKeyword))))
+                parser, fmt::format("\n{}{}  ", newPrefix, keywords().keyword(Species::SpeciesKeyword::CoordinateSets))))
             return false;
         if (!coordinateSetInputCoordinates_.writeBlock(parser, newPrefix))
             return false;
-        if (!parser.writeLineF("{}End{}\n", newPrefix, keywords().keyword(Species::CoordinateSetsKeyword)))
+        if (!parser.writeLineF("{}End{}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::CoordinateSets)))
             return false;
     }
 
     // Done with this species
-    if (!parser.writeLineF("{}{}\n", prefix, keywords().keyword(Species::EndSpeciesKeyword)))
+    if (!parser.writeLineF("{}{}\n", prefix, keywords().keyword(Species::SpeciesKeyword::EndSpecies)))
         return false;
 
     return true;

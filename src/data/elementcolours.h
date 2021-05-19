@@ -10,6 +10,6 @@ namespace ElementColours
 {
 
 // Return colour for specified element
-const float *colour(Elements::Element Z);
+const std::array<float, 4> &colour(Elements::Element Z);
 
 } // namespace ElementColours

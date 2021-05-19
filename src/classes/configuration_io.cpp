@@ -18,7 +18,7 @@ bool Configuration::serialise(LineParser &parser) const
     const auto lengths = box()->axisLengths();
     const auto angles = box()->axisAngles();
     if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}  {}\n", lengths.x, lengths.y, lengths.z, appliedSizeFactor_,
-                           requestedSizeFactor_, DissolveSys::btoa(box()->type() == Box::NonPeriodicBoxType)))
+                           requestedSizeFactor_, DissolveSys::btoa(box()->type() == Box::BoxType::NonPeriodic)))
         return false;
     if (!parser.writeLineF("{:12e} {:12e} {:12e}\n", angles.x, angles.y, angles.z))
         return false;
@@ -89,8 +89,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
         return false;
     const auto angles = parser.arg3d(0);
 
-    if (!createBox(lengths, angles, nonPeriodic))
-        return false;
+    createBox(lengths, angles, nonPeriodic);
 
     // Read total number of Molecules to expect
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -141,7 +140,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     usedAtomTypes_.finalise();
 
     // Set-up Cells for the Box
-    cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
+    cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
 
     // Scale box and cells according to the applied size factor
     scaleBox(appliedSizeFactor_);

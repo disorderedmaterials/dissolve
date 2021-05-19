@@ -10,30 +10,9 @@
 
 Box::Box()
 {
-    type_ = Box::CubicBoxType;
+    type_ = Box::BoxType::Cubic;
     periodic_.set(true, true, true);
     volume_ = 0.0;
-}
-
-// Virtual Destructor
-Box::~Box() = default;
-
-void Box::operator=(const Box &source)
-{
-    // Basic Definition
-    type_ = source.type_;
-    a_ = source.a_;
-    b_ = source.b_;
-    c_ = source.c_;
-    ra_ = source.ra_;
-    rb_ = source.rb_;
-    rc_ = source.rc_;
-    alpha_ = source.alpha_;
-    beta_ = source.beta_;
-    gamma_ = source.gamma_;
-    axes_ = source.axes_;
-    inverseAxes_ = source.inverseAxes_;
-    periodic_ = source.periodic_;
 }
 
 /*
@@ -43,11 +22,11 @@ void Box::operator=(const Box &source)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    return EnumOptions<Box::BoxType>("BoxType", {{Box::NonPeriodicBoxType, "NonPeriodic"},
-                                                 {Box::CubicBoxType, "Cubic"},
-                                                 {Box::OrthorhombicBoxType, "Orthorhombic"},
-                                                 {Box::MonoclinicBoxType, "Monoclinic"},
-                                                 {Box::TriclinicBoxType, "Triclinic"}});
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::NonPeriodic, "NonPeriodic"},
+                                                 {Box::BoxType::Cubic, "Cubic"},
+                                                 {Box::BoxType::Orthorhombic, "Orthorhombic"},
+                                                 {Box::BoxType::Monoclinic, "Monoclinic"},
+                                                 {Box::BoxType::Triclinic, "Triclinic"}});
 }
 
 // Return Box type
@@ -168,8 +147,8 @@ void Box::scale(double factor)
  * Utility Routines
  */
 
-// Generate a suitable Box given the supplied relative lengths, angles, and volume
-Box *Box::generate(Vec3<double> lengths, Vec3<double> angles)
+// Generate a suitable Box given the supplied relative lengths, angles
+std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
     // Determine box type from supplied lengths / angles
     auto rightAlpha = (fabs(angles.x - 90.0) < 0.001);
@@ -178,24 +157,17 @@ Box *Box::generate(Vec3<double> lengths, Vec3<double> angles)
 
     if (rightAlpha && rightBeta && rightGamma)
     {
-        // Cubic or orthorhombic
         auto abSame = (fabs(lengths.x - lengths.y) < 0.0001);
         auto acSame = (fabs(lengths.x - lengths.z) < 0.0001);
         if (abSame && acSame)
-            return new CubicBox(lengths.x);
+            return std::make_unique<CubicBox>(lengths.x);
         else
-            return new OrthorhombicBox(lengths);
+            return std::make_unique<OrthorhombicBox>(lengths);
     }
     else if (rightAlpha && (!rightBeta) && rightGamma)
-    {
-        // Monoclinic
-        return new MonoclinicBox(lengths, angles.y);
-    }
+        return std::make_unique<MonoclinicBox>(lengths, angles.y);
     else
-    {
-        // Triclinic
-        return new TriclinicBox(lengths, angles);
-    }
+        return std::make_unique<TriclinicBox>(lengths, angles);
 }
 
 // Return radius of largest possible inscribed sphere for box

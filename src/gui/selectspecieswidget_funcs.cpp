@@ -11,29 +11,30 @@ SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);
 
-    coreData_ = nullptr;
+    speciesFilterProxy_.setSourceModel(&speciesModel_);
+    ui_.SpeciesList->setModel(&speciesFilterProxy_);
+
+    connect(ui_.SpeciesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(selectionChanged(const QItemSelection &, const QItemSelection &)));
+
     minimumSelectionSize_ = 1;
     maximumSelectionSize_ = 1;
 
     refreshing_ = false;
 }
 
-SelectSpeciesWidget::~SelectSpeciesWidget() {}
-
 /*
  * Data
  */
 
-// Set CoreData containing available Species
-void SelectSpeciesWidget::setCoreData(const CoreData *coreData)
-{
-    coreData_ = coreData;
+// Set flags for the filter proxy
+void SelectSpeciesWidget::setFilterProxyFlags(int flags) { speciesFilterProxy_.setFlags(flags); }
 
-    updateSpeciesList();
-}
+// Set target Species data
+void SelectSpeciesWidget::setSpecies(const std::vector<std::unique_ptr<Species>> &species) { speciesModel_.setData(species); }
 
 // Reset widget, applying specified min and max limits to selection
-void SelectSpeciesWidget::reset(int minSize, int maxSize)
+void SelectSpeciesWidget::reset(int minSize, std::optional<int> maxSize)
 {
     minimumSelectionSize_ = minSize;
     maximumSelectionSize_ = maxSize;
@@ -41,42 +42,25 @@ void SelectSpeciesWidget::reset(int minSize, int maxSize)
     ui_.SpeciesList->clearSelection();
 
     // Set the correct selection behaviour and enable/disable select all / none buttons as appropriate
-    if (maxSize == 1)
-        ui_.SpeciesList->setSelectionMode(QAbstractItemView::SingleSelection);
-    else
-        ui_.SpeciesList->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    ui_.SelectionControls->setVisible(maxSize != 1);
+    ui_.SpeciesList->setSelectionMode(!maximumSelectionSize_.has_value() || maximumSelectionSize_.value() > 1
+                                          ? QAbstractItemView::ExtendedSelection
+                                          : QAbstractItemView::SingleSelection);
+    ui_.SelectionControls->setVisible(maximumSelectionSize_.has_value() && maximumSelectionSize_.value() > 1);
 }
 
 /*
  * Update
  */
-
-// Update the list of Species
-void SelectSpeciesWidget::updateSpeciesList()
+void SelectSpeciesWidget::selectionChanged(const QItemSelection &, const QItemSelection &)
 {
-    if (!coreData_)
-    {
-        ui_.SpeciesList->clear();
-        return;
-    }
-
-    ListWidgetUpdater<SelectSpeciesWidget, Species> speciesUpdater(ui_.SpeciesList, coreData_->species());
+    emit(speciesSelectionChanged(isSelectionValid()));
 }
 
 void SelectSpeciesWidget::on_SelectNoneButton_clicked(bool checked) { ui_.SpeciesList->clearSelection(); }
 
 void SelectSpeciesWidget::on_SelectAllButton_clicked(bool checked) { ui_.SpeciesList->selectAll(); }
 
-void SelectSpeciesWidget::on_SpeciesList_itemSelectionChanged() { emit(speciesSelectionChanged(isSelectionValid())); }
-
-void SelectSpeciesWidget::on_SpeciesList_itemDoubleClicked(QListWidgetItem *item)
-{
-    if (!item)
-        return;
-
-    emit(speciesDoubleClicked());
-}
+void SelectSpeciesWidget::on_SpeciesList_doubleClicked(const QModelIndex &index) { emit(speciesDoubleClicked()); }
 
 // Return whether number of selected items is valid
 bool SelectSpeciesWidget::isSelectionValid() const
@@ -85,40 +69,20 @@ bool SelectSpeciesWidget::isSelectionValid() const
 
     if (count < minimumSelectionSize_)
         return false;
-    else if (maximumSelectionSize_ == -1)
-        return true;
-    else
-        return (count <= maximumSelectionSize_);
+
+    return !maximumSelectionSize_.has_value() || count <= maximumSelectionSize_.value();
 }
 
 // Return number of species currently selected
-int SelectSpeciesWidget::nSelected() const
-{
-    auto count = 0;
-    for (auto n = 0; n < ui_.SpeciesList->count(); ++n)
-    {
-        QListWidgetItem *item = ui_.SpeciesList->item(n);
-
-        if (item->isSelected())
-            ++count;
-    }
-
-    return count;
-}
+int SelectSpeciesWidget::nSelected() const { return ui_.SpeciesList->selectionModel()->selectedIndexes().size(); }
 
 // Return the currently-selected Species
-RefList<Species> SelectSpeciesWidget::currentSpecies() const
+std::vector<const Species *> SelectSpeciesWidget::currentSpecies() const
 {
-    RefList<Species> selection;
+    std::vector<const Species *> selection;
 
-    // Loop over items in the list and construct the selection RefList
-    for (auto n = 0; n < ui_.SpeciesList->count(); ++n)
-    {
-        QListWidgetItem *item = ui_.SpeciesList->item(n);
-
-        if (item->isSelected())
-            selection.append(VariantPointer<Species>(item->data(Qt::UserRole)));
-    }
+    for (auto &index : ui_.SpeciesList->selectionModel()->selectedIndexes())
+        selection.push_back(speciesModel_.rawData(speciesFilterProxy_.mapToSource(index)));
 
     return selection;
 }

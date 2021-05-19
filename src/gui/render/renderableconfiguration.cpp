@@ -24,6 +24,7 @@ RenderableConfiguration::RenderableConfiguration(const Configuration *source)
     atomPrimitive_ = createPrimitive(GL_TRIANGLES, false);
     atomPrimitive_->sphere(1.0, 8, 10);
     bondPrimitive_ = createPrimitive(GL_TRIANGLES, false);
+    bondPrimitive_ = createPrimitive(GL_TRIANGLES, false);
     bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
     unitCellPrimitive_ = createPrimitive(GL_LINES, false);
     unitCellPrimitive_->wireOrthorhomboid(1.0, 1.0, 1.0, 0.5, 0.5, 0.5);
@@ -72,58 +73,11 @@ void RenderableConfiguration::transformValues()
  * Rendering Primitives
  */
 
-// Create cylinder bond between supplied atoms in specified assembly
-void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i,
-                                                 const std::shared_ptr<Atom> j, const Vec3<double> vij, bool drawFromAtoms,
-                                                 double radialScaling)
-{
-    Matrix4 A;
-    auto unit = vij;
-    const auto mag = unit.magAndNormalise();
-
-    // Create rotation matrix for Bond
-    A.setColumn(2, unit.x, unit.y, unit.z, 0.0);
-    A.setColumn(0, unit.orthogonal(), 0.0);
-    A.setColumn(1, unit * A.columnAsVec3(0), 0.0);
-    A.columnMultiply(2, 0.5 * mag);
-    A.applyScaling(radialScaling, radialScaling, 1.0);
-
-    // If drawing from individual Atoms, locate on each Atom and draw the bond halves from there. If not, locate to the bond
-    // centre.
-    if (drawFromAtoms)
-    {
-        // Render half of Bond in colour of Atom j
-        A.setTranslation(i->r());
-        const float *colour = ElementColours::colour(j->speciesAtom()->Z());
-        assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-
-        // Render half of Bond in colour of Atom i
-        A.setTranslation(j->r());
-        A.columnMultiply(2, -1.0);
-        colour = ElementColours::colour(i->speciesAtom()->Z());
-        assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-    }
-    else
-    {
-        A.setTranslation(i->r() + vij * 0.5);
-
-        // Render half of Bond in colour of Atom j
-        const float *colour = ElementColours::colour(j->speciesAtom()->Z());
-        assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-
-        // Render half of Bond in colour of Atom i
-        A.columnMultiply(2, -1.0);
-        colour = ElementColours::colour(i->speciesAtom()->Z());
-        assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-    }
-}
-
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableConfiguration::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
     Matrix4 A;
-    const GLfloat *colour;
-    const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
+    const std::array<float, 4> colourBlack = {0.0, 0.0, 0.0, 1.0};
     Vec3<double> ri, rj;
 
     // Check data source
@@ -152,11 +106,14 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             if (i->speciesAtom()->nBonds() == 0)
             {
                 const auto r = i->r();
-                colour = ElementColours::colour(i->speciesAtom()->Z());
+                auto &colour = ElementColours::colour(i->speciesAtom()->Z());
 
-                lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
-                lineConfigurationPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
-                lineConfigurationPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
+                lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z,
+                                                  colour.data());
+                lineConfigurationPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z,
+                                                  colour.data());
+                lineConfigurationPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_,
+                                                  colour.data());
             }
             else
             {
@@ -177,9 +134,9 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
                     // Draw bond halves
                     lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                                      ElementColours::colour(bond.i()->Z()));
+                                                      ElementColours::colour(bond.i()->Z()).data());
                     lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                                      ElementColours::colour(bond.j()->Z()));
+                                                      ElementColours::colour(bond.j()->Z()).data());
                 }
             }
         }
@@ -197,8 +154,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             A.applyScaling(spheresAtomRadius_);
 
             // The atom itself
-            colour = ElementColours::colour(i->speciesAtom()->Z());
-            configurationAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+            configurationAssembly_.add(atomPrimitive_, A, ElementColours::colour(i->speciesAtom()->Z()));
 
             // Bonds from this atom
             for (const SpeciesBond &bond : i->speciesAtom()->bonds())
@@ -210,10 +166,15 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                     continue;
 
                 if (i->cell()->mimRequired(partner->cell()))
-                    createCylinderBond(configurationAssembly_, i, partner, box->minimumVector(i->r(), partner->r()), true,
-                                       spheresBondRadius_);
+                    configurationAssembly_.createCylinderBond(
+                        bondPrimitive_, i->r(), partner->r(), box->minimumVector(i->r(), partner->r()),
+                        ElementColours::colour(i->speciesAtom()->Z()), ElementColours::colour(partner->speciesAtom()->Z()),
+                        true, spheresBondRadius_);
                 else
-                    createCylinderBond(configurationAssembly_, i, partner, partner->r() - i->r(), false, spheresBondRadius_);
+                    configurationAssembly_.createCylinderBond(bondPrimitive_, i->r(), partner->r(), partner->r() - i->r(),
+                                                              ElementColours::colour(i->speciesAtom()->Z()),
+                                                              ElementColours::colour(partner->speciesAtom()->Z()), false,
+                                                              spheresBondRadius_);
             }
         }
     }
