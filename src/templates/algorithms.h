@@ -6,6 +6,7 @@
 #include <fmt/format.h>
 #include <functional>
 #include <optional>
+#include <sstream>
 #include <tuple>
 #include <utility>
 
@@ -227,11 +228,12 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
 // Join the parameters into a comma separated string
 template <typename Iterator> std::string joinStrings(Iterator begin, Iterator end, std::string delim = ", ")
 {
-    // TODO: Rework this to not be O(n²) in string length
     if (begin == end)
         return std::string();
-    return std::accumulate(std::next(begin), end, fmt::format("{}", *begin),
-                           [&delim](const auto acc, const auto value) { return fmt::format("{}{}{}", acc, delim, value); });
+    std::stringstream stream;
+    stream << fmt::format("{}", *begin);
+    std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << fmt::format("{}", value); });
+    return stream.str();
 }
 
 // Join the parameters into a comma separated string
