@@ -1,4 +1,5 @@
 #include "gui/models/speciesModelUtils.h"
+#include "templates/algorithms.h"
 
 bool splitParameters(const QString &params, SpeciesIntra &destination)
 {

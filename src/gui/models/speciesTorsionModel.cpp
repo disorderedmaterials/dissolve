@@ -1,7 +1,7 @@
 #include "gui/models/speciesTorsionModel.h"
 #include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
-#include <algorithm>
+#include "templates/algorithms.h"
 
 SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, Dissolve &dissolve)
     : torsions_(torsions), dissolve_(dissolve)

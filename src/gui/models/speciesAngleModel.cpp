@@ -1,6 +1,7 @@
 #include "gui/models/speciesAngleModel.h"
 #include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
+#include "templates/algorithms.h"
 
 SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles, Dissolve &dissolve)
     : angles_(angles), dissolve_(dissolve)

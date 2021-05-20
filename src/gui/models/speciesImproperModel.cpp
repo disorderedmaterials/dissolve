@@ -1,6 +1,7 @@
 #include "gui/models/speciesImproperModel.h"
 #include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
+#include "templates/algorithms.h"
 
 SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, Dissolve &dissolve)
     : impropers_(impropers), dissolve_(dissolve)

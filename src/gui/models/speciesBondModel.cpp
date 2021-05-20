@@ -1,5 +1,6 @@
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesModelUtils.h"
+#include "templates/algorithms.h"
 
 SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, Dissolve &dissolve) : bonds_(bonds), dissolve_(dissolve) {}
 

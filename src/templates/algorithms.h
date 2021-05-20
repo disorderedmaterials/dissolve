@@ -3,6 +3,7 @@
 #pragma once
 
 #include "templates/parallel_defs.h"
+#include <fmt/format.h>
 #include <functional>
 #include <optional>
 #include <tuple>
@@ -222,3 +223,40 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
     dissolve::for_each(begin, end, unaryOp);
 }
 } // namespace dissolve
+
+// Join the parameters into a comma separated string
+template <typename Iterator> std::string joinStrings(Iterator begin, Iterator end, std::string delim = ", ")
+{
+    // TODO: Rework this to not be O(n²) in string length
+    if (begin == end)
+        return std::string();
+    return std::accumulate(std::next(begin), end, fmt::format("{}", *begin),
+                           [&delim](const auto acc, const auto value) { return fmt::format("{}{}{}", acc, delim, value); });
+}
+
+// Join the parameters into a comma separated string
+template <class Class> std::string joinStrings(Class range, std::string delim = ", ")
+{
+    return joinStrings(range.begin(), range.end(), delim);
+}
+
+// Split a string over a delimiter and store the results in an iterator.  Returns the number of elements split, or -1 if the
+// number of elements exceeds the givens size of the container.
+template <class T> int splitString(std::string str, T iterator, int size, std::string delim = " ")
+{
+    int found = 0, index = 0, count = 0;
+    while (true)
+    {
+        found = str.find(delim, index);
+        count += 1;
+        if (count > size)
+            return -1;
+        if (found == std::string::npos)
+        {
+            *iterator++ = str.substr(index);
+            return count;
+        }
+        *iterator++ = str.substr(index, found - index);
+        index = found + delim.size();
+    }
+}
