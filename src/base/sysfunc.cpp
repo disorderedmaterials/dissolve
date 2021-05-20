@@ -299,6 +299,24 @@ std::string DissolveSys::replace(const std::string_view source, const std::strin
     return result;
 }
 
+// Split a string over a delimiter, returning a vector of converted double values
+std::vector<double> DissolveSys::splitStringToDoubles(std::string str, std::string_view delim)
+{
+    std::vector<double> values;
+    std::string::size_type found = 0, index = 0;
+    while (true)
+    {
+        found = str.find(delim, index);
+        if (found == std::string::npos)
+        {
+            values.emplace_back(std::stod(str.substr(index)));
+            return values;
+        }
+        values.emplace_back(std::stod(str.substr(index, found - index)));
+        index = found + delim.size();
+    }
+}
+
 /*
  * Files
  */
