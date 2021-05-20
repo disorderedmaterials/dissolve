@@ -134,8 +134,8 @@ MasterIntra &CoreData::addMasterBond(std::string_view name)
 int CoreData::nMasterBonds() const { return masterBonds_.size(); }
 
 // Return list of master Bond parameters
-std::list<MasterIntra> &CoreData::masterBonds() { return masterBonds_; }
-const std::list<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
+std::vector<MasterIntra> &CoreData::masterBonds() { return masterBonds_; }
+const std::vector<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
 
 // Return whether named master Bond parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterBond(std::string_view name) const
@@ -178,8 +178,8 @@ MasterIntra &CoreData::addMasterAngle(std::string_view name)
 int CoreData::nMasterAngles() const { return masterAngles_.size(); }
 
 // Return list of master Angle parameters
-std::list<MasterIntra> &CoreData::masterAngles() { return masterAngles_; }
-const std::list<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
+std::vector<MasterIntra> &CoreData::masterAngles() { return masterAngles_; }
+const std::vector<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
 
 // Return whether named master Angle parameters exist
 OptionalReferenceWrapper<MasterIntra> CoreData::getMasterAngle(std::string_view name)
@@ -222,8 +222,8 @@ MasterIntra &CoreData::addMasterTorsion(std::string_view name)
 int CoreData::nMasterTorsions() const { return masterTorsions_.size(); }
 
 // Return list of master Torsion parameters
-std::list<MasterIntra> &CoreData::masterTorsions() { return masterTorsions_; }
-const std::list<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
+std::vector<MasterIntra> &CoreData::masterTorsions() { return masterTorsions_; }
+const std::vector<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
 
 // Return whether named master Torsion parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterTorsion(std::string_view name) const
@@ -266,8 +266,8 @@ MasterIntra &CoreData::addMasterImproper(std::string_view name)
 int CoreData::nMasterImpropers() const { return masterImpropers_.size(); }
 
 // Return list of master Improper parameters
-std::list<MasterIntra> &CoreData::masterImpropers() { return masterImpropers_; }
-const std::list<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
+std::vector<MasterIntra> &CoreData::masterImpropers() { return masterImpropers_; }
+const std::vector<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
 
 // Return whether named master Improper parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterImproper(std::string_view name) const
