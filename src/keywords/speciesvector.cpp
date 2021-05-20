@@ -7,7 +7,7 @@
 #include "classes/species.h"
 
 SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> references)
-    : KeywordData<std::vector<const Species *>>(KeywordBase::SpeciesVectorData, references)
+    : KeywordData<std::vector<const Species *>>(KeywordBase::SpeciesVectorData, std::move(references))
 {
 }
 
