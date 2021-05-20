@@ -18,24 +18,24 @@ class Molecule;
 class RegionalDistributor
 {
     public:
-    RegionalDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
-                        ProcessPool &procPool, ProcessPool::DivisionStrategy strategy);
+    RegionalDistributor(const int nMolecules, const CellArray &cellArray, ProcessPool &procPool,
+                        ProcessPool::DivisionStrategy strategy);
     ~RegionalDistributor() = default;
     // Molecule Status Flag
-    enum MoleculeStatusFlag
+    enum class MoleculeStatusFlag
     {
-        WaitingFlag,
-        DistributedFlag
+        Waiting,
+        Distributed
     };
     // Return string for specified MoleculeStatusFlag
     std::string_view moleculeStatusFlag(MoleculeStatusFlag flag);
     // Cell Status Flag
-    enum CellStatusFlag
+    enum class CellStatusFlag
     {
-        UnusedFlag,
-        LockedForEditingFlag,
-        ReadByOneFlag,
-        ReadByManyFlag
+        Unused,
+        LockedForEditing,
+        ReadByOne,
+        ReadByMany
     };
     // Return string for specified CellStatusFlag
     std::string_view cellStatusFlag(CellStatusFlag flag);
@@ -89,8 +89,8 @@ class RegionalDistributor
      * Molecule Data
      */
     private:
-    // Source Molecule Array
-    const std::deque<std::shared_ptr<Molecule>> &moleculeArray_;
+    // Total number of molecules in the system
+    int nMolecules_;
     // Number of Molecules to distribute
     int nMoleculesToDistribute_;
     // Counter for distributed Molecules
@@ -109,6 +109,8 @@ class RegionalDistributor
     std::shared_ptr<Molecule> assignMolecule(int processOrGroup);
 
     public:
+    // Set target molecules for the distributor
+    void setTargetMolecules(const std::vector<int> &targetMoleculeIndices);
     // Return next set of Molecule IDs assigned to this process
     std::vector<int> &assignedMolecules();
 
@@ -118,8 +120,8 @@ class RegionalDistributor
     public:
     // Return whether to collect statistics (counts, energies etc. - ensures correct summation)
     bool collectStatistics();
-    // Increment integer counter, but only if the process should (depend on the current strategy)
+    // Increment integer counter, but only if the process should (depends on the current strategy)
     void increment(int &counter);
-    // Add to double variable, but only if the process should (depend on the current strategy)
+    // Add to double variable, but only if the process should (depends on the current strategy)
     void increase(double &var, double value);
 };

@@ -55,9 +55,9 @@ std::string_view KeywordDataTypeKeywords[] = {"AtomTypeRefList",
                                               "Procedure",
                                               "Range",
                                               "Species",
-                                              "SpeciesRefList",
                                               "SpeciesSite",
                                               "SpeciesSiteRefList",
+                                              "SpeciesVector",
                                               "String",
                                               "Vec3<Double>",
                                               "Vec3<Integer>",
@@ -89,11 +89,8 @@ void KeywordBase::set(std::string_view name, std::string_view description, std::
     optionMask_ = optionMask;
 }
 
-// Return whether data has been set
-bool KeywordBase::isSet() const { return set_; }
-
 // Flag that data has been set by some other means
-void KeywordBase::hasBeenSet() { set_ = true; }
+void KeywordBase::setAsModified() { set_ = true; }
 
 // Return data type stored by keyword
 KeywordBase::KeywordDataType KeywordBase::type() const { return type_; }
@@ -114,7 +111,10 @@ int KeywordBase::optionMask() const { return optionMask_; }
 bool KeywordBase::isOptionSet(KeywordOption opt) const { return (optionMask_ & opt); }
 
 // Return whether the data has ever been set
-bool KeywordBase::isDataEmpty() const { return set_; }
+bool KeywordBase::isDataEmpty() const { return !set_; }
+
+// Return whether the keyword has been set, and is not currently empty (if relevant)
+bool KeywordBase::hasBeenSet() const { return set_ && !isDataEmpty(); }
 
 /*
  * Arguments

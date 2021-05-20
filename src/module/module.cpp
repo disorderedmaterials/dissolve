@@ -142,7 +142,7 @@ bool Module::addTargetConfiguration(Configuration *cfg)
     if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.nItems() < nRequiredTargets()))
     {
         targetConfigurations_.append(cfg);
-        keywords_.hasBeenSet("Configuration");
+        keywords_.setAsModified("Configuration");
         return true;
     }
     else

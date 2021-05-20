@@ -171,5 +171,5 @@ void FileAndFormatKeywordWidget::updateKeywordData()
     fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
     fileAndFormat.setFormatIndex(ui_.FormatCombo->currentIndex());
 
-    keyword_->hasBeenSet();
+    keyword_->setAsModified();
 }

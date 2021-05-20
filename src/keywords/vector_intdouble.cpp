@@ -53,7 +53,7 @@ bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, const Co
     // Add tuple to vector
     data_.emplace_back(i, d);
 
-    hasBeenSet();
+    setAsModified();
 
     return true;
 }

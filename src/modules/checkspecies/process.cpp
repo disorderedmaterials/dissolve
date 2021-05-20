@@ -57,7 +57,7 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check total charge
     auto nChargesFailed = 0;
-    if (keywords_.isSet("TotalCharge"))
+    if (keywords_.hasBeenSet("TotalCharge"))
     {
         Messenger::print("\nChecking total charge...\n");
 

@@ -41,6 +41,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const auto trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
     const auto variableTimestep = keywords_.asBool("VariableTimestep");
+    const auto restrictToSpecies = keywords_.retrieve<std::vector<const Species *>>("RestrictToSpecies");
     auto writeTraj = trajectoryFrequency > 0;
 
     // Print argument/parameter summary
@@ -66,12 +67,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("MD: Variable timestep will be employed.");
     else
         Messenger::print("MD: Constant timestep of {:e} ps will be used.\n", deltaT);
-    if (restrictToSpecies_.nItems() > 0)
+    if (!restrictToSpecies.empty())
     {
         std::string speciesNames;
-        for (Species *sp : restrictToSpecies_)
+        for (auto *sp : restrictToSpecies)
             speciesNames += fmt::format("  {}", sp->name());
-        Messenger::print("MD: Calculation will be restricted to Species:{}\n", speciesNames);
+        Messenger::print("MD: Calculation will be restricted to species:{}\n", speciesNames);
     }
     Messenger::print("\n");
 
@@ -92,17 +93,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
         }
 
-        // Determine target Molecules (if there are entries in the targetSpecies_ list)
-        Array<std::shared_ptr<Molecule>> targetMolecules;
-        if (restrictToSpecies_.nItems() > 0)
-        {
-            for (auto n = 0; n < cfg->nMolecules(); ++n)
-            {
-                std::shared_ptr<Molecule> mol = cfg->molecule(n);
-                if (restrictToSpecies_.contains(mol->species()))
-                    targetMolecules.add(mol);
-            }
-        }
+        // Determine target molecules from the restrictedSpecies vector (if any)
+        std::vector<const Molecule *> targetMolecules;
+        if (!restrictToSpecies.empty())
+            for (const auto &mol : cfg->molecules())
+                if (std::find(restrictToSpecies.begin(), restrictToSpecies.end(), mol->species()) != restrictToSpecies.end())
+                    targetMolecules.push_back(mol.get());
 
         // Get temperature from Configuration
         const auto temperature = cfg->temperature();
@@ -209,10 +205,10 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Variable timestep requires forces to be available immediately
         if (variableTimestep)
         {
-            if (restrictToSpecies_.nItems() > 0)
-                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), forces);
-            else
+            if (targetMolecules.empty())
                 ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), forces);
+            else
+                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), forces);
 
             // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
             std::transform(forces.begin(), forces.end(), forces.begin(), [](auto f) { return f * 100.0; });
@@ -243,10 +239,10 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             cfg->updateCellContents();
 
             // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-            if (restrictToSpecies_.nItems() > 0)
-                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), forces);
-            else
+            if (targetMolecules.empty())
                 ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), forces);
+            else
+                ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), forces);
             std::transform(forces.begin(), forces.end(), forces.begin(), [](auto &f) { return f * 100.0; });
 
             // Cap forces

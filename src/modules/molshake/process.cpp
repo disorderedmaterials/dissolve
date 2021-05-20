@@ -9,6 +9,7 @@
 #include "classes/configuration.h"
 #include "classes/regionaldistributor.h"
 #include "classes/scaledenergykernel.h"
+#include "classes/species.h"
 #include "main/dissolve.h"
 #include "modules/molshake/molshake.h"
 
@@ -46,6 +47,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
         const auto translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
         const auto translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
+        const auto restrictToSpecies = keywords_.retrieve<std::vector<const Species *>>("RestrictToSpecies");
         const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
@@ -57,13 +59,33 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print(
             "MolShake: Step size for rotation adjustments is {:.5f} degrees (allowed range is {} <= delta <= {}).\n",
             rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
+        if (!restrictToSpecies.empty())
+        {
+            std::string speciesNames;
+            for (auto *sp : restrictToSpecies)
+                speciesNames += fmt::format("  {}", sp->name());
+            Messenger::print("MolShake: Calculation will be restricted to species:{}\n", speciesNames);
+        }
         Messenger::print("\n");
 
         ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
         // Create a Molecule distributor
-        std::deque<std::shared_ptr<Molecule>> &moleculeArray = cfg->molecules();
-        RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
+        RegionalDistributor distributor(cfg->nMolecules(), cfg->cells(), procPool, strategy);
+
+        // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
+        if (!restrictToSpecies.empty())
+        {
+            std::vector<int> targetIndices;
+            auto id = 0;
+            for (const auto &mol : cfg->molecules())
+            {
+                if (std::find(restrictToSpecies.begin(), restrictToSpecies.end(), mol->species()) != restrictToSpecies.end())
+                    targetIndices.push_back(id);
+                ++id;
+            }
+            distributor.setTargetMolecules(targetIndices);
+        }
 
         // Create a local ChangeStore and a suitable EnergyKernel
         ChangeStore changeStore(procPool);
@@ -94,7 +116,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         while (distributor.cycle())
         {
             // Get next set of Molecule targets from the distributor
-            std::vector<int> targetMolecules = distributor.assignedMolecules();
+            auto &targetIndices = distributor.assignedMolecules();
 
             // Switch parallel strategy if necessary
             if (distributor.currentStrategy() != strategy)
@@ -107,14 +129,14 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Loop over target Molecules
-            for (auto molId : targetMolecules)
+            for (auto molId : targetIndices)
             {
                 /*
                  * Calculation Begins
                  */
 
                 // Get Molecule index and pointer
-                std::shared_ptr<Molecule> mol = cfg->molecule(molId);
+                auto mol = cfg->molecule(molId);
 
                 // Set current atom targets in ChangeStore (whole Molecule)
                 changeStore.add(mol);

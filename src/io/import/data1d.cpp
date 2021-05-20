@@ -114,7 +114,7 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
     for (auto n = 0; n < keywords_.asInt("RemovePoints"); ++n)
         data.removeFirstPoint();
     // -- Trim range?
-    if (keywords_.isSet("Trim"))
+    if (keywords_.hasBeenSet("Trim"))
     {
         const auto range = keywords_.retrieve<Range>("Trim");
         Filters::trim(data, range.minimum(), range.maximum());
