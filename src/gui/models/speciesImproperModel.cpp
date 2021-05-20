@@ -44,7 +44,7 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
                        ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
                        : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
         case 5:
-            return joinParameters(item);
+            return QString::fromStdString(joinStrings(item.parameters()));
         default:
             return QVariant();
     }
