@@ -16,7 +16,8 @@ EnumOptions<ProcedureNode::NodeClass> ProcedureNode::nodeClasses()
 {
     return EnumOptions<ProcedureNode::NodeClass>("NodeClass", {{ProcedureNode::NodeClass::None, "None"},
                                                                {ProcedureNode::NodeClass::Calculate, "Calculate"},
-                                                               {ProcedureNode::NodeClass::Operate, "Operate"}});
+                                                               {ProcedureNode::NodeClass::Operate, "Operate"},
+                                                               {ProcedureNode::NodeClass::Region, "Region"}});
 }
 
 // Return enum option info for NodeType
@@ -34,6 +35,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Collect3D, "Collect3D"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::Fit1D, "Fit1D"},
+                     {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
                      {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},
                      {ProcedureNode::NodeType::OperateExpression, "OperateExpression"},

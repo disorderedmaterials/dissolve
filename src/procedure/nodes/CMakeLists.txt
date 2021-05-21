@@ -12,6 +12,7 @@ add_library(
   collect3d.cpp
   dynamicsite.cpp
   fit1d.cpp
+  generalregion.cpp
   integrate1d.cpp
   node.cpp
   nodereference.cpp
@@ -28,6 +29,7 @@ add_library(
   process1d.cpp
   process2d.cpp
   process3d.cpp
+  regionbase.cpp
   select.cpp
   sequence.cpp
   sum1d.cpp
@@ -43,6 +45,7 @@ add_library(
   collect3d.h
   dynamicsite.h
   fit1d.h
+  generalregion.h
   integrate1d.h
   node.h
   nodereference.h
@@ -60,6 +63,7 @@ add_library(
   process1d.h
   process2d.h
   process3d.h
+  regionbase.h
   select.h
   sequence.h
   sum1d.h
