@@ -29,8 +29,6 @@ void WizardWidget::setUpHeaderAndFooter(QWidget *widget)
         headerAvailable_ = true;
 
         headerUi_.setupUi(headerWidget);
-
-        connect(headerUi_.CloseButton, SIGNAL(clicked(bool)), this, SLOT(closeWizard(bool)));
     }
     else
         Messenger::error("Header widget not found.\n");
@@ -95,15 +93,6 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo *page)
             footerUi_.FinishButton->setEnabled(false);
         }
     }
-}
-
-// Set whether the close button is available
-void WizardWidget::setCloseButtonAvailable(bool b)
-{
-    closeButtonAvailable_ = b;
-
-    if (headerAvailable_)
-        headerUi_.CloseButton->setVisible(closeButtonAvailable_);
 }
 
 // Return whether header controls are available

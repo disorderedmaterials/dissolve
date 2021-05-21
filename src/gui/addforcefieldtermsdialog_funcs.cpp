@@ -9,7 +9,6 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, const Dissol
 
     // Set up and connect the AddForcefieldTermsWidget
     ui_.AddForcefieldTermsWidget->setMainDissolveReference(&mainDissolveInstance);
-    ui_.AddForcefieldTermsWidget->setCloseButtonAvailable(false);
     connect(ui_.AddForcefieldTermsWidget, SIGNAL(finished()), this, SLOT(accept()));
     connect(ui_.AddForcefieldTermsWidget, SIGNAL(canceled()), this, SLOT(reject()));
 }

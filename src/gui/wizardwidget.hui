@@ -46,8 +46,6 @@ class WizardWidget : public QWidget
     void updateHeaderAndFooter(WizardWidgetPageInfo *page);
 
     public:
-    // Set whether the close button is available
-    void setCloseButtonAvailable(bool b);
     // Return whether header controls are available
     bool headerAvailable() const;
     // Return whether footer controls are available
