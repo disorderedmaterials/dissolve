@@ -1,4 +1,6 @@
 #include "gui/models/speciesBondModel.h"
+#include "gui/models/speciesModelUtils.h"
+#include "templates/algorithms.h"
 
 SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, Dissolve &dissolve) : bonds_(bonds), dissolve_(dissolve) {}
 
@@ -11,7 +13,7 @@ int SpeciesBondModel::rowCount(const QModelIndex &parent) const
 int SpeciesBondModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 7;
+    return 4;
 }
 
 QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
@@ -34,12 +36,7 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
                        ? QString::fromStdString("@" + std::string(bond.masterParameters()->name()))
                        : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())));
         case 3:
-        case 4:
-        case 5:
-        case 6:
-            if (bond.parameters().size() <= index.column() - 3)
-                return 0;
-            return bond.parameter(index.column() - 3);
+            return QString::fromStdString(joinStrings(bond.parameters()));
         default:
             return QVariant();
     }
@@ -58,13 +55,7 @@ QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, 
         case 2:
             return "Form";
         case 3:
-            return "Parameter 1";
-        case 4:
-            return "Parameter 2";
-        case 5:
-            return "Parameter 3";
-        case 6:
-            return "Parameter 4";
+            return "Parameters";
         default:
             return QVariant();
     }
@@ -112,14 +103,8 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             }
             break;
         case 3:
-        case 4:
-        case 5:
-        case 6:
-            if (item.masterParameters())
+            if (!splitParameters(value.toString(), item))
                 return false;
-            if (item.parameters().size() <= index.column() - 3)
-                return false;
-            item.setParameter(index.column() - 3, value.toDouble());
             break;
         default:
             return false;

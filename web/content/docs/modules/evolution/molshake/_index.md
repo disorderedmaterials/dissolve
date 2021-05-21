@@ -47,6 +47,7 @@ If it occurs that no moves are accepted for either of the move types, the corres
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`CutoffDistance`|`r`|--|Interatomic cutoff distance $r$to use for energy calculation. The default is to use the global pair potential cutoff defined in the simulation. If necessary, a short cutoff value can be set during early equilibration runs to significantly speed up calculation times at the expense of realism.|
+|`RestrictToSpecies`|`Species ...`|`--`|Restrict Monte Carlo moves to only molecules of the specified species. Molecules of other species types remain at their current positions.|
 |`RotationStepSize`|`delta`|`1.0`|Step size $\delta$ in degrees to use for the rotational component of the Monte Carlo moves. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
 |`RotationStepSizeMax`|`deltamax`|`90.0`|Maximum allowed value for rotational step size,  $\delta^{rot}_{max}$, in Angstroms|
 |`RotationStepSizeMin`|`deltamin`|`0.01`|Minimum allowed value for rotational step size, $\delta^{rot}_{min}$, in Angstroms|
@@ -55,8 +56,3 @@ If it occurs that no moves are accepted for either of the move types, the corres
 |`TranslationStepSize`|`delta`|`0.05`|Step size $\delta$ in Angstroms for the translational component of the Monte Carlo moves. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
 |`TranslationStepSizeMax`|`deltamax`|`1.0`|Maximum allowed value for translational step size, $\delta^{trans}_{max}$, in Angstroms|
 |`TranslationStepSizeMin`|`deltamin`|`0.001`|Minimum allowed value for translational step size, $\delta^{trans}_{min}$, in Angstroms|
-
-
-|Keyword|Arguments|Default|Description|
-|:------|:--:|:-----:|-----------|
-|`Name`|`type`|`def`|Text|

@@ -94,7 +94,7 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem *item)
                 keyword_->data().addModule(module, qPrintable(groupName));
             else
                 keyword_->data().removeModule(module);
-            keyword_->hasBeenSet();
+            keyword_->setAsModified();
             break;
         // Group name
         case (1):
@@ -103,7 +103,7 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem *item)
             if (isSelected)
             {
                 keyword_->data().addModule(module, qPrintable(groupName));
-                keyword_->hasBeenSet();
+                keyword_->setAsModified();
             }
             break;
     }

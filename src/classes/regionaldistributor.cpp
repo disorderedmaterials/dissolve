@@ -10,29 +10,11 @@
 #include <algorithm>
 
 // Debug Mode
-const bool DND = false;
+const bool DND = true;
 
-// Molecule Status Flag Keywords
-std::string_view MoleculeStatusFlagKeywords[] = {"Waiting", "Distributed"};
-
-// Return string for specified MoleculeStatusFlag
-std::string_view RegionalDistributor::moleculeStatusFlag(RegionalDistributor::MoleculeStatusFlag flag)
-{
-    return MoleculeStatusFlagKeywords[flag];
-}
-
-// Cell Status Flag Keywords
-std::string_view CellStatusFlagKeywords[] = {"Unused", "LockedForEditing", "ReadByOne", "ReadByMany"};
-
-// Return string for specified CellStatusFlag
-std::string_view RegionalDistributor::cellStatusFlag(RegionalDistributor::CellStatusFlag flag)
-{
-    return CellStatusFlagKeywords[flag];
-}
-
-RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
-                                         ProcessPool &procPool, ProcessPool::DivisionStrategy strategy)
-    : processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray), moleculeArray_(moleculeArray)
+RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &cellArray, ProcessPool &procPool,
+                                         ProcessPool::DivisionStrategy strategy)
+    : processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray)
 {
     // Core
     currentStrategy_ = originalStrategy_;
@@ -42,17 +24,38 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
     // Cells
     lockedCells_ = std::vector<std::set<Cell *>>(nProcessesOrGroups_);
     cellStatusFlags_.resize(cellArray.nCells());
-    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), RegionalDistributor::UnusedFlag);
+    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), CellStatusFlag::Unused);
     cellLockOwners_.resize(cellArray.nCells());
     std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
 
     // Molecules
+    nMolecules_ = nMolecules;
     assignedMolecules_.resize(nProcessesOrGroups_);
-    moleculeStatus_.resize(moleculeArray_.size());
-    std::fill(moleculeStatus_.begin(), moleculeStatus_.end(), RegionalDistributor::WaitingFlag);
-    nMoleculesToDistribute_ = moleculeArray_.size();
+    moleculeStatus_.resize(nMolecules_);
+    std::fill(moleculeStatus_.begin(), moleculeStatus_.end(), MoleculeStatusFlag::Waiting);
+    nMoleculesToDistribute_ = nMolecules_;
     nMoleculesDistributed_ = 0;
 }
+
+// Return string for specified MoleculeStatusFlag
+std::string_view RegionalDistributor::moleculeStatusFlag(RegionalDistributor::MoleculeStatusFlag flag)
+{
+    return (flag == MoleculeStatusFlag::Waiting ? "Waiting" : "Distributed");
+}
+
+// Return string for specified CellStatusFlag
+std::string_view RegionalDistributor::cellStatusFlag(RegionalDistributor::CellStatusFlag flag)
+{
+    if (flag == CellStatusFlag::Unused)
+        return "Unused";
+    else if (flag == CellStatusFlag::LockedForEditing)
+        return "LockedForEditing";
+    else if (flag == CellStatusFlag::ReadByOne)
+        return "ReadByOne";
+    else
+        return "ReadByMany";
+}
+
 /*
  * Core
  */
@@ -71,7 +74,7 @@ bool RegionalDistributor::cycle()
 {
     /*
      * All processes should call here together.
-     * We start by selecting a starting Cell index for the first process/group. Then, we choose a Molecule (pertly) present
+     * We start by selecting a starting Cell index for the first process/group. Then, we choose a Molecule (partly) present
      * in the Cell which needs to be calculated. If no such Molecule is available, we choose a new Cell (increase the Cell
      * index) and try again. Once a Molecule has been located, we attempt to assign all Cells which the Molecule's atoms
      * exist in, and all of the immediate adjacent neighbours, to that process/group. If any other process/group has already
@@ -102,7 +105,7 @@ bool RegionalDistributor::cycle()
     }
 
     // Reset the Cell status flags
-    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), RegionalDistributor::UnusedFlag);
+    std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), CellStatusFlag::Unused);
     std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
 
     // Set the process/group numbers for the original parallel strategy before we try to assign Molecules to groups
@@ -116,9 +119,9 @@ bool RegionalDistributor::cycle()
     // molecules sequentially to each
     if (nProcessesOrGroups_ == 1)
     {
-        for (auto n = 0; n < nMoleculesToDistribute_; ++n)
+        for (auto n = 0; n < nMolecules_; ++n)
         {
-            if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
+            if (moleculeStatus_[n] == MoleculeStatusFlag::Waiting)
             {
                 assignedMolecules_[0].push_back(n);
                 ++nMoleculesDistributed_;
@@ -152,7 +155,7 @@ bool RegionalDistributor::cycle()
                 {
                     // Valid Molecule found, so add it to our distribution array and mark it as such
                     assignedMolecules_[processOrGroup].push_back(molecule->arrayIndex());
-                    moleculeStatus_[molecule->arrayIndex()] = RegionalDistributor::DistributedFlag;
+                    moleculeStatus_[molecule->arrayIndex()] = MoleculeStatusFlag::Distributed;
                     ++nMoleculesDistributed_;
                     ++nMoleculesAssigned;
 
@@ -178,9 +181,9 @@ bool RegionalDistributor::cycle()
                 // Assign all remaining Molecules to group 0, and copy this group for distribution to all
                 // others.
                 assignedMolecules_[0].clear();
-                for (auto n = 0; n < nMoleculesToDistribute_; ++n)
+                for (auto n = 0; n < nMolecules_; ++n)
                 {
-                    if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
+                    if (moleculeStatus_[n] == MoleculeStatusFlag::Waiting)
                     {
                         assignedMolecules_[0].push_back(n);
                         ++nMoleculesDistributed_;
@@ -206,7 +209,7 @@ bool RegionalDistributor::cycle()
     for (processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
     {
         Messenger::printVerbose(
-            "Distributor cycle {} : Process/Group {} has {} Molecules asigned to it over {} locked Cells.\n", nCycles_,
+            "Distributor cycle {} : Process/Group {} has {} Molecules assigned to it over {} locked Cells.\n", nCycles_,
             processOrGroup, assignedMolecules_[processOrGroup].size(), lockedCells_[processOrGroup].size());
     }
 
@@ -231,21 +234,21 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
                          processOrGroup, cellStatusFlag(cellStatusFlags_.at(cellIndex)));
 
     // If the Cell is flagged as unused, return true
-    if (status == RegionalDistributor::UnusedFlag)
+    if (status == CellStatusFlag::Unused)
         return true;
 
     // If the Cell is flagged as 'LockedForEditing', and not by this processOrGroup, return false. If we have locked it,
     // return true.
-    if (status == RegionalDistributor::LockedForEditingFlag)
+    if (status == CellStatusFlag::LockedForEditing)
         return (cellLockOwners_.at(cellIndex) == processOrGroup);
 
     // If the Cell is flagged as 'ReadByOne', but not by this processOrGroup, return false (if we are the sole reader, we
     // can lock it)
-    if (status == RegionalDistributor::ReadByOneFlag)
+    if (status == CellStatusFlag::ReadByOne)
         return (cellLockOwners_.at(cellIndex) == processOrGroup);
 
     // If the Cell is flagged as 'ReadByMany', there is no chance of locking it, so return false.
-    if (status == RegionalDistributor::ReadByManyFlag)
+    if (status == CellStatusFlag::ReadByMany)
         return false;
 
     // That's all four possibilities, so raise an error if we get here (we never should)
@@ -271,7 +274,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         Messenger::print("  -- Checking Molecule {} for process/group {}: status = {}\n", molId, processOrGroup,
                          moleculeStatusFlag(moleculeStatus_[molId]));
 
-    if (moleculeStatus_[molId] != RegionalDistributor::WaitingFlag)
+    if (moleculeStatus_[molId] != MoleculeStatusFlag::Waiting)
         return false;
 
     // Go through the Atoms of the Molecule, assembling a list of primary Cells in which its Atoms are found.
@@ -283,8 +286,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         cellIndex = primaryCell->index();
 
         // Make sure we can lock this Cell for editing, unless we have locked it already...
-        if ((cellLockOwners_[cellIndex] == processOrGroup) &&
-            (cellStatusFlags_[cellIndex] == RegionalDistributor::LockedForEditingFlag))
+        if ((cellLockOwners_[cellIndex] == processOrGroup) && (cellStatusFlags_[cellIndex] == CellStatusFlag::LockedForEditing))
         {
             if (DND)
                 Messenger::print(" -- Cell {} is already locked by us ({})\n", cellIndex, cellLockOwners_[cellIndex]);
@@ -294,7 +296,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         {
             if (DND)
                 Messenger::print(" -- Cell {} cannot be locked for editing - current owner ({}) and/or status "
-                                 "({}) forbit it\n",
+                                 "({}) forbid it\n",
                                  cellIndex, cellLockOwners_[cellIndex], cellStatusFlag(cellStatusFlags_[cellIndex]));
             return false;
         }
@@ -317,7 +319,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
             cellIndex = neighbour->index();
 
             // If we have locked this Cell already, continue
-            if (cellStatusFlags_[cellIndex] == RegionalDistributor::LockedForEditingFlag)
+            if (cellStatusFlags_[cellIndex] == CellStatusFlag::LockedForEditing)
             {
                 if (cellLockOwners_[cellIndex] == processOrGroup)
                     continue;
@@ -348,7 +350,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         {
             lockedCells_[processOrGroup].insert(primaryCell);
             cellLockOwners_[cellIndex] = processOrGroup;
-            cellStatusFlags_[cellIndex] = RegionalDistributor::LockedForEditingFlag;
+            cellStatusFlags_[cellIndex] = CellStatusFlag::LockedForEditing;
         }
         else
             return Messenger::error("Tried to lock a (primary) Cell which is already locked by someone else.\n");
@@ -360,29 +362,29 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         cellIndex = readOnlyCell->index();
 
         // Check status
-        if (cellStatusFlags_[cellIndex] == RegionalDistributor::LockedForEditingFlag)
+        if (cellStatusFlags_[cellIndex] == CellStatusFlag::LockedForEditing)
         {
             if (cellLockOwners_[cellIndex] == processOrGroup)
                 continue;
             else
                 return Messenger::error("Tried to mark a Cell for reading that is locked.\n");
         }
-        else if (cellStatusFlags_[cellIndex] == RegionalDistributor::UnusedFlag)
+        else if (cellStatusFlags_[cellIndex] == CellStatusFlag::Unused)
         {
             // Not currently used, so mark it as being read by one process/group (us) and set its new status
-            cellStatusFlags_[cellIndex] = RegionalDistributor::ReadByOneFlag;
+            cellStatusFlags_[cellIndex] = CellStatusFlag::ReadByOne;
             cellLockOwners_[cellIndex] = processOrGroup;
         }
-        else if (cellStatusFlags_[cellIndex] == RegionalDistributor::ReadByOneFlag)
+        else if (cellStatusFlags_[cellIndex] == CellStatusFlag::ReadByOne)
         {
             // If the Cell is currently being read, but not by us, change the status to read-by-many
             if (cellLockOwners_[cellIndex] != processOrGroup)
             {
-                cellStatusFlags_[cellIndex] = RegionalDistributor::ReadByManyFlag;
+                cellStatusFlags_[cellIndex] = CellStatusFlag::ReadByMany;
                 cellLockOwners_[cellIndex] = -1;
             }
         }
-        else if (cellStatusFlags_[cellIndex] == RegionalDistributor::ReadByManyFlag)
+        else if (cellStatusFlags_[cellIndex] == CellStatusFlag::ReadByMany)
         {
             // Already being read by more than one processs/group, so nothing more to do
         }
@@ -476,7 +478,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
                                  processOrGroup, cellIndex, cellLockOwners_[cellIndex],
                                  cellStatusFlag(cellStatusFlags_[cellIndex]));
 
-            if (cellStatusFlags_[cellIndex] != RegionalDistributor::ReadByOneFlag)
+            if (cellStatusFlags_[cellIndex] != CellStatusFlag::ReadByOne)
                 continue;
             if (cellLockOwners_[cellIndex] != processOrGroup)
                 continue;
@@ -498,7 +500,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
             Messenger::print("  -- Checking Cell {} for process/group {}: status = {}\n", cellIndex, processOrGroup,
                              cellStatusFlags_[cellIndex]);
 
-        if (cellStatusFlags_[cellIndex] != RegionalDistributor::UnusedFlag)
+        if (cellStatusFlags_[cellIndex] != CellStatusFlag::Unused)
             continue;
 
         // Found an unused cell - does a suitable Molecule exist therein?
@@ -508,6 +510,16 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
     }
 
     return nullptr;
+}
+
+// Set target molecules for the distributor
+void RegionalDistributor::setTargetMolecules(const std::vector<int> &targetMoleculeIndices)
+{
+    std::fill(moleculeStatus_.begin(), moleculeStatus_.end(), MoleculeStatusFlag::Distributed);
+    for (auto id : targetMoleculeIndices)
+        moleculeStatus_[id] = MoleculeStatusFlag::Waiting;
+    nMoleculesToDistribute_ = targetMoleculeIndices.size();
+    nMoleculesDistributed_ = 0;
 }
 
 // Return next set of Molecule IDs assigned to this process

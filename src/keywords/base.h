@@ -53,15 +53,15 @@ class KeywordBase : public ListItem<KeywordBase>
         NodeAndIntegerData,
         NodeArrayData,
         NodeBranchData,
-        NodeRefListData,
         NodeValueData,
         NodeValueEnumOptionsData,
+        NodeVectorData,
         ProcedureData,
         RangeData,
         SpeciesData,
-        SpeciesRefListData,
         SpeciesSiteData,
         SpeciesSiteRefListData,
+        SpeciesVectorData,
         StringData,
         Vec3DoubleData,
         Vec3IntegerData,
@@ -114,10 +114,8 @@ class KeywordBase : public ListItem<KeywordBase>
     public:
     // Set name, description, arguments, and option mask
     void set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask = NoOptions);
-    // Return whether data has been set
-    bool isSet() const;
     // Flag that data has been set by some other means
-    void hasBeenSet();
+    void setAsModified();
     // Return data type stored by keyword
     KeywordDataType type() const;
     // Return name of data type stored by keyword
@@ -132,8 +130,10 @@ class KeywordBase : public ListItem<KeywordBase>
     int optionMask() const;
     // Return whether specified option is set
     bool isOptionSet(KeywordOption opt) const;
-    // Return whether the data has ever been set
+    // Return if the current data object is empty
     virtual bool isDataEmpty() const;
+    // Return whether the keyword has been set, and is not currently empty (if relevant)
+    bool hasBeenSet() const;
 
     /*
      * Arguments

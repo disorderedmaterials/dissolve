@@ -52,9 +52,9 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
                        int optionMask)
 {
     if (!object)
-        return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
+        throw(std::runtime_error(
+            fmt::format("Invalid KeywordBase* passed to KeywordList::link() (linked keyword name = '{}').\n", name)));
 
-    // Create a new LinkToKeyword
     return add(groupName, new LinkToKeyword(object), name, description, optionMask);
 }
 
@@ -63,9 +63,9 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
                        std::string_view arguments, int optionMask)
 {
     if (!object)
-        return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
+        throw(std::runtime_error(
+            fmt::format("Invalid KeywordBase* passed to KeywordList::link() (linked keyword name = '{}').\n", name)));
 
-    // Create a new LinkToKeyword
     return add(groupName, new LinkToKeyword(object), name, description, arguments, optionMask);
 }
 
@@ -200,8 +200,8 @@ Vec3<double> KeywordList::asVec3Double(std::string_view name) const
     return keyword->asVec3Double();
 }
 
-// Return whether the specified keyword data has ever been set
-bool KeywordList::isSet(std::string_view name) const
+// Return whether the keyword has been set, and is not currently empty (if relevant)
+bool KeywordList::hasBeenSet(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
@@ -211,11 +211,11 @@ bool KeywordList::isSet(std::string_view name) const
         return false;
     }
 
-    return keyword->isSet();
+    return keyword->hasBeenSet();
 }
 
 // Flag that the specified keyword has been set by some external means
-void KeywordList::hasBeenSet(std::string_view name)
+void KeywordList::setAsModified(std::string_view name)
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
@@ -225,7 +225,7 @@ void KeywordList::hasBeenSet(std::string_view name)
         return;
     }
 
-    keyword->hasBeenSet();
+    keyword->setAsModified();
 }
 
 /*
@@ -261,7 +261,7 @@ bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIf
     while (KeywordBase *keyword = keywordIterator.iterate())
     {
         // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-        if (onlyIfSet && (!keyword->base()->isSet()))
+        if (onlyIfSet && (!keyword->base()->hasBeenSet()))
             continue;
 
         // Make sure we are calling the write() function of the base() keyword class, but with the parent object's
@@ -286,7 +286,7 @@ bool KeywordList::writeGroups(LineParser &parser, std::string_view prefix, bool 
         for (KeywordBase *keyword : group->keywords())
         {
             // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-            if (onlyIfSet && (!keyword->base()->isSet()))
+            if (onlyIfSet && (!keyword->base()->hasBeenSet()))
                 continue;
 
             // If this is the first keyword to be written in the group, write the group name first as a comment

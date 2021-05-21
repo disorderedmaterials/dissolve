@@ -24,7 +24,7 @@ class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase
      */
     private:
     // Associated keyword
-    NodeAndIntegerKeywordBase *keyword_;
+    NodeAndIntegerKeyword *keyword_;
 
     /*
      * Widgets

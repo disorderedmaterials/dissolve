@@ -24,7 +24,7 @@ bool StringPairVectorKeyword::read(LineParser &parser, int startArg, const CoreD
     for (auto n = startArg; n < parser.nArgs(); n += 2)
         data_.emplace_back(parser.argsv(n), parser.argsv(n + 1));
 
-    hasBeenSet();
+    setAsModified();
 
     return true;
 }

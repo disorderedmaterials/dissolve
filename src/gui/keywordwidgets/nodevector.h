@@ -5,42 +5,37 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_speciesreflist.h"
-#include "keywords/speciesreflist.h"
+#include "gui/keywordwidgets/ui_nodevector.h"
+#include "gui/models/procedureNodeModel.h"
+#include "keywords/nodevector.h"
 #include <QWidget>
 
-// Forward Declarations
-class Species;
-
-class SpeciesRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    SpeciesRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    NodeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    SpeciesRefListKeyword *keyword_;
+    NodeVectorKeyword *keyword_;
 
     /*
      * Widgets
      */
     private:
     // Main form declaration
-    Ui::SpeciesRefListWidget ui_;
-
-    private:
-    // Selection list update function
-    void updateSelectionRow(int row, Species *sp, bool createItem);
+    Ui::NodeRefListWidget ui_;
+    // Model for the node list
+    ProcedureNodeModel nodeModel_;
 
     private slots:
-    // List item changed
-    void itemChanged(QListWidgetItem *item);
+    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
     // Keyword value changed

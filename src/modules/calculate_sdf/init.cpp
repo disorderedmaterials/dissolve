@@ -65,9 +65,8 @@ void CalculateSDFModule::initialise()
     // -- Select: Site 'B'
     selectB_ = new SelectProcedureNode();
     selectB_->setName("B");
-    RefList<SelectProcedureNode> exclusions(selectA_);
-    selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameSite", exclusions);
-    selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", exclusions);
+    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {selectA_});
+    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
     SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -87,7 +86,7 @@ void CalculateSDFModule::initialise()
     processPosition_->setKeyword<std::string>("LabelY", "y, \\symbol{Angstrom}");
     processPosition_->setKeyword<std::string>("LabelZ", "z, \\symbol{Angstrom}");
     SequenceProcedureNode *sdfNormalisation = processPosition_->addNormalisationBranch();
-    sdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));
+    sdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_}));
     sdfNormalisation->addNode(new OperateGridNormaliseProcedureNode());
     analyser_.addRootSequenceNode(processPosition_);
 

@@ -19,7 +19,7 @@ void MDModule::initialise()
                   "Whether a variable timestep should be used, determined from the maximal force vector");
     keywords_.add("Control", new BoolKeyword(false), "RandomVelocities",
                   "Whether random velocities should always be assigned before beginning MD simulation");
-    keywords_.add("Control", new SpeciesRefListKeyword(restrictToSpecies_), "RestrictToSpecies",
+    keywords_.add("Control", new SpeciesVectorKeyword(), "RestrictToSpecies",
                   "Restrict the calculation to the specified Species");
 
     // Output

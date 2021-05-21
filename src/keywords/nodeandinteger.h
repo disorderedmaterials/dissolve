@@ -5,83 +5,18 @@
 
 #include "base/lineparser.h"
 #include "keywords/data.h"
+#include "keywords/nodebase.h"
 #include "procedure/nodes/node.h"
 #include <tuple>
 
-// Forward Declarations
-class NodeValue;
-class ProcedureNode;
-
-// Keyword with ProcedureNode and integer index base class
-class NodeAndIntegerKeywordBase
-{
-    public:
-    NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-    virtual ~NodeAndIntegerKeywordBase();
-
-    /*
-     * Parent Node
-     */
-    private:
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
-
-    public:
-    // Return parent ProcedureNode
-    ProcedureNode *parentNode() const;
-
-    /*
-     * Target Node
-     */
-    private:
-    // Target node type to allow
-    ProcedureNode::NodeType nodeType_;
-    // Whether to accept nodes within scope only
-    bool onlyInScope_;
-
-    public:
-    // Return target node type to allow
-    ProcedureNode::NodeType nodeType() const;
-    // Return whether to accept nodes within scope only
-    bool onlyInScope() const;
-    // Set the target node
-    virtual bool setNode(ProcedureNode *node) = 0;
-    // Return the current target node
-    virtual ProcedureNode *node() const = 0;
-
-    /*
-     * Associated Index
-     */
-    public:
-    // Set target index
-    virtual void setIndex(int index) = 0;
-    // Return target index
-    virtual int index() const = 0;
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    virtual int optionMask() const = 0;
-};
-
 // Keyword with ProcedureNode and integer index
-template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase, public KeywordData<std::tuple<N *, int>>
+class NodeAndIntegerKeyword : public NodeKeywordBase, public KeywordData<std::pair<const ProcedureNode *, int>>
 {
     public:
-    NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node)
-        : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::tuple<N *, int>>(
-                                                                            KeywordBase::NodeAndIntegerData,
-                                                                            std::tuple<N *, int>(node, -1))
-    {
-    }
-    NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node, int index)
-        : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::tuple<N *, int>>(
-                                                                            KeywordBase::NodeAndIntegerData,
-                                                                            std::tuple<N *, int>(node, index))
-    {
-    }
+    NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                          ProcedureNode *node = nullptr, int index = 0);
+    NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                          ProcedureNode *node = nullptr, int index = 0);
     ~NodeAndIntegerKeyword() override = default;
 
     /*
@@ -89,95 +24,18 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const override { return 1; }
+    int minArguments() const override;
     // Return maximum number of arguments accepted
-    int maxArguments() const override { return 1; }
+    int maxArguments() const override;
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
-    {
-        if (!parentNode())
-            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
-                                    KeywordBase::name());
-
-        // Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-        ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg))
-                                            : parentNode()->nodeExists(parser.argsv(startArg));
-        if (!node)
-            return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
-                                    KeywordBase::name());
-
-        return setNode(node);
-    }
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
-    {
-        // Grab the node pointer
-        const N *node = std::get<0>(KeywordData<std::tuple<N *, int>>::data_);
-
-        // If an index was set, write it after the node name
-        if (std::get<1>(KeywordData<std::tuple<N *, int>>::data_) >= 0)
-        {
-            if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), node ? node->name() : "???"))
-                return false;
-        }
-        else
-        {
-            if (!parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(), node ? node->name() : "???",
-                                   std::get<1>(KeywordData<std::tuple<N *, int>>::data_)))
-                return false;
-        }
-
-        return true;
-    }
-
-    /*
-     * Target Node
-     */
-    public:
-    // Set the target node
-    bool setNode(ProcedureNode *node) override
-    {
-        if (!node)
-            return false;
-
-        if (!node->isType(nodeType()))
-            return Messenger::error("Node '{}' is of type {}, but the {} keyword requires a node of type {}.\n", node->name(),
-                                    ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
-                                    ProcedureNode::nodeTypes().keyword(nodeType()));
-
-        std::get<0>(KeywordData<std::tuple<N *, int>>::data_) = dynamic_cast<N *>(node);
-
-        KeywordData<std::tuple<N *, int>>::set_ = true;
-
-        return true;
-    }
-    // Return the current target node
-    ProcedureNode *node() const override { return std::get<0>(KeywordData<std::tuple<N *, int>>::data_); }
-
-    /*
-     * Associated Index
-     */
-    public:
-    // Set target index
-    void setIndex(int index) override
-    {
-        std::get<1>(KeywordData<std::tuple<N *, int>>::data_) = index;
-
-        KeywordData<std::tuple<N *, int>>::set_ = true;
-    }
-
-    // Return target index
-    int index() const override { return std::get<1>(KeywordData<std::tuple<N *, int>>::data_); }
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    int optionMask() const override { return KeywordBase::optionMask(); }
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
 
     /*
      * Object Management
      */
     protected:
+    // Prune any references to the supplied ProcedureNode in the contained data
+    void removeReferencesTo(ProcedureNode *node) override;
 };

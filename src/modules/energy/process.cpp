@@ -52,9 +52,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto testAnalytic = keywords_.asBool("TestAnalytic");
         const auto testMode = keywords_.asBool("Test");
         const auto testThreshold = keywords_.asDouble("TestThreshold");
-        auto hasReferenceInter = keywords_.isSet("TestReferenceInter");
+        auto hasReferenceInter = keywords_.hasBeenSet("TestReferenceInter");
         const auto testReferenceInter = keywords_.asDouble("TestReferenceInter");
-        auto hasReferenceIntra = keywords_.isSet("TestReferenceIntra");
+        auto hasReferenceIntra = keywords_.hasBeenSet("TestReferenceIntra");
         const auto testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
 
         // Print parameter summary

@@ -49,7 +49,7 @@ bool Vec3NodeValueKeyword::read(LineParser &parser, int startArg, const CoreData
         if (!data_.z.set(parser.argsv(startArg + 2), vars))
             return false;
 
-        hasBeenSet();
+        setAsModified();
 
         return true;
     }

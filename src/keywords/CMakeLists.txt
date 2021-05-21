@@ -27,15 +27,16 @@ add_library(
   node.cpp
   nodeandinteger.cpp
   nodearray.cpp
+  nodebase.cpp
   nodebranch.cpp
-  nodereflist.cpp
   nodevalue.cpp
+  nodevector.cpp
   procedure.cpp
   range.cpp
   species.cpp
-  speciesreflist.cpp
   speciessite.cpp
   speciessitereflist.cpp
+  speciesvector.cpp
   stdstring.cpp
   vec3double.cpp
   vec3integer.cpp
@@ -72,16 +73,17 @@ add_library(
   node.h
   nodeandinteger.h
   nodearray.h
+  nodebase.h
   nodebranch.h
-  nodereflist.h
   nodevalue.h
   nodevalueenumoptions.h
+  nodevector.h
   procedure.h
   range.h
   species.h
-  speciesreflist.h
   speciessite.h
   speciessitereflist.h
+  speciesvector.h
   stdstring.h
   vec3double.h
   vec3integer.h

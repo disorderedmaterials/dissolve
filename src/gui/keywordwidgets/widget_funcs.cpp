@@ -141,13 +141,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = nodeAndIntegerWidget;
         base = nodeAndIntegerWidget;
     }
-    else if (type == KeywordBase::NodeRefListData)
-    {
-        NodeRefListKeywordWidget *nodeRefListWidget = new NodeRefListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(nodeRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = nodeRefListWidget;
-        base = nodeRefListWidget;
-    }
     else if (type == KeywordBase::NodeValueData)
     {
         NodeValueKeywordWidget *nodeValueWidget = new NodeValueKeywordWidget(nullptr, keywordBase, coreData);
@@ -163,6 +156,13 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = nodeValueEnumOptionsWidget;
         base = nodeValueEnumOptionsWidget;
     }
+    else if (type == KeywordBase::NodeVectorData)
+    {
+        NodeVectorKeywordWidget *nodeVectorWidget = new NodeVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(nodeVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = nodeVectorWidget;
+        base = nodeVectorWidget;
+    }
     else if (type == KeywordBase::RangeData)
     {
         RangeKeywordWidget *rangeWidget = new RangeKeywordWidget(nullptr, keywordBase, coreData);
@@ -176,13 +176,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         connect(speciesWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = speciesWidget;
         base = speciesWidget;
-    }
-    else if (type == KeywordBase::SpeciesRefListData)
-    {
-        SpeciesRefListKeywordWidget *speciesRefListWidget = new SpeciesRefListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(speciesRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = speciesRefListWidget;
-        base = speciesRefListWidget;
     }
     else if (type == KeywordBase::SpeciesSiteData)
     {
@@ -198,6 +191,13 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         connect(speciesSiteRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = speciesSiteRefListWidget;
         base = speciesSiteRefListWidget;
+    }
+    else if (type == KeywordBase::SpeciesVectorData)
+    {
+        SpeciesVectorKeywordWidget *speciesVectorWidget = new SpeciesVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(speciesVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = speciesVectorWidget;
+        base = speciesVectorWidget;
     }
     else if (type == KeywordBase::StringData)
     {

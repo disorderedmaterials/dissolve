@@ -15,13 +15,13 @@ set(keywordwidgets_MOC_HDRS
     modulevector.h
     node.h
     nodeandinteger.h
-    nodereflist.h
     nodevalue.h
     nodevalueenumoptions.h
+    nodevector.h
     range.h
-    speciesreflist.h
     speciessite.h
     speciessitereflist.h
+    speciesvector.h
     vec3double.h
     vec3integer.h
     vec3labels.h
@@ -52,13 +52,13 @@ set(keywordwidgets_UIS
     modulevector.ui
     node.ui
     nodeandinteger.ui
-    nodereflist.ui
     nodevalue.ui
     nodevalueenumoptions.ui
+    nodevector.ui
     range.ui
-    speciesreflist.ui
     speciessite.ui
     speciessitereflist.ui
+    speciesvector.ui
     vec3double.ui
     vec3integer.ui
     vec3nodevalue.ui
@@ -86,14 +86,14 @@ set(keywordwidgets_SRCS
     modulevector_funcs.cpp
     node_funcs.cpp
     nodeandinteger_funcs.cpp
-    nodereflist_funcs.cpp
     nodevalue_funcs.cpp
     nodevalueenumoptions_funcs.cpp
+    nodevector_funcs.cpp
     range_funcs.cpp
     species_funcs.cpp
-    speciesreflist_funcs.cpp
     speciessite_funcs.cpp
     speciessitereflist_funcs.cpp
+    speciesvector_funcs.cpp
     stdstring_funcs.cpp
     widget_funcs.cpp
     vec3double_funcs.cpp

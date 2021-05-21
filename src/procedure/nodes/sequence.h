@@ -66,9 +66,10 @@ class SequenceProcedureNode : public ProcedureNode
     ProcedureNode::NodeContext context_;
 
     private:
-    // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
+    // Return named node if it exists anywhere in our sequence or below (and matches the type / class given)
     ProcedureNode *searchNodes(std::string_view name, ProcedureNode *excludeNode = nullptr,
-                               std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
+                               std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                               std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Search through the Procedure for the named parameter
     std::shared_ptr<ExpressionVariable>
     searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
@@ -78,20 +79,24 @@ class SequenceProcedureNode : public ProcedureNode
     const Procedure *procedure() const override;
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
-    // Return named node if present, and which matches the (optional) type given
-    ProcedureNode *node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
-    // Return list of nodes of specified type present in the Procedure
-    RefList<ProcedureNode> nodes(ProcedureNode *queryingNode,
-                                 std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
-    // Return named node if it is currently in scope, and optionally matches the type given
-    ProcedureNode *nodeInScope(ProcedureNode *queryingNode, std::string_view name,
-                               std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
-    // Return list of nodes of optional specified type present in scope
-    RefList<ProcedureNode> nodesInScope(ProcedureNode *queryingNode,
-                                        std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
-    // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
-                              std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
+    // Return named node if present (and matches the type / class given)
+    const ProcedureNode *node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                              std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return list of nodes (of specified type / class) present in the Procedure
+    std::vector<const ProcedureNode *> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return named node if it is currently in scope (and matches the type / class given)
+    const ProcedureNode *nodeInScope(const ProcedureNode *queryingNode, std::string_view name,
+                                     std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                     std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return list of nodes in scope (and matching the type / class given)
+    std::vector<const ProcedureNode *> nodesInScope(const ProcedureNode *queryingNode,
+                                                    std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
+    const ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
+                                    std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(ProcedureNode *queryingNode, std::string_view name,
                                                          const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr);

@@ -9,12 +9,12 @@
 // Forward Declarations
 class Species;
 
-// Keyword with Species RefList Data
-class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
+// Keyword with Species Vector Data
+class SpeciesVectorKeyword : public KeywordData<std::vector<const Species *>>
 {
     public:
-    SpeciesRefListKeyword(RefList<Species> &references);
-    ~SpeciesRefListKeyword() override;
+    SpeciesVectorKeyword(std::vector<const Species *> species = {});
+    ~SpeciesVectorKeyword() override;
 
     /*
      * Data

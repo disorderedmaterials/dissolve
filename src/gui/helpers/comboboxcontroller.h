@@ -32,7 +32,7 @@ template <class Iter, class Lam> Iter combo_box_updater(QComboBox *comboBox, Ite
          */
 
         // Get the text for this item (as a QString for convenience)
-        auto itemText = QString::fromStdString(std::string(getItemText(item)));
+        auto itemText = QString::fromStdString(std::string(getItemText(*item)));
 
         while (index < comboBox->count())
         {
@@ -40,7 +40,7 @@ template <class Iter, class Lam> Iter combo_box_updater(QComboBox *comboBox, Ite
             auto itemData = comboBox->itemData(index, Qt::UserRole).value<itemType>();
             if (itemData == *item)
             {
-                comboBox->setItemText(index, QString::fromStdString(std::string(getItemText(item))));
+                comboBox->setItemText(index, QString::fromStdString(std::string(getItemText(*item))));
                 break;
             }
             else
@@ -51,7 +51,7 @@ template <class Iter, class Lam> Iter combo_box_updater(QComboBox *comboBox, Ite
         if (index == comboBox->count())
         {
             // Create new item
-            comboBox->addItem(QString::fromStdString(std::string(getItemText(item))), QVariant::fromValue(*item));
+            comboBox->addItem(QString::fromStdString(std::string(getItemText(*item))), QVariant::fromValue(*item));
         }
 
         // Check for current item
