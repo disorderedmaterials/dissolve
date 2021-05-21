@@ -15,6 +15,7 @@ set(models_MOC_HDRS
     speciesAtomModel.h
     speciesBondModel.h
     speciesImproperModel.h
+    speciesIsoModel.h
     speciesTorsionModel.h
 )
 
@@ -37,6 +38,7 @@ set(models_SRCS
     speciesAtomModel.cpp
     speciesBondModel.cpp
     speciesImproperModel.cpp
+    speciesIsoModel.cpp
     speciesModelUtils.cpp
     speciesTorsionModel.cpp
 )
@@ -57,6 +59,7 @@ qt_wrap_cpp(
   speciesAtomModel.h
   speciesBondModel.h
   speciesImproperModel.h
+  speciesIsoModel.h
   speciesTorsionModel.h
 )
 

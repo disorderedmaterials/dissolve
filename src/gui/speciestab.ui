@@ -790,23 +790,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTreeWidget" name="IsotopologuesTree">
-         <column>
-          <property name="text">
-           <string>Isotopologue</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>AtomType</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Isotope</string>
-          </property>
-         </column>
-        </widget>
+        <widget class="QTreeView" name="IsotopologuesTree" />
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_10">

@@ -6,6 +6,7 @@
 #include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesImproperModel.h"
+#include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesTorsionModel.h"
 #include "main/dissolve.h"
 #include <gtest/gtest.h>
@@ -241,6 +242,33 @@ TEST_F(SpeciesTabTest, Impropers)
 
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
     EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "4.606, 2.0, 180.0, 1.0");
+}
+
+TEST_F(SpeciesTabTest, Isotopologues)
+{
+
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    dissolve.clear();
+    dissolve.loadInput("energyforce1/water3000-full.txt");
+    auto &species = dissolve.species()[0];
+
+    SpeciesIsoModel isos(*species);
+
+    // Test the top level branches of the tree
+    EXPECT_EQ(isos.columnCount(), 1);
+    EXPECT_EQ(isos.rowCount(), 1);
+    auto naturalIndex = isos.index(0, 0);
+    EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Natural1");
+    EXPECT_EQ(naturalIndex.internalId(), 0);
+    EXPECT_EQ(isos.rowCount(naturalIndex), 2);
+
+    // Check Display
+    EXPECT_EQ(isos.data(isos.index(0, 1, naturalIndex)).toString().toStdString(), "OW");
+    EXPECT_EQ(isos.data(isos.index(0, 2, naturalIndex)).toString().toStdString(), "Natural (bc = 5.803)");
+    EXPECT_EQ(isos.data(isos.index(1, 1, naturalIndex)).toString().toStdString(), "HW");
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "Natural (bc = -3.739)");
 }
 
 } // namespace UnitTest
