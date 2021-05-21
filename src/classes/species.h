@@ -28,6 +28,8 @@ class Species
     ~Species() = default;
     // Clear Data
     void clear();
+    // Copy basic information (atoms and intramolecular terms)
+    void copyBasic(const Species *source);
 
     /*
      * Basic Information

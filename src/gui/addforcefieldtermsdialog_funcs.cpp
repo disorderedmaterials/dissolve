@@ -98,7 +98,8 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                 return false;
 
             // Copy selected Species to our temporary instance
-            modifiedSpecies_ = temporaryDissolve_.copySpecies(targetSpecies_);
+            modifiedSpecies_ = temporaryDissolve_.addSpecies();
+            modifiedSpecies_->copyBasic(targetSpecies_);
             originalAtomTypeNames_.clear();
 
             // Determine atom types
