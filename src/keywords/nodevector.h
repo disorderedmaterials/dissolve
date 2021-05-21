@@ -8,17 +8,15 @@
 #include "keywords/nodebase.h"
 #include "procedure/nodes/node.h"
 
-// Forward Declarations
-class NodeValue;
-class ProcedureNode;
-
-// Keyword with ProcedureNode
-class NodeKeyword : public NodeKeywordBase, public KeywordData<const ProcedureNode *>
+// Keyword with ProcedureNode RefList
+class NodeVectorKeyword : public NodeKeywordBase, public KeywordData<std::vector<const ProcedureNode *>>
 {
     public:
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, ProcedureNode *node = nullptr);
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope, ProcedureNode *node = nullptr);
-    ~NodeKeyword() override = default;
+    NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                      std::vector<const ProcedureNode *> initNodes = {});
+    NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                      std::vector<const ProcedureNode *> initNodes = {});
+    ~NodeVectorKeyword() override = default;
 
     /*
      * Arguments

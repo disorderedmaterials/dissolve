@@ -14,12 +14,11 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *target)
+Process1DProcedureNode::Process1DProcedureNode(Collect1DProcedureNode *target)
     : ProcedureNode(ProcedureNode::NodeType::Process1D)
 {
-    keywords_.add("Control",
-                  new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::NodeType::Collect1D, false, target),
-                  "SourceData", "Collect1D node containing the histogram data to process");
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect1D, false, target), "SourceData",
+                  "Collect1D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
@@ -97,7 +96,7 @@ SequenceProcedureNode *Process1DProcedureNode::branch() { return normalisationBr
 bool Process1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Collect1D node target
-    collectNode_ = keywords_.retrieve<const Collect1DProcedureNode *>("SourceData");
+    collectNode_ = dynamic_cast<const Collect1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
     if (!collectNode_)
         return Messenger::error("No source Collect1D node set in '{}'.\n", name());
 
@@ -126,7 +125,7 @@ bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
         ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
         while (ProcedureNode *node = nodeIterator.iterate())
         {
-            if (!node->isType(ProcedureNode::NodeType::OperateBase))
+            if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
                 continue;
 
             // Cast the node

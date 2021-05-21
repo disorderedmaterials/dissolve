@@ -24,26 +24,31 @@ class Site;
 class ProcedureNode : public ListItem<ProcedureNode>
 {
     public:
+    // Node Classes
+    enum class NodeClass
+    {
+        None,
+        Calculate,
+        Operate
+
+    };
+    // Return enum option info for NodeClass
+    static EnumOptions<NodeClass> nodeClasses();
     // Node Types
     enum class NodeType
     {
         AddSpecies,
         Box,
-        BEGINCalculateNodes,
         CalculateAngle,
         CalculateAxisAngle,
         CalculateDistance,
-        CalculateBase,
         CalculateVector,
         Collect1D,
         Collect2D,
         Collect3D,
-        ENDCalculateNodes,
         DynamicSite,
         Fit1D,
         Integrate1D,
-        BEGINOperateNodes,
-        OperateBase,
         OperateDivide,
         OperateExpression,
         OperateGridNormalise,
@@ -52,7 +57,6 @@ class ProcedureNode : public ListItem<ProcedureNode>
         OperateNumberDensityNormalise,
         OperateSitePopulationNormalise,
         OperateSphericalShellNormalise,
-        ENDOperateNodes,
         Parameters,
         Process1D,
         Process2D,
@@ -73,13 +77,15 @@ class ProcedureNode : public ListItem<ProcedureNode>
     };
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();
-    ProcedureNode(NodeType nodeType);
+    ProcedureNode(NodeType nodeType, NodeClass nodeClass = NodeClass::None);
     virtual ~ProcedureNode() = default;
 
     /*
      * Identity
      */
     protected:
+    // Node class
+    NodeClass class_;
     // Node type
     NodeType type_;
     // Node name
@@ -88,10 +94,10 @@ class ProcedureNode : public ListItem<ProcedureNode>
     std::string niceName_;
 
     public:
+    // Return node class
+    NodeClass nodeClass() const;
     // Return node type
     NodeType type() const;
-    // Return whether the node is of the specified type (detecting derived node classes as well)
-    bool isType(NodeType thisType) const;
     // Return whether specified context is relevant for this node type
     virtual bool isContextRelevant(NodeContext context) = 0;
     // Return whether a name for the node must be provided
@@ -137,15 +143,19 @@ class ProcedureNode : public ListItem<ProcedureNode>
     virtual const Procedure *procedure() const;
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
-    // Return named node if it is currently in scope, and optionally matches the type given
-    ProcedureNode *nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
-    // Return list of nodes of optional specified type present in this node's scope
-    RefList<ProcedureNode> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt);
-    // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
-                              std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt) const;
-    // Return list of nodes of specified type present in the Procedure
-    RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
+    // Return named node if it is currently in scope (and matches the type / class given)
+    const ProcedureNode *nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                     std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return list of nodes in this node's scope (and matches the type / class given)
+    std::vector<const ProcedureNode *> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
+    const ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
+                                    std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return list of nodes (of specified type / class) present in the Procedure
+    std::vector<const ProcedureNode *> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(std::string_view name,
                                                          std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);

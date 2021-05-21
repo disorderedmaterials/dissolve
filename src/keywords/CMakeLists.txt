@@ -27,9 +27,10 @@ add_library(
   node.cpp
   nodeandinteger.cpp
   nodearray.cpp
+  nodebase.cpp
   nodebranch.cpp
-  nodereflist.cpp
   nodevalue.cpp
+  nodevector.cpp
   procedure.cpp
   range.cpp
   species.cpp
@@ -72,10 +73,11 @@ add_library(
   node.h
   nodeandinteger.h
   nodearray.h
+  nodebase.h
   nodebranch.h
-  nodereflist.h
   nodevalue.h
   nodevalueenumoptions.h
+  nodevector.h
   procedure.h
   range.h
   species.h

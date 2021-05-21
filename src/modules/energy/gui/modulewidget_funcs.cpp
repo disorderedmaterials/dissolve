@@ -51,7 +51,7 @@ void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     // Update partial set (Configuration) targets
     auto optConfig = combo_box_updater(ui_.ConfigurationTargetCombo, module_->targetConfigurations().begin(),
-                                       module_->targetConfigurations().end(), [](auto item) { return item.item()->name(); });
+                                       module_->targetConfigurations().end(), [](auto *item) { return item->name(); });
 
     // Set gradient and stability labels
     auto stabilityWindow = module_->keywords().asInt("StabilityWindow");

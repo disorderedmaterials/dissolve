@@ -112,15 +112,14 @@ void CalculateDAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = new SelectProcedureNode;
     selectB_->setName("B");
-    selectB_->setKeyword<SelectProcedureNode *>("SameMoleculeAsSite", selectA_);
+    selectB_->setKeyword<const ProcedureNode *>("SameMoleculeAsSite", selectA_);
     SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Select: Site 'C'
     selectC_ = new SelectProcedureNode;
     selectC_->setName("C");
-    RefList<SelectProcedureNode> sameMoleculeExclusions(selectA_);
-    selectC_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", sameMoleculeExclusions);
+    selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
     SequenceProcedureNode *forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(selectC_);
 
@@ -152,11 +151,8 @@ void CalculateDAngleModule::initialise()
     processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
 
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
-    RefList<const SelectProcedureNode> sitePopulationNormalisers;
-    sitePopulationNormalisers.append(selectA_);
-    sitePopulationNormalisers.append(selectB_);
-    rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));
-    rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectC_));
+    rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_, selectB_}));
+    rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectC_}));
     rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processDistance_);
 
@@ -204,10 +200,10 @@ void CalculateDAngleModule::initialise()
                   "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
 
     // Export
-    keywords_.link("Export", processDistance_->keywords().find("Exporot"), "ExportRDF",
+    keywords_.link("Export", processDistance_->keywords().find("Export"), "ExportRDF",
                    "File format and file name under which to save calculated B-C RDF");
-    keywords_.link("Export", processAngle_->keywords().find("Exporot"), "ExportAngle",
+    keywords_.link("Export", processAngle_->keywords().find("Export"), "ExportAngle",
                    "File format and file name under which to save calculated A-B...C angle histogram");
-    keywords_.link("Export", processDAngle_->keywords().find("Exporot"), "ExportDAngle",
+    keywords_.link("Export", processDAngle_->keywords().find("Export"), "ExportDAngle",
                    "File format and file name under which to save calculated A-B...C angle map");
 }

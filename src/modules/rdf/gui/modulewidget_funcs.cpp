@@ -86,7 +86,7 @@ void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 
     // Update partial set (Configuration) targets
     auto optConfig = combo_box_updater(ui_.ConfigurationTargetCombo, module_->targetConfigurations().begin(),
-                                       module_->targetConfigurations().end(), [](auto item) { return item.item()->name(); });
+                                       module_->targetConfigurations().end(), [](auto *item) { return item->name(); });
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it

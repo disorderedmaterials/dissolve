@@ -12,16 +12,8 @@ class SelectProcedureNode;
 class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
-    OperateNumberDensityNormaliseProcedureNode();
-    OperateNumberDensityNormaliseProcedureNode(const RefList<const SelectProcedureNode> &selectNodes);
+    OperateNumberDensityNormaliseProcedureNode(std::vector<const ProcedureNode *> nodes = {});
     ~OperateNumberDensityNormaliseProcedureNode() override = default;
-
-    /*
-     * Target Sites (SelectNodes)
-     */
-    private:
-    // List of sites (nodes) whose populations will be used to normalise the data
-    RefList<const SelectProcedureNode> selectNodes_;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

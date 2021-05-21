@@ -8,9 +8,6 @@
 #include "keywords/node.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
@@ -24,7 +21,7 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
      */
     private:
     // Associated keyword
-    NodeKeywordBase *keyword_;
+    NodeKeyword *keyword_;
 
     /*
      * Widgets
