@@ -22,21 +22,12 @@ set(components_MOC_HDRS
     speciesviewer.hui
     viewer.hui
     # Widgets and Wizards
-    addconfigurationwizard.h
-    addforcefieldtermswizard.h
-    importspecieswizard.h
     importforcefieldwizard.h
     selectconfigurationwidget.h
     selectforcefieldwidget.h
     selectspecieswidget.h
     wizard.hui
-    wizardwidget.hui
-    wizardwidgetfooter.h
-    wizardwidgetheader.h
-    wizardwidgethighlight.h
-    wizardwidgetpageinfo.h
     # Dialogs
-    addconfigurationdialog.h
     addforcefieldtermsdialog.h
     datamanagerdialog.h
     editspeciesdialog.h
@@ -68,16 +59,12 @@ set(components_UIS
     specieseditor.ui
     specieswidget.ui
     # Widgets and Wizards
-    addconfigurationwizard.ui
-    addforcefieldtermswizard.ui
-    importspecieswizard.ui
     selectconfigurationwidget.ui
     selectforcefieldwidget.ui
     selectspecieswidget.ui
-    wizardwidgetfooter.ui
-    wizardwidgetheader.ui
+    wizardfooter.ui
+    wizardheader.ui
     # Dialogs
-    addconfigurationdialog.ui
     addforcefieldtermsdialog.ui
     datamanagerdialog.ui
     editspeciesdialog.ui
@@ -137,19 +124,12 @@ set(components_SRCS
     viewer_renderables.cpp
     viewer_view.cpp
     # Widgets and Wizards
-    addconfigurationwizard_funcs.cpp
-    addforcefieldtermswizard_funcs.cpp
-    importspecieswizard_funcs.cpp
     importforcefieldwizard_funcs.cpp
     selectconfigurationwidget_funcs.cpp
     selectforcefieldwidget_funcs.cpp
     selectspecieswidget_funcs.cpp
     wizard_funcs.cpp
-    wizardwidget_funcs.cpp
-    wizardwidgethighlight.cpp
-    wizardwidgetpageinfo.cpp
     # Dialogs
-    addconfigurationdialog_funcs.cpp
     addforcefieldtermsdialog_funcs.cpp
     datamanagerdialog_funcs.cpp
     editspeciesdialog_funcs.cpp

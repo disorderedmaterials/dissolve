@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/ui_wizardwidgetfooter.h"
-#include "gui/ui_wizardwidgetheader.h"
+#include "gui/ui_wizardfooter.h"
+#include "gui/ui_wizardheader.h"
 #include <QDialog>
 #include <QStackedWidget>
 #include <optional>
@@ -26,9 +26,9 @@ class WizardDialog : public QDialog
     // Stack widget containing wizard pages
     QStackedWidget *stack_;
     // Header form declaration
-    Ui::WizardWidgetHeader headerUi_;
+    Ui::WizardHeader headerUi_;
     // Footer form declaration
-    Ui::WizardWidgetFooter footerUi_;
+    Ui::WizardFooter footerUi_;
     // Whether header controls are available
     bool headerAvailable_;
     // Whether the close button is available
