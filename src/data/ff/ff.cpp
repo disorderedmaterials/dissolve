@@ -291,32 +291,7 @@ bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpec
         return false;
     const ForcefieldAtomType &assignedType = *optRef;
 
-    // Check if an AtomType of the same name already exists - if it does, just use that one
-    auto at = coreData.findAtomType(assignedType.name());
-    if (!at)
-    {
-        at = coreData.addAtomType(i.Z());
-        at->setName(assignedType.name());
-        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
-    }
-    else
-        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
-
-    // Copy parameters from the assigned atom type - we take only the required number for the specified shortRangeType.
-    // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
-    std::vector<double> params;
-    params.insert(params.begin(), assignedType.parameters().begin(),
-                  assignedType.parameters().begin() + Forcefield::shortRangeTypes().minArgs(shortRangeType()).value_or(0));
-    at->setShortRangeParameters(params);
-    at->setShortRangeType(shortRangeType());
-    at->setCharge(assignedType.charge());
-
-    // Set the charge on the SpeciesAtom if requested
-    if (setSpeciesAtomCharges)
-        i.setCharge(assignedType.charge());
-
-    // Set type in the SpeciesAtom
-    i.setAtomType(at);
+    assignAtomType(assignedType, i, coreData, setSpeciesAtomCharges);
 
     return true;
 }
@@ -352,6 +327,39 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
                          (nFailed == 1 ? "atom" : "atoms"));
 
     return nFailed;
+}
+
+// Assign specific AtomType to the supplied atom
+void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, CoreData &coreData,
+                                bool setSpeciesAtomCharges) const
+{
+
+    // Check if an AtomType of the same name already exists - if it does, just use that one
+    auto at = coreData.findAtomType(ffa.name());
+    if (!at)
+    {
+        at = coreData.addAtomType(i.Z());
+        at->setName(ffa.name());
+        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
+    }
+    else
+        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
+
+    // Copy parameters from the assigned atom type - we take only the required number for the specified shortRangeType.
+    // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
+    std::vector<double> params;
+    params.insert(params.begin(), ffa.parameters().begin(),
+                  ffa.parameters().begin() + Forcefield::shortRangeTypes().minArgs(shortRangeType()).value_or(0));
+    at->setShortRangeParameters(params);
+    at->setShortRangeType(shortRangeType());
+    at->setCharge(ffa.charge());
+
+    // Set the charge on the SpeciesAtom if requested
+    if (setSpeciesAtomCharges)
+        i.setCharge(ffa.charge());
+
+    // Set type in the SpeciesAtom
+    i.setAtomType(at);
 }
 
 // Assign / generate bond term parameters
