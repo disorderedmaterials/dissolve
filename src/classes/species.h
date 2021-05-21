@@ -145,7 +145,9 @@ class Species
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
-    bool hasBond(SpeciesAtom *i, SpeciesAtom *j) const;
+    bool hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
+    // Return whether SpeciesBond between specified atom indices exists
+    bool hasBond(int i, int j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
     OptionalReferenceWrapper<const SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j) const;

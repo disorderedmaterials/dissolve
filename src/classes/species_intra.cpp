@@ -65,12 +65,15 @@ std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 const std::vector<SpeciesBond> &Species::bonds() const { return bonds_; }
 
 // Return whether SpeciesBond between specified SpeciesAtoms exists
-bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
+bool Species::hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const
 {
     auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
 
     return it != bonds_.cend();
 }
+
+// Return whether SpeciesBond between specified atom indices exists
+bool Species::hasBond(int i, int j) const { return hasBond(&atom(i), &atom(j)); }
 
 // Return the SpeciesBond between the specified SpeciesAtoms
 OptionalReferenceWrapper<SpeciesBond> Species::getBond(SpeciesAtom *i, SpeciesAtom *j)
