@@ -37,6 +37,7 @@ set(models_SRCS
     speciesAtomModel.cpp
     speciesBondModel.cpp
     speciesImproperModel.cpp
+    speciesModelUtils.cpp
     speciesTorsionModel.cpp
 )
 
