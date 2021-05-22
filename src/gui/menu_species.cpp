@@ -110,15 +110,10 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     if (!species)
         return;
 
-    static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
-
-    addForcefieldTermsDialog.reset();
-    addForcefieldTermsDialog.setTargetSpecies(species);
+    AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_, species);
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
     {
-        addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
-
         // Fully update GUI
         setModified();
         fullUpdate();
