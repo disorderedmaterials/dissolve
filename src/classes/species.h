@@ -116,6 +116,8 @@ class Species
     const AtomTypeList &usedAtomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
+    // Simplify atom types, merging together those with identical parameters
+    int simplifyAtomTypes();
     // Return total charge of species from local/atomtype atomic charges
     double totalCharge(bool useAtomTypes) const;
 

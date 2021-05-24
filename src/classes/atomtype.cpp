@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "data/elements.h"
+#include "templates/algorithms.h"
 
 AtomType::AtomType() : name_{"XX"} {}
 
@@ -52,3 +53,16 @@ void AtomType::setIndex(int id) { index_ = id; }
 
 // Return index of this type in the main type index
 int AtomType::index() const { return index_; }
+
+// Return whether our parameters are the same as those provided
+bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
+{
+    if (Z_ != other->Z_ || shortRangeType_ != other->shortRangeType_ || parameters_.size() != other->parameters_.size())
+        return false;
+    if (checkCharge && fabs(charge_ - other->charge_) > 1.0e-8)
+        return false;
+    for (auto &&[p1, p2] : zip(parameters_, other->parameters_))
+        if (fabs(p1 - p2) > 1.0e-8)
+            return false;
+    return true;
+}

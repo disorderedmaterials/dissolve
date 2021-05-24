@@ -64,4 +64,6 @@ class AtomType
     void setIndex(int id);
     // Return index of this type in the master type index
     int index() const;
+    // Return whether our parameters are the same as those provided
+    bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 };
