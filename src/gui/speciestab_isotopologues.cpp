@@ -19,13 +19,14 @@ Q_DECLARE_METATYPE(Sears91::Isotope)
 Isotopologue *SpeciesTab::currentIsotopologue()
 {
     // Get current item from tree, and check the parent item
-    // QTreeWidgetItem *item = ui_.IsotopologuesTree->currentItem();
-    // if (!item)
-    return nullptr;
-    // if (item->parent())
-    //     return VariantPointer<Isotopologue>(item->parent()->data(0, Qt::UserRole));
-    // else
-    //     return VariantPointer<Isotopologue>(item->data(0, Qt::UserRole));
+    auto model = ui_.IsotopologuesTree->selectionModel();
+    if (!model->hasSelection())
+        return nullptr;
+    auto item = model->currentIndex();
+    if (item.parent().isValid())
+        return VariantPointer<Isotopologue>(isos_.data(item.parent(), Qt::UserRole));
+    else
+        return VariantPointer<Isotopologue>(isos_.data(item, Qt::UserRole));
 }
 
 /*
@@ -43,7 +44,7 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
     KeywordBase::objectNoLongerValid<Isotopologue>(iso);
 
     // Finally, remove the Isotopologue from the Species
-    species_->removeIsotopologue(iso);
+    isos_.removeIso(iso);
 
     updateControls();
 }
@@ -64,23 +65,7 @@ void SpeciesTab::on_IsotopologueCollapseAllButton_clicked(bool checked) { ui_.Is
 // Update Isotopologues tab
 void SpeciesTab::updateIsotopologuesTab()
 {
-    Locker refreshLocker(refreshLock_);
-
-    // Isotopologues Tree
-    // if (!species_)
-    //     ui_.IsotopologuesTree->clear();
-    // else
-    // {
-    //     TreeWidgetUpdater<SpeciesTab, Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(),
-    //     this,
-    //                                                                     &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
-
-    //     // If there is no current isotopologue selected, try to select the first
-    //     if (!currentIsotopologue())
-    //         ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
-
-    //     ui_.IsotopologuesTree->resizeColumnToContents(0);
-    // }
+    ui_.IsotopologuesTree->resizeColumnToContents(0);
     Isotopologue *isotopologue = currentIsotopologue();
     ui_.IsotopologueRemoveButton->setEnabled(isotopologue != nullptr);
 }

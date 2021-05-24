@@ -163,3 +163,10 @@ void SpeciesIsoModel::addIso()
     species_.addIsotopologue("NewIsotopologue");
     endResetModel();
 }
+
+void SpeciesIsoModel::removeIso(Isotopologue *iso)
+{
+    beginResetModel();
+    species_.removeIsotopologue(iso);
+    endResetModel();
+}

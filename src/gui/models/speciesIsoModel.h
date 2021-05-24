@@ -15,6 +15,7 @@ class SpeciesIsoModel : public QAbstractItemModel
 
     public slots:
     void addIso();
+    void removeIso(Isotopologue *iso);
 
     public:
     SpeciesIsoModel(Species &species);
