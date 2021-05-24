@@ -115,7 +115,7 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
                     item.setForm(bf);
                     return true;
                 }
-                catch (std::runtime_error e)
+                catch (std::runtime_error &e)
                 {
                     return false;
                 }
