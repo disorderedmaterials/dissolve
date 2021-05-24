@@ -34,7 +34,7 @@ bool SpeciesIsoModel::hasChildren(const QModelIndex &parent) const { return !par
 
 QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
 {
-    if (role != Qt::DisplayRole && role != Qt::UserRole)
+    if (role != Qt::DisplayRole && role != Qt::UserRole && role != Qt::EditRole)
         return QVariant();
 
     if (!index.parent().isValid())
@@ -47,6 +47,7 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
         switch (role)
         {
             case Qt::DisplayRole:
+            case Qt::EditRole:
                 return QString::fromStdString(std::string(iso->name()));
             case Qt::UserRole:
                 return VariantPointer<Isotopologue>(iso);
@@ -59,6 +60,7 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
         case Qt::DisplayRole:
+        case Qt::EditRole:
             switch (index.column())
             {
                 case 1:
