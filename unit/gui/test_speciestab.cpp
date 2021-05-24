@@ -257,12 +257,17 @@ TEST_F(SpeciesTabTest, Isotopologues)
     SpeciesIsoModel isos(*species);
 
     // Test the top level branches of the tree
-    EXPECT_EQ(isos.columnCount(), 1);
+    EXPECT_EQ(isos.columnCount(), 3);
     EXPECT_EQ(isos.rowCount(), 1);
+    EXPECT_EQ(isos.data(isos.index(0, 1)), QVariant());
     auto naturalIndex = isos.index(0, 0);
     EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Natural1");
+    EXPECT_TRUE(isos.hasChildren(naturalIndex));
     EXPECT_EQ(naturalIndex.internalId(), 0);
     EXPECT_EQ(isos.rowCount(naturalIndex), 2);
+    EXPECT_EQ(isos.index(0, 1, naturalIndex).internalId(), 1);
+    EXPECT_EQ(isos.index(1, 2, naturalIndex).internalId(), 1);
+    EXPECT_EQ(isos.parent(isos.index(1, 2, naturalIndex)), naturalIndex);
 
     // Check Display
     EXPECT_EQ(isos.data(isos.index(0, 1, naturalIndex)).toString().toStdString(), "OW");
