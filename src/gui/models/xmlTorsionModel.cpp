@@ -186,7 +186,6 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
             ks({std::get<4>(torsion), std::get<5>(torsion), std::get<6>(torsion), std::get<7>(torsion)}),
             phases({std::get<12>(torsion), std::get<13>(torsion), std::get<14>(torsion), std::get<15>(torsion)});
         std::vector<int> ns({std::get<8>(torsion), std::get<9>(torsion), std::get<10>(torsion), std::get<11>(torsion)});
-        double k;
 
         params.resize(*std::max_element(ns.begin(), ns.end()) - 1);
         for (int n = 1; n <= params.size(); ++n)

@@ -96,7 +96,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
                     item.setForm(bf);
                     return true;
                 }
-                catch (std::runtime_error e)
+                catch (std::runtime_error &e)
                 {
                     return false;
                 }

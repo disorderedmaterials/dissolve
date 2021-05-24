@@ -46,8 +46,6 @@ int XmlAtomModel::columnCount(const QModelIndex &parent) const
 
 QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
 {
-    int type;
-
     if (role == Qt::ToolTipRole)
         switch (index.column())
         {

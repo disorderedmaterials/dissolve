@@ -26,7 +26,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     // Create a SpeciesSelectDialog and use it to get the Species to add to the mix
     SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
 
-    auto mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
+    auto mixSpecies = speciesSelectDialog.selectSpecies(SpeciesFilterProxy::FilterFlags::NoPeriodicBox);
     if (mixSpecies.empty())
         return;
 
@@ -53,7 +53,7 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     // Create a SpeciesSelectDialog and use it to get the Species to add to the mix
     SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
 
-    auto mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
+    auto mixSpecies = speciesSelectDialog.selectSpecies(SpeciesFilterProxy::FilterFlags::NoPeriodicBox);
     if (mixSpecies.empty())
         return;
 

@@ -24,7 +24,6 @@ std::vector<Cell *> MoleculeDistributor::cellsToBeModifiedForObject(int objectId
 
     // Loop over Atoms in the Molecule, and add the (unique) cellID each Atom is in
     std::vector<Cell *> cells;
-    int n;
     for (auto i = 0; i < molecule->nAtoms(); ++i)
     {
         auto *cell = molecule->atom(i)->cell();

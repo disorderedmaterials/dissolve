@@ -160,9 +160,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
-    // Grab the Box pointer and Cell array
-    const auto *box = cfg->box();
     auto &cellArray = cfg->cells();
+
     // Loop context is to use all processes in Pool as one group
     Combinations comb(cellArray.nCells(), 2);
     auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);

@@ -261,7 +261,7 @@ double euclidean(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     auto y2 = 0.0, sos = 0.0, delta = 0.0;
-    auto firstX = 0.0, lastX = 0.0, x = 0.0;
+    auto firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {

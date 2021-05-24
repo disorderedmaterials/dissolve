@@ -568,7 +568,6 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     auto totalEnergy = 0.0;
-    Cell *cell;
     auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
 
     totalEnergy = dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(begin),

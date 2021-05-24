@@ -63,7 +63,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 }
 
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, ProcedureNode::NodeClass classType)
-    : ListItem<ProcedureNode>(), type_(nodeType), class_(classType), scope_(nullptr)
+    : ListItem<ProcedureNode>(), class_(classType), type_(nodeType), scope_(nullptr)
 {
     // Assign default, unique name to the node
     static int nodeCount = 0;

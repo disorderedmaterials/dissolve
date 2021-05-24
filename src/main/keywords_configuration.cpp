@@ -26,7 +26,6 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
     Messenger::print("\nParsing {} block '{}'...\n",
                      BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
-    Module *module;
     std::string niceName;
     auto blockDone = false, error = false;
 

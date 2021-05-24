@@ -7,7 +7,7 @@
 #include <QFileDialog>
 
 DataManagerSimulationModel::DataManagerSimulationModel(Dissolve &dissolve, GenericList &items)
-    : dissolve_(dissolve), items_(items)
+    : items_(items), dissolve_(dissolve)
 {
 }
 

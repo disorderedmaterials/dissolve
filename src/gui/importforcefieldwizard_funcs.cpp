@@ -19,7 +19,6 @@ ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, Dissolve &mainDi
 void ImportForcefieldWizard::updateNavButtons()
 {
     int index = ui_.stackedWidget->currentIndex();
-    int count = ui_.stackedWidget->count();
 
     ui_.backButton->setEnabled(index > 0);
 
