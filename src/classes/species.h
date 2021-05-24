@@ -220,6 +220,8 @@ class Species
     void generateAttachedAtomLists();
     // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
     void detachFromMasterTerms();
+    // Reduce intramolecular terms to master terms
+    void reduceToMasterTerms(CoreData &coreData, bool selectionOnly = false);
 
     /*
      * Box Definition (if any)

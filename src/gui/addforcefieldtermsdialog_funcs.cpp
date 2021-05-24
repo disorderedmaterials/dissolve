@@ -12,7 +12,8 @@
 Q_DECLARE_METATYPE(AtomType *)
 
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp)
-    : WizardDialog(parent), dissolve_(dissolve), targetSpecies_(sp), temporaryDissolve_(temporaryCoreData_)
+    : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_), targetSpecies_(sp),
+      intramolecularTermsAssigned_(false)
 {
     ui_.setupUi(this);
 
@@ -144,144 +145,12 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                 }
             break;
         case (AddForcefieldTermsDialog::IntramolecularPage):
-            // Detach any MasterTerm references, and delete the MasterTerms
-            modifiedSpecies_->detachFromMasterTerms();
-            temporaryCoreData_.clearMasterTerms();
-
-            // Assign intramolecular terms
-            if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
-            {
-                auto flags = 0;
-                if (ui_.IgnoreCurrentTypesCheck->isChecked())
-                    flags += Forcefield::DetermineTypesFlag;
-                if (!ui_.NoImproperTermsCheck->isChecked())
-                    flags += Forcefield::GenerateImpropersFlag;
-                if (ui_.IntramolecularTermsAssignSelectionRadio->isChecked())
-                    flags += Forcefield::SelectionOnlyFlag;
-
-                if (!ff->assignIntramolecular(modifiedSpecies_, flags))
-                    return false;
-
-                // Reduce to master terms?
-                if (!ui_.NoMasterTermsCheck->isChecked())
-                {
-                    std::string termName;
-
-                    // Loop over bonds in the modified species
-                    for (auto &bond : modifiedSpecies_->bonds())
-                    {
-                        // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!bond.isSelected()))
-                            continue;
-
-                        // Construct a name for the master term based on the atom types - order atom
-                        // types alphabetically for consistency
-                        if (bond.i()->atomType()->name() < bond.j()->atomType()->name())
-                            termName = fmt::format("{}-{}", bond.i()->atomType()->name(), bond.j()->atomType()->name());
-                        else
-                            termName = fmt::format("{}-{}", bond.j()->atomType()->name(), bond.i()->atomType()->name());
-
-                        // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.getMasterBond(termName);
-                        if (!master)
-                        {
-                            // Create it now
-                            master = temporaryCoreData_.addMasterBond(termName);
-                            master->get().setForm(bond.form());
-                            master->get().setParameters(bond.parameters());
-                        }
-                        bond.setMasterParameters(&master->get());
-                    }
-
-                    // Loop over angles in the modified species
-                    for (auto &angle : modifiedSpecies_->angles())
-                    {
-                        // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!angle.isSelected()))
-                            continue;
-
-                        // Construct a name for the master term based on the atom types - order atom
-                        // types alphabetically for consistency
-                        if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
-                            termName = fmt::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
-                                                   angle.k()->atomType()->name());
-                        else
-                            termName = fmt::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
-                                                   angle.i()->atomType()->name());
-
-                        // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.getMasterAngle(termName);
-                        if (!master)
-                        {
-                            // Create it now
-                            master = temporaryCoreData_.addMasterAngle(termName);
-                            master->get().setForm(angle.form());
-                            master->get().setParameters(angle.parameters());
-                        }
-                        angle.setMasterParameters(&master->get());
-                    }
-
-                    // Loop over torsions in the modified species
-                    for (auto &torsion : modifiedSpecies_->torsions())
-                    {
-                        // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!torsion.isSelected()))
-                            continue;
-
-                        // Construct a name for the master term based on the atom types - order atom
-                        // types alphabetically for consistency
-                        if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
-                            termName =
-                                fmt::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
-                                            torsion.k()->atomType()->name(), torsion.l()->atomType()->name());
-                        else
-                            termName =
-                                fmt::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
-                                            torsion.j()->atomType()->name(), torsion.i()->atomType()->name());
-
-                        // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.getMasterTorsion(termName);
-                        if (!master)
-                        {
-                            // Create it now
-                            master = temporaryCoreData_.addMasterTorsion(termName);
-                            master->get().setForm(torsion.form());
-                            master->get().setParameters(torsion.parameters());
-                        }
-                        torsion.setMasterParameters(&master->get());
-                    }
-
-                    // Loop over impropers in the modified species
-                    for (auto &improper : modifiedSpecies_->impropers())
-                    {
-                        // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!improper.isSelected()))
-                            continue;
-
-                        // Construct a name for the master term based on the atom types - order atom
-                        // types for j-l alphabetically for consistency
-                        QStringList jkl = QStringList()
-                                          << QString::fromStdString(std::string(improper.j()->atomType()->name()))
-                                          << QString::fromStdString(std::string(improper.k()->atomType()->name()))
-                                          << QString::fromStdString(std::string(improper.l()->atomType()->name()));
-                        jkl.sort();
-                        termName = fmt::format("{}-{}", improper.i()->atomType()->name(), jkl.join("-").toStdString());
-
-                        // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.getMasterImproper(termName);
-                        if (!master)
-                        {
-                            // Create it now
-                            master = temporaryCoreData_.addMasterImproper(termName);
-                            master->get().setForm(improper.form());
-                            master->get().setParameters(improper.parameters());
-                        }
-                        improper.setMasterParameters(&master->get());
-                    }
-                }
-            }
+            if (!assignIntramolecularTerms(ff.get()))
+                return false;
 
             updateMasterTermsPage();
+
+            intramolecularTermsAssigned_ = true;
             break;
         default:
             break;
@@ -305,6 +174,12 @@ bool AddForcefieldTermsDialog::prepareForPreviousPage(int currentIndex)
 {
     if (currentIndex == AddForcefieldTermsDialog::AtomTypesConflictsPage)
         temporaryDissolve_.clear();
+    else if (currentIndex == AddForcefieldTermsDialog::MasterTermsPage)
+    {
+        modifiedSpecies_->detachFromMasterTerms();
+        temporaryCoreData_.clearMasterTerms();
+        intramolecularTermsAssigned_ = false;
+    }
 
     return true;
 }
@@ -346,6 +221,10 @@ void AddForcefieldTermsDialog::finalise()
         // Copy charge on species atom
         original.setCharge(modified.charge());
     }
+
+    // Assign intramolecular terms if we need to
+    if (!intramolecularTermsAssigned_)
+        assignIntramolecularTerms(ui_.ForcefieldWidget->currentForcefield().get());
 
     // Copy intramolecular terms
     if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
@@ -499,6 +378,35 @@ void AddForcefieldTermsDialog::on_IntramolecularTermsAssignSelectionRadio_clicke
 void AddForcefieldTermsDialog::on_IntramolecularTermsAssignNoneRadio_clicked(bool checked) { updateProgressionControls(); }
 
 void AddForcefieldTermsDialog::on_NoMasterTermsCheck_clicked(bool checked) { updateProgressionControls(); }
+
+// Assign intramolecular terms to species
+bool AddForcefieldTermsDialog::assignIntramolecularTerms(const Forcefield *ff)
+{
+    // Detach any MasterTerm references, and delete the MasterTerms
+    modifiedSpecies_->detachFromMasterTerms();
+    temporaryCoreData_.clearMasterTerms();
+
+    // Assign intramolecular terms
+    if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
+    {
+        auto flags = 0;
+        if (ui_.IgnoreCurrentTypesCheck->isChecked())
+            flags += Forcefield::DetermineTypesFlag;
+        if (!ui_.NoImproperTermsCheck->isChecked())
+            flags += Forcefield::GenerateImpropersFlag;
+        if (ui_.IntramolecularTermsAssignSelectionRadio->isChecked())
+            flags += Forcefield::SelectionOnlyFlag;
+
+        if (!ff->assignIntramolecular(modifiedSpecies_, flags))
+            return false;
+
+        // Reduce to master terms?
+        if (!ui_.NoMasterTermsCheck->isChecked())
+            modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_);
+    }
+
+    return true;
+}
 
 /*
  * MasterTerms Page

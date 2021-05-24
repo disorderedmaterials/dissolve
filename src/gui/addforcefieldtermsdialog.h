@@ -95,6 +95,12 @@ class AddForcefieldTermsDialog : public WizardDialog
     void on_IntramolecularTermsAssignNoneRadio_clicked(bool checked);
     void on_NoMasterTermsCheck_clicked(bool checked);
 
+    private:
+    // Whether intramolecular terms have been assigned
+    bool intramolecularTermsAssigned_;
+    // Assign intramolecular terms to species
+    bool assignIntramolecularTerms(const Forcefield *ff);
+
     /*
      * MasterTerms Page
      */

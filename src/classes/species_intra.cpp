@@ -2,9 +2,11 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
+#include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/species.h"
 #include "data/atomicradii.h"
+#include "templates/algorithms.h"
 #include <algorithm>
 
 /*
@@ -546,6 +548,122 @@ void Species::detachFromMasterTerms()
 
     for (auto &improper : impropers_)
         improper.detachFromMasterIntra();
+}
+
+void generateMasterTerm(SpeciesIntra &term, std::string_view termName,
+                        std::function<OptionalReferenceWrapper<MasterIntra>(std::string_view termName)> termGetter,
+                        std::function<MasterIntra &(std::string_view termName)> termCreator)
+{
+    // Search for an existing master term by this name, or a related one suffixed with a number
+    OptionalReferenceWrapper<MasterIntra> optMaster;
+    auto index = 0;
+    while ((optMaster = termGetter(index == 0 ? termName : fmt::format("{}_{}", termName, index))))
+    {
+        // Are the parameters the same as our local term?
+        const MasterIntra &master = optMaster->get();
+        if (master.form() != term.form() || master.nParameters() != term.nParameters())
+            continue;
+        else
+            for (auto &&[localValue, masterValue] : zip(term.parameters(), master.parameters()))
+                if (fabs(localValue - masterValue) > 1.0e-8)
+                    optMaster = std::nullopt;
+
+        // If the terms are identical, use this one (break out now)
+        if (optMaster)
+            break;
+
+        ++index;
+    }
+
+    // If we no longer have a valid reference, need to create a new term
+    if (!optMaster)
+    {
+        optMaster = termCreator(index == 0 ? termName : fmt::format("{}_{}", termName, index));
+        optMaster->get().setForm(term.form());
+        optMaster->get().setParameters(term.parameters());
+    }
+
+    term.setMasterParameters(&optMaster->get());
+}
+
+// Reduce intramolecular terms to master terms
+void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
+{
+    // Bonds
+    for (auto &bond : bonds_)
+    {
+        // Selection only?
+        if (selectionOnly && !bond.isSelected())
+            continue;
+
+        // Construct a name for the master term based on the atom types
+        std::vector<std::string_view> names = {bond.i()->atomType()->name(), bond.j()->atomType()->name()};
+        std::sort(names.begin(), names.end());
+        generateMasterTerm(bond, joinStrings(names, "-"),
+                           [&coreData](std::string_view name) { return coreData.getMasterBond(name); },
+                           [&coreData](auto name) -> MasterIntra & { return coreData.addMasterBond(name); });
+    }
+
+    // Angles
+    for (auto &angle : angles_)
+    {
+        // Selection only?
+        if (selectionOnly && !angle.isSelected())
+            continue;
+
+        // Construct a name for the master term based on the atom types
+        if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
+            generateMasterTerm(angle,
+                               fmt::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
+                                           angle.k()->atomType()->name()),
+                               [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
+                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterAngle(name); });
+        else
+            generateMasterTerm(angle,
+                               fmt::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
+                                           angle.i()->atomType()->name()),
+                               [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
+                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterAngle(name); });
+    }
+
+    // Torsions
+    for (auto &torsion : torsions_)
+    {
+        // Selection only?
+        if (selectionOnly && !torsion.isSelected())
+            continue;
+
+        // Construct a name for the master term based on the atom types
+        if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
+            generateMasterTerm(torsion,
+                               fmt::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
+                                           torsion.k()->atomType()->name(), torsion.l()->atomType()->name()),
+                               [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
+                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterTorsion(name); });
+        else
+            generateMasterTerm(torsion,
+                               fmt::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
+                                           torsion.j()->atomType()->name(), torsion.i()->atomType()->name()),
+                               [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
+                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterTorsion(name); });
+    }
+
+    // Impropers
+    for (auto &improper : impropers_)
+    {
+        // Selection only?
+        if (selectionOnly && !improper.isSelected())
+            continue;
+
+        // Construct a name for the master term based on the atom types
+        std::vector<std::string_view> jkl = {std::string(improper.j()->atomType()->name()),
+                                             std::string(improper.k()->atomType()->name()),
+                                             std::string(improper.l()->atomType()->name())};
+        std::sort(jkl.begin(), jkl.end());
+        generateMasterTerm(improper, fmt::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")),
+                           [&coreData](std::string_view name) { return coreData.getMasterImproper(name); },
+                           [&coreData](auto name) -> MasterIntra & { return coreData.addMasterImproper(name); });
+    }
 }
 
 // Return periodic box
