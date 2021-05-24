@@ -71,6 +71,6 @@ target_include_directories(
 )
 # target_link_libraries(models keywordwidgets charts delegates widgets components)
 
-target_link_libraries(models PUBLIC CONAN_PKG::pugixml)
+target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
 
 include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)
