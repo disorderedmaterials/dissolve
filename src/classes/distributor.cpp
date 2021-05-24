@@ -197,7 +197,6 @@ bool Distributor::canHardLock(std::vector<Cell *> cells) const
 std::vector<Cell *> Distributor::surroundingCells(std::vector<Cell *> centralCells)
 {
     std::vector<Cell *> surroundingCells;
-    int i;
     for (auto n = 0; n < centralCells.size(); ++n)
     {
         // Local Cell neighbours

@@ -17,8 +17,6 @@ int SpeciesAtomModel::columnCount(const QModelIndex &parent) const
 
 QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
 {
-    int type;
-
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 

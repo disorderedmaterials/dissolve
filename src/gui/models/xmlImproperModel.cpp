@@ -185,7 +185,6 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
             ks({std::get<4>(improper), std::get<5>(improper), std::get<6>(improper), std::get<7>(improper)}),
             phases({std::get<12>(improper), std::get<13>(improper), std::get<14>(improper), std::get<15>(improper)});
         std::vector<int> ns({std::get<8>(improper), std::get<9>(improper), std::get<10>(improper), std::get<11>(improper)});
-        double k;
 
         params.resize(*std::max_element(ns.begin(), ns.end()) - 1);
         for (int n = 1; n <= params.size(); ++n)

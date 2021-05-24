@@ -122,7 +122,6 @@ TEST_F(SampledValuesTest, SampledData1D)
     SampledDouble d;
     std::vector<double> ys = {73.478, 4.901,  48.52,  83.77,  60.356, 84.403, 70.622, 13.638, 92.007, 39.253,
                               31.703, 65.619, 17.404, 27.647, 40.677, 19.453, 73.203, 25.609, 17.674, 70.748};
-    auto x = 0.0;
     const auto nPoints = ys.size();
     a.initialise(nPoints);
     for (auto n = 0; n < nPoints; ++n)
