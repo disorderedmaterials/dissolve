@@ -1117,12 +1117,25 @@
      <addaction name="SpeciesImportFromXYZAction"/>
      <addaction name="SpeciesImportLigParGenAction"/>
     </widget>
+    <widget class="QMenu" name="SpeciesReduceForcefieldTermsMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Red&amp;uce Forcefield Terms...</string>
+     </property>
+     <addaction name="SpeciesSimplifyAtomTypesAction"/>
+     <addaction name="SpeciesReduceToMasterTermsAction"/>
+    </widget>
     <addaction name="SpeciesCreateMenu"/>
     <addaction name="SpeciesImportMenu"/>
     <addaction name="SpeciesRenameAction"/>
     <addaction name="SpeciesDeleteAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
+    <addaction name="SpeciesReduceForcefieldTermsMenu"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
@@ -1730,6 +1743,16 @@
    </property>
    <property name="toolTip">
     <string>Import coordinates and forcefield from LigParGen output</string>
+   </property>
+  </action>
+  <action name="SpeciesSimplifyAtomTypesAction">
+   <property name="text">
+    <string>Simplify Atom Types</string>
+   </property>
+  </action>
+  <action name="SpeciesReduceToMasterTermsAction">
+   <property name="text">
+    <string>To Master Terms</string>
    </property>
   </action>
  </widget>

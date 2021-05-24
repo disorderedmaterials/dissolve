@@ -158,6 +158,37 @@ void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(b
     ui_.MainTabs->currentTab()->updateControls();
 }
 
+void DissolveWindow::on_SpeciesSimplifyAtomTypesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto *species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    auto nModified = species->simplifyAtomTypes();
+    if (nModified > 0)
+    {
+        Messenger::print("{} atom types were modified.\n", nModified);
+        setModified();
+        fullUpdate();
+    }
+    else
+        Messenger::print("No atom types changed.\n");
+}
+
+void DissolveWindow::on_SpeciesReduceToMasterTermsAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto *species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    species->reduceToMasterTerms(dissolve_.coreData());
+
+    setModified();
+    fullUpdate();
+}
+
 void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab
