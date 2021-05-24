@@ -601,7 +601,6 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Ato
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl, dcos_dxpj, dcos_dxpk;
     Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-    double phi;
     if (j.cell()->mimRequired(i.cell()))
         vecji = box_->minimumVector(i, j);
     else
