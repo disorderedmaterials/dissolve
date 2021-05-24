@@ -12,6 +12,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+Q_DECLARE_METATYPE(Sears91::Isotope);
+
 namespace UnitTest
 {
 
@@ -276,6 +278,12 @@ TEST_F(SpeciesTabTest, Isotopologues)
     EXPECT_EQ(isos.data(isos.index(0, 2, naturalIndex)).toString().toStdString(), "Natural (bc = 5.803)");
     EXPECT_EQ(isos.data(isos.index(1, 1, naturalIndex)).toString().toStdString(), "HW");
     EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "Natural (bc = -3.739)");
+
+    //Update Isotope
+    EXPECT_TRUE(isos.setData(isos.index(1, 2, naturalIndex), QVariant::fromValue(Sears91::isotope(Elements::Element(1), 2)), Qt::UserRole));
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "2 (bc = 6.671)");
+    EXPECT_FALSE(isos.setData(isos.index(1, 2, naturalIndex), QVariant::fromValue(Sears91::isotope(Elements::Element(16), 33)), Qt::UserRole));
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "2 (bc = 6.671)");
 }
 
 } // namespace UnitTest

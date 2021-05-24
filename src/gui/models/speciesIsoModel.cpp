@@ -12,7 +12,7 @@ int SpeciesIsoModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
         return species_.isotopologues().nItems();
-    return 2;
+    return species_.isotopologue(parent.row())->isotopes().size();
 }
 
 int SpeciesIsoModel::columnCount(const QModelIndex &parent) const
@@ -126,7 +126,7 @@ Qt::ItemFlags SpeciesIsoModel::flags(const QModelIndex &index) const
             return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     }
-    if (index.column() > 0 && index.column() < 3)
+    if (index.column() == 2)
         return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
@@ -143,4 +143,16 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
         iso->setName(value.toString().toStdString());
         return true;
     }
+
+    if (role != Qt::UserRole)
+        return false;
+    if (index.column() != 2)
+        return false;
+    auto isotopologue = species_.isotopologue(index.parent().row());
+    auto [atomType, isotope] = isotopologue->isotopes()[index.row()];
+    auto newIso = value.value<Sears91::Isotope>();
+    if (Sears91::Z(isotope) != Sears91::Z(newIso))
+        return false;
+    isotopologue->setAtomTypeIsotope(atomType, newIso);
+    return true;
 }
