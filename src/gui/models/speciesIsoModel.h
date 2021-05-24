@@ -13,6 +13,9 @@ class SpeciesIsoModel : public QAbstractItemModel
     private:
     Species &species_;
 
+    public slots:
+    void addIso();
+
     public:
     SpeciesIsoModel(Species &species);
 

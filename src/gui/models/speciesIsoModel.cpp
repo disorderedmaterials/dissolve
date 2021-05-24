@@ -156,3 +156,10 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
     isotopologue->setAtomTypeIsotope(atomType, newIso);
     return true;
 }
+
+void SpeciesIsoModel::addIso()
+{
+    beginResetModel();
+    species_.addIsotopologue("NewIsotopologue");
+    endResetModel();
+}

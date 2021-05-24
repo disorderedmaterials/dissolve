@@ -96,6 +96,9 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
     connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
     connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+
+    connect(ui_.IsotopologueAddButton, SIGNAL(clicked()), &isos_, SLOT(addIso()));
 }
 
 SpeciesTab::~SpeciesTab()
