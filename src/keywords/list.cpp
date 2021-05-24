@@ -52,9 +52,9 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
                        int optionMask)
 {
     if (!object)
-        return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
+        throw(std::runtime_error(
+            fmt::format("Invalid KeywordBase* passed to KeywordList::link() (linked keyword name = '{}').\n", name)));
 
-    // Create a new LinkToKeyword
     return add(groupName, new LinkToKeyword(object), name, description, optionMask);
 }
 
@@ -63,9 +63,9 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
                        std::string_view arguments, int optionMask)
 {
     if (!object)
-        return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
+        throw(std::runtime_error(
+            fmt::format("Invalid KeywordBase* passed to KeywordList::link() (linked keyword name = '{}').\n", name)));
 
-    // Create a new LinkToKeyword
     return add(groupName, new LinkToKeyword(object), name, description, arguments, optionMask);
 }
 

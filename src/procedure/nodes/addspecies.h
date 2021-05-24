@@ -46,7 +46,8 @@ class AddSpeciesProcedureNode : public ProcedureNode
     {
         Central, /* Position the Species at the centre of the Box */
         Current, /* Use current Species coordinates */
-        Random   /* Set position randomly */
+        Random,  /* Set position randomly */
+        Region   /* Set position randomly within a specified region */
     };
     // Return enum option info for PositioningType
     static EnumOptions<PositioningType> positioningTypes();

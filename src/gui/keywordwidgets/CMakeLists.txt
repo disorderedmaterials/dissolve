@@ -15,9 +15,9 @@ set(keywordwidgets_MOC_HDRS
     modulevector.h
     node.h
     nodeandinteger.h
-    nodereflist.h
     nodevalue.h
     nodevalueenumoptions.h
+    nodevector.h
     range.h
     speciessite.h
     speciessitereflist.h
@@ -52,9 +52,9 @@ set(keywordwidgets_UIS
     modulevector.ui
     node.ui
     nodeandinteger.ui
-    nodereflist.ui
     nodevalue.ui
     nodevalueenumoptions.ui
+    nodevector.ui
     range.ui
     speciessite.ui
     speciessitereflist.ui
@@ -86,9 +86,9 @@ set(keywordwidgets_SRCS
     modulevector_funcs.cpp
     node_funcs.cpp
     nodeandinteger_funcs.cpp
-    nodereflist_funcs.cpp
     nodevalue_funcs.cpp
     nodevalueenumoptions_funcs.cpp
+    nodevector_funcs.cpp
     range_funcs.cpp
     species_funcs.cpp
     speciessite_funcs.cpp

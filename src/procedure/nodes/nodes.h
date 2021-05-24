@@ -17,6 +17,7 @@
 #include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/fit1d.h"
+#include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/integrate1d.h"
 #include "procedure/nodes/operatedivide.h"
 #include "procedure/nodes/operateexpression.h"

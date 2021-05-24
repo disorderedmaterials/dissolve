@@ -15,13 +15,9 @@ Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObse
                                                double yBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect2D)
 {
-    keywords_.add("Control",
-                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
-                                                                        xObservable, 0),
+    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xObservable, 0),
                   "QuantityX", "Calculated observable to collect for x axis");
-    keywords_.add("Control",
-                  new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::NodeType::CalculateBase, true,
-                                                                        yObservable, 0),
+    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, yObservable, 0),
                   "QuantityY", "Calculated observable to collect for y axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
@@ -122,10 +118,13 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     histogram_ = target;
 
     // Retrieve the observables
-    std::tie(xObservable_, xObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
+    const ProcedureNode *node;
+    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityX");
+    xObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
-    std::tie(yObservable_, yObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityY");
+    std::tie(node, yObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityY");
+    yObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
     if (!yObservable_)
         return Messenger::error("No valid y quantity set in '{}'.\n", name());
 

@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
 #include "main/dissolve.h"
 #include "modules/calculate_cn/cn.h"
 #include "modules/calculate_rdf/rdf.h"
+#include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/integrate1d.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/process1d.h"
+#include "procedure/nodes/select.h"
 
 // Run main processing
 bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
@@ -19,9 +20,8 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 
     // Set the target Collect1D and normalisation nodes in the Process1D
-    process1D_->setKeyword<const Collect1DProcedureNode *>("SourceData", rdfModule->collectDistanceNode());
-    RefList<const SelectProcedureNode> siteNodes(rdfModule->selectANode());
-    siteNormaliser_->setKeyword<RefList<const SelectProcedureNode> &>("Site", siteNodes);
+    process1D_->setKeyword<const ProcedureNode *>("SourceData", rdfModule->collectDistanceNode());
+    siteNormaliser_->setKeyword<std::vector<const ProcedureNode *>>("Site", {rdfModule->selectANode()});
 
     // Execute the analysis on the Configurations targeted by the RDF module
     for (Configuration *cfg : rdfModule->targetConfigurations())

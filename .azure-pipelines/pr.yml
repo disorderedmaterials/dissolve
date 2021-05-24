@@ -8,6 +8,7 @@ pr:
   paths:
     exclude:
     - examples/*
+    - scripts/*
     - web/*
     - README.md
     - .azure-pipelines/continuous.yml

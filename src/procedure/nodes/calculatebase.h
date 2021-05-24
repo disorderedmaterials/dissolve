@@ -5,7 +5,7 @@
 
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
-#include "templates/array.h"
+#include <array>
 
 // Forward Declarations
 class SelectProcedureNode;
@@ -31,14 +31,14 @@ class CalculateProcedureNodeBase : public ProcedureNode
      */
     protected:
     // Pointers to available site node keywords
-    NodeKeyword<SelectProcedureNode> *siteKeywords_[4];
+    std::array<NodeKeyword *, 4> siteKeywords_;
 
     /*
      * Observable Target
      */
     protected:
     // Sites (SelectProcedureNodes) to use for calculation of observable (retrieved from keywords)
-    SelectProcedureNode *sites_[4];
+    std::array<const SelectProcedureNode *, 4> sites_;
     // Last calculate value(s) of observable (as Vec3)
     Vec3<double> value_;
 

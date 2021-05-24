@@ -9,7 +9,7 @@
 CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0,
                                                        SelectProcedureNode *site1, SelectProcedureNode *site2,
                                                        SelectProcedureNode *site3)
-    : ProcedureNode(nodeType)
+    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Calculate)
 {
     sites_[0] = site0;
     sites_[1] = site1;
@@ -52,7 +52,7 @@ bool CalculateProcedureNodeBase::prepare(Configuration *cfg, std::string_view pr
     // Check that the sites have been properly defined
     for (auto n = 0; n < nSitesRequired(); ++n)
     {
-        sites_[n] = siteKeywords_[n] ? siteKeywords_[n]->node() : nullptr;
+        sites_[n] = siteKeywords_[n] ? dynamic_cast<const SelectProcedureNode *>(siteKeywords_[n]->data()) : nullptr;
         if (!sites_[n])
             return Messenger::error("Observable site {} is not set.\n", n);
     }

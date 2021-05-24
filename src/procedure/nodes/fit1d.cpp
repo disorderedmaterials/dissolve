@@ -114,18 +114,18 @@ bool Fit1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
 bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Copy reference data from the associated node
-    Collect1DProcedureNode *collect1DNode;
-    Process1DProcedureNode *process1DNode;
+    const Collect1DProcedureNode *collect1DNode;
+    const Process1DProcedureNode *process1DNode;
     switch (dataNode_.type())
     {
         case (ProcedureNode::NodeType::Collect1D):
-            collect1DNode = dynamic_cast<Collect1DProcedureNode *>(dataNode_.node());
+            collect1DNode = dynamic_cast<const Collect1DProcedureNode *>(dataNode_.node());
             if (collect1DNode)
                 return Messenger::error("Failed to cast dataNode_ into a Collect1DProcedureNode.\n");
             referenceData_ = collect1DNode->accumulatedData();
             break;
         case (ProcedureNode::NodeType::Process1D):
-            process1DNode = dynamic_cast<Process1DProcedureNode *>(dataNode_.node());
+            process1DNode = dynamic_cast<const Process1DProcedureNode *>(dataNode_.node());
             if (process1DNode)
                 return Messenger::error("Failed to cast dataNode_ into a Process1DProcedureNode.\n");
             referenceData_ = process1DNode->processedData();

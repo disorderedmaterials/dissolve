@@ -5,7 +5,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeType) : ProcedureNode(nodeType)
+OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeType)
+    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Operate)
 {
     targetData1D_ = nullptr;
     targetData2D_ = nullptr;

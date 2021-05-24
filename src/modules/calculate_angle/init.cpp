@@ -200,12 +200,8 @@ void CalculateAngleModule::initialise()
     processAB_->setKeyword<std::string>("LabelValue", "g\\sub{AB}(r)");
     processAB_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
     SequenceProcedureNode *rdfABNormalisation = processAB_->addNormalisationBranch();
-    RefList<const SelectProcedureNode> normAB;
-    normAB.append(selectB_);
-    normAB.append(selectA_);
-    normAB.append(selectC_);
-    rdfABNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(normAB));
-    rdfABNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectA_));
+    rdfABNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectB_, selectA_, selectC_}));
+    rdfABNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectA_}));
     rdfABNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processAB_);
 
@@ -215,12 +211,8 @@ void CalculateAngleModule::initialise()
     processBC_->setKeyword<std::string>("LabelValue", "g\\sub{BC}(r)");
     processBC_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
     SequenceProcedureNode *rdfBCNormalisation = processBC_->addNormalisationBranch();
-    RefList<const SelectProcedureNode> normBC;
-    normBC.append(selectB_);
-    normBC.append(selectA_);
-    normBC.append(selectC_);
-    rdfBCNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(normBC));
-    rdfBCNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectC_));
+    rdfBCNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectB_, selectA_, selectC_}));
+    rdfBCNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectC_}));
     rdfBCNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processBC_);
 

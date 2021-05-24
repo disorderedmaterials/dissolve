@@ -64,7 +64,7 @@ void Configuration::applySizeFactor(const PotentialMap &potentialMap)
                              requestedSizeFactor_, appliedSizeFactor_);
 
             // Scale molecule centres of geometry
-            scaleMoleculeCentres(sizeFactorRatio);
+            scaleContents(sizeFactorRatio);
 
             // Now scale the Box and its Cells
             scaleBox(sizeFactorRatio);

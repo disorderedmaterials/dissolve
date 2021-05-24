@@ -19,13 +19,12 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    RefList<SelectProcedureNode> exclusions;
     const auto rangeAB = keywords_.asVec3Double("RangeAB");
     const auto rangeBC = keywords_.asVec3Double("RangeBC");
     const auto angleRange = keywords_.asVec3Double("AngleRange");
-    selectA_->setKeyword<SelectProcedureNode *>("ReferenceSite", selectB_);
+    selectA_->setKeyword<const ProcedureNode *>("ReferenceSite", selectB_);
     selectA_->setKeyword<Range>("InclusiveRange", Range(rangeAB.x, rangeAB.y));
-    selectC_->setKeyword<SelectProcedureNode *>("ReferenceSite", selectB_);
+    selectC_->setKeyword<const ProcedureNode *>("ReferenceSite", selectB_);
     selectC_->setKeyword<Range>("InclusiveRange", Range(rangeBC.x, rangeBC.y));
     collectAB_->setKeyword<Vec3<double>>("RangeX", rangeAB);
     collectBC_->setKeyword<Vec3<double>>("RangeX", rangeBC);
@@ -35,20 +34,14 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
     collectDAngleBC_->setKeyword<Vec3<double>>("RangeX", rangeBC);
     collectDAngleBC_->setKeyword<Vec3<double>>("RangeY", angleRange);
     const bool excludeSameMoleculeAB = keywords_.asBool("ExcludeSameMoleculeAB");
-    exclusions.clear();
     if (excludeSameMoleculeAB)
-        exclusions.append(selectB_);
-    selectA_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", exclusions);
+        selectA_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectB_});
     const bool excludeSameMoleculeBC = keywords_.asBool("ExcludeSameMoleculeBC");
-    exclusions.clear();
     if (excludeSameMoleculeBC)
-        exclusions.append(selectB_);
-    selectC_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", exclusions);
+        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectB_});
     const bool excludeSameSiteAC = keywords_.asBool("ExcludeSameSiteAC");
-    exclusions.clear();
     if (excludeSameSiteAC)
-        exclusions.append(selectA_);
-    selectC_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameSite", exclusions);
+        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {selectA_});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurations_.firstItem();
