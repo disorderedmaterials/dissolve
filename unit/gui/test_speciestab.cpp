@@ -262,6 +262,8 @@ TEST_F(SpeciesTabTest, Isotopologues)
     EXPECT_EQ(isos.data(isos.index(0, 1)), QVariant());
     auto naturalIndex = isos.index(0, 0);
     EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Natural1");
+    EXPECT_TRUE(isos.setData(naturalIndex, "Example"));
+    EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Example");
     EXPECT_TRUE(isos.hasChildren(naturalIndex));
     EXPECT_EQ(naturalIndex.internalId(), 0);
     EXPECT_EQ(isos.rowCount(naturalIndex), 2);

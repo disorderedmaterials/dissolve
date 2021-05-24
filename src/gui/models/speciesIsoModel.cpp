@@ -130,3 +130,17 @@ Qt::ItemFlags SpeciesIsoModel::flags(const QModelIndex &index) const
         return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
+
+bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!index.parent().isValid())
+    {
+        if (index.row() != 0)
+            return false;
+        if (index.row() > species_.isotopologues().nItems())
+            return false;
+        auto iso = species_.isotopologue(index.row());
+        iso->setName(value.toString().toStdString());
+        return true;
+    }
+}
