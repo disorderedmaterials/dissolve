@@ -41,9 +41,6 @@ void AtomType::setShortRangeParameter(int index, double parameter) { parameters_
 // Return short-range parameters vector
 const std::vector<double> &AtomType::shortRangeParameters() const { return parameters_; }
 
-// Return short-range parameter with index specified
-double AtomType::shortRangeParameter(int index) const { return parameters_[index]; }
-
 // Set atomic charge
 void AtomType::setCharge(double q) { charge_ = q; }
 
