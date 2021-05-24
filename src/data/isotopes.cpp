@@ -405,7 +405,7 @@ static std::vector<IsotopeData> sears91Data_ = {
 
 IsotopeData::IsotopeData(Sears91::Isotope tope, Elements::Element Z, int A, std::string_view spin, double mass, double bc,
                          double bi, double sc, double si, double totalxs, double absxs)
-    : isotope_(tope), Z_(Z), A_(A), spin_(spin), mass_(mass), boundCoherent_(bc), boundIncoherent_(bi), boundCoherentXS_(sc),
+    : isotope_(tope), Z_(Z), A_(A), mass_(mass), spin_(spin), boundCoherent_(bc), boundIncoherent_(bi), boundCoherentXS_(sc),
       boundIncoherentXS_(si), totalXS_(totalxs), absorptionXS_(absxs)
 {
 }
