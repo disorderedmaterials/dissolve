@@ -34,6 +34,32 @@ jobs:
           ctest -j2 --output-on-failure
         displayName: 'Run Serial System Tests'
   - job:
+    condition: eq('${{ parameters.parallel }}', false)
+    displayName: 'System Tests (Serial/Threads)'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - bash: |
+          set -ex
+          sudo add-apt-repository ppa:${{ parameters.ppa }} -y
+          sudo apt-get install qt${{ parameters.qtver }}base
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-serial-threads'
+        displayName: 'Download Serial/Threads Test Artifacts'
+      - bash: |
+          set -ex
+          mkdir build && cd build
+          mv $(System.ArtifactsDirectory)/linux-tests-serial-threads/* ./
+          chmod +x bin/*
+          ctest -j2 --output-on-failure
+        displayName: 'Run Serial System Tests'
+  - job:
     condition: eq('${{ parameters.parallel }}', true)
     displayName: 'System Tests (Parallel)'
     pool:
