@@ -15,12 +15,7 @@ int SpeciesIsoModel::rowCount(const QModelIndex &parent) const
     return species_.isotopologue(parent.row())->isotopes().size();
 }
 
-int SpeciesIsoModel::columnCount(const QModelIndex &parent) const
-{
-    // if (!parent.isValid())
-    //     return 1;
-    return 3;
-}
+int SpeciesIsoModel::columnCount(const QModelIndex &parent) const { return 3; }
 
 QModelIndex SpeciesIsoModel::parent(const QModelIndex &index) const
 {
