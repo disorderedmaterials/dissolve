@@ -19,6 +19,7 @@
 
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+Q_DECLARE_METATYPE(std::shared_ptr<MasterIntra>)
 Q_DECLARE_METATYPE(MasterIntra *)
 Q_DECLARE_METATYPE(PairPotential *)
 
@@ -55,13 +56,24 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
         ui_.MasterImpropersTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
     }
 
-    // Ensure fonts for table headers are set correctly and the headers themselves are visible
+    // Ensure fonts for table headers are set correctly and the headers themselves are visible=
+    masterBondsTableModel_ = new MasterTermBondModel(dissolve_.coreData().masterBonds(), parent);
+    ui_.MasterBondsTable->setModel(masterBondsTableModel_);
     ui_.MasterBondsTable->horizontalHeader()->setFont(font());
     ui_.MasterBondsTable->horizontalHeader()->setVisible(true);
+
+    masterAnglesTableModel_ = new MasterTermAngleModel(dissolve_.coreData().masterAngles(), parent);
+    ui_.MasterAnglesTable->setModel(masterAnglesTableModel_);
     ui_.MasterAnglesTable->horizontalHeader()->setFont(font());
     ui_.MasterAnglesTable->horizontalHeader()->setVisible(true);
+
+    masterTorsionsTableModel_ = new MasterTermTorsionModel(dissolve_.coreData().masterTorsions(), parent);
+    ui_.MasterTorsionsTable->setModel(masterTorsionsTableModel_);
     ui_.MasterTorsionsTable->horizontalHeader()->setFont(font());
     ui_.MasterTorsionsTable->horizontalHeader()->setVisible(true);
+
+    masterImpropersTableModel_ = new MasterTermTorsionModel(dissolve_.coreData().masterImpropers(), parent);
+    ui_.MasterImpropersTable->setModel(masterImpropersTableModel_);
     ui_.MasterImpropersTable->horizontalHeader()->setFont(font());
     ui_.MasterImpropersTable->horizontalHeader()->setVisible(true);
 
@@ -117,173 +129,6 @@ MainTab::TabType ForcefieldTab::type() const { return MainTab::ForcefieldTabType
 // Return whether the tab can be closed
 bool ForcefieldTab::canClose() const { return false; }
 
-/*
- * Update
- */
-
-// Row update function for BondsTable
-void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Name
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(masterBond));
-        ui_.MasterBondsTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.MasterBondsTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(masterBond->name())));
-
-    // Functional Form
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        ui_.MasterBondsTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.MasterBondsTable->item(row, 1);
-    QString text = QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(masterBond->form())));
-    item->setText(text);
-
-    // Parameters
-    for (int n = 0; n < masterBond->parameters().size(); ++n)
-    {
-        if (createItems)
-        {
-            item = new QTableWidgetItem;
-            ui_.MasterBondsTable->setItem(row, n + 2, item);
-        }
-        else
-            item = ui_.MasterBondsTable->item(row, n + 2);
-        item->setText(QString::number(masterBond->parameter(n)));
-    }
-}
-
-// Row update function for AnglesTable
-void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Name
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(masterAngle));
-        ui_.MasterAnglesTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.MasterAnglesTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(masterAngle->name())));
-
-    // Functional Form
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        ui_.MasterAnglesTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.MasterAnglesTable->item(row, 1);
-    item->setText(QString::fromStdString(std::string(SpeciesAngle::angleFunctions().keywordFromInt(masterAngle->form()))));
-
-    // Parameters
-    for (int n = 0; n < masterAngle->parameters().size(); ++n)
-    {
-        if (createItems)
-        {
-            item = new QTableWidgetItem;
-            ui_.MasterAnglesTable->setItem(row, n + 2, item);
-        }
-        else
-            item = ui_.MasterAnglesTable->item(row, n + 2);
-        item->setText(QString::number(masterAngle->parameter(n)));
-    }
-}
-
-// Row update function for TorsionsTable
-void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Name
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(masterTorsion));
-        ui_.MasterTorsionsTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.MasterTorsionsTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(masterTorsion->name())));
-
-    // Functional Form
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        ui_.MasterTorsionsTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.MasterTorsionsTable->item(row, 1);
-    item->setText(
-        QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(masterTorsion->form()))));
-
-    // Parameters
-    for (int n = 0; n < masterTorsion->parameters().size(); ++n)
-    {
-        if (createItems)
-        {
-            item = new QTableWidgetItem;
-            ui_.MasterTorsionsTable->setItem(row, n + 2, item);
-        }
-        else
-            item = ui_.MasterTorsionsTable->item(row, n + 2);
-        item->setText(QString::number(masterTorsion->parameter(n)));
-    }
-}
-
-// Row update function for ImpropersTable
-void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Name
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(masterImproper));
-        ui_.MasterImpropersTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.MasterImpropersTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(masterImproper->name())));
-
-    // Functional Form
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        ui_.MasterImpropersTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.MasterImpropersTable->item(row, 1);
-    item->setText(
-        QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(masterImproper->form()))));
-
-    // Parameters
-    for (int n = 0; n < masterImproper->parameters().size(); ++n)
-    {
-        if (createItems)
-        {
-            item = new QTableWidgetItem;
-            ui_.MasterImpropersTable->setItem(row, n + 2, item);
-        }
-        else
-            item = ui_.MasterImpropersTable->item(row, n + 2);
-        item->setText(QString::number(masterImproper->parameter(n)));
-    }
-}
-
 // Row update function for AtomTypesTable
 void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems)
 {
@@ -294,10 +139,11 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     {
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        ui_.AtomTypesTable->setItem(row, 0, item);
+        // ui_.AtomTypesTable->setItem(row, 0, item);
     }
     else
-        item = ui_.AtomTypesTable->item(row, 0);
+        int a = 3;
+    // item = ui_.AtomTypesTable->item(row, 0);
     item->setText(QString::fromStdString(std::string(atomType->name())));
 
     // Target element
@@ -306,10 +152,11 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
         item->setFlags(Qt::NoItemFlags);
-        ui_.AtomTypesTable->setItem(row, 1, item);
+        // ui_.AtomTypesTable->setItem(row, 1, item);
     }
     else
-        item = ui_.AtomTypesTable->item(row, 1);
+        int a = 3;
+    // item = ui_.AtomTypesTable->item(row, 1);
     item->setText(QString::fromStdString(std::string(Elements::symbol(atomType->Z()))));
 
     // Charge
@@ -317,10 +164,11 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     {
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        ui_.AtomTypesTable->setItem(row, 2, item);
+        // ui_.AtomTypesTable->setItem(row, 2, item);
     }
     else
-        item = ui_.AtomTypesTable->item(row, 2);
+        int a = 3;
+    // item = ui_.AtomTypesTable->item(row, 2);
     item->setText(QString::number(atomType->charge()));
 
     // Short-Range Form
@@ -328,10 +176,11 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     {
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        ui_.AtomTypesTable->setItem(row, 3, item);
+        // ui_.AtomTypesTable->setItem(row, 3, item);
     }
     else
-        item = ui_.AtomTypesTable->item(row, 3);
+        int a = 3;
+    // item = ui_.AtomTypesTable->item(row, 3);
     item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()))));
 
     // Parameters
@@ -342,10 +191,11 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-            ui_.AtomTypesTable->setItem(row, col++, item);
+            // ui_.AtomTypesTable->setItem(row, col++, item);
         }
         else
-            item = ui_.AtomTypesTable->item(row, col++);
+            int a = 3;
+        // item = ui_.AtomTypesTable->item(row, col++);
         item->setText(QString::number(x));
     }
 }
@@ -432,25 +282,10 @@ void ForcefieldTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    // Master Bonds Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(), this,
-                                                                &ForcefieldTab::updateBondsTableRow);
-    ui_.MasterBondsTable->resizeColumnsToContents();
-
-    // Master Angles Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> anglesUpdater(ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(),
-                                                                 this, &ForcefieldTab::updateAnglesTableRow);
-    ui_.MasterAnglesTable->resizeColumnsToContents();
-
-    // Torsions Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> torsionsUpdater(
-        ui_.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
-    ui_.MasterTorsionsTable->resizeColumnsToContents();
-
-    // Impropers Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> impropersUpdater(
-        ui_.MasterImpropersTable, dissolve_.coreData().masterImpropers(), this, &ForcefieldTab::updateImpropersTableRow);
-    ui_.MasterImpropersTable->resizeColumnsToContents();
+    masterBondsTableModel_->reset(dissolve_.coreData().masterBonds());
+    masterAnglesTableModel_->reset(dissolve_.coreData().masterAngles());
+    masterTorsionsTableModel_->reset(dissolve_.coreData().masterTorsions());
+    masterImpropersTableModel_->reset(dissolve_.coreData().masterImpropers());
 
     // AtomTypes Table
     TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
@@ -708,7 +543,6 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *
     PairPotential *pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
     if (pp)
     {
-        printf("IN here?\n");
         auto fullPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uFull(), "Full");
         fullPotential->setColour(StockColours::BlackStockColour);
 
@@ -733,6 +567,7 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
     // Get target PairPotential from the passed widget
     PairPotential *pairPotential =
         w ? ui_.PairPotentialsTable->item(w->row(), 0)->data(Qt::UserRole).value<PairPotential *>() : nullptr;
+
     if (!pairPotential)
         return;
 
@@ -767,169 +602,18 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
     }
 }
 
+// Masterterm table add/remove buttons
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
 void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
-void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra = w ? ui_.MasterBondsTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
-    if (!masterIntra)
-        return;
-
-    // Column of passed item tells us the type of data we need to change
-    switch (w->column())
-    {
-        // Name
-        case (0):
-            masterIntra->setName(qPrintable(w->text()));
-            dissolveWindow_->setModified();
-            break;
-        // Functional Form
-        case (1):
-            masterIntra->setForm(SpeciesBond::bondFunctions().enumeration(qPrintable(w->text())));
-            dissolveWindow_->setModified();
-            break;
-        // Parameters
-        case (2):
-        case (3):
-        case (4):
-        case (5):
-            masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-            dissolveWindow_->setModified();
-            break;
-        default:
-            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
-            break;
-    }
-}
-
 void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
 void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
-void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra =
-        w ? ui_.MasterAnglesTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
-    if (!masterIntra)
-        return;
-
-    // Column of passed item tells us the type of data we need to change
-    switch (w->column())
-    {
-        // Name
-        case (0):
-            masterIntra->setName(qPrintable(w->text()));
-            dissolveWindow_->setModified();
-            break;
-        // Functional Form
-        case (1):
-            masterIntra->setForm(SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text())));
-            dissolveWindow_->setModified();
-            break;
-        // Parameters
-        case (2):
-        case (3):
-        case (4):
-        case (5):
-            masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-            dissolveWindow_->setModified();
-            break;
-        default:
-            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
-            break;
-    }
-}
-
 void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
 void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
-void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra =
-        w ? ui_.MasterTorsionsTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
-    if (!masterIntra)
-        return;
-
-    // Column of passed item tells us the type of data we need to change
-    switch (w->column())
-    {
-        // Name
-        case (0):
-            masterIntra->setName(qPrintable(w->text()));
-            dissolveWindow_->setModified();
-            break;
-        // Functional Form
-        case (1):
-            masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
-            dissolveWindow_->setModified();
-            break;
-        // Parameters
-        case (2):
-        case (3):
-        case (4):
-        case (5):
-            masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-            dissolveWindow_->setModified();
-            break;
-        default:
-            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
-            break;
-    }
-}
-
 void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
 void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
-void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra =
-        w ? ui_.MasterImpropersTable->item(w->row(), 0)->data(Qt::UserRole).value<MasterIntra *>() : nullptr;
-    if (!masterIntra)
-        return;
-
-    // Column of passed item tells us the type of data we need to change
-    switch (w->column())
-    {
-        // Name
-        case (0):
-            masterIntra->setName(qPrintable(w->text()));
-            dissolveWindow_->setModified();
-            break;
-        // Functional Form
-        case (1):
-            masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
-            dissolveWindow_->setModified();
-            break;
-        // Parameters
-        case (2):
-        case (3):
-        case (4):
-        case (5):
-            masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-            dissolveWindow_->setModified();
-            break;
-        default:
-            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
-            break;
-    }
-}
+// Masterterm table data changed
+// void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }
+// void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }
+// void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }
+// void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }

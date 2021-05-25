@@ -25,20 +25,20 @@ class ComboEnumOptionsPopulator
 };
 
 // ComboBox Populator, from templated List using item's name() function
-template <class T, typename U = typename T::value_type> class ComboNameListPopulator
+template <class T> class ComboNameListPopulator
 {
     public:
-    ComboNameListPopulator(QComboBox *combo, T &items, bool append = false)
+    ComboNameListPopulator(QComboBox *combo, const List<T> &items, bool append = false)
     {
         // Clear the combobox
         if (!append)
             combo->clear();
 
         // Add our text items to the list
-        for (auto &item : items)
-            combo->addItem(item->name(), VariantPointer<U>(item));
+        for (T *item = items.first(); item != nullptr; item = item->next())
+            combo->addItem(item->name(), VariantPointer<T>(item));
     }
-    ComboNameListPopulator(QComboBox *combo, const T &items, QString prefix, bool append = false)
+    ComboNameListPopulator(QComboBox *combo, const std::vector<T> &items, QString prefix, bool append = false)
     {
         // Clear the combobox
         if (!append)
@@ -47,6 +47,29 @@ template <class T, typename U = typename T::value_type> class ComboNameListPopul
         // Add our text items to the list
         for (auto &item : items)
             combo->addItem(QString("%1%2").arg(prefix, QString::fromStdString(std::string(item.name()))),
-                           VariantPointer<U>(&item));
+                           VariantPointer<T>(&item));
+    }
+
+    ComboNameListPopulator(QComboBox *combo, const std::vector<std::shared_ptr<T>> &items, QString prefix, bool append = false)
+    {
+        // Clear the combobox
+        if (!append)
+            combo->clear();
+
+        // Add our text items to the list
+        for (auto &item : items)
+            combo->addItem(QString("%1%2").arg(prefix, QString::fromStdString(std::string(item->name()))),
+                           VariantPointer<T>(item.get()));
+    }
+    ComboNameListPopulator(QComboBox *combo, const std::list<T> &items, QString prefix, bool append = false)
+    {
+        // Clear the combobox
+        if (!append)
+            combo->clear();
+
+        // Add our text items to the list
+        for (auto &item : items)
+            combo->addItem(QString("%1%2").arg(prefix, QString::fromStdString(std::string(item.name()))),
+                           VariantPointer<T>(&item));
     }
 };
