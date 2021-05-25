@@ -12,8 +12,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+Q_DECLARE_METATYPE(AtomType *)
 
 ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_)
@@ -231,7 +230,7 @@ void ImportSpeciesDialog::on_AtomTypesPrefixButton_clicked(bool checked)
     auto selectedItems = ui_.AtomTypesList->selectionModel()->selectedRows();
     for (auto &i : selectedItems)
     {
-        auto *at = atomTypesModel_.rawData(i);
+        auto *at = atomTypesModel_.data(i, Qt::UserRole).value<AtomType *>();
         at->setName(fmt::format("{}{}", prefix.toStdString(), at->name()));
     }
 
@@ -249,7 +248,7 @@ void ImportSpeciesDialog::on_AtomTypesSuffixButton_clicked(bool checked)
     auto selectedItems = ui_.AtomTypesList->selectionModel()->selectedRows();
     for (auto &i : selectedItems)
     {
-        auto *at = atomTypesModel_.rawData(i);
+        auto *at = atomTypesModel_.data(i, Qt::UserRole).value<AtomType *>();
         at->setName(fmt::format("{}{}", suffix.toStdString(), at->name()));
     }
 

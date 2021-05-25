@@ -9,7 +9,7 @@
 #include "templates/algorithms.h"
 #include <QInputDialog>
 
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+Q_DECLARE_METATYPE(AtomType *)
 
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp)
     : WizardDialog(parent), dissolve_(dissolve), targetSpecies_(sp), temporaryDissolve_(temporaryCoreData_)
@@ -462,7 +462,7 @@ void AddForcefieldTermsDialog::on_AtomTypesPrefixButton_clicked(bool checked)
     auto selectedItems = ui_.AtomTypesConflictsList->selectionModel()->selectedRows();
     for (auto &i : selectedItems)
     {
-        auto *at = atomTypeModel_.rawData(i);
+        auto *at = atomTypeModel_.data(i, Qt::UserRole).value<AtomType *>();
         at->setName(fmt::format("{}{}", prefix.toStdString(), at->name()));
     }
 
@@ -480,7 +480,7 @@ void AddForcefieldTermsDialog::on_AtomTypesSuffixButton_clicked(bool checked)
     auto selectedItems = ui_.AtomTypesConflictsList->selectionModel()->selectedRows();
     for (auto &i : selectedItems)
     {
-        auto *at = atomTypeModel_.rawData(i);
+        auto *at = atomTypeModel_.data(i, Qt::UserRole).value<AtomType *>();
         at->setName(fmt::format("{}{}", suffix.toStdString(), at->name()));
     }
 

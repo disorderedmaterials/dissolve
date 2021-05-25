@@ -21,13 +21,15 @@ class AtomTypeModel : public QAbstractListModel
     // Icon return function
     std::function<QIcon(const AtomType *atomType)> iconFunction_;
 
+    private:
+    // Return object represented by specified model index
+    AtomType *rawData(const QModelIndex &index) const;
+
     public:
     // Set source AtomType data
     void setData(const std::vector<std::shared_ptr<AtomType>> &species);
     // Set function to return QIcon for item
     void setIconFunction(std::function<QIcon(const AtomType *atomType)> func);
-    // Return object represented by specified model index
-    AtomType *rawData(const QModelIndex &index) const;
 
     /*
      * QAbstractItemModel overrides
