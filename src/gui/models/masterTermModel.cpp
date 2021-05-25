@@ -8,7 +8,6 @@ Q_DECLARE_METATYPE(MasterIntra *);
 
 namespace
 {
-
 bool splitParameters(const QString &params, MasterIntra &destination)
 {
     std::vector<std::string> terms(destination.parameters().size());
@@ -18,7 +17,6 @@ bool splitParameters(const QString &params, MasterIntra &destination)
         destination.setParameter(i, std::stod(terms[i]));
     return true;
 }
-
 constexpr int BASECOLUMNCOUNT = 3;
 } // namespace
 
