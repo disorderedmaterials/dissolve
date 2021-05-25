@@ -504,29 +504,28 @@ double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strateg
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    double totalEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, mol.atoms().begin(), mol.atoms().end(), 0.0, std::plus<double>(), [&](const auto &ii) {
-            auto *cellI = ii->cell();
+    auto totalEnergy = std::accumulate(mol.atoms().begin(), mol.atoms().end(), 0.0, [&](const auto &acc, const auto &i) {
+        auto *cellI = i->cell();
+        // This Atom with its own Cell
+        auto localEnergy = energy(*i, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
-            // This Atom with its own Cell
-            auto localEnergy = energy(*ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+        localEnergy +=
+            dissolve::transform_reduce(ParallelPolicies::par, cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(),
+                                       0.0, std::plus<double>(), [&i, this, strategy](const auto *cell) {
+                                           // Cell neighbours not requiring minimum image
+                                           return energy(*i, cell, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+                                       });
 
-            // Cell neighbours not requiring minimum image
-            localEnergy +=
-                std::accumulate(cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(), 0.0,
-                                [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
-                                    return acc + energy(*ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
-                                });
+        localEnergy += dissolve::transform_reduce(
+            ParallelPolicies::par, cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
+            std::plus<double>(), [&i, this, strategy](const auto *cell) {
+                // Cell neighbours requiring minimum image
+                return energy(*i, cell, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy,
+                              false);
+            });
 
-            // Cell neighbours requiring minimum image
-            localEnergy += std::accumulate(
-                cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
-                [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
-                    return acc + energy(*ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag,
-                                        strategy, false);
-                });
-            return localEnergy;
-        });
+        return acc + localEnergy;
+    });
 
     // Perform relevant sum if requested
     if (performSum)
