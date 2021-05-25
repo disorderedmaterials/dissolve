@@ -47,15 +47,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
         1, new ComboListDelegate(
                this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
 
-    // -- Parameters
-    for (auto n = 2; n < 6; ++n)
-    {
-        ui_.MasterBondsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-        ui_.MasterAnglesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-        ui_.MasterTorsionsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-        ui_.MasterImpropersTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-    }
-
     // Ensure fonts for table headers are set correctly and the headers themselves are visible=
     masterBondsTableModel_ = new MasterTermBondModel(dissolve_.coreData().masterBonds(), parent);
     ui_.MasterBondsTable->setModel(masterBondsTableModel_);
@@ -76,6 +67,15 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.MasterImpropersTable->setModel(masterImpropersTableModel_);
     ui_.MasterImpropersTable->horizontalHeader()->setFont(font());
     ui_.MasterImpropersTable->horizontalHeader()->setVisible(true);
+
+    connect(masterBondsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+            SLOT(setModified()));
+    connect(masterAnglesTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+            SLOT(setModified()));
+    connect(masterTorsionsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+            SLOT(setModified()));
+    connect(masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+            SLOT(setModified()));
 
     /*
      * Atom Types

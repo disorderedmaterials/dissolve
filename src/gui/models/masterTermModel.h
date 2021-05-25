@@ -30,8 +30,6 @@ class MasterTermModel : public QAbstractTableModel
 
     // Set function to return QIcon for item
     void setIconFunction(std::function<QIcon(const MasterIntra *term)> func);
-    // Return object represented by specified model index
-    MasterIntra *rawData(const QModelIndex &index) const;
 
     protected:
     // Source MasterIntra data

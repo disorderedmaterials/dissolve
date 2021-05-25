@@ -2,15 +2,25 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/models/masterTermModel.h"
-#include "classes/atomtype.h"
-#include <iostream>
+#include "templates/algorithms.h"
 
 Q_DECLARE_METATYPE(MasterIntra *);
 
 namespace
 {
-constexpr int BASECOLUMNCOUNT = 3;
+
+bool splitParameters(const QString &params, MasterIntra &destination)
+{
+    std::vector<std::string> terms(destination.parameters().size());
+    if (splitString(params.toStdString(), terms.begin(), terms.size()) != terms.size())
+        return false;
+    for (int i = 0; i < terms.size(); ++i)
+        destination.setParameter(i, std::stod(terms[i]));
+    return true;
 }
+
+constexpr int BASECOLUMNCOUNT = 3;
+} // namespace
 
 MasterTermModel::MasterTermModel(std::vector<std::shared_ptr<MasterIntra>> intras, QObject *parent)
     : QAbstractTableModel(parent), intras_(std::move(intras))
@@ -18,8 +28,6 @@ MasterTermModel::MasterTermModel(std::vector<std::shared_ptr<MasterIntra>> intra
 }
 // Set function to return QIcon for item
 void MasterTermModel::setIconFunction(std::function<QIcon(const MasterIntra *term)> func) { iconFunction_ = func; }
-
-MasterIntra *MasterTermModel::rawData(const QModelIndex &index) const { return intras_[index.row()].get(); }
 
 /*
  * QAbstractItemModel overrides
@@ -74,15 +82,17 @@ QVariant MasterTermBondModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
-    auto &item = intras_[index.row()];
+    auto &masterIntra = intras_[index.row()];
 
     switch (index.column())
     {
         // Name
         case 0:
-            return QString::fromStdString(std::string(item->name()));
+            return QString::fromStdString(std::string(masterIntra->name()));
         case 1:
-            return QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(item->form())));
+            return QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(masterIntra->form())));
+        case 2:
+            return QString::fromStdString(joinStrings(masterIntra->parameters()));
         default:
             return QVariant();
     }
@@ -95,15 +105,16 @@ bool MasterTermBondModel::setData(const QModelIndex &index, const QVariant &valu
     if (role != Qt::EditRole)
         return false;
 
-    auto *masterIntra = rawData(index);
+    auto &masterIntra = intras_[index.row()];
+
     switch (index.column())
     {
         // Name
-        case (0):
+        case 0:
             masterIntra->setName(value.toString().toStdString());
             break;
         // Parameters
-        case (1):
+        case 1:
             try
             {
                 SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
@@ -115,8 +126,9 @@ bool MasterTermBondModel::setData(const QModelIndex &index, const QVariant &valu
                 return false;
             }
             break;
-        case (2):
-            masterIntra->setParameter(0, value.toDouble());
+        case 2:
+            if (!splitParameters(value.toString(), *masterIntra))
+                return false;
             break;
         default:
             return false;
@@ -137,14 +149,16 @@ QVariant MasterTermAngleModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
-    auto &item = intras_[index.row()];
+    auto &masterIntra = intras_[index.row()];
     switch (index.column())
     {
         // Name
         case 0:
-            return QString::fromStdString(std::string(item->name()));
+            return QString::fromStdString(std::string(masterIntra->name()));
         case 1:
-            return QString::fromStdString(std::string(SpeciesAngle::angleFunctions().keywordFromInt(item->form())));
+            return QString::fromStdString(std::string(SpeciesAngle::angleFunctions().keywordFromInt(masterIntra->form())));
+        case 2:
+            return QString::fromStdString(joinStrings(masterIntra->parameters()));
         default:
             return QVariant();
     }
@@ -156,15 +170,15 @@ bool MasterTermAngleModel::setData(const QModelIndex &index, const QVariant &val
     if (role != Qt::EditRole)
         return false;
 
-    auto *masterIntra = rawData(index);
+    auto &masterIntra = intras_[index.row()];
     switch (index.column())
     {
         // Name
-        case (0):
+        case 0:
             masterIntra->setName(value.toString().toStdString());
             break;
         // Parameters
-        case (1):
+        case 1:
             try
             {
                 auto bf = SpeciesAngle::angleFunctions().enumeration(value.toString().toStdString());
@@ -176,8 +190,9 @@ bool MasterTermAngleModel::setData(const QModelIndex &index, const QVariant &val
                 return false;
             }
             break;
-        case (2):
-            masterIntra->setParameter(0, value.toDouble());
+        case 2:
+            if (!splitParameters(value.toString(), *masterIntra))
+                return false;
             break;
         default:
             return false;
@@ -198,14 +213,16 @@ QVariant MasterTermTorsionModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
-    auto &item = intras_[index.row()];
+    auto &masterIntra = intras_[index.row()];
     switch (index.column())
     {
         // Name
         case 0:
-            return QString::fromStdString(std::string(item->name()));
+            return QString::fromStdString(std::string(masterIntra->name()));
         case 1:
-            return QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(item->form())));
+            return QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(masterIntra->form())));
+        case 2:
+            return QString::fromStdString(joinStrings(masterIntra->parameters()));
         default:
             return QVariant();
     }
@@ -217,15 +234,15 @@ bool MasterTermTorsionModel::setData(const QModelIndex &index, const QVariant &v
     if (role != Qt::EditRole)
         return false;
 
-    auto *masterIntra = rawData(index);
+    auto &masterIntra = intras_[index.row()];
     switch (index.column())
     {
         // Name
-        case (0):
+        case 0:
             masterIntra->setName(value.toString().toStdString());
             break;
         // Parameters
-        case (1):
+        case 1:
             try
             {
                 auto bf = SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
@@ -237,8 +254,9 @@ bool MasterTermTorsionModel::setData(const QModelIndex &index, const QVariant &v
                 return false;
             }
             break;
-        case (2):
-            masterIntra->setParameter(0, value.toDouble());
+        case 2:
+            if (!splitParameters(value.toString(), *masterIntra))
+                return false;
             break;
         default:
             return false;
