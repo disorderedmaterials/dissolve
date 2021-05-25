@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/species.h"
+#include "gui/models/atomTypeModel.h"
 #include "gui/models/xmlAngleModel.h"
 #include "gui/models/xmlAtomModel.h"
 #include "gui/models/xmlBondModel.h"
@@ -29,9 +30,6 @@ class ImportLigParGenDialog : public WizardDialog
     private:
     Ui::ImportLigParGenDialog ui_;
     XmlTreeModel ff_;
-    std::vector<int> xyzClassIDs_;
-    Species importedSpecies_;
-    std::shared_ptr<Forcefield> importedForcefield_;
 
     /*
      * Data
@@ -39,6 +37,14 @@ class ImportLigParGenDialog : public WizardDialog
     private:
     // Main Dissolve object
     Dissolve &dissolve_;
+    // Temporary core data
+    CoreData temporaryCoreData_;
+    // Imported species (if any)
+    Species *importedSpecies_;
+    // Imported forcefield
+    std::shared_ptr<Forcefield> importedForcefield_;
+    // Class IDs for imported species atoms
+    std::vector<int> xyzClassIDs_;
 
     /*
      * Wizard
@@ -78,6 +84,17 @@ class ImportLigParGenDialog : public WizardDialog
     void on_InputXMLButton_clicked(bool checked);
     void on_InputXYZEdit_textChanged(QString text);
     void on_InputXYZButton_clicked(bool checked);
+
+    /*
+     * Atom Types
+     */
+    private:
+    // Atom types model
+    AtomTypeModel atomTypeModel_;
+
+    private slots:
+    void on_SimplifyAtomTypesGroup_clicked(bool checked);
+    void on_ReduceToMasterTermsGroup_clicked(bool checked);
 
     /*
      * Apply Forcefield

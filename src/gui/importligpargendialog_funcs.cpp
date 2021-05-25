@@ -9,14 +9,18 @@
 #include <pugixml.hpp>
 
 ImportLigParGenDialog::ImportLigParGenDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), ff_(dissolve), dissolve_(dissolve)
+    : WizardDialog(parent), ff_(dissolve), dissolve_(dissolve), importedSpecies_(nullptr), importedForcefield_(nullptr)
 {
     ui_.setupUi(this);
 
-    importedForcefield_ = nullptr;
+    // Create a temporary species to use when importing
+    importedSpecies_ = temporaryCoreData_.addSpecies();
 
     // Set model for ff terms tree
     ui_.xmlTree->setModel(&ff_);
+
+    // Set model for the atom type list
+    ui_.AtomTypeList->setModel(&atomTypeModel_);
 
     // Register pages with the wizard
     registerPage(ImportLigParGenDialog::SelectFilesPage, "Choose XML and/or XYZ Files");
@@ -42,16 +46,6 @@ bool ImportLigParGenDialog::progressionAllowed(int index) const
         case (ImportLigParGenDialog::SelectFilesPage):
             return (((!ui_.InputXMLEdit->text().isEmpty()) && QFile::exists(ui_.InputXMLEdit->text())) ||
                     ((!ui_.InputXYZEdit->text().isEmpty()) && QFile::exists(ui_.InputXYZEdit->text())));
-        case (ImportLigParGenDialog::ApplyForcefieldPage):
-            if (importedForcefield_)
-            {
-                CoreData coreDataDummy;
-                Species speciesDummy;
-                speciesDummy.copyBasic(&importedSpecies_);
-                return applyForcefield(coreDataDummy, &speciesDummy);
-            }
-            else
-                return false;
         default:
             break;
     }
@@ -67,37 +61,55 @@ bool ImportLigParGenDialog::prepareForNextPage(int currentIndex)
     switch (currentIndex)
     {
         case (ImportLigParGenDialog::SelectFilesPage):
-            // Check that the XML exists and and can be read in successfully
-            if (doc.load_file(ui_.InputXMLEdit->text().toStdString().c_str()))
-            {
-                ff_.resetXml();
-                ff_.readFile(doc.root());
-                ui_.xmlTree->expandAll();
-                for (int i = 0; i < ff_.columnCount(QModelIndex()); ++i)
-                    ui_.xmlTree->resizeColumnToContents(i);
-                ui_.xmlTree->collapseAll();
+            importedSpecies_->clear();
+            temporaryCoreData_.clearAtomTypes();
+            temporaryCoreData_.clearMasterTerms();
+            ui_.SpeciesView->setSpecies(nullptr);
 
-                if (!ff_.isValid())
-                    return Messenger::error("Failed to parse XML file '{}'.\n", ui_.InputXMLEdit->text().toStdString().c_str());
+            // Check that any specified XML exists and and can be read in successfully
+            if (!ui_.InputXMLEdit->text().isEmpty())
+            {
+                if (doc.load_file(ui_.InputXMLEdit->text().toStdString().c_str()))
+                {
+                    ff_.resetXml();
+                    ff_.readFile(doc.root());
+                    ui_.xmlTree->expandAll();
+                    for (int i = 0; i < ff_.columnCount(QModelIndex()); ++i)
+                        ui_.xmlTree->resizeColumnToContents(i);
+                    ui_.xmlTree->collapseAll();
+
+                    if (!ff_.isValid())
+                        return Messenger::error("Failed to parse XML file '{}'.\n",
+                                                ui_.InputXMLEdit->text().toStdString().c_str());
+                }
             }
 
             // Check that the XYZ file can be loaded
-            try
+            if (!ui_.InputXYZEdit->text().isEmpty())
             {
-                if (!importLigParGenXYZ(ui_.InputXYZEdit->text().toStdString()))
+                try
+                {
+                    if (!importLigParGenXYZ(ui_.InputXYZEdit->text().toStdString()))
+                        return Messenger::error("Failed to load XYZ file '{}'.\n", ui_.InputXYZEdit->text().toStdString());
+                }
+                catch (...)
+                {
                     return Messenger::error("Failed to load XYZ file '{}'.\n", ui_.InputXYZEdit->text().toStdString());
-            }
-            catch (...)
-            {
-                return Messenger::error("Failed to load XYZ file '{}'.\n", ui_.InputXYZEdit->text().toStdString());
-            }
+                }
 
-            ui_.SpeciesView->setSpecies(&importedSpecies_);
+                ui_.SpeciesView->setSpecies(importedSpecies_);
+            }
 
             return true;
         case (ImportLigParGenDialog::PreviewTermsPage):
             // Get the data as a Dissolve forcefield
             importedForcefield_ = ff_.toForcefield();
+
+            // Apply forcefield terms to the model
+            if (!applyForcefield(temporaryCoreData_, importedSpecies_))
+                return false;
+
+            atomTypeModel_.setData(temporaryCoreData_.atomTypes());
             break;
         default:
             break;
@@ -112,8 +124,8 @@ std::optional<int> ImportLigParGenDialog::determineNextPage(int currentIndex)
     switch (currentIndex)
     {
         case (ImportLigParGenDialog::SelectFilesPage):
-            return importedSpecies_.nAtoms() > 0 ? ImportLigParGenDialog::PreviewSpeciesPage
-                                                 : ImportLigParGenDialog::PreviewTermsPage;
+            return importedSpecies_ && importedSpecies_->nAtoms() > 0 ? ImportLigParGenDialog::PreviewSpeciesPage
+                                                                      : ImportLigParGenDialog::PreviewTermsPage;
         case (ImportLigParGenDialog::PreviewSpeciesPage):
             if (ff_.isValid())
                 return ImportLigParGenDialog::PreviewTermsPage;
@@ -130,7 +142,7 @@ bool ImportLigParGenDialog::prepareForPreviousPage(int currentIndex)
     switch (currentIndex)
     {
         case (ImportLigParGenDialog::PreviewSpeciesPage):
-            importedSpecies_.clear();
+            importedSpecies_->clear();
             ui_.SpeciesView->setSpecies(nullptr);
         case (ImportLigParGenDialog::PreviewTermsPage):
             ff_.resetXml();
@@ -145,18 +157,11 @@ bool ImportLigParGenDialog::prepareForPreviousPage(int currentIndex)
 // Perform any final actions before the wizard is closed
 void ImportLigParGenDialog::finalise()
 {
-    // Assign forcefield to species
-    if (importedForcefield_)
-    {
-        CoreData coreData;
-        applyForcefield(coreData, &importedSpecies_);
-    }
-
     // Copy the species to the main Dissolve instance and set its new name
-    if (importedSpecies_.nAtoms() > 0)
+    if (importedSpecies_ && importedSpecies_->nAtoms() > 0)
     {
-        auto *sp = dissolve_.copySpecies(&importedSpecies_);
-        sp->setName("Mr Species");
+        auto *sp = dissolve_.copySpecies(importedSpecies_);
+        sp->setName("LigParGen Species");
     }
 
     // Register forcefield?
@@ -171,7 +176,6 @@ void ImportLigParGenDialog::finalise()
 // Import LigParGen-style XYZ data
 bool ImportLigParGenDialog::importLigParGenXYZ(std::string filename)
 {
-    importedSpecies_.clear();
     xyzClassIDs_.clear();
     std::vector<std::vector<int>> connectivity;
 
@@ -190,7 +194,7 @@ bool ImportLigParGenDialog::importLigParGenXYZ(std::string filename)
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("LigParGen XYZ file ended abruptly at atom {}.\n", n + 1);
         auto Z = Elements::element(parser.argsv(1));
-        importedSpecies_.addAtom(Z, parser.arg3d(2));
+        importedSpecies_->addAtom(Z, parser.arg3d(2));
         xyzClassIDs_.push_back(parser.argi(5));
         for (auto i = 6; i < parser.nArgs(); ++i)
             connectivity[n].push_back(parser.argi(i) - 1);
@@ -199,11 +203,11 @@ bool ImportLigParGenDialog::importLigParGenXYZ(std::string filename)
     // Bond atoms according to the connectivity integers we read in
     for (auto i = 0; i < nAtoms; ++i)
         for (auto j : connectivity[i])
-            if (!importedSpecies_.hasBond(i, j))
-                importedSpecies_.addBond(i, j);
+            if (!importedSpecies_->hasBond(i, j))
+                importedSpecies_->addBond(i, j);
 
     // Create higher-order connectivity terms
-    importedSpecies_.updateIntramolecularTerms();
+    importedSpecies_->updateIntramolecularTerms();
 
     return true;
 }
@@ -244,13 +248,34 @@ void ImportLigParGenDialog::on_InputXYZButton_clicked(bool checked)
 }
 
 /*
+ * Atom Types
+ */
+
+void ImportLigParGenDialog::on_SimplifyAtomTypesGroup_clicked(bool checked)
+{
+    // Apply forcefield terms to the model
+    applyForcefield(temporaryCoreData_, importedSpecies_);
+
+    atomTypeModel_.setData(temporaryCoreData_.atomTypes());
+}
+
+void ImportLigParGenDialog::on_ReduceToMasterTermsGroup_clicked(bool checked)
+{
+    // Apply forcefield terms to the model
+    applyForcefield(temporaryCoreData_, importedSpecies_);
+
+    atomTypeModel_.setData(temporaryCoreData_.atomTypes());
+}
+
+/*
  * Apply Forcefield
  */
 
 // Attempt to manually apply our forcefield to the specified species
 bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) const
 {
-    coreData.clear();
+    coreData.clearAtomTypes();
+    coreData.clearMasterTerms();
     sp->clearAtomTypes();
 
     // Assign atomic charges from the original forcefield, based on the element/class atom types
@@ -266,6 +291,17 @@ bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) con
     // Assign intramolecular terms based on the assigned element/classId atom types
     if (!importedForcefield_->assignIntramolecular(sp))
         return false;
+
+    // Simplify atom types?
+    if (ui_.SimplifyAtomTypesGroup->isChecked())
+    {
+        sp->simplifyAtomTypes();
+        coreData.removeUnusedAtomTypes();
+    }
+
+    // Reduce to master terms?
+    if (ui_.ReduceToMasterTermsGroup->isChecked())
+        sp->reduceToMasterTerms(coreData);
 
     return true;
 }
