@@ -139,11 +139,10 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     {
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        // ui_.AtomTypesTable->setItem(row, 0, item);
+        ui_.AtomTypesTable->setItem(row, 0, item);
     }
     else
-        int a = 3;
-    // item = ui_.AtomTypesTable->item(row, 0);
+        item = ui_.AtomTypesTable->item(row, 0);
     item->setText(QString::fromStdString(std::string(atomType->name())));
 
     // Target element
@@ -152,7 +151,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
         item->setFlags(Qt::NoItemFlags);
-        // ui_.AtomTypesTable->setItem(row, 1, item);
+        ui_.AtomTypesTable->setItem(row, 1, item);
     }
     else
         int a = 3;
@@ -164,11 +163,10 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     {
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        // ui_.AtomTypesTable->setItem(row, 2, item);
+        ui_.AtomTypesTable->setItem(row, 2, item);
     }
     else
-        int a = 3;
-    // item = ui_.AtomTypesTable->item(row, 2);
+        item = ui_.AtomTypesTable->item(row, 2);
     item->setText(QString::number(atomType->charge()));
 
     // Short-Range Form
@@ -176,11 +174,10 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     {
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        // ui_.AtomTypesTable->setItem(row, 3, item);
+        ui_.AtomTypesTable->setItem(row, 3, item);
     }
     else
-        int a = 3;
-    // item = ui_.AtomTypesTable->item(row, 3);
+        item = ui_.AtomTypesTable->item(row, 3);
     item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()))));
 
     // Parameters
@@ -191,11 +188,10 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-            // ui_.AtomTypesTable->setItem(row, col++, item);
+            ui_.AtomTypesTable->setItem(row, col++, item);
         }
         else
-            int a = 3;
-        // item = ui_.AtomTypesTable->item(row, col++);
+            item = ui_.AtomTypesTable->item(row, col++);
         item->setText(QString::number(x));
     }
 }
@@ -611,9 +607,3 @@ void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked) { Messen
 void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-
-// Masterterm table data changed
-// void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }
-// void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }
-// void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }
-// void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w) { dissolveWindow_->setModified(); }

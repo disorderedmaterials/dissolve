@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
-
-#include "classes/species.h"
 #include "gui/models/masterTermModel.h"
 #include "main/dissolve.h"
 #include <QTableView>
@@ -58,6 +56,9 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
     EXPECT_TRUE(model.setData(model.index(0, 1), "EPSR"));
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "EPSR");
 
+    EXPECT_FALSE(model.setData(model.index(0, 1), "NON_EXISTING_ENUM"));
+    EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "EPSR");
+
     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
     EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3.0, 4.0");
 }
@@ -94,6 +95,9 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
     EXPECT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "TEST");
 
     EXPECT_TRUE(model.setData(model.index(0, 1), "Cos"));
+    EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos");
+
+    EXPECT_FALSE(model.setData(model.index(0, 1), "NON_EXISTING_ENUM"));
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos");
 
     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
@@ -135,6 +139,9 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
     EXPECT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "TEST");
 
     EXPECT_TRUE(model.setData(model.index(0, 1), "Cos3C"));
+    EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos3C");
+
+    EXPECT_FALSE(model.setData(model.index(0, 1), "NON_EXISTING_ENUM"));
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos3C");
 
     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4, 5"));
