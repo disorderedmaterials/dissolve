@@ -624,10 +624,9 @@ void AddForcefieldTermsDialog::on_MasterTermsPrefixButton_clicked(bool checked)
         return;
 
     QList<QTreeWidgetItem *> selectedItems = ui_.MasterTermsTree->selectedItems();
-    QList<QTreeWidgetItem *>::iterator i;
-    for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
+    for (auto &i : selectedItems)
     {
-        MasterIntra *intra = VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
+        MasterIntra *intra = VariantPointer<MasterIntra>(i->data(0, Qt::UserRole));
         intra->setName(fmt::format("{}{}", qPrintable(prefix), intra->name()));
     }
 
@@ -643,10 +642,9 @@ void AddForcefieldTermsDialog::on_MasterTermsSuffixButton_clicked(bool checked)
         return;
 
     QList<QTreeWidgetItem *> selectedItems = ui_.MasterTermsTree->selectedItems();
-    QList<QTreeWidgetItem *>::iterator i;
-    for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
+    for (auto &i : selectedItems)
     {
-        MasterIntra *intra = VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
+        MasterIntra *intra = VariantPointer<MasterIntra>(i->data(0, Qt::UserRole));
         intra->setName(fmt::format("{}{}", intra->name(), qPrintable(suffix)));
     }
 

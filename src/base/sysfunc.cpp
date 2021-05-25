@@ -3,6 +3,7 @@
 
 #include "base/sysfunc.h"
 #include "base/messenger.h"
+#include "templates/algorithms.h"
 #include <cctype>
 #include <ctime>
 #include <fstream>
@@ -303,18 +304,10 @@ std::string DissolveSys::replace(const std::string_view source, const std::strin
 std::vector<double> DissolveSys::splitStringToDoubles(std::string str, std::string_view delim)
 {
     std::vector<double> values;
-    std::string::size_type found = 0, index = 0;
-    while (true)
-    {
-        found = str.find(delim, index);
-        if (found == std::string::npos)
-        {
-            values.emplace_back(std::stod(str.substr(index)));
-            return values;
-        }
-        values.emplace_back(std::stod(str.substr(index, found - index)));
-        index = found + delim.size();
-    }
+    std::vector<string> terms;
+    values.resize(splitString(str, std::back_inserter(terms), INT_MAX, std::string(delim)));
+    std::transform(terms.begin(), terms.end(), values.begin(), [](const auto &term) { return std::stod(term); });
+    return values;
 }
 
 /*
