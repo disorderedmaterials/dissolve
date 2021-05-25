@@ -19,7 +19,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
                        Species *species)
     : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this),
       atoms_(species->atoms(), dissolve), angles_(species->angles(), dissolve), bonds_(species->bonds(), dissolve),
-      torsions_(species->torsions(), dissolve), impropers_(species->impropers(), dissolve)
+      torsions_(species->torsions(), dissolve), impropers_(species->impropers(), dissolve), isos_(*species)
 {
     ui_.setupUi(this);
 
@@ -49,6 +49,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
                this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()),
                dissolve.masterImpropers()));
     // -- Isotopologues Tree
+    ui_.IsotopologuesTree->setModel(&isos_);
     ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
     ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
@@ -95,6 +96,12 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
     connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
     connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+
+    connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(updateIsotopologuesTab()));
+
+    connect(ui_.IsotopologueAddButton, SIGNAL(clicked()), &isos_, SLOT(addIso()));
 }
 
 SpeciesTab::~SpeciesTab()

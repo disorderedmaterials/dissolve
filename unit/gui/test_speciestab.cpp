@@ -6,10 +6,13 @@
 #include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesImproperModel.h"
+#include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesTorsionModel.h"
 #include "main/dissolve.h"
 #include <gtest/gtest.h>
 #include <vector>
+
+Q_DECLARE_METATYPE(Sears91::Isotope);
 
 namespace UnitTest
 {
@@ -241,6 +244,48 @@ TEST_F(SpeciesTabTest, Impropers)
 
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
     EXPECT_EQ(improper.data(improper.index(3, 5)).toString().toStdString(), "4.606, 2.0, 180.0, 1.0");
+}
+
+TEST_F(SpeciesTabTest, Isotopologues)
+{
+
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    dissolve.clear();
+    dissolve.loadInput("energyforce1/water3000-full.txt");
+    auto &species = dissolve.species()[0];
+
+    SpeciesIsoModel isos(*species);
+
+    // Test the top level branches of the tree
+    EXPECT_EQ(isos.columnCount(), 3);
+    EXPECT_EQ(isos.rowCount(), 1);
+    EXPECT_EQ(isos.data(isos.index(0, 1)), QVariant());
+    auto naturalIndex = isos.index(0, 0);
+    EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Natural1");
+    EXPECT_TRUE(isos.setData(naturalIndex, "Example"));
+    EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Example");
+    EXPECT_TRUE(isos.hasChildren(naturalIndex));
+    EXPECT_EQ(naturalIndex.internalId(), 0);
+    EXPECT_EQ(isos.rowCount(naturalIndex), 2);
+    EXPECT_EQ(isos.index(0, 1, naturalIndex).internalId(), 1);
+    EXPECT_EQ(isos.index(1, 2, naturalIndex).internalId(), 1);
+    EXPECT_EQ(isos.parent(isos.index(1, 2, naturalIndex)), naturalIndex);
+
+    // Check Display
+    EXPECT_EQ(isos.data(isos.index(0, 1, naturalIndex)).toString().toStdString(), "OW");
+    EXPECT_EQ(isos.data(isos.index(0, 2, naturalIndex)).toString().toStdString(), "Natural (bc = 5.803)");
+    EXPECT_EQ(isos.data(isos.index(1, 1, naturalIndex)).toString().toStdString(), "HW");
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "Natural (bc = -3.739)");
+
+    // Update Isotope
+    EXPECT_TRUE(isos.setData(isos.index(1, 2, naturalIndex), QVariant::fromValue(Sears91::isotope(Elements::Element(1), 2)),
+                             Qt::UserRole));
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "2 (bc = 6.671)");
+    EXPECT_FALSE(isos.setData(isos.index(1, 2, naturalIndex), QVariant::fromValue(Sears91::isotope(Elements::Element(16), 33)),
+                              Qt::UserRole));
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "2 (bc = 6.671)");
 }
 
 } // namespace UnitTest

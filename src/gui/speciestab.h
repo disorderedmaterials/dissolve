@@ -12,6 +12,7 @@
 #include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesImproperModel.h"
+#include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesTorsionModel.h"
 #include "gui/ui_speciestab.h"
 
@@ -42,6 +43,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     SpeciesBondModel bonds_;
     SpeciesTorsionModel torsions_;
     SpeciesImproperModel impropers_;
+    SpeciesIsoModel isos_;
 
     public slots:
     // Update controls in tab
@@ -96,22 +98,14 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
      * Widget Functions - Isotopologues
      */
     private:
-    // IsotopologuesTree top-level update function
-    void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, const Isotopologue *data,
-                                             bool createItem);
-    // IsotopologuesTree item update function
-    void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<AtomType> item,
-                                          Sears91::Isotope tope, bool createItem);
     // Return currently-selected Isotopologue
     Isotopologue *currentIsotopologue();
 
     private slots:
-    void on_IsotopologueAddButton_clicked(bool checked);
     void on_IsotopologueRemoveButton_clicked(bool checked);
     void on_IsotopologueGenerateButton_clicked(bool checked);
     void on_IsotopologueExpandAllButton_clicked(bool checked);
     void on_IsotopologueCollapseAllButton_clicked(bool checked);
-    void on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int column);
 
     public slots:
     // Update Isotopologues tab
