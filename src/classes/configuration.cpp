@@ -31,7 +31,7 @@ void Configuration::clear()
     // Clear generated content
     empty();
 
-    // Reset composition
+    // Reset size factors
     requestedSizeFactor_ = 1.0;
     appliedSizeFactor_ = 1.0;
 
@@ -132,7 +132,6 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
         empty();
 
     appliedSizeFactor_ = 1.0;
-    requestedSizeFactor_ = 1.0;
 
     // If the Configuration is currently empty, run the generator Procedure and potentially load coordinates from file
     if (nAtoms() == 0)

@@ -17,7 +17,6 @@ void Configuration::empty()
     box_ = std::make_unique<CubicBox>(1.0);
     cells_.clear();
     appliedSizeFactor_ = 1.0;
-    requestedSizeFactor_ = 1.0;
     speciesPopulations_.clear();
 
     ++contentsVersion_;
