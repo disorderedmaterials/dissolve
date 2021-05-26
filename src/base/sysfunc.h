@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string_view>
+#include <vector>
 
 // System Functions
 class DissolveSys
@@ -58,6 +59,8 @@ class DissolveSys
     static bool isNumber(std::string_view text, bool &isFloatingPoint);
     // Replace all occurrences of search string with replace string
     static std::string replace(const std::string_view source, const std::string_view search, const std::string_view replace);
+    // Split a string over a delimiter, returning a vector of converted double values
+    static std::vector<double> splitStringToDoubles(std::string str, std::string_view delim = ", ");
 
     /*
      * Files

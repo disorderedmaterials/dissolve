@@ -51,19 +51,15 @@ void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 {
-    static ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
-
-    importSpeciesDialog.reset();
+    ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
 
     if (importSpeciesDialog.exec() == QDialog::Accepted)
     {
-        auto *sp = importSpeciesDialog.importSpecies(dissolve_);
-
         // Fully update GUI
         setModified();
         fullUpdate();
 
-        ui_.MainTabs->setCurrentTab(sp);
+        ui_.MainTabs->setCurrentTab(dissolve_.species().back().get());
     }
 }
 
@@ -114,15 +110,10 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     if (!species)
         return;
 
-    static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
-
-    addForcefieldTermsDialog.reset();
-    addForcefieldTermsDialog.setTargetSpecies(species);
+    AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_, species);
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
     {
-        addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
-
         // Fully update GUI
         setModified();
         fullUpdate();

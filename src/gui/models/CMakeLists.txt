@@ -1,4 +1,5 @@
 set(models_MOC_HDRS
+    atomTypeModel.h
     braggReflectionFilterProxy.h
     braggReflectionModel.h
     dataManagerReferencePointModel.h
@@ -23,6 +24,7 @@ set(models_MOC_HDRS
 qt5_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
 set(models_SRCS
+    atomTypeModel.cpp
     braggReflectionFilterProxy.cpp
     braggReflectionModel.cpp
     dataManagerReferencePointModel.cpp
@@ -47,6 +49,7 @@ set(models_SRCS
 
 qt_wrap_cpp(
   models_SRCS
+  atomTypeModel.h
   braggReflectionModel.h
   dataManagerReferencePointModel.h
   dataManagerSimulationModel.h
@@ -72,7 +75,6 @@ include_directories(models PUBLIC ${CONAN_INCLUDE_DIRS_PUGIXML} PRIVATE ${PROJEC
 target_include_directories(
   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 )
-# target_link_libraries(models keywordwidgets charts delegates widgets components)
 
 target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
 

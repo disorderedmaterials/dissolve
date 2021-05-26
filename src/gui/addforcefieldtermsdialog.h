@@ -3,30 +3,113 @@
 
 #pragma once
 
+#include "gui/models/atomTypeModel.h"
 #include "gui/ui_addforcefieldtermsdialog.h"
-#include <QDialog>
-
-// Forward Declarations
-class Dissolve;
+#include "gui/wizard.hui"
+#include "main/dissolve.h"
 
 // Add Forcefield Terms Dialog
-class AddForcefieldTermsDialog : public QDialog
+class AddForcefieldTermsDialog : public WizardDialog
 {
     Q_OBJECT
 
     public:
-    AddForcefieldTermsDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
-    ~AddForcefieldTermsDialog();
+    AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp);
+    ~AddForcefieldTermsDialog() = default;
 
     private:
     // Main form declaration
     Ui::AddForcefieldTermsDialog ui_;
+    // Model for atom type conflicts / renaming
+    AtomTypeModel atomTypeModel_;
 
-    public:
-    // Reset, ready for adding a new Configuration
-    void reset();
-    // Set target Species that we are acquiring forcefield terms for
-    void setTargetSpecies(Species *sp);
-    // Apply Forcefield terms to the targetted Species within the specified Dissolve object
-    bool applyForcefieldTerms(Dissolve &dissolve);
+    /*
+     * Data
+     */
+    private:
+    // Main instance of Dissolve that we're using as a reference
+    Dissolve &dissolve_;
+    // Temporary core data for applying Forcefield terms
+    CoreData temporaryCoreData_;
+    // Temporary Dissolve reference for creating / importing layers
+    Dissolve temporaryDissolve_;
+    // Target Species that we are acquiring forcefield terms for
+    Species *targetSpecies_;
+    // Species pointer with newly-applied Forcefield terms
+    Species *modifiedSpecies_;
+
+    /*
+     * Wizard
+     */
+    private:
+    // Pages Enum
+    enum WizardPage
+    {
+        SelectForcefieldPage,   /* Select Forcefield to apply to Species */
+        AtomTypesPage,          /* AtomTypes page - select how / what to assign */
+        AtomTypesConflictsPage, /* AtomTypes conflicts page - check / re-map AtomTypes */
+        IntramolecularPage,     /* Select intramolecular terms to generate */
+        MasterTermsPage         /* MasterTerms page - check / re-map MasterTerms */
+    };
+
+    protected:
+    // Return whether progression to the next page from the current page is allowed
+    bool progressionAllowed(int index) const override;
+    // Perform any necessary actions before moving to the next page
+    bool prepareForNextPage(int currentIndex) override;
+    // Determine next page for the current page, based on current data
+    std::optional<int> determineNextPage(int currentIndex) override;
+    // Perform any necessary actions before moving to the previous page
+    bool prepareForPreviousPage(int currentIndex) override;
+    // Perform any final actions before the wizard is closed
+    void finalise() override;
+
+    /*
+     * Select Forcefield Page
+     */
+    private slots:
+    void on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid);
+    void on_ForcefieldWidget_forcefieldDoubleClicked();
+
+    /*
+     * AtomTypes Page
+     */
+    private:
+    // Original atom type names assigned to species
+    std::vector<std::string> originalAtomTypeNames_;
+    // Check for atom type naming conflicts
+    void checkAtomTypeConflicts();
+
+    private slots:
+    void atomTypeConflictsSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+    void atomTypeConflictsDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+    void on_AtomTypesPrefixButton_clicked(bool checked);
+    void on_AtomTypesSuffixButton_clicked(bool checked);
+
+    /*
+     * Intramolecular Page
+     */
+    private slots:
+    void on_IntramolecularTermsAssignAllRadio_clicked(bool checked);
+    void on_IntramolecularTermsAssignSelectionRadio_clicked(bool checked);
+    void on_IntramolecularTermsAssignNoneRadio_clicked(bool checked);
+    void on_NoMasterTermsCheck_clicked(bool checked);
+
+    /*
+     * MasterTerms Page
+     */
+    private:
+    // Parental tree widgets for master terms
+    QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_, *masterImproperItemParent_;
+
+    private:
+    // Row update function for MasterTermsTree
+    void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra, bool createItem);
+    void updateMasterTermsPage();
+
+    private slots:
+    void on_MasterTermsTree_itemSelectionChanged();
+    void masterTermsTreeEdited(QWidget *lineEdit);
+    void on_MasterTermsPrefixButton_clicked(bool checked);
+    void on_MasterTermsSuffixButton_clicked(bool checked);
 };

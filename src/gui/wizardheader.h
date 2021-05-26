@@ -5,11 +5,8 @@
 
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
-// Wizard Widget Footer
-class WizardWidgetFooter : public QWidget
+// Wizard Dialog Header
+class WizardHeader : public QWidget
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
