@@ -74,7 +74,7 @@ const SpeciesAtom *Atom::speciesAtom() const { return speciesAtom_; }
 void Atom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ = std::move(mol); }
 
 // Return Molecule in which this Atom exists
-std::shared_ptr<Molecule> Atom::molecule() const { return molecule_; }
+const std::shared_ptr<Molecule> &Atom::molecule() const { return molecule_; }
 
 // Set cell in which the atom exists
 void Atom::setCell(Cell *cell) { cell_ = cell; }
