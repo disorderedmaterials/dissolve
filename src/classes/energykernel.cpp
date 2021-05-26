@@ -505,43 +505,55 @@ double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strateg
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    const Cell *lastCell = nullptr;
-    std::vector<Cell *> allCells;
+    std::vector<const Cell *> allCells;
 
-    auto totalEnergy = std::accumulate(mol.atoms().begin(), mol.atoms().end(), 0.0, [&](const auto &acc, const auto &i) {
-        auto *cellI = i->cell();
-        if (cellI != lastCell)
-        {
-            allCells.resize(cellI->allCellNeighbours().size() + 1, nullptr);
-            std::copy(cellI->allCellNeighbours().begin(), cellI->allCellNeighbours().end(), allCells.begin());
-            allCells[cellI->allCellNeighbours().size()] = cellI;
-        }
+    // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
+    std::map<Cell *, std::vector<const Atom *>> locationMap;
+    for (auto &i : mol.atoms())
+        locationMap[i->cell()].push_back(i.get());
 
-        // All cell neighbours (all treated with minimum image)
-        auto localEnergy = dissolve::transform_reduce(
-            ParallelPolicies::par, allCells.begin(), allCells.end(), 0.0, std::plus<double>(),
-            [&i, cellI, this, strategy](const auto *cell) {
-                const auto &ii = *i.get();
-                auto mimRequired = cell->mimRequired(cellI);
-                return std::accumulate(
-                    cell->atoms().begin(), cell->atoms().end(), 0.0, [&ii, mimRequired, this](const auto acc, const auto &j) {
-                        auto &jj = *j.get();
+    auto totalEnergy =
+        std::accumulate(locationMap.begin(), locationMap.end(), 0.0, [&](const auto totalAcc, const auto &location) {
+            const auto *centralCell = location.first;
+            const auto &centralCellAtoms = location.second;
 
-                        // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                        auto rSq = mimRequired ? box_->minimumDistanceSquared(ii.r(), jj.r()) : (ii.r() - jj.r()).magnitudeSq();
-                        if (rSq > cutoffDistanceSquared_)
-                            return acc;
+            // Create list of all cell neighbours (mim or otherwise) *and* the current cell
+            allCells.resize(centralCell->allCellNeighbours().size() + 1, nullptr);
+            std::copy(centralCell->allCellNeighbours().begin(), centralCell->allCellNeighbours().end(), allCells.begin());
+            allCells[centralCell->allCellNeighbours().size()] = centralCell;
 
-                        // Check for atoms in the same species
-                        if (ii.molecule().get() != jj.molecule().get())
-                            return acc + pairPotentialEnergy(ii, jj, sqrt(rSq));
+            // All cell neighbours (all treated with minimum image)
+            auto localEnergy = dissolve::transform_reduce(
+                ParallelPolicies::par, allCells.begin(), allCells.end(), 0.0, std::plus<double>(),
+                [&centralCellAtoms, centralCell, this](const auto *cell) {
+                    auto mimRequired = cell->mimRequired(centralCell);
+                    return std::accumulate(
+                        centralCellAtoms.begin(), centralCellAtoms.end(), 0.0,
+                        [cell, centralCell, mimRequired, this](const auto acc, const auto &i) {
+                            auto &ii = *i;
+                            return acc + std::accumulate(cell->atoms().begin(), cell->atoms().end(), 0.0,
+                                                         [&ii, mimRequired, this](const auto innerAcc, const auto &j) {
+                                                             auto &jj = *j.get();
 
-                        return acc;
-                    });
-            });
+                                                             // Calculate rSquared distance between atoms, and check it against
+                                                             // the stored cutoff distance
+                                                             auto rSq = mimRequired
+                                                                            ? box_->minimumDistanceSquared(ii.r(), jj.r())
+                                                                            : (ii.r() - jj.r()).magnitudeSq();
+                                                             if (rSq > cutoffDistanceSquared_)
+                                                                 return innerAcc;
 
-        return localEnergy;
-    });
+                                                             // Check for atoms in the same species
+                                                             if (ii.molecule().get() != jj.molecule().get())
+                                                                 return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
+
+                                                             return innerAcc;
+                                                         });
+                        });
+                });
+
+            return totalAcc + localEnergy;
+        });
 
     // Perform relevant sum if requested
     if (performSum)
