@@ -10,6 +10,7 @@
 #include "classes/species.h"
 #include "templates/algorithms.h"
 #include <iterator>
+#include <numeric>
 
 EnergyKernel::EnergyKernel(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                            double energyCutoff)
@@ -504,27 +505,42 @@ double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strateg
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
+    const Cell *lastCell = nullptr;
+    std::vector<Cell *> allCells;
+
     auto totalEnergy = std::accumulate(mol.atoms().begin(), mol.atoms().end(), 0.0, [&](const auto &acc, const auto &i) {
         auto *cellI = i->cell();
-        // This Atom with its own Cell
-        auto localEnergy = energy(*i, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+        if (cellI != lastCell)
+        {
+            allCells.resize(cellI->allCellNeighbours().size() + 1, nullptr);
+            std::copy(cellI->allCellNeighbours().begin(), cellI->allCellNeighbours().end(), allCells.begin());
+            allCells[cellI->allCellNeighbours().size()] = cellI;
+        }
 
-        localEnergy +=
-            dissolve::transform_reduce(ParallelPolicies::par, cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(),
-                                       0.0, std::plus<double>(), [&i, this, strategy](const auto *cell) {
-                                           // Cell neighbours not requiring minimum image
-                                           return energy(*i, cell, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
-                                       });
+        // All cell neighbours (all treated with minimum image)
+        auto localEnergy = dissolve::transform_reduce(
+            ParallelPolicies::par, allCells.begin(), allCells.end(), 0.0, std::plus<double>(),
+            [&i, cellI, this, strategy](const auto *cell) {
+                const auto &ii = *i.get();
+                auto mimRequired = cell->mimRequired(cellI);
+                return std::accumulate(
+                    cell->atoms().begin(), cell->atoms().end(), 0.0, [&ii, mimRequired, this](const auto acc, const auto &j) {
+                        auto &jj = *j.get();
 
-        localEnergy += dissolve::transform_reduce(
-            ParallelPolicies::par, cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
-            std::plus<double>(), [&i, this, strategy](const auto *cell) {
-                // Cell neighbours requiring minimum image
-                return energy(*i, cell, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy,
-                              false);
+                        // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+                        auto rSq = mimRequired ? box_->minimumDistanceSquared(ii.r(), jj.r()) : (ii.r() - jj.r()).magnitudeSq();
+                        if (rSq > cutoffDistanceSquared_)
+                            return acc;
+
+                        // Check for atoms in the same species
+                        if (ii.molecule().get() != jj.molecule().get())
+                            return acc + pairPotentialEnergy(ii, jj, sqrt(rSq));
+
+                        return acc;
+                    });
             });
 
-        return acc + localEnergy;
+        return localEnergy;
     });
 
     // Perform relevant sum if requested
