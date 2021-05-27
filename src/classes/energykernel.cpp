@@ -571,10 +571,9 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     int numRows = cellNeighbourArray.size();
     int numColumns = cellNeighbourArray[0].size();
     auto [rowBegin, rowEnd] = chop_range(0, numRows, nChunks, offset);
-    auto [colBegin, colEnd] = chop_range(0, numColumns, nChunks, offset);
 
     totalEnergy += dissolve::tbb_parallel_reduce(
-        dissolve::blocked_range2d<int, int>(rowBegin, rowEnd, colBegin, colEnd), 0.0,
+        dissolve::blocked_range2d<int, int>(rowBegin, rowEnd, 0, numColumns), 0.0,
         [&](dissolve::blocked_range2d<int, int> r, double runningTotal) -> double {
             for (auto i = r.rows().begin(); i != r.rows().end(); ++i)
             {
