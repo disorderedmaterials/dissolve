@@ -104,9 +104,9 @@ ConfigurationTab *MainTabsWidget::configurationTab(QWidget *page)
 }
 
 // Find LayerTab containing specified page widget
-LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
+std::shared_ptr<LayerTab> MainTabsWidget::processingLayerTab(QWidget *page)
 {
-    for (auto *tab = processingLayerTabs_.first(); tab != nullptr; tab = tab->next())
+    for (auto tab : processingLayerTabs_)
         if (tab->page() == page)
             return tab;
 
@@ -279,7 +279,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     while (ModuleLayer *layer = processingLayerIterator.iterate())
     {
         // Loop over existing tabs
-        while (currentTabIndex < processingLayerTabs_.nItems())
+        while (currentTabIndex < processingLayerTabs_.size())
         {
             // If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise,
             // delete it
@@ -287,19 +287,19 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
                 break;
             else
             {
-                allTabs_.remove(processingLayerTabs_[currentTabIndex]);
-                processingLayerTabs_.remove(currentTabIndex);
+                allTabs_.remove(processingLayerTabs_[currentTabIndex].get());
+                processingLayerTabs_.erase(processingLayerTabs_.begin() + currentTabIndex);
             }
         }
 
         // If the current tab index is (now) out of range, add a new one
-        if (currentTabIndex == processingLayerTabs_.nItems())
+        if (currentTabIndex == processingLayerTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
-            LayerTab *newTab = new LayerTab(dissolveWindow, dissolve, this, tabTitle, layer);
-            processingLayerTabs_.own(newTab);
-            allTabs_.append(newTab);
-            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
+            auto newTab = std::make_shared<LayerTab>(dissolveWindow, dissolve, this, tabTitle, layer);
+            processingLayerTabs_.push_back(newTab);
+            allTabs_.append(newTab.get());
+            insertTab(baseIndex + currentTabIndex, newTab.get(), tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             if (layer->enabled())
@@ -337,8 +337,9 @@ void MainTabsWidget::removeByPage(QWidget *page)
     }
     else if (processingLayerTab(page))
     {
-        allTabs_.remove(processingLayerTab(page));
-        processingLayerTabs_.remove(processingLayerTab(page));
+        allTabs_.remove(processingLayerTab(page).get());
+        processingLayerTabs_.erase(
+            std::remove(processingLayerTabs_.begin(), processingLayerTabs_.end(), processingLayerTab(page)));
         updateAll = true;
     }
     else if (workspaceTab(page))
@@ -444,7 +445,7 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
     if (!layer)
         return;
 
-    for (auto *tab = processingLayerTabs_.first(); tab != nullptr; tab = tab->next())
+    for (auto tab : processingLayerTabs_)
         if (tab->moduleLayer() == layer)
         {
             setCurrentWidget(tab->page());

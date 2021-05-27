@@ -11,7 +11,7 @@
 
 LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                    ModuleLayer *layer)
-    : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Layer: %1").arg(title), this)
+    : MainTab(dissolveWindow, dissolve, parent, QString("Layer: %1").arg(title), this)
 {
     ui_.setupUi(this);
 
