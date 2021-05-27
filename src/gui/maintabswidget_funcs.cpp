@@ -468,8 +468,7 @@ void MainTabsWidget::disableSensitiveControls()
         tab->disableSensitiveControls();
 
     // Disable tab close buttons
-    RefDataListIterator<QToolButton, QWidget *> buttonIterator(closeButtons_);
-    while (QToolButton *button = buttonIterator.iterate())
+    for (auto &[button, page] : closeButtons_)
         button->setDisabled(true);
 }
 
@@ -480,8 +479,7 @@ void MainTabsWidget::enableSensitiveControls()
         tab->enableSensitiveControls();
 
     // Enable tab close buttons
-    RefDataListIterator<QToolButton, QWidget *> buttonIterator(closeButtons_);
-    while (QToolButton *button = buttonIterator.iterate())
+    for (auto &[button, page] : closeButtons_)
         button->setEnabled(true);
 }
 
@@ -528,7 +526,7 @@ QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
     closeButton->setAutoRaise(true);
     mainTabsBar_->setTabButton(tabIndex, QTabBar::RightSide, closeButton);
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(tabCloseButtonClicked(bool)));
-    closeButtons_.append(closeButton, pageWidget);
+    closeButtons_.emplace_back(closeButton, pageWidget);
 
     return closeButton;
 }
@@ -545,11 +543,13 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
     if (!toolButton)
         return;
 
-    RefDataItem<QToolButton, QWidget *> *item = closeButtons_.contains(toolButton);
-    if (item)
+    auto it = std::find_if(closeButtons_.begin(), closeButtons_.end(),
+                           [toolButton](auto &term) { return std::get<QToolButton *>(term) == toolButton; });
+    if (it != closeButtons_.end())
     {
+        auto [button, page] = *it;
         // Find the tab containing the page widget (stored as the RefListItem's data)
-        auto tabIndex = indexOf(item->data());
+        auto tabIndex = indexOf(page);
         if (tabIndex == -1)
             return;
 
@@ -563,11 +563,8 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
         if (!tab->canClose())
             return;
 
-        // Grab the pointer to the page widget before we delete the button item
-        QWidget *page = item->data();
-
         // Remove the button item
-        closeButtons_.remove(item);
+        closeButtons_.erase(it);
 
         // Delete the tab (referenced by its page widget)
         removeByPage(page);
