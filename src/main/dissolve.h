@@ -41,7 +41,7 @@ class Dissolve
 
     /*
      * Atom Types
-     * (Exposes std::vector<std::shared_ptr<AtomType>> in coreData_)
+     * (Exposes functions in coreData_)
      */
     public:
     // Add AtomType with specified Element
@@ -59,7 +59,7 @@ class Dissolve
 
     /*
      * Master Terms
-     * (Exposes lists in coreData_)
+     * (Exposes functions in coreData_)
      */
     public:
     // Return list of master Bond parameters
@@ -70,12 +70,10 @@ class Dissolve
     const std::list<MasterIntra> &masterTorsions() const;
     // Return list of master Improper parameters
     const std::list<MasterIntra> &masterImpropers() const;
-    // Check and print MasterTerm usage
-    void checkMasterTermUsage() const;
 
     /*
      * Species Definitions
-     * (Exposes List<Species> in coreData_)
+     * (Exposes functions in coreData_)
      */
     public:
     // Add a new Species to the list

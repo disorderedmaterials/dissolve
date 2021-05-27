@@ -5,7 +5,7 @@
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/editspeciesdialog.h"
 #include "gui/gui.h"
-#include "gui/importforcefieldwizard.h"
+#include "gui/importligpargendialog.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
 #include "gui/speciestab.h"
@@ -94,6 +94,18 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
     ui_.MainTabs->setCurrentTab(sp);
 }
 
+void DissolveWindow::on_SpeciesImportLigParGenAction_triggered(bool checked)
+{
+    ImportLigParGenDialog importLigParGenDialog(this, dissolve_);
+
+    if (importLigParGenDialog.exec() == QDialog::Accepted)
+    {
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+    }
+}
+
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab, then call its rename() function
@@ -113,21 +125,6 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_, species);
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
-    {
-        // Fully update GUI
-        setModified();
-        fullUpdate();
-    }
-}
-
-void DissolveWindow::on_ImportForcefieldAction_triggered(bool checked)
-{
-    // Get the current Species (if a SpeciesTab is selected)
-    ImportForcefieldWizard importForcefieldWizardDialog(this, dissolve_);
-
-    importForcefieldWizardDialog.reset();
-
-    if (importForcefieldWizardDialog.exec() == QDialog::Accepted)
     {
         // Fully update GUI
         setModified();
@@ -159,6 +156,37 @@ void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(b
     setModified();
     updateWindowTitle();
     ui_.MainTabs->currentTab()->updateControls();
+}
+
+void DissolveWindow::on_SpeciesSimplifyAtomTypesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto *species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    auto nModified = species->simplifyAtomTypes();
+    if (nModified > 0)
+    {
+        Messenger::print("{} atom types were modified.\n", nModified);
+        setModified();
+        fullUpdate();
+    }
+    else
+        Messenger::print("No atom types changed.\n");
+}
+
+void DissolveWindow::on_SpeciesReduceToMasterTermsAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto *species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    species->reduceToMasterTerms(dissolve_.coreData());
+
+    setModified();
+    fullUpdate();
 }
 
 void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)

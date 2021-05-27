@@ -240,6 +240,28 @@ void Species::clearAtomTypes()
     usedAtomTypes_.clear();
 }
 
+// Simplify atom types, merging together those with identical parameters
+int Species::simplifyAtomTypes()
+{
+    // Iterate over all atoms bar the first
+    auto nModified = 0;
+    for (auto it = std::next(atoms_.begin()); it != atoms_.end(); ++it)
+    {
+        // Search all used atom types looking for a match, up to the current one
+        auto matchingIt = std::find_if(
+            atoms_.begin(), it, [&](auto &i) { return i.atomType() && i.atomType()->sameParametersAs(it->atomType().get()); });
+        if (matchingIt == it)
+            continue;
+
+        it->setAtomType(matchingIt->atomType());
+        ++nModified;
+    }
+
+    updateUsedAtomTypes();
+
+    return nModified;
+}
+
 // Return total charge of species from local/atomtype atomic charges
 double Species::totalCharge(bool useAtomTypes) const
 {

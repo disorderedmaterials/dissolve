@@ -58,6 +58,10 @@ class CoreData
     void bumpAtomTypesVersion();
     // Return AtomTypes version
     int atomTypesVersion() const;
+    // Remove any atom types that are unused across all species
+    int removeUnusedAtomTypes();
+    // Clear all atom types
+    void clearAtomTypes();
 
     /*
      * Master Intramolecular Terms

@@ -96,6 +96,23 @@ void CoreData::bumpAtomTypesVersion() { ++atomTypesVersion_; }
 // Return AtomTypes version
 int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
 
+// Remove any atom types that are unused across all species
+int CoreData::removeUnusedAtomTypes()
+{
+    auto nRemoved = atomTypes_.size();
+    atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
+                                    [&](const auto &atomType) {
+                                        return std::none_of(species_.begin(), species_.end(), [&atomType](const auto &sp) {
+                                            return sp->usedAtomTypes().contains(atomType);
+                                        });
+                                    }),
+                     atomTypes_.end());
+    return nRemoved - atomTypes_.size();
+}
+
+// Clear all atom types
+void CoreData::clearAtomTypes() { atomTypes_.clear(); }
+
 /*
  * Master Intramolecular Terms
  */
@@ -298,6 +315,7 @@ void CoreData::clearMasterTerms()
     masterBonds_.clear();
     masterAngles_.clear();
     masterTorsions_.clear();
+    masterImpropers_.clear();
 }
 
 /*

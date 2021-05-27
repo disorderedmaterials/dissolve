@@ -27,6 +27,26 @@ void Species::clear()
     ++version_;
 }
 
+// Copy basic information (atoms and intramolecular terms)
+void Species::copyBasic(const Species *source)
+{
+    clear();
+
+    name_ = source->name_;
+
+    for (auto &i : source->atoms_)
+        addAtom(i.Z(), i.r(), i.charge());
+
+    for (auto &bond : source->bonds_)
+        addBond(bond.indexI(), bond.indexJ());
+    for (auto &angle : source->angles_)
+        addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
+    for (auto &torsion : source->torsions_)
+        addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
+    for (auto &improper : source->impropers_)
+        addTorsion(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
+}
+
 /*
  * Basic Information
  */

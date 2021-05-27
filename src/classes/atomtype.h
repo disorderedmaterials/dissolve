@@ -42,8 +42,6 @@ class AtomType
     std::vector<double> parameters_;
     // Atomic charge
     double charge_;
-    // Whether this AtomType is exchangeable
-    bool exchangeable_{false};
     // Index of this type in the master type index
     int index_{-1};
 
@@ -58,8 +56,6 @@ class AtomType
     void setShortRangeParameter(int index, double parameter);
     // Return short-range parameters vector
     const std::vector<double> &shortRangeParameters() const;
-    // Return short-range parameter with index specified
-    double shortRangeParameter(int index) const;
     // Set atomic charge
     void setCharge(double q);
     // Return atomic charge
@@ -68,4 +64,6 @@ class AtomType
     void setIndex(int id);
     // Return index of this type in the master type index
     int index() const;
+    // Return whether our parameters are the same as those provided
+    bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 };

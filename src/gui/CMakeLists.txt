@@ -22,7 +22,6 @@ set(components_MOC_HDRS
     speciesviewer.hui
     viewer.hui
     # Widgets and Wizards
-    importforcefieldwizard.h
     selectconfigurationwidget.h
     selectforcefieldwidget.h
     selectspecieswidget.h
@@ -36,6 +35,7 @@ set(components_MOC_HDRS
     getmodulelayernamedialog.h
     getspeciesnamedialog.h
     gettabnamedialog.h
+    importligpargendialog.h
     importspeciesdialog.h
     selectconfigurationdialog.h
     selectelementdialog.h
@@ -73,8 +73,8 @@ set(components_UIS
     getmodulelayernamedialog.ui
     getspeciesnamedialog.ui
     gettabnamedialog.ui
+    importligpargendialog.ui
     importspeciesdialog.ui
-    importforcefieldwizard.ui
     selectconfigurationdialog.ui
     selectelementdialog.ui
     selectforcefielddialog.ui
@@ -124,7 +124,6 @@ set(components_SRCS
     viewer_renderables.cpp
     viewer_view.cpp
     # Widgets and Wizards
-    importforcefieldwizard_funcs.cpp
     selectconfigurationwidget_funcs.cpp
     selectforcefieldwidget_funcs.cpp
     selectspecieswidget_funcs.cpp
@@ -138,6 +137,7 @@ set(components_SRCS
     getmodulelayernamedialog_funcs.cpp
     getspeciesnamedialog_funcs.cpp
     gettabnamedialog_funcs.cpp
+    importligpargendialog_funcs.cpp
     importspeciesdialog_funcs.cpp
     selectconfigurationdialog_funcs.cpp
     selectelementdialog_funcs.cpp

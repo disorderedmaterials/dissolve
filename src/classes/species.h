@@ -28,6 +28,8 @@ class Species
     ~Species() = default;
     // Clear Data
     void clear();
+    // Copy basic information (atoms and intramolecular terms)
+    void copyBasic(const Species *source);
 
     /*
      * Basic Information
@@ -114,6 +116,8 @@ class Species
     const AtomTypeList &usedAtomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
+    // Simplify atom types, merging together those with identical parameters
+    int simplifyAtomTypes();
     // Return total charge of species from local/atomtype atomic charges
     double totalCharge(bool useAtomTypes) const;
 
@@ -145,7 +149,9 @@ class Species
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
-    bool hasBond(SpeciesAtom *i, SpeciesAtom *j) const;
+    bool hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
+    // Return whether SpeciesBond between specified atom indices exists
+    bool hasBond(int i, int j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
     OptionalReferenceWrapper<const SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
@@ -216,6 +222,8 @@ class Species
     void generateAttachedAtomLists();
     // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
     void detachFromMasterTerms();
+    // Reduce intramolecular terms to master terms
+    void reduceToMasterTerms(CoreData &coreData, bool selectionOnly = false);
 
     /*
      * Box Definition (if any)
