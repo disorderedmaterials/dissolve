@@ -23,7 +23,6 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     const auto &cellArray = problemDef.cfg_->cells();
     auto *cellI = cellArray.cell(1);
     auto &atoms = cellI->atoms();
-    int numAtoms = atoms.size();
     auto i = atoms[5];
     for (auto _ : state)
         energyKernel.energy(*i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
@@ -33,7 +32,6 @@ template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_SpeciesInterAtomicEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto &mol = problemDef.cfg_->molecules().front();
     auto &usedSpecies = problemDef.cfg_->speciesPopulations();
     auto *species = usedSpecies.back().first;
     auto &procPool = problemDef.dissolve_.worldPool();
@@ -99,7 +97,6 @@ static void BM_CalculateEnergy_TotalIntraMolecularEnergy(benchmark::State &state
 {
     Problem<problem, population> problemDef;
     auto &procPool = problemDef.dissolve_.worldPool();
-    const auto &cellArray = problemDef.cfg_->cells();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
         EnergyModule::intraMolecularEnergy(procPool, problemDef.cfg_, potentialMap);
@@ -109,7 +106,6 @@ static void BM_CalculateEnergy_TotalInterAtomicEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
     auto &procPool = problemDef.dissolve_.worldPool();
-    const auto &cellArray = problemDef.cfg_->cells();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
         EnergyModule::interAtomicEnergy(procPool, problemDef.cfg_, potentialMap);
@@ -120,7 +116,6 @@ static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state
 {
     Problem<problem, population> problemDef;
     auto &procPool = problemDef.dissolve_.worldPool();
-    const auto &cellArray = problemDef.cfg_->cells();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
         EnergyModule::interMolecularEnergy(procPool, problemDef.cfg_, potentialMap);
@@ -154,6 +149,9 @@ BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, ProblemType::mediumMo
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeTorsionEnergy, ProblemType::mediumMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, ProblemType::mediumMolecule, Population::small)
     ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, ProblemType::mediumMolecule, Population::medium)
+    ->Unit(benchmark::kMillisecond);
+
 // Benchmark energy calculations of the whole system
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, ProblemType::mediumMolecule, Population::small)
     ->Unit(benchmark::kMillisecond);
