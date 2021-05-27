@@ -8,8 +8,6 @@
 #include "classes/molecule.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
-#include "math/combinations.h"
-#include "tbb/blocked_range2d.h"
 #include "templates/algorithms.h"
 #include <iterator>
 
@@ -569,14 +567,15 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     auto totalEnergy = 0.0;
-    auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
     auto &cellNeighbourArray = cellArray.getCellNeighbourArray();
     int numRows = cellNeighbourArray.size();
     int numColumns = cellNeighbourArray[0].size();
+    auto [rowBegin, rowEnd] = chop_range(0, numRows, nChunks, offset);
+    auto [colBegin, colEnd] = chop_range(0, numColumns, nChunks, offset);
 
-    totalEnergy += tbb::parallel_reduce(
-        tbb::blocked_range2d<int, int>(0, numRows, 0, numColumns), 0.0,
-        [&](tbb::blocked_range2d<int, int> r, double runningTotal) -> double {
+    totalEnergy += dissolve::tbb_parallel_reduce(
+        dissolve::blocked_range2d<int, int>(rowBegin, rowEnd, colBegin, colEnd), 0.0,
+        [&](dissolve::blocked_range2d<int, int> r, double runningTotal) -> double {
             for (auto i = r.rows().begin(); i != r.rows().end(); ++i)
             {
                 for (auto j = r.cols().begin(); j != r.cols().end(); ++j)

@@ -294,8 +294,8 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 }
 
 // Creates a matrix storing the cell neighbours
-// includes self terms
-// The matrix has a fixed number of columns taking as the max neighbours a particular cell has
+// INCLUDES self terms, i.e. the element [cellI, cellI]
+// The matrix has a fixed number of columns, taken as the max number of neighbours any cell has
 // Empty columns point to a nullpointer instead of a cell
 void CellArray::createCellNeighbourArray(int maxNeighbours)
 {

@@ -81,4 +81,39 @@ template <typename T> class combinable
     T data_;
 };
 
+template <typename IntType> class blocked_range
+{
+    public:
+    blocked_range(IntType begin, IntType end) noexcept : begin_(begin), end_(end) {}
+
+    int begin() const noexcept { return begin_; }
+    int end() const noexcept { return end_; }
+
+    private:
+    IntType begin_;
+    IntType end_;
+};
+
+template <typename RowType, typename ColType> class blocked_range2d
+{
+    public:
+    blocked_range2d(RowType rowBegin, RowType rowEnd, ColType colBegin, ColType colEnd)
+        : rows_(rowBegin, rowEnd), cols_(colBegin, colEnd)
+    {
+    }
+
+    dissolve::blocked_range<RowType> rows() const noexcept { return rows_; }
+    dissolve::blocked_range<ColType> cols() const noexcept { return cols_; }
+
+    private:
+    dissolve::blocked_range<RowType> rows_;
+    dissolve::blocked_range<ColType> cols_;
+};
+
+template <typename Range, typename T, typename Op, typename ReductionOp>
+T tbb_parallel_reduce(const Range &range, T init, Op &&op, ReductionOp &&)
+{
+    return op(range, init);
+}
+
 } // namespace dissolve

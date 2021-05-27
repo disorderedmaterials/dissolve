@@ -138,10 +138,8 @@ BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, ProblemType::smallMolecule
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, ProblemType::smallMolecule, Population::small)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, ProblemType::smallMolecule, Population::small)
-    ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::smallMolecule, Population::small)
-    ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
 
 // medium molecule
@@ -158,8 +156,9 @@ BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, ProblemType::mediumMolecul
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, ProblemType::mediumMolecule, Population::small)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, ProblemType::mediumMolecule, Population::small)
-    ->Iterations(5)
-    ->Unit(benchmark::kMillisecond);
+    ->Unit(benchmark::kMillisecond)
+    ->Iterations(5);
+
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::mediumMolecule, Population::small)
-    ->Iterations(5)
-    ->Unit(benchmark::kMillisecond);
+    ->Unit(benchmark::kMillisecond)
+    ->Iterations(5);
