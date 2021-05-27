@@ -51,7 +51,7 @@ RefList<const MainTab> MainTabsWidget::allTabs() const
 Species *MainTabsWidget::currentSpecies() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
-    MainTab *tab = currentTab();
+    auto tab = currentTab();
     if (tab->type() != MainTab::SpeciesTabType)
         return nullptr;
 
@@ -63,7 +63,7 @@ Species *MainTabsWidget::currentSpecies() const
 Configuration *MainTabsWidget::currentConfiguration() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
-    MainTab *tab = currentTab();
+    auto tab = currentTab();
     if (tab->type() != MainTab::ConfigurationTabType)
         return nullptr;
 
@@ -75,7 +75,7 @@ Configuration *MainTabsWidget::currentConfiguration() const
 ModuleLayer *MainTabsWidget::currentLayer() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
-    MainTab *tab = currentTab();
+    auto tab = currentTab();
     if (tab->type() != MainTab::LayerTabType)
         return nullptr;
 
@@ -359,7 +359,7 @@ void MainTabsWidget::removeByPage(QWidget *page)
 MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title)
 {
     // Check that a tab with this title doesn't already exist
-    MainTab *tab = findTab(title);
+    auto tab = findTab(title);
     if (!tab)
     {
         auto newWorkspace = std::make_shared<WorkspaceTab>(dissolveWindow, dissolveWindow->dissolve(), this, title);
@@ -462,7 +462,7 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
 // Update all tabs
 void MainTabsWidget::updateAllTabs()
 {
-    for (MainTab *tab : allTabs_)
+    for (auto tab : allTabs_)
         tab->updateControls();
 }
 
@@ -476,7 +476,7 @@ void MainTabsWidget::updateSpeciesTabs()
 // Disable sensitive controls in all tabs
 void MainTabsWidget::disableSensitiveControls()
 {
-    for (MainTab *tab : allTabs_)
+    for (auto tab : allTabs_)
         tab->disableSensitiveControls();
 
     // Disable tab close buttons
@@ -488,7 +488,7 @@ void MainTabsWidget::disableSensitiveControls()
 // Enable sensitive controls in all tabs
 void MainTabsWidget::enableSensitiveControls()
 {
-    for (MainTab *tab : allTabs_)
+    for (auto tab : allTabs_)
         tab->enableSensitiveControls();
 
     // Enable tab close buttons

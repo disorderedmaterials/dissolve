@@ -311,7 +311,7 @@ void DissolveWindow::updateControlsFrame()
 // Update menus
 void DissolveWindow::updateMenus()
 {
-    MainTab *activeTab = ui_.MainTabs->currentTab();
+    auto activeTab = ui_.MainTabs->currentTab();
     if (!activeTab)
         return;
 

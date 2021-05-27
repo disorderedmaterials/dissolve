@@ -43,7 +43,7 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        for (const MainTab *tab : currentTabs_)
+        for (const auto tab : currentTabs_)
         {
             if (currentTab_ == tab)
                 continue;
