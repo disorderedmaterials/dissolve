@@ -94,9 +94,9 @@ std::shared_ptr<SpeciesTab> MainTabsWidget::speciesTab(QWidget *page)
 }
 
 // Find ConfigurationTab containing specified page widget
-ConfigurationTab *MainTabsWidget::configurationTab(QWidget *page)
+std::shared_ptr<ConfigurationTab> MainTabsWidget::configurationTab(QWidget *page)
 {
-    for (auto *tab = configurationTabs_.first(); tab != nullptr; tab = tab->next())
+    for (auto tab : configurationTabs_)
         if (tab->page() == page)
             return tab;
 
@@ -242,7 +242,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     while (Configuration *cfg = configurationIterator.iterate())
     {
         // Loop over existing tabs
-        while (currentTabIndex < configurationTabs_.nItems())
+        while (currentTabIndex < configurationTabs_.size())
         {
             // If the existing tab is displaying the current Configuration already, then we can move on. Otherwise,
             // delete it
@@ -250,19 +250,19 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
                 break;
             else
             {
-                allTabs_.remove(configurationTabs_[currentTabIndex]);
-                configurationTabs_.remove(currentTabIndex);
+                allTabs_.remove(configurationTabs_[currentTabIndex].get());
+                configurationTabs_.erase(configurationTabs_.begin() + currentTabIndex);
             }
         }
 
         // If the current tab index is (now) out of range, add a new one
-        if (currentTabIndex == configurationTabs_.nItems())
+        if (currentTabIndex == configurationTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(cfg->name()));
-            ConfigurationTab *newTab = new ConfigurationTab(dissolveWindow, dissolve, this, tabTitle, cfg);
-            configurationTabs_.own(newTab);
-            allTabs_.append(newTab);
-            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
+            auto newTab = std::make_shared<ConfigurationTab>(dissolveWindow, dissolve, this, tabTitle, cfg);
+            configurationTabs_.push_back(newTab);
+            allTabs_.append(newTab.get());
+            insertTab(baseIndex + currentTabIndex, newTab.get(), tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
@@ -331,8 +331,8 @@ void MainTabsWidget::removeByPage(QWidget *page)
     }
     else if (configurationTab(page))
     {
-        allTabs_.remove(configurationTab(page));
-        configurationTabs_.remove(configurationTab(page));
+        allTabs_.remove(configurationTab(page).get());
+        configurationTabs_.erase(std::remove(configurationTabs_.begin(), configurationTabs_.end(), configurationTab(page)));
         updateAll = true;
     }
     else if (processingLayerTab(page))
@@ -429,7 +429,7 @@ void MainTabsWidget::setCurrentTab(Configuration *cfg)
     if (!cfg)
         return;
 
-    for (auto *tab = configurationTabs_.first(); tab != nullptr; tab = tab->next())
+    for (auto tab : configurationTabs_)
         if (tab->configuration() == cfg)
         {
             setCurrentWidget(tab->page());
