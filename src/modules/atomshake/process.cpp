@@ -115,7 +115,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                         // Translate Atom and update its Cell position
                         i->translateCoordinates(rDelta);
-                        cfg->updateCellLocation(i);
+                        cfg->updateCellLocation(i.get());
 
                         // Calculate new energy
                         newEnergy = kernel.energy(*i, ProcessPool::subDivisionStrategy(strategy), true);

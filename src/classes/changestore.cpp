@@ -17,7 +17,7 @@ ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
  */
 
 // Add atom to watch
-void ChangeStore::add(std::shared_ptr<Atom> i)
+void ChangeStore::add(Atom *i)
 {
     targetAtoms_.emplace_back();
     targetAtoms_.back().setAtom(std::move(i));
@@ -27,7 +27,7 @@ void ChangeStore::add(std::shared_ptr<Atom> i)
 void ChangeStore::add(const std::shared_ptr<Molecule> &mol)
 {
     for (auto n = 0; n < mol->nAtoms(); ++n)
-        add(mol->atom(n));
+        add(mol->atom(n).get());
 }
 
 // Add Cell to watch

@@ -13,7 +13,7 @@ ChangeData::ChangeData() : atom_(nullptr) {}
  */
 
 // Set target atom
-void ChangeData::setAtom(const std::shared_ptr<Atom> &i)
+void ChangeData::setAtom(Atom *i)
 {
     assert(i != nullptr);
 
@@ -24,7 +24,7 @@ void ChangeData::setAtom(const std::shared_ptr<Atom> &i)
 }
 
 // Return target Atom
-std::shared_ptr<Atom> ChangeData::atom() { return atom_; }
+Atom *ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
 int ChangeData::atomArrayIndex() const { return atom_->arrayIndex(); }

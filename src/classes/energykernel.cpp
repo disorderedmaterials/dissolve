@@ -69,7 +69,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
-    std::shared_ptr<Atom> ii;
+    Atom *ii;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
     double rSq, scale;
@@ -159,7 +159,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 {
     auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
-    std::shared_ptr<Atom> ii;
+    Atom *ii;
     Vec3<double> rJ;
     std::shared_ptr<Molecule> molJ;
     double rSq, scale;
@@ -257,7 +257,7 @@ double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessP
     assert(cell);
 
     auto totalEnergy = 0.0;
-    std::shared_ptr<Atom> jj;
+    Atom *jj;
     double rSq, scale;
     auto &otherAtoms = cell->atoms();
 
@@ -280,7 +280,7 @@ double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessP
                 jj = *indexJ;
 
                 // Check for same atom
-                if (&i == jj.get())
+                if (&i == jj)
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -381,7 +381,7 @@ double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessP
                 jj = *indexJ;
 
                 // Check for same atom
-                if (&i == jj.get())
+                if (&i == jj)
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -532,8 +532,8 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
                         [cell, centralCell, mimRequired, this](const auto acc, const auto &i) {
                             auto &ii = *i;
                             return acc + std::accumulate(cell->atoms().begin(), cell->atoms().end(), 0.0,
-                                                         [&ii, mimRequired, this](const auto innerAcc, const auto &j) {
-                                                             auto &jj = *j.get();
+                                                         [&ii, mimRequired, this](const auto innerAcc, const auto *j) {
+                                                             auto &jj = *j;
 
                                                              // Calculate rSquared distance between atoms, and check it against
                                                              // the stored cutoff distance
@@ -573,7 +573,7 @@ double EnergyKernel::correct(const Atom &i)
                                                          std::plus<double>(), [&](auto &j) -> double {
                                                              if (&i == j.get())
                                                                  return 0.0;
-                                                             double scale = 1.0 - i.scaling(j);
+                                                             double scale = 1.0 - i.scaling(j.get());
                                                              if (scale <= 1.0e-3)
                                                                  return 0.0;
                                                              double r = box_->minimumDistance(rI, j->r());
