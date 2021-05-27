@@ -226,7 +226,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 
             auto newTab = speciesTabs_.back();
             allTabs_.append(newTab.get());
-            insertTab(baseIndex + currentTabIndex, newTab.get(), tabTitle);
+            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
@@ -262,7 +262,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             auto newTab = std::make_shared<ConfigurationTab>(dissolveWindow, dissolve, this, tabTitle, cfg);
             configurationTabs_.push_back(newTab);
             allTabs_.append(newTab.get());
-            insertTab(baseIndex + currentTabIndex, newTab.get(), tabTitle);
+            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
@@ -299,7 +299,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             auto newTab = std::make_shared<LayerTab>(dissolveWindow, dissolve, this, tabTitle, layer);
             processingLayerTabs_.push_back(newTab);
             allTabs_.append(newTab.get());
-            insertTab(baseIndex + currentTabIndex, newTab.get(), tabTitle);
+            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             if (layer->enabled())
@@ -603,4 +603,9 @@ void MainTabsWidget::tabBarDoubleClicked(int index)
 
     // Call the rename function in the tab
     tab->rename();
+}
+
+int MainTabsWidget::insertTab(int index, std::shared_ptr<QWidget> widget, const QString &title)
+{
+    return QTabWidget::insertTab(index, dynamic_cast<QWidget *>(widget.get()), title);
 }

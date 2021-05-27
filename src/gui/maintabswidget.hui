@@ -138,6 +138,8 @@ class MainTabsWidget : public QTabWidget
     private:
     // List of close buttons and their associated pageWidgets
     RefDataList<QToolButton, QWidget *> closeButtons_;
+    // Overload insertTab for shared_ptr
+    int insertTab(int index, std::shared_ptr<QWidget> widget, const QString &title);
 
     private slots:
     // Tab close button clicked
