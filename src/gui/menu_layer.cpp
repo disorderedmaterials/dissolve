@@ -307,7 +307,7 @@ void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
         return;
 
     // Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
-    LayerTab *layerTab = dynamic_cast<LayerTab *>(tab);
+    auto layerTab = std::dynamic_pointer_cast<LayerTab>(tab);
     if (!layerTab)
         return;
 

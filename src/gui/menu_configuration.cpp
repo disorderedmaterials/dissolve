@@ -196,7 +196,7 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
         return;
 
     // Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
-    auto *cfgTab = dynamic_cast<ConfigurationTab *>(tab);
+    auto cfgTab = std::dynamic_pointer_cast<ConfigurationTab>(tab);
     if (!cfgTab)
         return;
 

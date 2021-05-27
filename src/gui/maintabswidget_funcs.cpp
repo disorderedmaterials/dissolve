@@ -38,14 +38,7 @@ MainTabsWidget::~MainTabsWidget()
  */
 
 // Return reference list of all current tabs
-RefList<const MainTab> MainTabsWidget::allTabs() const
-{
-    RefList<const MainTab> constTabs;
-    for (MainTab *tab : allTabs_)
-        constTabs.append(tab);
-
-    return constTabs;
-}
+const std::vector<std::shared_ptr<MainTab>> &MainTabsWidget::allTabs() const { return allTabs_; }
 
 // Return currently-selected Species (if a SpeciesTab is the current one)
 Species *MainTabsWidget::currentSpecies() const
@@ -55,7 +48,7 @@ Species *MainTabsWidget::currentSpecies() const
     if (tab->type() != MainTab::SpeciesTabType)
         return nullptr;
 
-    SpeciesTab *speciesTab = dynamic_cast<SpeciesTab *>(tab);
+    auto speciesTab = std::dynamic_pointer_cast<SpeciesTab>(tab);
     return (speciesTab ? speciesTab->species() : nullptr);
 }
 
@@ -67,7 +60,7 @@ Configuration *MainTabsWidget::currentConfiguration() const
     if (tab->type() != MainTab::ConfigurationTabType)
         return nullptr;
 
-    ConfigurationTab *configurationTab = dynamic_cast<ConfigurationTab *>(tab);
+    auto configurationTab = std::dynamic_pointer_cast<ConfigurationTab>(tab);
     return (configurationTab ? configurationTab->configuration() : nullptr);
 }
 
@@ -79,7 +72,7 @@ ModuleLayer *MainTabsWidget::currentLayer() const
     if (tab->type() != MainTab::LayerTabType)
         return nullptr;
 
-    LayerTab *layerTab = dynamic_cast<LayerTab *>(tab);
+    auto layerTab = std::dynamic_pointer_cast<LayerTab>(tab);
     return (layerTab ? layerTab->moduleLayer() : nullptr);
 }
 
@@ -124,23 +117,17 @@ std::shared_ptr<WorkspaceTab> MainTabsWidget::workspaceTab(QWidget *page)
 }
 
 // Find tab with title specified
-MainTab *MainTabsWidget::findTab(const QString title)
+std::shared_ptr<MainTab> MainTabsWidget::findTab(const QString title)
 {
-    for (MainTab *tab : allTabs_)
-        if (tab->title() == title)
-            return tab;
-
-    return nullptr;
+    auto result = std::find_if(allTabs_.begin(), allTabs_.end(), [&title](auto tab) { return tab->title() == title; });
+    return result == allTabs_.end() ? nullptr : *result;
 }
 
 // Find tab with specified page widget
-MainTab *MainTabsWidget::findTab(QWidget *page)
+std::shared_ptr<MainTab> MainTabsWidget::findTab(QWidget *page)
 {
-    for (MainTab *tab : allTabs_)
-        if (tab->page() == page)
-            return tab;
-
-    return nullptr;
+    auto result = std::find_if(allTabs_.begin(), allTabs_.end(), [&page](auto tab) { return tab->page() == page; });
+    return result == allTabs_.end() ? nullptr : *result;
 }
 
 // Generate unique tab name with base name provided
@@ -170,11 +157,11 @@ const QString MainTabsWidget::uniqueTabName(const QString base)
 void MainTabsWidget::addCoreTabs(DissolveWindow *dissolveWindow)
 {
     // Forcefield
-    forcefieldTab_ = new ForcefieldTab(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
+    forcefieldTab_ = std::make_shared<ForcefieldTab>(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
     addTab(forcefieldTab_->page(), "Forcefield");
     setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 
-    allTabs_.append(forcefieldTab_);
+    allTabs_.push_back(forcefieldTab_);
 }
 
 // Remove tabs related to the current data
@@ -191,7 +178,7 @@ void MainTabsWidget::clearTabs()
 
     // Only remaining tab is the ForcefieldTab...
     allTabs_.clear();
-    allTabs_.append(forcefieldTab_);
+    allTabs_.push_back(forcefieldTab_);
 }
 
 // Reconcile tabs, making them consistent with the provided data
@@ -213,7 +200,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
                 break;
             else
             {
-                allTabs_.remove(speciesTabs_[currentTabIndex].get());
+                allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), speciesTabs_[currentTabIndex]));
                 speciesTabs_.erase(speciesTabs_.begin() + currentTabIndex);
             }
         }
@@ -225,7 +212,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             speciesTabs_.push_back(std::make_shared<SpeciesTab>(dissolveWindow, dissolve, this, tabTitle, sp.get()));
 
             auto newTab = speciesTabs_.back();
-            allTabs_.append(newTab.get());
+            allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
@@ -250,7 +237,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
                 break;
             else
             {
-                allTabs_.remove(configurationTabs_[currentTabIndex].get());
+                allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), configurationTabs_[currentTabIndex]));
                 configurationTabs_.erase(configurationTabs_.begin() + currentTabIndex);
             }
         }
@@ -261,7 +248,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             QString tabTitle = QString::fromStdString(std::string(cfg->name()));
             auto newTab = std::make_shared<ConfigurationTab>(dissolveWindow, dissolve, this, tabTitle, cfg);
             configurationTabs_.push_back(newTab);
-            allTabs_.append(newTab.get());
+            allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
@@ -287,7 +274,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
                 break;
             else
             {
-                allTabs_.remove(processingLayerTabs_[currentTabIndex].get());
+                allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), processingLayerTabs_[currentTabIndex]));
                 processingLayerTabs_.erase(processingLayerTabs_.begin() + currentTabIndex);
             }
         }
@@ -298,7 +285,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
             auto newTab = std::make_shared<LayerTab>(dissolveWindow, dissolve, this, tabTitle, layer);
             processingLayerTabs_.push_back(newTab);
-            allTabs_.append(newTab.get());
+            allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
@@ -325,26 +312,26 @@ void MainTabsWidget::removeByPage(QWidget *page)
     auto updateAll = false;
     if (speciesTab(page))
     {
-        allTabs_.remove(speciesTab(page).get());
+        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), speciesTab(page)));
         speciesTabs_.erase(std::remove(speciesTabs_.begin(), speciesTabs_.end(), speciesTab(page)));
         updateAll = true;
     }
     else if (configurationTab(page))
     {
-        allTabs_.remove(configurationTab(page).get());
+        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), configurationTab(page)));
         configurationTabs_.erase(std::remove(configurationTabs_.begin(), configurationTabs_.end(), configurationTab(page)));
         updateAll = true;
     }
     else if (processingLayerTab(page))
     {
-        allTabs_.remove(processingLayerTab(page).get());
+        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), processingLayerTab(page)));
         processingLayerTabs_.erase(
             std::remove(processingLayerTabs_.begin(), processingLayerTabs_.end(), processingLayerTab(page)));
         updateAll = true;
     }
     else if (workspaceTab(page))
     {
-        allTabs_.remove(workspaceTab(page).get());
+        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), workspaceTab(page)));
         workspaceTabs_.erase(std::remove(workspaceTabs_.begin(), workspaceTabs_.end(), workspaceTab(page)));
     }
 
@@ -356,7 +343,7 @@ void MainTabsWidget::removeByPage(QWidget *page)
 }
 
 // Add on a new workspace tab
-MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title)
+std::shared_ptr<MainTab> MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title)
 {
     // Check that a tab with this title doesn't already exist
     auto tab = findTab(title);
@@ -364,14 +351,14 @@ MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const Q
     {
         auto newWorkspace = std::make_shared<WorkspaceTab>(dissolveWindow, dissolveWindow->dissolve(), this, title);
         workspaceTabs_.push_back(newWorkspace);
-        allTabs_.append(newWorkspace.get());
+        allTabs_.push_back(newWorkspace);
 
         // Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
         addTab(newWorkspace.get(), title);
         addTabCloseButton(newWorkspace.get());
         setTabIcon(newWorkspace->page(), QIcon(":/tabs/icons/tabs_workspace.svg"));
 
-        return newWorkspace.get();
+        return newWorkspace;
     }
     else
         Messenger::printVerbose("Tab '{}' already exists, so returning that instead...\n", qPrintable(title));
@@ -384,25 +371,26 @@ MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const Q
  */
 
 // Return current tab
-MainTab *MainTabsWidget::currentTab() const
+std::shared_ptr<MainTab> MainTabsWidget::currentTab() const
 {
     if (currentWidget() == nullptr)
         return nullptr;
 
     // Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets
     // are derived
-    MainTab *currentTab = dynamic_cast<MainTab *>(currentWidget());
-    if (!currentTab)
+    auto result = std::find_if(allTabs_.begin(), allTabs_.end(),
+                               [this](auto tab) { return tab.get() == dynamic_cast<MainTab *>(currentWidget()); });
+    if (result == allTabs_.end())
     {
         Messenger::print("Can't cast current tab (index {}) into a MainTab.\n", currentIndex());
         return nullptr;
     }
 
-    return currentTab;
+    return *result;
 }
 
 // Make specified tab the current one
-void MainTabsWidget::setCurrentTab(MainTab *tab) { setCurrentWidget(tab->page()); }
+void MainTabsWidget::setCurrentTab(std::shared_ptr<MainTab> tab) { setCurrentWidget(tab->page()); }
 
 // Make specified tab the current one (by index)
 void MainTabsWidget::setCurrentTab(int tabIndex) { setCurrentIndex(tabIndex); }

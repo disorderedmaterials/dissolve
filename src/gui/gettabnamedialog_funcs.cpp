@@ -5,11 +5,10 @@
 #include "gui/gettabnamedialog.h"
 #include "gui/maintab.h"
 
-GetTabNameDialog::GetTabNameDialog(QWidget *parent, RefList<const MainTab> currentTabs)
+GetTabNameDialog::GetTabNameDialog(QWidget *parent, const std::vector<std::shared_ptr<MainTab>> &currentTabs)
+    : currentTabs_(currentTabs)
 {
     ui_.setupUi(this);
-
-    currentTabs_ = currentTabs;
 }
 
 GetTabNameDialog::~GetTabNameDialog() {}
@@ -45,7 +44,7 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
     {
         for (const auto tab : currentTabs_)
         {
-            if (currentTab_ == tab)
+            if (currentTab_ == tab.get())
                 continue;
 
             if (tab->title() == text)
