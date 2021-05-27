@@ -151,7 +151,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
 
         // Set new coordinates and update cell position
         atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
-        cfg->updateCellLocation(atoms[indices_[n]]);
+        cfg->updateCellLocation(atoms[indices_[n]].get());
     }
 #else
     // Apply atom changes
