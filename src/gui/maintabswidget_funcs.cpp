@@ -9,6 +9,7 @@
 #include "gui/maintabswidget.hui"
 #include "main/dissolve.h"
 #include <QToolButton>
+#include <memory>
 
 MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
 {
@@ -83,9 +84,9 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 }
 
 // Find SpeciesTab containing specified page widget
-SpeciesTab *MainTabsWidget::speciesTab(QWidget *page)
+std::shared_ptr<SpeciesTab> MainTabsWidget::speciesTab(QWidget *page)
 {
-    for (auto *tab = speciesTabs_.first(); tab != nullptr; tab = tab->next())
+    for (auto tab : speciesTabs_)
         if (tab->page() == page)
             return tab;
 
@@ -204,7 +205,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     for (const auto &sp : dissolve.species())
     {
         // Loop over existing tabs
-        while (currentTabIndex < speciesTabs_.nItems())
+        while (currentTabIndex < speciesTabs_.size())
         {
             // If the existing tab is displaying the current Species already, then we can move on.
             // Otherwise, delete it.
@@ -212,19 +213,20 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
                 break;
             else
             {
-                allTabs_.remove(speciesTabs_[currentTabIndex]);
-                speciesTabs_.remove(currentTabIndex);
+                allTabs_.remove(speciesTabs_[currentTabIndex].get());
+                speciesTabs_.erase(speciesTabs_.begin() + currentTabIndex);
             }
         }
 
         // If the current tab index is (now) out of range, add a new one
-        if (currentTabIndex == speciesTabs_.nItems())
+        if (currentTabIndex == speciesTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(sp->name()));
-            SpeciesTab *newTab = new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp.get());
-            speciesTabs_.own(newTab);
-            allTabs_.append(newTab);
-            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
+            speciesTabs_.push_back(std::make_shared<SpeciesTab>(dissolveWindow, dissolve, this, tabTitle, sp.get()));
+
+            auto newTab = speciesTabs_.back();
+            allTabs_.append(newTab.get());
+            insertTab(baseIndex + currentTabIndex, newTab.get(), tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
@@ -323,8 +325,8 @@ void MainTabsWidget::removeByPage(QWidget *page)
     auto updateAll = false;
     if (speciesTab(page))
     {
-        allTabs_.remove(speciesTab(page));
-        speciesTabs_.remove(speciesTab(page));
+        allTabs_.remove(speciesTab(page).get());
+        speciesTabs_.erase(std::remove(speciesTabs_.begin(), speciesTabs_.end(), speciesTab(page)));
         updateAll = true;
     }
     else if (configurationTab(page))
@@ -410,7 +412,7 @@ void MainTabsWidget::setCurrentTab(Species *species)
     if (!species)
         return;
 
-    for (auto *tab = speciesTabs_.first(); tab != nullptr; tab = tab->next())
+    for (auto &tab : speciesTabs_)
         if (tab->species() == species)
         {
             setCurrentWidget(tab->page());
@@ -466,8 +468,7 @@ void MainTabsWidget::updateAllTabs()
 // Update all Species tabs
 void MainTabsWidget::updateSpeciesTabs()
 {
-    ListIterator<SpeciesTab> tabIterator(speciesTabs_);
-    while (SpeciesTab *tab = tabIterator.iterate())
+    for (auto tab : speciesTabs_)
         tab->updateControls();
 }
 

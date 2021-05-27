@@ -11,6 +11,8 @@
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QTabWidget>
+#include <memory>
+#include <vector>
 
 // Forward declarations
 class Dissolve;
@@ -42,7 +44,7 @@ class MainTabsWidget : public QTabWidget
     // Pointer to Forcefield tab
     ForcefieldTab *forcefieldTab_;
     // List of Species tabs
-    List<SpeciesTab> speciesTabs_;
+    std::vector<std::shared_ptr<SpeciesTab>> speciesTabs_;
     // List of Configuration tabs
     List<ConfigurationTab> configurationTabs_;
     // List of processing layer tabs
@@ -60,7 +62,7 @@ class MainTabsWidget : public QTabWidget
     // Return currently-selected ModuleLayer (if a LayerTab is the current one)
     ModuleLayer *currentLayer() const;
     // Find SpeciesTab containing specified page widget
-    SpeciesTab *speciesTab(QWidget *page);
+    std::shared_ptr<SpeciesTab> speciesTab(QWidget *page);
     // Find ConfigurationTab containing specified page widget
     ConfigurationTab *configurationTab(QWidget *page);
     // Find LayerTab containing specified page widget
