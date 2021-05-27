@@ -3,34 +3,28 @@
 
 #pragma once
 
-#include <ctime>
+#include <chrono>
 #include <string>
 
 // Timer
 class Timer
 {
-    /*
-     * Simple class to store and manipulate tick information in order to provide timings for routines etc.
-     */
     public:
     Timer();
 
-    /*
-     * Timing Routines
-     */
     private:
     // Start time
-    clock_t startTime_;
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime_;
     // Split time
-    clock_t splitTime_;
+    std::chrono::time_point<std::chrono::high_resolution_clock> splitTime_;
     // Total time
-    clock_t totalTime_{0};
+    std::chrono::duration<double> totalTime_;
     // Whether the timer is running or not
     bool running_{false};
 
     private:
-    // Return time string based on provided tick count
-    std::string timeString(clock_t ticks);
+    // Return time string based on provided duration in seconds
+    std::string timeString(std::chrono::duration<double> duration);
 
     public:
     // Start timer
