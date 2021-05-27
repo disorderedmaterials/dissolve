@@ -114,9 +114,9 @@ std::shared_ptr<LayerTab> MainTabsWidget::processingLayerTab(QWidget *page)
 }
 
 // Find WorkspaceTab containing specified page widget
-WorkspaceTab *MainTabsWidget::workspaceTab(QWidget *page)
+std::shared_ptr<WorkspaceTab> MainTabsWidget::workspaceTab(QWidget *page)
 {
-    for (auto *tab = workspaceTabs_.first(); tab != nullptr; tab = tab->next())
+    for (auto tab : workspaceTabs_)
         if (tab->page() == page)
             return tab;
 
@@ -344,8 +344,8 @@ void MainTabsWidget::removeByPage(QWidget *page)
     }
     else if (workspaceTab(page))
     {
-        allTabs_.remove(workspaceTab(page));
-        workspaceTabs_.remove(workspaceTab(page));
+        allTabs_.remove(workspaceTab(page).get());
+        workspaceTabs_.erase(std::remove(workspaceTabs_.begin(), workspaceTabs_.end(), workspaceTab(page)));
     }
 
     if (updateAll)
@@ -362,16 +362,16 @@ MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const Q
     MainTab *tab = findTab(title);
     if (!tab)
     {
-        WorkspaceTab *newWorkspace = new WorkspaceTab(dissolveWindow, dissolveWindow->dissolve(), this, title);
-        workspaceTabs_.own(newWorkspace);
-        allTabs_.append(newWorkspace);
+        auto newWorkspace = std::make_shared<WorkspaceTab>(dissolveWindow, dissolveWindow->dissolve(), this, title);
+        workspaceTabs_.push_back(newWorkspace);
+        allTabs_.append(newWorkspace.get());
 
         // Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
-        addTab(newWorkspace, title);
-        addTabCloseButton(newWorkspace);
+        addTab(newWorkspace.get(), title);
+        addTabCloseButton(newWorkspace.get());
         setTabIcon(newWorkspace->page(), QIcon(":/tabs/icons/tabs_workspace.svg"));
 
-        return newWorkspace;
+        return newWorkspace.get();
     }
     else
         Messenger::printVerbose("Tab '{}' already exists, so returning that instead...\n", qPrintable(title));

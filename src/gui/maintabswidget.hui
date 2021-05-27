@@ -50,7 +50,7 @@ class MainTabsWidget : public QTabWidget
     // List of processing layer tabs
     std::vector<std::shared_ptr<LayerTab>> processingLayerTabs_;
     // List of Workspace tabs
-    List<WorkspaceTab> workspaceTabs_;
+    std::vector<std::shared_ptr<WorkspaceTab>> workspaceTabs_;
 
     public:
     // Return reference list of all current tabs
@@ -68,7 +68,7 @@ class MainTabsWidget : public QTabWidget
     // Find LayerTab containing specified page widget
     std::shared_ptr<LayerTab> processingLayerTab(QWidget *page);
     // Find WorkspaceTab containing specified page widget
-    WorkspaceTab *workspaceTab(QWidget *page);
+    std::shared_ptr<WorkspaceTab> workspaceTab(QWidget *page);
     // Find tab with title specified
     MainTab *findTab(const QString title);
     // Find tab with specified page widget
