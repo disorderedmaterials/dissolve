@@ -271,25 +271,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             maxNeighbours = numNeighbours;
     }
     maxNeighbours += 1;
-
-    cellNeighbours_.reserve(cells_.size());
-    for (int i = 0; i < cells_.size(); i++)
-    {
-        auto &cell = cells_[i];
-        cellNeighbours_.emplace_back(maxNeighbours);
-        cellNeighbours_[i][0] = Neighbour(cell.get(), false);
-        for (int k = 0; k < cell->cellNeighbours().size(); ++k)
-        {
-            auto id = cell->cellNeighbours()[k];
-            cellNeighbours_[i][k + 1] = Neighbour(id, false);
-        }
-        for (int k = 0; k < cell->mimCellNeighbours().size(); ++k)
-        {
-            auto id = cell->mimCellNeighbours()[k];
-            cellNeighbours_[i][k + cell->cellNeighbours().size() + 1] = Neighbour(id, true);
-        }
-    }
-
+    createCellNeighbourArray(maxNeighbours);
     return true;
 }
 
