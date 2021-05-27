@@ -8,6 +8,8 @@
 #include "classes/molecule.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
+#include "math/combinations.h"
+#include "tbb/blocked_range2d.h"
 #include "templates/algorithms.h"
 #include <iterator>
 
@@ -568,21 +570,28 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
 
     auto totalEnergy = 0.0;
     auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
+    auto &cellNeighbourArray = cellArray.getCellNeighbourArray();
+    int numRows = cellNeighbourArray.size();
+    int numColumns = cellNeighbourArray[0].size();
 
-    totalEnergy = dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(begin),
-                                             dissolve::counting_iterator<int>(end), 0.0, std::plus<double>(), [&](int i) {
-                                                 auto localEnergy = 0.0;
-                                                 auto *cell = cellArray.cell(i);
-
-                                                 // This cell with itself
-                                                 localEnergy +=
-                                                     energy(cell, cell, false, true, interMolecular, subStrategy, performSum);
-
-                                                 // Interatomic interactions between atoms in this cell and its neighbours
-                                                 localEnergy += energy(cell, true, interMolecular, subStrategy, performSum);
-
-                                                 return localEnergy;
-                                             });
+    totalEnergy += tbb::parallel_reduce(
+        tbb::blocked_range2d<int, int>(0, numRows, 0, numColumns), 0.0,
+        [&](tbb::blocked_range2d<int, int> r, double runningTotal) -> double {
+            for (auto i = r.rows().begin(); i != r.rows().end(); ++i)
+            {
+                for (auto j = r.cols().begin(); j != r.cols().end(); ++j)
+                {
+                    auto *cellI = cellArray.cell(i);
+                    auto *cellJ = cellNeighbourArray[i][j].neighbour_;
+                    if (!cellJ)
+                        return 0.0;
+                    auto mimRequired = cellNeighbourArray[i][j].requiresMIM_;
+                    runningTotal += energy(cellI, cellJ, mimRequired, true, interMolecular, subStrategy, performSum);
+                }
+            }
+            return runningTotal;
+        },
+        std::plus<double>());
 
     return totalEnergy;
 }
@@ -701,7 +710,6 @@ double EnergyKernel::energy(const SpeciesImproper &imp)
 // Return intramolecular energy for the supplied Atom
 double EnergyKernel::intramolecularEnergy(const Molecule &mol, const Atom &i)
 {
-
     // Get the SpeciesAtom
     const auto *spAtom = i.speciesAtom();
     assert(spAtom);
