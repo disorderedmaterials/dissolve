@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/cellneighbour.h"
 #include "math/matrix3.h"
 #include "templates/list.h"
 
@@ -16,14 +17,6 @@ class CellArray
     public:
     CellArray();
     ~CellArray();
-
-    struct Neighbour
-    {
-        Neighbour() = default;
-        Neighbour(Cell *n, bool mim) : neighbour_(n), requiresMIM_(mim) {}
-        Cell *neighbour_ = nullptr;
-        bool requiresMIM_ = false;
-    };
 
     /*
      * Cell Data
@@ -43,9 +36,6 @@ class CellArray
     std::vector<std::unique_ptr<Cell>> cells_;
     // Box associated with this cell division scheme
     const Box *box_{nullptr};
-    // cell neighbour arrays
-    std::vector<std::vector<Neighbour>> cellNeighbours_;
-    void createCellNeighbourArray(int maxCellNeighbours);
 
     public:
     // Generate array for provided Box
@@ -76,6 +66,16 @@ class CellArray
     Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
     // Return the minimum image equivalent of the supplied grid delta
     Vec3<int> mimGridDelta(Vec3<int> delta) const;
-    // Cell neighbour array
-    const std::vector<std::vector<Neighbour>> &getCellNeighbourArray() const;
+
+    /*
+     * Cell Neighbour pairs
+     */
+    private:
+    CellNeighbourPairs cellNeighboursPairs_;
+
+    private:
+    void createCellNeighbourPairs();
+
+    public:
+    const CellNeighbourPairs &getCellNeighbourPairs() const;
 };

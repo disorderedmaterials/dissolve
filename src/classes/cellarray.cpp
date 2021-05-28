@@ -241,7 +241,6 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     Messenger::print("Constructing neighbour lists for individual Cells...\n");
     std::vector<Cell *> nearNeighbours, mimNeighbours;
     Vec3<int> gridRef, delta;
-    int maxNeighbours = -1;
     for (auto &cell : cells_)
     {
         // Grab grid reference of central cell
@@ -266,37 +265,28 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
         // Set up lists in the cell
         cell->addCellNeighbours(nearNeighbours, mimNeighbours);
-        int numNeighbours = neighbourIndices.size();
-        if (numNeighbours > maxNeighbours)
-            maxNeighbours = numNeighbours;
     }
-    maxNeighbours += 1;
-    createCellNeighbourArray(maxNeighbours);
+    createCellNeighbourPairs();
     return true;
 }
 
-// Creates a matrix storing the cell neighbours
-// INCLUDES self terms, i.e. the element [cellI, cellI]
-// The matrix has a fixed number of columns, taken as the max number of neighbours any cell has
-// Empty columns point to a nullpointer instead of a cell
-void CellArray::createCellNeighbourArray(int maxNeighbours)
+void CellArray::createCellNeighbourPairs()
 {
-    cellNeighbours_.clear();
-    cellNeighbours_.reserve(cells_.size());
+    int n = cells_.size() * ((cells_.size() + 1) / 2);
+    cellNeighboursPairs_.neighbours().reserve(n);
     for (int i = 0; i < cells_.size(); i++)
     {
         auto &cell = cells_[i];
-        cellNeighbours_.emplace_back(maxNeighbours);
-        cellNeighbours_[i][0] = Neighbour(cell.get(), false);
+        cellNeighboursPairs_.insert(cell.get(), cell.get(), false);
         for (int k = 0; k < cell->cellNeighbours().size(); ++k)
         {
             auto id = cell->cellNeighbours()[k];
-            cellNeighbours_[i][k + 1] = Neighbour(id, false);
+            cellNeighboursPairs_.insert(cell.get(), id, false);
         }
         for (int k = 0; k < cell->mimCellNeighbours().size(); ++k)
         {
             auto id = cell->mimCellNeighbours()[k];
-            cellNeighbours_[i][k + cell->cellNeighbours().size() + 1] = Neighbour(id, true);
+            cellNeighboursPairs_.insert(cell.get(), id, true);
         }
     }
 }
@@ -450,5 +440,5 @@ Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
         delta.z += divisions_.z;
     return delta;
 }
-
-const std::vector<std::vector<CellArray::Neighbour>> &CellArray::getCellNeighbourArray() const { return cellNeighbours_; }
+// Return the cell neighbour pairs
+const CellNeighbourPairs &CellArray::getCellNeighbourPairs() const { return cellNeighboursPairs_; }

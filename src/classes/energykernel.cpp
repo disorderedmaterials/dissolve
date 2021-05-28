@@ -60,42 +60,27 @@ double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular,
-                            ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, bool interMolecular)
 {
     assert(centralCell && otherCell);
 
     auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
-    std::shared_ptr<Atom> ii;
-    Vec3<double> rI;
-    std::shared_ptr<Molecule> molI;
-    double rSq, scale;
-
-    // Get start/stride for specified loop context
-    auto offset = processPool_.interleavedLoopStart(strategy);
-    auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     // Loop over central cell atoms
     if (applyMim)
     {
-        auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
-        for (auto indexI = begin; indexI < end; ++indexI)
+        for (auto &ii : centralAtoms)
         {
-            ii = *indexI;
-            molI = ii->molecule();
-            rI = ii->r();
+            auto molI = ii->molecule();
+            auto &rI = ii->r();
 
             // Straight loop over other cell atoms
             for (const auto &jj : otherAtoms)
             {
-                // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
-                    continue;
-
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = box_->minimumDistanceSquared(rI, jj->r());
+                auto rSq = box_->minimumDistanceSquared(rI, jj->r());
                 if (rSq > cutoffDistanceSquared_)
                     continue;
 
@@ -104,7 +89,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                 else if (!interMolecular)
                 {
-                    scale = ii->scaling(jj);
+                    double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
                         totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
                 }
@@ -113,140 +98,70 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     }
     else
     {
-        auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), nChunks, offset);
-        for (auto indexI = begin; indexI < end; ++indexI)
+        for (auto &ii : centralAtoms)
         {
-            ii = *indexI;
-            molI = ii->molecule();
-            rI = ii->r();
+            auto &molI = ii->molecule();
+            auto &rI = ii->r();
 
             // Straight loop over other cell atoms
             for (const auto &jj : otherAtoms)
             {
-                // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
-                    continue;
-
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = (rI - jj->r()).magnitudeSq();
+                auto rSq = (rI - jj->r()).magnitudeSq();
                 if (rSq > cutoffDistanceSquared_)
                     continue;
 
                 // Check for atoms in the same molecule
                 if (molI != jj->molecule())
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+
                 else if (!interMolecular)
                 {
-                    scale = ii->scaling(jj);
+                    double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
                         totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
                 }
             }
         }
     }
-
-    // Perform relevant sum if requested
-    if (performSum)
-        processPool_.allSum(&totalEnergy, 1, strategy);
-
     return totalEnergy;
 }
 
-// Return PairPotential energy between cell and atomic neighbours
-double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy,
-                            bool performSum)
+// Return PairPotential energy between atoms in supplied cell
+double EnergyKernel::energy(Cell *cell, bool interMolecular)
 {
+    assert(cell);
+
     auto totalEnergy = 0.0;
-    auto &centralAtoms = centralCell->atoms();
-    std::shared_ptr<Atom> ii;
-    Vec3<double> rJ;
-    std::shared_ptr<Molecule> molJ;
-    double rSq, scale;
+    auto &atoms = cell->atoms();
 
-    // Get start/stride for specified loop context
-    auto offset = processPool_.interleavedLoopStart(strategy);
-    auto nChunks = processPool_.interleavedLoopStride(strategy);
-
-    // Straight loop over Cells *not* requiring mim
-    for (auto *otherCell : centralCell->cellNeighbours())
+    for (int i = 0; i < atoms.size(); ++i)
     {
-        auto &otherAtoms = otherCell->atoms();
+        auto &ii = atoms[i];
+        auto molI = ii->molecule();
+        auto &rI = ii->r();
 
-        for (const auto &jj : otherAtoms)
+        // Straight loop over other cell atoms
+        for (int j = i + 1; j < atoms.size(); ++j)
         {
-            molJ = jj->molecule();
-            rJ = jj->r();
+            // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+            auto &jj = atoms[j];
 
-            // Loop over central cell atoms
-            auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
-            for (auto indexI = begin; indexI < end; ++indexI)
+            double rSq = (rI - jj->r()).magnitudeSq();
+            if (rSq > cutoffDistanceSquared_)
+                continue;
+
+            // Check for atoms in the same molecule
+            if (molI != jj->molecule())
+                totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+            else if (!interMolecular)
             {
-                ii = *indexI;
-
-                // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
-                    continue;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = (ii->r() - rJ).magnitudeSq();
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (ii->molecule() != molJ)
-                    totalEnergy += pairPotentialEnergy(*jj, *ii, sqrt(rSq));
-                else if (!interMolecular)
-                {
-                    scale = ii->scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(*jj, *ii, sqrt(rSq)) * scale;
-                }
+                double scale = ii->scaling(jj);
+                if (scale > 1.0e-3)
+                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
             }
         }
     }
-
-    // Straight loop over Cells requiring mim
-    for (auto *otherCell : centralCell->mimCellNeighbours())
-    {
-        auto &otherAtoms = otherCell->atoms();
-
-        for (const auto &jj : otherAtoms)
-        {
-            molJ = jj->molecule();
-            rJ = jj->r();
-
-            // Loop over central cell atoms
-            auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
-            for (auto indexI = begin; indexI < end; ++indexI)
-            {
-                ii = *indexI;
-
-                // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
-                    continue;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = box_->minimumDistanceSquared(ii->r(), rJ);
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (ii->molecule() != molJ)
-                    totalEnergy += pairPotentialEnergy(*jj, *ii, sqrt(rSq));
-                else if (!interMolecular)
-                {
-                    scale = ii->scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(*jj, *ii, sqrt(rSq)) * scale;
-                }
-            }
-        }
-    }
-
-    // Perform relevant sum if requested
-    if (performSum)
-        processPool_.allSum(&totalEnergy, 1, strategy);
-
     return totalEnergy;
 }
 
@@ -562,34 +477,31 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     // Get sub-strategy to use
     ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
 
+    // List of cell neighbour pairs
+
+    auto &cellNeighboursPairs = cellArray.getCellNeighbourPairs();
     // Set start/stride for parallel loop
     auto offset = processPool_.interleavedLoopStart(strategy);
     auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     auto totalEnergy = 0.0;
-    auto &cellNeighbourArray = cellArray.getCellNeighbourArray();
-    int numRows = cellNeighbourArray.size();
-    int numColumns = cellNeighbourArray[0].size();
-    auto [rowBegin, rowEnd] = chop_range(0, numRows, nChunks, offset);
+    auto [begin, end] =
+        chop_range(cellNeighboursPairs.neighbours().begin(), cellNeighboursPairs.neighbours().end(), nChunks, offset);
 
-    totalEnergy += dissolve::tbb_parallel_reduce(dissolve::blocked_range2d<int, int>(rowBegin, rowEnd, 0, numColumns), 0.0,
-                                                 [&](dissolve::blocked_range2d<int, int> r, double runningTotal) -> double {
-                                                     for (auto i = r.rows().begin(); i != r.rows().end(); ++i)
-                                                     {
-                                                         for (auto j = r.cols().begin(); j != r.cols().end(); ++j)
-                                                         {
-                                                             auto *cellI = cellArray.cell(i);
-                                                             auto *cellJ = cellNeighbourArray[i][j].neighbour_;
-                                                             if (!cellJ)
-                                                                 return 0.0;
-                                                             auto mimRequired = cellNeighbourArray[i][j].requiresMIM_;
-                                                             runningTotal += energy(cellI, cellJ, mimRequired, true,
-                                                                                    interMolecular, subStrategy, performSum);
-                                                         }
-                                                     }
-                                                     return runningTotal;
-                                                 },
-                                                 std::plus<double>());
+    totalEnergy +=
+        dissolve::transform_reduce(ParallelPolicies::par, begin, end, 0.0, std::plus<double>(), [&](const auto &pair) {
+            auto *cellI = pair.master_;
+            auto *cellJ = pair.neighbour_;
+            auto mimRequired = pair.requiresMIM_;
+            if (cellI == cellJ)
+                return energy(cellI, interMolecular);
+            else
+                return energy(cellI, cellJ, mimRequired, interMolecular);
+        });
+
+    // Perform relevant sum if requested
+    if (performSum)
+        processPool_.allSum(&totalEnergy, 1, strategy);
 
     return totalEnergy;
 }

@@ -80,7 +80,7 @@ class Atom : public DynamicArrayObject<Atom>
     // Set Molecule in which this Atom exists
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists
-    std::shared_ptr<Molecule> molecule() const;
+    const std::shared_ptr<Molecule> &molecule() const;
     // Set cell in which the atom exists
     void setCell(Cell *cell);
     // Return cell in which the atom exists
