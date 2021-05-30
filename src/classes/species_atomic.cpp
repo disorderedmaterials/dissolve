@@ -90,8 +90,7 @@ std::list<SpeciesAtom> &Species::atoms() { return atoms_; }
 // Set coordinates of specified atom
 void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
 {
-    if (!i)
-        return;
+    assert(i);
 
     i->setCoordinates(r);
 
