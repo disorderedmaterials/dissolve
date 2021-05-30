@@ -46,9 +46,9 @@ Species 'Water'
 
   # Analysis Sites
   Site  'origin'
-    Origin  2
-    XAxis  1 3
-    YAxis  3
+    Origin  1 3
+    XAxis  3
+    YAxis  2
   EndSite
 EndSpecies
 
@@ -96,6 +96,30 @@ EndModule
 Module  CalculateAvgMol
   Configuration  'Bulk'
   Site  Water  'origin'
+EndModule
+
+Module  DataTest
+  Frequency  95
+  SampledVector  'CalculateAvgMol01//X'  values  @
+  EndSampledVector
+  3
+  -0.83305
+  0.00016
+  0.83305
+
+  SampledVector  'CalculateAvgMol01//Y'  values  @
+  EndSampledVector
+  3
+  0.00000
+  0.60443
+  0.00000
+
+  SampledVector  'CalculateAvgMol01//Z'  values  @
+  EndSampledVector
+  3
+  0.00000
+  0.00000
+  0.00000
 EndModule
 
 EndLayer
