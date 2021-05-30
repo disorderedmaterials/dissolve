@@ -17,12 +17,14 @@ add_library(
   forces_moscito.cpp
   forces_simple.cpp
   trajectory.cpp
+  values.cpp
   coordinates.h
   data1d.h
   data2d.h
   data3d.h
   forces.h
   trajectory.h
+  values.h
 )
 
 include_directories(import PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
