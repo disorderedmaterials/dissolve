@@ -58,3 +58,9 @@ template <> GenericItemSearcher<const SampledData1D>::GenericItemSearcher()
         return psa.searchSampledData1D(dataName);
     });
 }
+
+/*
+ * SampledVector
+ */
+
+template <> GenericItemSearcher<const SampledVector>::GenericItemSearcher() {}
