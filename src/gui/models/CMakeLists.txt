@@ -10,6 +10,8 @@ set(models_MOC_HDRS
     masterTermModel.h
     speciesFilterProxy.h
     speciesModel.h
+    speciesSiteFilterProxy.h
+    speciesSiteModel.h
     xmlAngleModel.h
     xmlAtomModel.h
     xmlBondModel.h
@@ -36,21 +38,23 @@ set(models_SRCS
     masterTermModel.cpp
     pairPotentialModel.cpp
     procedureNodeModel.cpp
+    speciesAngleModel.cpp
+    speciesAtomModel.cpp
+    speciesBondModel.cpp
     speciesFilterProxy.cpp
+    speciesImproperModel.cpp
+    speciesIsoModel.cpp
     speciesModel.cpp
+    speciesModelUtils.cpp
+    speciesSiteFilterProxy.cpp
+    speciesSiteModel.cpp
+    speciesTorsionModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
     xmlImproperModel.cpp
     xmlTreeModel.cpp
     xmlTorsionModel.cpp
-    speciesAngleModel.cpp
-    speciesAtomModel.cpp
-    speciesBondModel.cpp
-    speciesImproperModel.cpp
-    speciesIsoModel.cpp
-    speciesModelUtils.cpp
-    speciesTorsionModel.cpp
 )
 
 qt_wrap_cpp(
@@ -62,6 +66,7 @@ qt_wrap_cpp(
   pairPotentialModel.h
   enumOptionsModel.h
   speciesModel.h
+  speciesSiteModel.h
   xmlAngleModel.h
   xmlAtomModel.h
   xmlBondModel.h
