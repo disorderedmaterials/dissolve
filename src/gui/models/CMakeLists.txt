@@ -4,6 +4,7 @@ set(models_MOC_HDRS
     braggReflectionModel.h
     dataManagerReferencePointModel.h
     dataManagerSimulationModel.h
+    enumOptionsModel.h
     procedureNodeModel.h
     masterTermModel.h
     speciesFilterProxy.h
