@@ -34,7 +34,9 @@ class Configuration : public ListItem<Configuration>
     public:
     Configuration();
     ~Configuration();
-    void operator=(Configuration &source);
+    Configuration(const Configuration &source) = delete;
+    Configuration(Configuration &&source) = delete;
+    void operator=(Configuration &source) = delete;
     // Clear all data
     void clear();
 

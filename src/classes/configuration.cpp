@@ -19,11 +19,6 @@ Configuration::Configuration() : ListItem<Configuration>(), generator_(Procedure
 
 Configuration::~Configuration() { clear(); }
 
-void Configuration::operator=(Configuration &source)
-{
-    Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
-}
-
 // Clear all data
 void Configuration::clear()
 {
