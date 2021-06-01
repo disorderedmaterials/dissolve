@@ -15,14 +15,13 @@ class Data3DExportFileFormat : public FileAndFormat
 {
     public:
     // Available data formats
-    enum Data3DExportFormat
+    enum class Data3DExportFormat
     {
-        BlockData3D,
-        CartesianData3D,
-        PDensData3D,
-        nData3DExportFormats
+        Block,
+        Cartesian,
+        PDens
     };
-    Data3DExportFileFormat(std::string_view filename = "", Data3DExportFormat format = Data3DExportFileFormat::BlockData3D);
+    Data3DExportFileFormat(std::string_view filename = "", Data3DExportFormat format = Data3DExportFormat::Block);
     ~Data3DExportFileFormat() override = default;
 
     /*

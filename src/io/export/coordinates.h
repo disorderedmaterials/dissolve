@@ -13,13 +13,12 @@ class CoordinateExportFileFormat : public FileAndFormat
 {
     public:
     // Available coordinate formats
-    enum CoordinateExportFormat
+    enum class CoordinateExportFormat
     {
-        XYZCoordinates,
-        DLPOLYCoordinates,
-        nCoordinateExportFormats
+        XYZ,
+        DLPOLY
     };
-    CoordinateExportFileFormat(std::string_view filename = "", CoordinateExportFormat format = XYZCoordinates);
+    CoordinateExportFileFormat(std::string_view filename = "", CoordinateExportFormat format = CoordinateExportFormat::XYZ);
     ~CoordinateExportFileFormat() override = default;
 
     /*

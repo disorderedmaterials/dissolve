@@ -13,12 +13,11 @@ class ForceExportFileFormat : public FileAndFormat
 {
     public:
     // Available force formats
-    enum ForceExportFormat
+    enum class ForceExportFormat
     {
-        SimpleForces,
-        nForceExportFormats
+        Simple
     };
-    ForceExportFileFormat(std::string_view filename = "", ForceExportFormat format = SimpleForces);
+    ForceExportFileFormat(std::string_view filename = "", ForceExportFormat format = ForceExportFormat::Simple);
     ~ForceExportFileFormat() override = default;
 
     /*

@@ -14,10 +14,10 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
 {
     formats_ = EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
         "CoordinateImportFileFormat",
-        {{CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG"},
-         {CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO"},
-         {CoordinateImportFileFormat::MoscitoCoordinates, "moscito", "Moscito structure file"},
-         {CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ"}},
+        {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
+         {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
+         {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
+         {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}},
         format);
     setUpKeywords();
 }
@@ -72,16 +72,16 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (CoordinateImportFileFormat::DLPOLYCoordinates):
+        case (CoordinateImportFormat::DLPOLY):
             result = importDLPOLY(parser, r);
             break;
-        case (CoordinateImportFileFormat::EPSRCoordinates):
+        case (CoordinateImportFormat::EPSR):
             result = importEPSR(parser, r);
             break;
-        case (CoordinateImportFileFormat::MoscitoCoordinates):
+        case (CoordinateImportFormat::Moscito):
             result = importMoscito(parser, r);
             break;
-        case (CoordinateImportFileFormat::XYZCoordinates):
+        case (CoordinateImportFormat::XYZ):
             result = importXYZ(parser, r);
             break;
         default:

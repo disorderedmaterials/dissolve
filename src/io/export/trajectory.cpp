@@ -12,7 +12,7 @@ TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename
     : FileAndFormat(formats_, filename)
 {
     formats_ = EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
-        "TrajectoryExportFileFormat", {{TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}}, format);
+        "TrajectoryExportFileFormat", {{TrajectoryExportFormat::XYZ, "xyz", "XYZ Trajectory"}}, format);
 }
 
 /*
@@ -56,7 +56,7 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
     {
         auto headerResult = false;
 
-        if (formats_.enumeration() == XYZTrajectory)
+        if (formats_.enumeration() == TrajectoryExportFormat::XYZ)
             headerResult = true;
         else
             headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
@@ -70,7 +70,7 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
     auto frameResult = false;
     switch (formats_.enumeration())
     {
-        case (TrajectoryExportFileFormat::XYZTrajectory):
+        case (TrajectoryExportFormat::XYZ):
             frameResult = exportXYZ(parser, cfg);
             break;
         default:

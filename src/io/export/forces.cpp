@@ -14,7 +14,7 @@ ForceExportFileFormat::ForceExportFileFormat(std::string_view filename, ForceExp
     : FileAndFormat(formats_, filename)
 {
     formats_ = EnumOptions<ForceExportFileFormat::ForceExportFormat>(
-        "ForceExportFileFormat", {{ForceExportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}}, format);
+        "ForceExportFileFormat", {{ForceExportFormat::Simple, "simple", "Simple Free-Formatted Forces"}}, format);
 }
 
 /*
@@ -51,7 +51,7 @@ bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
 
     // Write data
     auto result = false;
-    if (formats_.enumeration() == ForceExportFileFormat::SimpleForces)
+    if (formats_.enumeration() == ForceExportFormat::Simple)
         result = exportSimple(parser, f);
     else
     {

@@ -10,8 +10,7 @@ Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2D
     : FileAndFormat(formats_, filename)
 {
     formats_ = EnumOptions<Data2DImportFileFormat::Data2DImportFormat>(
-        "Data2DImportFileFormat", {{Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data"}},
-        format);
+        "Data2DImportFileFormat", {{Data2DImportFormat::Cartesian, "cartesian", "Cartesian X,Y,f(X,Y) data"}}, format);
     setUpKeywords();
 }
 
@@ -55,7 +54,7 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (Data2DImportFileFormat::CartesianData2D):
+        case (Data2DImportFormat::Cartesian):
             result = importCartesian(parser, data);
             break;
         default:

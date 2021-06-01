@@ -223,7 +223,7 @@ void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
     if (exportFile.isEmpty())
         return;
 
-    CoordinateExportFileFormat fileAndFormat(qPrintable(exportFile), CoordinateExportFileFormat::XYZCoordinates);
+    CoordinateExportFileFormat fileAndFormat(qPrintable(exportFile), CoordinateExportFileFormat::CoordinateExportFormat::XYZ);
     if (!fileAndFormat.exportData(cfg))
         QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.",
                              QMessageBox::Ok, QMessageBox::Ok);

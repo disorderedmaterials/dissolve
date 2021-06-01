@@ -14,15 +14,15 @@ class CoordinateImportFileFormat : public FileAndFormat
 {
     public:
     // Coordinate Import Formats
-    enum CoordinateImportFormat
+    enum class CoordinateImportFormat
     {
-        DLPOLYCoordinates,
-        EPSRCoordinates,
-        MoscitoCoordinates,
-        XYZCoordinates,
-        nCoordinateImportFormats
+        DLPOLY,
+        EPSR,
+        Moscito,
+        XYZ
     };
-    explicit CoordinateImportFileFormat(std::string_view filename = "", CoordinateImportFormat format = XYZCoordinates);
+    explicit CoordinateImportFileFormat(std::string_view filename = "",
+                                        CoordinateImportFormat format = CoordinateImportFormat::XYZ);
     ~CoordinateImportFileFormat() override = default;
 
     /*

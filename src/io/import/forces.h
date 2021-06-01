@@ -14,14 +14,13 @@ class ForceImportFileFormat : public FileAndFormat
 {
     public:
     // Forces Formats
-    enum ForceImportFormat
+    enum class ForceImportFormat
     {
-        DLPOLYForces,
-        MoscitoForces,
-        SimpleForces,
-        nForceImportFormats
+        DLPOLY,
+        Moscito,
+        Simple
     };
-    explicit ForceImportFileFormat(std::string_view filename = "", ForceImportFormat format = SimpleForces);
+    explicit ForceImportFileFormat(std::string_view filename = "", ForceImportFormat format = ForceImportFormat::Simple);
     ~ForceImportFileFormat() override = default;
 
     /*

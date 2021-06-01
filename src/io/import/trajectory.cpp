@@ -11,7 +11,7 @@ TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename
     : FileAndFormat(formats_, filename)
 {
     formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
-        "TrajectoryImportFileFormat", {{TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}}, format);
+        "TrajectoryImportFileFormat", {{TrajectoryImportFormat::XYZ, "xyz", "XYZ Trajectory"}}, format);
 }
 
 /*
@@ -25,8 +25,9 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (TrajectoryImportFileFormat::XYZTrajectory):
-            result = CoordinateImportFileFormat("", CoordinateImportFileFormat::XYZCoordinates).importData(parser, cfg);
+        case (TrajectoryImportFormat::XYZ):
+            result =
+                CoordinateImportFileFormat("", CoordinateImportFileFormat::CoordinateImportFormat::XYZ).importData(parser, cfg);
             break;
         default:
             throw(std::runtime_error(

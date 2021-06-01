@@ -15,12 +15,11 @@ class Data1DExportFileFormat : public FileAndFormat
 {
     public:
     // Available data formats
-    enum Data1DExportFormat
+    enum class Data1DExportFormat
     {
-        XYData1D,
-        nData1DExportFormats
+        XY
     };
-    Data1DExportFileFormat(std::string_view filename = "", Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
+    Data1DExportFileFormat(std::string_view filename = "", Data1DExportFormat format = Data1DExportFormat::XY);
     ~Data1DExportFileFormat() override = default;
 
     /*

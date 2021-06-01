@@ -9,8 +9,7 @@ Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3D
     : FileAndFormat(formats_, filename)
 {
     formats_ = EnumOptions<Data3DImportFileFormat::Data3DImportFormat>(
-        "Data3DImportFileFormat", {{Data3DImportFileFormat::CartesianData3D, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data"}},
-        format);
+        "Data3DImportFileFormat", {{Data3DImportFormat::Cartesian, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data"}}, format);
     setUpKeywords();
 }
 

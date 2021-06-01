@@ -14,12 +14,11 @@ class Data3DImportFileFormat : public FileAndFormat
 {
     public:
     // Available Data3D formats
-    enum Data3DImportFormat
+    enum class Data3DImportFormat
     {
-        CartesianData3D,
-        nData3DImportFormats
+        Cartesian
     };
-    explicit Data3DImportFileFormat(std::string_view filename = "", Data3DImportFormat format = CartesianData3D);
+    explicit Data3DImportFileFormat(std::string_view filename = "", Data3DImportFormat format = Data3DImportFormat::Cartesian);
     ~Data3DImportFileFormat() override = default;
 
     /*

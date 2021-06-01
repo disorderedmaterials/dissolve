@@ -11,9 +11,9 @@ Data3DExportFileFormat::Data3DExportFileFormat(std::string_view filename, Data3D
 {
     formats_ = EnumOptions<Data3DExportFileFormat::Data3DExportFormat>(
         "Data3DExportFileFormat",
-        {{Data3DExportFileFormat::BlockData3D, "block", "Block Data"},
-         {Data3DExportFileFormat::CartesianData3D, "cartesian", "Cartesian (x,y,z,value) Data"},
-         {Data3DExportFileFormat::PDensData3D, "pdens", "DLPutils PDens Data"}},
+        {{Data3DExportFormat::Block, "block", "Block Data"},
+         {Data3DExportFormat::Cartesian, "cartesian", "Cartesian (x,y,z,value) Data"},
+         {Data3DExportFormat::PDens, "pdens", "DLPutils PDens Data"}},
         format);
 }
 
@@ -128,13 +128,13 @@ bool Data3DExportFileFormat::exportData(const Data3DBase &data)
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (Data3DExportFileFormat::BlockData3D):
+        case (Data3DExportFormat::Block):
             result = exportBlock(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
             break;
-        case (Data3DExportFileFormat::CartesianData3D):
+        case (Data3DExportFormat::Cartesian):
             result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
             break;
-        case (Data3DExportFileFormat::PDensData3D):
+        case (Data3DExportFormat::PDens):
             result = exportPDens(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
             break;
         default:

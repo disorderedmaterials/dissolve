@@ -11,9 +11,9 @@ ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImp
 {
     formats_ = EnumOptions<ForceImportFileFormat::ForceImportFormat>(
         "ForceImportFileFormat",
-        {{ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces"},
-         {ForceImportFileFormat::MoscitoForces, "moscito", "Moscito Structure File Forces"},
-         {ForceImportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}},
+        {{ForceImportFormat::DLPOLY, "dlpoly", "DL_POLY Config File Forces"},
+         {ForceImportFormat::Moscito, "moscito", "Moscito Structure File Forces"},
+         {ForceImportFormat::Simple, "simple", "Simple Free-Formatted Forces"}},
         format);
     setUpKeywords();
 }
@@ -55,13 +55,13 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (ForceImportFileFormat::DLPOLYForces):
+        case (ForceImportFormat::DLPOLY):
             result = importDLPOLY(parser, f);
             break;
-        case (ForceImportFileFormat::MoscitoForces):
+        case (ForceImportFormat::Moscito):
             result = importMoscito(parser, f);
             break;
-        case (ForceImportFileFormat::SimpleForces):
+        case (ForceImportFormat::Simple):
             result = importSimple(parser, f);
             break;
         default:

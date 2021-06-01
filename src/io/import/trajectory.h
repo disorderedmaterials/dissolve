@@ -14,13 +14,13 @@ class TrajectoryImportFileFormat : public FileAndFormat
 {
     public:
     // Available trajectory formats
-    enum TrajectoryImportFormat
+    enum class TrajectoryImportFormat
     {
-        XYZTrajectory,
-        nTrajectoryImportFormats
+        XYZ
     };
 
-    explicit TrajectoryImportFileFormat(std::string_view filename = "", TrajectoryImportFormat format = XYZTrajectory);
+    explicit TrajectoryImportFileFormat(std::string_view filename = "",
+                                        TrajectoryImportFormat format = TrajectoryImportFormat::XYZ);
     ~TrajectoryImportFileFormat() override = default;
 
     /*

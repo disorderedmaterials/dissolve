@@ -13,12 +13,11 @@ class TrajectoryExportFileFormat : public FileAndFormat
 {
     public:
     // Trajectory Export Formats
-    enum TrajectoryExportFormat
+    enum class TrajectoryExportFormat
     {
-        XYZTrajectory,
-        nTrajectoryExportFormats
+        XYZ
     };
-    TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = XYZTrajectory);
+    TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = TrajectoryExportFormat::XYZ);
     ~TrajectoryExportFileFormat() override = default;
 
     /*

@@ -11,9 +11,9 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
 {
     formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
         "Data1DImportFileFormat",
-        {{Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"},
-         {Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
-         {Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)"}},
+        {{Data1DImportFormat::XY, "xy", "Simple XY data (x = bin centres)"},
+         {Data1DImportFormat::Histogram, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
+         {Data1DImportFormat::GudrunMint, "mint", "Gudrun output (mint01)"}},
         format);
     setUpKeywords();
 }
@@ -63,13 +63,13 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (Data1DImportFileFormat::XYData1D):
+        case (Data1DImportFormat::XY):
             result = importXY(parser, data);
             break;
-        case (Data1DImportFileFormat::HistogramData1D):
+        case (Data1DImportFormat::Histogram):
             result = importHistogram(parser, data);
             break;
-        case (Data1DImportFileFormat::GudrunMintData1D):
+        case (Data1DImportFormat::GudrunMint):
             result = importGudrunMint(parser, data);
             break;
         default:

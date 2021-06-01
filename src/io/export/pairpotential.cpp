@@ -12,8 +12,8 @@ PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view fi
 {
     formats_ = EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>(
         "PairPotentialExportFileFormat",
-        {{PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data"},
-         {PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File"}},
+        {{PairPotentialExportFormat::Block, "block", "Block Data"},
+         {PairPotentialExportFormat::DLPOLYTABLE, "table", "DL_POLY TABLE File"}},
         format);
 }
 
@@ -108,9 +108,9 @@ bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
 
     // Write data
     auto result = false;
-    if (formats_.enumeration() == PairPotentialExportFileFormat::BlockPairPotential)
+    if (formats_.enumeration() == PairPotentialExportFormat::Block)
         result = exportBlock(parser, pp);
-    else if (formats_.enumeration() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential)
+    else if (formats_.enumeration() == PairPotentialExportFormat::DLPOLYTABLE)
         result = exportDLPOLY(parser, pp);
     else
     {

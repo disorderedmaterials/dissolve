@@ -15,8 +15,8 @@ CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename
 {
     formats_ = EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat>(
         "CoordinateExportFileFormat",
-        {{CoordinateExportFileFormat::XYZCoordinates, "xyz", "Simple XYZ Coordinates"},
-         {CoordinateExportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG File"}},
+        {{CoordinateExportFormat::XYZ, "xyz", "Simple XYZ Coordinates"},
+         {CoordinateExportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG File"}},
         format);
 }
 
@@ -106,10 +106,10 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (CoordinateExportFileFormat::XYZCoordinates):
+        case (CoordinateExportFormat::XYZ):
             result = exportXYZ(parser, cfg);
             break;
-        case (CoordinateExportFileFormat::DLPOLYCoordinates):
+        case (CoordinateExportFormat::DLPOLY):
             result = exportDLPOLY(parser, cfg);
             break;
         default:

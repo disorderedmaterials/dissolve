@@ -17,12 +17,11 @@ class Data2DImportFileFormat : public FileAndFormat
 {
     public:
     // Available Data2D formats
-    enum Data2DImportFormat
+    enum class Data2DImportFormat
     {
-        CartesianData2D,
-        nData2DImportFormats
+        Cartesian
     };
-    explicit Data2DImportFileFormat(std::string_view filename = "", Data2DImportFormat format = CartesianData2D);
+    explicit Data2DImportFileFormat(std::string_view filename = "", Data2DImportFormat format = Data2DImportFormat::Cartesian);
     ~Data2DImportFileFormat() override = default;
 
     /*

@@ -11,8 +11,8 @@ Data2DExportFileFormat::Data2DExportFileFormat(std::string_view filename, Data2D
 {
     formats_ = EnumOptions<Data2DExportFileFormat::Data2DExportFormat>(
         "Data2DExportFileFormat",
-        {{Data2DExportFileFormat::BlockData2D, "block", "Block Data"},
-         {Data2DExportFileFormat::CartesianData2D, "cartesian", "Cartesian (x,y,value) Data"}},
+        {{Data2DExportFormat::Block, "block", "Block Data"},
+         {Data2DExportFormat::Cartesian, "cartesian", "Cartesian (x,y,value) Data"}},
         format);
 }
 
@@ -74,10 +74,10 @@ bool Data2DExportFileFormat::exportData(const Data2DBase &data)
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (Data2DExportFileFormat::BlockData2D):
+        case (Data2DExportFormat::Block):
             result = exportBlock(parser, data.xAxis(), data.yAxis(), data.values());
             break;
-        case (Data2DExportFileFormat::CartesianData2D):
+        case (Data2DExportFormat::Cartesian):
             result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.values());
             break;
         default:

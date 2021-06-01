@@ -12,7 +12,7 @@ Data1DExportFileFormat::Data1DExportFileFormat(std::string_view filename, Data1D
     : FileAndFormat(formats_, filename)
 {
     formats_ = EnumOptions<Data1DExportFileFormat::Data1DExportFormat>(
-        "Data1DExportFileFormat", {{Data1DExportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"}}, format);
+        "Data1DExportFileFormat", {{Data1DExportFormat::XY, "xy", "Simple XY data (x = bin centres)"}}, format);
 }
 
 /*
@@ -52,7 +52,7 @@ bool Data1DExportFileFormat::exportData(const Data1DBase &data)
     auto result = false;
     switch (formats_.enumeration())
     {
-        case (Data1DExportFileFormat::XYData1D):
+        case (Data1DExportFormat::XY):
             if (data.valuesHaveErrors())
                 result = exportXY(parser, data.xAxis(), data.values(), data.errors());
             else
