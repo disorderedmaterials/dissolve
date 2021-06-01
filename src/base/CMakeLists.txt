@@ -1,5 +1,6 @@
 add_library(
   base
+  enumoptionsbase.cpp
   geometry.cpp
   lineparser.cpp
   lock.cpp
