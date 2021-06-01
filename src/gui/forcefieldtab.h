@@ -7,6 +7,7 @@
 #include "classes/masterintra.h"
 #include "classes/pairpotential.h"
 #include "gui/maintab.h"
+#include "gui/models/atomTypeModel.h"
 #include "gui/ui_forcefieldtab.h"
 
 Q_DECLARE_METATYPE(const MasterIntra *)
@@ -29,6 +30,8 @@ class ForcefieldTab : public QWidget, public MainTab
     private:
     // Main form declaration
     Ui::ForcefieldTab ui_;
+    // Model of Atom Types
+    AtomTypeModel atoms_;
 
     /*
      * MainTab Reimplementations
@@ -51,8 +54,6 @@ class ForcefieldTab : public QWidget, public MainTab
     void updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems);
     // Row update function for ImpropersTable
     void updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems);
-    // Row update function for AtomTypesTable
-    void updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems);
     // Row update function for PairPotentialsTable
     void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
 

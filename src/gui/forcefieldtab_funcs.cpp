@@ -74,12 +74,11 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.AtomTypesTable->setItemDelegateForColumn(
         3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
     // -- Charge / Parameters
-    for (auto n = 4; n < 9; ++n)
-        ui_.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.AtomTypesTable->horizontalHeader()->setFont(font());
     ui_.AtomTypesTable->horizontalHeader()->setVisible(true);
+    ui_.AtomTypesTable->setModel(&atoms_);
 
     /*
      * Pair Potentials
@@ -284,72 +283,6 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper
     }
 }
 
-// Row update function for AtomTypesTable
-void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Name
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        ui_.AtomTypesTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.AtomTypesTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(atomType->name())));
-
-    // Target element
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        item->setFlags(Qt::NoItemFlags);
-        ui_.AtomTypesTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.AtomTypesTable->item(row, 1);
-    item->setText(QString::fromStdString(std::string(Elements::symbol(atomType->Z()))));
-
-    // Charge
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        ui_.AtomTypesTable->setItem(row, 2, item);
-    }
-    else
-        item = ui_.AtomTypesTable->item(row, 2);
-    item->setText(QString::number(atomType->charge()));
-
-    // Short-Range Form
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-        ui_.AtomTypesTable->setItem(row, 3, item);
-    }
-    else
-        item = ui_.AtomTypesTable->item(row, 3);
-    item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()))));
-
-    // Parameters
-    auto col = 4;
-    for (auto x : atomType->shortRangeParameters())
-    {
-        if (createItems)
-        {
-            item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-            ui_.AtomTypesTable->setItem(row, col++, item);
-        }
-        else
-            item = ui_.AtomTypesTable->item(row, col++);
-        item->setText(QString::number(x));
-    }
-}
-
 // Row update function for PairPotentialsTable
 void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems)
 {
@@ -453,8 +386,7 @@ void ForcefieldTab::updateControls()
     ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
-    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
-        ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+    atoms_.setData(dissolve_.atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
@@ -528,8 +460,7 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
     Locker refreshLocker(refreshLock_);
 
-    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
-        ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+    atoms_.setData(dissolve_.atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
