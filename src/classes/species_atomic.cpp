@@ -186,17 +186,7 @@ void Species::selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalRefer
 }
 
 // Return current atom selection
-const RefList<SpeciesAtom> &Species::selectedAtoms() const { return selectedAtoms_; }
-
-// Return nth selected Atom
-SpeciesAtom *Species::selectedAtom(int n)
-{
-    RefListItem<SpeciesAtom> *ri = selectedAtoms_[n];
-    if (ri == nullptr)
-        return nullptr;
-    else
-        return ri->item();
-}
+const RefList<const SpeciesAtom> &Species::selectedAtoms() const { return selectedAtoms_; }
 
 // Return number of selected Atoms
 int Species::nSelectedAtoms() const { return selectedAtoms_.nItems(); }

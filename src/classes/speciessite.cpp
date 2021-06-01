@@ -8,13 +8,7 @@
 #include "data/atomicmasses.h"
 #include <numeric>
 
-SpeciesSite::SpeciesSite()
-{
-    parent_ = nullptr;
-    originMassWeighted_ = false;
-}
-
-SpeciesSite::~SpeciesSite() = default;
+SpeciesSite::SpeciesSite(const Species *parent) : parent_(parent), originMassWeighted_(false) {}
 
 /*
  * Basic Information
@@ -23,14 +17,11 @@ SpeciesSite::~SpeciesSite() = default;
 // Set name of site
 void SpeciesSite::setName(std::string_view newName) { name_ = newName; }
 
-// Return anme of site
+// Return name of site
 std::string_view SpeciesSite::name() const { return name_; }
 
-// Set Species parent
-void SpeciesSite::setParent(Species *sp) { parent_ = sp; }
-
 // Return species parent
-Species *SpeciesSite::parent() const { return parent_; }
+const Species *SpeciesSite::parent() const { return parent_; }
 
 // Return version
 int SpeciesSite::version() const { return version_; }
@@ -40,7 +31,7 @@ int SpeciesSite::version() const { return version_; }
  */
 
 // Add origin atom
-bool SpeciesSite::addOriginAtom(SpeciesAtom *originAtom)
+bool SpeciesSite::addOriginAtom(const SpeciesAtom *originAtom)
 {
     if (!originAtom)
         return Messenger::error("NULL SpeciesAtom passed to SpeciesSite::addOriginAtom().\n");
@@ -57,7 +48,7 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom *originAtom)
 }
 
 // Remove origin atom
-void SpeciesSite::removeOriginAtom(SpeciesAtom *originAtom)
+void SpeciesSite::removeOriginAtom(const SpeciesAtom *originAtom)
 {
     if (originAtoms_.contains(originAtom))
     {
@@ -77,13 +68,13 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Set origin atoms
-bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> &atoms)
+bool SpeciesSite::setOriginAtoms(const RefList<const SpeciesAtom> &atoms)
 {
     originAtoms_.clear();
 
     ++version_;
 
-    for (SpeciesAtom *i : atoms)
+    for (auto *i : atoms)
         if (!addOriginAtom(i))
         {
             originAtoms_.clear();
@@ -94,7 +85,7 @@ bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> &atoms)
 }
 
 // Return list of origin atoms
-const RefList<SpeciesAtom> &SpeciesSite::originAtoms() { return originAtoms_; }
+const RefList<const SpeciesAtom> &SpeciesSite::originAtoms() { return originAtoms_; }
 
 // Return integer array of indices from which the origin should be formed
 std::vector<int> SpeciesSite::originAtomIndices() const
@@ -102,7 +93,6 @@ std::vector<int> SpeciesSite::originAtomIndices() const
     std::vector<int> indices;
     std::transform(originAtoms_.begin(), originAtoms_.end(), std::back_inserter(indices),
                    [](auto *atom) { return atom->index(); });
-
     return indices;
 }
 
@@ -118,7 +108,7 @@ void SpeciesSite::setOriginMassWeighted(bool b)
 bool SpeciesSite::originMassWeighted() const { return originMassWeighted_; }
 
 // Add x-axis atom
-bool SpeciesSite::addXAxisAtom(SpeciesAtom *xAxisAtom)
+bool SpeciesSite::addXAxisAtom(const SpeciesAtom *xAxisAtom)
 {
     if (!xAxisAtom)
         return Messenger::error("NULL SpeciesAtom passed to SpeciesSite::addXAxisAtom().\n");
@@ -142,7 +132,7 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 }
 
 // Remove x-axis atom
-void SpeciesSite::removeXAxisAtom(SpeciesAtom *xAxisAtom)
+void SpeciesSite::removeXAxisAtom(const SpeciesAtom *xAxisAtom)
 {
     if (xAxisAtoms_.contains(xAxisAtom))
     {
@@ -155,13 +145,13 @@ void SpeciesSite::removeXAxisAtom(SpeciesAtom *xAxisAtom)
 }
 
 // Set x-axis atoms
-bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> &atoms)
+bool SpeciesSite::setXAxisAtoms(const RefList<const SpeciesAtom> &atoms)
 {
     xAxisAtoms_.clear();
 
     ++version_;
 
-    for (SpeciesAtom *i : atoms)
+    for (auto *i : atoms)
         if (!addXAxisAtom(i))
         {
             xAxisAtoms_.clear();
@@ -172,7 +162,7 @@ bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> &atoms)
 }
 
 // Return list of x-axis atoms
-const RefList<SpeciesAtom> &SpeciesSite::xAxisAtoms() { return xAxisAtoms_; }
+const RefList<const SpeciesAtom> &SpeciesSite::xAxisAtoms() { return xAxisAtoms_; }
 
 // Return integer array of indices from which x-axis should be formed
 std::vector<int> SpeciesSite::xAxisAtomIndices() const
@@ -184,7 +174,7 @@ std::vector<int> SpeciesSite::xAxisAtomIndices() const
 }
 
 // Add y-axis atom
-bool SpeciesSite::addYAxisAtom(SpeciesAtom *yAxisAtom)
+bool SpeciesSite::addYAxisAtom(const SpeciesAtom *yAxisAtom)
 {
     if (!yAxisAtom)
         return Messenger::error("NULL SpeciesAtom passed to SpeciesSite::addYAxisAtom().\n");
@@ -208,7 +198,7 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 }
 
 // Remove y-axis atom
-void SpeciesSite::removeYAxisAtom(SpeciesAtom *yAxisAtom)
+void SpeciesSite::removeYAxisAtom(const SpeciesAtom *yAxisAtom)
 {
     if (yAxisAtoms_.contains(yAxisAtom))
     {
@@ -221,13 +211,13 @@ void SpeciesSite::removeYAxisAtom(SpeciesAtom *yAxisAtom)
 }
 
 // Set y-axis atoms
-bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> &atoms)
+bool SpeciesSite::setYAxisAtoms(const RefList<const SpeciesAtom> &atoms)
 {
     yAxisAtoms_.clear();
 
     ++version_;
 
-    for (SpeciesAtom *i : atoms)
+    for (auto *i : atoms)
         if (!addYAxisAtom(i))
         {
             yAxisAtoms_.clear();
@@ -238,7 +228,7 @@ bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> &atoms)
 }
 
 // Return list of y-axis atoms
-const RefList<SpeciesAtom> &SpeciesSite::yAxisAtoms() { return yAxisAtoms_; }
+const RefList<const SpeciesAtom> &SpeciesSite::yAxisAtoms() { return yAxisAtoms_; }
 
 // Return integer array of indices from which y-axis should be formed
 std::vector<int> SpeciesSite::yAxisAtomIndices() const

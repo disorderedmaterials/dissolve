@@ -8,35 +8,30 @@
 // Add a new SpeciesSite to this Species
 SpeciesSite *Species::addSite(std::string_view name)
 {
-    auto &site = sites_.emplace_back();
-    site.setParent(this);
-    site.setName(uniqueSiteName(name));
+    auto &site = sites_.emplace_back(std::make_unique<SpeciesSite>(this));
+    site->setName(uniqueSiteName(name));
 
-    return &site;
+    return site.get();
 }
 
 // Remove specified SpeciesSite
 void Species::removeSite(SpeciesSite *site)
 {
-    auto it = std::remove_if(sites_.begin(), sites_.end(), [&](const auto &p) { return &p == site; });
-    if (site == nullptr)
-        Messenger::error("NULL_POINTER - NULL SpeciesSite passed to Species::removeSite().\n");
-    else if (it != sites_.end())
-    {
-        Messenger::print("Removed SpeciesSite '{}' from Species '{}'.\n", site->name(), name_);
-        sites_.erase(it, sites_.end());
-    }
+    assert(site);
+    auto it = std::find_if(sites_.begin(), sites_.end(), [&](const auto &p) { return p.get() == site; });
+    if (it == sites_.end())
+        throw(std::runtime_error(fmt::format("Site '{}' doesn't exist in Species '{}'.\n", site->name(), name_)));
+
+    Messenger::print("Removing site '{}' from species '{}'...\n", site->name(), name_);
+    sites_.erase(it);
 }
 
 // Return number of defined SpeciesSites
 int Species::nSites() const { return sites_.size(); }
 
 // Return SpeciesSite List
-const std::vector<SpeciesSite> &Species::sites() const { return sites_; }
-std::vector<SpeciesSite> &Species::sites() { return sites_; }
-
-// Return nth SpeciesSite defined
-SpeciesSite &Species::site(int n) { return sites_[n]; }
+const std::vector<std::unique_ptr<SpeciesSite>> &Species::sites() const { return sites_; }
+std::vector<std::unique_ptr<SpeciesSite>> &Species::sites() { return sites_; }
 
 // Generate unique site name with base name provided
 std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *exclude) const
@@ -53,23 +48,23 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
 }
 
 // Search for SpeciesSite by name
-OptionalReferenceWrapper<const SpeciesSite> Species::findSite(std::string_view name, const SpeciesSite *exclude) const
+const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
-    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &p) {
-        return ((&p != exclude) && (DissolveSys::sameString(name, p.name())));
+    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site) {
+        return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name())));
     });
     if (it != sites_.end())
-        return *it;
-    else
-        return std::nullopt;
+        return (*it).get();
+
+    return nullptr;
 }
-OptionalReferenceWrapper<SpeciesSite> Species::findSite(std::string_view name, const SpeciesSite *exclude)
+SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude)
 {
-    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &p) {
-        return ((&p != exclude) && (DissolveSys::sameString(name, p.name())));
+    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site) {
+        return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name())));
     });
     if (it != sites_.end())
-        return *it;
-    else
-        return std::nullopt;
+        return (*it).get();
+
+    return nullptr;
 }

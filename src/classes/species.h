@@ -59,7 +59,7 @@ class Species
     // List of Atoms in the Species
     std::list<SpeciesAtom> atoms_;
     // List of selected Atoms
-    RefList<SpeciesAtom> selectedAtoms_;
+    RefList<const SpeciesAtom> selectedAtoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
     // List of AtomTypes, and their populations, used in the Species
@@ -99,9 +99,7 @@ class Species
     // Select atoms along any path from the specified one, ignoring the bond(s) provided
     void selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt);
     // Return current atom selection
-    const RefList<SpeciesAtom> &selectedAtoms() const;
-    // Return nth selected atom
-    SpeciesAtom *selectedAtom(int n);
+    const RefList<const SpeciesAtom> &selectedAtoms() const;
     // Return number of selected atoms
     int nSelectedAtoms() const;
     // Return whether specified atom is selected
@@ -288,8 +286,8 @@ class Species
      * Site
      */
     private:
-    // List of defined sites
-    std::vector<SpeciesSite> sites_;
+    // Defined sites
+    std::vector<std::unique_ptr<SpeciesSite>> sites_;
 
     public:
     // Add a new SpeciesSite to this Species
@@ -299,16 +297,13 @@ class Species
     // Return number of defined SpeciesSites
     int nSites() const;
     // Return SpeciesSite List
-    const std::vector<SpeciesSite> &sites() const;
-    std::vector<SpeciesSite> &sites();
-
-    // Return nth SpeciesSite defined
-    SpeciesSite &site(int n);
+    const std::vector<std::unique_ptr<SpeciesSite>> &sites() const;
+    std::vector<std::unique_ptr<SpeciesSite>> &sites();
     // Generate unique site name with base name provided
     std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = nullptr) const;
     // Search for SpeciesSite by name
-    OptionalReferenceWrapper<const SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
-    OptionalReferenceWrapper<SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
+    const SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
 
     /*
      * Transforms

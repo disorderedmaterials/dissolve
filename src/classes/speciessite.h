@@ -20,8 +20,8 @@ class SpeciesAtom;
 class SpeciesSite
 {
     public:
-    SpeciesSite();
-    ~SpeciesSite();
+    explicit SpeciesSite(const Species *parent);
+    ~SpeciesSite() = default;
 
     /*
      * Basic Information
@@ -30,7 +30,7 @@ class SpeciesSite
     // Name of site
     std::string name_;
     // Parent Species
-    Species *parent_;
+    const Species *parent_;
     // Version of the SpeciesSite
     VersionCounter version_;
 
@@ -39,10 +39,8 @@ class SpeciesSite
     void setName(std::string_view newName);
     // Return anme of site
     std::string_view name() const;
-    // Set Species parent
-    void setParent(Species *sp);
     // Return species parent
-    Species *parent() const;
+    const Species *parent() const;
     // Return version
     int version() const;
 
@@ -51,25 +49,25 @@ class SpeciesSite
      */
     private:
     // List of SpeciesAtoms whose average position is the origin of the site
-    RefList<SpeciesAtom> originAtoms_;
+    RefList<const SpeciesAtom> originAtoms_;
     // Whether the origin should be calculated with mass-weighted positions
     bool originMassWeighted_;
     // SpeciesAtom(s) that indicate the x axis with the origin
-    RefList<SpeciesAtom> xAxisAtoms_;
+    RefList<const SpeciesAtom> xAxisAtoms_;
     // SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
-    RefList<SpeciesAtom> yAxisAtoms_;
+    RefList<const SpeciesAtom> yAxisAtoms_;
 
     public:
     // Add origin atom
-    bool addOriginAtom(SpeciesAtom *originAtom);
+    bool addOriginAtom(const SpeciesAtom *originAtom);
     // Add origin atom from index
     bool addOriginAtom(int atomIndex);
     // Remove origin atom
-    void removeOriginAtom(SpeciesAtom *originAtom);
+    void removeOriginAtom(const SpeciesAtom *originAtom);
     // Set origin atoms
-    bool setOriginAtoms(const RefList<SpeciesAtom> &atoms);
+    bool setOriginAtoms(const RefList<const SpeciesAtom> &atoms);
     // Return list of origin atoms
-    const RefList<SpeciesAtom> &originAtoms();
+    const RefList<const SpeciesAtom> &originAtoms();
     // Return integer array of indices from which the origin should be formed
     std::vector<int> originAtomIndices() const;
     // Set whether the origin should be calculated with mass-weighted positions
@@ -77,27 +75,27 @@ class SpeciesSite
     // Return whether the origin should be calculated with mass-weighted positions
     bool originMassWeighted() const;
     // Add x-axis atom
-    bool addXAxisAtom(SpeciesAtom *xAxisAtom);
+    bool addXAxisAtom(const SpeciesAtom *xAxisAtom);
     // Add x-axis atom from index
     bool addXAxisAtom(int atomIndex);
     // Remove x-axis atom
-    void removeXAxisAtom(SpeciesAtom *xAxisAtom);
+    void removeXAxisAtom(const SpeciesAtom *xAxisAtom);
     // Set x-axis atoms
-    bool setXAxisAtoms(const RefList<SpeciesAtom> &atoms);
+    bool setXAxisAtoms(const RefList<const SpeciesAtom> &atoms);
     // Return list of x-axis atoms
-    const RefList<SpeciesAtom> &xAxisAtoms();
+    const RefList<const SpeciesAtom> &xAxisAtoms();
     // Return integer array of indices from which x-axis should be formed
     std::vector<int> xAxisAtomIndices() const;
     // Add y-axis atom
-    bool addYAxisAtom(SpeciesAtom *yAxisAtom);
+    bool addYAxisAtom(const SpeciesAtom *yAxisAtom);
     // Add y-axis atom from indey
     bool addYAxisAtom(int atomIndex);
     // Remove y-axis atom
-    void removeYAxisAtom(SpeciesAtom *yAxisAtom);
+    void removeYAxisAtom(const SpeciesAtom *yAxisAtom);
     // Set y-axis atoms
-    bool setYAxisAtoms(const RefList<SpeciesAtom> &atoms);
+    bool setYAxisAtoms(const RefList<const SpeciesAtom> &atoms);
     // Return list of y-axis atoms
-    const RefList<SpeciesAtom> &yAxisAtoms();
+    const RefList<const SpeciesAtom> &yAxisAtoms();
     // Return integer array of indices from which y-axis should be formed
     std::vector<int> yAxisAtomIndices() const;
     // Return whether the site has defined axes sites

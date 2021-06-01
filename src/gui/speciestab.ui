@@ -321,41 +321,6 @@
              <attribute name="verticalHeaderStretchLastSection">
               <bool>false</bool>
              </attribute>
-             <column>
-              <property name="text">
-               <string>I</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>J</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Form</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Parameter 1</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Parameter 2</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Parameter 3</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Parameter 4</string>
-              </property>
-             </column>
             </widget>
            </item>
           </layout>
@@ -453,46 +418,6 @@
               <attribute name="verticalHeaderStretchLastSection">
                <bool>false</bool>
               </attribute>
-              <column>
-               <property name="text">
-                <string>I</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>J</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>K</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Form</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 1</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 2</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 3</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 4</string>
-               </property>
-              </column>
              </widget>
             </item>
            </layout>
@@ -790,7 +715,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTreeView" name="IsotopologuesTree" />
+        <widget class="QTreeView" name="IsotopologuesTree"/>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -1000,7 +925,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QListWidget" name="SiteList">
+               <widget class="QListView" name="SiteList">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                   <horstretch>0</horstretch>

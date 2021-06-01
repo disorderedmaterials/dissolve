@@ -14,7 +14,8 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 
-SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired) : ProcedureNode(ProcedureNode::NodeType::Select), axesRequired_(axesRequired)
+SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
+    : ProcedureNode(ProcedureNode::NodeType::Select), axesRequired_(axesRequired)
 {
     axesRequired_ = axesRequired;
     inclusiveDistanceRange_.set(0.0, 5.0);

@@ -48,14 +48,13 @@ bool SpeciesSiteVectorKeyword::read(LineParser &parser, int startArg, const Core
         if (!speciesSite)
             return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                     parser.argsv(n + 1), sp->name());
-        auto *site = &speciesSite->get();
-        if (axesRequired_ && (!site->hasAxes()))
+        if (axesRequired_ && (!speciesSite->hasAxes()))
             return Messenger::error("Can't add site '{}' to keyword '{}', as the keyword requires axes "
                                     "specifications for all sites.\n",
-                                    site->name(), name());
+                                    speciesSite->name(), name());
 
         // Add site to the list
-        data_.push_back(site);
+        data_.push_back(speciesSite);
     }
 
     set_ = true;
@@ -88,8 +87,12 @@ bool SpeciesSiteVectorKeyword::write(LineParser &parser, std::string_view keywor
 // Prune any references to the supplied Species in the contained data
 void SpeciesSiteVectorKeyword::removeReferencesTo(Species *sp)
 {
-    data_.erase(std::remove_if(data_.begin(), data_.end(), [sp](const auto *site) { return site->parent() == sp; }), data_.end());
+    data_.erase(std::remove_if(data_.begin(), data_.end(), [sp](const auto *site) { return site->parent() == sp; }),
+                data_.end());
 }
 
 // Prune any references to the supplied SpeciesSite in the contained data
-void SpeciesSiteVectorKeyword::removeReferencesTo(SpeciesSite *spSite) {     data_.erase(std::remove(data_.begin(), data_.end(), spSite), data_.end()); }
+void SpeciesSiteVectorKeyword::removeReferencesTo(SpeciesSite *spSite)
+{
+    data_.erase(std::remove(data_.begin(), data_.end(), spSite), data_.end());
+}

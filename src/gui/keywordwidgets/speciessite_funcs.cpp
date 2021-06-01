@@ -93,16 +93,16 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
             // Loop over sites defined in this Species
             for (auto &site : sp->sites())
             {
-                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site.name())));
-                if (keyword_->data() == &site)
+                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site->name())));
+                if (keyword_->data() == site.get())
                     radioButton->setChecked(true);
                 connect(radioButton, SIGNAL(clicked(bool)), this, SLOT(siteRadioButton_clicked(bool)));
-                radioButton->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(&site));
+                radioButton->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(site.get()));
                 layout->addWidget(radioButton);
                 buttonGroup->addButton(radioButton);
 
                 // If this keyword demands oriented sites, disable the radio button if the site has no axes
-                if (keyword_->axesRequired() && (!site.hasAxes()))
+                if (keyword_->axesRequired() && (!site->hasAxes()))
                     radioButton->setDisabled(true);
             }
 

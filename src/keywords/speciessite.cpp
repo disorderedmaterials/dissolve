@@ -43,11 +43,11 @@ bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, const CoreData &
     }
 
     // Find specified Site (second argument) in the Species
-    auto site = sp->findSite(parser.argsv(startArg + 1));
-    if (!site)
+    data_ = sp->findSite(parser.argsv(startArg + 1));
+    if (!data_)
         return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                 parser.argsv(startArg + 1), sp->name());
-    data_ = &site->get();
+
     if (axesRequired_ && (!data_->hasAxes()))
         return Messenger::error(
             "Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",

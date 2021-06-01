@@ -57,7 +57,7 @@ class CalculateAvgMolModule : public Module
      */
     private:
     // Species targeted by module (derived from selected site)
-    Species *targetSpecies_;
+    const Species *targetSpecies_;
     // Local Species representing average of targeted Species
     Species averageSpecies_;
 
