@@ -5,12 +5,9 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_fileandformat.h"
+#include "gui/models/enumOptionsModel.h"
 #include "keywords/fileandformat.h"
 #include <QWidget>
-
-// Forward Declarations
-class Dissolve;
-class QComboBox;
 
 class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 {
@@ -33,6 +30,8 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
     private:
     // Main form declaration
     Ui::FileAndFormatWidget ui_;
+    // Model for enum options
+    EnumOptionsModel enumOptionsModel_;
 
     private slots:
     void on_FileEdit_editingFinished();

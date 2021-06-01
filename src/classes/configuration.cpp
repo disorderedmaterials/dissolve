@@ -6,7 +6,6 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
-#include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
@@ -102,28 +101,6 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
 // Return import coordinates file / format
 CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
 
-// Load coordinates from file
-bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileFormat::CoordinateImportFormat format)
-{
-    // Load coordinates into temporary array
-    std::vector<Vec3<double>> r;
-    CoordinateImportFileFormat coordinateFormat(format);
-    if (!coordinateFormat.importData(parser, r))
-        return false;
-
-    // Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
-    if (atoms_.size() != r.size())
-        return Messenger::error(
-            "Number of atoms read from initial coordinates file ({}) does not match that in Configuration ({}).\n", r.size(),
-            atoms_.size());
-
-    // All good, so copy atom coordinates over into our array
-    for (auto n = 0; n < atoms_.size(); ++n)
-        atoms_[n]->setCoordinates(r[n]);
-
-    return true;
-}
-
 // Initialise (generate or load) the basic contents of the Configuration
 bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent)
 {
@@ -146,17 +123,13 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
             return false;
 
         // If an input file was specified, try to load it
-        if (inputCoordinates_.hasValidFileAndFormat())
+        if (inputCoordinates_.hasFilename())
         {
             if (DissolveSys::fileExists(inputCoordinates_))
             {
                 Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
-                LineParser inputFileParser(&procPool);
-                if (!inputFileParser.openInput(inputCoordinates_))
+                if (!inputCoordinates_.importData(this, &procPool))
                     return false;
-                if (!loadCoordinates(inputFileParser, inputCoordinates_.coordinateFormat()))
-                    return false;
-                inputFileParser.closeFiles();
 
                 // Need to update cell locations now, as we have new atom positions
                 updateCellContents();

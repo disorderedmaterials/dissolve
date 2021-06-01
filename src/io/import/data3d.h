@@ -33,28 +33,11 @@ class Data3DImportFileFormat : public FileAndFormat
     void setUpKeywords();
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for Data3DImportFormat
-    static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> data3DImportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as Data3DImportFormat
-    Data3DImportFormat data3DFormat() const;
-
-    /*
-     * Templating
-     */
-    private:
-    // Object tag of Data3D upon which to template arrays before importing
-    std::string templateSourceObjectTag_;
+    // Format enum options
+    EnumOptions<Data3DImportFileFormat::Data3DImportFormat> formats_;
 
     /*
      * Filename / Basename
@@ -62,17 +45,6 @@ class Data3DImportFileFormat : public FileAndFormat
     public:
     // Return whether the file must exist
     bool fileMustExist() const override { return true; }
-
-    /*
-     * Import / Write
-     */
-    protected:
-    // Parse additional argument
-    bool parseArgument(std::string_view arg);
-    // Return whether this file/format has any additional arguments to write
-    bool hasAdditionalArguments() const;
-    // Return additional arguments as string
-    std::string additionalArguments() const;
 
     /*
      * Data Import

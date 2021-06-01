@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/keywordwidgets/dialog.h"
-#include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/fileandformat.h"
 #include "io/fileandformat.h"
 #include "main/dissolve.h"
@@ -10,28 +9,23 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QHBoxLayout>
 
 FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData)
 {
-    // Create and set up our UI
     ui_.setupUi(this);
 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<FileAndFormatKeyword *>(keyword);
     if (!keyword_)
-    {
-        Messenger::error("Couldn't cast base keyword '{}' into FileAndFormatKeyword.\n", keyword->name());
-        return;
-    }
+        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into FileAndFormatKeyword.\n", keyword->name())));
+    enumOptionsModel_.setData(keyword_->data().formats());
 
     refreshing_ = true;
 
     // Populate combo with the file formats available
     ui_.FormatCombo->clear();
-    for (auto n = 0; n < keyword_->data().nFormats(); ++n)
-        ui_.FormatCombo->addItem(QString::fromStdString(std::string(keyword_->data().formatKeyword(n))));
+    ui_.FormatCombo->setModel(&enumOptionsModel_);
 
     // If the FileAndFormat has keyword options, enable the options button.
     ui_.OptionsButton->setEnabled(keyword_->hasOptions());
@@ -154,9 +148,9 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData &coreData)
     // Grab the target FileAndFormat
     auto &fileAndFormat = keyword_->data();
 
-    // UPdate widgets
+    // Update widgets
     ui_.FileEdit->setText(QString::fromStdString(std::string(fileAndFormat.filename())));
-    ui_.FormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
+    ui_.FormatCombo->setCurrentIndex(fileAndFormat.formats().index());
     checkFileValidity();
 
     refreshing_ = false;
@@ -169,7 +163,7 @@ void FileAndFormatKeywordWidget::updateKeywordData()
     auto &fileAndFormat = keyword_->data();
 
     fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
-    fileAndFormat.setFormatIndex(ui_.FormatCombo->currentIndex());
+    fileAndFormat.formats().setIndex(ui_.FormatCombo->currentIndex());
 
     keyword_->setAsModified();
 }

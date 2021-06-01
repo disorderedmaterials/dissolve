@@ -7,35 +7,13 @@
 #include "math/data2d.h"
 
 Data2DExportFileFormat::Data2DExportFileFormat(std::string_view filename, Data2DExportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for Data2DExportFormat
-EnumOptions<Data2DExportFileFormat::Data2DExportFormat> Data2DExportFileFormat::data2DExportFormats()
-{
-    return EnumOptions<Data2DExportFileFormat::Data2DExportFormat>(
-        "Data2DExportFileFormat", {{Data2DExportFileFormat::BlockData2D, "block", "Block Data"},
-                                   {Data2DExportFileFormat::CartesianData2D, "cartesian", "Cartesian (x,y,value) Data"}});
-}
-
-// Return number of available formats
-int Data2DExportFileFormat::nFormats() const { return Data2DExportFileFormat::nData2DExportFormats; }
-
-// Return format keyword for supplied index
-std::string Data2DExportFileFormat::formatKeyword(int id) const { return data2DExportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string Data2DExportFileFormat::formatDescription(int id) const { return data2DExportFormats().descriptionByIndex(id); }
-
-// Return current format as CoordinateExportFormat
-Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const
-{
-    return (Data2DExportFileFormat::Data2DExportFormat)format_;
+    formats_ = EnumOptions<Data2DExportFileFormat::Data2DExportFormat>(
+        "Data2DExportFileFormat",
+        {{Data2DExportFileFormat::BlockData2D, "block", "Block Data"},
+         {Data2DExportFileFormat::CartesianData2D, "cartesian", "Cartesian (x,y,value) Data"}},
+        format);
 }
 
 /*
@@ -94,14 +72,16 @@ bool Data2DExportFileFormat::exportData(const Data2DBase &data)
 
     // Write data
     auto result = false;
-    if (data2DFormat() == Data2DExportFileFormat::BlockData2D)
-        result = exportBlock(parser, data.xAxis(), data.yAxis(), data.values());
-    else if (data2DFormat() == Data2DExportFileFormat::CartesianData2D)
-        result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.values());
-    else
+    switch (formats_.enumeration())
     {
-        Messenger::error("Unrecognised Data2D format.\nKnown formats are:\n");
-        printAvailableFormats();
+        case (Data2DExportFileFormat::BlockData2D):
+            result = exportBlock(parser, data.xAxis(), data.yAxis(), data.values());
+            break;
+        case (Data2DExportFileFormat::CartesianData2D):
+            result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.values());
+            break;
+        default:
+            throw(std::runtime_error(fmt::format("Data2D format '{}' export has not been implemented.\n", formats_.keyword())));
     }
 
     return result;

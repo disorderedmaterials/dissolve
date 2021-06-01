@@ -6,13 +6,25 @@
 #include "base/sysfunc.h"
 #include "keywords/double.h"
 
-ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(format)
+ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(formats_)
 {
+    formats_ = EnumOptions<ForceImportFileFormat::ForceImportFormat>(
+        "ForceImportFileFormat",
+        {{ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces"},
+         {ForceImportFileFormat::MoscitoForces, "moscito", "Moscito Structure File Forces"},
+         {ForceImportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}},
+        format);
     setUpKeywords();
 }
 ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImportFileFormat::ForceImportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
+    formats_ = EnumOptions<ForceImportFileFormat::ForceImportFormat>(
+        "ForceImportFileFormat",
+        {{ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces"},
+         {ForceImportFileFormat::MoscitoForces, "moscito", "Moscito Structure File Forces"},
+         {ForceImportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}},
+        format);
     setUpKeywords();
 }
 
@@ -26,34 +38,6 @@ ForceImportFileFormat::~ForceImportFileFormat() = default;
 void ForceImportFileFormat::setUpKeywords()
 {
     keywords_.add("Conversion", new DoubleKeyword(1.0), "Factor", "Factor to multiply forces by (for unit conversion etc.)");
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for ForceImportFormat
-EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::forceImportFormats()
-{
-    return EnumOptions<ForceImportFileFormat::ForceImportFormat>(
-        "ForceImportFileFormat", {{ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces"},
-                                  {ForceImportFileFormat::MoscitoForces, "moscito", "Moscito Structure File Forces"},
-                                  {ForceImportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}});
-}
-
-// Return number of available formats
-int ForceImportFileFormat::nFormats() const { return ForceImportFileFormat::nForceImportFormats; }
-
-// Return format keyword for supplied index
-std::string ForceImportFileFormat::formatKeyword(int id) const { return forceImportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string ForceImportFileFormat::formatDescription(int id) const { return forceImportFormats().descriptionByIndex(id); }
-
-// Return current format as ForceImportFormat
-ForceImportFileFormat::ForceImportFormat ForceImportFileFormat::forceFormat() const
-{
-    return (ForceImportFileFormat::ForceImportFormat)format_;
 }
 
 /*
@@ -81,7 +65,7 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
 {
     // Import the data
     auto result = false;
-    switch (forceFormat())
+    switch (formats_.enumeration())
     {
         case (ForceImportFileFormat::DLPOLYForces):
             result = importDLPOLY(parser, f);
@@ -93,7 +77,7 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
             result = importSimple(parser, f);
             break;
         default:
-            Messenger::error("Don't know how to load forces in format '{}'.\n", formatKeyword(forceFormat()));
+            throw(std::runtime_error(fmt::format("Force format '{}' import has not been implemented.\n", formats_.keyword())));
     }
 
     // Apply factor to data

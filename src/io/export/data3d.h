@@ -25,21 +25,11 @@ class Data3DExportFileFormat : public FileAndFormat
     Data3DExportFileFormat(std::string_view filename = "", Data3DExportFormat format = Data3DExportFileFormat::BlockData3D);
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for Data3DExportFormat
-    static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> data3DExportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as Data3DExportFormat
-    Data3DExportFormat data3DFormat() const;
+    // Format enum options
+    EnumOptions<Data3DExportFileFormat::Data3DExportFormat> formats_;
 
     /*
      * Filename / Basename

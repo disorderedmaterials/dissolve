@@ -6,7 +6,8 @@
 #include "io/fileandformat.h"
 
 // Forward Declarations
-/* none */
+class Configuration;
+class ProcessPool;
 
 // Trajectory Import Formats
 class TrajectoryImportFileFormat : public FileAndFormat
@@ -23,28 +24,11 @@ class TrajectoryImportFileFormat : public FileAndFormat
     ~TrajectoryImportFileFormat() override;
 
     /*
-     * Keyword Options
+     * Formats
      */
     private:
-    // Set up keywords for the format
-    void setUpKeywords();
-
-    /*
-     * Format Access
-     */
-    private:
-    // Return enum options for TrajectoryImportFileFormat
-    static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> trajectoryImportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as TrajectoryImportFormat
-    TrajectoryImportFormat trajectoryFormat() const;
+    // Format enum options
+    EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> formats_;
 
     /*
      * Filename / Basename
@@ -52,4 +36,11 @@ class TrajectoryImportFileFormat : public FileAndFormat
     public:
     // Return whether the file must exist
     bool fileMustExist() const override { return true; }
+
+    /*
+     * Import Functions
+     */
+    public:
+    // Import trajectory using supplied parser and current format
+    bool importData(LineParser &parser, Configuration *cfg);
 };

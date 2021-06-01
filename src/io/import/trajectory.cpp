@@ -2,54 +2,44 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "io/import/trajectory.h"
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "io/import/coordinates.h"
 
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(TrajectoryImportFileFormat::TrajectoryImportFormat format)
-    : FileAndFormat(format)
+    : FileAndFormat(formats_)
 {
-    setUpKeywords();
+    formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
+        "TrajectoryImportFileFormat", {{TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}}, format);
 }
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename,
                                                        TrajectoryImportFileFormat::TrajectoryImportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-    setUpKeywords();
+    formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
+        "TrajectoryImportFileFormat", {{TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}}, format);
 }
 
 TrajectoryImportFileFormat::~TrajectoryImportFileFormat() = default;
 
 /*
- * Keyword Options
+ * Import Functions
  */
 
-// Set up keywords for the format
-void TrajectoryImportFileFormat::setUpKeywords() {}
-
-/*
- * Format Access
- */
-
-// Return enum options for TrajectoryImportFormat
-EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImportFileFormat::trajectoryImportFormats()
+// Import trajectory using supplied parser and current format
+bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *cfg)
 {
-    return EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
-        "TrajectoryImportFileFormat", {{TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}});
-}
+    // Import the data
+    auto result = false;
+    switch (formats_.enumeration())
+    {
+        case (TrajectoryImportFileFormat::XYZTrajectory):
+            result = CoordinateImportFileFormat(CoordinateImportFileFormat::XYZCoordinates).importData(parser, cfg);
+            break;
+        default:
+            throw(std::runtime_error(
+                fmt::format("Trajectory format '{}' import has not been implemented.\n", formats_.keyword())));
+    }
 
-// Return number of available formats
-int TrajectoryImportFileFormat::nFormats() const { return TrajectoryImportFileFormat::nTrajectoryImportFormats; }
-
-// Return format keyword for supplied index
-std::string TrajectoryImportFileFormat::formatKeyword(int id) const { return trajectoryImportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string TrajectoryImportFileFormat::formatDescription(int id) const
-{
-    return trajectoryImportFormats().descriptionByIndex(id);
-}
-
-// Return current format as TrajectoryImportFormat
-TrajectoryImportFileFormat::TrajectoryImportFormat TrajectoryImportFileFormat::trajectoryFormat() const
-{
-    return (TrajectoryImportFileFormat::TrajectoryImportFormat)format_;
+    return result;
 }

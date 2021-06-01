@@ -8,43 +8,13 @@
 #include "math/data1d.h"
 
 PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view filename, PairPotentialExportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for PairPotentialExportFormat
-EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>
-PairPotentialExportFileFormat::pairPotentialExportFormats()
-{
-    return EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>(
+    formats_ = EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>(
         "PairPotentialExportFileFormat",
         {{PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data"},
-         {PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File"}});
-}
-
-// Return number of available formats
-int PairPotentialExportFileFormat::nFormats() const { return PairPotentialExportFileFormat::nPairPotentialExportFormats; }
-
-// Return format keyword for supplied index
-std::string PairPotentialExportFileFormat::formatKeyword(int id) const
-{
-    return pairPotentialExportFormats().keywordByIndex(id);
-}
-
-// Return description string for supplied index
-std::string PairPotentialExportFileFormat::formatDescription(int id) const
-{
-    return pairPotentialExportFormats().descriptionByIndex(id);
-}
-
-// Return current format as PairPotentialExportFormat
-PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const
-{
-    return (PairPotentialExportFileFormat::PairPotentialExportFormat)format_;
+         {PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File"}},
+        format);
 }
 
 /*
@@ -138,9 +108,9 @@ bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
 
     // Write data
     auto result = false;
-    if (pairPotentialFormat() == PairPotentialExportFileFormat::BlockPairPotential)
+    if (formats_.enumeration() == PairPotentialExportFileFormat::BlockPairPotential)
         result = exportBlock(parser, pp);
-    else if (pairPotentialFormat() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential)
+    else if (formats_.enumeration() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential)
         result = exportDLPOLY(parser, pp);
     else
     {

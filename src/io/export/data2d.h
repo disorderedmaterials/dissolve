@@ -23,21 +23,11 @@ class Data2DExportFileFormat : public FileAndFormat
     Data2DExportFileFormat(std::string_view filename = "", Data2DExportFormat format = Data2DExportFileFormat::BlockData2D);
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for Data2DExportFormat
-    static EnumOptions<Data2DExportFileFormat::Data2DExportFormat> data2DExportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as Data2DExportFormat
-    Data2DExportFormat data2DFormat() const;
+    // Format enum options
+    EnumOptions<Data2DExportFileFormat::Data2DExportFormat> formats_;
 
     /*
      * Filename / Basename

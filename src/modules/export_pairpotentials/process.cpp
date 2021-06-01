@@ -12,7 +12,7 @@
 // Run main processing
 bool ExportPairPotentialsModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    if (!pairPotentialFormat_.hasValidFileAndFormat())
+    if (!pairPotentialFormat_.hasFilename())
         return Messenger::error("No valid file/format set for pair potential export.\n");
 
     // Only the pool master saves the data

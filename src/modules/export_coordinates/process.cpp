@@ -2,10 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "classes/atom.h"
 #include "classes/atomtype.h"
-#include "classes/box.h"
 #include "main/dissolve.h"
 #include "modules/export_coordinates/exportcoords.h"
 
@@ -14,13 +12,12 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     const auto tagWithIteration = keywords_.asBool("TagWithIteration");
 
-    // Copy coordinates format
-    CoordinateExportFileFormat format(coordinatesFormat_.filename(), coordinatesFormat_.coordinateFormat());
-    if (tagWithIteration)
-        format.setFilename(fmt::format("{}.{}", coordinatesFormat_.filename(), dissolve.iteration()));
-
-    if (!format.hasValidFileAndFormat())
+    if (!coordinatesFormat_.hasFilename())
         Messenger::error("No valid file/format set for coordinate export.\n");
+
+    std::string originalFilename{coordinatesFormat_.filename()};
+    if (tagWithIteration)
+        coordinatesFormat_.setFilename(fmt::format("{}.{}", coordinatesFormat_.filename(), dissolve.iteration()));
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
@@ -34,12 +31,12 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Only the pool master saves the data
     if (procPool.isMaster())
     {
-        Messenger::print("Export: Writing coordinates file ({}) for Configuration '{}'...\n", format.description(),
+        Messenger::print("Export: Writing coordinates file ({}) for Configuration '{}'...\n", coordinatesFormat_.description(),
                          cfg->name());
 
-        if (!format.exportData(cfg))
+        if (!coordinatesFormat_.exportData(cfg))
         {
-            Messenger::print("Export: Failed to export coordinates file '{}'.\n", format.filename());
+            Messenger::print("Export: Failed to export coordinates file '{}'.\n", coordinatesFormat_.filename());
             procPool.decideFalse();
             return false;
         }
@@ -48,6 +45,9 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
     else if (!procPool.decision())
         return false;
+
+    // Reset filename
+    coordinatesFormat_.setFilename(originalFilename);
 
     return true;
 }

@@ -9,37 +9,10 @@
 #include "data/elements.h"
 
 TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename, TrajectoryExportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for TrajectoryExportFormat
-EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExportFileFormat::trajectoryExportFormats()
-{
-    return EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
-        "TrajectoryExportFileFormat", {{TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}});
-}
-
-// Return number of available formats
-int TrajectoryExportFileFormat::nFormats() const { return TrajectoryExportFileFormat::nTrajectoryExportFormats; }
-
-// Return format keyword for supplied index
-std::string TrajectoryExportFileFormat::formatKeyword(int id) const { return trajectoryExportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string TrajectoryExportFileFormat::formatDescription(int id) const
-{
-    return trajectoryExportFormats().descriptionByIndex(id);
-}
-
-// Return current format as TrajectoryExportFormat
-TrajectoryExportFileFormat::TrajectoryExportFormat TrajectoryExportFileFormat::trajectoryFormat() const
-{
-    return (TrajectoryExportFileFormat::TrajectoryExportFormat)format_;
+    formats_ = EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
+        "TrajectoryExportFileFormat", {{TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}}, format);
 }
 
 /*
@@ -83,7 +56,7 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
     {
         auto headerResult = false;
 
-        if (format_ == XYZTrajectory)
+        if (formats_.enumeration() == XYZTrajectory)
             headerResult = true;
         else
             headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
@@ -95,12 +68,14 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
 
     // Append frame in supplied format
     auto frameResult = false;
-    if (trajectoryFormat() == TrajectoryExportFileFormat::XYZTrajectory)
-        frameResult = exportXYZ(parser, cfg);
-    else
+    switch (formats_.enumeration())
     {
-        Messenger::error("Unrecognised trajectory format.\nKnown formats are:\n");
-        printAvailableFormats();
+        case (TrajectoryExportFileFormat::XYZTrajectory):
+            frameResult = exportXYZ(parser, cfg);
+            break;
+        default:
+            throw(std::runtime_error(
+                fmt::format("Trajectory format '{}' export has not been implemented.\n", formats_.keyword())));
     }
 
     parser.closeFiles();

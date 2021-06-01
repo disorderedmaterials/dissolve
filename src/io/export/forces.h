@@ -21,19 +21,11 @@ class ForceExportFileFormat : public FileAndFormat
     ForceExportFileFormat(std::string_view filename = "", ForceExportFormat format = SimpleForces);
 
     /*
-     * Format Access
+     * Formats
      */
-    public:
-    // Return enum options for ForceExportFormat
-    static EnumOptions<ForceExportFileFormat::ForceExportFormat> forceExportFormats();
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as ForceExportFormat
-    ForceExportFormat forceFormat() const;
+    private:
+    // Format enum options
+    EnumOptions<ForceExportFileFormat::ForceExportFormat> formats_;
 
     /*
      * Filename / Basename

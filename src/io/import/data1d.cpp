@@ -6,13 +6,25 @@
 #include "base/sysfunc.h"
 #include "math/filters.h"
 
-Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format)
+Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(formats_)
 {
+    formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
+        "Data1DImportFileFormat",
+        {{Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"},
+         {Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
+         {Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)"}},
+        format);
     setUpKeywords();
 }
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
+    formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
+        "Data1DImportFileFormat",
+        {{Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"},
+         {Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
+         {Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)"}},
+        format);
     setUpKeywords();
 }
 
@@ -34,35 +46,6 @@ void Data1DImportFileFormat::setUpKeywords()
                   "Trim the range of the loaded data to be within the specified boundaries");
     keywords_.add("Manipulations", new IntegerKeyword(0, 0), "RemovePoints",
                   "Remove a number of points from the start of the data");
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for Data1DImportFormat
-EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormats()
-{
-    return EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
-        "Data1DImportFileFormat",
-        {{Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"},
-         {Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
-         {Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)"}});
-}
-
-// Return number of available formats
-int Data1DImportFileFormat::nFormats() const { return Data1DImportFileFormat::nData1DImportFormats; }
-
-// Return format keyword for supplied index
-std::string Data1DImportFileFormat::formatKeyword(int id) const { return data1DImportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string Data1DImportFileFormat::formatDescription(int id) const { return data1DImportFormats().descriptionByIndex(id); }
-
-// Return current format as Data1DImportFormat
-Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const
-{
-    return (Data1DImportFileFormat::Data1DImportFormat)format_;
 }
 
 /*
@@ -90,7 +73,7 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 {
     // Import the data
     auto result = false;
-    switch (data1DFormat())
+    switch (formats_.enumeration())
     {
         case (Data1DImportFileFormat::XYData1D):
             result = importXY(parser, data);
@@ -102,7 +85,7 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
             result = importGudrunMint(parser, data);
             break;
         default:
-            Messenger::error("Don't know how to load Data1D of format '{}'.\n", formatKeyword(data1DFormat()));
+            throw(std::runtime_error(fmt::format("Data1D format '{}' import has not been implemented.\n", formats_.keyword())));
     }
 
     // If we failed, may as well return now

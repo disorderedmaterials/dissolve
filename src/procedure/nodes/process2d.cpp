@@ -138,7 +138,7 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Save data?
-    if (exportFileAndFormat_.hasValidFileAndFormat())
+    if (exportFileAndFormat_.hasFilename())
     {
         if (procPool.isMaster())
         {

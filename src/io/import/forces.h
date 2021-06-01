@@ -33,21 +33,11 @@ class ForceImportFileFormat : public FileAndFormat
     void setUpKeywords();
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for ForceImportFormat
-    static EnumOptions<ForceImportFileFormat::ForceImportFormat> forceImportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as ForceImportFormat
-    ForceImportFormat forceFormat() const;
+    // Format enum options
+    EnumOptions<ForceImportFileFormat::ForceImportFormat> formats_;
 
     /*
      * Filename / Basename

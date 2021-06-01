@@ -22,19 +22,11 @@ class CoordinateExportFileFormat : public FileAndFormat
     CoordinateExportFileFormat(std::string_view filename = "", CoordinateExportFormat format = XYZCoordinates);
 
     /*
-     * Format Access
+     * Formats
      */
-    public:
-    // Return enum options for CoordinateExportFormat
-    static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> coordinateExportFormats();
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as CoordinateExportFormat
-    CoordinateExportFormat coordinateFormat() const;
+    private:
+    // Format enum options
+    EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> formats_;
 
     /*
      * Filename / Basename
