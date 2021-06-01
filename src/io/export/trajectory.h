@@ -19,6 +19,7 @@ class TrajectoryExportFileFormat : public FileAndFormat
         nTrajectoryExportFormats
     };
     TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = XYZTrajectory);
+    ~TrajectoryExportFileFormat() override = default;
 
     /*
      * Formats

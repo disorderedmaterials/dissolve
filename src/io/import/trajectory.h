@@ -19,9 +19,9 @@ class TrajectoryImportFileFormat : public FileAndFormat
         XYZTrajectory,
         nTrajectoryImportFormats
     };
-    TrajectoryImportFileFormat(TrajectoryImportFormat format = XYZTrajectory);
-    TrajectoryImportFileFormat(std::string_view filename, TrajectoryImportFormat format = XYZTrajectory);
-    ~TrajectoryImportFileFormat() override;
+
+    explicit TrajectoryImportFileFormat(std::string_view filename = "", TrajectoryImportFormat format = XYZTrajectory);
+    ~TrajectoryImportFileFormat() override = default;
 
     /*
      * Formats

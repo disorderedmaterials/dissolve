@@ -20,6 +20,7 @@ class PairPotentialExportFileFormat : public FileAndFormat
         nPairPotentialExportFormats
     };
     PairPotentialExportFileFormat(std::string_view filename = "", PairPotentialExportFormat format = BlockPairPotential);
+    ~PairPotentialExportFileFormat() override = default;
 
     /*
      * Formats

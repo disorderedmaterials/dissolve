@@ -22,9 +22,8 @@ class CoordinateImportFileFormat : public FileAndFormat
         XYZCoordinates,
         nCoordinateImportFormats
     };
-    CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
-    CoordinateImportFileFormat(std::string_view filename, CoordinateImportFormat format = XYZCoordinates);
-    ~CoordinateImportFileFormat() override;
+    explicit CoordinateImportFileFormat(std::string_view filename = "", CoordinateImportFormat format = XYZCoordinates);
+    ~CoordinateImportFileFormat() override = default;
 
     /*
      * Keyword Options

@@ -21,6 +21,7 @@ class Data2DExportFileFormat : public FileAndFormat
         nData2DExportFormats
     };
     Data2DExportFileFormat(std::string_view filename = "", Data2DExportFormat format = Data2DExportFileFormat::BlockData2D);
+    ~Data2DExportFileFormat() override = default;
 
     /*
      * Formats

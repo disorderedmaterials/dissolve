@@ -5,13 +5,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(formats_)
-{
-    formats_ = EnumOptions<Data3DImportFileFormat::Data3DImportFormat>(
-        "Data3DImportFileFormat", {{Data3DImportFileFormat::CartesianData3D, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data"}},
-        format);
-    setUpKeywords();
-}
 Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3DImportFileFormat::Data3DImportFormat format)
     : FileAndFormat(formats_, filename)
 {
@@ -20,8 +13,6 @@ Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3D
         format);
     setUpKeywords();
 }
-
-Data3DImportFileFormat::~Data3DImportFileFormat() = default;
 
 /*
  * Keyword Options

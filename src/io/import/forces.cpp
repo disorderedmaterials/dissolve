@@ -6,16 +6,6 @@
 #include "base/sysfunc.h"
 #include "keywords/double.h"
 
-ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(formats_)
-{
-    formats_ = EnumOptions<ForceImportFileFormat::ForceImportFormat>(
-        "ForceImportFileFormat",
-        {{ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces"},
-         {ForceImportFileFormat::MoscitoForces, "moscito", "Moscito Structure File Forces"},
-         {ForceImportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}},
-        format);
-    setUpKeywords();
-}
 ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImportFileFormat::ForceImportFormat format)
     : FileAndFormat(formats_, filename)
 {
@@ -27,8 +17,6 @@ ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImp
         format);
     setUpKeywords();
 }
-
-ForceImportFileFormat::~ForceImportFileFormat() = default;
 
 /*
  * Keyword Options

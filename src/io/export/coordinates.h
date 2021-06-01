@@ -20,6 +20,7 @@ class CoordinateExportFileFormat : public FileAndFormat
         nCoordinateExportFormats
     };
     CoordinateExportFileFormat(std::string_view filename = "", CoordinateExportFormat format = XYZCoordinates);
+    ~CoordinateExportFileFormat() override = default;
 
     /*
      * Formats

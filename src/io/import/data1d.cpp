@@ -6,16 +6,6 @@
 #include "base/sysfunc.h"
 #include "math/filters.h"
 
-Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(formats_)
-{
-    formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
-        "Data1DImportFileFormat",
-        {{Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"},
-         {Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
-         {Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)"}},
-        format);
-    setUpKeywords();
-}
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format)
     : FileAndFormat(formats_, filename)
 {
@@ -27,8 +17,6 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
         format);
     setUpKeywords();
 }
-
-Data1DImportFileFormat::~Data1DImportFileFormat() = default;
 
 /*
  * Keyword Options

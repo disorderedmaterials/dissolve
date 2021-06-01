@@ -21,6 +21,7 @@ class Data1DExportFileFormat : public FileAndFormat
         nData1DExportFormats
     };
     Data1DExportFileFormat(std::string_view filename = "", Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
+    ~Data1DExportFileFormat() override = default;
 
     /*
      * Formats

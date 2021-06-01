@@ -22,9 +22,8 @@ class Data1DImportFileFormat : public FileAndFormat
         GudrunMintData1D,
         nData1DImportFormats
     };
-    Data1DImportFileFormat(Data1DImportFormat format = XYData1D);
-    Data1DImportFileFormat(std::string_view filename, Data1DImportFormat format = XYData1D);
-    ~Data1DImportFileFormat() override;
+    explicit Data1DImportFileFormat(std::string_view filename = "", Data1DImportFormat format = XYData1D);
+    ~Data1DImportFileFormat() override = default;
 
     /*
      * Keyword Options

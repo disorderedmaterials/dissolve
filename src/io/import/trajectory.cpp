@@ -6,12 +6,6 @@
 #include "base/sysfunc.h"
 #include "io/import/coordinates.h"
 
-TrajectoryImportFileFormat::TrajectoryImportFileFormat(TrajectoryImportFileFormat::TrajectoryImportFormat format)
-    : FileAndFormat(formats_)
-{
-    formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
-        "TrajectoryImportFileFormat", {{TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}}, format);
-}
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename,
                                                        TrajectoryImportFileFormat::TrajectoryImportFormat format)
     : FileAndFormat(formats_, filename)
@@ -19,8 +13,6 @@ TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename
     formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
         "TrajectoryImportFileFormat", {{TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}}, format);
 }
-
-TrajectoryImportFileFormat::~TrajectoryImportFileFormat() = default;
 
 /*
  * Import Functions
@@ -34,7 +26,7 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
     switch (formats_.enumeration())
     {
         case (TrajectoryImportFileFormat::XYZTrajectory):
-            result = CoordinateImportFileFormat(CoordinateImportFileFormat::XYZCoordinates).importData(parser, cfg);
+            result = CoordinateImportFileFormat("", CoordinateImportFileFormat::XYZCoordinates).importData(parser, cfg);
             break;
         default:
             throw(std::runtime_error(

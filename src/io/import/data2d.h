@@ -22,9 +22,8 @@ class Data2DImportFileFormat : public FileAndFormat
         CartesianData2D,
         nData2DImportFormats
     };
-    Data2DImportFileFormat(Data2DImportFormat format = CartesianData2D);
-    Data2DImportFileFormat(std::string_view filename, Data2DImportFormat format = CartesianData2D);
-    ~Data2DImportFileFormat() override;
+    explicit Data2DImportFileFormat(std::string_view filename = "", Data2DImportFormat format = CartesianData2D);
+    ~Data2DImportFileFormat() override = default;
 
     /*
      * Keyword Options

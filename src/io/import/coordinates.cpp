@@ -8,18 +8,6 @@
 #include "classes/configuration.h"
 #include "templates/algorithms.h"
 
-CoordinateImportFileFormat::CoordinateImportFileFormat(CoordinateImportFileFormat::CoordinateImportFormat format)
-    : FileAndFormat(formats_)
-{
-    formats_ = EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "CoordinateImportFileFormat",
-        {{CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG"},
-         {CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO"},
-         {CoordinateImportFileFormat::MoscitoCoordinates, "moscito", "Moscito structure file"},
-         {CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ"}},
-        format);
-    setUpKeywords();
-}
 CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename,
                                                        CoordinateImportFileFormat::CoordinateImportFormat format)
     : FileAndFormat(formats_, filename)
@@ -33,8 +21,6 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
         format);
     setUpKeywords();
 }
-
-CoordinateImportFileFormat::~CoordinateImportFileFormat() = default;
 
 /*
  * Keyword Options

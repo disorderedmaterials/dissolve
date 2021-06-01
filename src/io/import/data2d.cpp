@@ -6,13 +6,6 @@
 #include "base/sysfunc.h"
 #include "keywords/types.h"
 
-Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(formats_)
-{
-    formats_ = EnumOptions<Data2DImportFileFormat::Data2DImportFormat>(
-        "Data2DImportFileFormat", {{Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data"}},
-        format);
-    setUpKeywords();
-}
 Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2DImportFileFormat::Data2DImportFormat format)
     : FileAndFormat(formats_, filename)
 {
@@ -21,8 +14,6 @@ Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2D
         format);
     setUpKeywords();
 }
-
-Data2DImportFileFormat::~Data2DImportFileFormat() = default;
 
 /*
  * Keyword Options

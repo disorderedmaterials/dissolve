@@ -19,6 +19,7 @@ class ForceExportFileFormat : public FileAndFormat
         nForceExportFormats
     };
     ForceExportFileFormat(std::string_view filename = "", ForceExportFormat format = SimpleForces);
+    ~ForceExportFileFormat() override = default;
 
     /*
      * Formats

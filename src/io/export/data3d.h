@@ -23,6 +23,7 @@ class Data3DExportFileFormat : public FileAndFormat
         nData3DExportFormats
     };
     Data3DExportFileFormat(std::string_view filename = "", Data3DExportFormat format = Data3DExportFileFormat::BlockData3D);
+    ~Data3DExportFileFormat() override = default;
 
     /*
      * Formats

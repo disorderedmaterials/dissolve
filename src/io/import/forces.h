@@ -21,9 +21,8 @@ class ForceImportFileFormat : public FileAndFormat
         SimpleForces,
         nForceImportFormats
     };
-    ForceImportFileFormat(ForceImportFormat format = SimpleForces);
-    ForceImportFileFormat(std::string_view filename, ForceImportFormat format = SimpleForces);
-    ~ForceImportFileFormat() override;
+    explicit ForceImportFileFormat(std::string_view filename = "", ForceImportFormat format = SimpleForces);
+    ~ForceImportFileFormat() override = default;
 
     /*
      * Keyword Options
