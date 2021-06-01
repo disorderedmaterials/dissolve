@@ -23,7 +23,7 @@ class SpeciesSite;
 class SelectProcedureNode : public ProcedureNode
 {
     public:
-    SelectProcedureNode(SpeciesSite *site = nullptr, bool axesRequired = false);
+    explicit SelectProcedureNode(std::vector<const SpeciesSite *> sites = {}, bool axesRequired = false);
     ~SelectProcedureNode() override;
 
     /*
@@ -39,8 +39,8 @@ class SelectProcedureNode : public ProcedureNode
     private:
     // Whether sites must have a defined orientation
     bool axesRequired_;
-    // List of sites within Species to select
-    RefList<SpeciesSite> speciesSites_;
+    // Vector of sites to select (retrieved from keyword)
+    std::vector<const SpeciesSite *> speciesSites_;
     // List of DynamicSites to select, if any
     RefList<DynamicSiteProcedureNode> dynamicSites_;
 
@@ -66,8 +66,6 @@ class SelectProcedureNode : public ProcedureNode
     public:
     // Return list of Molecules currently excluded from selection
     const std::vector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
-    // List of Sites currently excluded from selection
-    const RefList<const Site> &excludedSites() const;
     // Return Molecule (from site) in which the site must exist
     std::shared_ptr<const Molecule> sameMoleculeMolecule();
 
@@ -75,8 +73,8 @@ class SelectProcedureNode : public ProcedureNode
      * Selected Sites
      */
     private:
-    // Array containing pointers to our selected sites
-    Array<const Site *> sites_;
+    // Vector of selected sites
+    std::vector<const Site *> sites_;
     // Current Site index
     int currentSiteIndex_;
     // Number of selections made by the node

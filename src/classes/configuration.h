@@ -202,7 +202,7 @@ class Configuration : public ListItem<Configuration>
 
     public:
     // Calculate / retrieve stack of sites for specified SpeciesSite
-    const SiteStack *siteStack(SpeciesSite *site);
+    const SiteStack *siteStack(const SpeciesSite *site);
 
     /*
      * I/O

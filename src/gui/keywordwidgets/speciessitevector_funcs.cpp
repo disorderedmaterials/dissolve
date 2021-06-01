@@ -4,29 +4,31 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "classes/speciessite.h"
-#include "gui/keywordwidgets/speciessitereflist.h"
+#include "gui/keywordwidgets/speciessitevector.h"
 #include "templates/variantpointer.h"
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QListView>
 #include <QSpacerItem>
 
-SpeciesSiteRefListKeywordWidget::SpeciesSiteRefListKeywordWidget(QWidget *parent, KeywordBase *keyword,
+SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, KeywordBase *keyword,
                                                                  const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
 
+    // Connect signals / slots
+    connect(&siteModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
+
     // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<SpeciesSiteRefListKeyword *>(keyword);
+    keyword_ = dynamic_cast<SpeciesSiteVectorKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into SpeciesSiteRefListKeyword.\n", keyword->name());
-    else
-    {
-        // Set current information
-        updateWidgetValues(coreData_);
-    }
+        throw(
+            std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into SpeciesSiteVectorKeyword.\n", keyword->name())));
+    siteModel_.setCheckStateData(keyword_->data());
 
     // Summary text on KeywordDropDown button
     setSummaryText("<None>");
@@ -35,25 +37,11 @@ SpeciesSiteRefListKeywordWidget::SpeciesSiteRefListKeywordWidget(QWidget *parent
 /*
  * Widgets
  */
-void SpeciesSiteRefListKeywordWidget::siteCheckBox_clicked(bool checked)
+
+void SpeciesSiteVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
     if (refreshing_)
         return;
-
-    QCheckBox *checkBox = qobject_cast<QCheckBox *>(sender());
-    if (!checkBox)
-        return;
-
-    // Retrieve the SpeciesSite from the checkBox
-    SpeciesSite *site = VariantPointer<SpeciesSite>(checkBox->property("SpeciesSite"));
-    if (!site)
-        return;
-
-    // If the box is checked, we need to add the site to the list. If not, remove it.
-    if (checked)
-        keyword_->data().addUnique(site);
-    else
-        keyword_->data().remove(site);
 
     keyword_->setAsModified();
 
@@ -67,10 +55,10 @@ void SpeciesSiteRefListKeywordWidget::siteCheckBox_clicked(bool checked)
  */
 
 // Update value displayed in widget
-void SpeciesSiteRefListKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void SpeciesSiteVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
+void SpeciesSiteVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
     refreshing_ = true;
 
@@ -95,11 +83,15 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData &coreDat
         }
         else
         {
+//            QListView *listView = new QListView;
+//            QAb
+//
+//            layout->addWidget()
             // Loop over sites defined in this Species
             for (auto &site : sp->sites())
             {
                 QCheckBox *checkBox = new QCheckBox(QString::fromStdString(std::string(site.name())));
-                if (keyword_->data().contains(&site))
+                if (std::find(keyword_->data().begin(), keyword_->data().end(), &site) != keyword_->data().end())
                     checkBox->setChecked(true);
                 connect(checkBox, SIGNAL(clicked(bool)), this, SLOT(siteCheckBox_clicked(bool)));
                 checkBox->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(&site));
@@ -124,21 +116,21 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData &coreDat
 }
 
 // Update keyword data based on widget values
-void SpeciesSiteRefListKeywordWidget::updateKeywordData()
+void SpeciesSiteVectorKeywordWidget::updateKeywordData()
 {
     // Not relevant - Handled via checkbox callbacks
 }
 
 // Update summary text
-void SpeciesSiteRefListKeywordWidget::updateSummaryText()
+void SpeciesSiteVectorKeywordWidget::updateSummaryText()
 {
     QString siteText;
-    if (keyword_->data().nItems() == 0)
+    if (keyword_->data().size() == 0)
         siteText = "<None>";
     else
     {
         auto first = true;
-        for (SpeciesSite *site : keyword_->data())
+        for (auto *site : keyword_->data())
         {
             if (!first)
                 siteText += ", ";

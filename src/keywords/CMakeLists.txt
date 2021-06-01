@@ -35,7 +35,7 @@ add_library(
   range.cpp
   species.cpp
   speciessite.cpp
-  speciessitereflist.cpp
+  speciessitevector.cpp
   speciesvector.cpp
   stdstring.cpp
   vec3double.cpp
@@ -82,7 +82,7 @@ add_library(
   range.h
   species.h
   speciessite.h
-  speciessitereflist.h
+  speciessitevector.h
   speciesvector.h
   stdstring.h
   vec3double.h

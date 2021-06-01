@@ -42,7 +42,7 @@ class SpeciesSite
     // Set Species parent
     void setParent(Species *sp);
     // Return species parent
-    Species *parent();
+    Species *parent() const;
     // Return version
     int version() const;
 

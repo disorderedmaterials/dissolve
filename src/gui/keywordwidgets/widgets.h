@@ -25,7 +25,7 @@
 #include "gui/keywordwidgets/range.h"
 #include "gui/keywordwidgets/species.hui"
 #include "gui/keywordwidgets/speciessite.h"
-#include "gui/keywordwidgets/speciessitereflist.h"
+#include "gui/keywordwidgets/speciessitevector.h"
 #include "gui/keywordwidgets/speciesvector.h"
 #include "gui/keywordwidgets/stdstring.hui"
 #include "gui/keywordwidgets/vec3double.h"

@@ -20,7 +20,7 @@ set(keywordwidgets_MOC_HDRS
     nodevector.h
     range.h
     speciessite.h
-    speciessitereflist.h
+    speciessitevector.h
     speciesvector.h
     vec3double.h
     vec3integer.h
@@ -57,7 +57,7 @@ set(keywordwidgets_UIS
     nodevector.ui
     range.ui
     speciessite.ui
-    speciessitereflist.ui
+    speciessitevector.ui
     speciesvector.ui
     vec3double.ui
     vec3integer.ui
@@ -92,7 +92,7 @@ set(keywordwidgets_SRCS
     range_funcs.cpp
     species_funcs.cpp
     speciessite_funcs.cpp
-    speciessitereflist_funcs.cpp
+    speciessitevector_funcs.cpp
     speciesvector_funcs.cpp
     stdstring_funcs.cpp
     widget_funcs.cpp

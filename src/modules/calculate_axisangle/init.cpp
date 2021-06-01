@@ -78,13 +78,13 @@ void CalculateAxisAngleModule::initialise()
      */
 
     // Select: Site 'A'
-    selectA_ = new SelectProcedureNode(nullptr, true);
+    selectA_ = new SelectProcedureNode({}, true);
     selectA_->setName("A");
     SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
 
     // -- Select: Site 'B'
-    selectB_ = new SelectProcedureNode(nullptr, true);
+    selectB_ = new SelectProcedureNode({}, true);
     selectB_->setName("B");
     selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
     SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);

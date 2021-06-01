@@ -29,7 +29,7 @@ class SiteStack : public ListItem<SiteStack>
     // Index at which the sites were last calculated for the Configuration
     int configurationIndex_;
     // Target SpeciesSite
-    SpeciesSite *speciesSite_;
+    const SpeciesSite *speciesSite_;
 
     private:
     // Calculate geometric centre of atoms in the given molecule
@@ -39,11 +39,11 @@ class SiteStack : public ListItem<SiteStack>
 
     public:
     // Create stack for specified Configuration and site
-    bool create(Configuration *cfg, SpeciesSite *speciesSite);
+    bool create(Configuration *cfg, const SpeciesSite *site);
     // Return target Configuration
     Configuration *configuration() const;
     // Return target SpeciesSite
-    SpeciesSite *speciesSite() const;
+    const SpeciesSite *speciesSite() const;
 
     /*
      * Stack

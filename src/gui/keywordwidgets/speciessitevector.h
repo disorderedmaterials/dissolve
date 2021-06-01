@@ -5,27 +5,28 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_speciessitereflist.h"
-#include "keywords/speciessitereflist.h"
+#include "gui/keywordwidgets/ui_speciessitevector.h"
+#include "gui/models/speciesSiteModel.h"
+#include "keywords/speciessitevector.h"
 #include <QWidget>
 
 // Forward Declarations
 class Species;
 
-class SpeciesSiteRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class SpeciesSiteVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    SpeciesSiteRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    SpeciesSiteVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    SpeciesSiteRefListKeyword *keyword_;
+    SpeciesSiteVectorKeyword *keyword_;
 
     /*
      * Widgets
@@ -33,9 +34,11 @@ class SpeciesSiteRefListKeywordWidget : public KeywordDropDown, public KeywordWi
     private:
     // Main form declaration
     Ui::SpeciesSiteRefListWidget ui_;
+    // Model for the Sites list
+    SpeciesSiteModel siteModel_;
 
     private slots:
-    void siteCheckBox_clicked(bool checked);
+    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
     // Keyword value changed
