@@ -39,6 +39,7 @@ class SpeciesIntra
     protected:
     // Linked master from which parameters should be taken (if relevant)
     MasterIntra *masterParameters_;
+    std::weak_ptr<MasterIntra> masterParameterss;
     // Index of functional form of interaction
     int form_;
     // Parameters for interaction

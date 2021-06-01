@@ -38,3 +38,5 @@ changes
 *.restart
 *.restart.prev
 *.state
+
+.vscode/launch.json

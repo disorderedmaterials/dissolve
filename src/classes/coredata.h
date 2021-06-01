@@ -68,13 +68,13 @@ class CoreData
      */
     private:
     // List of master Bond parameters for Species
-    std::vector<MasterIntra> masterBonds_;
+    std::vector<std::shared_ptr<MasterIntra>> masterBonds_;
     // List of master Angles parameters for Species
-    std::vector<MasterIntra> masterAngles_;
+    std::vector<std::shared_ptr<MasterIntra>> masterAngles_;
     // List of master Torsions parameters for Species
-    std::vector<MasterIntra> masterTorsions_;
+    std::vector<std::shared_ptr<MasterIntra>> masterTorsions_;
     // List of master Improper parameters for Species
-    std::vector<MasterIntra> masterImpropers_;
+    std::vector<std::shared_ptr<MasterIntra>> masterImpropers_;
 
     public:
     // Add new master Bond parameters
@@ -82,8 +82,8 @@ class CoreData
     // Return number of master Bond parameters in list
     int nMasterBonds() const;
     // Return list of master Bond parameters
-    std::vector<MasterIntra> &masterBonds();
-    const std::vector<MasterIntra> &masterBonds() const;
+    std::vector<std::shared_ptr<MasterIntra>> &masterBonds();
+    const std::vector<std::shared_ptr<MasterIntra>> &masterBonds() const;
     // Return whether named master Bond parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterBond(std::string_view name);
     OptionalReferenceWrapper<const MasterIntra> getMasterBond(std::string_view name) const;
@@ -92,8 +92,8 @@ class CoreData
     // Return number of master Angles parameters in list
     int nMasterAngles() const;
     // Return list of master Angle parameters
-    std::vector<MasterIntra> &masterAngles();
-    const std::vector<MasterIntra> &masterAngles() const;
+    std::vector<std::shared_ptr<MasterIntra>> &masterAngles();
+    const std::vector<std::shared_ptr<MasterIntra>> &masterAngles() const;
     // Return whether named master Angle parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterAngle(std::string_view name);
     OptionalReferenceWrapper<const MasterIntra> getMasterAngle(std::string_view name) const;
@@ -102,8 +102,8 @@ class CoreData
     // Return number of master Torsions parameters in list
     int nMasterTorsions() const;
     // Return list of master Torsion parameters
-    std::vector<MasterIntra> &masterTorsions();
-    const std::vector<MasterIntra> &masterTorsions() const;
+    std::vector<std::shared_ptr<MasterIntra>> &masterTorsions();
+    const std::vector<std::shared_ptr<MasterIntra>> &masterTorsions() const;
     // Return whether named master Torsion parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterTorsion(std::string_view name);
     OptionalReferenceWrapper<const MasterIntra> getMasterTorsion(std::string_view name) const;
@@ -112,8 +112,8 @@ class CoreData
     // Return number of master Impropers parameters in list
     int nMasterImpropers() const;
     // Return list of master Improper parameters
-    std::vector<MasterIntra> &masterImpropers();
-    const std::vector<MasterIntra> &masterImpropers() const;
+    std::vector<std::shared_ptr<MasterIntra>> &masterImpropers();
+    const std::vector<std::shared_ptr<MasterIntra>> &masterImpropers() const;
     // Return whether named master Improper parameters exist
     OptionalReferenceWrapper<MasterIntra> getMasterImproper(std::string_view name);
     OptionalReferenceWrapper<const MasterIntra> getMasterImproper(std::string_view name) const;
