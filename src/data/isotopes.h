@@ -4,6 +4,7 @@
 #pragma once
 
 #include "data/elements.h"
+#include <vector>
 
 // Sears '91 Isotope Data
 namespace Sears91
