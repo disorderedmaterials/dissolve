@@ -106,7 +106,7 @@ class Dissolve
     // Whether Coulomb terms are included in generated PairPotentials
     bool pairPotentialsIncludeCoulomb_;
     // Simulation PairPotentials
-    List<PairPotential> pairPotentials_;
+    std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
     // Version of AtomTypes at which PairPotential were last generated
     int pairPotentialAtomTypeVersion_;
     // Map for PairPotentials
@@ -134,7 +134,7 @@ class Dissolve
     // Add new pair potential to list
     PairPotential *addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2);
     // Return PairPotentials list
-    const List<PairPotential> &pairPotentials() const;
+    const std::vector<std::unique_ptr<PairPotential>> &pairPotentials() const;
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
     // Return whether specified PairPotential is defined

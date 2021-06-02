@@ -412,8 +412,8 @@ void ForcefieldTab::updateControls()
     // -- Table
     // -- Get current row index before we refresh...
     auto ppRowIndex = ui_.PairPotentialsTable->currentRow();
-    TableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
-                                                               &ForcefieldTab::updatePairPotentialsTableRow);
+    // TableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
+    //                                                            &ForcefieldTab::updatePairPotentialsTableRow);
     ui_.PairPotentialsTable->resizeColumnsToContents();
 
     refreshLocker.unlock();

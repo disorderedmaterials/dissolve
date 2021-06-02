@@ -234,7 +234,7 @@ bool Dissolve::iterate(int nIterations)
             // -- Iteration number
             processingModuleData_.realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
             // -- Pair Potentials
-            for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
+	    for (auto &pot : pairPotentials_)
             {
                 processingModuleData_.realise<Data1D>(
                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",

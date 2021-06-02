@@ -32,35 +32,40 @@ void Dissolve::setPairPotentialsIncludeCoulomb(bool b) { pairPotentialsIncludeCo
 bool Dissolve::pairPotentialsIncludeCoulomb() { return pairPotentialsIncludeCoulomb_; }
 
 // Return index of specified PairPotential
-int Dissolve::indexOf(PairPotential *pp) { return pairPotentials_.indexOf(pp); }
+int Dissolve::indexOf(PairPotential *pp)
+{
+    auto result = std::find_if(pairPotentials_.begin(), pairPotentials_.end(), [pp](auto &p) { return pp == p.get(); });
+
+    return result == pairPotentials_.end() ? -1 : result - pairPotentials_.begin();
+}
 
 // Return number of defined PairPotentials
-int Dissolve::nPairPotentials() const { return pairPotentials_.nItems(); }
+int Dissolve::nPairPotentials() const { return pairPotentials_.size(); }
 
 // Add new pair potential to list
 PairPotential *Dissolve::addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
-    PairPotential *pp = pairPotentials_.add();
+    auto &pp = pairPotentials_.emplace_back(new PairPotential());
     pp->setUp(std::move(at1), std::move(at2));
 
-    return pp;
+    return pp.get();
 }
 
 // Return first PairPotential in list
-const List<PairPotential> &Dissolve::pairPotentials() const { return pairPotentials_; }
+const std::vector<std::unique_ptr<PairPotential>> &Dissolve::pairPotentials() const { return pairPotentials_; }
 
 // Return nth PairPotential in list
-PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
+PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n].get(); }
 
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
 {
-    for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
+    for (auto &pot : pairPotentials_)
     {
         if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2))
-            return pot;
+            return pot.get();
         if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1))
-            return pot;
+            return pot.get();
     }
     return nullptr;
 }
@@ -68,12 +73,12 @@ PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, con
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at2) const
 {
-    for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
+    for (auto &pot : pairPotentials_)
     {
         if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2))
-            return pot;
+            return pot.get();
         if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1))
-            return pot;
+            return pot.get();
     }
     return nullptr;
 }
