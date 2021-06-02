@@ -13,6 +13,7 @@
 #include <QInputDialog>
 
 Q_DECLARE_METATYPE(AtomType *)
+Q_DECLARE_METATYPE(const Species *)
 
 ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_)
@@ -181,7 +182,8 @@ void ImportSpeciesDialog::speciesSelectionChanged(const QItemSelection &current,
         importTarget_ = nullptr;
     else
     {
-        importTarget_ = speciesModel_.rawData(current.indexes().front());
+        importTarget_ = speciesModel_.data(current.indexes().front(), Qt::UserRole).value<const Species *>();
+        assert(importTarget_);
         ui_.SpeciesNameEdit->setText(QString::fromStdString(std::string(importTarget_->name())));
     }
 

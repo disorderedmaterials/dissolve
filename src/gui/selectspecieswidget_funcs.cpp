@@ -7,6 +7,8 @@
 #include "gui/selectspecieswidget.h"
 #include "templates/variantpointer.h"
 
+Q_DECLARE_METATYPE(const Species *)
+
 SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);
@@ -82,7 +84,7 @@ std::vector<const Species *> SelectSpeciesWidget::currentSpecies() const
     std::vector<const Species *> selection;
 
     for (auto &index : ui_.SpeciesList->selectionModel()->selectedIndexes())
-        selection.push_back(speciesModel_.rawData(speciesFilterProxy_.mapToSource(index)));
+        selection.push_back(speciesModel_.data(speciesFilterProxy_.mapToSource(index), Qt::UserRole).value<const Species *>());
 
     return selection;
 }

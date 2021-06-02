@@ -19,14 +19,14 @@ class SpeciesModel : public QAbstractListModel
     OptionalReferenceWrapper<const std::vector<std::unique_ptr<Species>>> species_;
     // Vector containing checked items (if relevant)
     OptionalReferenceWrapper<std::vector<const Species *>> checkedItems_;
+    // Return object represented by specified model index
+    const Species *rawData(const QModelIndex &index) const;
 
     public:
     // Set source Species data
     void setData(const std::vector<std::unique_ptr<Species>> &species);
     // Set vector containing checked items
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
-    // Return object represented by specified model index
-    const Species *rawData(const QModelIndex &index) const;
 
     /*
      * QAbstractItemModel overrides
