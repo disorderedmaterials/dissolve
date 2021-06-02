@@ -20,6 +20,6 @@ class EmpiricalFormula
     public:
     // Return empirical formula for supplied Species
     static std::string formula(const Species *species, bool richText = false);
-    // Return empirical formula for supplied SpeciesAtom reflist
-    static std::string formula(const RefList<const SpeciesAtom> &atoms, bool richText = false);
+    // Return empirical formula for supplied SpeciesAtom vector
+    static std::string formula(const std::vector<const SpeciesAtom *> &atoms, bool richText = false);
 };

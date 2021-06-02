@@ -6,6 +6,7 @@
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
+#include "templates/algorithms.h"
 #include <numeric>
 
 SpeciesSite::SpeciesSite(const Species *parent) : parent_(parent), originMassWeighted_(false) {}
@@ -33,31 +34,17 @@ int SpeciesSite::version() const { return version_; }
 // Add origin atom
 bool SpeciesSite::addOriginAtom(const SpeciesAtom *originAtom)
 {
-    if (!originAtom)
-        return Messenger::error("NULL SpeciesAtom passed to SpeciesSite::addOriginAtom().\n");
+    assert(originAtom);
 
-    // If the SpeciesAtom already exists in the list, complain
-    if (originAtoms_.contains(originAtom))
+    // If the SpeciesAtom already exists in the vector, complain
+    if (std::find(originAtoms_.begin(), originAtoms_.end(), originAtom) != originAtoms_.end())
         return Messenger::error("Origin atom index {} specified twice for site '{}'.\n", originAtom->index(), name_);
 
-    originAtoms_.append(originAtom);
+    originAtoms_.push_back(originAtom);
 
     ++version_;
 
     return true;
-}
-
-// Remove origin atom
-void SpeciesSite::removeOriginAtom(const SpeciesAtom *originAtom)
-{
-    if (originAtoms_.contains(originAtom))
-    {
-        originAtoms_.remove(originAtom);
-
-        ++version_;
-    }
-    else
-        Messenger::error("Tried to remove a SpeciesAtom from the origin list that isn't present\n");
 }
 
 // Add origin atom from index
@@ -68,7 +55,7 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Set origin atoms
-bool SpeciesSite::setOriginAtoms(const RefList<const SpeciesAtom> &atoms)
+bool SpeciesSite::setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     originAtoms_.clear();
 
@@ -83,9 +70,6 @@ bool SpeciesSite::setOriginAtoms(const RefList<const SpeciesAtom> &atoms)
 
     return true;
 }
-
-// Return list of origin atoms
-const RefList<const SpeciesAtom> &SpeciesSite::originAtoms() { return originAtoms_; }
 
 // Return integer array of indices from which the origin should be formed
 std::vector<int> SpeciesSite::originAtomIndices() const
@@ -110,14 +94,13 @@ bool SpeciesSite::originMassWeighted() const { return originMassWeighted_; }
 // Add x-axis atom
 bool SpeciesSite::addXAxisAtom(const SpeciesAtom *xAxisAtom)
 {
-    if (!xAxisAtom)
-        return Messenger::error("NULL SpeciesAtom passed to SpeciesSite::addXAxisAtom().\n");
+    assert(xAxisAtom);
 
-    // If the SpeciesAtom already exists in the list, complain
-    if (xAxisAtoms_.contains(xAxisAtom))
+    // If the SpeciesAtom already exists in the vector, complain
+    if (std::find(xAxisAtoms_.begin(), xAxisAtoms_.end(), xAxisAtom) != xAxisAtoms_.end())
         return Messenger::error("X-axis atom index {} specified twice for site '{}'.\n", xAxisAtom->index(), name_);
 
-    xAxisAtoms_.append(xAxisAtom);
+    xAxisAtoms_.push_back(xAxisAtom);
 
     ++version_;
 
@@ -131,38 +114,21 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
     return addXAxisAtom(&parent_->atom(atomIndex));
 }
 
-// Remove x-axis atom
-void SpeciesSite::removeXAxisAtom(const SpeciesAtom *xAxisAtom)
-{
-    if (xAxisAtoms_.contains(xAxisAtom))
-    {
-        xAxisAtoms_.remove(xAxisAtom);
-
-        ++version_;
-    }
-    else
-        Messenger::error("Tried to remove a SpeciesAtom from the x-axis list that isn't present\n");
-}
-
 // Set x-axis atoms
-bool SpeciesSite::setXAxisAtoms(const RefList<const SpeciesAtom> &atoms)
+bool SpeciesSite::setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     xAxisAtoms_.clear();
 
     ++version_;
 
-    for (auto *i : atoms)
-        if (!addXAxisAtom(i))
-        {
-            xAxisAtoms_.clear();
-            return false;
-        }
+    if (!std::all_of(atoms.begin(), atoms.end(), [&](const auto *i) { return addXAxisAtom(i); }))
+    {
+        xAxisAtoms_.clear();
+        return false;
+    }
 
     return true;
 }
-
-// Return list of x-axis atoms
-const RefList<const SpeciesAtom> &SpeciesSite::xAxisAtoms() { return xAxisAtoms_; }
 
 // Return integer array of indices from which x-axis should be formed
 std::vector<int> SpeciesSite::xAxisAtomIndices() const
@@ -176,14 +142,13 @@ std::vector<int> SpeciesSite::xAxisAtomIndices() const
 // Add y-axis atom
 bool SpeciesSite::addYAxisAtom(const SpeciesAtom *yAxisAtom)
 {
-    if (!yAxisAtom)
-        return Messenger::error("NULL SpeciesAtom passed to SpeciesSite::addYAxisAtom().\n");
+    assert(yAxisAtom);
 
-    // If the SpeciesAtom already exists in the list, complain
-    if (yAxisAtoms_.contains(yAxisAtom))
+    // If the SpeciesAtom already exists in the vector, complain
+    if (std::find(yAxisAtoms_.begin(), yAxisAtoms_.end(), yAxisAtom) != yAxisAtoms_.end())
         return Messenger::error("Y-axis atom index {} specified twice for site '{}'.\n", yAxisAtom->index(), name_);
 
-    yAxisAtoms_.append(yAxisAtom);
+    yAxisAtoms_.push_back(yAxisAtom);
 
     ++version_;
 
@@ -197,38 +162,21 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
     return addYAxisAtom(&parent_->atom(atomIndex));
 }
 
-// Remove y-axis atom
-void SpeciesSite::removeYAxisAtom(const SpeciesAtom *yAxisAtom)
-{
-    if (yAxisAtoms_.contains(yAxisAtom))
-    {
-        yAxisAtoms_.remove(yAxisAtom);
-
-        ++version_;
-    }
-    else
-        Messenger::error("Tried to remove a SpeciesAtom from the y-axis list that isn't present\n");
-}
-
 // Set y-axis atoms
-bool SpeciesSite::setYAxisAtoms(const RefList<const SpeciesAtom> &atoms)
+bool SpeciesSite::setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     yAxisAtoms_.clear();
 
     ++version_;
 
-    for (auto *i : atoms)
-        if (!addYAxisAtom(i))
-        {
-            yAxisAtoms_.clear();
-            return false;
-        }
+    if (!std::all_of(atoms.begin(), atoms.end(), [&](const auto *i) { return addYAxisAtom(i); }))
+    {
+        yAxisAtoms_.clear();
+        return false;
+    }
 
     return true;
 }
-
-// Return list of y-axis atoms
-const RefList<const SpeciesAtom> &SpeciesSite::yAxisAtoms() { return yAxisAtoms_; }
 
 // Return integer array of indices from which y-axis should be formed
 std::vector<int> SpeciesSite::yAxisAtomIndices() const
@@ -240,12 +188,7 @@ std::vector<int> SpeciesSite::yAxisAtomIndices() const
 }
 
 // Return whether the site has defined axes sites
-bool SpeciesSite::hasAxes() const
-{
-    if ((xAxisAtoms_.nItems() == 0) || (yAxisAtoms_.nItems() == 0))
-        return false;
-    return true;
-}
+bool SpeciesSite::hasAxes() const { return !(xAxisAtoms_.empty() || yAxisAtoms_.empty()); }
 
 /*
  * Generation from Parent
@@ -438,15 +381,10 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Origin atom indices
-    if (originAtoms_.nItems() > 0)
+    if (!originAtoms_.empty())
     {
-        std::vector<int> indices = originAtomIndices();
-
-        std::string atomIndices =
-            std::accumulate(indices.begin(), indices.end(), std::string(),
-                            [](const auto &acc, const auto &idx) { return acc + fmt::format("  {}", idx + 1); });
-
-        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(OriginKeyword), atomIndices))
+        if (!parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
+                               joinStrings(originAtomIndices(), "  ")))
             return false;
     }
 
@@ -455,28 +393,16 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // X-Axis atom indices
-    if (xAxisAtoms_.nItems() > 0)
+    if (!xAxisAtoms_.empty())
     {
-        std::vector<int> indices = xAxisAtomIndices();
-
-        std::string atomIndices =
-            std::accumulate(indices.begin(), indices.end(), std::string(),
-                            [](const auto &acc, const auto &idx) { return acc + fmt::format("  {}", idx + 1); });
-
-        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(XAxisKeyword), atomIndices))
+        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(XAxisKeyword), joinStrings(xAxisAtomIndices(), "  ")))
             return false;
     }
 
     // Y-Axis atom indices
-    if (yAxisAtoms_.nItems() > 0)
+    if (!yAxisAtoms_.empty())
     {
-        std::vector<int> indices = yAxisAtomIndices();
-
-        std::string atomIndices =
-            std::accumulate(indices.begin(), indices.end(), std::string(),
-                            [](const auto &acc, const auto &idx) { return acc + fmt::format("  {}", idx + 1); });
-
-        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(YAxisKeyword), atomIndices))
+        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(YAxisKeyword), joinStrings(yAxisAtomIndices(), "  ")))
             return false;
     }
 

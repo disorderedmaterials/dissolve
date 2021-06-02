@@ -48,26 +48,22 @@ class SpeciesSite
      * Definition
      */
     private:
-    // List of SpeciesAtoms whose average position is the origin of the site
-    RefList<const SpeciesAtom> originAtoms_;
+    // Species atoms whose average position is the origin of the site
+    std::vector<const SpeciesAtom *> originAtoms_;
     // Whether the origin should be calculated with mass-weighted positions
     bool originMassWeighted_;
-    // SpeciesAtom(s) that indicate the x axis with the origin
-    RefList<const SpeciesAtom> xAxisAtoms_;
-    // SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
-    RefList<const SpeciesAtom> yAxisAtoms_;
+    // Species atom(s) that indicate the x axis with the origin
+    std::vector<const SpeciesAtom *> xAxisAtoms_;
+    // Species atom(s) that indicate the y axis with the origin, after orthogonalisation
+    std::vector<const SpeciesAtom *> yAxisAtoms_;
 
     public:
     // Add origin atom
     bool addOriginAtom(const SpeciesAtom *originAtom);
     // Add origin atom from index
     bool addOriginAtom(int atomIndex);
-    // Remove origin atom
-    void removeOriginAtom(const SpeciesAtom *originAtom);
     // Set origin atoms
-    bool setOriginAtoms(const RefList<const SpeciesAtom> &atoms);
-    // Return list of origin atoms
-    const RefList<const SpeciesAtom> &originAtoms();
+    bool setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return integer array of indices from which the origin should be formed
     std::vector<int> originAtomIndices() const;
     // Set whether the origin should be calculated with mass-weighted positions
@@ -78,24 +74,16 @@ class SpeciesSite
     bool addXAxisAtom(const SpeciesAtom *xAxisAtom);
     // Add x-axis atom from index
     bool addXAxisAtom(int atomIndex);
-    // Remove x-axis atom
-    void removeXAxisAtom(const SpeciesAtom *xAxisAtom);
     // Set x-axis atoms
-    bool setXAxisAtoms(const RefList<const SpeciesAtom> &atoms);
-    // Return list of x-axis atoms
-    const RefList<const SpeciesAtom> &xAxisAtoms();
+    bool setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return integer array of indices from which x-axis should be formed
     std::vector<int> xAxisAtomIndices() const;
     // Add y-axis atom
     bool addYAxisAtom(const SpeciesAtom *yAxisAtom);
-    // Add y-axis atom from indey
+    // Add y-axis atom from index
     bool addYAxisAtom(int atomIndex);
-    // Remove y-axis atom
-    void removeYAxisAtom(const SpeciesAtom *yAxisAtom);
     // Set y-axis atoms
-    bool setYAxisAtoms(const RefList<const SpeciesAtom> &atoms);
-    // Return list of y-axis atoms
-    const RefList<const SpeciesAtom> &yAxisAtoms();
+    bool setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return integer array of indices from which y-axis should be formed
     std::vector<int> yAxisAtomIndices() const;
     // Return whether the site has defined axes sites

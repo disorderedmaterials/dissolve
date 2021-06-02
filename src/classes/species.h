@@ -56,10 +56,10 @@ class Species
      * Atomic Information
      */
     private:
-    // List of Atoms in the Species
+    // List of atoms in the Species
     std::list<SpeciesAtom> atoms_;
-    // List of selected Atoms
-    RefList<const SpeciesAtom> selectedAtoms_;
+    // Vector of selected atoms
+    std::vector<const SpeciesAtom *> selectedAtoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
     // List of AtomTypes, and their populations, used in the Species
@@ -99,11 +99,9 @@ class Species
     // Select atoms along any path from the specified one, ignoring the bond(s) provided
     void selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt);
     // Return current atom selection
-    const RefList<const SpeciesAtom> &selectedAtoms() const;
+    const std::vector<const SpeciesAtom *> &selectedAtoms() const;
     // Return number of selected atoms
     int nSelectedAtoms() const;
-    // Return whether specified atom is selected
-    bool isAtomSelected(SpeciesAtom *i) const;
     // Return version of the atom selection
     int atomSelectionVersion() const;
     // Return total atomic mass of Species

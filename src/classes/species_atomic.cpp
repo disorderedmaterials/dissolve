@@ -45,7 +45,7 @@ void Species::removeAtom(SpeciesAtom *i)
     // Now remove the atom
     auto atomIt = std::find_if(atoms_.begin(), atoms_.end(), [&](const auto &p) { return i == &p; });
     atoms_.erase(atomIt);
-    selectedAtoms_.remove(i);
+    selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), i));
 
     renumberAtoms();
 
@@ -135,7 +135,7 @@ void Species::selectAtom(SpeciesAtom *i)
     {
         i->setSelected(true);
 
-        selectedAtoms_.append(i);
+        selectedAtoms_.push_back(i);
 
         ++atomSelectionVersion_;
     }
@@ -148,7 +148,7 @@ void Species::deselectAtom(SpeciesAtom *i)
     {
         i->setSelected(false);
 
-        selectedAtoms_.remove(i);
+        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), i));
 
         ++atomSelectionVersion_;
     }
@@ -179,20 +179,18 @@ void Species::selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalRefer
         // Get the partner atom in the bond and select it (if it is not selected already)
         auto *partner = bond.partner(i);
 
-        if (selectedAtoms_.contains(partner))
-            continue;
+        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), i) != selectedAtoms_.end())
+            ;
+        continue;
         selectFromAtom(partner, exclude);
     }
 }
 
 // Return current atom selection
-const RefList<const SpeciesAtom> &Species::selectedAtoms() const { return selectedAtoms_; }
+const std::vector<const SpeciesAtom *> &Species::selectedAtoms() const { return selectedAtoms_; }
 
 // Return number of selected Atoms
-int Species::nSelectedAtoms() const { return selectedAtoms_.nItems(); }
-
-// Return whether specified Atom is selected
-bool Species::isAtomSelected(SpeciesAtom *i) const { return selectedAtoms_.contains(i); }
+int Species::nSelectedAtoms() const { return selectedAtoms_.size(); }
 
 // Return version of the atom selection
 int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
