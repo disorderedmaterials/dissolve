@@ -3,6 +3,7 @@
 
 #include "io/import/values.h"
 #include "base/lineparser.h"
+#include "templates/optionalref.h"
 
 ValueImportFileFormat::ValueImportFileFormat(std::string_view filename, ValueImportFileFormat::ValueImportFormat format)
     : FileAndFormat(formats_, filename)
@@ -40,24 +41,16 @@ bool ValueImportFileFormat::importSimple(LineParser &parser, std::vector<double>
 }
 
 // Import values using current filename and format
-bool ValueImportFileFormat::importData(std::vector<double> &data, ProcessPool *procPool)
+bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &currentParser, ProcessPool *procPool)
 {
-    // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
-    if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
+    // If the filename is simply '@' then we read from the current parser - otherwise open a new file / parser
+    auto readFromCurrent = filename_ == "@";
+    LineParser fileParser(procPool);
+    LineParser &parser = readFromCurrent ? currentParser : fileParser;
+
+    if (!readFromCurrent && ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading())))
         return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename_);
 
-    // Import the data
-    auto result = importData(parser, data);
-
-    parser.closeFiles();
-
-    return result;
-}
-
-// Import values using supplied parser and current format
-bool ValueImportFileFormat::importData(LineParser &parser, std::vector<double> &data)
-{
     // Import the data
     auto result = false;
     switch (formats_.enumeration())
@@ -68,6 +61,9 @@ bool ValueImportFileFormat::importData(LineParser &parser, std::vector<double> &
         default:
             throw(std::runtime_error(fmt::format("Value format '{}' import has not been implemented.\n", formats_.keyword())));
     }
+
+    if (!readFromCurrent)
+        fileParser.closeFiles();
 
     return result;
 }

@@ -43,7 +43,5 @@ class ValueImportFileFormat : public FileAndFormat
 
     public:
     // Import value data using current filename and format
-    bool importData(std::vector<double> &data, ProcessPool *procPool = nullptr);
-    // Import value data using supplied parser and current format
-    bool importData(LineParser &parser, std::vector<double> &data);
+    bool importData(std::vector<double> &data, LineParser &currentParser, ProcessPool *procPool = nullptr);
 };

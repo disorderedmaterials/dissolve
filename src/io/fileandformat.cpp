@@ -85,7 +85,7 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
         filename_ = parser.argsv(startArg + 1);
 
         // Check that the file exists?
-        if (fileMustExist() && (!DissolveSys::fileExists(filename_)))
+        if (fileMustExist() && (filename_ != "@") && (!DissolveSys::fileExists(filename_)))
             return Messenger::error("Specified file '{}' does not exist.\n", filename_);
     }
 
