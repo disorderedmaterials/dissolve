@@ -7,6 +7,8 @@
 #include "classes/data1dstore.h"
 #include "classes/data2dstore.h"
 #include "classes/data3dstore.h"
+#include "classes/valuestore.h"
+#include "io/import/values.h"
 #include "module/module.h"
 
 // DataTest Module
@@ -62,6 +64,8 @@ class DataTestModule : public Module
     Data2DStore test2DData_;
     // Test 3D datasets
     Data3DStore test3DData_;
+    // Test SampledValue datasets
+    ValueStore testSampledVectorData_;
 
     /*
      * GUI Widget

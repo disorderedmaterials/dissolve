@@ -42,6 +42,39 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
     return 0.0;
 }
 
+// Return error of specified type between supplied double vectors
+double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet)
+{
+    // Size check
+    assert(vecA.size() == vecB.size());
+
+    // Create temporary Data1D for simplicity
+    Data1D A, B;
+    auto x = 0.0;
+    for (auto &&[y1, y2] : zip(vecA, vecB))
+    {
+        A.addPoint(x, y1);
+        B.addPoint(x, y2);
+        x += 1.0;
+    }
+
+    if (errorType == RMSEError)
+        return rmse(A, B, quiet);
+    else if (errorType == MAAPEError)
+        return maape(A, B, quiet);
+    else if (errorType == MAPEError)
+        return mape(A, B, quiet);
+    else if (errorType == PercentError)
+        return percent(A, B, quiet);
+    else if (errorType == RFactorError)
+        return rFactor(A, B, quiet);
+    else if (errorType == EuclideanError)
+        return euclidean(A, B, quiet);
+
+    Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
+    return 0.0;
+}
+
 /*
  * Data1D
  */
