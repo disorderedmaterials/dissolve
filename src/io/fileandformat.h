@@ -4,7 +4,6 @@
 #pragma once
 
 #include "keywords/list.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class CoreData;
@@ -14,34 +13,23 @@ class LineParser;
 class FileAndFormat
 {
     public:
-    FileAndFormat(int format = 0);
-    FileAndFormat(std::string_view filename = "", int format = 0);
+    FileAndFormat(EnumOptionsBase &formats, std::string_view filename = "");
     virtual ~FileAndFormat() = default;
     operator std::string_view() const;
 
     /*
-     * Available Formats
+     * File and Format
      */
     protected:
-    // Format of associated file
-    int format_;
+    // Formats enum as the base object
+    EnumOptionsBase &formats_;
 
     public:
-    // Return number of available formats
-    virtual int nFormats() const = 0;
-    // Return format keyword for supplied index
-    virtual std::string formatKeyword(int id) const = 0;
-    // Return description string for supplied index
-    virtual std::string formatDescription(int id) const = 0;
-    // Convert text string to format index
-    int format(std::string_view fmtString) const;
-    // Set format index
-    void setFormatIndex(int id);
-    // Return format index
-    int formatIndex() const;
-    // Return format string
+    // Return formats enum as the base object
+    EnumOptionsBase &formats();
+    // Return current format keyword
     std::string format() const;
-    // Return description string
+    // Return current format description
     std::string description() const;
     // Print available formats
     void printAvailableFormats() const;
@@ -69,8 +57,6 @@ class FileAndFormat
     public:
     // Return whether a filename has been set
     bool hasFilename() const;
-    // Return whether a filename and format have been set
-    bool hasValidFileAndFormat() const;
 
     /*
      * Additional Options

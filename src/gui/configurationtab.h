@@ -5,6 +5,7 @@
 
 #include "base/units.h"
 #include "gui/maintab.h"
+#include "gui/models/enumOptionsModel.h"
 #include "gui/ui_configurationtab.h"
 
 // Forward Declarations
@@ -28,6 +29,8 @@ class ConfigurationTab : public QWidget, public MainTab
     private:
     // Main form declaration
     Ui::ConfigurationTab ui_;
+    // Model for import file format
+    EnumOptionsModel importEnumOptionsModel_;
 
     /*
      * MainTab Reimplementations

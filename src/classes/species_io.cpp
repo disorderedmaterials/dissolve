@@ -804,7 +804,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Input Coordinates
-    if (coordinateSetInputCoordinates_.hasValidFileAndFormat())
+    if (coordinateSetInputCoordinates_.hasFilename())
     {
         if (!coordinateSetInputCoordinates_.writeFilenameAndFormat(
                 parser, fmt::format("\n{}{}  ", newPrefix, keywords().keyword(Species::SpeciesKeyword::CoordinateSets))))

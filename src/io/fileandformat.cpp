@@ -5,9 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-FileAndFormat::FileAndFormat(int format) { format_ = format; }
-
-FileAndFormat::FileAndFormat(std::string_view filename, int format) : format_(format), filename_{filename} {}
+FileAndFormat::FileAndFormat(EnumOptionsBase &formats, std::string_view filename) : formats_(formats), filename_{filename} {}
 
 FileAndFormat::operator std::string_view() const { return filename_; }
 
@@ -15,45 +13,20 @@ FileAndFormat::operator std::string_view() const { return filename_; }
  * Formats
  */
 
-// Convert text string to format index
-int FileAndFormat::format(std::string_view fmtString) const
-{
-    for (auto n = 0; n < nFormats(); ++n)
-        if (DissolveSys::sameString(fmtString, formatKeyword(n)))
-            return n;
+// Return formats enum as the base object
+EnumOptionsBase &FileAndFormat::formats() { return formats_; }
 
-    return nFormats();
-}
+// Return current format keyword
+std::string FileAndFormat::format() const { return formats_.keywordByIndex(formats_.index()); }
 
-// Set format index
-void FileAndFormat::setFormatIndex(int id) { format_ = id; }
-
-// Return format index
-int FileAndFormat::formatIndex() const { return format_; }
-
-// Return format string
-std::string FileAndFormat::format() const
-{
-    if ((format_ < 0) || (format_ >= nFormats()))
-        return "???";
-    else
-        return formatKeyword(format_);
-}
-
-// Return nice format string
-std::string FileAndFormat::description() const
-{
-    if ((format_ < 0) || (format_ >= nFormats()))
-        return "???";
-    else
-        return formatDescription(format_);
-}
+// Return current format description
+std::string FileAndFormat::description() const { return formats_.descriptionByIndex(formats_.index()); }
 
 // Print available formats
 void FileAndFormat::printAvailableFormats() const
 {
-    for (auto n = 0; n < nFormats(); ++n)
-        Messenger::print("  {:12}  {}\n", formatKeyword(n), formatDescription(n));
+    for (auto n = 0; n < formats_.nOptions(); ++n)
+        Messenger::print("  {:12}  {}\n", formats_.keywordByIndex(n), formats_.descriptionByIndex(n));
 }
 
 /*
@@ -80,17 +53,6 @@ std::string_view FileAndFormat::filename() const { return filename_; }
 // Return whether a filename has been set
 bool FileAndFormat::hasFilename() const { return (!filename_.empty()); }
 
-// Return whether a filename and format have been set
-bool FileAndFormat::hasValidFileAndFormat() const
-{
-    if (filename_.empty())
-        return false;
-    if ((format_ < 0) || (format_ >= nFormats()))
-        return false;
-
-    return true;
-}
-
 /*
  * Additional Options
  */
@@ -105,9 +67,9 @@ KeywordList &FileAndFormat::keywords() { return keywords_; }
 // Read format / filename from specified parser
 bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData)
 {
-    // Convert first argument to format type
-    format_ = format(parser.argsv(startArg));
-    if (format_ == nFormats())
+    // Convert first argument to format index
+    auto formatId = formats_.keywordIndex(parser.argsv(startArg));
+    if (!formatId)
     {
         Messenger::print("Unrecognised format '{}' given for file. Recognised formats are:\n\n", parser.argsv(startArg));
 
@@ -115,6 +77,7 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
 
         return false;
     }
+    formats_.setIndex(formatId.value());
 
     // Set filename if present
     if (parser.hasArg(startArg + 1))
@@ -153,7 +116,7 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
 // Write format / filename to specified parser
 bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const
 {
-    return parser.writeLineF("{}{}  '{}'\n", prefix, formatKeyword(format_), filename_);
+    return parser.writeLineF("{}{}  '{}'\n", prefix, formats_.keywordByIndex(formats_.index()), filename_);
 }
 
 // Write options and end block

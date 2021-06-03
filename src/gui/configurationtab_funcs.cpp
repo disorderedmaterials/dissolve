@@ -24,9 +24,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     configuration_ = cfg;
 
-    // Populate coordinates file format combo
-    for (auto n = 0; n < cfg->inputCoordinates().nFormats(); ++n)
-        ui_.CoordinatesFileFormatCombo->addItem(QString::fromStdString(std::string(cfg->inputCoordinates().formatKeyword(n))));
+    // Set model for input file coordinates
+    importEnumOptionsModel_.setData(cfg->inputCoordinates().formats());
+    ui_.CoordinatesFileFormatCombo->setModel(&importEnumOptionsModel_);
 
     // Populate density units combo
     ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
@@ -137,7 +137,7 @@ void ConfigurationTab::updateControls()
 
     // Input Coordinates
     ui_.CoordinatesFileEdit->setText(QString::fromStdString(std::string(configuration_->inputCoordinates().filename())));
-    ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
+    ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formats().index());
 
     // Size Factor
     ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());

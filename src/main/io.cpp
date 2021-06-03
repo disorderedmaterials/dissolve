@@ -299,7 +299,7 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
         // Input Coordinates
-        if (cfg->inputCoordinates().hasValidFileAndFormat())
+        if (cfg->inputCoordinates().hasFilename())
         {
             if (!cfg->inputCoordinates().writeFilenameAndFormat(
                     parser,

@@ -13,7 +13,7 @@
 // Run set-up stage
 bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 {
-    if (referenceForces_.hasValidFileAndFormat())
+    if (referenceForces_.hasFilename())
     {
         Messenger::print("Reading test reference forces.\n");
 
@@ -51,7 +51,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters
-        const auto saveData = exportedForces_.hasValidFileAndFormat();
+        const auto saveData = exportedForces_.hasFilename();
         const auto testMode = keywords_.asBool("Test");
         const auto testAnalytic = keywords_.asBool("TestAnalytic");
         const auto testInter = keywords_.asBool("TestInter");

@@ -194,7 +194,7 @@ void BenchmarkModule::printTimingResult(std::string_view testFile, std::string_v
     // Open the existing timings file if it exists
     Data1D existingTimings;
     existingTimings.addErrors();
-    Data1DImportFileFormat importer(testFile, Data1DImportFileFormat::XYData1D);
+    Data1DImportFileFormat importer(testFile, Data1DImportFileFormat::Data1DImportFormat::XY);
     if (importer.fileExists())
     {
         importer.keywords().set("Error", 3);
@@ -220,7 +220,7 @@ void BenchmarkModule::printTimingResult(std::string_view testFile, std::string_v
     {
         existingTimings.addPoint(existingTimings.nValues() + 1, timing.value(), timing.stDev());
 
-        Data1DExportFileFormat exporter(testFile, Data1DExportFileFormat::XYData1D);
+        Data1DExportFileFormat exporter(testFile, Data1DExportFileFormat::Data1DExportFormat::XY);
         exporter.exportData(existingTimings);
     }
 }

@@ -11,34 +11,10 @@
 #include "data/atomicmasses.h"
 
 ForceExportFileFormat::ForceExportFileFormat(std::string_view filename, ForceExportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for ForceExportFormat
-EnumOptions<ForceExportFileFormat::ForceExportFormat> ForceExportFileFormat::forceExportFormats()
-{
-    return EnumOptions<ForceExportFileFormat::ForceExportFormat>(
-        "ForceExportFileFormat", {{ForceExportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}});
-}
-
-// Return number of available formats
-int ForceExportFileFormat::nFormats() const { return ForceExportFileFormat::nForceExportFormats; }
-
-// Return format keyword for supplied index
-std::string ForceExportFileFormat::formatKeyword(int id) const { return forceExportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string ForceExportFileFormat::formatDescription(int id) const { return forceExportFormats().descriptionByIndex(id); }
-
-// Return current format as ForceExportFormat
-ForceExportFileFormat::ForceExportFormat ForceExportFileFormat::forceFormat() const
-{
-    return (ForceExportFileFormat::ForceExportFormat)format_;
+    formats_ = EnumOptions<ForceExportFileFormat::ForceExportFormat>(
+        "ForceExportFileFormat", {{ForceExportFormat::Simple, "simple", "Simple Free-Formatted Forces"}}, format);
 }
 
 /*
@@ -75,7 +51,7 @@ bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
 
     // Write data
     auto result = false;
-    if (forceFormat() == ForceExportFileFormat::SimpleForces)
+    if (formats_.enumeration() == ForceExportFormat::Simple)
         result = exportSimple(parser, f);
     else
     {

@@ -18,7 +18,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasValidFileAndFormat())
+    if (referenceFQ_.hasFilename())
     {
         // Load the data
         Data1D referenceData;

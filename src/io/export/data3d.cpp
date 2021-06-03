@@ -7,36 +7,14 @@
 #include "math/data3d.h"
 
 Data3DExportFileFormat::Data3DExportFileFormat(std::string_view filename, Data3DExportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for Data3DExportFormat
-EnumOptions<Data3DExportFileFormat::Data3DExportFormat> Data3DExportFileFormat::data3DExportFormats()
-{
-    return EnumOptions<Data3DExportFileFormat::Data3DExportFormat>(
-        "Data3DExportFileFormat", {{Data3DExportFileFormat::BlockData3D, "block", "Block Data"},
-                                   {Data3DExportFileFormat::CartesianData3D, "cartesian", "Cartesian (x,y,z,value) Data"},
-                                   {Data3DExportFileFormat::PDensData3D, "pdens", "DLPutils PDens Data"}});
-}
-
-// Return number of available formats
-int Data3DExportFileFormat::nFormats() const { return Data3DExportFileFormat::nData3DExportFormats; }
-
-// Return format keyword for supplied index
-std::string Data3DExportFileFormat::formatKeyword(int id) const { return data3DExportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string Data3DExportFileFormat::formatDescription(int id) const { return data3DExportFormats().descriptionByIndex(id); }
-
-// Return current format as CoordinateExportFormat
-Data3DExportFileFormat::Data3DExportFormat Data3DExportFileFormat::data3DFormat() const
-{
-    return (Data3DExportFileFormat::Data3DExportFormat)format_;
+    formats_ = EnumOptions<Data3DExportFileFormat::Data3DExportFormat>(
+        "Data3DExportFileFormat",
+        {{Data3DExportFormat::Block, "block", "Block Data"},
+         {Data3DExportFormat::Cartesian, "cartesian", "Cartesian (x,y,z,value) Data"},
+         {Data3DExportFormat::PDens, "pdens", "DLPutils PDens Data"}},
+        format);
 }
 
 /*
@@ -148,16 +126,19 @@ bool Data3DExportFileFormat::exportData(const Data3DBase &data)
 
     // Write data
     auto result = false;
-    if (data3DFormat() == Data3DExportFileFormat::BlockData3D)
-        result = exportBlock(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
-    else if (data3DFormat() == Data3DExportFileFormat::CartesianData3D)
-        result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
-    else if (data3DFormat() == Data3DExportFileFormat::PDensData3D)
-        result = exportPDens(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
-    else
+    switch (formats_.enumeration())
     {
-        Messenger::error("Unrecognised Data3D format.\nKnown formats are:\n");
-        printAvailableFormats();
+        case (Data3DExportFormat::Block):
+            result = exportBlock(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
+            break;
+        case (Data3DExportFormat::Cartesian):
+            result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
+            break;
+        case (Data3DExportFormat::PDens):
+            result = exportPDens(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
+            break;
+        default:
+            throw(std::runtime_error(fmt::format("Data3D format '{}' export has not been implemented.\n", formats_.keyword())));
     }
 
     return result;

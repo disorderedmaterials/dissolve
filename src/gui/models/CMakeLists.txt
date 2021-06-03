@@ -4,6 +4,7 @@ set(models_MOC_HDRS
     braggReflectionModel.h
     dataManagerReferencePointModel.h
     dataManagerSimulationModel.h
+    enumOptionsModel.h
     procedureNodeModel.h
     masterTermModel.h
     speciesFilterProxy.h
@@ -30,6 +31,7 @@ set(models_SRCS
     braggReflectionModel.cpp
     dataManagerReferencePointModel.cpp
     dataManagerSimulationModel.cpp
+    enumOptionsModel.cpp
     masterTermModel.cpp
     procedureNodeModel.cpp
     speciesFilterProxy.cpp
@@ -55,6 +57,7 @@ qt_wrap_cpp(
   braggReflectionModel.h
   dataManagerReferencePointModel.h
   dataManagerSimulationModel.h
+  enumOptionsModel.h
   speciesModel.h
   xmlAngleModel.h
   xmlAtomModel.h

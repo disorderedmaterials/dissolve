@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
 #include "data/formfactors_wk1995.h"
 #include "data/formfactors.h"
 #include <algorithm>
 #include <functional>
+#include <math.h>
 #include <utility>
 #include <vector>
 
@@ -37,7 +39,7 @@ double FormFactorData_WK1995::magnitude(double Q) const
      * So, remove factor of 4Pi implicit in our Q value before squaring.
      */
 
-    const auto k = Q / (4 * PI);
+    const auto k = Q / (4 * M_PI);
     const auto k2 = k * k;
     auto mag = c_;
     for (auto n = 0; n < 5; ++n)

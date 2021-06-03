@@ -2,6 +2,9 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/isotopes.h"
+#include <algorithm>
+#include <fmt/core.h>
+#include <stdexcept>
 
 namespace Sears91
 {

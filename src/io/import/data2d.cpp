@@ -6,17 +6,13 @@
 #include "base/sysfunc.h"
 #include "keywords/types.h"
 
-Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(format)
-{
-    setUpKeywords();
-}
 Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2DImportFileFormat::Data2DImportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
+    formats_ = EnumOptions<Data2DImportFileFormat::Data2DImportFormat>(
+        "Data2DImportFileFormat", {{Data2DImportFormat::Cartesian, "cartesian", "Cartesian X,Y,f(X,Y) data"}}, format);
     setUpKeywords();
 }
-
-Data2DImportFileFormat::~Data2DImportFileFormat() = default;
 
 /*
  * Keyword Options
@@ -29,32 +25,6 @@ void Data2DImportFileFormat::setUpKeywords()
                   "Min, max, and delta to assume for x axis");
     keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "YAxis",
                   "Min, max, and delta to assume for y axis");
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for Data2DImportFormat
-EnumOptions<Data2DImportFileFormat::Data2DImportFormat> Data2DImportFileFormat::data2DImportFormats()
-{
-    return EnumOptions<Data2DImportFileFormat::Data2DImportFormat>(
-        "Data2DImportFileFormat", {{Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data"}});
-}
-
-// Return number of available formats
-int Data2DImportFileFormat::nFormats() const { return Data2DImportFileFormat::nData2DImportFormats; }
-
-// Return format keyword for supplied index
-std::string Data2DImportFileFormat::formatKeyword(int id) const { return data2DImportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string Data2DImportFileFormat::formatDescription(int id) const { return data2DImportFormats().descriptionByIndex(id); }
-
-// Return current format as Data2DImportFormat
-Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const
-{
-    return (Data2DImportFileFormat::Data2DImportFormat)format_;
 }
 
 /*
@@ -82,13 +52,13 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
 {
     // Import the data
     auto result = false;
-    switch (data2DFormat())
+    switch (formats_.enumeration())
     {
-        case (Data2DImportFileFormat::CartesianData2D):
+        case (Data2DImportFormat::Cartesian):
             result = importCartesian(parser, data);
             break;
         default:
-            Messenger::error("Don't know how to load Data2D of format '{}'.\n", formatKeyword(data2DFormat()));
+            throw(std::runtime_error(fmt::format("Data2D format '{}' import has not been implemented.\n", formats_.keyword())));
     }
 
     return result;
