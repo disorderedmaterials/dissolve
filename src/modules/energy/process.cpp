@@ -118,7 +118,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             continue;
 
                         // Get intramolecular scaling of atom pair
-                        scale = i->scaling(j);
+                        scale = i->scaling(j.get());
                         if (scale < 1.0e-3)
                             continue;
 
@@ -241,9 +241,11 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (const auto &mol : cfg->molecules())
                 molecularEnergy += energyKernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
             // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
-            // pairpotential energy, but exactly the intramolecular pairpotential energy
+            // pairpotential energy, and zero intramolecular energy
             if (cfg->nMolecules() > 1)
-                molecularEnergy = (molecularEnergy - correctSelfEnergy) * 0.5 + correctSelfEnergy;
+                molecularEnergy *= 0.5;
+            molecularEnergy /= procPool.nProcesses();
+            molecularEnergy += correctSelfEnergy;
             moleculeTimer.stop();
 
             Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", interEnergy);

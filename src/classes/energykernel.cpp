@@ -10,6 +10,7 @@
 #include "classes/species.h"
 #include "templates/algorithms.h"
 #include <iterator>
+#include <numeric>
 
 EnergyKernel::EnergyKernel(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                            double energyCutoff)
@@ -171,7 +172,7 @@ double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessP
     assert(cell);
 
     auto totalEnergy = 0.0;
-    std::shared_ptr<Atom> jj;
+    Atom *jj;
     double rSq, scale;
     auto &otherAtoms = cell->atoms();
 
@@ -194,7 +195,7 @@ double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessP
                 jj = *indexJ;
 
                 // Check for same atom
-                if (&i == jj.get())
+                if (&i == jj)
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -295,7 +296,7 @@ double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessP
                 jj = *indexJ;
 
                 // Check for same atom
-                if (&i == jj.get())
+                if (&i == jj)
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -419,28 +420,55 @@ double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strateg
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    auto totalEnergy = std::accumulate(mol.atoms().begin(), mol.atoms().end(), 0.0, [&](const auto &acc, const auto &i) {
-        auto *cellI = i->cell();
-        // This Atom with its own Cell
-        auto localEnergy = energy(*i, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+    std::vector<const Cell *> allCells;
 
-        localEnergy +=
-            dissolve::transform_reduce(ParallelPolicies::par, cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(),
-                                       0.0, std::plus<double>(), [&i, this, strategy](const auto *cell) {
-                                           // Cell neighbours not requiring minimum image
-                                           return energy(*i, cell, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
-                                       });
+    // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
+    std::map<Cell *, std::vector<const Atom *>> locationMap;
+    for (auto &i : mol.atoms())
+        locationMap[i->cell()].push_back(i.get());
 
-        localEnergy += dissolve::transform_reduce(
-            ParallelPolicies::par, cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
-            std::plus<double>(), [&i, this, strategy](const auto *cell) {
-                // Cell neighbours requiring minimum image
-                return energy(*i, cell, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy,
-                              false);
-            });
+    auto totalEnergy =
+        std::accumulate(locationMap.begin(), locationMap.end(), 0.0, [&](const auto totalAcc, const auto &location) {
+            const auto *centralCell = location.first;
+            const auto &centralCellAtoms = location.second;
 
-        return acc + localEnergy;
-    });
+            // Create list of all cell neighbours (mim or otherwise) *and* the current cell
+            allCells.resize(centralCell->allCellNeighbours().size() + 1, nullptr);
+            std::copy(centralCell->allCellNeighbours().begin(), centralCell->allCellNeighbours().end(), allCells.begin());
+            allCells[centralCell->allCellNeighbours().size()] = centralCell;
+
+            // All cell neighbours (all treated with minimum image)
+            auto localEnergy = dissolve::transform_reduce(
+                ParallelPolicies::par, allCells.begin(), allCells.end(), 0.0, std::plus<double>(),
+                [&centralCellAtoms, centralCell, this](const auto *cell) {
+                    auto mimRequired = cell->mimRequired(centralCell);
+                    return std::accumulate(
+                        centralCellAtoms.begin(), centralCellAtoms.end(), 0.0,
+                        [cell, centralCell, mimRequired, this](const auto acc, const auto &i) {
+                            auto &ii = *i;
+                            return acc + std::accumulate(cell->atoms().begin(), cell->atoms().end(), 0.0,
+                                                         [&ii, mimRequired, this](const auto innerAcc, const auto *j) {
+                                                             auto &jj = *j;
+
+                                                             // Calculate rSquared distance between atoms, and check it against
+                                                             // the stored cutoff distance
+                                                             auto rSq = mimRequired
+                                                                            ? box_->minimumDistanceSquared(ii.r(), jj.r())
+                                                                            : (ii.r() - jj.r()).magnitudeSq();
+                                                             if (rSq > cutoffDistanceSquared_)
+                                                                 return innerAcc;
+
+                                                             // Check for atoms in the same species
+                                                             if (ii.molecule().get() != jj.molecule().get())
+                                                                 return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
+
+                                                             return innerAcc;
+                                                         });
+                        });
+                });
+
+            return totalAcc + localEnergy;
+        });
 
     // Perform relevant sum if requested
     if (performSum)
@@ -460,7 +488,7 @@ double EnergyKernel::correct(const Atom &i)
                                                          std::plus<double>(), [&](auto &j) -> double {
                                                              if (&i == j.get())
                                                                  return 0.0;
-                                                             double scale = 1.0 - i.scaling(j);
+                                                             double scale = 1.0 - i.scaling(j.get());
                                                              if (scale <= 1.0e-3)
                                                                  return 0.0;
                                                              double r = box_->minimumDistance(rI, j->r());

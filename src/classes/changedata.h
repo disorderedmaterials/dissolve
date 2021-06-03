@@ -22,7 +22,7 @@ class ChangeData
      */
     private:
     // Atom
-    std::shared_ptr<Atom> atom_;
+    Atom *atom_;
     // Flag indicating whether Atom has moved
     bool moved_{false};
     // Stored coordinates of Atom
@@ -32,9 +32,9 @@ class ChangeData
 
     public:
     // Set target Atom
-    void setAtom(const std::shared_ptr<Atom> &i);
+    void setAtom(Atom *i);
     // Return target Atom
-    std::shared_ptr<Atom> atom();
+    Atom *atom();
     // Return array index of stored Atom
     int atomArrayIndex() const;
     // Update stored position, and flag as moved

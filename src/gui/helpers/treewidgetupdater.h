@@ -300,6 +300,19 @@ template <class T, class I> class TreeWidgetUpdater
         while (count < parentItem->childCount())
             parentItem->removeChild(parentItem->child(count));
     }
+    // Update the children of the specified parent QTreeWidgetItem
+    TreeWidgetUpdater(QTreeWidgetItem *parentItem, const std::vector<std::shared_ptr<I>> &data, T *functionParent,
+                      TreeWidgetChildUpdateFunction updateChildFunction)
+    {
+        int count = 0;
+
+        for (auto &dataItem : data)
+            updateTreeChildren(parentItem, count++, dataItem.get(), functionParent, updateChildFunction);
+
+        // If there are still items remaining in the widget, delete them now
+        while (count < parentItem->childCount())
+            parentItem->removeChild(parentItem->child(count));
+    }
 
     // Update the children of the specified parent QTreeWidgetItem
     TreeWidgetUpdater(QTreeWidgetItem *parentItem, const std::list<I> &data, T *functionParent,

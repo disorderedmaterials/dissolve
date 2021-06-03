@@ -4,13 +4,13 @@
 #include "main/dissolve.h"
 
 // Return list of master Bond parameters
-const std::list<MasterIntra> &Dissolve::masterBonds() const { return coreData_.masterBonds(); }
+const std::vector<std::shared_ptr<MasterIntra>> &Dissolve::masterBonds() const { return coreData_.masterBonds(); }
 
 // Return list of master Angle parameters
-const std::list<MasterIntra> &Dissolve::masterAngles() const { return coreData_.masterAngles(); }
+const std::vector<std::shared_ptr<MasterIntra>> &Dissolve::masterAngles() const { return coreData_.masterAngles(); }
 
 // Return list of master Torsion parameters
-const std::list<MasterIntra> &Dissolve::masterTorsions() const { return coreData_.masterTorsions(); }
+const std::vector<std::shared_ptr<MasterIntra>> &Dissolve::masterTorsions() const { return coreData_.masterTorsions(); }
 
 // Return list of master Improper parameters
-const std::list<MasterIntra> &Dissolve::masterImpropers() const { return coreData_.masterImpropers(); }
+const std::vector<std::shared_ptr<MasterIntra>> &Dissolve::masterImpropers() const { return coreData_.masterImpropers(); }

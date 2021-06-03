@@ -11,7 +11,6 @@ set(delegates_SRCS
     combolist_funcs.cpp
     exponentialspin_funcs.cpp
     integerspin_funcs.cpp
-    intraformcombo_funcs.cpp
     isotopecombo_funcs.cpp
     null.cpp
     customcombodelegate.h

@@ -51,18 +51,18 @@ class Cell
      */
     private:
     // Array of Atoms contained in this Cell
-    std::vector<std::shared_ptr<Atom>> atoms_;
+    std::vector<Atom *> atoms_;
 
     public:
     // Return array of contained Atoms
-    std::vector<std::shared_ptr<Atom>> &atoms();
-    const std::vector<std::shared_ptr<Atom>> &atoms() const;
+    std::vector<Atom *> &atoms();
+    const std::vector<Atom *> &atoms() const;
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell
-    void addAtom(const std::shared_ptr<Atom> &atom);
+    void addAtom(Atom *atom);
     // Remove Atom from Cell
-    void removeAtom(const std::shared_ptr<Atom> &atom);
+    void removeAtom(Atom *atom);
 
     /*
      * Neighbours

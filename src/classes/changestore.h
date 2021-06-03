@@ -29,7 +29,7 @@ class ChangeStore
 
     public:
     // Add atom to watch
-    void add(std::shared_ptr<Atom> i);
+    void add(Atom *i);
     // Add molecule to watch
     void add(const std::shared_ptr<Molecule> &mol);
     // Add cell to watch
