@@ -8,8 +8,8 @@
 #include "classes/pairpotential.h"
 #include "gui/maintab.h"
 #include "gui/models/atomTypeModel.h"
-#include "gui/models/pairPotentialModel.h"
 #include "gui/models/masterTermModel.h"
+#include "gui/models/pairPotentialModel.h"
 #include "gui/ui_forcefieldtab.h"
 
 Q_DECLARE_METATYPE(const MasterIntra *)
