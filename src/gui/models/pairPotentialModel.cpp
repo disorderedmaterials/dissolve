@@ -76,9 +76,8 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
         // Name
         case (0):
         case (1):
-            return false;
         case (2):
-            break;
+            return false;
         case (3):
             pair->setChargeI(value.toDouble());
             break;
@@ -105,12 +104,7 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
     return true;
 }
 
-Qt::ItemFlags PairPotentialModel::flags(const QModelIndex &index) const
-{
-    if (index.column() < 2)
-        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
-}
+Qt::ItemFlags PairPotentialModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
 
 QVariant PairPotentialModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
