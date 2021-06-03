@@ -229,6 +229,13 @@ double Matrix3::value(int n) const { return matrix_[n]; }
 // Return maximal element
 double Matrix3::max() const { return *std::max_element(matrix_.begin(), matrix_.end()); }
 
+// Return maximal absolute element
+double Matrix3::maxAbs() const
+{
+    return std::fabs(
+        *std::max_element(matrix_.begin(), matrix_.end(), [](auto a, auto b) { return std::fabs(a) < std::fabs(b); }));
+}
+
 /*
  * Column Operations
  */

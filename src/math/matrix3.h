@@ -49,6 +49,8 @@ class Matrix3
     double value(int n) const;
     // Return maximal element
     double max() const;
+    // Return maximal absolute element
+    double maxAbs() const;
 
     /*
      * Column Operations
