@@ -16,7 +16,7 @@
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
-    : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this)
+    : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this)
 {
     ui_.setupUi(this);
 

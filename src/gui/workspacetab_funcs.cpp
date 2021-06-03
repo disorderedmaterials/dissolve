@@ -15,7 +15,7 @@
 #include <QMenu>
 
 WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
-    : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
+    : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
     ui.setupUi(this);
 

@@ -12,7 +12,7 @@ class Configuration;
 class SpeciesInfo;
 
 // Configuration Tab
-class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, public MainTab
+class ConfigurationTab : public QWidget, public MainTab
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT

@@ -109,7 +109,7 @@ void DissolveWindow::on_SpeciesImportLigParGenAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab, then call its rename() function
-    auto *tab = ui_.MainTabs->currentTab();
+    auto tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
         return;
     tab->rename();
@@ -118,7 +118,7 @@ void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
-    auto *species = ui_.MainTabs->currentSpecies();
+    auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
 
@@ -135,7 +135,7 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
-    auto *species = ui_.MainTabs->currentSpecies();
+    auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
 
@@ -192,12 +192,12 @@ void DissolveWindow::on_SpeciesReduceToMasterTermsAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab
-    auto *tab = ui_.MainTabs->currentTab();
+    auto tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
         return;
 
     // Cast up the tab to a SpeciesTab
-    auto *spTab = dynamic_cast<SpeciesTab *>(tab);
+    auto spTab = std::dynamic_pointer_cast<SpeciesTab>(tab);
     if (!spTab)
         return;
 

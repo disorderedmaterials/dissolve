@@ -293,7 +293,7 @@ void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked
 void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a LayerTab, then call its rename() function
-    MainTab *tab = ui_.MainTabs->currentTab();
+    auto tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::LayerTabType))
         return;
     tab->rename();
@@ -302,12 +302,12 @@ void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab
-    MainTab *tab = ui_.MainTabs->currentTab();
+    auto tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
         return;
 
     // Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
-    LayerTab *layerTab = dynamic_cast<LayerTab *>(tab);
+    auto layerTab = std::dynamic_pointer_cast<LayerTab>(tab);
     if (!layerTab)
         return;
 

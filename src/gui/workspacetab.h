@@ -12,7 +12,7 @@ class TMdiArea;
 class QMenu;
 
 // Workspace Tab
-class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainTab
+class WorkspaceTab : public QWidget, public MainTab
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
