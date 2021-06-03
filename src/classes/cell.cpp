@@ -43,14 +43,14 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  */
 
 // Return array of contained Atoms
-std::vector<std::shared_ptr<Atom>> &Cell::atoms() { return atoms_; }
-const std::vector<std::shared_ptr<Atom>> &Cell::atoms() const { return atoms_; }
+std::vector<Atom *> &Cell::atoms() { return atoms_; }
+const std::vector<Atom *> &Cell::atoms() const { return atoms_; }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-void Cell::addAtom(const std::shared_ptr<Atom> &atom)
+void Cell::addAtom(Atom *atom)
 {
     assert(atom);
     atoms_.push_back(atom);
@@ -62,7 +62,7 @@ void Cell::addAtom(const std::shared_ptr<Atom> &atom)
 }
 
 // Remove Atom from Cell
-void Cell::removeAtom(const std::shared_ptr<Atom> &atom)
+void Cell::removeAtom(Atom *atom)
 {
     auto it = std::find(atoms_.begin(), atoms_.end(), atom);
     assert(it != atoms_.end());

@@ -74,7 +74,7 @@ const SpeciesAtom *Atom::speciesAtom() const { return speciesAtom_; }
 void Atom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ = std::move(mol); }
 
 // Return Molecule in which this Atom exists
-std::shared_ptr<Molecule> Atom::molecule() const { return molecule_; }
+const std::shared_ptr<Molecule> &Atom::molecule() const { return molecule_; }
 
 // Set cell in which the atom exists
 void Atom::setCell(Cell *cell) { cell_ = cell; }
@@ -103,7 +103,7 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
  */
 
 // Return scaling factor to employ with specified Atom
-double Atom::scaling(const std::shared_ptr<Atom> &j) const
+double Atom::scaling(const Atom *j) const
 {
     assert(speciesAtom_ != nullptr);
     assert(j != nullptr);

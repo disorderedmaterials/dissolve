@@ -178,7 +178,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
             for (auto &jj : otherAtoms)
             {
                 // Check for same atom
-                if (&i == jj.get())
+                if (&i == jj)
                     continue;
 
                 // Check for atoms in the same species
@@ -262,7 +262,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
                 auto &jj = *indexJ;
 
                 // Check for same atom
-                if (&i == jj.get())
+                if (&i == jj)
                     continue;
 
                 // Check for atoms in the same species
@@ -307,7 +307,7 @@ void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::Divi
                 else
                 {
                     // Pointer comparison for i >= jj
-                    if (&i >= jj.get())
+                    if (&i >= jj)
                         continue;
 
                     double scale = i.scaling(jj);
