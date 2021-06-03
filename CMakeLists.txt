@@ -284,7 +284,12 @@ if(BUILD_BENCHMARKS)
   # The conan package of goooglebenchmark segfaults - so lets use fetch content
   include(FetchContent)
   set(BENCHMARK_ENABLE_TESTING "OFF")
-  fetchcontent_declare(googlebenchmark GIT_REPOSITORY https://github.com/google/benchmark.git GIT_TAG v1.5.4)
+  fetchcontent_declare(
+    googlebenchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG v1.5.4
+  )
+
   fetchcontent_makeavailable(googlebenchmark)
   add_subdirectory(benchmark)
 endif(BUILD_BENCHMARKS)
