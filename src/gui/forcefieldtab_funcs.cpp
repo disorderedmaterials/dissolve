@@ -23,7 +23,7 @@ Q_DECLARE_METATYPE(MasterIntra *)
 Q_DECLARE_METATYPE(PairPotential *)
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
-    : MainTab(dissolveWindow, dissolve, parent, title, this)
+    : MainTab(dissolveWindow, dissolve, parent, title, this), pairs_(dissolve.pairPotentials())
 {
     ui_.setupUi(this);
 
@@ -97,6 +97,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
+    ui_.PairPotentialsTable->setModel(&pairs_);
 
     DataViewer *viewer = ui_.PairPotentialsPlotWidget->dataViewer();
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -280,83 +281,6 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper
         else
             item = ui_.MasterImpropersTable->item(row, n + 2);
         item->setText(QString::number(masterImproper->parameter(n)));
-    }
-}
-
-// Row update function for PairPotentialsTable
-void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems)
-{
-    QTableWidgetItem *item;
-
-    // Type I
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, QVariant::fromValue(pairPotential));
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        ui_.PairPotentialsTable->setItem(row, 0, item);
-    }
-    else
-        item = ui_.PairPotentialsTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(pairPotential->atomTypeNameI())));
-
-    // Type J
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        ui_.PairPotentialsTable->setItem(row, 1, item);
-    }
-    else
-        item = ui_.PairPotentialsTable->item(row, 1);
-    item->setText(QString::fromStdString(std::string(pairPotential->atomTypeNameJ())));
-
-    // Short-Range Form
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        ui_.PairPotentialsTable->setItem(row, 2, item);
-    }
-    else
-        item = ui_.PairPotentialsTable->item(row, 2);
-    item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(pairPotential->shortRangeType()))));
-
-    // Charge I
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        ui_.PairPotentialsTable->setItem(row, 3, item);
-    }
-    else
-        item = ui_.PairPotentialsTable->item(row, 3);
-    item->setText(QString::number(pairPotential->chargeI()));
-
-    // Charge I
-    if (createItems)
-    {
-        item = new QTableWidgetItem;
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        ui_.PairPotentialsTable->setItem(row, 4, item);
-    }
-    else
-        item = ui_.PairPotentialsTable->item(row, 4);
-    item->setText(QString::number(pairPotential->chargeJ()));
-
-    // Parameters
-    auto col = 5;
-    for (auto x : pairPotential->parameters())
-    {
-        if (createItems)
-        {
-            item = new QTableWidgetItem;
-            item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            ui_.PairPotentialsTable->setItem(row, col++, item);
-        }
-        else
-            item = ui_.PairPotentialsTable->item(row, col++);
-        item->setText(QString::number(x));
     }
 }
 

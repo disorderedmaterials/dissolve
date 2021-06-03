@@ -8,6 +8,7 @@
 #include "classes/pairpotential.h"
 #include "gui/maintab.h"
 #include "gui/models/atomTypeModel.h"
+#include "gui/models/pairPotentialModel.h"
 #include "gui/ui_forcefieldtab.h"
 
 Q_DECLARE_METATYPE(const MasterIntra *)
@@ -32,6 +33,7 @@ class ForcefieldTab : public QWidget, public MainTab
     Ui::ForcefieldTab ui_;
     // Model of Atom Types
     AtomTypeModel atoms_;
+    PairPotentialModel pairs_;
 
     /*
      * MainTab Reimplementations
@@ -88,7 +90,6 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_UpdatePairPotentialsButton_clicked(bool checked);
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
     void on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *previousItem);
-    void on_PairPotentialsTable_itemChanged(QTableWidgetItem *w);
     // Master Terms
     void on_MasterTermAddBondButton_clicked(bool checked);
     void on_MasterTermRemoveBondButton_clicked(bool checked);

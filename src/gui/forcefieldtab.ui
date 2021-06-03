@@ -583,7 +583,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QTableWidget" name="PairPotentialsTable">
+           <widget class="QTableView" name="PairPotentialsTable">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
@@ -595,60 +595,12 @@
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
             </property>
-            <property name="columnCount">
-             <number>9</number>
-            </property>
             <attribute name="horizontalHeaderVisible">
              <bool>false</bool>
             </attribute>
             <attribute name="verticalHeaderVisible">
              <bool>false</bool>
             </attribute>
-            <column>
-             <property name="text">
-              <string>TypeI</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>TypeJ</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Form</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>q(I)</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>q(J)</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Parameter 1</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Parameter 2</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Parameter 3</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Parameter 4</string>
-             </property>
-            </column>
            </widget>
           </item>
           <item>
