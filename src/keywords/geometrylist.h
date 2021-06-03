@@ -5,16 +5,15 @@
 
 #include "base/geometry.h"
 #include "keywords/data.h"
-#include "templates/list.h"
 
 // Forward Declarations
 /* none */
 
 // Keyword with Geometry Data
-class GeometryListKeyword : public KeywordData<List<Geometry> &>
+class GeometryListKeyword : public KeywordData<std::vector<Geometry> &>
 {
     public:
-    GeometryListKeyword(List<Geometry> &, Geometry::GeometryType t);
+    GeometryListKeyword(std::vector<Geometry> &, Geometry::GeometryType t);
 
     ~GeometryListKeyword() override;
 

@@ -30,7 +30,7 @@ void Geometry::set(double value, int a, int b, int c, int d)
 }
 
 // Return reference value
-double Geometry::value() { return value_; }
+double Geometry::value() const { return value_; }
 
 // Return index value
 int Geometry::indices(int i) const { return indices_[i]; }

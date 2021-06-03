@@ -59,7 +59,7 @@ class ChecksModule : public Module
      */
     private:
     // Distances between atoms
-    List<Geometry> distances_;
+    std::vector<Geometry> distances_;
     // Angles between atoms
-    List<Geometry> angles_;
+    std::vector<Geometry> angles_;
 };
