@@ -219,53 +219,6 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
-void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // Get target AtomType from the passed widget
-    if (w == nullptr)
-        return;
-
-    std::shared_ptr<AtomType> atomType = w->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
-    if (!atomType)
-        return;
-
-    // Column of passed item tells us the type of data we need to change
-    switch (w->column())
-    {
-        // Name
-        case (0):
-            atomType->setName(qPrintable(w->text()));
-            dissolveWindow_->setModified();
-            break;
-        // Charge
-        case (2):
-            atomType->setCharge(w->text().toDouble());
-            atomTypeDataModified();
-            dissolveWindow_->setModified();
-            break;
-        // Short-range form
-        case (3):
-            atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
-            atomTypeDataModified();
-            break;
-        // Parameters
-        case (4):
-        case (5):
-        case (6):
-        case (7):
-            atomType->setShortRangeParameter(w->column() - 4, w->text().toDouble());
-            atomTypeDataModified();
-            dissolveWindow_->setModified();
-            break;
-        default:
-            Messenger::error("Don't know what to do with data from column {} of AtomTypes table.\n", w->column());
-            break;
-    }
-}
-
 void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
 {
     if (refreshLock_.isLocked())
@@ -374,37 +327,6 @@ void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
         on_UpdatePairPotentialsButton_clicked(false);
 }
 
-void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *previousItem)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // Clear all data in the graph
-    DataViewer *graph = ui_.PairPotentialsPlotWidget->dataViewer();
-    graph->clearRenderables();
-
-    if (!currentItem)
-        return;
-
-    // Get the selected pair potential
-    PairPotential *pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
-    if (pp)
-    {
-        auto fullPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uFull(), "Full");
-        fullPotential->setColour(StockColours::BlackStockColour);
-
-        auto originalPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uOriginal(), "Original");
-        originalPotential->setColour(StockColours::RedStockColour);
-        originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
-
-        auto additionalPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uAdditional(), "Additional");
-        additionalPotential->setColour(StockColours::BlueStockColour);
-        additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
-
-        auto dUFull = graph->createRenderable<RenderableData1D, Data1D>(pp->dUFull(), "Force");
-        dUFull->setColour(StockColours::GreenStockColour);
-    }
-}
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
