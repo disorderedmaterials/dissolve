@@ -1,1 +1,1 @@
-dissolve_system_test(calculate_rdf water rdf.txt 95)
+dissolve_system_test(water rdf.txt 95)

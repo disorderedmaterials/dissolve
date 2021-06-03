@@ -1,1 +1,1 @@
-dissolve_system_test(correlations water sq.txt 1)
+dissolve_system_test(water sq.txt 1)

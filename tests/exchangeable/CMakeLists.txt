@@ -1,1 +1,1 @@
-dissolve_system_test(exchangeable mix watermeth.txt 1)
+dissolve_system_test(mix watermeth.txt 1)
