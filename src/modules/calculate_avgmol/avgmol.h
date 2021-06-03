@@ -66,6 +66,8 @@ class CalculateAvgMolModule : public Module
     void updateSpecies(const SampledVector &x, const SampledVector &y, const SampledVector &z);
 
     public:
+    // Update average Species with coordinates from processing data
+    void updateSpecies(const GenericList &moduleData);
     // Return average Species
     Species &averageSpecies();
 

@@ -43,13 +43,8 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     // Realise arrays
     updateArrays(dissolve);
 
-    // Retrieve data arrays
-    auto &x = dissolve.processingModuleData().retrieve<SampledVector>("X", uniqueName());
-    auto &y = dissolve.processingModuleData().retrieve<SampledVector>("Y", uniqueName());
-    auto &z = dissolve.processingModuleData().retrieve<SampledVector>("Z", uniqueName());
-
-    // Update our Species
-    updateSpecies(x, y, z);
+    // Update the species coordinates
+    updateSpecies(dissolve.processingModuleData());
 
     return true;
 }

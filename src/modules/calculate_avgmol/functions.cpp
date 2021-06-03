@@ -50,5 +50,17 @@ void CalculateAvgMolModule::updateSpecies(const SampledVector &x, const SampledV
  * Public Functions
  */
 
+// Update average Species with coordinates from processing data
+void CalculateAvgMolModule::updateSpecies(const GenericList &moduleData)
+{
+    // Retrieve data arrays
+    auto &x = moduleData.value<SampledVector>("X", uniqueName());
+    auto &y = moduleData.value<SampledVector>("Y", uniqueName());
+    auto &z = moduleData.value<SampledVector>("Z", uniqueName());
+
+    // Update our Species
+    updateSpecies(x, y, z);
+}
+
 // Return average Species
 Species &CalculateAvgMolModule::averageSpecies() { return averageSpecies_; }
