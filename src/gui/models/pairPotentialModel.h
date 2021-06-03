@@ -23,6 +23,7 @@ class PairPotentialModel : public QAbstractListModel
     PairPotentialModel(const std::vector<std::unique_ptr<PairPotential>> &pairs);
     ~PairPotentialModel() = default;
     const PairPotential *rawData(const QModelIndex index) const;
+    PairPotential *rawData(const QModelIndex index);
     // Update the table contents
     void reset();
 

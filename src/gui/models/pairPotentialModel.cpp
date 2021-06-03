@@ -28,11 +28,13 @@ int PairPotentialModel::columnCount(const QModelIndex &parent) const
 
 const PairPotential *PairPotentialModel::rawData(const QModelIndex index) const { return pairs_[index.row()].get(); }
 
+PairPotential *PairPotentialModel::rawData(const QModelIndex index) { return pairs_[index.row()].get(); }
+
 QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
 {
     // return QString::number(pairs_.size());
 
-    if (role == Qt::DisplayRole)
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch (index.column())
         {
@@ -66,42 +68,49 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
     if (role != Qt::EditRole)
         return false;
 
-    // auto *atomType = rawData(index);
-    // std::vector<double> values;
+    auto *pair = rawData(index);
+    std::vector<double> values;
 
-    // switch (index.column())
-    // {
-    //     // Name
-    //     case (0):
-    //         atomType->setName(value.toString().toStdString());
-    //         break;
-    //     // Element
-    //     case (1):
-    //         return false;
-    //     // Charge
-    //     case (2):
-    //         atomType->setCharge(value.toDouble());
-    //         break;
-    //     // Short Range Form
-    //     case (3):
-    //         atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(value.toString().toStdString()));
-    //         break;
-    //     // Short Range Parameters
-    //     case (4):
-    //         values = DissolveSys::splitStringToDoubles(value.toString().toStdString());
-    //         if (!Forcefield::shortRangeTypes().validNArgs(atomType->shortRangeType(), values.size()))
-    //             return false;
-    //         atomType->setShortRangeParameters(values);
-    //     default:
-    //         return false;
-    // }
+    switch (index.column())
+    {
+        // Name
+        case (0):
+        case (1):
+            return false;
+        case (2):
+            break;
+        case (3):
+            pair->setChargeI(value.toDouble());
+            break;
+        case (4):
+            pair->setChargeJ(value.toDouble());
+            break;
+        // Short Range Parameters
+        case (5):
+            values = DissolveSys::splitStringToDoubles(value.toString().toStdString());
+            if (values.size() != pair->parameters().size())
+                return false;
+            {
+                int idx = 0;
+                for (auto v : values)
+                    pair->setParameter(idx++, v);
+            }
+            break;
+        default:
+            return false;
+    }
 
-    // emit dataChanged(index, index);
+    emit dataChanged(index, index);
 
     return true;
 }
 
-Qt::ItemFlags PairPotentialModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
+Qt::ItemFlags PairPotentialModel::flags(const QModelIndex &index) const
+{
+    if (index.column() < 2)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+}
 
 QVariant PairPotentialModel::headerData(int section, Qt::Orientation orientation, int role) const
 {

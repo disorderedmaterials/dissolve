@@ -103,6 +103,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
     viewer->view().axes().setTitle(1, "U, kj/mol");
     viewer->view().axes().setRange(1, -100.0, 100.0);
+
+    connect(&pairs_, SIGNAL(dataChanged()), dissolveWindow, SLOT(setModified()));
 }
 
 ForcefieldTab::~ForcefieldTab() {}
@@ -335,15 +337,10 @@ void ForcefieldTab::updateControls()
 
     // -- Table
     // -- Get current row index before we refresh...
-    auto ppRowIndex = ui_.PairPotentialsTable->currentRow();
-    // TableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
-    //                                                            &ForcefieldTab::updatePairPotentialsTableRow);
+    pairs_.reset();
     ui_.PairPotentialsTable->resizeColumnsToContents();
 
     refreshLocker.unlock();
-
-    // Re-set active row in pair potentials table
-    ui_.PairPotentialsTable->setCurrentCell(ppRowIndex == -1 ? 0 : ppRowIndex, 0);
 }
 
 // Disable sensitive controls within tab
@@ -577,48 +574,6 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *
 
         auto dUFull = graph->createRenderable<RenderableData1D, Data1D>(pp->dUFull(), "Force");
         dUFull->setColour(StockColours::GreenStockColour);
-    }
-}
-
-void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // Get target PairPotential from the passed widget
-    PairPotential *pairPotential =
-        w ? ui_.PairPotentialsTable->item(w->row(), 0)->data(Qt::UserRole).value<PairPotential *>() : nullptr;
-    if (!pairPotential)
-        return;
-
-    // Column of passed item tells us the type of data we need to change
-    switch (w->column())
-    {
-        // Functional form
-        case (2):
-            dissolveWindow_->setModified();
-            break;
-        // Charge I
-        case (3):
-            pairPotential->setChargeI(w->text().toDouble());
-            dissolveWindow_->setModified();
-            break;
-        // Charge J
-        case (4):
-            pairPotential->setChargeJ(w->text().toDouble());
-            dissolveWindow_->setModified();
-            break;
-        // Parameters
-        case (5):
-        case (6):
-        case (7):
-        case (8):
-            pairPotential->setParameter(w->column() - 5, w->text().toDouble());
-            dissolveWindow_->setModified();
-            break;
-        default:
-            Messenger::error("Don't know what to do with data from column {} of PairPotentials table.\n", w->column());
-            break;
     }
 }
 
