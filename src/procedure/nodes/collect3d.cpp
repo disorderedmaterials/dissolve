@@ -168,7 +168,7 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     xObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
-    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityY");
+    std::tie(node, yObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityY");
     yObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
     if (!yObservable_)
         return Messenger::error("No valid y quantity set in '{}'.\n", name());

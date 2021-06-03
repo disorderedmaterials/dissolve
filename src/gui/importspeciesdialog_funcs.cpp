@@ -294,25 +294,25 @@ void ImportSpeciesDialog::updateMasterTermsPage()
     // Determine whether we have any naming conflicts
     auto conflicts = false;
     for (auto &intra : temporaryCoreData_.masterBonds())
-        if (dissolve_.coreData().findMasterTerm(intra.name()))
+        if (dissolve_.coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterAngles())
-        if (dissolve_.coreData().findMasterTerm(intra.name()))
+        if (dissolve_.coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterTorsions())
-        if (dissolve_.coreData().findMasterTerm(intra.name()))
+        if (dissolve_.coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterImpropers())
-        if (dissolve_.coreData().findMasterTerm(intra.name()))
+        if (dissolve_.coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;

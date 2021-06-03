@@ -25,7 +25,7 @@ foreach(SRCFILE ${tests_SRC})
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module 'nogui' libs
            ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} CONAN_PKG::gtest
+    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
   )
   add_test(NAME ${NAME} COMMAND ${NAME})

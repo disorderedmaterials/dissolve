@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="Tabs">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="AtomTypesTab">
       <attribute name="title">
@@ -142,7 +142,7 @@
           </font>
          </property>
          <attribute name="horizontalHeaderVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
@@ -761,51 +761,12 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableWidget" name="MasterBondsTable">
+          <widget class="QTableView" name="MasterBondsTable">
            <property name="font">
             <font>
              <pointsize>10</pointsize>
             </font>
            </property>
-           <property name="columnCount">
-            <number>6</number>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Form</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 2</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 3</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 4</string>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>
@@ -907,51 +868,12 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableWidget" name="MasterAnglesTable">
+          <widget class="QTableView" name="MasterAnglesTable">
            <property name="font">
             <font>
              <pointsize>10</pointsize>
             </font>
            </property>
-           <property name="columnCount">
-            <number>6</number>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Form</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 2</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 3</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 4</string>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>
@@ -1053,51 +975,12 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableWidget" name="MasterTorsionsTable">
+          <widget class="QTableView" name="MasterTorsionsTable">
            <property name="font">
             <font>
              <pointsize>10</pointsize>
             </font>
            </property>
-           <property name="columnCount">
-            <number>6</number>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Form</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 2</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 3</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 4</string>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>
@@ -1199,51 +1082,12 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableWidget" name="MasterImpropersTable">
+          <widget class="QTableView" name="MasterImpropersTable">
            <property name="font">
             <font>
              <pointsize>10</pointsize>
             </font>
            </property>
-           <property name="columnCount">
-            <number>6</number>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Form</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 2</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 3</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 4</string>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>

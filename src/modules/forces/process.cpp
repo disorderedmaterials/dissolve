@@ -113,7 +113,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             j = molN->atom(jj);
 
                             // Get intramolecular scaling of atom pair
-                            scale = i->scaling(j);
+                            scale = i->scaling(j.get());
                             if (scale < 1.0e-3)
                                 continue;
 

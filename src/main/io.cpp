@@ -187,8 +187,8 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &b : coreData_.masterBonds())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::BondKeyword),
-                                           b.name(), SpeciesBond::bondFunctions().keywordFromInt(b.form()));
-            for (auto p : b.parameters())
+                                           b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+            for (auto p : b->parameters())
                 line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;
@@ -197,8 +197,8 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &a : coreData_.masterAngles())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
-                                           a.name(), SpeciesAngle::angleFunctions().keywordFromInt(a.form()));
-            for (auto p : a.parameters())
+                                           a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+            for (auto p : a->parameters())
                 line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;
@@ -207,8 +207,8 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &t : coreData_.masterTorsions())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
-                                           t.name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t.form()));
-            for (auto p : t.parameters())
+                                           t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+            for (auto p : t->parameters())
                 line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;
@@ -217,8 +217,8 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &imp : coreData_.masterImpropers())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                           imp.name(), SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
-            for (auto p : imp.parameters())
+                                           imp->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(imp->form()));
+            for (auto p : imp->parameters())
                 line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
                 return false;

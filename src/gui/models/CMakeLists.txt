@@ -6,6 +6,7 @@ set(models_MOC_HDRS
     dataManagerSimulationModel.h
     pairPotentialModel.h
     procedureNodeModel.h
+    masterTermModel.h
     speciesFilterProxy.h
     speciesModel.h
     xmlAngleModel.h
@@ -30,6 +31,7 @@ set(models_SRCS
     braggReflectionModel.cpp
     dataManagerReferencePointModel.cpp
     dataManagerSimulationModel.cpp
+    masterTermModel.cpp
     pairPotentialModel.cpp
     procedureNodeModel.cpp
     speciesFilterProxy.cpp

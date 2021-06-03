@@ -9,6 +9,7 @@
 #include "gui/maintab.h"
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/pairPotentialModel.h"
+#include "gui/models/masterTermModel.h"
 #include "gui/ui_forcefieldtab.h"
 
 Q_DECLARE_METATYPE(const MasterIntra *)
@@ -59,6 +60,12 @@ class ForcefieldTab : public QWidget, public MainTab
     // Row update function for PairPotentialsTable
     void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
 
+    // Table models
+    MasterTermBondModel *masterBondsTableModel_;
+    MasterTermAngleModel *masterAnglesTableModel_;
+    MasterTermTorsionModel *masterTorsionsTableModel_;
+    MasterTermTorsionModel *masterImpropersTableModel_;
+
     protected:
     // Update controls in tab
     void updateControls();
@@ -93,14 +100,10 @@ class ForcefieldTab : public QWidget, public MainTab
     // Master Terms
     void on_MasterTermAddBondButton_clicked(bool checked);
     void on_MasterTermRemoveBondButton_clicked(bool checked);
-    void on_MasterBondsTable_itemChanged(QTableWidgetItem *w);
     void on_MasterTermAddAngleButton_clicked(bool checked);
     void on_MasterTermRemoveAngleButton_clicked(bool checked);
-    void on_MasterAnglesTable_itemChanged(QTableWidgetItem *w);
     void on_MasterTermAddTorsionButton_clicked(bool checked);
     void on_MasterTermRemoveTorsionButton_clicked(bool checked);
-    void on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w);
     void on_MasterTermAddImproperButton_clicked(bool checked);
     void on_MasterTermRemoveImproperButton_clicked(bool checked);
-    void on_MasterImpropersTable_itemChanged(QTableWidgetItem *w);
 };
