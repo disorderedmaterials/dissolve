@@ -6,17 +6,16 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const List<SystemTemplate> &systemTemplates)
+SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const std::vector<SystemTemplate> &systemTemplates)
     : systemTemplates_(systemTemplates)
 {
     ui_.setupUi(this);
 
     // Populate the list with available templates
-    ListIterator<SystemTemplate> templateIterator(systemTemplates_);
-    while (SystemTemplate *sysTemp = templateIterator.iterate())
+    for (const auto &sysTemp : systemTemplates_)
     {
-        QListWidgetItem *item = new QListWidgetItem(QPixmap(sysTemp->iconResource()), sysTemp->name(), ui_.TemplatesList);
-        item->setData(Qt::UserRole, VariantPointer<SystemTemplate>(sysTemp));
+        QListWidgetItem *item = new QListWidgetItem(QPixmap(sysTemp.iconResource()), sysTemp.name(), ui_.TemplatesList);
+        item->setData(Qt::UserRole, VariantPointer<SystemTemplate>(&sysTemp));
     }
 }
 

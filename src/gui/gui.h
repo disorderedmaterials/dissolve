@@ -98,7 +98,7 @@ class DissolveWindow : public QMainWindow
      */
     private:
     // List of available SystemTemplates
-    List<SystemTemplate> systemTemplates_;
+    std::vector<SystemTemplate> systemTemplates_;
 
     private:
     // Initialise system templates from the main resource

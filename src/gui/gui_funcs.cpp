@@ -248,11 +248,11 @@ void DissolveWindow::initialiseSystemTemplates()
         QDir dir = templateIterator.next();
 
         // Open the associated xml file
-        SystemTemplate *sysTemp = systemTemplates_.add();
-        if (!sysTemp->read(dir))
+        auto &sysTemp = systemTemplates_.emplace_back();
+        if (!sysTemp.read(dir))
         {
             Messenger::error("Error reading the template info file '{}'.\n", qPrintable(dir.filePath("info.xml")));
-            systemTemplates_.remove(sysTemp);
+            systemTemplates_.pop_back();
             continue;
         }
     }
