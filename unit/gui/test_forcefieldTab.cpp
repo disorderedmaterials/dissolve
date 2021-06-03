@@ -55,9 +55,16 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, 4)).toDouble(), 0.115);
     EXPECT_EQ(pairs.data(pairs.index(2, 5)).toString().toStdString(), "0.12552, 2.42");
 
-    // // Mutate Hydrogen
-    EXPECT_FALSE(pairs.setData(pairs.index(0, 0), "Carbon"));
+    // Currently, we do not support the user changing the values, but
+    // I've added the option for the future
+    EXPECT_FALSE(pairs.setData(pairs.index(0, 0), "HA"));
     EXPECT_FALSE(pairs.setData(pairs.index(0, 1), "HA"));
-    EXPECT_FALSE(pairs.setData(pairs.index(0, 2), "Unreal"));
+    EXPECT_FALSE(pairs.setData(pairs.index(0, 2), "LJ"));
+    EXPECT_TRUE(pairs.setData(pairs.index(0, 3), 2));
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 3)).toDouble(), 2);
+    EXPECT_TRUE(pairs.setData(pairs.index(0, 4), -3));
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 4)).toDouble(), -3);
+    EXPECT_TRUE(pairs.setData(pairs.index(0, 5), "4.0, -5.0"));
+    EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "4.0, -5.0");
 }
 } // namespace UnitTest
