@@ -4,6 +4,7 @@
 #pragma once
 
 #include "templates/vector3.h"
+#include <array>
 
 // Column-major 3x3 matrix
 class Matrix3
@@ -13,7 +14,7 @@ class Matrix3
 
     private:
     // Matrix
-    double matrix_[9];
+    std::array<double, 9> matrix_;
 
     /*
      * Operators
@@ -38,8 +39,6 @@ class Matrix3
     void print() const;
     // Set the zero matrix
     void zero();
-    // Return matrix array
-    double *matrix();
     // Return transpose of current matrix
     Matrix3 &transpose();
     // Calculate determinant

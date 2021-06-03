@@ -35,8 +35,7 @@ Matrix3 Matrix3::operator*(const Matrix3 &B) const
 Matrix3 Matrix3::operator*(const double a) const
 {
     Matrix3 AB;
-    for (auto n = 0; n < 9; ++n)
-        AB.matrix_[n] = matrix_[n] * a;
+    std::transform(matrix_.begin(), matrix_.end(), AB.matrix_.begin(), [a](const auto &el) { return el * a; });
     return AB;
 }
 
@@ -89,15 +88,7 @@ Matrix3 &Matrix3::operator*=(const Matrix3 &B)
 
 Matrix3 &Matrix3::operator*=(const double a)
 {
-    matrix_[0] *= a;
-    matrix_[1] *= a;
-    matrix_[2] *= a;
-    matrix_[3] *= a;
-    matrix_[4] *= a;
-    matrix_[5] *= a;
-    matrix_[6] *= a;
-    matrix_[7] *= a;
-    matrix_[8] *= a;
+    std::transform(matrix_.begin(), matrix_.end(), matrix_.begin(), [a](const auto &el) { return el * a; });
 
     return *this;
 }
@@ -110,18 +101,7 @@ double &Matrix3::operator[](int index) { return matrix_[index]; }
  */
 
 // Reset to the identity matrix
-void Matrix3::setIdentity()
-{
-    matrix_[0] = 1.0;
-    matrix_[1] = 0.0;
-    matrix_[2] = 0.0;
-    matrix_[3] = 0.0;
-    matrix_[4] = 1.0;
-    matrix_[5] = 0.0;
-    matrix_[6] = 0.0;
-    matrix_[7] = 0.0;
-    matrix_[8] = 1.0;
-}
+void Matrix3::setIdentity() { matrix_ = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0}; }
 
 // Print matrix
 void Matrix3::print() const
@@ -133,21 +113,7 @@ void Matrix3::print() const
 }
 
 // Set zero matrix
-void Matrix3::zero()
-{
-    matrix_[0] = 0.0;
-    matrix_[1] = 0.0;
-    matrix_[2] = 0.0;
-    matrix_[3] = 0.0;
-    matrix_[4] = 0.0;
-    matrix_[5] = 0.0;
-    matrix_[6] = 0.0;
-    matrix_[7] = 0.0;
-    matrix_[8] = 0.0;
-}
-
-// Return matrix array
-double *Matrix3::matrix() { return matrix_; }
+void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
 
 // Return transpose of current matrix
 Matrix3 &Matrix3::transpose()
@@ -261,14 +227,7 @@ void Matrix3::invert()
 double Matrix3::value(int n) const { return matrix_[n]; }
 
 // Return maximal element
-double Matrix3::max() const
-{
-    auto maxId = 0;
-    for (auto n = 1; n < 9; ++n)
-        if (matrix_[n] > matrix_[maxId])
-            maxId = n;
-    return matrix_[maxId];
-}
+double Matrix3::max() const { return *std::max_element(matrix_.begin(), matrix_.end()); }
 
 /*
  * Column Operations
