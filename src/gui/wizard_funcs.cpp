@@ -3,6 +3,7 @@
 
 #include "gui/wizard.hui"
 #include <fmt/core.h>
+#include <stdexcept>
 
 WizardDialog::WizardDialog(QWidget *parent)
     : QDialog(parent), headerAvailable_(false), closeButtonAvailable_(true), footerAvailable_(false),
