@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2021 Team Dissolve and contributors
+
+#include "classes/species.h"
+#include "gui/models/pairPotentialModel.h"
+#include "main/dissolve.h"
+#include <gtest/gtest.h>
+#include <vector>
+
+Q_DECLARE_METATYPE(Sears91::Isotope);
+
+namespace UnitTest
+{
+
+class ForcefieldTabTest : public ::testing::Test
+{
+    public:
+    ForcefieldTabTest() = default;
+
+    protected:
+    void SetUp() override {}
+};
+
+std::vector<Qt::ItemDataRole> roles = {Qt::DisplayRole, Qt::EditRole};
+
+TEST_F(ForcefieldTabTest, PairPotentials)
+{
+
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    dissolve.clear();
+    dissolve.registerMasterModules();
+    dissolve.loadInput("molshake/benzene.txt");
+    ASSERT_TRUE(dissolve.generatePairPotentials());
+
+    PairPotentialModel pairs(dissolve.pairPotentials());
+    ASSERT_EQ(dissolve.nPairPotentials(), 3);
+
+    // Test Pairss
+    EXPECT_EQ(pairs.columnCount(), 6);
+    EXPECT_EQ(pairs.rowCount(), 3);
+
+    EXPECT_EQ(pairs.data(pairs.index(0, 0)).toString().toStdString(), "CA");
+    EXPECT_EQ(pairs.data(pairs.index(0, 1)).toString().toStdString(), "CA");
+    EXPECT_EQ(pairs.data(pairs.index(0, 2)).toString().toStdString(), "LJGeometric");
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 3)).toDouble(), -0.115);
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 4)).toDouble(), -0.115);
+    EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "0.29288, 3.55");
+
+    EXPECT_EQ(pairs.data(pairs.index(2, 0)).toString().toStdString(), "HA");
+    EXPECT_EQ(pairs.data(pairs.index(2, 1)).toString().toStdString(), "HA");
+    EXPECT_EQ(pairs.data(pairs.index(2, 2)).toString().toStdString(), "LJGeometric");
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, 3)).toDouble(), 0.115);
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, 4)).toDouble(), 0.115);
+    EXPECT_EQ(pairs.data(pairs.index(2, 5)).toString().toStdString(), "0.12552, 2.42");
+
+    // // Mutate Hydrogen
+    EXPECT_FALSE(pairs.setData(pairs.index(0, 0), "Carbon"));
+    EXPECT_FALSE(pairs.setData(pairs.index(0, 1), "HA"));
+    EXPECT_FALSE(pairs.setData(pairs.index(0, 2), "Unreal"));
+}
+} // namespace UnitTest

@@ -63,6 +63,8 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+// This function is extraneous right now, since none of the cells are
+// editable, but they're included for completeness.
 bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
