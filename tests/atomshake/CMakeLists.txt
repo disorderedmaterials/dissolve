@@ -1,1 +1,1 @@
-dissolve_system_test(atomshake singlewater 100)
+dissolve_system_test(atomshake water singlewater.txt 100)

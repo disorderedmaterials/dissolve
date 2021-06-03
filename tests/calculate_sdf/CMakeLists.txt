@@ -1,1 +1,1 @@
-dissolve_system_test(calculate_sdf sdf 95)
+dissolve_system_test(calculate_sdf water sdf.txt 95)

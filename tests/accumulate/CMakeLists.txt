@@ -1,1 +1,1 @@
-dissolve_system_test(accumulate accumulate 20)
+dissolve_system_test(accumulate full accumulate.txt 20)
