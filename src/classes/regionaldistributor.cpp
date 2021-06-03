@@ -278,7 +278,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         return false;
 
     // Go through the Atoms of the Molecule, assembling a list of primary Cells in which its Atoms are found.
-    std::vector<Cell *> primaryCells;
+    std::vector<const Cell *> primaryCells;
     for (auto i = 0; i < mol->nAtoms(); ++i)
     {
         // Get Cell pointer and index
@@ -394,7 +394,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
 }
 
 // Try to assign a Molecule from the specified Cell to the process/group
-std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int processOrGroup)
+std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(const Cell *cell, int processOrGroup)
 {
     // TODO May be beneficial to do this by size order (nAtoms in molecules)?
 

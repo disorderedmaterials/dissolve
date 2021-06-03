@@ -8,9 +8,9 @@
 
 struct CellNeighbour
 {
-    CellNeighbour(Cell *m, Cell *n, bool mim) : master_(m), neighbour_(n), requiresMIM_(mim) {}
-    Cell *master_ = nullptr;
-    Cell *neighbour_ = nullptr;
+    CellNeighbour(const Cell *m, const Cell *n, bool mim) : master_(m), neighbour_(n), requiresMIM_(mim) {}
+    const Cell *master_ = nullptr;
+    const Cell *neighbour_ = nullptr;
     bool requiresMIM_ = false;
 
     bool operator==(const CellNeighbour &other) const
@@ -30,7 +30,7 @@ class CellNeighbourPairs
     // Try to insert a neighbour pair - Returning true if succesfull.
     // If the pair is already present it will return false and the pair will not be added.
     bool insert(const CellNeighbour &neighbour) { return addNeighbour(neighbour); };
-    bool insert(Cell *master, Cell *other, bool mimRequired)
+    bool insert(const Cell *master, const Cell *other, bool mimRequired)
     {
         return addNeighbour(CellNeighbour(master, other, mimRequired));
     };

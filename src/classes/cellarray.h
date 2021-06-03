@@ -33,7 +33,7 @@ class CellArray
     // Cell axes
     Matrix3 axes_;
     // Cell array (one-dimensional)
-    std::vector<std::unique_ptr<Cell>> cells_;
+    std::vector<Cell> cells_;
     // Box associated with this cell division scheme
     const Box *box_{nullptr};
 
@@ -53,11 +53,12 @@ class CellArray
     // Return cell extents out from given central cell
     Vec3<int> extents() const;
     // Retrieve Cell with (wrapped) grid reference specified
-    Cell *cell(int x, int y, int z) const;
+    const Cell *cell(int x, int y, int z) const;
     // Retrieve Cell with id specified
-    Cell *cell(int id) const;
+    const Cell *cell(int id) const;
     // Return Cell which contains specified coordinate
-    Cell *cell(const Vec3<double> r) const;
+    Cell *cell(const Vec3<double> r);
+    const Cell *cell(const Vec3<double> r) const;
     // Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
     bool withinRange(const Cell *a, const Cell *b, double distance);
     // Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
@@ -66,6 +67,13 @@ class CellArray
     Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
     // Return the minimum image equivalent of the supplied grid delta
     Vec3<int> mimGridDelta(Vec3<int> delta) const;
+
+    /*
+     * Upkeep
+     */
+    public:
+    // Update Cell location of specified Atom
+    void updateCellLocation(const std::shared_ptr<Atom> &i);
 
     /*
      * Cell Neighbour pairs

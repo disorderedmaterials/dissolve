@@ -75,7 +75,7 @@ void Cell::removeAtom(const std::shared_ptr<Atom> &atom)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours)
+void Cell::addCellNeighbours(std::vector<const Cell *> &nearNeighbours, std::vector<const Cell *> &mimNeighbours)
 {
     // Create near-neighbour array of Cells not requiring minimum image to be applied
     cellNeighbours_.clear();
@@ -95,10 +95,10 @@ void Cell::addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Ce
 }
 
 // Return adjacent Cell neighbour list
-const std::vector<Cell *> &Cell::cellNeighbours() const { return cellNeighbours_; }
+const std::vector<const Cell *> &Cell::cellNeighbours() const { return cellNeighbours_; }
 
 // Return list of Cell neighbours requiring minimum image calculation
-const std::vector<Cell *> &Cell::mimCellNeighbours() const { return mimCellNeighbours_; }
+const std::vector<const Cell *> &Cell::mimCellNeighbours() const { return mimCellNeighbours_; }
 
 // Return if the specified Cell requires minimum image calculation
 bool Cell::mimRequired(const Cell *otherCell) const
@@ -107,4 +107,4 @@ bool Cell::mimRequired(const Cell *otherCell) const
 }
 
 // Return list of all Cell neighbours
-const std::vector<Cell *> &Cell::allCellNeighbours() const { return allCellNeighbours_; }
+const std::vector<const Cell *> &Cell::allCellNeighbours() const { return allCellNeighbours_; }

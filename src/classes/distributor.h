@@ -55,19 +55,19 @@ class Distributor
     // Remove hard lock from specified Cell index, soft-unlocking surrounding Cells automatically
     bool removeHardLocks(int cellIndex);
     // Add hard locks to specified Cells, soft-locking surrounding Cells automatically
-    bool addHardLocks(std::vector<Cell *> cells);
+    bool addHardLocks(std::vector<const Cell *> cells);
     // Remove hard lock from specified Cells, soft-unlocking surrounding Cells automatically
-    bool removeHardLocks(std::vector<Cell *> cells);
+    bool removeHardLocks(std::vector<const Cell *> cells);
     // Return lockCount on specified Cell index
     int lockCount(int cellIndex) const;
     // Check hard lock possibility for specified Cell index
     bool canHardLock(int cellIndex) const;
     // Check hard lock possibility for list of Cells
-    bool canHardLock(std::vector<Cell *> cells) const;
+    bool canHardLock(std::vector<const Cell *> cells) const;
     // Return list of unique cells surrounding the supplied list of 'central' ones
-    std::vector<Cell *> surroundingCells(std::vector<Cell *> centralCells);
+    std::vector<const Cell *> surroundingCells(std::vector<const Cell *> centralCells);
     // Return array of Cells that we must hard lock in order to modify the object with index specified
-    virtual std::vector<Cell *> cellsToBeModifiedForObject(int objectId) = 0;
+    virtual std::vector<const Cell *> cellsToBeModifiedForObject(int objectId) = 0;
 
     /*
      * Distribution
@@ -92,7 +92,7 @@ class Distributor
     // Last objects distributed to process or group
     std::vector<int> lastObjectDistributed_;
     // Arrays of cells that were hard-locked in the last distribution (per process/group)
-    std::vector<Cell *> *lastHardLockedCells_;
+    std::vector<const Cell *> *lastHardLockedCells_;
     // Number of instances where no viable object was available
     int nUnavailableInstances_;
     // Number of times a change broadcast was required

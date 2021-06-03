@@ -27,7 +27,7 @@ Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &
     processOrGroupIndex_ = processPool_.strategyProcessIndex(divisionStrategy_);
     lastObjectDistributed_.resize(nProcessesOrGroups_);
     std::fill(lastObjectDistributed_.begin(), lastObjectDistributed_.end(), Distributor::NoneAvailable);
-    lastHardLockedCells_ = new std::vector<Cell *>[nProcessesOrGroups_];
+    lastHardLockedCells_ = new std::vector<const Cell *>[nProcessesOrGroups_];
 
     repeatsAllowed_ = allowRepeats;
 }
@@ -79,18 +79,21 @@ bool Distributor::removeSoftLock(int cellIndex)
 }
 
 // Add hard lock to specified Cell index, soft-locking surrounding Cells automatically
-bool Distributor::addHardLocks(int cellIndex) { return addHardLocks(std::vector<Cell *>({cellArray_.cell(cellIndex)})); }
+bool Distributor::addHardLocks(int cellIndex) { return addHardLocks(std::vector<const Cell *>({cellArray_.cell(cellIndex)})); }
 
 // Remove hard lock from specified Cell index, soft-unlocking surrounding Cells automatically
-bool Distributor::removeHardLocks(int cellIndex) { return removeHardLocks(std::vector<Cell *>({cellArray_.cell(cellIndex)})); }
+bool Distributor::removeHardLocks(int cellIndex)
+{
+    return removeHardLocks(std::vector<const Cell *>({cellArray_.cell(cellIndex)}));
+}
 
 // Add hard locks to specified Cells, soft-locking surrounding Cells automatically
-bool Distributor::addHardLocks(std::vector<Cell *> cells)
+bool Distributor::addHardLocks(std::vector<const Cell *> cells)
 {
     int cellId;
 
     // Form a list of unique surrounding cells that we need to soft-lock
-    std::vector<Cell *> softCells = surroundingCells(cells);
+    std::vector<const Cell *> softCells = surroundingCells(cells);
     Messenger::printVerbose("Hard-locking {} cells and soft-locking {} surrounding ones...\n", cells.size(), softCells.size());
 
     // Loop over Cells to hard-lock
@@ -123,12 +126,12 @@ bool Distributor::addHardLocks(std::vector<Cell *> cells)
 }
 
 // Remove hard lock from specified Cells, soft-unlocking surrounding Cells automatically
-bool Distributor::removeHardLocks(std::vector<Cell *> cells)
+bool Distributor::removeHardLocks(std::vector<const Cell *> cells)
 {
     int cellId;
 
     // Form a list of unique surrounding cells that we need to soft-lock
-    std::vector<Cell *> softCells = surroundingCells(cells);
+    std::vector<const Cell *> softCells = surroundingCells(cells);
     Messenger::printVerbose("Hard-unlocking {} cells and soft-unlocking {} surrounding ones...\n", cells.size(),
                             softCells.size());
 
@@ -188,15 +191,15 @@ bool Distributor::canHardLock(int cellIndex) const
 }
 
 // Check hard lock possibility for list of Cells
-bool Distributor::canHardLock(std::vector<Cell *> cells) const
+bool Distributor::canHardLock(std::vector<const Cell *> cells) const
 {
     return std::all_of(cells.begin(), cells.end(), [&](const auto &cell) { return canHardLock(cell->index()); });
 }
 
 // Return list of unique cells surrounding the supplied list of 'central' ones
-std::vector<Cell *> Distributor::surroundingCells(std::vector<Cell *> centralCells)
+std::vector<const Cell *> Distributor::surroundingCells(std::vector<const Cell *> centralCells)
 {
-    std::vector<Cell *> surroundingCells;
+    std::vector<const Cell *> surroundingCells;
     for (auto n = 0; n < centralCells.size(); ++n)
     {
         // Local Cell neighbours
@@ -243,7 +246,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
      * each process or group of processes.
      */
 
-    std::vector<Cell *> hardLocksRequired, softLocksRequired;
+    std::vector<const Cell *> hardLocksRequired, softLocksRequired;
     changesBroadcastRequired = false;
 
     // Initial check - if all objects have been distributed, we can return the AllComplete flag

@@ -73,7 +73,7 @@ void ForceKernel::forces(const Atom &i, const Atom &j, bool applyMim, bool exclu
 }
 
 // Calculate forces between atoms in supplied cells
-void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ,
+void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
                          ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
     assert(centralCell && otherCell);
@@ -146,7 +146,7 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 }
 
 // Calculate forces between Cell and its neighbours
-void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
+void ForceKernel::forces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
     // Straight loop over Cells *not* requiring mim
     for (auto *otherCell : cell->cellNeighbours())
@@ -158,7 +158,8 @@ void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStra
 }
 
 // Calculate forces between Atom and Cell
-void ForceKernel::forces(const Atom &i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
+void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy,
+                         ForceVector &f) const
 {
     // Grab some information on the supplied atom
     auto moleculeI = i.molecule();

@@ -60,7 +60,7 @@ double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, bool interMolecular)
+double EnergyKernel::energy(const Cell *centralCell, const Cell *otherCell, bool applyMim, bool interMolecular)
 {
     assert(centralCell && otherCell);
 
@@ -128,7 +128,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
 }
 
 // Return PairPotential energy between atoms in supplied cell
-double EnergyKernel::energy(Cell *cell, bool interMolecular)
+double EnergyKernel::energy(const Cell *cell, bool interMolecular)
 {
     assert(cell);
 
@@ -478,8 +478,8 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
 
     // List of cell neighbour pairs
-
     auto &cellNeighboursPairs = cellArray.getCellNeighbourPairs();
+
     // Set start/stride for parallel loop
     auto offset = processPool_.interleavedLoopStart(strategy);
     auto nChunks = processPool_.interleavedLoopStride(strategy);
