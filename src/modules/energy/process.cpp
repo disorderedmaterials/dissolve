@@ -340,8 +340,8 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                              "intramolecular).\n",
                              interEnergy + intraEnergy, interEnergy, intraEnergy);
             Messenger::print("Intramolecular contributions are - bonds = {:15.9e} kJ/mol, angles = {:15.9e} kJ/mol, "
-                             "torsions = {:15.9e} kJ/mol.\n",
-                             bondEnergy, angleEnergy, torsionEnergy);
+                             "torsions = {:15.9e} kJ/mol, impropers = {:15.9e} kJ/mol.\n",
+                             bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
             // Store current energies in the Configuration in case somebody else needs them
             auto &interData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Inter", cfg->niceName()),
@@ -359,6 +359,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto &torsionData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Torsions", cfg->niceName()),
                                                                                 uniqueName(), GenericItem::InRestartFileFlag);
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
+            auto &improperData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Impropers", cfg->niceName()),
+                                                                                 uniqueName(), GenericItem::InRestartFileFlag);
+            torsionData.addPoint(dissolve.iteration(), improperEnergy);
 
             // Append to arrays of total energies
             auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(
@@ -401,13 +404,13 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     parser.writeLineF("# Energies for Configuration '{}'.\n", cfg->name());
                     parser.writeLine("# All values in kJ/mol.\n");
                     parser.writeLine("# Iteration   Total         Inter         Bond          Angle        "
-                                     " Torsion       Gradient      S?\n");
+                                     " Torsion      Improper    Gradient      S?\n");
                 }
                 else
                     parser.appendOutput(filename);
-                parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
+                parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
                                   dissolve.iteration(), interEnergy + intraEnergy, interEnergy, bondEnergy, angleEnergy,
-                                  torsionEnergy, grad, stable);
+                                  torsionEnergy, improperEnergy, grad, stable);
                 parser.closeFiles();
             }
         }
