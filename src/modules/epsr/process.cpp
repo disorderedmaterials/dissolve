@@ -262,8 +262,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         differenceData = originalReferenceData;
         Interpolator::addInterpolated(differenceData, weightedSQ.total(), -1.0);
 
-        // Calculate and store r-factor
-        auto rFactor = Error::rFactor(originalReferenceData, weightedSQ.total(), true);
+        // Calculate r-factor over fit range and store
+        auto tempRefData = originalReferenceData;
+        Filters::trim(tempRefData, qMin, qMax);
+        auto rFactor = Error::rFactor(tempRefData, weightedSQ.total(), true);
         rFacTot += rFactor;
         errors.addPoint(dissolve.iteration(), rFactor);
         Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->uniqueName(), rFactor);
