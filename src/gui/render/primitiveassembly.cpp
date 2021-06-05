@@ -20,7 +20,7 @@ void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix)
 {
     UncolouredPrimitiveInfo *pi = uncolouredPrimitiveFactory_.produce();
     (*pi) = UncolouredPrimitiveInfo(primitive, matrix);
-    assembly_.add(pi);
+    assembly_.push_back(pi);
 }
 
 // Add Primitive with colour to the assembly
@@ -28,7 +28,7 @@ void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, const s
 {
     ColouredPrimitiveInfo *pi = colouredPrimitiveFactory_.produce();
     (*pi) = ColouredPrimitiveInfo(primitive, matrix, rgba[0], rgba[1], rgba[2], rgba[3]);
-    assembly_.add(pi);
+    assembly_.push_back(pi);
 }
 
 // Add Primitive with colour to the assembly
@@ -36,7 +36,7 @@ void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, GLfloat
 {
     ColouredPrimitiveInfo *pi = colouredPrimitiveFactory_.produce();
     (*pi) = ColouredPrimitiveInfo(primitive, matrix, r, g, b, a);
-    assembly_.add(pi);
+    assembly_.push_back(pi);
 }
 
 // Add styling information
@@ -44,7 +44,7 @@ void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode)
 {
     StylePrimitiveInfo *pi = stylePrimitiveFactory_.produce();
     (*pi) = StylePrimitiveInfo(lighting, polygonFillMode);
-    assembly_.add(pi);
+    assembly_.push_back(pi);
 }
 
 // Add line styling information
@@ -52,7 +52,7 @@ void PrimitiveAssembly::add(LineStyle lineStyle)
 {
     LineStylePrimitiveInfo *pi = lineStylePrimitiveFactory_.produce();
     (*pi) = LineStylePrimitiveInfo(lineStyle);
-    assembly_.add(pi);
+    assembly_.push_back(pi);
 }
 
 /*
@@ -108,6 +108,6 @@ void PrimitiveAssembly::createCylinderBond(Primitive *bondPrimitive, Vec3<double
 // Send to OpenGL (i.e. render)
 void PrimitiveAssembly::sendToGL(double pixelScaling)
 {
-    for (auto n = 0; n < assembly_.nItems(); ++n)
-        assembly_[n]->sendToGL(pixelScaling);
+    for (auto *pi : assembly_)
+        pi->sendToGL(pixelScaling);
 }

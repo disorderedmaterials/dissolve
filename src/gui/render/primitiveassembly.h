@@ -33,7 +33,7 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
      */
     private:
     // Array of PrimitiveInfo pointers that constitute our assembly
-    Array<PrimitiveInfo *> assembly_;
+    std::vector<PrimitiveInfo *> assembly_;
 
     public:
     // Clear existing data
