@@ -1025,67 +1025,6 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
 }
 
 // Broadcast std::vector<int>
-bool ProcessPool::broadcast(Array<int> &array, int rootRank, ProcessPool::CommunicatorType commType)
-{
-#ifdef PARALLEL
-    timer_.start();
-
-    int length;
-    if (poolRank_ == rootRank)
-    {
-        // Broadcast array length first...
-        length = array.nItems();
-        if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
-        {
-            Messenger::print("Failed to broadcast std::vector<int> size from root rank {} (world rank {}).\n", rootRank,
-                             worldRanks_[rootRank]);
-            return false;
-        }
-
-        // Now broadcast Array data
-        if (length > 0)
-        {
-            if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
-            {
-                Messenger::print("Failed to broadcast std::vector<int> data from root rank {} (world rank {}).\n", rootRank,
-                                 worldRanks_[rootRank]);
-                return false;
-            }
-        }
-    }
-    else
-    {
-        // Slaves receive the length, and then create and receive the array
-        // Length first...
-        if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
-        {
-            Messenger::print("Slave {} (world rank {}) failed to receive std::vector<int> size from root rank {}.\n", poolRank_,
-                             worldRank_, rootRank);
-            return false;
-        }
-
-        if (length > 0)
-        {
-            // Create array of specified size
-            array.initialise(length);
-
-            if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
-            {
-                Messenger::print("Slave {} (world rank {}) failed to receive std::vector<int> data from root rank {}.\n",
-                                 poolRank_, worldRank_, rootRank);
-                return false;
-            }
-        }
-        else
-            array.clear();
-    }
-
-    timer_.accumulate();
-#endif
-    return true;
-}
-
-// Broadcast std::vector<int>
 bool ProcessPool::broadcast(std::vector<int> &array, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
