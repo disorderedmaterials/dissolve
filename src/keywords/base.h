@@ -51,7 +51,6 @@ class KeywordBase : public ListItem<KeywordBase>
         ModuleRefListData,
         NodeData,
         NodeAndIntegerData,
-        NodeArrayData,
         NodeBranchData,
         NodeValueData,
         NodeValueEnumOptionsData,
