@@ -5,7 +5,6 @@
 #include "math/data1d.h"
 #include "math/integrator.h"
 #include "templates/algorithms.h"
-#include "templates/array.h"
 
 namespace Filters
 {

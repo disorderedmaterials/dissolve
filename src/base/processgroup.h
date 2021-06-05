@@ -3,14 +3,15 @@
 
 #pragma once
 
-#include "templates/array.h"
+#include <vector>
+
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL
 #include <mpi.h>
 #endif
 
 // ProcessGroup
-class ProcessGroup : public ListItem<ProcessGroup>
+class ProcessGroup
 {
     /*
      * Class to define a group of processes within a pool, keeping reference of their pool and world ranks.

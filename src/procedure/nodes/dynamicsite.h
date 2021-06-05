@@ -5,7 +5,6 @@
 
 #include "data/elements.h"
 #include "procedure/nodes/node.h"
-#include "templates/array.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include <memory>

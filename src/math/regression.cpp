@@ -3,7 +3,6 @@
 
 #include "math/regression.h"
 #include "math/data1d.h"
-#include "templates/array.h"
 
 namespace Regression
 {

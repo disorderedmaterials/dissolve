@@ -5,7 +5,6 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class ExpressionVariable;

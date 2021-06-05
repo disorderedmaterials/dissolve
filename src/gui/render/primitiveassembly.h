@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/render/primitiveinfo.h"
-#include "templates/array.h"
 #include "templates/factory.h"
 #include "templates/listitem.h"
 

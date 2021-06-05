@@ -17,7 +17,6 @@
 #include "math/interpolator.h"
 #include "module/layer.h"
 #include "procedure/procedure.h"
-#include "templates/array.h"
 #include "templates/vector3.h"
 #include <deque>
 #include <memory>
