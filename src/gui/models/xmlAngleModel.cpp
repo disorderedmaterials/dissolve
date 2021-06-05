@@ -14,7 +14,7 @@ void XmlAngleModel::readFile(const pugi::xml_node &root)
     for (auto &a : root.select_nodes("/ForceField/HarmonicAngleForce/Angle"))
     {
         angles_.emplace_back(a.node().attribute("class1").as_string(), a.node().attribute("class2").as_string(),
-                             a.node().attribute("class3").as_string(), a.node().attribute("angle").as_double() * 180 / PI,
+                             a.node().attribute("class3").as_string(), a.node().attribute("angle").as_double() * 180 / M_PI,
                              a.node().attribute("k").as_double());
     }
 
