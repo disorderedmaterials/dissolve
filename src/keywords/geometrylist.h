@@ -10,7 +10,7 @@
 /* none */
 
 // Keyword with Geometry Data
-class GeometryListKeyword : public KeywordData<std::vector<Geometry> &>
+class GeometryListKeyword : public KeywordData<std::vector<Geometry>>
 {
     public:
     GeometryListKeyword(std::vector<Geometry> &, Geometry::GeometryType t);
