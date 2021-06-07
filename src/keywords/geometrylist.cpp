@@ -5,8 +5,8 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> &data, Geometry::GeometryType type)
-    : KeywordData<std::vector<Geometry> &>(KeywordBase::GeometryListData, data), type_(type)
+GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> data, Geometry::GeometryType type)
+    : KeywordData<std::vector<Geometry>>(KeywordBase::GeometryListData, data), type_(type)
 {
 }
 
