@@ -67,7 +67,8 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over angles to check
-        for (const auto &a : angles_)
+        auto &angles = keywords_.retrieve<std::vector<Geometry>>("Angle");
+        for (const auto &a : angles)
         {
             actual = cfg->box()->angleInDegrees(atoms[a.indices(0)], atoms[a.indices(1)], atoms[a.indices(2)]);
             delta = fabs(actual - a.value());
