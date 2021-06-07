@@ -17,14 +17,12 @@ class Data2DImportFileFormat : public FileAndFormat
 {
     public:
     // Available Data2D formats
-    enum Data2DImportFormat
+    enum class Data2DImportFormat
     {
-        CartesianData2D,
-        nData2DImportFormats
+        Cartesian
     };
-    Data2DImportFileFormat(Data2DImportFormat format = CartesianData2D);
-    Data2DImportFileFormat(std::string_view filename, Data2DImportFormat format = CartesianData2D);
-    ~Data2DImportFileFormat() override;
+    explicit Data2DImportFileFormat(std::string_view filename = "", Data2DImportFormat format = Data2DImportFormat::Cartesian);
+    ~Data2DImportFileFormat() override = default;
 
     /*
      * Keyword Options
@@ -34,21 +32,11 @@ class Data2DImportFileFormat : public FileAndFormat
     void setUpKeywords();
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for Data2DImportFormat
-    static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> data2DImportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as Data2DImportFormat
-    Data2DImportFormat data2DFormat() const;
+    // Format enum options
+    EnumOptions<Data2DImportFileFormat::Data2DImportFormat> formats_;
 
     /*
      * Filename / Basename

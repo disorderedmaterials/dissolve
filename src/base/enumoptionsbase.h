@@ -4,6 +4,7 @@
 #pragma once
 
 #include <optional>
+#include <string>
 
 // Enum Options Base
 class EnumOptionsBase
@@ -18,8 +19,6 @@ class EnumOptionsBase
     public:
     // Return name of options (e.g. from source enumeration)
     virtual std::string name() const = 0;
-
-    public:
     // Return number of options available
     virtual int nOptions() const = 0;
     // Return nth keyword in the list
@@ -32,8 +31,9 @@ class EnumOptionsBase
     virtual void setIndex(int index) = 0;
 
     /*
-     * Operators
+     * Search
      */
     public:
-    EnumOptionsBase &operator=(int index);
+    // Return index of matching keyword, if it exists
+    std::optional<int> keywordIndex(std::string_view keyword) const;
 };

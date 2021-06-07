@@ -12,7 +12,7 @@
 // Run main processing
 bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    if (!trajectoryFormat_.hasValidFileAndFormat())
+    if (!trajectoryFormat_.hasFilename())
         Messenger::error("No valid file/format set for trajectory export.\n");
 
     // Check for zero Configuration targets

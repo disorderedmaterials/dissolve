@@ -37,18 +37,9 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Read the frame
-    switch (trajectoryFormat_.trajectoryFormat())
-    {
-        case (TrajectoryImportFileFormat::XYZTrajectory):
-            if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
-                return false;
-            cfg->incrementContentsVersion();
-            break;
-        default:
-            return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format {}.\n",
-                                    trajectoryFormat_.trajectoryFormat());
-            break;
-    }
+    if (!trajectoryFormat_.importData(parser, cfg))
+        return Messenger::error("Failed to read trajectory frame data.\n");
+    cfg->incrementContentsVersion();
 
     // Set the trajectory file position in the restart file
     dissolve.processingModuleData().realise<std::streampos>(streamPosName, uniqueName(), GenericItem::InRestartFileFlag) =

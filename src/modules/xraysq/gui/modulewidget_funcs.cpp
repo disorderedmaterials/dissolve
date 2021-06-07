@@ -93,7 +93,7 @@ void XRaySQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
                                                        "Calculated", "Calculated");
 
             // Add on reference F(Q) data if present
-            if (referenceFileAndFormat.hasValidFileAndFormat())
+            if (referenceFileAndFormat.hasFilename())
                 graph_
                     ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", module_->uniqueName()),
                                                          "Reference F(Q)", "Reference")
@@ -114,7 +114,7 @@ void XRaySQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             repGR->setColour(StockColours::GreenStockColour);
 
             // Add on reference G(r) (from FT of F(Q)) if present
-            if (referenceFileAndFormat.hasValidFileAndFormat())
+            if (referenceFileAndFormat.hasFilename())
                 graph_
                     ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", module_->uniqueName()),
                                                          "Reference G(r) (via FT)", "Reference")

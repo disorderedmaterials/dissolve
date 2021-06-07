@@ -14,17 +14,16 @@ class CoordinateImportFileFormat : public FileAndFormat
 {
     public:
     // Coordinate Import Formats
-    enum CoordinateImportFormat
+    enum class CoordinateImportFormat
     {
-        DLPOLYCoordinates,
-        EPSRCoordinates,
-        MoscitoCoordinates,
-        XYZCoordinates,
-        nCoordinateImportFormats
+        DLPOLY,
+        EPSR,
+        Moscito,
+        XYZ
     };
-    CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
-    CoordinateImportFileFormat(std::string_view filename, CoordinateImportFormat format = XYZCoordinates);
-    ~CoordinateImportFileFormat() override;
+    explicit CoordinateImportFileFormat(std::string_view filename = "",
+                                        CoordinateImportFormat format = CoordinateImportFormat::XYZ);
+    ~CoordinateImportFileFormat() override = default;
 
     /*
      * Keyword Options
@@ -34,21 +33,11 @@ class CoordinateImportFileFormat : public FileAndFormat
     void setUpKeywords();
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for CoordinateImportFormat
-    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as CoordinateImportFormat
-    CoordinateImportFormat coordinateFormat() const;
+    // Format enum options
+    EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> formats_;
 
     /*
      * Filename / Basename
@@ -73,6 +62,10 @@ class CoordinateImportFileFormat : public FileAndFormat
     public:
     // Import coordinates using current filename and format
     bool importData(std::vector<Vec3<double>> &r, ProcessPool *procPool = nullptr);
+    // Import coordinates direct to configuration using current filename and format
+    bool importData(Configuration *cfg, ProcessPool *procPool = nullptr);
     // Import coordinates using supplied parser and current format
     bool importData(LineParser &parser, std::vector<Vec3<double>> &r);
+    // Import coordinates direct to configuration using supplied parser and current format
+    bool importData(LineParser &parser, Configuration *cfg);
 };

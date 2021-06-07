@@ -15,16 +15,14 @@ class Data1DImportFileFormat : public FileAndFormat
 {
     public:
     // Data1D Formats
-    enum Data1DImportFormat
+    enum class Data1DImportFormat
     {
-        XYData1D,
-        HistogramData1D,
-        GudrunMintData1D,
-        nData1DImportFormats
+        XY,
+        Histogram,
+        GudrunMint
     };
-    Data1DImportFileFormat(Data1DImportFormat format = XYData1D);
-    Data1DImportFileFormat(std::string_view filename, Data1DImportFormat format = XYData1D);
-    ~Data1DImportFileFormat() override;
+    explicit Data1DImportFileFormat(std::string_view filename = "", Data1DImportFormat format = Data1DImportFormat::XY);
+    ~Data1DImportFileFormat() override = default;
 
     /*
      * Keyword Options
@@ -34,21 +32,11 @@ class Data1DImportFileFormat : public FileAndFormat
     void setUpKeywords();
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for Data1DImportFormat
-    static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> data1DImportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as Data1DImportFormat
-    Data1DImportFormat data1DFormat() const;
+    // Format enum options
+    EnumOptions<Data1DImportFileFormat::Data1DImportFormat> formats_;
 
     /*
      * Filename / Basename

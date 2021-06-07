@@ -182,7 +182,7 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
 void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab, then call its rename() function
-    auto *tab = ui_.MainTabs->currentTab();
+    auto tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
         return;
     tab->rename();
@@ -191,12 +191,12 @@ void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab
-    auto *tab = ui_.MainTabs->currentTab();
+    auto tab = ui_.MainTabs->currentTab();
     if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
         return;
 
     // Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
-    auto *cfgTab = dynamic_cast<ConfigurationTab *>(tab);
+    auto cfgTab = std::dynamic_pointer_cast<ConfigurationTab>(tab);
     if (!cfgTab)
         return;
 
@@ -223,7 +223,7 @@ void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
     if (exportFile.isEmpty())
         return;
 
-    CoordinateExportFileFormat fileAndFormat(qPrintable(exportFile), CoordinateExportFileFormat::XYZCoordinates);
+    CoordinateExportFileFormat fileAndFormat(qPrintable(exportFile), CoordinateExportFileFormat::CoordinateExportFormat::XYZ);
     if (!fileAndFormat.exportData(cfg))
         QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.",
                              QMessageBox::Ok, QMessageBox::Ok);

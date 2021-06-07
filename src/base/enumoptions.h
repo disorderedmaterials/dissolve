@@ -16,15 +16,28 @@ template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() = default;
-    EnumOptions(std::string_view name, std::vector<EnumOption<E>> options) : name_(name), options_(std::move(options))
+    EnumOptions(std::string_view name, std::vector<EnumOption<E>> options) : name_(name), options_(options)
     {
         currentOption_ = options_.cbegin();
+    }
+    EnumOptions(std::string_view name, std::vector<EnumOption<E>> options, E currentOption) : name_(name), options_(options)
+    {
+        currentOption_ = std::find_if(options_.cbegin(), options_.cend(),
+                                      [currentOption](const auto &optData) { return optData.enumeration() == currentOption; });
     }
     EnumOptions(const EnumOptions<E> &source)
     {
         name_ = source.name_;
         options_ = source.options_;
-        currentOption_ = options_.cbegin() + source.index();
+        currentOption_ = options_.cbegin() + (source.currentOption_ - source.options_.cbegin());
+    }
+    EnumOptions<E> &operator=(const EnumOptions<E> &source)
+    {
+        name_ = source.name_;
+        options_ = source.options_;
+        currentOption_ = options_.cbegin() + (source.currentOption_ - source.options_.cbegin());
+
+        return *this;
     }
     EnumOptions<E> &operator=(E value)
     {

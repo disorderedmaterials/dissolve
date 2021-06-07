@@ -9,34 +9,10 @@
 #include "templates/algorithms.h"
 
 Data1DExportFileFormat::Data1DExportFileFormat(std::string_view filename, Data1DExportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for Data1DExportFormat
-EnumOptions<Data1DExportFileFormat::Data1DExportFormat> Data1DExportFileFormat::data1DExportFormats()
-{
-    return EnumOptions<Data1DExportFileFormat::Data1DExportFormat>(
-        "Data1DExportFileFormat", {{Data1DExportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"}});
-}
-
-// Return number of available formats
-int Data1DExportFileFormat::nFormats() const { return Data1DExportFileFormat::nData1DExportFormats; }
-
-// Return format keyword for supplied index
-std::string Data1DExportFileFormat::formatKeyword(int id) const { return data1DExportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string Data1DExportFileFormat::formatDescription(int id) const { return data1DExportFormats().descriptionByIndex(id); }
-
-// Return current format as CoordinateExportFormat
-Data1DExportFileFormat::Data1DExportFormat Data1DExportFileFormat::data1DFormat() const
-{
-    return (Data1DExportFileFormat::Data1DExportFormat)format_;
+    formats_ = EnumOptions<Data1DExportFileFormat::Data1DExportFormat>(
+        "Data1DExportFileFormat", {{Data1DExportFormat::XY, "xy", "Simple XY data (x = bin centres)"}}, format);
 }
 
 /*
@@ -74,17 +50,16 @@ bool Data1DExportFileFormat::exportData(const Data1DBase &data)
 
     // Write data
     auto result = false;
-    if (data1DFormat() == Data1DExportFileFormat::XYData1D)
+    switch (formats_.enumeration())
     {
-        if (data.valuesHaveErrors())
-            result = exportXY(parser, data.xAxis(), data.values(), data.errors());
-        else
-            result = exportXY(parser, data.xAxis(), data.values());
-    }
-    else
-    {
-        Messenger::error("Unrecognised Data1D format.\nKnown formats are:\n");
-        printAvailableFormats();
+        case (Data1DExportFormat::XY):
+            if (data.valuesHaveErrors())
+                result = exportXY(parser, data.xAxis(), data.values(), data.errors());
+            else
+                result = exportXY(parser, data.xAxis(), data.values());
+            break;
+        default:
+            throw(std::runtime_error(fmt::format("Data1D format '{}' export has not been implemented.\n", formats_.keyword())));
     }
 
     return result;

@@ -11,7 +11,7 @@ class ModuleChart;
 class ModulePalette;
 
 // Layer Tab
-class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
+class LayerTab : public QWidget, public MainTab
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT

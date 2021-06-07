@@ -11,7 +11,7 @@
 
 void DissolveWindow::on_WorkspaceCreateEmptyAction_triggered(bool checked)
 {
-    MainTab *workspaceTab = ui_.MainTabs->addWorkspaceTab(this, "New Workspace");
+    auto workspaceTab = ui_.MainTabs->addWorkspaceTab(this, "New Workspace");
 
     ui_.MainTabs->setCurrentTab(workspaceTab);
 }

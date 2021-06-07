@@ -4,6 +4,7 @@
 #pragma once
 
 #include "data/elements.h"
+#include <array>
 
 // Element Colours
 namespace ElementColours

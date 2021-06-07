@@ -15,29 +15,19 @@ class Data1DExportFileFormat : public FileAndFormat
 {
     public:
     // Available data formats
-    enum Data1DExportFormat
+    enum class Data1DExportFormat
     {
-        XYData1D,
-        nData1DExportFormats
+        XY
     };
-    Data1DExportFileFormat(std::string_view filename = "", Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
+    Data1DExportFileFormat(std::string_view filename = "", Data1DExportFormat format = Data1DExportFormat::XY);
+    ~Data1DExportFileFormat() override = default;
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for Data1DExportFormat
-    static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> data1DExportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as Data1DExportFormat
-    Data1DExportFormat data1DFormat() const;
+    // Format enum options
+    EnumOptions<Data1DExportFileFormat::Data1DExportFormat> formats_;
 
     /*
      * Filename / Basename

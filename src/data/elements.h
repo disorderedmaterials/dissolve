@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "templates/array.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
+#include <string>
 
 namespace Elements
 {
@@ -174,18 +172,5 @@ std::string_view name(Element Z);
 std::string_view symbol(Element Z);
 // Return group for element with specified Z
 int group(Element Z);
-
-// Create array of Lists, with array size equal to number of elements defined
-template <class T> void createElementListArray(Array<List<T>> &listArray)
-{
-    /*
-     * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
-     * Need to do this otherwise each datum will be destructed twice - once from the List<T> destructor, and once
-     * again from the destruction of the static array.
-     */
-    listArray.initialise(Elements::nElements);
-    for (auto n = 0; n < Elements::nElements; ++n)
-        listArray[n].setDisownOnDestruction(true);
-}
 
 }; // namespace Elements

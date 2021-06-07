@@ -284,7 +284,7 @@ class DissolveWindow : public QMainWindow
 
     public:
     // Return list of all current tabs
-    RefList<const MainTab> allTabs() const;
+    const std::vector<std::shared_ptr<MainTab>> allTabs() const;
 
     /*
      * 'Simulation' Stack Page - Messages

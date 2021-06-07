@@ -22,7 +22,7 @@ class Isotopologue;
 class Species;
 
 // Species Tab
-class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
+class SpeciesTab : public QWidget, public MainTab
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT

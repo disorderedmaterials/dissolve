@@ -5,6 +5,7 @@
 
 #include "base/units.h"
 #include "gui/maintab.h"
+#include "gui/models/enumOptionsModel.h"
 #include "gui/ui_configurationtab.h"
 
 // Forward Declarations
@@ -12,7 +13,7 @@ class Configuration;
 class SpeciesInfo;
 
 // Configuration Tab
-class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, public MainTab
+class ConfigurationTab : public QWidget, public MainTab
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
@@ -28,6 +29,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
     private:
     // Main form declaration
     Ui::ConfigurationTab ui_;
+    // Model for import file format
+    EnumOptionsModel importEnumOptionsModel_;
 
     /*
      * MainTab Reimplementations

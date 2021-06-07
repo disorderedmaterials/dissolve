@@ -34,7 +34,9 @@ class Configuration : public ListItem<Configuration>
     public:
     Configuration();
     ~Configuration();
-    void operator=(Configuration &source);
+    Configuration(const Configuration &source) = delete;
+    Configuration(Configuration &&source) = delete;
+    void operator=(Configuration &source) = delete;
     // Clear all data
     void clear();
 
@@ -66,8 +68,6 @@ class Configuration : public ListItem<Configuration>
     bool generate(ProcessPool &procPool, double pairPotentialRange);
     // Return import coordinates file / format
     CoordinateImportFileFormat &inputCoordinates();
-    // Load coordinates from specified parser
-    bool loadCoordinates(LineParser &parser, CoordinateImportFileFormat::CoordinateImportFormat format);
     // Initialise (generate or load) the basic contents of the Configuration
     bool initialiseContent(ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent = false);
     // Set configuration temperature

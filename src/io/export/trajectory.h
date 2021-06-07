@@ -13,29 +13,19 @@ class TrajectoryExportFileFormat : public FileAndFormat
 {
     public:
     // Trajectory Export Formats
-    enum TrajectoryExportFormat
+    enum class TrajectoryExportFormat
     {
-        XYZTrajectory,
-        nTrajectoryExportFormats
+        XYZ
     };
-    TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = XYZTrajectory);
+    TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = TrajectoryExportFormat::XYZ);
+    ~TrajectoryExportFileFormat() override = default;
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for TrajectoryExportFormat
-    static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> trajectoryExportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as TrajectoryExportFormat
-    TrajectoryExportFormat trajectoryFormat() const;
+    // Format enum options
+    EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> formats_;
 
     /*
      * Filename / Basename

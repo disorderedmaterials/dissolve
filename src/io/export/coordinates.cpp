@@ -11,38 +11,13 @@
 #include "data/atomicmasses.h"
 
 CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename, CoordinateExportFormat format)
-    : FileAndFormat(filename, format)
+    : FileAndFormat(formats_, filename)
 {
-}
-
-/*
- * Format Access
- */
-
-// Return enum options for CoordinateExportFormat
-EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> CoordinateExportFileFormat::coordinateExportFormats()
-{
-    return EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat>(
-        "CoordinateExportFileFormat", {{CoordinateExportFileFormat::XYZCoordinates, "xyz", "Simple XYZ Coordinates"},
-                                       {CoordinateExportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG File"}});
-}
-
-// Return number of available formats
-int CoordinateExportFileFormat::nFormats() const { return CoordinateExportFileFormat::nCoordinateExportFormats; }
-
-// Return format keyword for supplied index
-std::string CoordinateExportFileFormat::formatKeyword(int id) const { return coordinateExportFormats().keywordByIndex(id); }
-
-// Return description string for supplied index
-std::string CoordinateExportFileFormat::formatDescription(int id) const
-{
-    return coordinateExportFormats().descriptionByIndex(id);
-}
-
-// Return current format as CoordinateExportFormat
-CoordinateExportFileFormat::CoordinateExportFormat CoordinateExportFileFormat::coordinateFormat() const
-{
-    return (CoordinateExportFileFormat::CoordinateExportFormat)format_;
+    formats_ = EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat>(
+        "CoordinateExportFileFormat",
+        {{CoordinateExportFormat::XYZ, "xyz", "Simple XYZ Coordinates"},
+         {CoordinateExportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG File"}},
+        format);
 }
 
 /*
@@ -129,14 +104,17 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
 
     // Write data
     auto result = false;
-    if (coordinateFormat() == CoordinateExportFileFormat::XYZCoordinates)
-        result = exportXYZ(parser, cfg);
-    else if (coordinateFormat() == CoordinateExportFileFormat::DLPOLYCoordinates)
-        result = exportDLPOLY(parser, cfg);
-    else
+    switch (formats_.enumeration())
     {
-        Messenger::error("Unrecognised coordinate format.\nKnown formats are:\n");
-        printAvailableFormats();
+        case (CoordinateExportFormat::XYZ):
+            result = exportXYZ(parser, cfg);
+            break;
+        case (CoordinateExportFormat::DLPOLY):
+            result = exportDLPOLY(parser, cfg);
+            break;
+        default:
+            throw(std::runtime_error(
+                fmt::format("Coordinates format '{}' export has not been implemented.\n", formats_.keyword())));
     }
 
     return result;

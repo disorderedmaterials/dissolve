@@ -13,30 +13,21 @@ class PairPotentialExportFileFormat : public FileAndFormat
 {
     public:
     // Available data formats
-    enum PairPotentialExportFormat
+    enum class PairPotentialExportFormat
     {
-        BlockPairPotential,
-        DLPOLYTABLEPairPotential,
-        nPairPotentialExportFormats
+        Block,
+        DLPOLYTABLE
     };
-    PairPotentialExportFileFormat(std::string_view filename = "", PairPotentialExportFormat format = BlockPairPotential);
+    PairPotentialExportFileFormat(std::string_view filename = "",
+                                  PairPotentialExportFormat format = PairPotentialExportFormat::Block);
+    ~PairPotentialExportFileFormat() override = default;
 
     /*
-     * Format Access
+     * Formats
      */
     private:
-    // Return enum options for PairPotentialExportFormat
-    static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> pairPotentialExportFormats();
-
-    public:
-    // Return number of available formats
-    int nFormats() const override;
-    // Return format keyword for supplied index
-    std::string formatKeyword(int id) const override;
-    // Return description string for supplied index
-    std::string formatDescription(int id) const override;
-    // Return current format as PairPotentialExportFormat
-    PairPotentialExportFormat pairPotentialFormat() const;
+    // Format enum options
+    EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> formats_;
 
     /*
      * Filename / Basename

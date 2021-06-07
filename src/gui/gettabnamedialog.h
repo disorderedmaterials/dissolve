@@ -17,14 +17,14 @@ class GetTabNameDialog : public QDialog
     Q_OBJECT
 
     public:
-    GetTabNameDialog(QWidget *parent, RefList<const MainTab> currentTabs);
+    GetTabNameDialog(QWidget *parent, const std::vector<std::shared_ptr<MainTab>> &currentTabs);
     ~GetTabNameDialog();
 
     private:
     // Main form declaration
     Ui::GetTabNameDialog ui_;
     // RefList of current tabs
-    RefList<const MainTab> currentTabs_;
+    const std::vector<std::shared_ptr<MainTab>> &currentTabs_;
     // Current tab that we are renaming
     const MainTab *currentTab_;
 

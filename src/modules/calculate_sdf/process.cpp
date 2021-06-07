@@ -38,7 +38,7 @@ bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("CalculateSDF experienced problems with its analysis.\n");
 
     // Save data?
-    if (sdfFileAndFormat_.hasValidFileAndFormat())
+    if (sdfFileAndFormat_.hasFilename())
     {
         if (procPool.isMaster())
         {
