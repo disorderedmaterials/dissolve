@@ -45,7 +45,8 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over distances to check
-        for (const auto &d : distances_)
+        auto &distances = keywords_.retrieve<std::vector<Geometry>>("Distance");
+        for (const auto &d : distances)
         {
             actual = cfg->box()->minimumDistance(atoms[d.indices(0)], atoms[d.indices(1)]);
             delta = fabs(actual - d.value());
