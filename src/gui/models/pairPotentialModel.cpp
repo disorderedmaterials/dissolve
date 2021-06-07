@@ -32,8 +32,6 @@ PairPotential *PairPotentialModel::rawData(const QModelIndex index) { return pai
 
 QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
 {
-    // return QString::number(pairs_.size());
-
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch (index.column())
