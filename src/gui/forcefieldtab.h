@@ -32,7 +32,7 @@ class ForcefieldTab : public QWidget, public MainTab
     private:
     // Main form declaration
     Ui::ForcefieldTab ui_;
-    // Model of Atom Types
+    // Models
     AtomTypeModel atoms_;
     PairPotentialModel pairs_;
 
