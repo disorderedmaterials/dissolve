@@ -18,7 +18,7 @@ class CellNeighbour;
 class Cell
 {
     public:
-    Cell(int index = 0, Vec3<int> gridReference = {}, Vec3<double> centre = {});
+    Cell(int index = 0, Vec3<int> gridReference = Vec3<int>(), Vec3<double> centre = Vec3<double>());
     ~Cell() = default;
 
     /*

@@ -15,20 +15,20 @@ template <typename BoxType> BoxType createTestBox()
     }
     else if constexpr (std::is_same_v<BoxType, OrthorhombicBox>)
     {
-        Vec3<double> lengths = {1.00, 1.00, 1.00};
+        Vec3<double> lengths(1.00, 1.00, 1.00);
         OrthorhombicBox box(lengths);
         return box;
     }
     else if constexpr (std::is_same_v<BoxType, MonoclinicBox>)
     {
-        Vec3<double> lengths = {1.00, 1.00, 1.00};
+        Vec3<double> lengths(1.00, 1.00, 1.00);
         MonoclinicBox box(lengths, 45);
         return box;
     }
     else if constexpr (std::is_same_v<BoxType, TriclinicBox>)
     {
-        Vec3<double> lengths = {1.00, 1.00, 1.00};
-        Vec3<double> angles = {45, 45, 45};
+        Vec3<double> lengths(1.00, 1.00, 1.00);
+        Vec3<double> angles(45, 45, 45);
         TriclinicBox box(lengths, angles);
         return box;
     }
