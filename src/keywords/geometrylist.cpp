@@ -63,7 +63,7 @@ bool GeometryListKeyword::write(LineParser &parser, std::string_view keywordName
 {
     std::string index;
 
-    for (auto ref : data_)
+    for (auto &ref : data_)
     {
         index.clear();
         for (auto n = 0; n < maxArguments() - 1; ++n)
