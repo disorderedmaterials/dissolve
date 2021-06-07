@@ -13,7 +13,7 @@
 class GeometryListKeyword : public KeywordData<std::vector<Geometry>>
 {
     public:
-    GeometryListKeyword(std::vector<Geometry> &, Geometry::GeometryType t);
+    GeometryListKeyword(std::vector<Geometry>, Geometry::GeometryType t);
 
     ~GeometryListKeyword() override;
 

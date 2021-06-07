@@ -53,13 +53,4 @@ class ChecksModule : public Module
     private:
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Checks
-     */
-    private:
-    // Distances between atoms
-    std::vector<Geometry> distances_;
-    // Angles between atoms
-    std::vector<Geometry> angles_;
 };
