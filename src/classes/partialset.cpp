@@ -486,6 +486,14 @@ OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view
  * Serialisation
  */
 
+int readDataPoint(int argIndex, LineParser &parser, Data1D &data)
+{
+    data.values().push_back(parser.argd(argIndex++));
+    if (data.valuesHaveErrors())
+        data.errors().push_back(parser.argd(argIndex++));
+    return argIndex;
+}
+
 // Read data through specified LineParser
 bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
@@ -509,12 +517,37 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     {
         for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            if (!partials_[{typeI, typeJ}].deserialise(parser))
+            auto &part = partials_[{typeI, typeJ}];
+            auto &bound = boundPartials_[{typeI, typeJ}];
+            auto &unbound = unboundPartials_[{typeI, typeJ}];
+
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            if (!boundPartials_[{typeI, typeJ}].deserialise(parser))
+            part.setTag(parser.argsv(0));
+            bound.setTag(parser.argsv(1));
+            unbound.setTag(parser.argsv(2));
+
+            Messenger::warn("Tags: {} {} {}", parser.argsv(0), parser.argsv(1), parser.argsv(2));
+
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            if (!unboundPartials_[{typeI, typeJ}].deserialise(parser))
-                return false;
+            auto nPoints = parser.argi(0);
+            auto partError = parser.argb(1);
+            auto boundError = parser.argb(2);
+            auto unboundError = parser.argb(3);
+
+            for (auto n = 0; n < nPoints; ++n)
+            {
+                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                    return false;
+                int argIndex = 0;
+                part.xAxis().push_back(parser.argd(argIndex));
+                bound.xAxis().push_back(parser.argd(argIndex));
+                unbound.xAxis().push_back(parser.argd(argIndex++));
+                argIndex = readDataPoint(argIndex, parser, part);
+                argIndex = readDataPoint(argIndex, parser, bound);
+                argIndex = readDataPoint(argIndex, parser, unbound);
+            }
         }
     }
 
@@ -527,6 +560,14 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
         return false;
 
     return true;
+}
+
+std::string writeDataPoint(int i, Data1D data)
+{
+    if (data.valuesHaveErrors())
+        return fmt::format("{} {}", data.value(i), data.error(i));
+    else
+        return fmt::format("{}", data.value(i));
 }
 
 // Write data through specified LineParser
@@ -544,12 +585,26 @@ bool PartialSet::serialise(LineParser &parser) const
 
     // Write individual Data1D
     for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_[{typeI, typeJ}].serialise(parser))
+        const auto &part = partials_[{typeI, typeJ}];
+        const auto &bound = boundPartials_[{typeI, typeJ}];
+        const auto &unbound = unboundPartials_[{typeI, typeJ}];
+
+        // Write tag
+        if (!parser.writeLineF("{} {} {}\n", part.tag(), bound.tag(), unbound.tag()))
             return false;
-        if (!boundPartials_[{typeI, typeJ}].serialise(parser))
+
+        // Write axis size and errors flag
+        if (!parser.writeLineF("{} {} {} {}\n", part.xAxis().size(), DissolveSys::btoa(part.valuesHaveErrors()),
+                               DissolveSys::btoa(bound.valuesHaveErrors()), DissolveSys::btoa(unbound.valuesHaveErrors())))
             return false;
-        if (!unboundPartials_[{typeI, typeJ}].serialise(parser))
+
+        for (int i = 0; i < part.xAxis().size(); ++i)
+        {
+            if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
+                                   writeDataPoint(i, unbound)))
+                ;
             return false;
+        }
 
         return EarlyReturn<bool>::Continue;
     });
