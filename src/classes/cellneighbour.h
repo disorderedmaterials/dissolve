@@ -6,12 +6,21 @@
 
 struct CellNeighbour
 {
-    CellNeighbour(const Cell &m, const Cell &n, bool mim) : master_(m), neighbour_(n), requiresMIM_(mim) {}
+    CellNeighbour(const Cell &n, bool mim) : neighbour_(n), requiresMIM_(mim) {}
+    const Cell &neighbour_;
+    bool requiresMIM_ = false;
+
+    bool operator==(const Cell &other) const { return this->neighbour_.index() == other.index(); }
+};
+
+struct CellNeighbourPair
+{
+    CellNeighbourPair(const Cell &m, const Cell &n, bool mim) : master_(m), neighbour_(n), requiresMIM_(mim) {}
     const Cell &master_;
     const Cell &neighbour_;
     bool requiresMIM_ = false;
 
-    bool operator==(const CellNeighbour &other) const
+    bool operator==(const CellNeighbourPair &other) const
     {
         if (this->master_.index() == other.master_.index() && this->neighbour_.index() == other.neighbour_.index())
             return true;

@@ -169,10 +169,26 @@ Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
  * Cell Neighbour
  */
 
+// Add neighbour to cell vector
+void CellArray::addNeighbour(const Cell &cell, const Cell &nbr, bool useMim)
+{
+    auto &cellVector = neighbours_[cell.index()];
+    auto it = std::find(cellVector.begin(), cellVector.end(), nbr);
+    if (it != cellVector.end())
+    {
+        // Neighbour already exists - make sure it is consistent
+        assert(it->neighbour_.index() == nbr.index());
+        assert(it->requiresMIM_ == useMim);
+    }
+    else
+        cellVector.emplace_back(nbr, useMim);
+}
+
 // Construct cell neighbour pairs
 void CellArray::createCellNeighbourPairs()
 {
     auto nPairs = cells_.size() * ((cells_.size() + 1) / 2);
+    neighbourPairs_.clear();
     neighbourPairs_.reserve(nPairs);
     for (auto &cell : cells_)
     {
@@ -191,8 +207,11 @@ void CellArray::createCellNeighbourPairs()
     }
 }
 
+// Return neighbour vector for specified cell, including self as first item
+const std::vector<CellNeighbour> &CellArray::neighbours(const Cell &cell) const { return neighbours_[cell.index()]; }
+
 // Return vector of all unique cell neighbour pairs
-const std::vector<CellNeighbour> &CellArray::getCellNeighbourPairs() const { return neighbourPairs_; }
+const std::vector<CellNeighbourPair> &CellArray::getCellNeighbourPairs() const { return neighbourPairs_; }
 
 /*
  * Generation
@@ -208,7 +227,6 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
     const auto minCellsPerSide = 3;
     const auto tolerance = 0.01;
-    int n, x, y, z;
 
     box_ = box;
 
@@ -231,8 +249,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                         "while we require at least {}.\n",
                         divisions.min(), cellSize, minCellsPerSide);
 
-        // We must now take the shortest box length and divide by 3 to get the absolute maximum length to use on that
-        // side
+        // We must now take the shortest box length and divide by 3 to get the absolute maximum length to use on that side
         minEl = boxLengths.minElement();
         realCellSize_[minEl] = boxLengths[minEl] / minCellsPerSide;
         divisions_[minEl] = minCellsPerSide;
@@ -250,7 +267,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
     // Now, set our other cellLengths_ based on the minimum value we have just set
     // We try to get all lengths as similar as possible
-    for (n = 1; n < 3; ++n)
+    for (auto n = 1; n < 3; ++n)
     {
         auto el = (minEl + n) % 3;
         double x = boxLengths[el] / realCellSize_[minEl];
@@ -315,13 +332,13 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     cells_.resize(nCells);
     Vec3<double> fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
     auto count = 0;
-    for (x = 0; x < divisions_.x; ++x)
+    for (auto x = 0; x < divisions_.x; ++x)
     {
         fracCentre.y = fractionalCellSize_.y * 0.5;
-        for (y = 0; y < divisions_.y; ++y)
+        for (auto y = 0; y < divisions_.y; ++y)
         {
             fracCentre.z = fractionalCellSize_.z * 0.5;
-            for (z = 0; z < divisions_.z; ++z)
+            for (auto z = 0; z < divisions_.z; ++z)
             {
                 cells_[count] = Cell(count, Vec3<int>(x, y, z), box_->fracToReal(fracCentre));
                 fracCentre.z += fractionalCellSize_.z;
@@ -346,7 +363,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     extents_.zero();
 
     // First, establish a maximal extent in principal directions...
-    for (n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         do
         {
@@ -356,8 +373,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             r = cellAxes * r;
         } while (r[n] < pairPotentialRange);
 
-        // If we require a larger number of cells than the box physically has along this direction, reduce it
-        // accordingly
+        // If we require a larger number of cells than the box physically has along this direction, reduce it accordingly
         if ((extents_[n] * 2 + 1) > divisions_[n])
             extents_[n] = divisions_[n] / 2;
     }
@@ -369,11 +385,11 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     RefList<const Cell> cellNbrs;
     Vec3<int> i, j;
     const Cell *nbr;
-    for (x = -extents_.x; x <= extents_.x; ++x)
+    for (auto x = -extents_.x; x <= extents_.x; ++x)
     {
-        for (y = -extents_.y; y <= extents_.y; ++y)
+        for (auto y = -extents_.y; y <= extents_.y; ++y)
         {
-            for (z = -extents_.z; z <= extents_.z; ++z)
+            for (auto z = -extents_.z; z <= extents_.z; ++z)
             {
                 if ((x == 0) && (y == 0) && (z == 0))
                     continue;
@@ -418,6 +434,25 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
         }
     }
     Messenger::print("Added {} Cells to representative neighbour list.\n", neighbourIndices.size());
+
+    // Construct neighbour arrays for individual Cells
+    neighbours_.clear();
+    neighbours_.resize(cells_.size());
+    for (auto &nbrVector : neighbours_)
+        nbrVector.reserve(neighbourIndices.size() + 1);
+
+    for (auto &cell : cells_)
+    {
+        addNeighbour(cell, cell, false);
+
+        for (auto &indices : neighbourIndices)
+        {
+            // Find neighbour with the relative indices provided
+            auto *nbr = this->cell(cell.gridReference().x + indices.x, cell.gridReference().y + indices.y,
+                                   cell.gridReference().z + indices.z);
+            addNeighbour(cell, *nbr, minimumImageRequired(&cell, nbr, pairPotentialRange));
+        }
+    }
 
     // Finally, loop over Cells and set neighbours, and construct neighbour matrix
     Messenger::print("Constructing neighbour lists for individual Cells...\n");

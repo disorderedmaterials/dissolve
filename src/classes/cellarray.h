@@ -5,7 +5,6 @@
 
 #include "classes/cellneighbour.h"
 #include "math/matrix3.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class Box;
@@ -63,15 +62,21 @@ class CellArray
      */
     private:
     // Neighbour pair array (one-dimensional)
-    std::vector<CellNeighbour> neighbourPairs_;
+    std::vector<CellNeighbourPair> neighbourPairs_;
+    // Neighbour array per Cell
+    std::vector<std::vector<CellNeighbour>> neighbours_;
 
     private:
+    // Add neighbour to cell vector
+    void addNeighbour(const Cell &cell, const Cell &nbr, bool useMim);
     // Construct cell neighbour pairs
     void createCellNeighbourPairs();
 
     public:
+    // Return neighbour vector for specified cell, including self as first item
+    const std::vector<CellNeighbour> &neighbours(const Cell &cell) const;
     // Return vector of all unique cell neighbour pairs
-    const std::vector<CellNeighbour> &getCellNeighbourPairs() const;
+    const std::vector<CellNeighbourPair> &getCellNeighbourPairs() const;
 
     /*
      * Generation
