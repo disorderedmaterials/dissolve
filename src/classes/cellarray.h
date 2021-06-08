@@ -34,12 +34,6 @@ class CellArray
     const Box *box_{nullptr};
 
     public:
-    // Generate array for provided Box
-    bool generate(const Box *box, double cellSize, double pairPotentialRange);
-    // Scale Cells sizes by supplied factor
-    void scale(double factor);
-    // Clear Cell arrays
-    void clear();
     // Return number of Cells for box
     int nCells() const;
     // Return cell divisions along each axis
@@ -65,13 +59,6 @@ class CellArray
     Vec3<int> mimGridDelta(Vec3<int> delta) const;
 
     /*
-     * Upkeep
-     */
-    public:
-    // Update Cell location of specified Atom
-    void updateCellLocation(const std::shared_ptr<Atom> &i);
-
-    /*
      * Cell Neighbour pairs
      */
     private:
@@ -82,4 +69,20 @@ class CellArray
 
     public:
     const CellNeighbourPairs &getCellNeighbourPairs() const;
+
+    /*
+     * Generation
+     */
+    public:
+    // Generate array for provided Box
+    bool generate(const Box *box, double cellSize, double pairPotentialRange);
+    // Clear Cell arrays
+    void clear();
+
+    /*
+     * Operations
+     */
+    public:
+    // Scale Cells sizes by supplied factor
+    void scale(double factor);
 };
