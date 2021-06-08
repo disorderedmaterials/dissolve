@@ -130,7 +130,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     clear();
     auto nCells = divisions_.x * divisions_.y * divisions_.z;
     Messenger::print("Constructing array of {} cells...\n", nCells);
-    cells_.reserve(nCells);
+    cells_.resize(nCells);
     Vec3<double> fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
     auto count = 0;
     for (x = 0; x < divisions_.x; ++x)
@@ -141,7 +141,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             fracCentre.z = fractionalCellSize_.z * 0.5;
             for (z = 0; z < divisions_.z; ++z)
             {
-                cells_.emplace_back(std::make_unique<Cell>(count, Vec3<int>(x, y, z), box_->fracToReal(fracCentre)));
+                cells_[count] = Cell(count, Vec3<int>(x, y, z), box_->fracToReal(fracCentre));
                 fracCentre.z += fractionalCellSize_.z;
                 ++count;
             }
@@ -184,9 +184,9 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
     // Now, loop over extent integers and construct list of gridReferences within range
     std::vector<Vec3<int>> neighbourIndices;
-    RefList<Cell> cellNbrs;
+    RefList<const Cell> cellNbrs;
     Vec3<int> i, j;
-    Cell *nbr;
+    const Cell *nbr;
     for (x = -extents_.x; x <= extents_.x; ++x)
     {
         for (y = -extents_.y; y <= extents_.y; ++y)
@@ -239,12 +239,12 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
     // Finally, loop over Cells and set neighbours, and construct neighbour matrix
     Messenger::print("Constructing neighbour lists for individual Cells...\n");
-    std::vector<Cell *> nearNeighbours, mimNeighbours;
+    std::vector<const Cell *> nearNeighbours, mimNeighbours;
     Vec3<int> gridRef, delta;
     for (auto &cell : cells_)
     {
         // Grab grid reference of central cell
-        gridRef = cell->gridReference();
+        gridRef = cell.gridReference();
 
         // Clear neighbour lists
         nearNeighbours.clear();
@@ -257,17 +257,38 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             nbr = this->cell(gridRef.x + nbrIndices.x, gridRef.y + nbrIndices.y, gridRef.z + nbrIndices.z);
             if (box_->type() == Box::BoxType::NonPeriodic)
                 nearNeighbours.emplace_back(nbr);
-            else if (minimumImageRequired(cell.get(), nbr, pairPotentialRange))
+            else if (minimumImageRequired(&cell, nbr, pairPotentialRange))
                 mimNeighbours.emplace_back(nbr);
             else
                 nearNeighbours.emplace_back(nbr);
         }
 
         // Set up lists in the cell
-        cell->addCellNeighbours(nearNeighbours, mimNeighbours);
+        cell.addCellNeighbours(nearNeighbours, mimNeighbours);
     }
-
+    createCellNeighbourPairs();
     return true;
+}
+
+void CellArray::createCellNeighbourPairs()
+{
+    int n = cells_.size() * ((cells_.size() + 1) / 2);
+    cellNeighboursPairs_.neighbours().reserve(n);
+    for (int i = 0; i < cells_.size(); i++)
+    {
+        auto &cell = cells_[i];
+        cellNeighboursPairs_.insert(&cell, &cell, false);
+        for (int k = 0; k < cell.cellNeighbours().size(); ++k)
+        {
+            auto id = cell.cellNeighbours()[k];
+            cellNeighboursPairs_.insert(&cell, id, false);
+        }
+        for (int k = 0; k < cell.mimCellNeighbours().size(); ++k)
+        {
+            auto id = cell.mimCellNeighbours()[k];
+            cellNeighboursPairs_.insert(&cell, id, true);
+        }
+    }
 }
 
 // Scale Cells by supplied factor
@@ -290,7 +311,7 @@ Vec3<double> CellArray::realCellSize() const { return realCellSize_; }
 Vec3<int> CellArray::extents() const { return extents_; }
 
 // Retrieve Cell with (wrapped) grid reference specified
-Cell *CellArray::cell(int x, int y, int z) const
+const Cell *CellArray::cell(int x, int y, int z) const
 {
     x = x % divisions_.x;
     if (x < 0)
@@ -301,19 +322,19 @@ Cell *CellArray::cell(int x, int y, int z) const
     z = z % divisions_.z;
     if (z < 0)
         z += divisions_.z;
-    return cells_[x * divisions_.y * divisions_.z + y * divisions_.z + z].get();
+    return &cells_[x * divisions_.y * divisions_.z + y * divisions_.z + z];
 }
 
 // Retrieve Cell with id specified
-Cell *CellArray::cell(int id) const
+const Cell *CellArray::cell(int id) const
 {
     assert(id >= 0 && id < cells_.size());
 
-    return cells_[id].get();
+    return &cells_[id];
 }
 
 // Return Cell which contains specified coordinate
-Cell *CellArray::cell(const Vec3<double> r) const
+const Cell *CellArray::cell(const Vec3<double> r) const
 {
     auto foldFracR = box_->foldFrac(r);
     Vec3<int> indices;
@@ -324,7 +345,20 @@ Cell *CellArray::cell(const Vec3<double> r) const
     indices.y %= divisions_.y;
     indices.z %= divisions_.z;
 
-    return cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z].get();
+    return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
+}
+Cell *CellArray::cell(const Vec3<double> r)
+{
+    auto foldFracR = box_->foldFrac(r);
+    Vec3<int> indices;
+    indices.x = foldFracR.x / fractionalCellSize_.x;
+    indices.y = foldFracR.y / fractionalCellSize_.y;
+    indices.z = foldFracR.z / fractionalCellSize_.z;
+    indices.x %= divisions_.x;
+    indices.y %= divisions_.y;
+    indices.z %= divisions_.z;
+
+    return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
 }
 
 // Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
@@ -419,3 +453,6 @@ Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
         delta.z += divisions_.z;
     return delta;
 }
+
+// Return the cell neighbour pairs
+const CellNeighbourPairs &CellArray::getCellNeighbourPairs() const { return cellNeighboursPairs_; }

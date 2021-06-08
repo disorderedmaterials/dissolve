@@ -35,9 +35,9 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Initialise working arrays for coordinates and forces
-        rRef_.resize(cfg->nAtoms(), 0.0);
-        rTemp_.resize(cfg->nAtoms(), 0.0);
-        f_.resize(cfg->nAtoms(), 0.0);
+        rRef_.resize(cfg->nAtoms(), Vec3<double>());
+        rTemp_.resize(cfg->nAtoms(), Vec3<double>());
+        f_.resize(cfg->nAtoms(), Vec3<double>());
 
         optimise<Configuration>(dissolve, procPool, cfg);
     }

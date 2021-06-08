@@ -28,5 +28,5 @@ class CellDistributor : public Distributor
      */
     private:
     // Return array of Cells that we must hard lock in order to modify the object with index specified
-    std::vector<Cell *> cellsToBeModifiedForObject(int objectId) override;
+    std::vector<const Cell *> cellsToBeModifiedForObject(int objectId) override;
 };

@@ -17,13 +17,13 @@ MoleculeDistributor::~MoleculeDistributor() = default;
  */
 
 // Return array of Cells that we must hard lock in order to modify the object with index specified
-std::vector<Cell *> MoleculeDistributor::cellsToBeModifiedForObject(int objectId)
+std::vector<const Cell *> MoleculeDistributor::cellsToBeModifiedForObject(int objectId)
 {
     // Grab specified molecule
     std::shared_ptr<const Molecule> molecule = moleculeArray_[objectId];
 
     // Loop over Atoms in the Molecule, and add the (unique) cellID each Atom is in
-    std::vector<Cell *> cells;
+    std::vector<const Cell *> cells;
     for (auto i = 0; i < molecule->nAtoms(); ++i)
     {
         auto *cell = molecule->atom(i)->cell();

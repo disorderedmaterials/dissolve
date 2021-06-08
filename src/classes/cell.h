@@ -18,7 +18,7 @@ class CellNeighbour;
 class Cell
 {
     public:
-    Cell(int index, Vec3<int> gridReference, Vec3<double> centre);
+    Cell(int index = 0, Vec3<int> gridReference = Vec3<int>(), Vec3<double> centre = Vec3<double>());
     ~Cell() = default;
 
     /*
@@ -69,19 +69,19 @@ class Cell
      */
     private:
     // Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
-    std::vector<Cell *> cellNeighbours_, mimCellNeighbours_;
+    std::vector<const Cell *> cellNeighbours_, mimCellNeighbours_;
     // Array of all neighbouring cells
-    std::vector<Cell *> allCellNeighbours_;
+    std::vector<const Cell *> allCellNeighbours_;
 
     public:
     // Add Cell neighbours
-    void addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours);
+    void addCellNeighbours(std::vector<const Cell *> &nearNeighbours, std::vector<const Cell *> &mimNeighbours);
     // Return adjacent Cell neighbour list
-    const std::vector<Cell *> &cellNeighbours() const;
+    const std::vector<const Cell *> &cellNeighbours() const;
     // Return list of Cell neighbours requiring minimum image calculation
-    const std::vector<Cell *> &mimCellNeighbours() const;
+    const std::vector<const Cell *> &mimCellNeighbours() const;
     // Return if the specified Cell requires minimum image calculation
     bool mimRequired(const Cell *otherCell) const;
     // Return list of all Cell neighbours
-    const std::vector<Cell *> &allCellNeighbours() const;
+    const std::vector<const Cell *> &allCellNeighbours() const;
 };

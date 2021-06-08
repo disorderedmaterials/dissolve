@@ -21,7 +21,7 @@ void Configuration::updateCellLocation(Atom *i)
     i->setCoordinates(box_->fold(i->r()));
 
     // Determine new Cell position
-    Cell *cell = cells_.cell(i->r());
+    auto *cell = cells_.cell(i->r());
 
     // Need to move?
     if (cell != i->cell())
