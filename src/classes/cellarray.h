@@ -14,10 +14,6 @@ class Cell;
 // Cell Array
 class CellArray
 {
-    public:
-    CellArray();
-    ~CellArray();
-
     /*
      * Cell Data
      */

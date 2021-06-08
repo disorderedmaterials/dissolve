@@ -5,10 +5,6 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-CellArray::CellArray() {}
-
-CellArray::~CellArray() = default;
-
 /*
  * Cell Data
  */
