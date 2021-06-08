@@ -190,6 +190,7 @@ Layer  'RDF / Neutron / XRay'
     EndReference
     ReferenceFTQMin  0.5
     ReferenceFTQMax  30.0
+    SaveRepresentativeGR  On
   EndModule
   
   # Test total neutron-weighted F(Q)
@@ -243,6 +244,7 @@ Layer  'RDF / Neutron / XRay'
     Reference  xy  '../_data/epsr25/water1000-neutron-xray/PCCPfofq.txt'
     EndReference
     ReferenceFTQMin  0.5
+    SaveRepresentativeGR  On
   EndModule
 
   Module  DataTest  'F(Q) H2Ox'

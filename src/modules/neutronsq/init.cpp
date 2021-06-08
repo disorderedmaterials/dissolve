@@ -44,6 +44,8 @@ void NeutronSQModule::initialise()
     keywords_.add("Export", new BoolKeyword(false), "SaveGR", "Save weighted g(r) and G(r)", "<True|False>");
     keywords_.add("Export", new BoolKeyword(false), "SaveReference", "Save the reference data and its Fourier transform",
                   "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveRepresentativeGR",
+                  "Save representative G(r), obtained from Fourier transform of the calculated F(Q)");
     keywords_.add("Export", new BoolKeyword(false), "SaveSQ", "Save weighted partial and total structure factors",
                   "<True|False>");
 }

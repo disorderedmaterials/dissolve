@@ -128,6 +128,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const auto saveSQ = keywords_.asBool("SaveSQ");
     const auto saveGR = keywords_.asBool("SaveGR");
+    const auto saveRepresentativeGR = keywords_.asBool("SaveRepresentativeGR");
 
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
@@ -143,10 +144,12 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
     else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
-    if (saveGR)
-        Messenger::print("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");
     if (saveSQ)
         Messenger::print("NeutronSQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
+    if (saveGR)
+        Messenger::print("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");
+    if (saveRepresentativeGR)
+        Messenger::print("NeutronSQ: Representative G(r) will be saved.\n");
     Messenger::print("\n");
 
     /*
@@ -203,7 +206,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "WeightedGR", "gr", "r, Angstroms"))))
         return false;
 
-    // Calculate representative total g(r) from FT of calculated S(Q)
+    // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
         dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
@@ -213,7 +216,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
 
     // Save data if requested
-    if (saveGR)
+    if (saveRepresentativeGR)
     {
         if (procPool.isMaster())
         {

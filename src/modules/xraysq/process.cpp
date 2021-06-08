@@ -133,6 +133,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
     const bool saveGR = keywords_.asBool("SaveGR");
     const bool saveSQ = keywords_.asBool("SaveSQ");
+    const auto saveRepresentativeGR = keywords_.asBool("SaveRepresentativeGR");
 
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
@@ -154,6 +155,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("XRaySQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
     if (saveGR)
         Messenger::print("XRaySQ: Weighted partial g(r) and total G(r) will be saved.\n");
+    if (saveRepresentativeGR)
+        Messenger::print("XRaySQ: Representative G(r) will be saved.\n");
     Messenger::print("\n");
 
     /*
@@ -242,7 +245,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
 
-    // Calculate representative total g(r) from FT of calculated S(Q)
+    // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
         dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
@@ -252,8 +255,19 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedGR", "sq", "Q, 1/Angstroms"))))
-        return false;
+    if (saveRepresentativeGR)
+    {
+        if (procPool.isMaster())
+        {
+            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", uniqueName_));
+            if (exportFormat.exportData(repGR))
+                procPool.decideTrue();
+            else
+                procPool.decideFalse();
+        }
+        else if (!procPool.decision())
+            return false;
+    }
 
     return true;
 }

@@ -59,4 +59,5 @@ Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`SaveGR`|`true|false`|`false`|Save weighted g(r) and G(r). Separate files are written for each partial between atom types $i$ and $j$, as well as the total.||
 |`SaveReference`|`true|false`|`false`|Save the reference data and its Fourier transform|
+|`SaveRepresentativeGR`|`true|false`|`false`|Save the representative $G(r)$ obtained from Fourier transform of the calculate $F(Q)$|
 |`SaveSQ`|`true|false`|`false`|Save weighted partial and total structure factors. Separate files are written for each partial between atom types $i$ and $j$, as well as the total.|
