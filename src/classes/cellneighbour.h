@@ -27,7 +27,7 @@ struct CellNeighbour
 class CellNeighbourPairs
 {
     public:
-    // Try to insert a neighbour pair - Returning true if succesfull.
+    // Try to insert a neighbour pair - Returning true if successful.
     // If the pair is already present it will return false and the pair will not be added.
     bool insert(const CellNeighbour &neighbour) { return addNeighbour(neighbour); };
     bool insert(const Cell *master, const Cell *other, bool mimRequired)
@@ -41,7 +41,7 @@ class CellNeighbourPairs
     std::vector<CellNeighbour> neighbours_;
     bool addNeighbour(CellNeighbour neighbour)
     {
-        // At the moment we find if a pair is already present through a linear seearch.
+        // At the moment we find if a pair is already present through a linear search.
         // Searching could be optimised using a set, but would cost more memory.
         auto it = std::find(neighbours_.begin(), neighbours_.end(), neighbour);
         if (it == neighbours_.end())
