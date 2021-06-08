@@ -21,12 +21,9 @@ stamp-h1
 *.hh
 ui_*
 moc_*
-src/dissolve-mpi
-src/dissolve-gui
-src/dissolve
 *.kdev4
 build/
-cmake-build-*/
+build-*/
 *.exe
 
 # Miscellaneous
