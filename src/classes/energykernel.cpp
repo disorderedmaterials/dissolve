@@ -61,13 +61,11 @@ double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(const Cell *centralCell, const Cell *otherCell, bool applyMim, bool interMolecular)
+double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool applyMim, bool interMolecular)
 {
-    assert(centralCell && otherCell);
-
     auto totalEnergy = 0.0;
-    auto &centralAtoms = centralCell->atoms();
-    auto &otherAtoms = otherCell->atoms();
+    auto &centralAtoms = centralCell.atoms();
+    auto &otherAtoms = otherCell.atoms();
 
     // Loop over central cell atoms
     if (applyMim)
@@ -129,12 +127,10 @@ double EnergyKernel::energy(const Cell *centralCell, const Cell *otherCell, bool
 }
 
 // Return PairPotential energy between atoms in supplied cell
-double EnergyKernel::energy(const Cell *cell, bool interMolecular)
+double EnergyKernel::energy(const Cell &cell, bool interMolecular)
 {
-    assert(cell);
-
     auto totalEnergy = 0.0;
-    auto &atoms = cell->atoms();
+    auto &atoms = cell.atoms();
 
     for (int i = 0; i < atoms.size(); ++i)
     {
@@ -506,22 +502,21 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
 
     // List of cell neighbour pairs
-    auto &cellNeighboursPairs = cellArray.getCellNeighbourPairs();
+    auto &cellNeighbourPairs = cellArray.getCellNeighbourPairs();
 
     // Set start/stride for parallel loop
     auto offset = processPool_.interleavedLoopStart(strategy);
     auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     auto totalEnergy = 0.0;
-    auto [begin, end] =
-        chop_range(cellNeighboursPairs.neighbours().begin(), cellNeighboursPairs.neighbours().end(), nChunks, offset);
+    auto [begin, end] = chop_range(cellNeighbourPairs.begin(), cellNeighbourPairs.end(), nChunks, offset);
 
     totalEnergy +=
         dissolve::transform_reduce(ParallelPolicies::par, begin, end, 0.0, std::plus<double>(), [&](const auto &pair) {
-            auto *cellI = pair.master_;
-            auto *cellJ = pair.neighbour_;
+            auto &cellI = pair.master_;
+            auto &cellJ = pair.neighbour_;
             auto mimRequired = pair.requiresMIM_;
-            if (cellI == cellJ)
+            if (&cellI == &cellJ)
                 return energy(cellI, interMolecular);
             else
                 return energy(cellI, cellJ, mimRequired, interMolecular);

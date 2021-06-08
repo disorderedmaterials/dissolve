@@ -166,32 +166,33 @@ Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
 }
 
 /*
- * Cell Neighbour pairs
+ * Cell Neighbour
  */
 
+// Construct cell neighbour pairs
 void CellArray::createCellNeighbourPairs()
 {
-    int n = cells_.size() * ((cells_.size() + 1) / 2);
-    cellNeighboursPairs_.neighbours().reserve(n);
-    for (int i = 0; i < cells_.size(); i++)
+    auto nPairs = cells_.size() * ((cells_.size() + 1) / 2);
+    neighbourPairs_.reserve(nPairs);
+    for (auto &cell : cells_)
     {
-        auto &cell = cells_[i];
-        cellNeighboursPairs_.insert(&cell, &cell, false);
-        for (int k = 0; k < cell.cellNeighbours().size(); ++k)
-        {
-            auto id = cell.cellNeighbours()[k];
-            cellNeighboursPairs_.insert(&cell, id, false);
-        }
-        for (int k = 0; k < cell.mimCellNeighbours().size(); ++k)
-        {
-            auto id = cell.mimCellNeighbours()[k];
-            cellNeighboursPairs_.insert(&cell, id, true);
-        }
+        // Cell with itself
+        neighbourPairs_.emplace_back(cell, cell, false);
+
+        // Central cell neighbours not requiring minimum image
+        for (auto *otherCell : cell.cellNeighbours())
+            if (cell.index() < otherCell->index())
+                neighbourPairs_.emplace_back(cell, *otherCell, false);
+
+        // Central cell neighbours not requiring minimum image
+        for (auto *otherCell : cell.mimCellNeighbours())
+            if (cell.index() < otherCell->index())
+                neighbourPairs_.emplace_back(cell, *otherCell, true);
     }
 }
 
-// Return the cell neighbour pairs
-const CellNeighbourPairs &CellArray::getCellNeighbourPairs() const { return cellNeighboursPairs_; }
+// Return vector of all unique cell neighbour pairs
+const std::vector<CellNeighbour> &CellArray::getCellNeighbourPairs() const { return neighbourPairs_; }
 
 /*
  * Generation

@@ -59,16 +59,19 @@ class CellArray
     Vec3<int> mimGridDelta(Vec3<int> delta) const;
 
     /*
-     * Cell Neighbour pairs
+     * Cell Neighbours
      */
     private:
-    CellNeighbourPairs cellNeighboursPairs_;
+    // Neighbour pair array (one-dimensional)
+    std::vector<CellNeighbour> neighbourPairs_;
 
     private:
+    // Construct cell neighbour pairs
     void createCellNeighbourPairs();
 
     public:
-    const CellNeighbourPairs &getCellNeighbourPairs() const;
+    // Return vector of all unique cell neighbour pairs
+    const std::vector<CellNeighbour> &getCellNeighbourPairs() const;
 
     /*
      * Generation
