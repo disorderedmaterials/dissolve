@@ -188,7 +188,8 @@ Layer  'RDF / Neutron / XRay'
     Isotopologue  'Water'  'Natural'  1.000000
     Reference  mint  '../_data/epsr25/water1000-neutron-xray/H2O.mint01'
     EndReference
-    #SaveSQ  On
+    ReferenceFTQMin  0.5
+    ReferenceFTQMax  30.0
   EndModule
   
   # Test total neutron-weighted F(Q)
@@ -205,7 +206,8 @@ Layer  'RDF / Neutron / XRay'
     Isotopologue  'Water'  'Deuterated'  1.000000
     Reference  mint  '../_data/epsr25/water1000-neutron-xray/D2O.mint01'
     EndReference
-    #SaveSQ  On
+    ReferenceFTQMin  0.5
+    ReferenceFTQMax  30.0
   EndModule
 
   Module  DataTest  'F(Q) D2O'
@@ -223,7 +225,8 @@ Layer  'RDF / Neutron / XRay'
     Isotopologue  'Water'  'Deuterated'  1.000000
     Reference  mint  '../_data/epsr25/water1000-neutron-xray/HDO.mint01'
     EndReference
-    #SaveSQ  On
+    ReferenceFTQMin  0.5
+    ReferenceFTQMax  30.0
   EndModule
 
   Module  DataTest  'F(Q) HDO'
@@ -239,11 +242,27 @@ Layer  'RDF / Neutron / XRay'
     Normalisation  AverageOfSquares
     Reference  xy  '../_data/epsr25/water1000-neutron-xray/PCCPfofq.txt'
     EndReference
-    #SaveSQ  On
+    ReferenceFTQMin  0.5
   EndModule
 
   Module  DataTest  'F(Q) H2Ox'
     Data1D  'H2Ox//WeightedSQ//Total'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.u01'
+      Y  8
+    EndData1D
+  EndModule
+
+  Module DataTest  'ReferenceFT'
+    Threshold  5e-05
+    Data1D  'H2O//ReferenceDataFT'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.w01'
+      Y  4
+    EndData1D
+    Data1D  'D2O//ReferenceDataFT'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.w01'
+      Y  2
+    EndData1D
+    Data1D  'HDO//ReferenceDataFT'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.w01'
+      Y  6
+    EndData1D
+    Data1D  'H2Ox//ReferenceDataFT'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.w01'
       Y  8
     EndData1D
   EndModule

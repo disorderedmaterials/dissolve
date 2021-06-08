@@ -27,6 +27,12 @@ void XRaySQModule::initialise()
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
                   "ReferenceNormalisation", "Normalisation to remove from reference data");
+    keywords_.add("Reference Data", new DoubleKeyword(0.0), "ReferenceFTQMin",
+                  "Set the minimum Q value to use when Fourier-transforming the data");
+    keywords_.add("Reference Data", new DoubleKeyword(0.0), "ReferenceFTQMax",
+                  "Set the maximum Q value to use when Fourier-transforming the data");
+    keywords_.add("Reference Data", new DoubleKeyword(0.05), "ReferenceFTDeltaR",
+                  "Set the spacing in r to use when generating the Fourier-transformed data");
     keywords_.add("Reference Data",
                   new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms() = WindowFunction::Form::Lorch0),
                   "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
