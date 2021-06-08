@@ -10,15 +10,15 @@ Timer::Timer() { start(); }
  * Timing Routines
  */
 
-// Return time string based on provided tick count
-std::string Timer::timeString(clock_t ticks)
+// Return time string based on provided duration in seconds
+std::string Timer::timeString(std::chrono::duration<double> duration)
 {
-    auto n = ticks / CLOCKS_PER_SEC;
+    int n = duration.count();
     auto hours = n / 3600;
     n %= 3600;
     auto minutes = n / 60;
     n %= 60;
-    double seconds = ticks / double(CLOCKS_PER_SEC) - hours * 3600 - minutes * 60;
+    double seconds = duration.count() - hours * 3600 - minutes * 60;
     if (hours != 0)
         return fmt::format("{} hours, {} minutes, and {:0.2f} seconds", hours, minutes, seconds);
     else if (minutes != 0)
@@ -31,39 +31,39 @@ std::string Timer::timeString(clock_t ticks)
 void Timer::start()
 {
     running_ = true;
-    startTime_ = clock();
+    startTime_ = std::chrono::high_resolution_clock::now();
     splitTime_ = startTime_;
 }
 
 // Set total time
 void Timer::stop()
 {
-    totalTime_ = clock() - startTime_;
+    totalTime_ = std::chrono::high_resolution_clock::now() - startTime_;
     running_ = false;
 }
 
 // Return split time
 double Timer::split()
 {
-    clock_t newSplit = clock();
-    double splitTime = (newSplit - splitTime_) / double(CLOCKS_PER_SEC);
+    auto newSplit = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> splitTime = newSplit - splitTime_;
 
     splitTime_ = newSplit;
 
-    return splitTime;
+    return splitTime.count();
 }
 
 // Accumulate time since last start
-void Timer::accumulate() { totalTime_ += clock() - startTime_; }
+void Timer::accumulate() { totalTime_ += std::chrono::high_resolution_clock::now() - startTime_; }
 
 // Zero total time
-void Timer::zero() { totalTime_ = 0; }
+void Timer::zero() { totalTime_ = std::chrono::duration<double>(); }
 
 // Return current elapsed time as a time string
 std::string Timer::elapsedTimeString()
 {
     if (running_)
-        return timeString(clock() - startTime_);
+        return timeString(std::chrono::high_resolution_clock::now() - startTime_);
     else
         return timeString(totalTime_);
 }
@@ -75,9 +75,9 @@ std::string Timer::totalTimeString() { return timeString(totalTime_); }
 double Timer::secondsElapsed() const
 {
     if (running_)
-        return (clock() - startTime_) / double(CLOCKS_PER_SEC);
+        return (std::chrono::high_resolution_clock::now() - startTime_).count();
     else
-        return totalTime_ / double(CLOCKS_PER_SEC);
+        return totalTime_.count();
 }
 
 // Return time string for number of seconds provided

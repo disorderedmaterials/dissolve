@@ -84,6 +84,8 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
 
     updateKeywordData();
 
+    updateSummaryText();
+
     emit(keywordValueChanged(keyword_->optionMask()));
 }
 
@@ -102,12 +104,6 @@ void Function1DKeywordWidget::updateWidgetValues(const CoreData &coreData)
     // Grab the target Function1D
     auto &function = keyword_->data();
 
-    // Summary text on KeywordDropDown button
-    setSummaryText(QString::fromStdString(
-        function.nParameters() == 0
-            ? Functions::function1D().keyword(function.type())
-            : fmt::format("{} ({})", Functions::function1D().keyword(function.type()), function.parameterSummary())));
-
     // Widgets
     ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.type())));
 
@@ -119,6 +115,9 @@ void Function1DKeywordWidget::updateWidgetValues(const CoreData &coreData)
         spins_[n]->setVisible(nParams > n);
         labels_[n]->setVisible(nParams > n);
     }
+
+    // Update summary text
+    updateSummaryText();
 
     refreshing_ = false;
 }
@@ -138,4 +137,17 @@ void Function1DKeywordWidget::updateKeywordData()
     // Set new data
     function.setFunctionAndParameters(func, newParams);
     keyword_->setAsModified();
+}
+
+// Update summary text
+void Function1DKeywordWidget::updateSummaryText()
+{
+    // Grab the target Function1D
+    auto &function = keyword_->data();
+
+    // Summary text on KeywordDropDown button
+    setSummaryText(QString::fromStdString(
+        function.nParameters() == 0
+            ? Functions::function1D().keyword(function.type())
+            : fmt::format("{} ({})", Functions::function1D().keyword(function.type()), function.parameterSummary())));
 }

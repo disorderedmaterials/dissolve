@@ -1007,7 +1007,7 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>26</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -1153,8 +1153,8 @@
       <rect>
        <x>749</x>
        <y>600</y>
-       <width>218</width>
-       <height>195</height>
+       <width>221</width>
+       <height>191</height>
       </rect>
      </property>
      <property name="font">
@@ -1625,7 +1625,7 @@
   </action>
   <action name="LayerCreateCalculateRDFNeutronXRayAction">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>RDF, Neutron S(Q), and &amp;X-ray S(Q)</string>
