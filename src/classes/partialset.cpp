@@ -534,6 +534,19 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
             auto boundError = parser.argb(2);
             auto unboundError = parser.argb(3);
 
+            part.xAxis().reserve(nPoints);
+            part.values().reserve(nPoints);
+            if (part.valuesHaveErrors())
+                part.errors().reserve(nPoints);
+            bound.xAxis().reserve(nPoints);
+            bound.values().reserve(nPoints);
+            if (bound.valuesHaveErrors())
+                bound.errors().reserve(nPoints);
+            unbound.xAxis().reserve(nPoints);
+            unbound.values().reserve(nPoints);
+            if (unbound.valuesHaveErrors())
+                unbound.errors().reserve(nPoints);
+
             for (auto n = 0; n < nPoints; ++n)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
