@@ -39,6 +39,9 @@ EnumOptions<PairPotential::ShortRangeTruncationScheme> PairPotential::shortRange
  * Seed Interaction Type
  */
 
+// Set short-ranged type
+void PairPotential::setShortRangeType(Forcefield::ShortRangeType srType) { shortRangeType_ = srType; }
+
 // Return short-ranged type
 Forcefield::ShortRangeType PairPotential::shortRangeType() const { return shortRangeType_; }
 
@@ -209,6 +212,9 @@ std::shared_ptr<AtomType> PairPotential::atomTypeJ() const { return atomTypeJ_; 
 
 // Set parameter with index specified
 void PairPotential::setParameter(int index, double value) { parameters_[index] = value; }
+
+// Set parameters vector
+void PairPotential::setParameters(std::vector<double> parameters) { parameters_ = std::move(parameters); }
 
 // Return parameters vector
 const std::vector<double> &PairPotential::parameters() const { return parameters_; }
