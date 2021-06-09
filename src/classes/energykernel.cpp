@@ -416,8 +416,6 @@ double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strateg
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    std::vector<const Cell *> allCells;
-
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
     for (auto &i : mol.atoms())
@@ -425,24 +423,21 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
 
     auto totalEnergy =
         std::accumulate(locationMap.begin(), locationMap.end(), 0.0, [&](const auto totalAcc, const auto &location) {
-            const auto *centralCell = location.first;
             const auto &centralCellAtoms = location.second;
 
-            // Create list of all cell neighbours (mim or otherwise) *and* the current cell
-            allCells.resize(centralCell->allCellNeighbours().size() + 1, nullptr);
-            std::copy(centralCell->allCellNeighbours().begin(), centralCell->allCellNeighbours().end(), allCells.begin());
-            allCells[centralCell->allCellNeighbours().size()] = centralCell;
+            // Get cell neighbours for the cell
+            auto &neighbours = cells_.neighbours(*location.first);
 
-            // All cell neighbours (all treated with minimum image)
             auto localEnergy = dissolve::transform_reduce(
-                ParallelPolicies::par, allCells.begin(), allCells.end(), 0.0, std::plus<double>(),
-                [&centralCellAtoms, centralCell, this](const auto *cell) {
-                    auto mimRequired = cell->mimRequired(centralCell);
+                ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
+                [&centralCellAtoms, this](const auto &neighbour) {
                     return std::accumulate(
                         centralCellAtoms.begin(), centralCellAtoms.end(), 0.0,
-                        [cell, centralCell, mimRequired, this](const auto acc, const auto &i) {
+                        [&neighbour, this](const auto acc, const auto &i) {
                             auto &ii = *i;
-                            return acc + std::accumulate(cell->atoms().begin(), cell->atoms().end(), 0.0,
+                            auto mimRequired = neighbour.requiresMIM_;
+                            auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+                            return acc + std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                                          [&ii, mimRequired, this](const auto innerAcc, const auto *j) {
                                                              auto &jj = *j;
 
