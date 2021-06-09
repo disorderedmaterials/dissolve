@@ -28,6 +28,16 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
         energyKernel.energy(*i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
 }
 
+template <ProblemType problem, Population population> static void BM_CalculateEnergy_AtomicWorldEnergy(benchmark::State &state)
+{
+    Problem<problem, population> problemDef;
+    auto energyKernel = createEnergyKernel(problemDef);
+    const auto &cellArray = problemDef.cfg_->cells();
+    auto &i = *problemDef.cfg_->atom(0);
+    for (auto _ : state)
+        energyKernel.energy(i, ProcessPool::PoolStrategy, false);
+}
+
 template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_SpeciesInterAtomicEnergy(benchmark::State &state)
 {
@@ -120,9 +130,14 @@ static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state
     for (auto _ : state)
         EnergyModule::interMolecularEnergy(procPool, problemDef.cfg_, potentialMap);
 }
+
 // Small molecule
+
 // Benchmarking pairwise energy calculation of an individual atom with another cell
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::smallMolecule, Population::small);
+// Benchmark energy calculation of single atom with world
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, ProblemType::smallMolecule, Population::small);
+// Benchmark energy of single species
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_SpeciesInterAtomicEnergy, ProblemType::smallMolecule, Population::small);
 // Benchmarking individual molecule calculations
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, ProblemType::smallMolecule, Population::small);
@@ -137,9 +152,13 @@ BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, ProblemType::sm
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::smallMolecule, Population::small)
     ->Unit(benchmark::kMillisecond);
 
-// medium molecule
+// Medium molecule
+
 // Benchmarking pairwise energy calculation of an individual atom with another cell
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::mediumMolecule, Population::small);
+// Benchmark energy calculation of single atom with world
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, ProblemType::mediumMolecule, Population::small);
+// Benchmark energy of single species
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_SpeciesInterAtomicEnergy, ProblemType::mediumMolecule, Population::small);
 // Benchmarking individual molecule calculations
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, ProblemType::mediumMolecule, Population::small);
