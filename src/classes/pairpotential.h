@@ -13,7 +13,7 @@
 class AtomType;
 
 // PairPotential Definition
-class PairPotential : public ListItem<PairPotential>
+class PairPotential
 {
     public:
     PairPotential();

@@ -26,7 +26,7 @@ void PotentialMap::clear() { potentialMatrix_.clear(); }
 
 // Initialise maps
 bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
-                              const List<PairPotential> &pairPotentials, double pairPotentialRange)
+                              const std::vector<std::unique_ptr<PairPotential>> &pairPotentials, double pairPotentialRange)
 {
     // Clear old data first
     clear();
@@ -37,7 +37,7 @@ bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &mast
 
     // Loop over defined PairPotentials
     int indexI, indexJ;
-    for (auto *pot = pairPotentials.first(); pot != nullptr; pot = pot->next())
+    for (auto &pot : pairPotentials)
     {
         indexI = pot->atomTypeI()->index();
         indexJ = pot->atomTypeJ()->index();
@@ -51,14 +51,14 @@ bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &mast
         {
             Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n",
                              pot->atomTypeI()->name(), indexI, indexJ);
-            potentialMatrix_[{indexI, indexI}] = pot;
+            potentialMatrix_[{indexI, indexI}] = pot.get();
         }
         else
         {
             Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n",
                              pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
-            potentialMatrix_[{indexI, indexJ}] = pot;
-            potentialMatrix_[{indexJ, indexI}] = pot;
+            potentialMatrix_[{indexI, indexJ}] = pot.get();
+            potentialMatrix_[{indexJ, indexI}] = pot.get();
         }
     }
 

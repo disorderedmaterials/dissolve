@@ -3,33 +3,29 @@
 
 #pragma once
 
-#include "classes/species.h"
-#include "templates/optionalref.h"
+#include "classes/pairpotential.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
 
 #include <vector>
 
-class AtomTypeModel : public QAbstractListModel
+class PairPotentialModel : public QAbstractListModel
 {
     Q_OBJECT
 
     private:
     // Source AtomType data
-    OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes_;
-    // Icon return function
-    std::function<QIcon(const AtomType *atomType)> iconFunction_;
-
-    private:
-    // Return object represented by specified model index
-    AtomType *rawData(const QModelIndex &index) const;
+    const std::vector<std::unique_ptr<PairPotential>> &pairs_;
 
     public:
     // Set source AtomType data
-    void setData(const std::vector<std::shared_ptr<AtomType>> &species);
-    // Set function to return QIcon for item
-    void setIconFunction(std::function<QIcon(const AtomType *atomType)> func);
+    PairPotentialModel(const std::vector<std::unique_ptr<PairPotential>> &pairs);
+    ~PairPotentialModel() = default;
+    const PairPotential *rawData(const QModelIndex index) const;
+    PairPotential *rawData(const QModelIndex index);
+    // Update the table contents
+    void reset();
 
     /*
      * QAbstractItemModel overrides

@@ -21,7 +21,7 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, ProcessPool &procPo
         // Store the current (root) pair potential filename
         std::string rootPPName{pairPotentialFormat_.filename()};
 
-        for (auto *pp = dissolve.pairPotentials().first(); pp != nullptr; pp = pp->next())
+        for (auto &pp : dissolve.pairPotentials())
         {
             Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n", pairPotentialFormat_.description(),
                              pp->atomTypeNameI(), pp->atomTypeNameJ());
@@ -30,7 +30,7 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, ProcessPool &procPo
             pairPotentialFormat_.setFilename(fmt::format("{}-{}-{}.pp", rootPPName, pp->atomTypeNameI(), pp->atomTypeNameJ()));
 
             // Append pair potential
-            if (!pairPotentialFormat_.exportData(pp))
+            if (!pairPotentialFormat_.exportData(pp.get()))
             {
                 Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
                 pairPotentialFormat_.setFilename(rootPPName);

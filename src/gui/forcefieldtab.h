@@ -7,7 +7,9 @@
 #include "classes/masterintra.h"
 #include "classes/pairpotential.h"
 #include "gui/maintab.h"
+#include "gui/models/atomTypeModel.h"
 #include "gui/models/masterTermModel.h"
+#include "gui/models/pairPotentialModel.h"
 #include "gui/ui_forcefieldtab.h"
 
 Q_DECLARE_METATYPE(const MasterIntra *)
@@ -30,6 +32,9 @@ class ForcefieldTab : public QWidget, public MainTab
     private:
     // Main form declaration
     Ui::ForcefieldTab ui_;
+    // Models
+    AtomTypeModel atoms_;
+    PairPotentialModel pairs_;
 
     /*
      * MainTab Reimplementations
@@ -52,8 +57,6 @@ class ForcefieldTab : public QWidget, public MainTab
     void updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems);
     // Row update function for ImpropersTable
     void updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems);
-    // Row update function for AtomTypesTable
-    void updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems);
     // Row update function for PairPotentialsTable
     void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
 
@@ -82,7 +85,6 @@ class ForcefieldTab : public QWidget, public MainTab
     // Atom Types
     void on_AtomTypeAddButton_clicked(bool checked);
     void on_AtomTypeRemoveButton_clicked(bool checked);
-    void on_AtomTypesTable_itemChanged(QTableWidgetItem *w);
     // Pair Potentials
     void on_PairPotentialRangeSpin_valueChanged(double value);
     void on_PairPotentialDeltaSpin_valueChanged(double value);
@@ -93,8 +95,6 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
     void on_UpdatePairPotentialsButton_clicked(bool checked);
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
-    void on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *previousItem);
-    void on_PairPotentialsTable_itemChanged(QTableWidgetItem *w);
     // Master Terms
     void on_MasterTermAddBondButton_clicked(bool checked);
     void on_MasterTermRemoveBondButton_clicked(bool checked);

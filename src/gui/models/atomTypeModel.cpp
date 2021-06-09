@@ -35,6 +35,12 @@ int AtomTypeModel::rowCount(const QModelIndex &parent) const
     return atomTypes_ ? atomTypes_->get().size() : 0;
 }
 
+int AtomTypeModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return 5;
+}
+
 QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole || role == Qt::EditRole)

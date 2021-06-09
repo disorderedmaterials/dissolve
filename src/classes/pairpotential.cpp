@@ -16,7 +16,7 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
     PairPotential::ShiftedShortRangeTruncation;
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
-PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_) {}
+PairPotential::PairPotential() : uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_) {}
 
 // Return enum option info for CoulombTruncationScheme
 EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTruncationSchemes()
