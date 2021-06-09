@@ -13,7 +13,7 @@ const SiteStack *Configuration::siteStack(SpeciesSite *site)
                            [site](const auto &stack) { return stack->speciesSite() == site; });
     if (it == siteStacks_.end())
     {
-        siteStacks_.emplace_back();
+        siteStacks_.emplace_back(std::make_unique<SiteStack>());
         it = siteStacks_.end() - 1;
     }
 
