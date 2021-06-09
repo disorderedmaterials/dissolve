@@ -198,7 +198,7 @@ class Configuration : public ListItem<Configuration>
      */
     private:
     // List of current SiteStacks
-    List<SiteStack> siteStacks_;
+    std::vector<std::unique_ptr<SiteStack>> siteStacks_;
 
     public:
     // Calculate / retrieve stack of sites for specified SpeciesSite

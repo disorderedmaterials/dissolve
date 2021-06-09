@@ -14,7 +14,7 @@ class SpeciesSite;
 class Molecule;
 
 // Site Stack Definition
-class SiteStack : public ListItem<SiteStack>
+class SiteStack
 {
     public:
     SiteStack();

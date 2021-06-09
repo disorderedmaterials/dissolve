@@ -3,26 +3,27 @@
 
 #include "classes/configuration.h"
 #include "classes/species.h"
+#include <algorithm>
 
 // Calculate / retrieve stack of sites for specified Species / SpeciesSite
 const SiteStack *Configuration::siteStack(SpeciesSite *site)
 {
     // Create or find existing stack in our list
-    SiteStack *stack = nullptr;
-    ListIterator<SiteStack> stackIterator(siteStacks_);
-    while ((stack = stackIterator.iterate()))
-        if (stack->speciesSite() == site)
-            break;
-    if (!stack)
-        stack = siteStacks_.add();
+    auto it = std::find_if(siteStacks_.begin(), siteStacks_.end(),
+                           [site](const auto &stack) { return stack->speciesSite() == site; });
+    if (it == siteStacks_.end())
+    {
+        siteStacks_.emplace_back();
+        it = siteStacks_.end() - 1;
+    }
 
     // Recreate the stack list
-    if (!stack->create(this, site))
+    if (!it->get()->create(this, site))
     {
         Messenger::error("Failed to create stack for site '{}' in Configuration '{}'.\n", site->name(), name());
-        siteStacks_.remove(stack);
+        siteStacks_.erase(it);
         return nullptr;
     }
 
-    return stack;
+    return it->get();
 }

@@ -218,7 +218,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
     double r;
     for (SpeciesSite *site : speciesSites_)
     {
-        const SiteStack *siteStack = cfg->siteStack(site);
+        const auto *siteStack = cfg->siteStack(site);
         if (siteStack == nullptr)
             return false;
 
