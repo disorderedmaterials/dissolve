@@ -602,7 +602,7 @@ bool PartialSet::serialise(LineParser &parser) const
         const auto &unbound = unboundPartials_[{typeI, typeJ}];
 
         // Write tag
-        if (!parser.writeLineF("{} {} {}\n", part.tag(), bound.tag(), unbound.tag()))
+        if (!parser.writeLineF("'{}' '{}' '{}'\n", part.tag(), bound.tag(), unbound.tag()))
             return false;
 
         // Write axis size and errors flag
