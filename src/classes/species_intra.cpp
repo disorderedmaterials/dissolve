@@ -434,7 +434,7 @@ void Species::generateAttachedAtomLists()
 
         // If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
-        if (selectedAtoms_.contains(bond.j()))
+        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), bond.j()) != selectedAtoms_.end())
         {
             Messenger::printVerbose("Bond between Atoms {}-{} is present in a cycle, so a minimal set of attached "
                                     "atoms will be used.\n",
@@ -465,11 +465,11 @@ void Species::generateAttachedAtomLists()
         selectFromAtom(angle.i(), *ji, *jk);
 
         // Remove Atom 'j' from the list if it's there
-        selectedAtoms_.remove(angle.j());
+        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), angle.j()));
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
-        if (selectedAtoms_.contains(angle.k()))
+        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), angle.k()) != selectedAtoms_.end())
         {
             Messenger::printVerbose("Angle between Atoms {}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
@@ -487,7 +487,7 @@ void Species::generateAttachedAtomLists()
         selectFromAtom(angle.k(), *ji, jk);
 
         // Remove Atom 'j' from the list if it's there
-        selectedAtoms_.remove(angle.j());
+        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), angle.j()));
 
         angle.setAttachedAtoms(1, selectedAtoms_);
     }
@@ -503,11 +503,11 @@ void Species::generateAttachedAtomLists()
         selectFromAtom(torsion.j(), *jk);
 
         // Remove Atom 'j' from the list
-        selectedAtoms_.remove(torsion.j());
+        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), torsion.j()));
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i'
-        if (selectedAtoms_.contains(torsion.k()))
+        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), torsion.k()) != selectedAtoms_.end())
         {
             Messenger::printVerbose("Torsion between Atoms {}-{}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
@@ -526,7 +526,7 @@ void Species::generateAttachedAtomLists()
         selectFromAtom(torsion.k(), *jk);
 
         // Remove Atom 'k' from the list
-        selectedAtoms_.remove(torsion.k());
+        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), torsion.k()));
 
         torsion.setAttachedAtoms(1, selectedAtoms_);
     }

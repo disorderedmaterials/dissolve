@@ -48,5 +48,5 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
      */
     public:
     // Update value displayed in widget
-    void updateValue();
+    void updateValue() override;
 };

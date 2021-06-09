@@ -123,13 +123,11 @@ const std::vector<double> &SpeciesIntra::parameters() const
  */
 
 // Set attached SpeciesAtoms for the terminus specified
-void SpeciesIntra::setAttachedAtoms(int terminus, const RefList<SpeciesAtom> &atoms)
+void SpeciesIntra::setAttachedAtoms(int terminus, const std::vector<const SpeciesAtom *> &atoms)
 {
     attached_[terminus].clear();
 
-    // Add the SpeciesAtoms in the list
-    for (RefListItem<SpeciesAtom> *refAtom = atoms.first(); refAtom != nullptr; refAtom = refAtom->next())
-        attached_[terminus].push_back(refAtom->item()->index());
+    std::transform(atoms.begin(), atoms.end(), std::back_inserter(attached_[terminus]), [](auto *i) { return i->index(); });
 }
 
 // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)

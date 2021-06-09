@@ -60,7 +60,7 @@ class KeywordBase : public ListItem<KeywordBase>
         RangeData,
         SpeciesData,
         SpeciesSiteData,
-        SpeciesSiteRefListData,
+        SpeciesSiteVectorData,
         SpeciesVectorData,
         StringData,
         Vec3DoubleData,

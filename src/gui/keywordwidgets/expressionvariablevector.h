@@ -52,5 +52,5 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
      */
     public:
     // Update value displayed in widget
-    void updateValue();
+    void updateValue() override;
 };

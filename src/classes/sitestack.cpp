@@ -48,7 +48,7 @@ Vec3<double> SiteStack::centreOfMass(const Molecule &mol, const Box *box, const 
  */
 
 // Create stack for specified Configuration and site
-bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
+bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 {
     // Are we already up-to-date?
     if (configurationIndex_ == cfg->contentsVersion())
@@ -56,22 +56,22 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
     // Set the defining information for the stack
     configuration_ = cfg;
-    speciesSite_ = speciesSite;
+    speciesSite_ = site;
     sitesInMolecules_ = true;
-    sitesHaveOrientation_ = speciesSite->hasAxes();
+    sitesHaveOrientation_ = speciesSite_->hasAxes();
 
     // Get origin atom indices from site, and grab the Configuration's Box
-    auto originAtomIndices = speciesSite->originAtomIndices();
+    auto originAtomIndices = speciesSite_->originAtomIndices();
     if (originAtomIndices.empty())
-        return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite->name());
+        return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite_->name());
     const auto *box = configuration_->box();
 
     // If the site has axes, grab the atom indices involved
     std::vector<int> xAxisAtomIndices, yAxisAtomIndices;
     if (sitesHaveOrientation_)
     {
-        xAxisAtomIndices = speciesSite->xAxisAtomIndices();
-        yAxisAtomIndices = speciesSite->yAxisAtomIndices();
+        xAxisAtomIndices = speciesSite_->xAxisAtomIndices();
+        yAxisAtomIndices = speciesSite_->yAxisAtomIndices();
     }
 
     // Set new index and clear old arrays
@@ -81,7 +81,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
     // Get Molecule array from Configuration and search for the target Species
     std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
-    auto *targetSpecies = speciesSite->parent();
+    auto *targetSpecies = speciesSite_->parent();
     Vec3<double> origin, x, y, z;
     Matrix3 axes;
     for (const auto &molecule : molecules)
@@ -90,7 +90,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
             continue;
 
         // Calculate origin
-        if (speciesSite->originMassWeighted())
+        if (speciesSite_->originMassWeighted())
             origin = centreOfMass(*molecule, box, originAtomIndices);
         else
             origin = centreOfGeometry(*molecule, box, originAtomIndices);
@@ -124,7 +124,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 Configuration *SiteStack::configuration() const { return configuration_; }
 
 // Return target SpeciesSite
-SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
+const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
 
 /*
  * Stack

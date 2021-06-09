@@ -5,7 +5,7 @@
 #include "classes/species.h"
 
 // Calculate / retrieve stack of sites for specified Species / SpeciesSite
-const SiteStack *Configuration::siteStack(SpeciesSite *site)
+const SiteStack *Configuration::siteStack(const SpeciesSite *site)
 {
     // Create or find existing stack in our list
     SiteStack *stack = nullptr;

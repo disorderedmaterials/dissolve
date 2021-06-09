@@ -10,23 +10,27 @@
 
 #include <vector>
 
-class SpeciesModel : public QAbstractListModel
+class SpeciesSiteModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    public:
+    SpeciesSiteModel(OptionalReferenceWrapper<std::vector<std::unique_ptr<SpeciesSite>>> sites = std::nullopt,
+                     OptionalReferenceWrapper<std::vector<const SpeciesSite *>> checkedItems = std::nullopt);
+
     private:
-    // Source Species data
-    OptionalReferenceWrapper<const std::vector<std::unique_ptr<Species>>> species_;
+    // Source SpeciesSite data
+    OptionalReferenceWrapper<std::vector<std::unique_ptr<SpeciesSite>>> sites_;
     // Vector containing checked items (if relevant)
-    OptionalReferenceWrapper<std::vector<const Species *>> checkedItems_;
+    OptionalReferenceWrapper<std::vector<const SpeciesSite *>> checkedItems_;
     // Return object represented by specified model index
-    const Species *rawData(const QModelIndex &index) const;
+    SpeciesSite *rawData(const QModelIndex &index) const;
 
     public:
-    // Set source Species data
-    void setData(const std::vector<std::unique_ptr<Species>> &species);
+    // Set source SpeciesSite data
+    void setData(std::vector<std::unique_ptr<SpeciesSite>> &sites);
     // Set vector containing checked items
-    void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
+    void setCheckStateData(std::vector<const SpeciesSite *> &checkedItemsVector);
 
     /*
      * QAbstractItemModel overrides

@@ -41,5 +41,5 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
      */
     public:
     // Update value displayed in widget
-    void updateValue();
+    void updateValue() override;
 };

@@ -14,14 +14,13 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 
-SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) : ProcedureNode(ProcedureNode::NodeType::Select)
+SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
+    : ProcedureNode(ProcedureNode::NodeType::Select), axesRequired_(axesRequired)
 {
-    if (site)
-        speciesSites_.append(site);
     axesRequired_ = axesRequired;
     inclusiveDistanceRange_.set(0.0, 5.0);
 
-    keywords_.add("Control", new SpeciesSiteRefListKeyword(speciesSites_, axesRequired_), "Site",
+    keywords_.add("Control", new SpeciesSiteVectorKeyword(std::move(sites), axesRequired_), "Site",
                   "Add target site(s) to the selection");
     keywords_.add("Control", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite",
                   "Add a new dynamic site to the selection");
@@ -80,9 +79,6 @@ const std::vector<std::shared_ptr<const Molecule>> &SelectProcedureNode::exclude
     return excludedMolecules_;
 }
 
-// List of Sites currently excluded from selection
-const RefList<const Site> &SelectProcedureNode::excludedSites() const { return excludedSites_; }
-
 // Return Molecule (from site) in which the site must exist
 std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 {
@@ -104,7 +100,7 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
  */
 
 // Return the number of available sites in the current stack, if any
-int SelectProcedureNode::nSitesInStack() const { return sites_.nItems(); }
+int SelectProcedureNode::nSitesInStack() const { return sites_.size(); }
 
 // Return the average number of sites selected
 double SelectProcedureNode::nAverageSites() const { return double(nCumulativeSites_) / nSelections_; }
@@ -143,8 +139,11 @@ SequenceProcedureNode *SelectProcedureNode::addForEachBranch(ProcedureNode::Node
 // Prepare any necessary data, ready for execution
 bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
+    // Retrieve target sites from keyword
+    speciesSites_ = keywords_.retrieve<std::vector<const SpeciesSite *>>("Site");
+
     // Check for at least one site being defined
-    if ((speciesSites_.nItems() == 0) && (dynamicSites_.nItems() == 0))
+    if ((speciesSites_.size() == 0) && (dynamicSites_.nItems() == 0))
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     // Prep some variables
@@ -192,7 +191,7 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
 // Execute node, targetting the supplied Configuration
 bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Create our arrays of sites
+    // Create our site vector
     sites_.clear();
 
     // Update our exclusion lists
@@ -216,7 +215,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
      * Add sites from specified Species/Sites
      */
     double r;
-    for (SpeciesSite *site : speciesSites_)
+    for (auto *site : speciesSites_)
     {
         const SiteStack *siteStack = cfg->siteStack(site);
         if (siteStack == nullptr)
@@ -248,7 +247,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
             }
 
             // All OK, so add site
-            sites_.add(site);
+            sites_.push_back(site);
         }
     }
 
@@ -264,17 +263,17 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
 
         const Array<Site> &generatedSites = dynamicNode->generatedSites();
         for (auto n = 0; n < generatedSites.nItems(); ++n)
-            sites_.add(&generatedSites.at(n));
+            sites_.push_back(&generatedSites.at(n));
     }
 
     // Set first site index and increase selections counter
-    currentSiteIndex_ = (sites_.nItems() == 0 ? -1 : 0);
+    currentSiteIndex_ = (sites_.size() == 0 ? -1 : 0);
     ++nSelections_;
 
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
     if (forEachBranch_)
     {
-        for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.nItems(); ++currentSiteIndex_)
+        for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.size(); ++currentSiteIndex_)
         {
             ++nCumulativeSites_;
 
@@ -301,7 +300,7 @@ bool SelectProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, st
 
     // Print out summary information
     Messenger::print("Select - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,
-                     sites_.nItems());
+                     sites_.size());
     Messenger::print("Select - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
     Messenger::print("Select - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);

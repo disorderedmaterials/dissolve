@@ -4,17 +4,16 @@
 #pragma once
 
 #include "keywords/data.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class SpeciesSite;
 
-// Keyword with SpeciesSiteReference Data
-class SpeciesSiteRefListKeyword : public KeywordData<RefList<SpeciesSite> &>
+// Keyword with vector of SpeciesSites
+class SpeciesSiteVectorKeyword : public KeywordData<std::vector<const SpeciesSite *>>
 {
     public:
-    SpeciesSiteRefListKeyword(RefList<SpeciesSite> &references, bool axesRequired = false);
-    ~SpeciesSiteRefListKeyword() override;
+    SpeciesSiteVectorKeyword(std::vector<const SpeciesSite *> sites, bool axesRequired = false);
+    ~SpeciesSiteVectorKeyword() override;
 
     /*
      * Specification

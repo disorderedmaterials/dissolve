@@ -85,7 +85,7 @@ class SpeciesIntra
 
     public:
     // Set attached SpeciesAtoms for terminus specified
-    void setAttachedAtoms(int terminus, const RefList<SpeciesAtom> &atoms);
+    void setAttachedAtoms(int terminus, const std::vector<const SpeciesAtom *> &atoms);
     // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
     void setAttachedAtoms(int terminus, SpeciesAtom *atom);
     // Return vector of attached indices for terminus specified

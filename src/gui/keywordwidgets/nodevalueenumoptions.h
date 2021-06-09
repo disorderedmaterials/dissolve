@@ -48,5 +48,5 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
      */
     public:
     // Update value displayed in widget
-    void updateValue();
+    void updateValue() override;
 };

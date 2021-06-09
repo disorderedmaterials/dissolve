@@ -23,8 +23,7 @@ SpeciesVectorKeywordWidget::SpeciesVectorKeywordWidget(QWidget *parent, KeywordB
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<SpeciesVectorKeyword *>(keyword);
     if (!keyword_)
-        throw(
-            std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into SpeciesRefListKeyword.\n", keyword->name())));
+        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into SpeciesVectorKeyword.\n", keyword->name())));
     speciesModel_.setCheckStateData(keyword_->data());
 }
 

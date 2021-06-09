@@ -184,13 +184,13 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = speciesSiteWidget;
         base = speciesSiteWidget;
     }
-    else if (type == KeywordBase::SpeciesSiteRefListData)
+    else if (type == KeywordBase::SpeciesSiteVectorData)
     {
-        SpeciesSiteRefListKeywordWidget *speciesSiteRefListWidget =
-            new SpeciesSiteRefListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(speciesSiteRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = speciesSiteRefListWidget;
-        base = speciesSiteRefListWidget;
+        SpeciesSiteVectorKeywordWidget *speciesSiteVectorWidget =
+            new SpeciesSiteVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(speciesSiteVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = speciesSiteVectorWidget;
+        base = speciesSiteVectorWidget;
     }
     else if (type == KeywordBase::SpeciesVectorData)
     {

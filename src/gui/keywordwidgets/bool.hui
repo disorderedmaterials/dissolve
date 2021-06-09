@@ -41,5 +41,5 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
      */
     public:
     // Update value displayed in widget
-    void updateValue();
+    void updateValue() override;
 };

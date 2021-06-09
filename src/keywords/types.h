@@ -43,7 +43,7 @@
 #include "keywords/range.h"
 #include "keywords/species.h"
 #include "keywords/speciessite.h"
-#include "keywords/speciessitereflist.h"
+#include "keywords/speciessitevector.h"
 #include "keywords/speciesvector.h"
 #include "keywords/stdstring.h"
 #include "keywords/vec3double.h"

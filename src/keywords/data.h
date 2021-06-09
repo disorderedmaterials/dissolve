@@ -6,9 +6,6 @@
 #include "keywords/base.h"
 #include "templates/array.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword Interface
 template <class T> class KeywordData : public KeywordBase
 {

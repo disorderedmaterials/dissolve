@@ -42,8 +42,8 @@ std::string EmpiricalFormula::formula(const Species *species, bool richText)
     return constructFormula(elCounts, richText);
 }
 
-// Return empirical formula for supplied SpeciesAtom reflist
-std::string EmpiricalFormula::formula(const RefList<SpeciesAtom> &atoms, bool richText)
+// Return empirical formula for supplied SpeciesAtom vector
+std::string EmpiricalFormula::formula(const std::vector<const SpeciesAtom *> &atoms, bool richText)
 {
     std::vector<int> elCounts(Elements::nElements, 0);
 

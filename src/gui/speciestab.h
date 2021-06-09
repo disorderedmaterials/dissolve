@@ -13,6 +13,7 @@
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesImproperModel.h"
 #include "gui/models/speciesIsoModel.h"
+#include "gui/models/speciesSiteModel.h"
 #include "gui/models/speciesTorsionModel.h"
 #include "gui/ui_speciestab.h"
 
@@ -44,6 +45,7 @@ class SpeciesTab : public QWidget, public MainTab
     SpeciesTorsionModel torsions_;
     SpeciesImproperModel impropers_;
     SpeciesIsoModel isos_;
+    SpeciesSiteModel sites_;
 
     public slots:
     // Update controls in tab
@@ -122,8 +124,7 @@ class SpeciesTab : public QWidget, public MainTab
     void setCurrentSiteFromViewer();
     void on_SiteAddButton_clicked(bool checked);
     void on_SiteRemoveButton_clicked(bool checked);
-    void on_SiteList_currentItemChanged(QListWidgetItem *currentItem, QListWidgetItem *previousItem);
-    void on_SiteList_itemChanged(QListWidgetItem *item);
+    void siteSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_SiteOriginMassWeightedCheck_clicked(bool checked);
 
     public slots:
