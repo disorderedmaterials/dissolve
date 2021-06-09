@@ -527,8 +527,6 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
             bound.setTag(parser.argsv(1));
             unbound.setTag(parser.argsv(2));
 
-            Messenger::warn("Tags: {} {} {}", parser.argsv(0), parser.argsv(1), parser.argsv(2));
-
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             auto nPoints = parser.argi(0);
