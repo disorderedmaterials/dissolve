@@ -552,9 +552,10 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
                 int argIndex = 0;
-                part.xAxis().push_back(parser.argd(argIndex));
-                bound.xAxis().push_back(parser.argd(argIndex));
-                unbound.xAxis().push_back(parser.argd(argIndex++));
+                auto x = parser.argd(argIndex++);
+                part.xAxis().push_back(x);
+                bound.xAxis().push_back(x);
+                unbound.xAxis().push_back(x);
                 argIndex = readDataPoint(argIndex, parser, part);
                 argIndex = readDataPoint(argIndex, parser, bound);
                 argIndex = readDataPoint(argIndex, parser, unbound);
