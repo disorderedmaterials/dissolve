@@ -30,14 +30,10 @@ void SpeciesTab::setCurrentSiteFromViewer()
         return;
 
     // Sanity check that the displayed site actually exists in our species, and get its index in the sites list
-    auto index = 0;
-    for (auto &site : species_->sites())
-    {
-        if (site.get() == displayedSite)
-            break;
-        ++index;
-    }
-    if (index >= species_->sites().size())
+    auto it = std::find_if(species_->sites().begin(), species_->sites().end(),
+                           [displayedSite](const auto &site) { return site.get() == displayedSite; });
+    auto index = it - species_->sites().begin();
+    if (it == species_->sites().end())
         return;
 
     // Force a refresh of the sites model
