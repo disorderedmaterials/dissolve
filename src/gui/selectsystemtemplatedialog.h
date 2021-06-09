@@ -17,14 +17,14 @@ class SelectSystemTemplateDialog : public QDialog
     Q_OBJECT
 
     public:
-    SelectSystemTemplateDialog(QWidget *parent, const List<SystemTemplate> &systemTemplates);
+    SelectSystemTemplateDialog(QWidget *parent, const std::vector<SystemTemplate> &systemTemplates);
     ~SelectSystemTemplateDialog();
 
     private:
     // Main form declaration
     Ui::SelectSystemTemplateDialog ui_;
     // Available system templates
-    const List<SystemTemplate> &systemTemplates_;
+    const std::vector<SystemTemplate> &systemTemplates_;
 
     private:
     // Update the list of system templates, optionally filtering them by name and description

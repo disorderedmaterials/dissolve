@@ -10,7 +10,7 @@
 /* none */
 
 // Geometry Definition
-class Geometry : public ListItem<Geometry>
+class Geometry
 {
     public:
     Geometry();
@@ -36,7 +36,7 @@ class Geometry : public ListItem<Geometry>
     // Set reference value and indices
     void set(double value, int a, int b, int c = -1, int d = -1);
     // Return reference value
-    double value();
+    double value() const;
     // Return specified index
     int indices(int i) const;
 };

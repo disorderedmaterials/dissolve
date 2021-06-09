@@ -45,13 +45,14 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over distances to check
-        for (auto *d = distances_.first(); d != nullptr; d = d->next())
+        auto &distances = keywords_.retrieve<std::vector<Geometry>>("Distance");
+        for (const auto &d : distances)
         {
-            actual = cfg->box()->minimumDistance(atoms[d->indices(0)], atoms[d->indices(1)]);
-            delta = fabs(actual - d->value());
+            actual = cfg->box()->minimumDistance(atoms[d.indices(0)], atoms[d.indices(1)]);
+            delta = fabs(actual - d.value());
             ok = delta < distanceThreshold;
             Messenger::print("Distance between Atoms {} and {} is {} Angstroms, and is {} (delta = {}, tolerance = {}).\n",
-                             d->indices(0) + 1, d->indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold);
+                             d.indices(0) + 1, d.indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold);
 
             // Check consistency between processes
             if (!procPool.allTrue(ok))
@@ -66,13 +67,14 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over angles to check
-        for (auto *a = angles_.first(); a != nullptr; a = a->next())
+        auto &angles = keywords_.retrieve<std::vector<Geometry>>("Angle");
+        for (const auto &a : angles)
         {
-            actual = cfg->box()->angleInDegrees(atoms[a->indices(0)], atoms[a->indices(1)], atoms[a->indices(2)]);
-            delta = fabs(actual - a->value());
+            actual = cfg->box()->angleInDegrees(atoms[a.indices(0)], atoms[a.indices(1)], atoms[a.indices(2)]);
+            delta = fabs(actual - a.value());
             ok = delta < angleThreshold;
             Messenger::print("Angle between Atoms {}, {} and {} is {} degrees, and is {} (delta = {}, tolerance = {}).\n",
-                             a->indices(0) + 1, a->indices(1) + 1, a->indices(2) + 1, actual, ok ? "OK" : "NOT OK", delta,
+                             a.indices(0) + 1, a.indices(1) + 1, a.indices(2) + 1, actual, ok ? "OK" : "NOT OK", delta,
                              angleThreshold);
 
             // Check consistency between processes

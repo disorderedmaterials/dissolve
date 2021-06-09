@@ -11,7 +11,7 @@
 class QToolButton;
 
 // System Template
-class SystemTemplate : public ListItem<SystemTemplate>
+class SystemTemplate
 {
     public:
     SystemTemplate();

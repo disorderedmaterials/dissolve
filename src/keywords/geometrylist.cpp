@@ -5,8 +5,8 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(List<Geometry> &data, Geometry::GeometryType type)
-    : KeywordData<List<Geometry> &>(KeywordBase::GeometryListData, data), type_(type)
+GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> data, Geometry::GeometryType type)
+    : KeywordData<std::vector<Geometry>>(KeywordBase::GeometryListData, data), type_(type)
 {
 }
 
@@ -37,7 +37,7 @@ int GeometryListKeyword::maxArguments() const
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool GeometryListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    Geometry *g = data_.add();
+    Geometry &g = data_.emplace_back();
     for (auto i = startArg; i <= (startArg + maxArguments() - 1); i++)
     {
         if (parser.argi(i) < 1)
@@ -45,13 +45,13 @@ bool GeometryListKeyword::read(LineParser &parser, int startArg, const CoreData 
     }
 
     if (maxArguments() == 3)
-        g->set(parser.argd(2 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1);
+        g.set(parser.argd(2 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1);
     else if (maxArguments() == 4)
-        g->set(parser.argd(3 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
-               parser.argi(2 + startArg) - 1);
+        g.set(parser.argd(3 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
+              parser.argi(2 + startArg) - 1);
     else
-        g->set(parser.argd(4 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
-               parser.argi(2 + startArg) - 1, parser.argi(3 + startArg) - 1);
+        g.set(parser.argd(4 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
+              parser.argi(2 + startArg) - 1, parser.argi(3 + startArg) - 1);
 
     setAsModified();
 
@@ -63,13 +63,12 @@ bool GeometryListKeyword::write(LineParser &parser, std::string_view keywordName
 {
     std::string index;
 
-    ListIterator<Geometry> GeoIterator(data_);
-    while (Geometry *ref = GeoIterator.iterate())
+    for (auto &ref : data_)
     {
         index.clear();
         for (auto n = 0; n < maxArguments() - 1; ++n)
-            index += fmt::format("  {}", ref->indices(n) + 1);
-        if (!parser.writeLineF("{}{}{}  {:12.4e}\n", prefix, keywordName, index, ref->value()))
+            index += fmt::format("  {}", ref.indices(n) + 1);
+        if (!parser.writeLineF("{}{}{}  {:12.4e}\n", prefix, keywordName, index, ref.value()))
             return false;
     }
 
