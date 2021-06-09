@@ -610,7 +610,7 @@ bool PartialSet::serialise(LineParser &parser) const
                                DissolveSys::btoa(bound.valuesHaveErrors()), DissolveSys::btoa(unbound.valuesHaveErrors())))
             return false;
 
-        for (int i = 0; i < part.xAxis().size(); ++i)
+        for (auto i = 0; i < part.xAxis().size(); ++i)
         {
             if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
                                    writeDataPoint(i, unbound)))
