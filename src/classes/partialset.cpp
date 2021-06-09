@@ -596,7 +596,7 @@ bool PartialSet::serialise(LineParser &parser) const
     auto nTypes = atomTypes_.nItems();
 
     // Write individual Data1D
-    for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
+    auto success = for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
         const auto &part = partials_[{typeI, typeJ}];
         const auto &bound = boundPartials_[{typeI, typeJ}];
         const auto &unbound = unboundPartials_[{typeI, typeJ}];
@@ -620,6 +620,9 @@ bool PartialSet::serialise(LineParser &parser) const
 
         return EarlyReturn<bool>::Continue;
     });
+
+    if (!success.value_or(true))
+        return false;
 
     // Write total
     if (!total_.serialise(parser))
