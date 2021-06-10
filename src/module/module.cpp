@@ -161,33 +161,31 @@ bool Module::addTargetConfiguration(Configuration *cfg)
 }
 
 // Add Configuration targets
-bool Module::addTargetConfigurations(const List<Configuration> &configs)
+bool Module::addTargetConfigurations(const std::vector<std::unique_ptr<Configuration>> &configs)
 {
     if (nRequiredTargets() == Module::ZeroTargets)
         return Messenger::error("Module targets no configurations, so none will be set from the {} provided.\n",
-                                configs.nItems());
+                                configs.size());
     else if (nRequiredTargets() == Module::OneOrMoreTargets)
     {
-        Messenger::print("Adding {} configurations as targets for module '{}'...\n", configs.nItems(), uniqueName());
+        Messenger::print("Adding {} configurations as targets for module '{}'...\n", configs.size(), uniqueName());
 
-        ListIterator<Configuration> configIterator(configs);
-        while (Configuration *cfg = configIterator.iterate())
-            if (!addTargetConfiguration(cfg))
+        for (auto &cfg : configs)
+            if (!addTargetConfiguration(cfg.get()))
                 return Messenger::error("Failed to add configuration '{}' to module '{}'.\n", cfg->name(), uniqueName());
     }
     else if (nTargetConfigurations() == nRequiredTargets())
         return Messenger::error("Refusing to add any of the {} provided configurations as targets for the module '{}' "
                                 "as it already has it's specified number ({}).\n",
-                                configs.nItems(), uniqueName(), nRequiredTargets());
+                                configs.size(), uniqueName(), nRequiredTargets());
     else
     {
         auto spaces = nRequiredTargets() - nTargetConfigurations();
         Messenger::print("Adding up to {} configurations from the {} provided as targets for module '{}'...\n", spaces,
-                         configs.nItems(), uniqueName());
+                         configs.size(), uniqueName());
 
-        ListIterator<Configuration> configIterator(configs);
-        while (Configuration *cfg = configIterator.iterate())
-            if (!addTargetConfiguration(cfg))
+        for (auto &cfg : configs)
+            if (!addTargetConfiguration(cfg.get()))
                 return Messenger::error("Failed to add configuration '{}' to module '{}'.\n", cfg->name(), uniqueName());
     }
 

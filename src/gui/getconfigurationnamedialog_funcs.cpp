@@ -42,10 +42,9 @@ void GetConfigurationNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        ListIterator<Configuration> configIterator(coreData_.configurations());
-        while (Configuration *cfg = configIterator.iterate())
+        for (auto &cfg : coreData_.configurations())
         {
-            if (configuration_ == cfg)
+            if (configuration_ == cfg.get())
                 continue;
 
             if (DissolveSys::sameString(cfg->name(), qPrintable(text)))

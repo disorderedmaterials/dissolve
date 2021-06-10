@@ -149,7 +149,7 @@ class CoreData
      */
     private:
     // Core Configurations list
-    List<Configuration> configurations_;
+    std::vector<std::unique_ptr<Configuration>> configurations_;
 
     public:
     // Add new Configuration
@@ -159,8 +159,8 @@ class CoreData
     // Return number of Configuration in list
     int nConfigurations() const;
     // Return core Configuration list
-    List<Configuration> &configurations();
-    const List<Configuration> &configurations() const;
+    std::vector<std::unique_ptr<Configuration>> &configurations();
+    const std::vector<std::unique_ptr<Configuration>> &configurations() const;
     // Return nth Configuration in list
     Configuration *configuration(int n);
     // Generate unique Configuration name with base name provided

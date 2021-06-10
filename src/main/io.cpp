@@ -282,7 +282,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write Configurations
     if (!parser.writeBannerComment("Configurations"))
         return false;
-    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
+    for (auto &cfg : configurations())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                cfg->name()))
@@ -622,7 +622,7 @@ bool Dissolve::saveRestart(std::string_view filename)
         return false;
 
     // Configurations
-    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
+    for (const auto &cfg : configurations())
     {
         if (!parser.writeLineF("Configuration  '{}'\n", cfg->name()))
             return false;

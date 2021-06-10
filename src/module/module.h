@@ -124,7 +124,7 @@ class Module : public ListItem<Module>
     // Add Configuration target
     bool addTargetConfiguration(Configuration *cfg);
     // Add Configuration targets
-    bool addTargetConfigurations(const List<Configuration> &configs);
+    bool addTargetConfigurations(const std::vector<std::unique_ptr<Configuration>> &configs);
     // Remove Configuration target
     bool removeTargetConfiguration(Configuration *cfg);
     // Return number of targeted Configurations
