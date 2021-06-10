@@ -7,6 +7,7 @@
 #include "classes/xrayweights.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
+#include "math/filters.h"
 #include "math/ft.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
@@ -61,7 +62,10 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             }
         }
 
-        // Get window function to use for transformation of reference S(Q) to g(r)
+        // Get Q-range and window function to use for transformation of F(Q) to G(r)
+        auto ftQMin = keywords_.hasBeenSet("ReferenceFTQMin") ? keywords_.asDouble("ReferenceFTQMin") : 0.0;
+        auto ftQMax = keywords_.hasBeenSet("ReferenceFTQMax") ? keywords_.asDouble("ReferenceFTQMax")
+                                                              : referenceData.xAxis().back() + 1.0;
         const auto wf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
         if (wf == WindowFunction::Form::None)
             Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
@@ -80,9 +84,11 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         auto &storedDataFT =
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT = referenceData;
+        Filters::trim(storedDataFT, ftQMin, ftQMax);
+        auto deltaR = keywords_.asDouble("ReferenceFTDeltaR");
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(wf));
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), deltaR, deltaR, 30.0, WindowFunction(wf));
 
         // Save data?
         if (keywords_.asBool("SaveReference"))
@@ -127,6 +133,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
     const bool saveGR = keywords_.asBool("SaveGR");
     const bool saveSQ = keywords_.asBool("SaveSQ");
+    const auto saveRepresentativeGR = keywords_.asBool("SaveRepresentativeGR");
 
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
@@ -148,6 +155,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("XRaySQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
     if (saveGR)
         Messenger::print("XRaySQ: Weighted partial g(r) and total G(r) will be saved.\n");
+    if (saveRepresentativeGR)
+        Messenger::print("XRaySQ: Representative G(r) will be saved.\n");
     Messenger::print("\n");
 
     /*
@@ -236,7 +245,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
 
-    // Calculate representative total g(r) from FT of calculated S(Q)
+    // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
         dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
@@ -246,8 +255,19 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedGR", "sq", "Q, 1/Angstroms"))))
-        return false;
+    if (saveRepresentativeGR)
+    {
+        if (procPool.isMaster())
+        {
+            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", uniqueName_));
+            if (exportFormat.exportData(repGR))
+                procPool.decideTrue();
+            else
+                procPool.decideFalse();
+        }
+        else if (!procPool.decision())
+            return false;
+    }
 
     return true;
 }

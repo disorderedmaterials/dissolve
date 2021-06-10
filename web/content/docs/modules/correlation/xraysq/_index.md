@@ -41,6 +41,9 @@ The application of instrumental broadening is the responsibility of the source [
 Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`Reference`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. [`EPSR`]({{< ref "epsr" >}})|
+|`ReferenceFTDeltaR`|`double`|0.05|Spacing in $r$ to use when generating the Fourier-transform of the $F(Q)$|
+|`ReferenceFTQMax`|`double`|--|Maximum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
+|`ReferenceFTQMin`|`double`|--|Minimum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
 |`ReferenceNormalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Assumed normalisation type to remove from the reference total structure factor data once loaded|
 |`ReferenceWindowFunction`|[`WindowFunction`]({{< ref "function1d" >}})|`Lorch0`|Window function to apply when Fourier-transforming reference $F(Q)$ to a reference $g(r)$|
 
@@ -50,4 +53,5 @@ Keyword|Arguments|Default|Description|
 |`SaveFormFactors`|`true|false`|`false`|Save Q-dependent form factors for each atom type pair|
 |`SaveGR`|`true|false`|`false`|Save weighted g(r) and G(r). Separate files are written for each partial between atom types $i$ and $j$, as well as the total.||
 |`SaveReference`|`true|false`|`false`|Save the reference data and its Fourier transform|
+|`SaveRepresentativeGR`|`true|false`|`false`|Save the representative $G(r)$ obtained from Fourier transform of the calculate $F(Q)$|
 |`SaveSQ`|`true|false`|`false`|Save weighted partial and total structure factors. Separate files are written for each partial between atom types $i$ and $j$, as well as the total.|

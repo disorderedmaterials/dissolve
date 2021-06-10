@@ -7,6 +7,7 @@
 #include "classes/species.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
+#include "math/filters.h"
 #include "math/ft.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"
@@ -59,7 +60,10 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             }
         }
 
-        // Get window function to use for transformation of S(Q) to g(r)
+        // Get Q-range and window function to use for transformation of F(Q) to G(r)
+        auto ftQMin = keywords_.hasBeenSet("ReferenceFTQMin") ? keywords_.asDouble("ReferenceFTQMin") : 0.0;
+        auto ftQMax = keywords_.hasBeenSet("ReferenceFTQMax") ? keywords_.asDouble("ReferenceFTQMax")
+                                                              : referenceData.xAxis().back() + 1.0;
         const auto wf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
         if (wf == WindowFunction::Form::None)
             Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
@@ -78,9 +82,11 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         auto &storedDataFT =
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT = referenceData;
+        Filters::trim(storedDataFT, ftQMin, ftQMax);
+        auto deltaR = keywords_.asDouble("ReferenceFTDeltaR");
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(wf));
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), deltaR, deltaR, 30.0, WindowFunction(wf));
 
         // Save data?
         if (keywords_.asBool("SaveReference"))
@@ -122,6 +128,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const auto saveSQ = keywords_.asBool("SaveSQ");
     const auto saveGR = keywords_.asBool("SaveGR");
+    const auto saveRepresentativeGR = keywords_.asBool("SaveRepresentativeGR");
 
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
@@ -137,10 +144,12 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
     else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
-    if (saveGR)
-        Messenger::print("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");
     if (saveSQ)
         Messenger::print("NeutronSQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
+    if (saveGR)
+        Messenger::print("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");
+    if (saveRepresentativeGR)
+        Messenger::print("NeutronSQ: Representative G(r) will be saved.\n");
     Messenger::print("\n");
 
     /*
@@ -197,7 +206,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "WeightedGR", "gr", "r, Angstroms"))))
         return false;
 
-    // Calculate representative total g(r) from FT of calculated S(Q)
+    // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
         dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
@@ -207,7 +216,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
 
     // Save data if requested
-    if (saveGR)
+    if (saveRepresentativeGR)
     {
         if (procPool.isMaster())
         {

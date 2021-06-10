@@ -27,6 +27,12 @@ void XRaySQModule::initialise()
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
                   "ReferenceNormalisation", "Normalisation to remove from reference data");
+    keywords_.add("Reference Data", new DoubleKeyword(0.0), "ReferenceFTQMin",
+                  "Set the minimum Q value to use when Fourier-transforming the data");
+    keywords_.add("Reference Data", new DoubleKeyword(0.0), "ReferenceFTQMax",
+                  "Set the maximum Q value to use when Fourier-transforming the data");
+    keywords_.add("Reference Data", new DoubleKeyword(0.05), "ReferenceFTDeltaR",
+                  "Set the spacing in r to use when generating the Fourier-transformed data");
     keywords_.add("Reference Data",
                   new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms() = WindowFunction::Form::Lorch0),
                   "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
@@ -35,10 +41,12 @@ void XRaySQModule::initialise()
     // Export
     keywords_.add("Export", new BoolKeyword(false), "SaveFormFactors",
                   "Whether to save combined form factor weightings for atomtype pairs", "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveReference",
-                  "Whether to save the reference data and its Fourier transform", "<True|False>");
     keywords_.add("Export", new BoolKeyword(false), "SaveGR",
                   "Whether to save weighted g(r) and G(r) to disk after calculation", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveReference",
+                  "Whether to save the reference data and its Fourier transform", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveRepresentativeGR",
+                  "Save representative G(r), obtained from Fourier transform of the calculated F(Q)");
     keywords_.add("Export", new BoolKeyword(false), "SaveSQ",
                   "Whether to save weighted S(Q) and F(Q) to disk after calculation", "<True|False>");
 }

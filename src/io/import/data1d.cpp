@@ -30,8 +30,8 @@ void Data1DImportFileFormat::setUpKeywords()
     keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
     keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage",
                   "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
-    keywords_.add("Manipulations", new RangeKeyword(Range(0.0, 0.0), Vec3Labels::MinMaxDeltaLabels), "Trim",
-                  "Trim the range of the loaded data to be within the specified boundaries");
+    keywords_.add("Manipulations", new DoubleKeyword(0.0), "XMin", "Set the minimum X value to allow when reading in the data");
+    keywords_.add("Manipulations", new DoubleKeyword(0.0), "XMax", "Set the maximum X value to allow when reading in the data");
     keywords_.add("Manipulations", new IntegerKeyword(0, 0), "RemovePoints",
                   "Remove a number of points from the start of the data");
 }
@@ -85,10 +85,11 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
     for (auto n = 0; n < keywords_.asInt("RemovePoints"); ++n)
         data.removeFirstPoint();
     // -- Trim range?
-    if (keywords_.hasBeenSet("Trim"))
+    if (keywords_.hasBeenSet("XMin") || keywords_.hasBeenSet("XMax"))
     {
-        const auto range = keywords_.retrieve<Range>("Trim");
-        Filters::trim(data, range.minimum(), range.maximum());
+        auto xMin = keywords_.hasBeenSet("XMin") ? keywords_.asDouble("XMin") : data.xAxis().front() - 1.0;
+        auto xMax = keywords_.hasBeenSet("XMax") ? keywords_.asDouble("XMax") : data.xAxis().back() + 1.0;
+        Filters::trim(data, xMin, xMax);
     }
     // -- Subtract average level from data?
     const auto removeAverage = keywords_.asDouble("RemoveAverage");

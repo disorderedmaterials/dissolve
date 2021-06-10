@@ -196,21 +196,19 @@ void normalisedMovingAverage(Data1D &data, int avgSize)
 double subtractAverage(Data1D &data, double xStart)
 {
     // Grab x and y arrays
-    const auto &x = data.xAxis();
-    auto &y = data.values();
+    const auto &xAxis = data.xAxis();
+    auto &values = data.values();
 
     auto sum = 0.0;
     auto nPoints = 0;
-    for (auto n = 0; n < x.size(); ++n)
-    {
-        if (x[n] >= xStart)
+    for (auto &&[x, y] : zip(xAxis, values))
+        if (x >= xStart)
         {
-            sum += y[n];
+            sum += y;
             ++nPoints;
         }
-    }
 
-    std::transform(y.begin(), y.end(), y.begin(), [sum, nPoints](auto value) { return value - sum / nPoints; });
+    std::transform(values.begin(), values.end(), values.begin(), [sum, nPoints](auto value) { return value - sum / nPoints; });
 
     return sum / nPoints;
 }
@@ -229,8 +227,7 @@ void trim(Data1D &data, double xMin, double xMax, bool interpolateEnds, double i
             // X axis value now exceeds the xMax - interpolate the end?
             if (interpolateEnds)
             {
-                // Is there a usable data point with lower x than the present one that we can use for our
-                // interpolation?
+                // Is there a usable data point with lower x than the present one that we can use for our interpolation?
                 if (n > 0)
                 {
                     double intervalFraction = (xMax - x[n - 1]) / (x[n] - x[n - 1]);
