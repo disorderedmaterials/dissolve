@@ -4,8 +4,6 @@
 #pragma once
 
 #include "classes/site.h"
-#include "templates/array.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 class Box;
