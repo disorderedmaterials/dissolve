@@ -21,7 +21,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-  if (targetConfigurations_.empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
     auto *cfg = targetConfigurations_.front();
 
