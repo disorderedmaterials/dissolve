@@ -11,10 +11,10 @@
 class Configuration;
 
 // Keyword with Configuration RefList Data
-class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
+class ConfigurationRefListKeyword : public KeywordData<std::vector<Configuration *> &>
 {
     public:
-    ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize);
+    ConfigurationRefListKeyword(std::vector<Configuration *> &references, int maxListSize);
     ~ConfigurationRefListKeyword() override;
 
     /*

@@ -14,7 +14,7 @@ class Configuration;
 class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 {
     public:
-    AtomTypeSelectionKeyword(AtomTypeList &selection_, const RefList<Configuration> &sourceConfigurations);
+    AtomTypeSelectionKeyword(AtomTypeList &selection_, const std::vector<Configuration *> &sourceConfigurations);
     ~AtomTypeSelectionKeyword() override;
 
     /*
@@ -22,7 +22,7 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
      */
     private:
     // Source Configurations from which we take our valid AtomTypes
-    const RefList<Configuration> &sourceConfigurations_;
+    const std::vector<Configuration *> &sourceConfigurations_;
 
     public:
     // Determine whether current data is 'empty', and should be considered as 'not set'

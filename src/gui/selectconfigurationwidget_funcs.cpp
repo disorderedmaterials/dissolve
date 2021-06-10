@@ -111,9 +111,9 @@ int SelectConfigurationWidget::nSelected() const
 }
 
 // Return the currently-selected Configuration
-RefList<Configuration> SelectConfigurationWidget::currentConfiguration() const
+std::vector<Configuration *> SelectConfigurationWidget::currentConfiguration() const
 {
-    RefList<Configuration> selection;
+    std::vector<Configuration *> selection;
 
     // Loop over items in the list and construct the selection RefList
     for (auto n = 0; n < ui_.ConfigurationList->count(); ++n)
@@ -121,7 +121,7 @@ RefList<Configuration> SelectConfigurationWidget::currentConfiguration() const
         QListWidgetItem *item = ui_.ConfigurationList->item(n);
 
         if (item->isSelected())
-            selection.append(VariantPointer<Configuration>(item->data(Qt::UserRole)));
+            selection.push_back(VariantPointer<Configuration>(item->data(Qt::UserRole)));
     }
 
     return selection;

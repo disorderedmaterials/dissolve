@@ -8,7 +8,7 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList &selection, const RefList<Configuration> &sourceConfigurations)
+AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList &selection, const std::vector<Configuration *> &sourceConfigurations)
     : KeywordData<AtomTypeList &>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }

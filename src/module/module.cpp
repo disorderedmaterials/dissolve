@@ -139,9 +139,9 @@ bool Module::isDisabled() const { return !enabled_; }
 bool Module::addTargetConfiguration(Configuration *cfg)
 {
     // Check how many Configurations we accept before we do anything else
-    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.nItems() < nRequiredTargets()))
+    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.size() < nRequiredTargets()))
     {
-        targetConfigurations_.append(cfg);
+        targetConfigurations_.push_back(cfg);
         keywords_.setAsModified("Configuration");
         return true;
     }
@@ -195,17 +195,18 @@ bool Module::addTargetConfigurations(const std::vector<std::unique_ptr<Configura
 // Remove Configuration target
 bool Module::removeTargetConfiguration(Configuration *cfg)
 {
-    if (!targetConfigurations_.contains(cfg))
+    auto it = std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg);
+    if (it == targetConfigurations_.end())
         return Messenger::error("Can't remove Configuration '{}' from Module '{}' as it isn't currently a target.\n",
                                 cfg->name(), uniqueName());
 
-    targetConfigurations_.remove(cfg);
+    targetConfigurations_.erase(it);
 
     return true;
 }
 
 // Return number of targeted Configurations
-int Module::nTargetConfigurations() const { return targetConfigurations_.nItems(); }
+int Module::nTargetConfigurations() const { return targetConfigurations_.size(); }
 
 // Return whether the number of targeted Configurations is valid
 bool Module::hasValidNTargetConfigurations(bool reportError) const
@@ -238,10 +239,13 @@ bool Module::hasValidNTargetConfigurations(bool reportError) const
 }
 
 // Return first targeted Configuration
-const RefList<Configuration> &Module::targetConfigurations() const { return targetConfigurations_; }
+const std::vector<Configuration *> &Module::targetConfigurations() const { return targetConfigurations_; }
 
 // Return if the specified Configuration is in the targets list
-bool Module::isTargetConfiguration(Configuration *cfg) const { return targetConfigurations_.contains(cfg); }
+bool Module::isTargetConfiguration(Configuration *cfg) const
+{
+    return std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg) != targetConfigurations_.end();
+}
 
 // Copy Configuration targets from specified Module
 void Module::copyTargetConfigurations(Module *sourceModule)

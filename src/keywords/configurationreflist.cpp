@@ -6,8 +6,8 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize)
-    : KeywordData<RefList<Configuration> &>(KeywordBase::ConfigurationRefListData, references)
+ConfigurationRefListKeyword::ConfigurationRefListKeyword(std::vector<Configuration *> &references, int maxListSize)
+    : KeywordData<std::vector<Configuration *> &>(KeywordBase::ConfigurationRefListData, references)
 {
     maxListSize_ = maxListSize;
 }
@@ -19,7 +19,7 @@ ConfigurationRefListKeyword::~ConfigurationRefListKeyword() = default;
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ConfigurationRefListKeyword::isDataEmpty() const { return data_.nItems() == 0; }
+bool ConfigurationRefListKeyword::isDataEmpty() const { return data_.size() == 0; }
 
 // Return maximum number of Configurations to allow in the list
 int ConfigurationRefListKeyword::maxListSize() const { return maxListSize_; }
@@ -46,14 +46,14 @@ bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, const C
                                     parser.argsv(n));
 
         // Check maximum size of list
-        if ((maxListSize_ != -1) && (data_.nItems() >= maxListSize_))
+        if ((maxListSize_ != -1) && (data_.size() >= maxListSize_))
             return Messenger::error("Too many configurations given to keyword. Maximum allowed is {}.\n", maxListSize_);
 
         // Check that the configuration isn't already in the list
-        if (data_.contains(cfg))
+        if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
             return Messenger::error("Configuration '{}' is already present in the list.\n", cfg->name());
 
-        data_.append(cfg);
+        data_.push_back(cfg);
     }
 
     set_ = true;
@@ -80,4 +80,8 @@ bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view key
  */
 
 // Prune any references to the supplied Configuration in the contained data
-void ConfigurationRefListKeyword::removeReferencesTo(Configuration *cfg) { data_.remove(cfg); }
+void ConfigurationRefListKeyword::removeReferencesTo(Configuration *cfg)
+{
+    auto it = std::find(data_.begin(), data_.end(), cfg);
+    data_.erase(it);
+}
