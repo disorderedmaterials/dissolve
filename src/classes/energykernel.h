@@ -24,8 +24,7 @@ class SpeciesTorsion;
 class EnergyKernel
 {
     public:
-    EnergyKernel(ProcessPool &procPool, const Configuration *config, const PotentialMap &potentialMap,
-                 double energyCutoff = -1.0);
+    EnergyKernel(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap, double energyCutoff = -1.0);
     ~EnergyKernel() = default;
     // Clear all data
     void clear();
@@ -39,14 +38,14 @@ class EnergyKernel
     // Source Box (from Configuration)
     const Box *box_;
     // Source CellArray (from Configuration)
-    const CellArray &cells_;
+    const CellArray &cellArray_;
     // Potential map to use
     const PotentialMap &potentialMap_;
     // Squared cutoff distance to use in calculation
     double cutoffDistanceSquared_;
 
     /*
-     * Internal Routines
+     * Base Routines
      */
     private:
     // Return PairPotential energy between atoms
@@ -59,21 +58,23 @@ class EnergyKernel
     /*
      * PairPotential Terms
      */
-    public:
+    private:
     // Return PairPotential energy between atoms
     double energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ);
+    // Return PairPotential energy of atoms in the supplied cell with all other cells
+    double energy(const Cell &cell, bool includeIntraMolecular);
     // Return PairPotential energy between two cells
-    double energy(const Cell &cell, const Cell &otherCell, bool applyMim, bool interMolecular);
-    // Return PairPotential energy for atoms in a cell
-    double energy(const Cell &cell, bool interMolecular);
+    double energy(const Cell &cell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular);
+
+    public:
     // Return PairPotential energy of atom with world
     double energy(const Atom &i);
-    // Return PairPotential energy of Molecule with world
-    double energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return molecular correction energy related to intramolecular terms involving supplied atom
     double correct(const Atom &i);
+    // Return PairPotential energy of Molecule with world
+    double energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy);
     // Return total interatomic PairPotential energy of the system
-    double energy(const CellArray &cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
+    double energy(const CellArray &cellArray, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy);
 
     /*
      * Intramolecular Terms

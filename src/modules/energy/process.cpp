@@ -236,7 +236,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             EnergyKernel energyKernel(procPool, cfg, dissolve.potentialMap(), cutoff);
             auto molecularEnergy = 0.0;
             for (const auto &mol : cfg->molecules())
-                molecularEnergy += energyKernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
+                molecularEnergy += energyKernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
             // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
             // pairpotential energy, and zero intramolecular energy
             if (cfg->nMolecules() > 1)
