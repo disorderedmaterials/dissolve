@@ -391,26 +391,33 @@ double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessP
 }
 
 // Return PairPotential energy of Atom with world
-double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const Atom &i)
 {
-    auto *cellI = i.cell();
+    // Get cell neighbours for atom i's cell
+    auto &neighbours = cells_.neighbours(*i.cell());
 
-    // This Atom with its own Cell
-    auto totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
+    return dissolve::transform_reduce(
+        ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
+        [&i, this](const auto &neighbour) {
+            auto mimRequired = neighbour.requiresMIM_;
+            auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+            return std::accumulate(
+                nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0, [&i, mimRequired, this](const auto innerAcc, const auto *j) {
+                    auto &jj = *j;
 
-    // Cell neighbours not requiring minimum image
-    for (auto *neighbour : cellI->cellNeighbours())
-        totalEnergy += energy(i, neighbour, KernelFlags::NoFlags, strategy, false);
+                    // Calculate rSquared distance between atoms, and check it against
+                    // the stored cutoff distance
+                    auto rSq = mimRequired ? box_->minimumDistanceSquared(i.r(), jj.r()) : (i.r() - jj.r()).magnitudeSq();
+                    if (rSq > cutoffDistanceSquared_)
+                        return innerAcc;
 
-    // Cell neighbours requiring minimum image
-    for (auto *neighbour : cellI->mimCellNeighbours())
-        totalEnergy += energy(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy, false);
+                    // Check for atoms in the same species
+                    if (i.molecule().get() != jj.molecule().get())
+                        return innerAcc + pairPotentialEnergy(i, jj, sqrt(rSq));
 
-    // Perform relevant sum if requested
-    if (performSum)
-        processPool_.allSum(&totalEnergy, 1, strategy);
-
-    return totalEnergy;
+                    return innerAcc;
+                });
+        });
 }
 
 // Return PairPotential energy of Molecule with world

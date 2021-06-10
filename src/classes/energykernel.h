@@ -69,7 +69,7 @@ class EnergyKernel
     // Return PairPotential energy between Atom and Cell
     double energy(const Atom &i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return PairPotential energy of atom with world
-    double energy(const Atom &i, ProcessPool::DivisionStrategy strategy, bool performSum);
+    double energy(const Atom &i);
     // Return PairPotential energy of Molecule with world
     double energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return molecular correction energy related to intramolecular terms involving supplied atom

@@ -35,7 +35,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     const auto &cellArray = problemDef.cfg_->cells();
     auto &i = *problemDef.cfg_->atom(0);
     for (auto _ : state)
-        energyKernel.energy(i, ProcessPool::PoolStrategy, false);
+        energyKernel.energy(i);
 }
 
 template <ProblemType problem, Population population>
