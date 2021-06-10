@@ -4,7 +4,7 @@
 #include "classes/sitereference.h"
 
 SiteReference::SiteReference(SiteStack &siteStack, std::string_view name)
-    : ListItem<SiteReference>(), siteStack_(siteStack), name_{name}
+    : siteStack_(siteStack), name_{name}
 {
 }
 
