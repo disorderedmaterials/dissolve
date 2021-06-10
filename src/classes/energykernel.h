@@ -66,8 +66,6 @@ class EnergyKernel
     double energy(const Cell &cell, const Cell &otherCell, bool applyMim, bool interMolecular);
     // Return PairPotential energy for atoms in a cell
     double energy(const Cell &cell, bool interMolecular);
-    // Return PairPotential energy between Atom and Cell
-    double energy(const Atom &i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return PairPotential energy of atom with world
     double energy(const Atom &i);
     // Return PairPotential energy of Molecule with world

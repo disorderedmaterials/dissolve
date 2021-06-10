@@ -16,23 +16,10 @@ template <ProblemType problem, Population population> EnergyKernel createEnergyK
     return kernel;
 }
 
-template <ProblemType problem, Population population> static void BM_CalculateEnergy_AtomicEnergy(benchmark::State &state)
-{
-    Problem<problem, population> problemDef;
-    auto energyKernel = createEnergyKernel(problemDef);
-    const auto &cellArray = problemDef.cfg_->cells();
-    auto *cellI = cellArray.cell(1);
-    auto &atoms = cellI->atoms();
-    auto i = atoms[5];
-    for (auto _ : state)
-        energyKernel.energy(*i, cellI, KernelFlags::Flags::NoFlags, ProcessPool::PoolStrategy, false);
-}
-
 template <ProblemType problem, Population population> static void BM_CalculateEnergy_AtomicWorldEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
-    const auto &cellArray = problemDef.cfg_->cells();
     auto &i = *problemDef.cfg_->atom(0);
     for (auto _ : state)
         energyKernel.energy(i);
@@ -133,8 +120,6 @@ static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state
 
 // Small molecule
 
-// Benchmarking pairwise energy calculation of an individual atom with another cell
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::smallMolecule, Population::small);
 // Benchmark energy calculation of single atom with world
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, ProblemType::smallMolecule, Population::small);
 // Benchmark energy of single species
@@ -154,8 +139,6 @@ BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::small
 
 // Medium molecule
 
-// Benchmarking pairwise energy calculation of an individual atom with another cell
-BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicEnergy, ProblemType::mediumMolecule, Population::small);
 // Benchmark energy calculation of single atom with world
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, ProblemType::mediumMolecule, Population::small);
 // Benchmark energy of single species
