@@ -295,110 +295,55 @@ double EnergyKernel::energy(const CellArray &cellArray, bool includeIntraMolecul
  */
 
 // Return SpeciesBond energy at Atoms specified
-double EnergyKernel::energy(const SpeciesBond &bond, const Atom &i, const Atom &j)
+double EnergyKernel::energy(const SpeciesBond &b, const Atom &i, const Atom &j)
 {
-    // Determine whether we need to apply minimum image to the distance calculation
-    if (i.cell()->mimRequired(j.cell()))
-        return bond.energy(box_->minimumDistance(i.r(), j.r()));
-    else
-        return bond.energy((i.r() - j.r()).magnitude());
+    return b.energy(box_->minimumDistance(i.r(), j.r()));
 }
 
 // Return SpeciesBond energy
-double EnergyKernel::energy(const SpeciesBond &b) { return b.energy((b.j()->r() - b.i()->r()).magnitude()); }
+double EnergyKernel::energy(const SpeciesBond &b) { return b.energy(box_->minimumDistance(b.j()->r(), b.i()->r())); }
 
 // Return SpeciesAngle energy at Atoms specified
-double EnergyKernel::energy(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k)
+double EnergyKernel::energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k)
 {
-    Vec3<double> vecji, vecjk;
-
-    // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-    if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j.r(), i.r());
-    else
-        vecji = i.r() - j.r();
-    if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j.r(), k.r());
-    else
-        vecjk = k.r() - j.r();
-
-    // Normalise vectors
-    vecji.normalise();
-    vecjk.normalise();
-
-    // Determine Angle energy
-    return angle.energy(Box::angleInDegrees(vecji, vecjk));
+    return a.energy(Box::angleInDegrees(box_->minimumVectorN(j.r(), i.r()), box_->minimumVectorN(j.r(), k.r())));
 }
 
 // Return SpeciesAngle energy
-double EnergyKernel::energy(const SpeciesAngle &angle)
+double EnergyKernel::energy(const SpeciesAngle &a)
 {
-    auto vecji = angle.i()->r() - angle.j()->r(), vecjk = angle.k()->r() - angle.j()->r();
-
-    // Normalise vectors
-    vecji.normalise();
-    vecjk.normalise();
-
-    // Determine Angle energy
-    return angle.energy(Box::angleInDegrees(vecji, vecjk));
+    return a.energy(
+        Box::angleInDegrees(box_->minimumVectorN(a.j()->r(), a.i()->r()), box_->minimumVectorN(a.j()->r(), a.k()->r())));
 }
 
 // Return SpeciesTorsion energy at Atoms specified
-double EnergyKernel::energy(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
+double EnergyKernel::energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
 {
-    Vec3<double> vecji, vecjk, veckl;
-
-    // Calculate vectors, ensuring we account for minimum image
-    if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j.r(), i.r());
-    else
-        vecji = i.r() - j.r();
-    if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j.r(), k.r());
-    else
-        vecjk = k.r() - j.r();
-    if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k.r(), l.r());
-    else
-        veckl = l.r() - k.r();
-
-    return torsion.energy(Box::torsionInDegrees(vecji, vecjk, veckl));
+    return t.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
+                                          box_->minimumVector(k.r(), l.r())));
 }
 
 // Return SpeciesTorsion energy
-double EnergyKernel::energy(const SpeciesTorsion &torsion)
+double EnergyKernel::energy(const SpeciesTorsion &t)
 {
-    return torsion.energy(Box::torsionInDegrees(torsion.i()->r() - torsion.j()->r(), torsion.k()->r() - torsion.j()->r(),
-                                                torsion.l()->r() - torsion.k()->r()));
+    return t.energy(Box::torsionInDegrees(box_->minimumVector(t.j()->r(), t.i()->r()),
+                                          box_->minimumVector(t.j()->r(), t.k()->r()),
+                                          box_->minimumVector(t.k()->r(), t.l()->r())));
 }
 
 // Return SpeciesImproper energy at Atoms specified
 double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
 {
-    Vec3<double> vecji, vecjk, veckl;
-
-    // Calculate vectors, ensuring we account for minimum image
-    if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j.r(), i.r());
-    else
-        vecji = i.r() - j.r();
-    if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j.r(), k.r());
-    else
-        vecjk = k.r() - j.r();
-    if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k.r(), l.r());
-    else
-        veckl = l.r() - k.r();
-
-    return imp.energy(Box::torsionInDegrees(vecji, vecjk, veckl));
+    return imp.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
+                                            box_->minimumVector(k.r(), l.r())));
 }
 
 // Return SpeciesImproper energy
 double EnergyKernel::energy(const SpeciesImproper &imp)
 {
-    return imp.energy(
-        Box::torsionInDegrees(imp.i()->r() - imp.j()->r(), imp.k()->r() - imp.j()->r(), imp.l()->r() - imp.k()->r()));
+    return imp.energy(Box::torsionInDegrees(box_->minimumVector(imp.j()->r(), imp.i()->r()),
+                                            box_->minimumVector(imp.j()->r(), imp.k()->r()),
+                                            box_->minimumVector(imp.k()->r(), imp.l()->r())));
 }
 
 // Return intramolecular energy for the supplied Atom

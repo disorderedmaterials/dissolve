@@ -82,19 +82,19 @@ class EnergyKernel
     // Return SpeciesBond energy at Atoms specified
     double energy(const SpeciesBond &b, const Atom &i, const Atom &j);
     // Return SpeciesBond energy
-    static double energy(const SpeciesBond &b);
+    double energy(const SpeciesBond &b);
     // Return SpeciesAngle energy at Atoms specified
     double energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k);
     // Return SpeciesAngle energy
-    static double energy(const SpeciesAngle &a);
+    double energy(const SpeciesAngle &a);
     // Return SpeciesTorsion energy at Atoms specified
     double energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l);
     // Return SpeciesTorsion energy
-    static double energy(const SpeciesTorsion &t);
+    double energy(const SpeciesTorsion &t);
     // Return SpeciesImproper energy at Atoms specified
     double energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l);
     // Return SpeciesImproper energy
-    static double energy(const SpeciesImproper &imp);
+    double energy(const SpeciesImproper &imp);
     // Return intramolecular energy for the supplied Atom
     double intramolecularEnergy(const Molecule &mol, const Atom &i);
     // Return intramolecular energy for the supplied Molecule
