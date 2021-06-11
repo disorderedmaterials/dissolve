@@ -19,7 +19,7 @@ ConfigurationRefListKeyword::~ConfigurationRefListKeyword() = default;
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ConfigurationRefListKeyword::isDataEmpty() const { return data_.size() == 0; }
+bool ConfigurationRefListKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return maximum number of Configurations to allow in the list
 int ConfigurationRefListKeyword::maxListSize() const { return maxListSize_; }
