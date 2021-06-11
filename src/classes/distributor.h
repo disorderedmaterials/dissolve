@@ -54,9 +54,9 @@ class Distributor
     // Remove hard lock from specified Cell index, soft-unlocking surrounding Cells automatically
     bool removeHardLocks(int cellIndex);
     // Add hard locks to specified Cells, soft-locking surrounding Cells automatically
-    bool addHardLocks(std::vector<const Cell *> cells);
+    bool addHardLocks(const std::vector<const Cell *> &cells);
     // Remove hard lock from specified Cells, soft-unlocking surrounding Cells automatically
-    bool removeHardLocks(std::vector<const Cell *> cells);
+    bool removeHardLocks(const std::vector<const Cell *> &cells);
     // Return lockCount on specified Cell index
     int lockCount(int cellIndex) const;
     // Check hard lock possibility for specified Cell index

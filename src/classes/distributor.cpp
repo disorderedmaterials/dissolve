@@ -88,7 +88,7 @@ bool Distributor::removeHardLocks(int cellIndex)
 }
 
 // Add hard locks to specified Cells, soft-locking surrounding Cells automatically
-bool Distributor::addHardLocks(std::vector<const Cell *> cells)
+bool Distributor::addHardLocks(const std::vector<const Cell *> &cells)
 {
     int cellId;
 
@@ -126,7 +126,7 @@ bool Distributor::addHardLocks(std::vector<const Cell *> cells)
 }
 
 // Remove hard lock from specified Cells, soft-unlocking surrounding Cells automatically
-bool Distributor::removeHardLocks(std::vector<const Cell *> cells)
+bool Distributor::removeHardLocks(const std::vector<const Cell *> &cells)
 {
     int cellId;
 
@@ -170,22 +170,16 @@ int Distributor::lockCount(int cellIndex) const { return cellLocks_.at(cellIndex
 // Check hard lock possibility
 bool Distributor::canHardLock(int cellIndex) const
 {
-    if (cellLocks_.at(cellIndex) != NoLocks)
+    if (cellLocks_[cellIndex] != NoLocks)
         return false;
 
     auto *cell = cellArray_.cell(cellIndex);
 
     // For the specified Cell to be hard lockable its neighbours must not be HardLocked
-
-    // Check lock status of local Cell neighbours
-    for (auto *c : cell->cellNeighbours())
-        if (cellLocks_.at(c->index()) == HardLocked)
-            return false;
-
-    // Check lock status of minimum image Cell neighbours
-    for (auto *c : cell->mimCellNeighbours())
-        if (cellLocks_.at(c->index()) == HardLocked)
-            return false;
+    if (std::find_if(cellArray_.neighbours(*cell).begin(), cellArray_.neighbours(*cell).end(), [&](const auto &nbr) {
+            return cellLocks_[nbr.neighbour_.index()] == HardLocked;
+        }) != cellArray_.neighbours(*cell).end())
+        return false;
 
     return true;
 }
@@ -203,31 +197,37 @@ std::vector<const Cell *> Distributor::surroundingCells(std::vector<const Cell *
     for (auto n = 0; n < centralCells.size(); ++n)
     {
         // Local Cell neighbours
-        for (auto *nbrCell : centralCells[n]->cellNeighbours())
+        for (auto &nbr : cellArray_.neighbours(*centralCells[n]))
         {
+            if (nbr.requiresMIM_)
+                continue;
+
             // Check presence in central cells list
-            if (std::find(centralCells.begin(), centralCells.end(), nbrCell) != centralCells.end())
+            if (std::find(centralCells.begin(), centralCells.end(), &nbr.neighbour_) != centralCells.end())
                 continue;
 
             // Check presence in surrounding cells list
-            if (std::find(surroundingCells.begin(), surroundingCells.end(), nbrCell) != surroundingCells.end())
+            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.neighbour_) != surroundingCells.end())
                 continue;
 
-            surroundingCells.push_back(nbrCell);
+            surroundingCells.push_back(&nbr.neighbour_);
         }
 
         // MIM Cell neighbours
-        for (auto *nbrCell : centralCells[n]->mimCellNeighbours())
+        for (auto &nbr : cellArray_.neighbours(*centralCells[n]))
         {
+            if (!nbr.requiresMIM_)
+                continue;
+
             // Check presence in central cells list
-            if (std::find(centralCells.begin(), centralCells.end(), nbrCell) != centralCells.end())
+            if (std::find(centralCells.begin(), centralCells.end(), &nbr.neighbour_) != centralCells.end())
                 continue;
 
             // Check presence in surrounding cells list
-            if (std::find(surroundingCells.begin(), surroundingCells.end(), nbrCell) != surroundingCells.end())
+            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.neighbour_) != surroundingCells.end())
                 continue;
 
-            surroundingCells.push_back(nbrCell);
+            surroundingCells.push_back(&nbr.neighbour_);
         }
     }
 

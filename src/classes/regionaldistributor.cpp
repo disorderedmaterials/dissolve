@@ -265,7 +265,6 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
 bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &mol, int processOrGroup)
 {
     Cell *primaryCell = nullptr;
-    int cellIndex;
 
     // Obvious check first - is the Molecule available for distribution / assignment?
     const auto molId = mol->arrayIndex();
@@ -283,7 +282,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     {
         // Get Cell pointer and index
         primaryCell = mol->atom(i)->cell();
-        cellIndex = primaryCell->index();
+        auto cellIndex = primaryCell->index();
 
         // Make sure we can lock this Cell for editing, unless we have locked it already...
         if ((cellLockOwners_[cellIndex] == processOrGroup) && (cellStatusFlags_[cellIndex] == CellStatusFlag::LockedForEditing))
@@ -313,28 +312,31 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     std::set<const Cell *> readOnlyCells;
     for (auto *cell : primaryCells)
     {
-        // Loop over all cell neighbours for this primary Cell
-        for (const auto *neighbour : cell->allCellNeighbours())
+        // Loop over all neighbours for this primary Cell, taking care to ignore the entry corresponding to this cell itself
+        for (auto &nbr : cellArray_.neighbours(*cell))
         {
-            cellIndex = neighbour->index();
+            if (&nbr.neighbour_ == cell)
+                continue;
+
+            auto nbrIndex = nbr.neighbour_.index();
 
             // If we have locked this Cell already, continue
-            if (cellStatusFlags_[cellIndex] == CellStatusFlag::LockedForEditing)
+            if (cellStatusFlags_[nbrIndex] == CellStatusFlag::LockedForEditing)
             {
-                if (cellLockOwners_[cellIndex] == processOrGroup)
+                if (cellLockOwners_[nbrIndex] == processOrGroup)
                     continue;
                 else
                 {
                     if (DND)
                         Messenger::print(" -- Can't add Cell {} as a read-only Cell, since "
                                          "process/group {} has locked it for editing.\n",
-                                         cellIndex, cellLockOwners_[cellIndex]);
+                                         nbrIndex, cellLockOwners_[nbrIndex]);
                     return false;
                 }
             }
 
             // All good - add to our list
-            readOnlyCells.insert(neighbour);
+            readOnlyCells.insert(&nbr.neighbour_);
         }
     }
 
@@ -343,7 +345,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     // Add primary and secondary lock Cells to our list, sanity checking along the way
     for (const auto *cell : primaryCells)
     {
-        cellIndex = cell->index();
+        auto cellIndex = cell->index();
 
         // Set lock index
         if ((cellLockOwners_[cellIndex] == processOrGroup) || (cellLockOwners_[cellIndex] == -1))
@@ -359,7 +361,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     // For the read-only Cells, we just need to set relevant ownership in the cellLockOwners_ array
     for (const auto &readOnlyCell : readOnlyCells)
     {
-        cellIndex = readOnlyCell->index();
+        auto cellIndex = readOnlyCell->index();
 
         // Check status
         if (cellStatusFlags_[cellIndex] == CellStatusFlag::LockedForEditing)
