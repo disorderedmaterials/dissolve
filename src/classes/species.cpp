@@ -8,6 +8,7 @@
 Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {
     box_ = std::make_unique<NonPeriodicBox>();
+    cellArray_.generate(box_.get(), 7.0, 12.0);
 
     // Set up natural Isotopologue
     naturalIsotopologue_.setName("Natural");

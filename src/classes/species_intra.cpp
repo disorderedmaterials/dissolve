@@ -673,3 +673,6 @@ void Species::createBox(const Vec3<double> lengths, const Vec3<double> angles, b
 {
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
 }
+
+// Return CellArray
+const CellArray &Species::cells() const { return cellArray_; }
