@@ -23,7 +23,8 @@ class SpeciesTorsion;
 class ForceKernel
 {
     public:
-    ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, double cutoffDistance = -1.0);
+    ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+                double cutoffDistance = -1.0);
     ~ForceKernel() = default;
 
     // Alias for force storage vector
@@ -35,6 +36,8 @@ class ForceKernel
     protected:
     // Source Box (from Configuration)
     const Box *box_;
+    // Source CellArray (from Configuration)
+    const CellArray &cellArray_;
     // Potential map to use
     const PotentialMap &potentialMap_;
     // Squared cutoff distance to use in calculation

@@ -12,11 +12,10 @@
 #include <iterator>
 #include <numeric>
 
-EnergyKernel::EnergyKernel(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
+EnergyKernel::EnergyKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
                            double energyCutoff)
-    : configuration_(cfg), cellArray_(cfg->cells()), potentialMap_(potentialMap), processPool_(procPool)
+    : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
 {
-    box_ = configuration_->box();
     cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
 }
 

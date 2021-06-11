@@ -24,7 +24,8 @@ class SpeciesTorsion;
 class EnergyKernel
 {
     public:
-    EnergyKernel(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap, double energyCutoff = -1.0);
+    EnergyKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+                 double energyCutoff = -1.0);
     ~EnergyKernel() = default;
     // Clear all data
     void clear();
@@ -33,8 +34,6 @@ class EnergyKernel
      * Source Data
      */
     protected:
-    // Source Configuration
-    const Configuration *configuration_;
     // Source Box (from Configuration)
     const Box *box_;
     // Source CellArray (from Configuration)

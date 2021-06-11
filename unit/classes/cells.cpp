@@ -83,7 +83,7 @@ TEST(CellsTest, Basic)
         auto [rCut, cellSize, refEnergy] = state;
 
         // Initialise an EnergyKernel with the specified cutoff
-        EnergyKernel energyKernel(dissolve.worldPool(), cfg, dissolve.potentialMap(), rCut);
+        EnergyKernel energyKernel(dissolve.worldPool(), cfg->box(), cfg->cells(), dissolve.potentialMap(), rCut);
 
         // Remove atoms from cells
         for (auto &i : cfg->atoms())

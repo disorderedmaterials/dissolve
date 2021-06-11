@@ -228,16 +228,12 @@ class Species
     private:
     // Periodic Box
     std::unique_ptr<Box> box_;
-    // Cell array for Box
-    CellArray cellArray_;
 
     public:
     // Return periodic box
     const Box *box() const;
     // Create Box definition with specified lengths and angles
     void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
-    // Return CellArray
-    const CellArray &cells() const;
 
     /*
      * Source Forcefield (if any)

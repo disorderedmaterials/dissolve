@@ -12,7 +12,7 @@ template <ProblemType problem, Population population> EnergyKernel createEnergyK
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     auto *cfg = problemDef.cfg_;
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
     return kernel;
 }
 

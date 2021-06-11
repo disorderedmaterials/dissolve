@@ -233,7 +233,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Calculate total interatomic energy from molecules
             Timer moleculeTimer;
-            EnergyKernel energyKernel(procPool, cfg, dissolve.potentialMap(), cutoff);
+            EnergyKernel energyKernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), cutoff);
             auto molecularEnergy = 0.0;
             for (const auto &mol : cfg->molecules())
                 molecularEnergy += energyKernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));

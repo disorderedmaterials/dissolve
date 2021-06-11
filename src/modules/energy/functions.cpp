@@ -42,7 +42,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, const Configuratio
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
 
     // Set the strategy
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
@@ -108,7 +108,7 @@ double EnergyModule::interMolecularEnergy(ProcessPool &procPool, const Configura
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
 
     // Set the strategy
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
@@ -148,7 +148,7 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, const Configura
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
 
     bondEnergy = 0;
     angleEnergy = 0;

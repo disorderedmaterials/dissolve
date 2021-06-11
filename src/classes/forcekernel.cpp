@@ -11,8 +11,9 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, double cutoffDistance)
-    : box_(box), potentialMap_(potentialMap), processPool_(procPool)
+ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+                         double cutoffDistance)
+    : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
 {
     cutoffDistanceSquared_ =
         (cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);

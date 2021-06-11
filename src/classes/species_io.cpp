@@ -355,7 +355,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     // Generate Box
                     box_ = Box::generate(*boxLengths, boxAngles);
-                    cellArray_.generate(box_.get(), 7.0, 12.0);
 
                     // Fold atoms
                     for (auto &i : atoms_)

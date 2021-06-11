@@ -13,7 +13,7 @@ template <ProblemType problem, Population population> ForceKernel createForceKer
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     auto *cfg = problemDef.cfg_;
-    ForceKernel kernel(procPool, cfg->box(), potentialMap);
+    ForceKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
     return kernel;
 }
 
