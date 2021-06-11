@@ -149,13 +149,9 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
 // Calculate forces between Cell and its neighbours
 void ForceKernel::forces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
-    // Straight loop over Cells *not* requiring mim
-    for (auto *otherCell : cell->cellNeighbours())
-        forces(cell, otherCell, false, excludeIgeJ, strategy, f);
-
-    // Straight loop over Cells requiring mim
-    for (auto *otherCell : cell->mimCellNeighbours())
-        forces(cell, otherCell, true, excludeIgeJ, strategy, f);
+    auto &neighbours = cellArray_.neighbours(*cell);
+    for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
+        forces(cell, &it->neighbour_, it->requiresMIM_, excludeIgeJ, strategy, f);
 }
 
 // Calculate forces between Atom and Cell
@@ -344,13 +340,15 @@ void ForceKernel::forces(const Atom &i, ProcessPool::DivisionStrategy strategy, 
     // This Atom with other Atoms in the same Cell
     forces(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, f);
 
-    // This Atom with other Atoms in neighbour Cells
-    for (auto *neighbour : cellI->cellNeighbours())
-        forces(i, neighbour, KernelFlags::NoFlags, strategy, f);
-
-    // This Atom with other Atoms in neighbour Cells which require minimum image
-    for (auto *neighbour : cellI->mimCellNeighbours())
-        forces(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy, f);
+    // This Atom with other Atoms in neighbouring Cells
+    auto &neighbours = cellArray_.neighbours(*cellI);
+    for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
+    {
+        if (it->requiresMIM_)
+            forces(i, &it->neighbour_, KernelFlags::ApplyMinimumImageFlag, strategy, f);
+        else
+            forces(i, &it->neighbour_, KernelFlags::NoFlags, strategy, f);
+    }
 }
 
 /*
