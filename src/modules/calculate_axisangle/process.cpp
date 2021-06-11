@@ -15,7 +15,7 @@ bool CalculateAxisAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool) 
 bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurations_.size() == 0)
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
