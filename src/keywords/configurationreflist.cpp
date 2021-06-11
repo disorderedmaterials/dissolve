@@ -82,6 +82,5 @@ bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view key
 // Prune any references to the supplied Configuration in the contained data
 void ConfigurationRefListKeyword::removeReferencesTo(Configuration *cfg)
 {
-    auto it = std::find(data_.begin(), data_.end(), cfg);
-    data_.erase(it);
+    data_.erase(std::remove(data_.begin(), data_.end(), cfg), data_.end());
 }

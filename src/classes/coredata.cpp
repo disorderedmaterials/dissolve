@@ -399,9 +399,9 @@ Configuration *CoreData::addConfiguration()
 // Remove specified Configuration
 void CoreData::removeConfiguration(Configuration *cfg)
 {
-    auto it = std::find_if(configurations_.begin(), configurations_.end(), [cfg](const auto &c) { return cfg == c.get(); });
-    if (it != configurations_.end())
-        configurations_.erase(it);
+    configurations_.erase(
+        std::remove_if(configurations_.begin(), configurations_.end(), [cfg](const auto &c) { return cfg == c.get(); }),
+        configurations_.end());
 }
 
 // Return number of Configurations in list
