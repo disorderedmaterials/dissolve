@@ -63,6 +63,7 @@ class KeywordBase : public ListItem<KeywordBase>
         SpeciesSiteVectorData,
         SpeciesVectorData,
         StringData,
+        ValueStoreData,
         Vec3DoubleData,
         Vec3IntegerData,
         Vec3NodeValueData,

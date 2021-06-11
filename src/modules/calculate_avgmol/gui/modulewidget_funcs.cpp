@@ -11,6 +11,8 @@ CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget *parent, const 
     // Set up user interface
     ui_.setupUi(this);
 
+    module_->updateSpecies(processingData);
+
     ui_.SpeciesView->setSpecies(&module_->averageSpecies());
 
     refreshing_ = false;

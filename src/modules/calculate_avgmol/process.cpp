@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "main/dissolve.h"
 #include "modules/calculate_avgmol/avgmol.h"
+#include "templates/algorithms.h"
 
 // Run set-up stage
 bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
@@ -43,13 +43,8 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     // Realise arrays
     updateArrays(dissolve);
 
-    // Retrieve data arrays
-    auto &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
-    auto &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
-    auto &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
-
-    // Update our Species
-    updateSpecies(x, y, z);
+    // Update the species coordinates
+    updateSpecies(dissolve.processingModuleData());
 
     return true;
 }
@@ -85,11 +80,12 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto *stack = cfg->siteStack(site);
 
     // Retrieve data arrays
-    auto &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
-    auto &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
-    auto &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
+    auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", uniqueName());
+    auto &sampledY = dissolve.processingModuleData().retrieve<SampledVector>("Y", uniqueName());
+    auto &sampledZ = dissolve.processingModuleData().retrieve<SampledVector>("Z", uniqueName());
 
     // Loop over sites
+    std::vector<double> rx(targetSpecies_->nAtoms()), ry(targetSpecies_->nAtoms()), rz(targetSpecies_->nAtoms());
     Vec3<double> r;
     for (auto n = 0; n < stack->nSites(); ++n)
     {
@@ -101,17 +97,21 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
         inverseAxes.invert();
 
         // Loop over atoms, taking delta position with origin, and rotating into local axes
-        for (auto i = 0; i < s.molecule()->nAtoms(); ++i)
+        for (auto &&[i, x, y, z] : zip(s.molecule()->atoms(), rx, ry, rz))
         {
-            r = inverseAxes * box->minimumVector(s.origin(), s.molecule()->atom(i)->r());
-
-            x.at(i) += r.x;
-            y.at(i) += r.y;
-            z.at(i) += r.z;
+            r = inverseAxes * box->minimumVector(s.origin(), i->r());
+            x = r.x;
+            y = r.y;
+            z = r.z;
         }
+
+        // Accumulate positions
+        sampledX += rx;
+        sampledY += ry;
+        sampledZ += rz;
     }
 
-    updateSpecies(x, y, z);
+    updateSpecies(sampledX, sampledY, sampledZ);
 
     return true;
 }

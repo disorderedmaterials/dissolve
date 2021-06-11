@@ -153,6 +153,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
+    registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);
     registerDeserialiser<Vec3<int>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         auto &v = std::any_cast<Vec3<int> &>(a);
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

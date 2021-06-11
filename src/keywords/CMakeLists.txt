@@ -38,6 +38,7 @@ add_library(
   speciessitevector.cpp
   speciesvector.cpp
   stdstring.cpp
+  valuestore.cpp
   vec3double.cpp
   vec3integer.cpp
   vec3nodevalue.cpp
@@ -85,6 +86,7 @@ add_library(
   speciessitevector.h
   speciesvector.h
   stdstring.h
+  valuestore.h
   vec3double.h
   vec3integer.h
   vec3labels.h

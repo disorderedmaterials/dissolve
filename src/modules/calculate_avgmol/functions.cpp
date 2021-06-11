@@ -3,6 +3,7 @@
 
 #include "main/dissolve.h"
 #include "modules/calculate_avgmol/avgmol.h"
+#include "templates/algorithms.h"
 
 /*
  * Private Functions
@@ -14,13 +15,13 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
     auto requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
     // Retrieve / create the three data arrays, and size accordingly
-    auto &x = dissolve.processingModuleData().realise<Array<SampledDouble>>("X", uniqueName(), GenericItem::InRestartFileFlag);
-    auto &y = dissolve.processingModuleData().realise<Array<SampledDouble>>("Y", uniqueName(), GenericItem::InRestartFileFlag);
-    auto &z = dissolve.processingModuleData().realise<Array<SampledDouble>>("Z", uniqueName(), GenericItem::InRestartFileFlag);
+    auto &x = dissolve.processingModuleData().realise<SampledVector>("X", uniqueName(), GenericItem::InRestartFileFlag);
+    auto &y = dissolve.processingModuleData().realise<SampledVector>("Y", uniqueName(), GenericItem::InRestartFileFlag);
+    auto &z = dissolve.processingModuleData().realise<SampledVector>("Z", uniqueName(), GenericItem::InRestartFileFlag);
 
     if (requiredSize > 0)
     {
-        if (x.nItems() == requiredSize && y.nItems() == requiredSize && z.nItems() == requiredSize)
+        if (x.values().size() == requiredSize && y.values().size() == requiredSize && z.values().size() == requiredSize)
             Messenger::print("Using existing coordinate arrays for average species.\n");
         else
         {
@@ -39,17 +40,27 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
 }
 
 // Update the local species with the coordinates from the supplied arrays
-void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble> &x, const Array<SampledDouble> &y,
-                                          const Array<SampledDouble> &z)
+void CalculateAvgMolModule::updateSpecies(const SampledVector &x, const SampledVector &y, const SampledVector &z)
 {
-    // Loop over atoms in our species
-    for (auto n = 0; n < averageSpecies_.nAtoms(); ++n)
-        averageSpecies_.setAtomCoordinates(n, x.at(n).value(), y.at(n).value(), z.at(n).value());
+    for (auto &&[i, rx, ry, rz] : zip(averageSpecies_.atoms(), x.values(), y.values(), z.values()))
+        averageSpecies_.setAtomCoordinates(&i, Vec3<double>(rx, ry, rz));
 }
 
 /*
  * Public Functions
  */
+
+// Update average Species with coordinates from processing data
+void CalculateAvgMolModule::updateSpecies(const GenericList &moduleData)
+{
+    // Retrieve data arrays
+    auto &x = moduleData.value<SampledVector>("X", uniqueName());
+    auto &y = moduleData.value<SampledVector>("Y", uniqueName());
+    auto &z = moduleData.value<SampledVector>("Z", uniqueName());
+
+    // Update our Species
+    updateSpecies(x, y, z);
+}
 
 // Return average Species
 Species &CalculateAvgMolModule::averageSpecies() { return averageSpecies_; }

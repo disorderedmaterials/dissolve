@@ -17,5 +17,8 @@ void DataTestModule::initialise()
                   "Type of error calculation to use");
     keywords_.add("Test", new StringPairVectorKeyword(internal1DData_), "InternalData1D",
                   "Specify one-dimensional internal reference and test data", "<target1> <target2>");
-    keywords_.add("Test", new DoubleKeyword(5.0e-3, 1.0e-5), "Threshold", "Threshold for error metric above which test fails");
+    keywords_.add("Test", new ValueStoreKeyword(testSampledVectorData_), "SampledVector",
+                  "Specify test reference values for named SampledVector data",
+                  "<target> <fileformat> <filename> [options...]");
+    keywords_.add("Test", new DoubleKeyword(5.0e-3, 1.0e-15), "Threshold", "Threshold for error metric above which test fails");
 }

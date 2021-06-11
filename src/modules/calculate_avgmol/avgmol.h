@@ -4,10 +4,8 @@
 #pragma once
 
 #include "classes/species.h"
+#include "math/sampledvector.h"
 #include "module/module.h"
-
-// Forward Declarations
-/* none */
 
 // Calculate Average Molecule Module
 class CalculateAvgMolModule : public Module
@@ -65,9 +63,11 @@ class CalculateAvgMolModule : public Module
     // Ensure arrays are the correct size for the current target Species
     void updateArrays(Dissolve &dissolve);
     // Update the local species with the coordinates from the supplied arrays
-    void updateSpecies(const Array<SampledDouble> &x, const Array<SampledDouble> &y, const Array<SampledDouble> &z);
+    void updateSpecies(const SampledVector &x, const SampledVector &y, const SampledVector &z);
 
     public:
+    // Update average Species with coordinates from processing data
+    void updateSpecies(const GenericList &moduleData);
     // Return average Species
     Species &averageSpecies();
 

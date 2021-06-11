@@ -69,6 +69,7 @@ jobs:
         fetchDepth: 1
       - bash: |
           set -ex
+          sudo apt-get update
           sudo apt-get install libopenmpi-dev openmpi-bin openmpi-common
         displayName: 'Install Prerequisites'
       - task: DownloadBuildArtifacts@0

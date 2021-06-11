@@ -40,7 +40,7 @@ class GenericItemProducer
     }
     // Produce object of specified type
     std::any produce(const std::type_info &objectType) const;
-    // Produce object od named class
+    // Produce object of named class
     std::any produce(const std::string_view className) const;
     // Return class name for specified type
     std::string className(const std::type_info &objectType) const;

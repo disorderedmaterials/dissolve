@@ -46,6 +46,7 @@
 #include "keywords/speciessitevector.h"
 #include "keywords/speciesvector.h"
 #include "keywords/stdstring.h"
+#include "keywords/valuestore.h"
 #include "keywords/vec3double.h"
 #include "keywords/vec3integer.h"
 #include "keywords/vec3nodevalue.h"
