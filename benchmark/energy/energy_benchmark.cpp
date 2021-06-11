@@ -52,12 +52,11 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
 template <ProblemType problem, Population population> static void BM_CalculateEnergy_MoleculeBondEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto energyKernel = createEnergyKernel(problemDef);
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &bond = mol->species()->bonds().back();
     for (auto _ : state)
     {
-        double energy = energyKernel.energy(bond);
+        double energy = bond.energy(1.0);
         benchmark::DoNotOptimize(energy);
     }
 }
@@ -66,12 +65,11 @@ template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_MoleculeTorsionEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto energyKernel = createEnergyKernel(problemDef);
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &torsion = mol->species()->torsions().front();
     for (auto _ : state)
     {
-        double energy = energyKernel.energy(torsion);
+        double energy = torsion.energy(109.5);
         benchmark::DoNotOptimize(energy);
     }
 }
@@ -79,12 +77,11 @@ template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_MoleculeAngleEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto energyKernel = createEnergyKernel(problemDef);
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &angle = mol->species()->angles().front();
     for (auto _ : state)
     {
-        double energy = energyKernel.energy(angle);
+        double energy = angle.energy(109.5);
         benchmark::DoNotOptimize(energy);
     }
 }

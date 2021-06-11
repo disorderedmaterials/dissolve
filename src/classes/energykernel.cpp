@@ -300,20 +300,10 @@ double EnergyKernel::energy(const SpeciesBond &b, const Atom &i, const Atom &j)
     return b.energy(box_->minimumDistance(i.r(), j.r()));
 }
 
-// Return SpeciesBond energy
-double EnergyKernel::energy(const SpeciesBond &b) { return b.energy(box_->minimumDistance(b.j()->r(), b.i()->r())); }
-
 // Return SpeciesAngle energy at Atoms specified
 double EnergyKernel::energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k)
 {
     return a.energy(Box::angleInDegrees(box_->minimumVectorN(j.r(), i.r()), box_->minimumVectorN(j.r(), k.r())));
-}
-
-// Return SpeciesAngle energy
-double EnergyKernel::energy(const SpeciesAngle &a)
-{
-    return a.energy(
-        Box::angleInDegrees(box_->minimumVectorN(a.j()->r(), a.i()->r()), box_->minimumVectorN(a.j()->r(), a.k()->r())));
 }
 
 // Return SpeciesTorsion energy at Atoms specified
@@ -323,27 +313,11 @@ double EnergyKernel::energy(const SpeciesTorsion &t, const Atom &i, const Atom &
                                           box_->minimumVector(k.r(), l.r())));
 }
 
-// Return SpeciesTorsion energy
-double EnergyKernel::energy(const SpeciesTorsion &t)
-{
-    return t.energy(Box::torsionInDegrees(box_->minimumVector(t.j()->r(), t.i()->r()),
-                                          box_->minimumVector(t.j()->r(), t.k()->r()),
-                                          box_->minimumVector(t.k()->r(), t.l()->r())));
-}
-
 // Return SpeciesImproper energy at Atoms specified
 double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
 {
     return imp.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
                                             box_->minimumVector(k.r(), l.r())));
-}
-
-// Return SpeciesImproper energy
-double EnergyKernel::energy(const SpeciesImproper &imp)
-{
-    return imp.energy(Box::torsionInDegrees(box_->minimumVector(imp.j()->r(), imp.i()->r()),
-                                            box_->minimumVector(imp.j()->r(), imp.k()->r()),
-                                            box_->minimumVector(imp.k()->r(), imp.l()->r())));
 }
 
 // Return intramolecular energy for the supplied Atom

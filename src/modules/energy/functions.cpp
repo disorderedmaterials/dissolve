@@ -234,25 +234,35 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, const Configura
 }
 
 // Return total intramolecular energy of Species
-double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, const Species *sp)
+double EnergyModule::intraMolecularEnergy(const Species *sp)
 {
     auto energy = 0.0;
+    const Box *box = sp->box();
 
     // Loop over bonds
-    for (const auto &bond : sp->bonds())
-        energy += EnergyKernel::energy(bond);
+    energy += std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0, [box](const auto acc, const auto &b) {
+        return acc + b.energy(box->minimumDistance(b.j()->r(), b.i()->r()));
+    });
 
     // Loop over angles
-    for (const auto &angle : sp->angles())
-        energy += EnergyKernel::energy(angle);
+    energy += std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0, [box](const auto acc, const auto &a) {
+        return acc + a.energy(Box::angleInDegrees(box->minimumVectorN(a.j()->r(), a.i()->r()),
+                                                  box->minimumVectorN(a.j()->r(), a.k()->r())));
+    });
 
     // Loop over torsions
-    for (const auto &torsion : sp->torsions())
-        energy += EnergyKernel::energy(torsion);
+    energy += std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0, [box](const auto acc, const auto &t) {
+        return acc + t.energy(Box::torsionInDegrees(box->minimumVector(t.j()->r(), t.i()->r()),
+                                                    box->minimumVector(t.j()->r(), t.k()->r()),
+                                                    box->minimumVector(t.k()->r(), t.l()->r())));
+    });
 
     // Loop over impropers
-    for (const auto &improper : sp->impropers())
-        energy += EnergyKernel::energy(improper);
+    energy += std::accumulate(sp->impropers().begin(), sp->impropers().end(), 0.0, [box](const auto acc, const auto &imp) {
+        return acc + imp.energy(Box::torsionInDegrees(box->minimumVector(imp.j()->r(), imp.i()->r()),
+                                                      box->minimumVector(imp.j()->r(), imp.k()->r()),
+                                                      box->minimumVector(imp.k()->r(), imp.l()->r())));
+    });
 
     return energy;
 }
@@ -277,7 +287,7 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, const Configuration *cfg
 // Return total energy (interatomic and intramolecular) of Species
 double EnergyModule::totalEnergy(ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
 {
-    return (interAtomicEnergy(procPool, sp, potentialMap) + intraMolecularEnergy(procPool, sp));
+    return (interAtomicEnergy(procPool, sp, potentialMap) + intraMolecularEnergy(sp));
 }
 
 // Check energy stability of specified Configuration
