@@ -213,6 +213,15 @@ const std::vector<CellNeighbour> &CellArray::neighbours(const Cell &cell) const 
 // Return vector of all unique cell neighbour pairs
 const std::vector<CellNeighbourPair> &CellArray::getCellNeighbourPairs() const { return neighbourPairs_; }
 
+// Return whether minimum image calculation is required between the supplied cells
+bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
+{
+    auto it = std::find(neighbours_[a.index()].begin(), neighbours_[a.index()].end(), b);
+    if (it == neighbours_[a.index()].end())
+        return false;
+    return it->requiresMIM_;
+}
+
 /*
  * Generation
  */

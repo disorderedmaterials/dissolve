@@ -100,7 +100,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(lineConfigurationPrimitive_, A);
 
         // Draw Atoms
-        for (const auto i : source_->atoms())
+        for (const auto &i : source_->atoms())
         {
             // If the atom has no bonds draw it as a 'cross'
             if (i->speciesAtom()->nBonds() == 0)
@@ -130,7 +130,10 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                     rj = partner->r();
 
                     // Determine half delta i-j for bond
-                    const auto dij = (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
+                    const auto dij =
+                        (source_->cells().minimumImageRequired(*i->cell(), *partner->cell()) ? box->minimumVector(ri, rj)
+                                                                                             : rj - ri) *
+                        0.5;
 
                     // Draw bond halves
                     lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
@@ -165,7 +168,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                 if (i == partner)
                     continue;
 
-                if (i->cell()->mimRequired(partner->cell()))
+                if (source_->cells().minimumImageRequired(*i->cell(), *partner->cell()))
                     configurationAssembly_.createCylinderBond(
                         bondPrimitive_, i->r(), partner->r(), box->minimumVector(i->r(), partner->r()),
                         ElementColours::colour(i->speciesAtom()->Z()), ElementColours::colour(partner->speciesAtom()->Z()),
