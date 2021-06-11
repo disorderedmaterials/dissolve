@@ -24,7 +24,7 @@ class ForceKernel
 {
     public:
     ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
-                double cutoffDistance = -1.0);
+                std::optional<double> energyCutoff = std::nullopt);
     ~ForceKernel() = default;
 
     // Alias for force storage vector

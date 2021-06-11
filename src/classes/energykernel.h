@@ -6,6 +6,7 @@
 #include "base/processpool.h"
 #include "classes/kernelflags.h"
 #include <memory>
+#include <optional>
 
 // Forward Declarations
 class Atom;
@@ -25,7 +26,7 @@ class EnergyKernel
 {
     public:
     EnergyKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
-                 double energyCutoff = -1.0);
+                 std::optional<double> energyCutoff = std::nullopt);
     ~EnergyKernel() = default;
     // Clear all data
     void clear();

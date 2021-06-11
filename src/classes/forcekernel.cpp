@@ -12,11 +12,11 @@
 #include <iterator>
 
 ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
-                         double cutoffDistance)
+                         std::optional<double> energyCutoff)
     : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
 {
     cutoffDistanceSquared_ =
-        (cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);
+        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
 }
 
 /*

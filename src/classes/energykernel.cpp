@@ -13,10 +13,11 @@
 #include <numeric>
 
 EnergyKernel::EnergyKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
-                           double energyCutoff)
+                           std::optional<double> energyCutoff)
     : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
 {
-    cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
+    cutoffDistanceSquared_ =
+        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
 }
 
 /*
