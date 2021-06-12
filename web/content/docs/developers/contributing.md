@@ -33,7 +33,7 @@ More details can be found in this [GitHub guide](https://help.github.com/en/arti
 
 ## Contributing to the Codebase
 
-Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with git, and is available from [https://www.github.com/disorderedmaterials/dissolve](). Dissolve adopts a simple branching model for development, with `develop` being the main branch of the repository, and versioned releases branching off from that. Any additions or fixes to the code should be made through a suitable pull request from your own forked repository.
+Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with [git](https://git-scm.com/) and hosted on GitHub at [https://www.github.com/disorderedmaterials/dissolve](). Dissolve adopts a simple branching model for development, with `develop` being the main branch of the repository, and versioned releases branching off from that. Any additions or fixes to the code should be made through a suitable pull request from your own forked repository.
 
 ### 1) Register on GitHub
 
