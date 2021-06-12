@@ -8,13 +8,11 @@ description: Compilation instructions
 
 Dissolve uses `CMake` in order to provide a consistent build system across Window, OSX, and Linux.
 
-Note that the serial and parallel versions must be built separately. Building the GUI will also build the serial version.
-
 ## Prerequisites
 
 ### Build Toolchain
 
-Dissolve is completely written in C++ and uses some aspects of the C++17 standard, so a compiler that supports C++17 is a must. The CMake build system is used throughout.
+Dissolve is completely written in C++ and uses some aspects of the C++17 standard and parallel STL, so a compiler that supports C++17 and PSTL is a must (for `gcc` this means version 9 or above, for example). The CMake build system is used throughout.
 
 You may also consider using the excellent [`Ninja`](https://ninja-build.org/) to speed up your build. If you choose to do so, add `-G Ninja` to the `cmake` commands detailed below, and run `ninja` instead of `make`.
 
@@ -30,9 +28,13 @@ Satisfying these dependencies is enough to build the serial version. For the par
 
 Dissolve uses the [`Conan`](https://conan.io/) package manager to satisfy external dependencies as far as possible. `ANTLR4` is not available via Conan (yet) and so must either be installed from platform-specific repositories or built alongside Dissolve using the relevant configuration options. See the [compilation instructions]({{< ref "compilation#install-antlr4" >}}) for more information.
 
-### Dissolve (Parallel Version)
+### Dissolve (Multithreaded Version)
 
-As at version 0.7 Dissolve uses OpenMPI for parallelism, so a suitable installation providing `mpic++` is required.
+As of version 0.8 the default is for Dissolve to be built with multithreading enabled - this applies to both the command-line and GUI versions. If you really want a truly serial code, pass `-DMULTI_THREADING:bool=false` to `cmake`.
+
+### Dissolve (MPI-enabled)
+
+Version 0.7.X of Dissolve uses MPI for parallelism, so a suitable MPI implementation providing `mpic++` is required - MPI-based parallelism is enabled by passing `-DPARALLEL:bool=true` to `cmake`. It is *not* recommended to build version 0.8 with MPI enabled, since MPI+threading is only experimental in this version.
 
 ### GUI
 
@@ -41,6 +43,8 @@ The GUI requires several external graphical libraries and toolkits:
 - Qt5 (Widgets, Core, OpenGL) v5.10 or higher (including development libraries/headers)
 - FTGL (including development libraries/headers)
 - Freetype2 (including development libraries/headers)
+
+To build the GUI, pass `-DGUI:bool=true` to `cmake`.
 
 ## Prepare the Build
 
@@ -94,39 +98,17 @@ If you have downloaded the ANTLR4 Java tool and need to specify it explicitly, u
 -DANTLR_EXECUTABLE:path=/my/downloads/antlr-4.8-complete.jar
 ```
 
-### Serial Version
-
-For the serial version, run the following (appending any flags mentioned above as necessary):
-
-```
-cmake ../
-```
-
-### Parallel Version
-
-```
-cmake ../ -DPARALLEL:bool=true
-```
-
-### GUI
-
-```
-cmake ../ -DGUI:bool=true
-```
-
-As noted above, building the GUI implicitly builds the serial version as well, since the underlying codebase is identical.
-
 ### Full Example
 
-An example`cmake` command using Ninja,building ANTLR4 as an external project, and locating the ANTLR4 Java tool in the build directory, would look like this:
+An example`cmake` command using Ninja to build both the command-line and GUI codes, building ANTLR4 as an external project, and locating the ANTLR4 Java tool in the build directory, would look like this:
 
 ```
-cmake ../ -G Ninja -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=./antlr-4.8-complete.jar
+cmake ../ -G Ninja -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=./antlr-4.8-complete.jar
 ```
 
 ## Run the Build
 
-Once configured correctly and with no errors, the target binary can be built simply by running `make`
+Once configured correctly and with no errors, the target binary can be built simply by running `make`:
 
 ```
 make
@@ -192,7 +174,7 @@ Default: `false`
 
 #### `BUILD_UNIT_TESTS`
 
-In addition to the main build, also build unit tests located in the `unit/` directory.  The unit tests check individual portions of the dissolve code base for problems.  These tests are not as comprehensive, but they run much quicker than the system tests and provide more precision as to where an bug is arising.
+In addition to the main build, also build unit tests located in the `unit/` directory.  The unit tests check individual portions of the dissolve code base for problems.  These tests are not as comprehensive, but they run much quicker than the system tests and provide more precision as to where a bug is arising.
 
 Example: `-DBUILD_UNIT_TESTS:bool=true`
 
@@ -216,8 +198,8 @@ Default: `false`
 
 #### `MULTI_THREADING`
 
-Requests that the multithreaded version of Dissolve be built. Intel thread building blocks (tbb) must be present on the path. By default this option is enabled.
+Requests that the multithreaded version of Dissolve be built. Intel thread building blocks (tbb) must be present in the path. By default this option is enabled.
 
 Usage: `-DMULTI_THREADING=ON`
 
-Default: `ON`
+Default: `true`

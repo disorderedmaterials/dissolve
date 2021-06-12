@@ -5,11 +5,22 @@ description: Where to find/get Dissolve
 ---
 {{< label color="blue" icon="fa-clock" text="2 minute read" >}}
 
+## The Various Flavours of Dissolve
+
+There are two principal "flavours" of Dissolve:
+
+- A command-line version, suitable for running from the command line / console, potentially on a cluster or HPC resource
+- A GUI version, which can be used to set-up simulations, visualise results, and also run simulations
+
+Both the GUI and command-line versions make use of multi-threading for parallel computation in order to be as efficient as possible.
+
+## Parallelism
+
+Prior to version 0.8 Dissolve utilised pure MPI (Message Passing Interface) to enable parallel computation. In version 0.8 the only parallel option available for general use is the multithreaded code - this means that code versions 0.8.X can only be run on a single machine / node, as opposed to the MPI version which could run across multiple machines / nodes. MPI use has not been completely removed, however, with the intention for version 0.9 to make use of combined MPI / multithreading. See the [top-level roadmap]({{< ref "roadmap" >}}) for more details.
+
 ## Pre-Built Packages
 
-Dissolve is available in packaged / installable form for several common operating systems from the [packages]({{< ref "packages" >}}) page.  Note that these packages focus primarily on providing the GUI version of the code, which can be used for setting up / visualising simulations, as well as running small-scale simulations such as the [examples]({{< ref "examples" >}}).
-
-For serious simulations, the parallel MPI version is recommended, but which must usually be compiled by hand on the target machine on a case-by-case basis.
+Dissolve is available in packaged / installable form for several common operating systems from the [packages]({{< ref "packages" >}}) page.  Note that these packages focus primarily on providing the GUI version of the code, which can be used for setting up / visualising simulations, as well as running smaller-scale simulations such as the [examples]({{< ref "examples" >}}).
 
 ### Windows 10
 
