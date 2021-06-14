@@ -150,7 +150,7 @@ set(components_SRCS
 # Target 'components'
 add_library(components ${components_UIS_H} ${components_SRCS} ${components_MOC_SRCS})
 target_include_directories(
-  components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+  components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${Qt6OpenGLWidgets_INCLUDE_DIRS}
                      ${CONAN_INCLUDE_DIRS_PUGIXML}
 )
 
@@ -249,6 +249,8 @@ qt6_add_resources(gui_RES ${gui_RES_QRC})
 add_library(gui ${gui_RES} ${gui_UIS_H} ${gui_SRCS} ${gui_MOC_SRCS})
 target_include_directories(
   gui PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+  Qt6::OpenGL
+  Qt6::OpenGLWidgets
 )
 target_link_libraries(
   gui
@@ -259,6 +261,8 @@ target_link_libraries(
   components
   models
   base
+  Qt6::OpenGL
+  Qt6::OpenGLWidgets
 )
 
 # Subdirectories

@@ -90,17 +90,23 @@ endif(BUILD_ANTLR_RUNTIME)
 if(GUI)
   # Add extra functions
   include(FindFTGL)
-
+  
+  set(Qt6_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6/")
   set(Qt6Widgets_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6Widgets/")
   set(Qt6WidgetsTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6WidgetsTools/")
   set(Qt6CoreTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6CoreTools/")
   set(Qt6GuiTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6GuiTools/")
-  find_package(Qt6Widgets 6.0 REQUIRED)
-  find_package(Qt6Core 6.0 REQUIRED)
-  find_package(Qt6Gui 6.0 REQUIRED)
-  find_package(OpenGL REQUIRED)
+  set(Qt6OpenGL_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6OpenGL/")
+  set(Qt6OpenGLWidgets_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6OpenGLWidgets/")
+  find_package(Qt6 COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets REQUIRED)
+  # find_package(Qt6Widgets 6.0 REQUIRED)
+  # find_package(Qt6Core 6.0 REQUIRED)
+  # find_package(Qt6Gui 6.0 REQUIRED)
+  # find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
+  find_package(Qt6OpenGL 6.0 REQUIRED)
+  find_package(Qt6OpenGLWidgets 6.0 REQUIRED)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
   set(CMAKE_AUTOMOC OFF)
@@ -239,6 +245,8 @@ if(GUI)
             ${Qt6Gui_INCLUDE_DIRS}
             ${Qt6OpenGL_INCLUDE_DIRS}
             ${Qt6Widgets_INCLUDE_DIRS}
+            ${Qt6OpenGL_INCLUDE_DIRS}
+            ${Qt6OpenGLWidgets_INCLUDE_DIRS}
   )
 
 endif(GUI)

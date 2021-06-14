@@ -22,7 +22,7 @@ foreach(SRCFILE ${tests_SRC})
             ${PROJECT_BINARY_DIR}/src
             ${ANTLR4_INCLUDE_DIRS}
             ${ANTLR_OUTPUT_DIRS}
-            ${Qt5Widgets_INCLUDE_DIRS}
+            ${Qt6Widgets_INCLUDE_DIRS}
             ${CONAN_INCLUDE_DIRS_GTEST}
             CONAN_PKG::pugixml
   )
@@ -34,9 +34,9 @@ foreach(SRCFILE ${tests_SRC})
            # Module 'nogui' libs
            ${MODULENOGUI_LINK_LIBS}
            ${NO_WHOLE_ARCHIVE_FLAG}
-           Qt5::Core
-           Qt5::Widgets
     PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
+           Qt6::Core
+           Qt6::Widgets
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
   )
 
