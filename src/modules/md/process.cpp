@@ -24,7 +24,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Get control parameters

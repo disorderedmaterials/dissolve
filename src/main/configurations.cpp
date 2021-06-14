@@ -19,10 +19,11 @@ Configuration *Dissolve::addConfiguration()
 bool Dissolve::ownConfiguration(Configuration *cfg)
 {
     // Sanity check - do we already own this Configuration?
-    if (coreData_.configurations().contains(cfg))
+    if (std::find_if(coreData_.configurations().begin(), coreData_.configurations().end(),
+                     [cfg](const auto &c) { return c.get() == cfg; }) != coreData_.configurations().end())
         return Messenger::error("Already own Configuration '{}', so nothing to do.\n", cfg->name());
 
-    coreData_.configurations().own(cfg);
+    coreData_.configurations().emplace_back(cfg);
 
     return true;
 }
@@ -44,9 +45,9 @@ void Dissolve::removeConfiguration(Configuration *cfg)
 int Dissolve::nConfigurations() const { return coreData_.nConfigurations(); }
 
 // Return Configuration list
-List<Configuration> &Dissolve::configurations() { return coreData_.configurations(); }
+std::vector<std::unique_ptr<Configuration>> &Dissolve::configurations() { return coreData_.configurations(); }
 
-const List<Configuration> &Dissolve::configurations() const { return coreData_.configurations(); }
+const std::vector<std::unique_ptr<Configuration>> &Dissolve::configurations() const { return coreData_.configurations(); }
 
 // Find configuration by name
 Configuration *Dissolve::findConfiguration(std::string_view name) const { return coreData_.findConfiguration(name); }
@@ -54,9 +55,9 @@ Configuration *Dissolve::findConfiguration(std::string_view name) const { return
 // Find configuration by 'nice' name
 Configuration *Dissolve::findConfigurationByNiceName(std::string_view name) const
 {
-    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
-        if (DissolveSys::sameString(name, cfg->niceName()))
-            return cfg;
-
-    return nullptr;
+    auto it = std::find_if(configurations().begin(), configurations().end(),
+                           [&name](const auto &cfg) { return DissolveSys::sameString(name, cfg->niceName()); });
+    if (it == configurations().end())
+        return nullptr;
+    return it->get();
 }

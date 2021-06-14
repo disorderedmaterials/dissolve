@@ -139,9 +139,9 @@ bool Module::isDisabled() const { return !enabled_; }
 bool Module::addTargetConfiguration(Configuration *cfg)
 {
     // Check how many Configurations we accept before we do anything else
-    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.nItems() < nRequiredTargets()))
+    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.size() < nRequiredTargets()))
     {
-        targetConfigurations_.append(cfg);
+        targetConfigurations_.push_back(cfg);
         keywords_.setAsModified("Configuration");
         return true;
     }
@@ -161,33 +161,31 @@ bool Module::addTargetConfiguration(Configuration *cfg)
 }
 
 // Add Configuration targets
-bool Module::addTargetConfigurations(const List<Configuration> &configs)
+bool Module::addTargetConfigurations(const std::vector<std::unique_ptr<Configuration>> &configs)
 {
     if (nRequiredTargets() == Module::ZeroTargets)
         return Messenger::error("Module targets no configurations, so none will be set from the {} provided.\n",
-                                configs.nItems());
+                                configs.size());
     else if (nRequiredTargets() == Module::OneOrMoreTargets)
     {
-        Messenger::print("Adding {} configurations as targets for module '{}'...\n", configs.nItems(), uniqueName());
+        Messenger::print("Adding {} configurations as targets for module '{}'...\n", configs.size(), uniqueName());
 
-        ListIterator<Configuration> configIterator(configs);
-        while (Configuration *cfg = configIterator.iterate())
-            if (!addTargetConfiguration(cfg))
+        for (auto &cfg : configs)
+            if (!addTargetConfiguration(cfg.get()))
                 return Messenger::error("Failed to add configuration '{}' to module '{}'.\n", cfg->name(), uniqueName());
     }
     else if (nTargetConfigurations() == nRequiredTargets())
         return Messenger::error("Refusing to add any of the {} provided configurations as targets for the module '{}' "
                                 "as it already has it's specified number ({}).\n",
-                                configs.nItems(), uniqueName(), nRequiredTargets());
+                                configs.size(), uniqueName(), nRequiredTargets());
     else
     {
         auto spaces = nRequiredTargets() - nTargetConfigurations();
         Messenger::print("Adding up to {} configurations from the {} provided as targets for module '{}'...\n", spaces,
-                         configs.nItems(), uniqueName());
+                         configs.size(), uniqueName());
 
-        ListIterator<Configuration> configIterator(configs);
-        while (Configuration *cfg = configIterator.iterate())
-            if (!addTargetConfiguration(cfg))
+        for (auto &cfg : configs)
+            if (!addTargetConfiguration(cfg.get()))
                 return Messenger::error("Failed to add configuration '{}' to module '{}'.\n", cfg->name(), uniqueName());
     }
 
@@ -197,17 +195,18 @@ bool Module::addTargetConfigurations(const List<Configuration> &configs)
 // Remove Configuration target
 bool Module::removeTargetConfiguration(Configuration *cfg)
 {
-    if (!targetConfigurations_.contains(cfg))
+    auto it = std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg);
+    if (it == targetConfigurations_.end())
         return Messenger::error("Can't remove Configuration '{}' from Module '{}' as it isn't currently a target.\n",
                                 cfg->name(), uniqueName());
 
-    targetConfigurations_.remove(cfg);
+    targetConfigurations_.erase(it);
 
     return true;
 }
 
 // Return number of targeted Configurations
-int Module::nTargetConfigurations() const { return targetConfigurations_.nItems(); }
+int Module::nTargetConfigurations() const { return targetConfigurations_.size(); }
 
 // Return whether the number of targeted Configurations is valid
 bool Module::hasValidNTargetConfigurations(bool reportError) const
@@ -240,10 +239,13 @@ bool Module::hasValidNTargetConfigurations(bool reportError) const
 }
 
 // Return first targeted Configuration
-const RefList<Configuration> &Module::targetConfigurations() const { return targetConfigurations_; }
+const std::vector<Configuration *> &Module::targetConfigurations() const { return targetConfigurations_; }
 
 // Return if the specified Configuration is in the targets list
-bool Module::isTargetConfiguration(Configuration *cfg) const { return targetConfigurations_.contains(cfg); }
+bool Module::isTargetConfiguration(Configuration *cfg) const
+{
+    return std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg) != targetConfigurations_.end();
+}
 
 // Copy Configuration targets from specified Module
 void Module::copyTargetConfigurations(Module *sourceModule)

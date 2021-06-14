@@ -251,10 +251,9 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
             newInstance->addTargetConfiguration(localConfiguration_);
         else
         {
-            ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-            while (Configuration *cfg = configIterator.iterate())
+            for (auto &cfg : dissolveWindow_->dissolve().configurations())
             {
-                newInstance->addTargetConfiguration(cfg);
+                newInstance->addTargetConfiguration(cfg.get());
                 if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) &&
                     (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations()))
                     break;

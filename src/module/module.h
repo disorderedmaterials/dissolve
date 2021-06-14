@@ -116,7 +116,7 @@ class Module : public ListItem<Module>
      */
     protected:
     // Configurations that are targeted by this Module
-    RefList<Configuration> targetConfigurations_;
+    std::vector<Configuration *> targetConfigurations_;
     // Whether this module is a local Module in a Configuration
     bool configurationLocal_;
 
@@ -124,7 +124,7 @@ class Module : public ListItem<Module>
     // Add Configuration target
     bool addTargetConfiguration(Configuration *cfg);
     // Add Configuration targets
-    bool addTargetConfigurations(const List<Configuration> &configs);
+    bool addTargetConfigurations(const std::vector<std::unique_ptr<Configuration>> &configs);
     // Remove Configuration target
     bool removeTargetConfiguration(Configuration *cfg);
     // Return number of targeted Configurations
@@ -132,7 +132,7 @@ class Module : public ListItem<Module>
     // Return whether the number of targeted Configurations is valid
     bool hasValidNTargetConfigurations(bool reportError = false) const;
     // Return targeted Configurations
-    const RefList<Configuration> &targetConfigurations() const;
+    const std::vector<Configuration *> &targetConfigurations() const;
     // Return if the specified Configuration is in the targets list
     bool isTargetConfiguration(Configuration *cfg) const;
     // Copy Configuration targets from specified Module

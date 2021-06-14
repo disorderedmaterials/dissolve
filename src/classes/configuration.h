@@ -29,7 +29,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration : public ListItem<Configuration>
+class Configuration
 {
     public:
     Configuration();

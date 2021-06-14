@@ -44,7 +44,7 @@ bool Dissolve::prepare()
         at->setIndex(count++);
 
     // Check Configurations
-    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
+    for (auto &cfg : configurations())
     {
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();
@@ -175,7 +175,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Configuration Upkeep");
 
-        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
+        for (auto &cfg : configurations())
         {
             Messenger::heading("'{}'", cfg->name());
 

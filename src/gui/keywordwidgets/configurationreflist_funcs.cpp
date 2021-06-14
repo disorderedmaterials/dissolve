@@ -39,7 +39,7 @@ ConfigurationRefListKeywordWidget::ConfigurationRefListKeywordWidget(QWidget *pa
 void ConfigurationRefListKeywordWidget::updateSelectionRow(int row, Configuration *cfg, bool createItem)
 {
     // Grab the target reference list
-    RefList<Configuration> &selection = keyword_->data();
+    auto &selection = keyword_->data();
 
     QListWidgetItem *item;
     if (createItem)
@@ -51,7 +51,8 @@ void ConfigurationRefListKeywordWidget::updateSelectionRow(int row, Configuratio
     }
     else
         item = ui_.SelectionList->item(row);
-    item->setCheckState(selection.contains(cfg) ? Qt::Checked : Qt::Unchecked);
+    bool contains = std::find(selection.begin(), selection.end(), cfg) != selection.end();
+    item->setCheckState(contains ? Qt::Checked : Qt::Unchecked);
 }
 
 // List item changed
@@ -136,12 +137,12 @@ void ConfigurationRefListKeywordWidget::updateWidgetValues(const CoreData &coreD
 void ConfigurationRefListKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Configurations for any that are checked
-    RefList<Configuration> newSelection;
+    std::vector<Configuration *> newSelection;
     for (auto n = 0; n < ui_.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)
-            newSelection.append(VariantPointer<Configuration>(item->data(Qt::UserRole)));
+            newSelection.push_back(VariantPointer<Configuration>(item->data(Qt::UserRole)));
     }
     keyword_->setData(newSelection);
 }
@@ -150,13 +151,13 @@ void ConfigurationRefListKeywordWidget::updateKeywordData()
 void ConfigurationRefListKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
-    RefList<Configuration> &selection = keyword_->data();
-    if (selection.nItems() == 0)
+    auto &selection = keyword_->data();
+    if (selection.size() == 0)
         setSummaryText("<None>");
     else
     {
         QString summaryText;
-        for (Configuration *cfg : selection)
+        for (auto *cfg : selection)
             summaryText +=
                 QString("%1%2").arg(summaryText.isEmpty() ? "" : ", ").arg(QString::fromStdString(std::string(cfg->name())));
 

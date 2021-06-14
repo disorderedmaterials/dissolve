@@ -388,27 +388,32 @@ Species *CoreData::findSpecies(std::string_view name) const
 // Add new Configuration
 Configuration *CoreData::addConfiguration()
 {
-    Configuration *newConfiguration = configurations_.add();
+    auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
     newConfiguration->setName(uniqueConfigurationName("NewConfiguration"));
 
-    return newConfiguration;
+    return newConfiguration.get();
 }
 
 // Remove specified Configuration
-void CoreData::removeConfiguration(Configuration *cfg) { configurations_.remove(cfg); }
+void CoreData::removeConfiguration(Configuration *cfg)
+{
+    configurations_.erase(
+        std::remove_if(configurations_.begin(), configurations_.end(), [cfg](const auto &c) { return cfg == c.get(); }),
+        configurations_.end());
+}
 
 // Return number of Configurations in list
-int CoreData::nConfigurations() const { return configurations_.nItems(); }
+int CoreData::nConfigurations() const { return configurations_.size(); }
 
 // Return core Configurations list
-List<Configuration> &CoreData::configurations() { return configurations_; }
+std::vector<std::unique_ptr<Configuration>> &CoreData::configurations() { return configurations_; }
 
-const List<Configuration> &CoreData::configurations() const { return configurations_; }
+const std::vector<std::unique_ptr<Configuration>> &CoreData::configurations() const { return configurations_; }
 
 // Return nth Configuration in list
-Configuration *CoreData::configuration(int n) { return configurations_[n]; }
+Configuration *CoreData::configuration(int n) { return configurations_[n].get(); }
 
 // Generate unique Configuration name with base name provided
 std::string CoreData::uniqueConfigurationName(std::string_view base) const
@@ -431,11 +436,11 @@ std::string CoreData::uniqueConfigurationName(std::string_view base) const
 // Search for Configuration by name
 Configuration *CoreData::findConfiguration(std::string_view name) const
 {
-    for (auto *cfg = configurations_.first(); cfg != nullptr; cfg = cfg->next())
-        if (DissolveSys::sameString(cfg->name(), name))
-            return cfg;
-
-    return nullptr;
+    auto it = std::find_if(configurations_.begin(), configurations_.end(),
+                           [&name](const auto &cfg) { return DissolveSys::sameString(cfg->name(), name); });
+    if (it == configurations_.end())
+        return nullptr;
+    return it->get();
 }
 
 /*

@@ -313,7 +313,7 @@ EnergyModule::EnergyStability EnergyModule::checkStability(GenericList &processi
 }
 
 // Check energy stability of specified Configurations, returning the number that failed
-int EnergyModule::nUnstable(GenericList &processingData, const RefList<Configuration> &configurations)
+int EnergyModule::nUnstable(GenericList &processingData, const std::vector<Configuration *> &configurations)
 {
     auto nFailed = 0;
 
