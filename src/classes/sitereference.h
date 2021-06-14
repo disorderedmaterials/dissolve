@@ -10,7 +10,7 @@
 class SiteStack;
 
 // Site Reference
-class SiteReference : public ListItem<SiteReference>
+class SiteReference
 {
     public:
     SiteReference(SiteStack &siteStack, std::string_view name);
