@@ -40,7 +40,6 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
         auto *cfgWidget = new ConfigurationRefListKeywordWidget(nullptr, cfgKeyword, dissolve.coreData());
         connect(cfgWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
         auto *layout = new QHBoxLayout;
-        layout->setMargin(0);
         layout->addWidget(cfgWidget);
         ui_.ConfigurationsPlaceholderWidget->setLayout(layout);
         if (module_->nRequiredTargets() == Module::ZeroTargets)
