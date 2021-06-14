@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "gui/render/textprimitive.h"
 #include "TextPrimitiveLexer.h"
+#include "gui/render/textprimitive.h"
 #include "base/sysfunc.h"
 #include "gui/render/TextPrimitiveErrorListeners.h"
 #include "gui/render/TextPrimitiveVisitor.h"
