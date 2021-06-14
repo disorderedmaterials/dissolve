@@ -9,7 +9,7 @@
 #include "data/atomicmasses.h"
 #include <numeric>
 
-SiteStack::SiteStack() : ListItem<SiteStack>()
+SiteStack::SiteStack()
 {
     configuration_ = nullptr;
     configurationIndex_ = -1;
