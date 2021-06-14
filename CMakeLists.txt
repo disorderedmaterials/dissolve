@@ -91,9 +91,13 @@ if(GUI)
   # Add extra functions
   include(FindFTGL)
 
-  find_package(Qt5Widgets 5.10 REQUIRED)
-  find_package(Qt5Core 5.10 REQUIRED)
-  find_package(Qt5Gui 5.10 REQUIRED)
+  set(Qt6Widgets_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6Widgets/")
+  set(Qt6WidgetsTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6WidgetsTools/")
+  set(Qt6CoreTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6CoreTools/")
+  set(Qt6GuiTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6GuiTools/")
+  find_package(Qt6Widgets 6.0 REQUIRED)
+  find_package(Qt6Core 6.0 REQUIRED)
+  find_package(Qt6Gui 6.0 REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
@@ -231,10 +235,10 @@ if(GUI)
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
             ${FREETYPE_INCLUDE_DIRS}
-            ${Qt5Core_INCLUDE_DIRS}
-            ${Qt5Gui_INCLUDE_DIRS}
-            ${Qt5OpenGL_INCLUDE_DIRS}
-            ${Qt5Widgets_INCLUDE_DIRS}
+            ${Qt6Core_INCLUDE_DIRS}
+            ${Qt6Gui_INCLUDE_DIRS}
+            ${Qt6OpenGL_INCLUDE_DIRS}
+            ${Qt6Widgets_INCLUDE_DIRS}
   )
 
 endif(GUI)
@@ -327,8 +331,8 @@ if(GUI)
            ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
             antlr4-runtime
-            Qt5::Widgets
-            Qt5::Core
+            Qt6::Widgets
+            Qt6::Core
             ${FTGL_LIBRARIES}
             ${OPENGL_LIBRARIES}
             ${FREETYPE_LIBRARIES}
