@@ -42,7 +42,7 @@ bool SystemTemplate::read(const QDir rootResourceDir)
     // Check that we have a file with the correct root node
     if (!infoReader.readNextStartElement())
         return Messenger::error("Failed to do initial read from system template xml.\n");
-    if (infoReader.name() != "systemtemplate")
+    if (infoReader.name().toString() == "systemtemplate")
         return Messenger::error("System template file has wrong root node type ({}).\n",
                                 qPrintable(infoReader.name().toString()));
 
