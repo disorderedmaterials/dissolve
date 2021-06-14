@@ -273,12 +273,18 @@ else()
   set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
 endif()
 
-# Enable build of unit tests?
-if(BUILD_TESTS)
+# Enable build of unit / system tests?
+option(BUILD_SYSTEM_TESTS "Build system tests" OFF)
+option(BUILD_UNIT_TESTS "Build unit tests" OFF)
+if(BUILD_SYSTEM_TESTS OR BUILD_UNIT_TESTS)
   enable_testing()
-  add_subdirectory(unit)
-  add_subdirectory(tests)
-endif(BUILD_TESTS)
+  if(BUILD_SYSTEM_TESTS)
+    add_subdirectory(tests)
+  endif(BUILD_SYSTEM_TESTS)
+  if(BUILD_UNIT_TESTS)
+    add_subdirectory(unit)
+  endif(BUILD_UNIT_TESTS)
+endif(BUILD_SYSTEM_TESTS OR BUILD_UNIT_TESTS)
 
 if(BUILD_BENCHMARKS)
   # The conan package of goooglebenchmark segfaults - so lets use fetch content
