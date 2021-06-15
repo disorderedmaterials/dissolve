@@ -47,7 +47,7 @@ void BaseViewer::mouseReleaseEvent(QMouseEvent *event)
     postRedisplay();
 
     // Clear button state and interaction flag
-    buttonState_ = 0;
+    buttonState_ = Qt::NoButton;
     interacting_ = false;
 }
 
