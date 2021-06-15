@@ -4,7 +4,7 @@
 #include "gui/selectsystemtemplatedialog.h"
 #include "gui/systemtemplate.h"
 #include "templates/variantpointer.h"
-#include <QRegExp>
+#include <QRegularExpression>
 
 SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const std::vector<SystemTemplate> &systemTemplates)
     : systemTemplates_(systemTemplates)
@@ -38,10 +38,12 @@ void SelectSystemTemplateDialog::updateTemplatesList(QString filter)
         else
         {
             // Check name
-            auto inName = sysTemp->name().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inName = sysTemp->name().contains(
+                QRegularExpression(filter.replace("*", ".*"), QRegularExpression::CaseInsensitiveOption));
 
             // Check description
-            auto inDescription = sysTemp->description().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inDescription = sysTemp->description().contains(
+                QRegularExpression(filter.replace("*", ".*"), QRegularExpression::CaseInsensitiveOption));
 
             // Hide the item?
             auto hide = (!inName) && (!inDescription);
