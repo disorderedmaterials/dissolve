@@ -1,7 +1,7 @@
 ---
 title: Compilation
-weight: 2
-description: Compilation instructions
+description: Building Dissolve from scratch
+weight: 3
 ---
 
 {{< tip text="Pre-built binaries for most desktop systems are available in the [packages](/packages/) section - don't compile Dissolve if you don't have to!" >}}
@@ -28,13 +28,13 @@ Satisfying these dependencies is enough to build the serial version. For the par
 
 Dissolve uses the [`Conan`](https://conan.io/) package manager to satisfy external dependencies as far as possible. `ANTLR4` is not available via Conan (yet) and so must either be installed from platform-specific repositories or built alongside Dissolve using the relevant configuration options. See the [compilation instructions]({{< ref "compilation#install-antlr4" >}}) for more information.
 
-### Dissolve (Multithreaded Version)
-
-As of version 0.8 the default is for Dissolve to be built with multithreading enabled - this applies to both the command-line and GUI versions. If you really want a truly serial code, pass `-DMULTI_THREADING:bool=false` to `cmake`.
-
-### Dissolve (MPI-enabled)
+### MPI (for versions 0.5.X, 0.6.X, and 0.7.X)
 
 Version 0.7.X of Dissolve uses MPI for parallelism, so a suitable MPI implementation providing `mpic++` is required - MPI-based parallelism is enabled by passing `-DPARALLEL:bool=true` to `cmake`. It is *not* recommended to build version 0.8 with MPI enabled, since MPI+threading is only experimental in this version.
+
+### Multithreading (for version 0.8.X)
+
+As of version 0.8 the default is for Dissolve to be built with multithreading enabled - this applies to both the command-line and GUI versions. If you really want a truly serial code, pass `-DMULTI_THREADING:bool=false` to `cmake`.
 
 ### GUI
 
