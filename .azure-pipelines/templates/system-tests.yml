@@ -62,6 +62,7 @@ jobs:
   - job:
     condition: eq('${{ parameters.parallel }}', true)
     displayName: 'System Tests (Parallel)'
+    timeoutInMinutes: 90
     pool:
       vmImage: ubuntu-latest
     steps:
