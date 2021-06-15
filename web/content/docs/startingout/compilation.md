@@ -184,7 +184,7 @@ Default: `false`
 
 #### `BUILD_SYSTEM_TESTS`
 
-In addition to the main build, also build system tests located in the `tests/` directory.
+In addition to the main build, also build system tests located in the `tests/` directory.  The system tests run dissolve on a large number of known data sets to confirm that there are no error in those calculations.
 
 Example: `-DBUILD_SYSTEM_TESTS:bool=true`
 
@@ -192,7 +192,7 @@ Default: `false`
 
 #### `BUILD_UNIT_TESTS`
 
-In addition to the main build, also build unit tests located in the `unit/` directory.
+In addition to the main build, also build unit tests located in the `unit/` directory.  The unit tests check individual portions of the dissolve code base for problems.  These tests are not as comprehensive, but they run much quicker than the system tests and provide more precision as to where an bug is arising.
 
 Example: `-DBUILD_UNIT_TESTS:bool=true`
 

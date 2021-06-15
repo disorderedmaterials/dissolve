@@ -22,9 +22,9 @@ struct CellNeighbourPair
 
     bool operator==(const CellNeighbourPair &other) const
     {
-        if (this->master_.index() == other.master_.index() && this->neighbour_.index() == other.neighbour_.index())
+        if (&this->master_ == &other.master_ && &this->neighbour_ == &other.neighbour_)
             return true;
-        else if (this->neighbour_.index() == other.master_.index() && this->master_.index() == other.neighbour_.index())
+        else if (&this->neighbour_ == &other.master_ && &this->master_ == &other.neighbour_)
             return true;
         else
             return false;
