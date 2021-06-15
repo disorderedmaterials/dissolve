@@ -1,0 +1,26 @@
+box
+units kj
+molecules 2
+argon
+nummols 1
+atoms 1
+Ar          30.0000    0.0         1   0   1
+finish
+water
+nummols 267
+atoms 3
+HW            1.00800   0.000000   1   0   1
+OW           15.99900   0.000000   1   0   1
+HW            1.00800   0.000000   1   0   1
+bonds 2
+harm    1     2      4431.53   1.012
+harm    2     3      4431.53   1.012
+angles 1
+harm    1     2     3     317.565    113.24
+finish
+vdw 4
+HW       HW        lj      0.000000      0.000000
+OW       HW        lj      0.000000      0.000000
+OW       OW        lj      0.000000      0.000000
+Ar       OW        lj      0.350000      2.166000
+close

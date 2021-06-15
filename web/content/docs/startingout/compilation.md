@@ -174,19 +174,27 @@ Example: `-DBUILD_ANTLR_ZIPFILE:path=/path/to/antlr4-cpp-runtime-4.8-source.zip`
 
 Default: `not set`
 
-#### `BUILD_TESTS`
+#### `BUILD_BENCHMARKS`
 
-In addition to the main build, also build unit/system tests.
+In addition to the main build, also build the benchmarks located in the benchmark directory. If this option is specified, the Google benchmark library will be downloaded and compiled by cmake.
 
-Example: `-DBUILD_TESTS:bool=true`
+Usage: `-DBUILD_BECHMARKS:bool=true`
 
 Default: `false`
 
-#### `BUILD_BENCHMARKS`
+#### `BUILD_SYSTEM_TESTS`
 
-In addition to the main build, also build the benchmarks located in the benchmark directory. If this option is specified, the Google benchmark library will be downloaded and compiled by cmake. 
+In addition to the main build, also build system tests located in the `tests/` directory.  The system tests run dissolve on a large number of known data sets to confirm that there are no error in those calculations.
 
-Usage: `-DBUILD_BECHMARKS:bool=true`
+Example: `-DBUILD_SYSTEM_TESTS:bool=true`
+
+Default: `false`
+
+#### `BUILD_UNIT_TESTS`
+
+In addition to the main build, also build unit tests located in the `unit/` directory.  The unit tests check individual portions of the dissolve code base for problems.  These tests are not as comprehensive, but they run much quicker than the system tests and provide more precision as to where an bug is arising.
+
+Example: `-DBUILD_UNIT_TESTS:bool=true`
 
 Default: `false`
 

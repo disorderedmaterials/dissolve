@@ -103,7 +103,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (const auto &i : mol->atoms())
                 {
                     // Calculate reference energy for the Atom
-                    currentEnergy = kernel.energy(*i, ProcessPool::subDivisionStrategy(strategy), true);
+                    currentEnergy = kernel.energy(*i);
                     currentIntraEnergy = kernel.intramolecularEnergy(*mol, *i) * termScale;
 
                     // Loop over number of shakes per Atom
@@ -118,7 +118,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         cfg->updateCellLocation(i.get());
 
                         // Calculate new energy
-                        newEnergy = kernel.energy(*i, ProcessPool::subDivisionStrategy(strategy), true);
+                        newEnergy = kernel.energy(*i);
                         newIntraEnergy = kernel.intramolecularEnergy(*mol, *i) * termScale;
 
                         // Trial the transformed Atom position

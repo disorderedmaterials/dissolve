@@ -47,7 +47,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
             parameters:
-              extraflags: "-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
+              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
               threading: "ON"
           - task: PublishBuildArtifacts@1
             inputs:
@@ -64,7 +64,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-parallel.yml
             parameters:
-              extraflags: "-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
+              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
