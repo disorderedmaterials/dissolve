@@ -1,31 +1,24 @@
 ---
 title: Input, Output, and Workflow
 description: An overview of key files and basic operation
+weight: 1
 ---
 
 ## Input
 
-Dissolve takes a single [main input file]({{< ref "inputfile" >}}) that contains all of the definitions for species, configurations, forcefield parameters, and the actual description of what simulation to perform. Essentially, this file is a blueprint for the entire simulation, but does not contain any information on the current _state_ of the simulation. The current state of the simulation - every calculated property, every coordinate of every atom etc. - is stored in the [restart file]({{< ref "restart" >}}). The [restart file]({{< ref "restart" >}}), if it exists, is read in immediately after Dissolve has finished parsing the [main input file]({{< ref "inputfile" >}}), and is written to periodically as the simulation progresses. If you remove your restart file (or choose to ignore it with the [`-i` switch]({{< ref "cli#-i---ignore-restart" >}})) then your simulation is effectively reset, and begins again from the start with no memory of anything.
+Dissolve takes a single [main input file]({{< ref "inputfile" >}}) that contains all of the definitions for species, configurations, forcefield parameters, and the actual description of what simulation to perform. Essentially, this file is a blueprint for the entire simulation, but does not contain any information on the current _state_ of the simulation. The current state of the simulation - every calculated property, every coordinate of every atom etc. - is stored in the [restart file]({{< ref "restart" >}}). The [restart file]({{< ref "restart" >}}), if it exists, is read in immediately after Dissolve has finished parsing the [main input file]({{< ref "inputfile" >}}), and is written out periodically as the simulation progresses. If you remove your restart file (or choose to ignore it with the [`-i` switch]({{< ref "cli#-i---ignore-restart" >}})) then your simulation is effectively reset, and begins again from the start with no memory of anything.
 
-The restart file is named after the input file, with the suffix `.restart` appended - e.g. if the input file is `water-3000.txt` the restart file for the simulation will be `water-3000.txt.restart`. Dissolve also saves a second, backup restart file with the suffix `.restart.bak`, containing the previous saved state of the simulation.
+The restart file is named after the input file, with the suffix `.restart` appended - e.g. if the input file is `water-3000.txt` the restart file for the simulation will be `water-3000.txt.restart`. Dissolve also keeps a second, backup restart file with the suffix `.restart.bak`, containing the previous saved state of the simulation.
 
 ### External Data
 
 Certain modules may require external data - this data does not have to be stored in the same directory as the main input file, since Dissolve uses relative paths for any referenced external files.
 
-* * *
-
 ## Workflow
 
-### Main Loop
+Once the input file(s) have been successfully loaded, Dissolve enters its main loop, beginning from the last iteration number stored in the restart file, if present. The main loop steps through all defined [layers]({{< ref "inputfile#layer" >}}) of [modules]({{< ref "modules" >}}) and executes them sequentially, at the frequencies defined. This is the core of Dissolve'contained in that tell Dissolve "what to do".
 
-Once the input file(s) have been successfully loaded, Dissolve enters its main loop (beginning from the last iteration number stored in the restart file, if present). The main loop consists of a sequence of user-defined steps that tell Dissolve "what to do".
-
-### Iterations
-
-Run from the command line, Dissolve will perform five iterations and then exit unless told otherwise. A useful number of iterations to run can be specified with the `-n` switch (see the full list of [command-line options]({{< ref "cli" >}}) for more details.
-
-* * *
+From the command-line, a useful number of iterations to run can be specified with the [`-n`]({{< ref "cli#-i-n--iterations-n" >}}) [command-line option]({{< ref "cli" >}}).
 
 ## Output
 
