@@ -2,7 +2,6 @@
 title: Input, Output, and Workflow
 description: An overview of key files and basic operation
 ---
-{{< label color="blue" icon="fa-clock" text="5 minute read" >}}
 
 ## Input
 

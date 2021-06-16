@@ -2,7 +2,6 @@
 title: Units
 description: "Units used within Dissolve"
 ---
-{{< label color="blue" icon="fa-clock" text="1 minute read" >}}
 
 Dissolve uses Angstroms (&#8491;) for distance, degrees (&deg;) for angles, and kJ/mol for energies.
 

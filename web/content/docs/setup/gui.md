@@ -3,8 +3,6 @@ title: Using the GUI
 description: An overview of Dissolve's GUI
 ---
 
-{{< label color="blue" icon="fa-clock" text="2 minute read" >}}
-
 ## Overview
 Dissolve's user interface comprises three main areas:
 

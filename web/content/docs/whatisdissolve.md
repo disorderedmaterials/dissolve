@@ -3,7 +3,6 @@ title: 1. Introduction
 description: A brief overview of the purpose of Dissolve
 weight: 1
 ---
-{{< label color="blue" icon="fa-clock" text="2 minute read" >}}
 
 Dissolve is a code to help make sense of experimental structural scattering data by generating suitable representations ('models') of the real-world systems that are consistent with the measured data. These models are typically atomistic in nature (i.e. the atom is the basic unit that is assembled to make up the model), and employ classical forcefields in order to describe the interactions within. These interaction parameters are then adjusted by some method in order to drive agreement between the measured data and that calculated from the atomistic representation. As such, Dissolve sits somewhere in-between being a classical simulation code (doing standard classical simulation things such as Monte Carlo and molecular dynamics) and an optimisation package.
 
