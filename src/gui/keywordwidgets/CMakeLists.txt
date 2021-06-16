@@ -105,5 +105,5 @@ set(keywordwidgets_SRCS
 
 # Target 'keywordwidgets'
 add_library(keywordwidgets ${keywordwidgets_UIS_H} ${keywordwidgets_SRCS} ${keywordwidgets_MOC_SRCS})
-target_include_directories(keywordwidgets PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
-target_link_libraries(keywordwidgets PRIVATE base)
+target_include_directories(keywordwidgets PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
+target_link_libraries(keywordwidgets PRIVATE base Qt6::Widgets)

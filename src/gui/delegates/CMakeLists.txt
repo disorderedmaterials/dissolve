@@ -23,5 +23,5 @@ add_library(
   # ${delegates_UIS_H}
   ${delegates_SRCS} ${delegates_MOC_SRCS}
 )
-target_include_directories(delegates PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
-target_link_libraries(delegates PRIVATE base)
+target_include_directories(delegates PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
+target_link_libraries(delegates PRIVATE base Qt6::Widgets)

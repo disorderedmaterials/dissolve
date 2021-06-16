@@ -3,13 +3,16 @@ CLI11/1.9.1@cliutils/stable
 fmt/7.0.3
 gtest/1.10.0
 pugixml/1.11
+qt/6.1.1
 tbb/2020.3
 onedpl/20200330
 
 [generators]
 cmake
+cmake_find_package
 
 [options]
 fmt:header_only=True
 pugixml:header_only=False
 tbb:shared=False
+qt:shared=True

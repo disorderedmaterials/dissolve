@@ -29,5 +29,5 @@ set(charts_SRCS
 
 # Target 'charts'
 add_library(charts ${charts_UIS_H} ${charts_SRCS} ${charts_MOC_SRCS})
-target_include_directories(charts PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
-target_link_libraries(charts PRIVATE base)
+target_include_directories(charts PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
+target_link_libraries(charts PRIVATE base Qt6::Widgets)
