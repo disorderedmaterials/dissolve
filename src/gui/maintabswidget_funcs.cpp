@@ -372,7 +372,7 @@ std::shared_ptr<MainTab> MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolv
 // Return current tab
 std::shared_ptr<MainTab> MainTabsWidget::currentTab() const
 {
-    if (currentWidget() == nullptr)
+    if (allTabs_.empty() || currentWidget() == nullptr)
         return nullptr;
 
     // Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets
