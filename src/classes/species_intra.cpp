@@ -668,3 +668,9 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
 
 // Return periodic box
 const Box *Species::box() const { return box_.get(); }
+
+// Create Box definition with specified lengths and angles
+void Species::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
+{
+    box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
+}
