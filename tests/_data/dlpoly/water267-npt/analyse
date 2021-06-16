@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# RDFs
+rdf water-267-298K.HISf water-267-298K.OUT 
+rdfaa water-267-298K.HISf water-267-298K.OUT 1 -pair 2 1 -pair 2 3 -pair 2 2 -pair 1 3
+
+# O-H...O distance-angle map
+# -- Perform separate calculation to get averaged intermolecular H...O rdf
+rdfaainter water-267-298K.HISf water-267-298K.OUT -sp1 1 -sp2 1 -pair 2 1 -pair 2 3 -pair 2 2
+rdfsum water-267-298K.aardf1_02_1_01 water-267-298K.aardf1_02_1_03 > water-267-298K.aardf_21_23_inter_sum
+dahist water-267-298K.HISf water-267-298K.OUT 1 1 5.0 -triplet 2 1 2 -triplet 2 3 2
+# -- Renormalise angle distribution - dlputils doesn't normalise to sin(x)
+TOTAL=`gawk ' { sum += $2/sin($1/57.295779578552) } END {print sum}' water-267-298K.dahist1_02_1_01_02.angle`
+gawk "{ print \$1\"  \"\$2/sin(\$1/57.295779578552)/$TOTAL }" water-267-298K.dahist1_02_1_01_02.angle > water-267-298K.dahist1_02_1_01_02.angle.norm
+gawk ' { sum += $2 } END {print sum}' water-267-298K.dahist1_02_1_01_02.angle.norm
+
+# SDFs 
+pdens water-267-298K.HISf water-267-298K.OUT 1 1 -axis 1 1 3 2 2

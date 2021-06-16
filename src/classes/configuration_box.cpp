@@ -12,6 +12,27 @@ void Configuration::createBox(const Vec3<double> lengths, const Vec3<double> ang
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
 }
 
+// Create Box definition from axes matrix
+void Configuration::createBox(const Matrix3 axes)
+{
+    // Calculate cell lengths
+    Vec3<double> lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
+
+    // Calculate cell angles
+    Vec3<double> vecx, vecy, vecz;
+    vecx = axes.columnAsVec3(0);
+    vecy = axes.columnAsVec3(1);
+    vecz = axes.columnAsVec3(2);
+    vecx.normalise();
+    vecy.normalise();
+    vecz.normalise();
+
+    Vec3<double> angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
+    angles *= DEGRAD;
+
+    box_ = Box::generate(lengths, angles);
+}
+
 // Return Box
 const Box *Configuration::box() const { return box_.get(); }
 

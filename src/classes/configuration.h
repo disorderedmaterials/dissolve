@@ -160,6 +160,8 @@ class Configuration
     public:
     // Create Box definition with specified lengths and angles
     void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+    // Create Box definition from axes matrix
+    void createBox(const Matrix3 axes);
     // Return Box
     const Box *box() const;
     // Scale Box (and associated Cells) by specified factor
