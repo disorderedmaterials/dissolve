@@ -272,9 +272,6 @@ double EnergyKernel::correct(const Atom &i)
 double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy,
                             bool performSum)
 {
-    // Get sub-strategy to use
-    ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
-
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cellArray.getCellNeighbourPairs();
 

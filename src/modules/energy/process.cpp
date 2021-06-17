@@ -358,7 +358,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
             auto &improperData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Impropers", cfg->niceName()),
                                                                                  uniqueName(), GenericItem::InRestartFileFlag);
-            torsionData.addPoint(dissolve.iteration(), improperEnergy);
+            improperData.addPoint(dissolve.iteration(), improperEnergy);
 
             // Append to arrays of total energies
             auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(

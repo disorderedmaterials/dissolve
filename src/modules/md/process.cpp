@@ -120,7 +120,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Read in or assign random velocities
         // Realise the velocity array from the moduleData
         auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
-            fmt::format("{}//Velocities", cfg->niceName()), uniqueName(), GenericItem::NoFlags);
+            fmt::format("{}//Velocities", cfg->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
         if (status == GenericItem::ItemStatus::Created)
         {
             randomVelocities = true;
@@ -130,6 +130,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("Random initial velocities will be assigned.\n");
         else
             Messenger::print("Existing velocities will be used.\n");
+        Messenger::print("\n");
 
         // Initialise the random number buffer for all processes
         procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
