@@ -1,10 +1,10 @@
 parameters:
   - name: mpi
-    default: false
+    default: true
   - name: threading
-    default: false
+    default: true
   - name: serial
-    default: false
+    default: true
   - name: ppa
     default: 'beineri/opt-qt-5.15.2-focal'
   - name: qtver

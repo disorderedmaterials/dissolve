@@ -106,20 +106,6 @@ stages:
 
   # Run Tests
   - stage: "tests"
-    displayName: "Threads, CLI/GUI"
+    displayName: "Testing"
     jobs:
-      - template: templates/system-tests.yml
-        parameters:
-          threading: true
-  - stage: "tests_serial"
-    displayName: "Serial, CLI"
-    jobs:
-      - template: templates/system-tests.yml
-        parameters:
-          serial: true
-  - stage: "tests_mpi"
-    displayName: "MPI, CLI"
-    jobs:
-      - template: templates/system-tests.yml
-        parameters:
-          mpi: true
+      - template: templates/tests.yml
