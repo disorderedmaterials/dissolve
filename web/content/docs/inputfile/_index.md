@@ -1,5 +1,5 @@
 ---
-title: 5. Main Input File
+title: 5. Input File Reference
 description: Dissolve's main input file explained
 weight: 5
 ---
