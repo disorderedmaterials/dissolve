@@ -5,8 +5,10 @@ parameters:
     default: 'beineri/opt-qt-5.15.2-focal'
   - name: qtver
     default: 515
+  - name: gui
+    default: true
   - name: threading
-    default: 'OFF'
+    default: true
 
 steps:
   - bash: |
@@ -32,6 +34,6 @@ steps:
       mkdir build
       cd build
       conan install .. -s compiler.libcxx=libstdc++11 --build missing
-      cmake -G "Ninja" -DMULTI_THREADING=${{ parameters.threading }} -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
+      cmake -G "Ninja" -DMULTI_THREADING:bool=${{ parameters.threading }} -DGUI:bool=${{ parameters.gui }} -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'
