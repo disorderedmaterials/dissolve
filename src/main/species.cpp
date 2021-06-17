@@ -130,6 +130,10 @@ Species *Dissolve::copySpecies(const Species *species)
     Species *newSpecies = addSpecies();
     newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
 
+    // Copy Box definition if one exists
+    if (species->box()->type() != Box::BoxType::NonPeriodic)
+        newSpecies->createBox(species->box()->axisLengths(), species->box()->axisAngles());
+
     // Duplicate atoms
     for (auto &i : species->atoms())
     {

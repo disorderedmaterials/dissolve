@@ -116,7 +116,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     viewer->view().axes().setTitle(1, "U, kj/mol");
     viewer->view().axes().setRange(1, -100.0, 100.0);
 
-    connect(&pairs_, SIGNAL(dataChanged()), dissolveWindow, SLOT(setModified()));
+    connect(&pairs_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,
+            SLOT(setModified()));
 }
 
 ForcefieldTab::~ForcefieldTab() {}
