@@ -1,9 +1,11 @@
 ---
-title: Compiling Dissolve on SCARF (gcc/FOSS)
+title: Compiling on SCARF (gcc/FOSS)
 description: How to build Dissolve on SCARF using gcc/FOSS
 ---
 
 Compilation using gcc/FOSS is, as of v0.7.3, the recommended way to build Dissolve on SCARF.
+
+{{< tip text="[Batch scripts](https://github.com/disorderedmaterials/dissolve/tree/develop/scripts) to build Dissolve on SCARF (or other SLURM-based clusters) are available in the `scripts/` directory." >}}
 
 ## 1. Request Interactive Resources
 
@@ -62,11 +64,22 @@ We'll use the `BUILD_ANTLR_ZIPFILE` option to specify that we want to use this l
 
 ## 5. Configure and Build
 
-In your Dissolve `build` directory, run:
+First we install prerequisites via `conan`. In your Dissolve `build` directory, run:
 
 ```
 conan install ..
+```
+
+For Dissolve version 0.7.X or below, configure the build with the following `cmake` command:
+
+```
 cmake .. -DCMAKE_CXX_FLAGS:string="-std=c++17" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=`pwd`/antlr-4.8-complete.jar -DBUILD_ANTLR_ZIPFILE:path=`pwd`/antlr4-cpp-runtime-4.8-source.zip
+```
+
+For version 0.8.X, run this command instead:
+
+```
+cmake .. -DCMAKE_CXX_FLAGS:string="-std=c++17" -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=`pwd`/antlr-4.8-complete.jar -DBUILD_ANTLR_ZIPFILE:path=`pwd`/antlr4-cpp-runtime-4.8-source.zip
 ```
 
 Note that the `CMAKE_CXX_FLAGS` must be explicitly set to force the use of the C++17 standard, as this option is not correctly passed down by `cmake`.

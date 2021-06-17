@@ -1,5 +1,5 @@
 ---
-title: Compiling Dissolve on SCARF (Intel)
+title: Compiling on SCARF (Intel)
 description: How to build Dissolve on SCARF using the Intel compilers
 ---
 
