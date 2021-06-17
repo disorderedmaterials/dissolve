@@ -4,7 +4,7 @@ description: Defining, creating, and importing species
 weight: 3
 ---
 
-### Overview
+## Overview
 
 Species are the basic building blocks of [configurations]({{< ref "configurations" >}}), and can represent individual ions, uncharged atoms, molecules, proteins, or even periodic structures such as metal organic frameworks. A species defines the coordinates of all atoms, how those atoms interact with each other (i.e. bonds, angles, torsion terms etc.), and how they interact "through space" with other atoms (through their assigned [atom types]({{< ref "atomtypes" >}}) and, optionally, atomic charges).
 
@@ -12,7 +12,7 @@ Terms describing the internal interactions between atoms within a species are th
 
 Forcefield descriptions for species can be entered manually, but it is generally a better idea to use other methods if at all possible. See the [Applying Forcefields]({{< ref "applyff" >}}) section for more information on the methods available.
 
-#### Isotopologues
+### Isotopologues
 
 When wishing to simulate neutron-weighted correlation functions such as total structure factors (via the [NeutronSQ module]({{< ref "neutronsq" >}}) a species can contain a number of specifications of atomic isotopes (linked to the atom types assigned to the atoms) in order to build up _isotopologues_ - isotopically-labelled variants of the same species.
 

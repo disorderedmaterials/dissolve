@@ -4,7 +4,7 @@ description: Importing species from other sources
 weight: 2
 ---
 
-### From an Existing Simulation
+## From an Existing Simulation
 
 Dissolve can extract species definitions from existing input files, allowing quick re-use of those from your own simulations or those of others. From the main menu:
 
@@ -12,7 +12,7 @@ Dissolve can extract species definitions from existing input files, allowing qui
 
 The wizard will guide you through choosing an existing input file and selecting a target species to import. The full forcefield of the species, including atom types, is also copied. Because this may cause conflicts with atom types or master terms already present in your simulation, the wizard will check for such conflicts and allows renaming of any terms.
 
-### From XYZ coordinates
+## From XYZ coordinates
 
 A bare species with no forcefield terms can be created from a standard XYZ file:
 
@@ -20,7 +20,7 @@ A bare species with no forcefield terms can be created from a standard XYZ file:
 
 Once an XYZ file has been chosen Dissolve will read the coordinates, calculate connectivity between atoms, and put the result up for editing (as if it had been drawn by hand) so that any errors can be corrected (e.g. missing or extra bonds between atoms).
 
-### From LigParGen
+## From LigParGen
 
 A neat way of importing a species including a complete forcefield (with charges) into Dissolve is to use the [LigParGen service](http://zarbi.chem.yale.edu/ligpargen/) offered by the Jorgensen group at Yale. There you can input a structure from its [SMILES notation](https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system) or an existing structure file, and the service will create for you a forcefield definition based on the OPLS-AA parameter set. It's possible to find SMILES codes for most molecules online - for instance through [PubChem](https://pubchem.ncbi.nlm.nih.gov/).
 

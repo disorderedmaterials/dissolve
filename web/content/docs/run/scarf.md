@@ -7,7 +7,7 @@ The MPI version of Dissolve is installed as a module on [SCARF](https://www.scar
 
 Of course, you'll need an account on SCARF - register [here](https://www.scarf.rl.ac.uk/registration.html).
 
-### Available Versions
+## Available Versions
 
 To see the available versions, run:
 
@@ -29,7 +29,7 @@ To source one ready for use in a script run:
 bob@scarf:~> module load contrib/dissolve/0.8.0
 ```
 
-### Example Scripts
+## Example Scripts
 
 The following example scripts for SCARF can be used as a basis for your own, or slightly modified and used as-is for the most part, but be aware that at present there are specific scripts for specific versions of Dissolve.
 
@@ -42,7 +42,7 @@ Before using any of these this script, you should:
 
 Note that, as written here, the associated error and log files written by the system for the run are prepended by the numerical job identifier for the run (e.g. `435003.err`).
 
-#### Pure MPI (v0.7.X)
+### Pure MPI (v0.7.X)
 
 ```
 #!/bin/bash
@@ -68,7 +68,7 @@ mpirun dissolve-mpi input.txt -n 100
 
  This script requests eight processors (`-n 8` in the `#SBATCH` section) all on the same physical node (`--tasks-per-node=8`) - highly recommended for performance reasons. This is a good place to start, but can be increased (or reduced) as necessary.
 
-#### Multithreaded (v0.8.X)
+### Multithreaded (v0.8.X)
 
 ```
 #!/bin/bash

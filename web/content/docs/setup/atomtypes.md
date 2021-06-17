@@ -4,7 +4,7 @@ description: Describing interactions between atoms
 weight: 2
 ---
 
-### Overview
+## Overview
 
 Atom types provide interaction parameters which describe how the energy (and forces) between atoms that are not bound together interact with each other, as a function of distance. You will often hear these referred to as "short-range", "van der Waals", or (in specific cases) "Lennard-Jones" interactions. The latter is actually just one popular [functional form]({{< ref "short-range" >}}) utilised to represent short-range interactions. These parameters essentially describe how atoms or molecules "feel" each other in a condensed phase simulation, typically preventing overlap of atoms due to their strongly repulsive nature at very short distances, and also contributing a little to cohesive (i.e. negative) energy between molecules. Interaction parameters are specific to one atom type alone - interactions between different atom types are generated automatically by applying "combination rules".
 
@@ -16,7 +16,7 @@ The exact relationship between the number of defined atom types $M$ and the numb
 
 Squares in dark blue (on the diagonal of the matrix) correspond to interactions between similar atom types, while the light blue represent those between different atom types. Squares in white can be neglected because of the equivalence of interaction $i$-$j$ and $j$-$i$. As you can see, even for simple molecules there are a reasonable number of interaction potentials / partials that must be considered, and which rise quickly as more species are added.
 
-### Specificity of Atom Types
+## Specificity of Atom Types
 
 One key thing to consider with atom types in your simulation is how they affect various processes involving potential refinement, particularly when doing [EPSR-like]({{< ref "epsr" >}}) simulations. The number of distinct interatomic potentials resulting from the $M$ atom types present in the system can be thought of as the maximum "flexibility" that potential refinement methods have to work with. Having too few atom types in the system may hamper such methods as there are not enough variable parameters to change. Similarly, having too many atom types (in the extreme case one per individual atom, regardless of chemical similarity of those atoms) can provide too many variable parameters compared to the density of other available information. Usually, published forcefields are sensible enough to reduce atom types down based on molecular symmetry and chemical similarity, but this is something to be aware of if you are constructing your own.
 
