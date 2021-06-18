@@ -38,6 +38,21 @@ bool Dissolve::prepare()
         if (!sp->checkSetUp())
             return false;
 
+    // Remove unused atom types
+    atomTypes().erase(std::remove_if(atomTypes().begin(), atomTypes().end(),
+                                     [&](const auto &at) {
+                                         if (std::find_if(species().begin(), species().end(), [&at](const auto &sp) {
+                                                 return sp->usedAtomTypes().contains(at);
+                                             }) == species().end())
+                                         {
+                                             Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
+                                             return true;
+                                         }
+                                         else
+                                             return false;
+                                     }),
+                      atomTypes().end());
+
     // Reassign AtomType indices (in case one or more have been added / removed)
     auto count = 0;
     for (const auto &at : atomTypes())
