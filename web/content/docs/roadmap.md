@@ -14,10 +14,12 @@ _Released 18th January 2021_
 
 ## Version 0.8
 
-_Released XXX June 2021_
+_Released 18th June 2021_
 
 - Accumulation of partialsets
 - Calculation of Bragg scattering
+- Multithreading support
+- Bragg scattering
 
 ## Version 0.9
 
