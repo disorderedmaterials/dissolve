@@ -15,7 +15,7 @@ DELETE_ALL_ASSETS="false"
 UPDATE_TAG_SHA="false"
 ARTIFACTS=""
 NARTIFACTS=0
-CURL_OPTS="-H 'Accept: application/vnd.github.v3+json' --silent --show-error"
+CURL_OPTS="-H 'Accept:application/vnd.github.v3+json' --silent --show-error"
 
 usage()
 {
