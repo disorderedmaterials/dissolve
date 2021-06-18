@@ -2,7 +2,7 @@ parameters:
   - name: extraflags
     default: ''
   - name: threading
-    default: 'OFF'
+    default: true
 
 steps:
   - bash: |
@@ -32,6 +32,6 @@ steps:
       mkdir build
       cd build
       conan install .. --build missing
-      cmake -DGUI:bool=true -DMULTI_THREADING=${{ parameters.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} ../
+      cmake -DGUI:bool=true -DMULTI_THREADING:bool=${{ parameters.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} ../
       make
     displayName: 'Build'

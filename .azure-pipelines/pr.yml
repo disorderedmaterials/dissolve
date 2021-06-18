@@ -21,57 +21,58 @@ stages:
   - stage: "build"
     displayName: "Build"
     jobs:
-      - job: "linux_serialgui"
-        displayName: "Build Linux (Serial/GUI, ubuntu-latest)"
+      - job: "linux"
+        displayName: "Ubuntu, Threads, CLI/GUI"
         pool:
           vmImage: "ubuntu-latest"
         steps:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-linux-serial-gui.yml
+          - template: templates/build-linux.yml
             parameters:
-              extraflags: "-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
+              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "build/"
+              ArtifactName: "linux-tests"
+            displayName: "Publish Threaded Test Artifacts"
+      - job: "linux_serial"
+        displayName: "Ubuntu, Serial, CLI"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
+          - template: templates/build-linux.yml
+            parameters:
+              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
+              threading: false
+              gui: false
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
               ArtifactName: "linux-tests-serial"
             displayName: "Publish Serial Test Artifacts"
-      - job: "linux_threadsgui"
-        displayName: "Build Linux (Serial/Threads/GUI, ubuntu-latest)"
+      - job: "linux_mpi"
+        displayName: "Ubuntu, MPI, CLI"
         pool:
           vmImage: "ubuntu-latest"
         steps:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-linux-serial-gui.yml
-            parameters:
-              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
-              threading: "ON"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "build/"
-              ArtifactName: "linux-tests-serial-threads"
-            displayName: "Publish Serial/Threaded Test Artifacts"
-      - job: "linux_parallel"
-        displayName: "Build Linux (Parallel, ubuntu-latest)"
-        pool:
-          vmImage: "ubuntu-latest"
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux-parallel.yml
+          - template: templates/build-linux-mpi.yml
             parameters:
               extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
-              ArtifactName: "linux-tests-parallel"
-            displayName: "Publish Parallel Test Artifacts"
-      - job: "osx_serialgui"
-        displayName: "Build OSX (Serial/GUI, macos-latest)"
+              ArtifactName: "linux-tests-mpi"
+            displayName: "Publish MPI Test Artifacts"
+      - job: "osx"
+        displayName: "OSX, Threads, CLI/GUI"
         timeoutInMinutes: 120
         pool:
           vmImage: "macos-latest"
@@ -79,15 +80,15 @@ stages:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-osx-serial-gui.yml
-          - template: templates/package-osx-serial-gui.yml
+          - template: templates/build-osx.yml
+          - template: templates/package-osx.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
               ArtifactName: "osx-artifacts"
             displayName: "Publish OSX Artifacts"
-      - job: "windows_serialgui"
-        displayName: "Build Windows (Serial/GUI, windows-latest)"
+      - job: "windows"
+        displayName: "Windows, Threads, CLI/GUI"
         timeoutInMinutes: 120
         pool:
           vmImage: "windows-latest"
@@ -95,39 +96,16 @@ stages:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-windows-serial-gui.yml
-          - template: templates/package-windows-serial-gui.yml
+          - template: templates/build-windows.yml
+          - template: templates/package-windows.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
               ArtifactName: "windows-artifacts"
             displayName: "Publish Windows Artifacts"
-      - job: "windows_threadinggui"
-        displayName: "Build Windows (Threading/GUI, windows-latest)"
-        timeoutInMinutes: 120
-        pool:
-          vmImage: "windows-latest"
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-windows-serial-gui.yml
-            parameters:
-              threading: "ON"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "build/"
-              ArtifactName: "windows-threading-artifacts"
-            displayName: "Publish Windows Threading Artifacts"
 
-  # Run System Tests
-  - stage: "system_tests_serial"
-    displayName: "System Tests (Serial)"
+  # Run Tests
+  - stage: "tests"
+    displayName: "Testing"
     jobs:
-      - template: templates/system-tests.yml
-  - stage: "system_tests_parallel"
-    displayName: "System Tests (Parallel)"
-    jobs:
-      - template: templates/system-tests.yml
-        parameters:
-          parallel: true
+      - template: templates/tests.yml

@@ -8,7 +8,7 @@ parameters:
   - name: ftglrepo
     default: https://github.com/frankheckenbach/ftgl.git
   - name: threading
-    default: 'OFF'
+    default: true
 
 steps:
   - task: UsePythonVersion@0
@@ -58,7 +58,7 @@ steps:
       mkdir build
       cd build
       conan install .. --build missing
-      cmake ../ -G "Visual Studio 16 2019" -A "x64" -DMULTI_THREADING=${{ parameters.threading }} -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DBUILD_ANTLR_LINK_LIB:string="dist\Release\antlr4-runtime.lib" -DCMAKE_BUILD_TYPE:STRING="Release" ${{ parameters.extraflags }}
+      cmake ../ -G "Visual Studio 16 2019" -A "x64" -DMULTI_THREADING:bool=${{ parameters.threading }} -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DBUILD_ANTLR_LINK_LIB:string="dist\Release\antlr4-runtime.lib" -DCMAKE_BUILD_TYPE:STRING="Release" ${{ parameters.extraflags }}
       cmake --build . --config Release --target keywordwidgets
       cmake --build . --config Release
     displayName: 'Build'
