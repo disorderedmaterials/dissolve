@@ -4,7 +4,7 @@ project(Dissolve)
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "8")
+set(VERSION_MINOR "9")
 set(VERSION_PATCH "0")
 
 if(NOT CMAKE_BUILD_TYPE)
