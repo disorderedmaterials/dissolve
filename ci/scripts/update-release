@@ -200,7 +200,7 @@ then
 		# Update tag SHA?
 		if [ "$UPDATE_TAG_SHA" = "true" ]
 		then
-			TAG_HASH=`git rev-parse HEAD`
+			TAG_HASH=$(git rev-parse HEAD)
 			echo " -- Updating tag hash to that of the current HEAD (${TAG_HASH})"
 			RESULT=$(curl ${CURL_OPTS} -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${TAG_HASH}'" }' ${REPO_URL}/git/refs/tags/${RELEASE_TAG})
 		fi
@@ -240,7 +240,7 @@ then
 	echo "    A new one will be created."
 
     # Get the hash of the current revision
-	TAG_HASH=`git rev-parse --short HEAD`
+	TAG_HASH=$(git rev-parse HEAD)
 
 	# Construct release information
 	RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
