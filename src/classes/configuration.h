@@ -102,8 +102,8 @@ class Configuration
     const AtomTypeList &usedAtomTypesList() const;
     // Return number of atom types used in this Configuration
     int nUsedAtomTypes() const;
-    // Increase population of specified Species in the Configuration
-    void increaseSpeciesPopulation(const Species *sp, int population);
+    // Adjust population of specified Species in the Configuration
+    void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
     const std::vector<std::pair<const Species *, int>> &speciesPopulations() const;
     // Return if the specified Species is present in the Configuration
@@ -121,6 +121,10 @@ class Configuration
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
     addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    // Remove all Molecules of the target Species from the Configuration
+    void removeMolecules(const Species *sp);
+    // Remove specified Molecules from the Configuration
+    void removeMolecules(const std::vector<std::shared_ptr<Molecule>> &molecules);
     // Return number of Molecules in Configuration
     int nMolecules() const;
     // Return Molecule vector

@@ -66,6 +66,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Process1D,
         Process2D,
         Process3D,
+        RemoveSpecies,
         Select,
         Sequence,
         Sum1D

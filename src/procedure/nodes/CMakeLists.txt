@@ -33,6 +33,7 @@ add_library(
   process2d.cpp
   process3d.cpp
   regionbase.cpp
+  removespecies.cpp
   select.cpp
   sequence.cpp
   sum1d.cpp
@@ -70,6 +71,7 @@ add_library(
   process2d.h
   process3d.h
   regionbase.h
+  removespecies.h
   select.h
   sequence.h
   sum1d.h

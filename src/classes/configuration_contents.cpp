@@ -37,15 +37,20 @@ const AtomTypeList &Configuration::usedAtomTypesList() const { return usedAtomTy
 // Return number of atom types used in this Configuration
 int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 
-// Increase population of specified Species in the Configuration
-void Configuration::increaseSpeciesPopulation(const Species *sp, int population)
+// Adjust population of specified Species in the Configuration
+void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
 {
     auto it = std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
                            [sp](const auto &data) { return data.first == sp; });
     if (it == speciesPopulations_.end())
-        speciesPopulations_.emplace_back(sp, population);
+    {
+        if (delta < 0)
+            throw(std::runtime_error(
+                fmt::format("Can't decrease population of Species '{}' as it is not in the list.\n", sp->name())));
+        speciesPopulations_.emplace_back(sp, delta);
+    }
     else
-        it->second += population;
+        it->second += delta;
 }
 
 // Return Species populations within the Configuration
@@ -94,7 +99,7 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     newMolecule->setSpecies(sp);
 
     // Update the relevant Species population
-    increaseSpeciesPopulation(sp, 1);
+    adjustSpeciesPopulation(sp, 1);
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
     if (sourceCoordinates)
@@ -109,6 +114,42 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
             addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
     }
     return newMolecule;
+}
+
+// Remove all Molecules of the target Species from the Configuration
+void Configuration::removeMolecules(const Species *sp)
+{
+    molecules_.erase(std::remove_if(molecules_.begin(), molecules_.end(),
+                                    [&, sp](auto &mol) {
+                                        if (mol->species() == sp)
+                                        {
+                                            for (auto &i : mol->atoms())
+                                                atoms_.erase(std::find(atoms_.begin(), atoms_.end(), i));
+                                            adjustSpeciesPopulation(mol->species(), -1);
+                                            return true;
+                                        }
+                                        else
+                                            return false;
+                                    }),
+                     molecules_.end());
+}
+
+// Remove specified Molecules from the Configuration
+void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>> &molecules)
+{
+    molecules_.erase(std::remove_if(molecules_.begin(), molecules_.end(),
+                                    [&, molecules](const auto &mol) {
+                                        if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
+                                        {
+                                            for (auto &i : mol->atoms())
+                                                atoms_.erase(std::find(atoms_.begin(), atoms_.end(), i));
+                                            adjustSpeciesPopulation(mol->species(), -1);
+                                            return true;
+                                        }
+                                        else
+                                            return false;
+                                    }),
+                     molecules_.end());
 }
 
 // Return number of Molecules in Configuration

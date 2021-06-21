@@ -33,6 +33,7 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"
+#include "procedure/nodes/removespecies.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodes/sum1d.h"
