@@ -84,9 +84,9 @@ class Configuration
     AtomTypeList usedAtomTypes_;
     // Contents version, incremented whenever Configuration content or Atom positions change
     VersionCounter contentsVersion_;
-    // Array of Molecules
-    std::deque<std::shared_ptr<Molecule>> molecules_;
-    // Array of Atoms
+    // Molecule vector
+    std::vector<std::shared_ptr<Molecule>> molecules_;
+    // Atom vector
     std::vector<std::shared_ptr<Atom>> atoms_;
 
     public:
@@ -123,9 +123,9 @@ class Configuration
     addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
     // Return number of Molecules in Configuration
     int nMolecules() const;
-    // Return array of Molecules
-    std::deque<std::shared_ptr<Molecule>> &molecules();
-    const std::deque<std::shared_ptr<Molecule>> &molecules() const;
+    // Return Molecule vector
+    std::vector<std::shared_ptr<Molecule>> &molecules();
+    const std::vector<std::shared_ptr<Molecule>> &molecules() const;
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration

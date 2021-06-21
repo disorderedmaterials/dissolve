@@ -114,9 +114,9 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
 // Return number of Molecules in Configuration
 int Configuration::nMolecules() const { return molecules_.size(); }
 
-// Return array of Molecules
-std::deque<std::shared_ptr<Molecule>> &Configuration::molecules() { return molecules_; }
-const std::deque<std::shared_ptr<Molecule>> &Configuration::molecules() const { return molecules_; }
+// Return Molecule vector
+std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() { return molecules_; }
+const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const { return molecules_; }
 
 // Return nth Molecule
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }

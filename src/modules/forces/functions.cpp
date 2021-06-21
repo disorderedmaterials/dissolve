@@ -206,7 +206,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
     auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
 
     // algorithm parameters
-    std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
+    auto &molecules = cfg->molecules();
     auto unaryOp = [&combinableForces, &kernel, &molecules, strategy](const auto &mol) {
         auto &fLocal = combinableForces.local();
         // Loop over bonds

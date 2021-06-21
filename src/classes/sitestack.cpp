@@ -80,11 +80,10 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     orientedSites_.clear();
 
     // Get Molecule array from Configuration and search for the target Species
-    std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
     auto *targetSpecies = speciesSite_->parent();
     Vec3<double> origin, x, y, z;
     Matrix3 axes;
-    for (const auto &molecule : molecules)
+    for (const auto &molecule : cfg->molecules())
     {
         if (molecule->species() != targetSpecies)
             continue;
