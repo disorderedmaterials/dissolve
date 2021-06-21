@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "gui/render/textprimitive.h"
+// This must be included BEFORE textprimitive.h.  Otherwise, the MOC
+// will make mess of things.  However, clang-format will alphabetise
+// the includes.  Thus, there needs to be a line of whitespaec before
+// the rest of the includes to make sure that this doesn't get
+// re-sorted.
 #include "TextPrimitiveLexer.h"
+
+#include "gui/render/textprimitive.h"
 #include "base/sysfunc.h"
 #include "gui/render/TextPrimitiveErrorListeners.h"
 #include "gui/render/TextPrimitiveVisitor.h"
