@@ -95,13 +95,8 @@ add_library(
 )
 
 target_include_directories(
-  render
-  PRIVATE ${PROJECT_SOURCE_DIR}/src
-          ${PROJECT_BINARY_DIR}/src
-          ${FREETYPE_INCLUDE_DIRS}
-          ${ANTLRRUNTIME_INCLUDE_DIRS}
-          ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR}
-          ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
+  render PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${FREETYPE_INCLUDE_DIRS} ${ANTLRRUNTIME_INCLUDE_DIRS}
+                 ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR} ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
 )
 
 target_link_libraries(render PRIVATE base Qt6::Widgets)

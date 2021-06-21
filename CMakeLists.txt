@@ -91,7 +91,7 @@ endif(BUILD_ANTLR_RUNTIME)
 if(GUI)
   # Add extra functions
   include(FindFTGL)
-  
+
   find_package(Qt6 REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
@@ -225,12 +225,7 @@ if(GUI)
 
   # Set project-local include directories for target
   target_include_directories(
-    ${gui_target_name}
-    PRIVATE ${PROJECT_SOURCE_DIR}/src
-            ${PROJECT_BINARY_DIR}/src
-            ${FREETYPE_INCLUDE_DIRS}
-	    Qt6::OpenGL
-	    Qt6::OpenGLWidgets
+    ${gui_target_name} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${FREETYPE_INCLUDE_DIRS} Qt6::OpenGL Qt6::OpenGLWidgets
   )
 
 endif(GUI)

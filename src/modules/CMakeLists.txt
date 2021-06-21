@@ -26,9 +26,7 @@ macro(dissolve_add_module header modulename)
     )
     target_link_libraries(
       module_${modulename}_nogui
-      PRIVATE base
-  Qt6::OpenGL
-  Qt6::OpenGLWidgets
+      PRIVATE base Qt6::OpenGL Qt6::OpenGLWidgets
       PUBLIC ${THREADING_LINK_LIBS}
     )
   endif()
@@ -92,19 +90,10 @@ macro(dissolve_add_module_gui modulename)
   add_dependencies(module_${modulename}_gui gui)
 
   # Set common include dirs
-  include_directories(
-    module_${modulename}_gui
-    PRIVATE
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_BINARY_DIR}/src
-    ${FREETYPE_INCLUDE_DIRS}
-  )
+  include_directories(module_${modulename}_gui PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${FREETYPE_INCLUDE_DIRS})
   target_link_libraries(
     module_${modulename}_gui
-    PRIVATE base
-    Qt6::Widgets
-    Qt6::OpenGL
-    Qt6::OpenGLWidgets
+    PRIVATE base Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets
     PUBLIC ${THREADING_LINK_LIBS}
   )
 endmacro()
