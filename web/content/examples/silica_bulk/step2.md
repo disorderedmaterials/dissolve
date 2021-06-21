@@ -26,7 +26,7 @@ The density of bulk, amorphous silica is 0.0664 atoms &#8491;<sup>-3</sup>. We u
 Next, the box. We will still use relative lengths and scale the box according to our species population and density, but we will create a monoclinic box rather than a cubic one:
 
 {{< action type="settings" text="Open the settings for the `Box` node" >}}
-{{< action type="edit" text="Set the angle _&#945;_ to 120 degrees" >}}
+{{< action type="edit" text="Set the angle _&gamma;_ to 120 degrees" >}}
 
 Finally, we just need to check the ordering of the species in the `AddSpecies` nodes.
 

@@ -21,7 +21,7 @@ We just need to set the instrumental _Q_ broadening and add the reference data t
 {{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of 0.03" >}}
 {{< action type="groups" text="Open the **Reference Data** settings group" >}}
 {{< step text="For the **Reference** keyword select the file `SiO2_NIMROD.mint01` and set the format of the data to `mint`" >}}
-{{< step text="The datafile contains a point at _Q_ = 0.0 which we must remove, so tick the **ReferenceIgnoreFirst** option" >}}
+{{< step text="The datafile contains a point at _Q_ = 0.0 which we will trim off by setting the minimum X value to read in to `0.1`. Open the settings for the **Reference** datafile by clicking the cog button near to the file type selector, and in the **Manipulations** tab set _XMin_ to `0.1`." >}}
 
 
 {{< button pos="left" text="Previous Step" path="step2/">}}
