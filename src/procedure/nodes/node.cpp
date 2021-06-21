@@ -45,6 +45,8 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::OperateSitePopulationNormalise, "OperateSitePopulationNormalise"},
                      {ProcedureNode::NodeType::OperateSphericalShellNormalise, "OperateSphericalShellNormalise"},
                      {ProcedureNode::NodeType::Parameters, "Parameters"},
+                     {ProcedureNode::NodeType::Pick, "Pick"},
+                     {ProcedureNode::NodeType::PickCylinder, "PickCylinder"},
                      {ProcedureNode::NodeType::Process1D, "Process1D"},
                      {ProcedureNode::NodeType::Process2D, "Process2D"},
                      {ProcedureNode::NodeType::Process3D, "Process3D"},

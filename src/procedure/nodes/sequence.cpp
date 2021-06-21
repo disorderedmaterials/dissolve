@@ -463,6 +463,12 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::Parameters):
                 newNode = new ParametersProcedureNode();
                 break;
+            case (ProcedureNode::NodeType::Pick):
+                newNode = new PickProcedureNode();
+                break;
+            case (ProcedureNode::NodeType::PickCylinder):
+                newNode = new PickCylinderProcedureNode();
+                break;
             case (ProcedureNode::NodeType::Process1D):
                 newNode = new Process1DProcedureNode();
                 break;
@@ -471,6 +477,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
                 break;
             case (ProcedureNode::NodeType::Process3D):
                 newNode = new Process3DProcedureNode();
+                break;
+            case (ProcedureNode::NodeType::RemoveSpecies):
+                newNode = new RemoveSpeciesProcedureNode();
                 break;
             case (ProcedureNode::NodeType::Select):
                 newNode = new SelectProcedureNode();

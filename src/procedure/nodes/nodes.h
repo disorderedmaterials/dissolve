@@ -28,6 +28,8 @@
 #include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/operatesphericalshellnormalise.h"
 #include "procedure/nodes/parameters.h"
+#include "procedure/nodes/pick.h"
+#include "procedure/nodes/pickcylinder.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"

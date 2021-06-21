@@ -30,6 +30,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
         None,
         Calculate,
         Operate,
+        Pick,
         Region
 
     };
@@ -60,6 +61,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
         OperateSitePopulationNormalise,
         OperateSphericalShellNormalise,
         Parameters,
+        Pick,
+        PickCylinder,
         Process1D,
         Process2D,
         Process3D,
