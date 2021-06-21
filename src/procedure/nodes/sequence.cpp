@@ -489,8 +489,8 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
                 newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
                 break;
             default:
-                return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '{}'.\n",
-                                        parser.argsv(0));
+                throw(std::runtime_error(
+                    fmt::format("Epic Developer Fail - Don't know how to create a node of type '{}'.\n", parser.argsv(0))));
         }
 
         // Check for clash of names with existing node in scope
