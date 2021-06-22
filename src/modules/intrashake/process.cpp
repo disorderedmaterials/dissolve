@@ -157,7 +157,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         for (shake = 0; shake < nShakesPerTerm; ++shake)
                         {
                             // Get translation vector, normalise, and apply random delta
-                            vji = box->minimumVector(i, j);
+                            vji = box->minimumVector(i->r(), j->r());
                             vji.normalise();
                             vji *= procPool.randomPlusMinusOne() * bondStepSize;
 
@@ -211,8 +211,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         for (shake = 0; shake < nShakesPerTerm; ++shake)
                         {
                             // Get bond vectors and calculate cross product to get rotation axis
-                            vji = box->minimumVector(j, i);
-                            vjk = box->minimumVector(j, k);
+                            vji = box->minimumVector(j->r(), i->r());
+                            vjk = box->minimumVector(j->r(), k->r());
                             v = vji * vjk;
 
                             // Create suitable transformation matrix
@@ -271,7 +271,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         for (shake = 0; shake < nShakesPerTerm; ++shake)
                         {
                             // Get bond vectors j-k to get rotation axis
-                            vjk = box->minimumVector(j, k);
+                            vjk = box->minimumVector(j->r(), k->r());
 
                             // Create suitable transformation matrix
                             transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne() * torsionStepSize,

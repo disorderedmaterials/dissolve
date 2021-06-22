@@ -36,7 +36,7 @@ double EnergyKernel::energyWithoutMim(const Atom &i, const Atom &j)
 // Return PairPotential energy between atoms provided
 double EnergyKernel::energyWithMim(const Atom &i, const Atom &j)
 {
-    return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
+    return pairPotentialEnergy(i, j, box_->minimumDistance(j.r(), i.r()));
 }
 
 /*
@@ -309,7 +309,7 @@ double EnergyKernel::energy(const SpeciesBond &bond, const Atom &i, const Atom &
 {
     // Determine whether we need to apply minimum image to the distance calculation
     if (i.cell()->mimRequired(j.cell()))
-        return bond.energy(box_->minimumDistance(i, j));
+        return bond.energy(box_->minimumDistance(i.r(), j.r()));
     else
         return bond.energy((i.r() - j.r()).magnitude());
 }
@@ -324,11 +324,11 @@ double EnergyKernel::energy(const SpeciesAngle &angle, const Atom &i, const Atom
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
 
@@ -360,15 +360,15 @@ double EnergyKernel::energy(const SpeciesTorsion &torsion, const Atom &i, const 
 
     // Calculate vectors, ensuring we account for minimum image
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(k.r(), l.r());
     else
         veckl = l.r() - k.r();
 
@@ -389,15 +389,15 @@ double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Ato
 
     // Calculate vectors, ensuring we account for minimum image
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(k.r(), l.r());
     else
         veckl = l.r() - k.r();
 
