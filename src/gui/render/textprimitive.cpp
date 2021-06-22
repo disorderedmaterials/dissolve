@@ -8,12 +8,12 @@
 // re-sorted.
 #include "TextPrimitiveLexer.h"
 
-#include "gui/render/textprimitive.h"
 #include "base/sysfunc.h"
 #include "gui/render/TextPrimitiveErrorListeners.h"
 #include "gui/render/TextPrimitiveVisitor.h"
 #include "gui/render/fontinstance.h"
 #include "gui/render/symbol.h"
+#include "gui/render/textprimitive.h"
 #include <QtGui/qopengl.h>
 
 // Return enum options for TextAnchor
