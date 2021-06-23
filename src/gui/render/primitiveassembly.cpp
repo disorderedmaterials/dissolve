@@ -108,6 +108,6 @@ void PrimitiveAssembly::createCylinderBond(Primitive *bondPrimitive, Vec3<double
 // Send to OpenGL (i.e. render)
 void PrimitiveAssembly::sendToGL(double pixelScaling)
 {
-    for (auto *pi : assembly_)
-        pi->sendToGL(pixelScaling);
+    for (auto *prim : assembly_)
+        prim->sendToGL(pixelScaling);
 }
