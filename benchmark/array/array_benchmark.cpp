@@ -75,6 +75,5 @@ static void BM_Array_3d(benchmark::State &state)
     state.SetLabel(std::to_string(bytes / 1024) + "kb");
 }
 
-BENCHMARK(BM_Array_1d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
 BENCHMARK(BM_Array_2d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
 BENCHMARK(BM_Array_3d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
