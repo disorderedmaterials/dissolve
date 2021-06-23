@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/render/primitiveinfo.h"
-#include "templates/array.h"
 #include "templates/factory.h"
 #include "templates/listitem.h"
 
@@ -33,7 +32,7 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
      */
     private:
     // Array of PrimitiveInfo pointers that constitute our assembly
-    Array<PrimitiveInfo *> assembly_;
+    std::vector<PrimitiveInfo *> assembly_;
 
     public:
     // Clear existing data

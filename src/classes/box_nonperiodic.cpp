@@ -4,7 +4,6 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "templates/array.h"
 
 NonPeriodicBox::NonPeriodicBox(double length) : Box()
 {

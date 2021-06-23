@@ -26,7 +26,6 @@ add_library(
   modulevector.cpp
   node.cpp
   nodeandinteger.cpp
-  nodearray.cpp
   nodebase.cpp
   nodebranch.cpp
   nodevalue.cpp
@@ -73,7 +72,6 @@ add_library(
   modulevector.h
   node.h
   nodeandinteger.h
-  nodearray.h
   nodebase.h
   nodebranch.h
   nodevalue.h

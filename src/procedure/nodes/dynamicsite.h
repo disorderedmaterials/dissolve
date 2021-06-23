@@ -5,7 +5,6 @@
 
 #include "data/elements.h"
 #include "procedure/nodes/node.h"
-#include "templates/array.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include <memory>
@@ -53,8 +52,8 @@ class DynamicSiteProcedureNode : public ProcedureNode
      * Site Generation
      */
     private:
-    // List of generated sites
-    Array<Site> generatedSites_;
+    // Generated sites
+    std::vector<Site> generatedSites_;
 
     private:
     // Generate dynamic sites from the specified Molecule
@@ -62,7 +61,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
 
     public:
     // Return Array of generated sites
-    const Array<Site> &generatedSites() const;
+    const std::vector<Site> &generatedSites() const;
 
     /*
      * Execute

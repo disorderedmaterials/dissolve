@@ -261,13 +261,12 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
         if (!dynamicNode->execute(procPool, cfg, prefix, targetList))
             return false;
 
-        const Array<Site> &generatedSites = dynamicNode->generatedSites();
-        for (auto n = 0; n < generatedSites.nItems(); ++n)
-            sites_.push_back(&generatedSites.at(n));
+        for (auto &s : dynamicNode->generatedSites())
+            sites_.push_back(&s);
     }
 
     // Set first site index and increase selections counter
-    currentSiteIndex_ = (sites_.size() == 0 ? -1 : 0);
+    currentSiteIndex_ = (sites_.empty() ? -1 : 0);
     ++nSelections_;
 
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.

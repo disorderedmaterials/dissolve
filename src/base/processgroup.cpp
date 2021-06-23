@@ -4,7 +4,7 @@
 #include "base/processgroup.h"
 #include "base/messenger.h"
 
-ProcessGroup::ProcessGroup() : ListItem<ProcessGroup>() {}
+ProcessGroup::ProcessGroup() {}
 
 /*
  * Group Data

@@ -5,7 +5,6 @@
 
 #include "data3d.h"
 #include "expression/expression.h"
-#include "templates/array.h"
 #include "templates/array2d.h"
 
 // Forward Declarations

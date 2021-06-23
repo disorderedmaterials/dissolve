@@ -6,7 +6,6 @@
 #include "math/data2d.h"
 #include "math/data3d.h"
 #include "templates/algorithms.h"
-#include "templates/array.h"
 #include <numeric>
 
 /*

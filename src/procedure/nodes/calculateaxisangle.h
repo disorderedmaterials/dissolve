@@ -5,7 +5,6 @@
 
 #include "classes/site.h"
 #include "procedure/nodes/calculatebase.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class SelectProcedureNode;

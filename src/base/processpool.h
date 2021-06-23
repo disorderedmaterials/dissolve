@@ -8,7 +8,7 @@
 
 #include "base/processgroup.h"
 #include "base/timer.h"
-#include "templates/array.h"
+#include "templates/vector3.h"
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL
 #include <mpi.h>
@@ -279,9 +279,6 @@ class ProcessPool
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast bool
     bool broadcast(bool &source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Broadcast std::vector<int>
-    bool broadcast(Array<int> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast std::vector<int>
     bool broadcast(std::vector<int> &array, int rootRank = 0,
