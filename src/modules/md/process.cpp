@@ -93,13 +93,6 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
         }
 
-        // Determine target molecules from the restrictedSpecies vector (if any)
-        std::vector<const Molecule *> targetMolecules;
-        if (!restrictToSpecies.empty())
-            for (const auto &mol : cfg->molecules())
-                if (std::find(restrictToSpecies.begin(), restrictToSpecies.end(), mol->species()) != restrictToSpecies.end())
-                    targetMolecules.push_back(mol.get());
-
         // Get temperature from Configuration
         const auto temperature = cfg->temperature();
 
@@ -112,6 +105,20 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &atoms = cfg->atoms();
         double tInstant, ke, tScale, peInter, peIntra;
         auto deltaTSq = deltaT * deltaT;
+
+        // Determine target molecules from the restrictedSpecies vector (if any), and zero velocities for those atoms
+        std::vector<const Molecule *> targetMolecules;
+        std::vector<int> free(cfg->nAtoms(), 0);
+        if (restrictToSpecies.empty())
+            std::fill(free.begin(), free.end(), 1);
+        else
+            for (const auto &mol : cfg->molecules())
+                if (std::find(restrictToSpecies.begin(), restrictToSpecies.end(), mol->species()) != restrictToSpecies.end())
+                {
+                    targetMolecules.push_back(mol.get());
+                    for (const auto &i : mol->atoms())
+                        free[i->arrayIndex()] = 1;
+                }
 
         /*
          * Calculation Begins
@@ -135,28 +142,38 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Initialise the random number buffer for all processes
         procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 
-        Vec3<double> vCom;
-        auto massSum = 0.0;
-        for (auto &&[i, v, m] : zip(atoms, velocities, mass))
-        {
-            if (randomVelocities)
+        // Assign random velocities?
+        if (randomVelocities)
+            for (auto &&[v, iFree] : zip(velocities, free))
             {
-                v.x = exp(procPool.random() - 0.5) / sqrt(TWOPI);
-                v.y = exp(procPool.random() - 0.5) / sqrt(TWOPI);
-                v.z = exp(procPool.random() - 0.5) / sqrt(TWOPI);
+                if (iFree)
+                    v.set(exp(procPool.random() - 0.5), exp(procPool.random() - 0.5), exp(procPool.random() - 0.5));
+                else
+                    v.zero();
+                v /= sqrt(TWOPI);
             }
 
-            // Grab atom mass for future use
+        // Store atomic masses for future use
+        for (auto &&[i, m] : zip(atoms, mass))
             m = AtomicMass::mass(i->speciesAtom()->Z());
 
-            // Calculate total velocity and mass over all atoms
+        // Calculate total velocity and mass over all atoms
+        Vec3<double> vCom;
+        auto massSum = 0.0;
+        for (auto &&[v, m, iFree] : zip(velocities, mass, free))
+        {
+            if (!iFree)
+                continue;
             vCom += v * m;
             massSum += m;
         }
 
-        // Remove any velocity shift
+        // Remove any velocity shift, and re-zero velocities on fixed atoms
         vCom /= massSum;
         std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
+        for (auto &&[v, iFree] : zip(velocities, free))
+            if (!iFree)
+                v.zero();
 
         // Calculate instantaneous temperature
         // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
