@@ -515,26 +515,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 fmt::format("{}//Forces", cfg->niceName()), uniqueName());
             f.resize(cfg->nAtoms());
 
-            procPool.resetAccumulatedTime();
-
-            // Calculate interatomic forces
-            Timer interTimer;
-            interTimer.start();
-            interAtomicForces(procPool, cfg, dissolve.potentialMap(), f);
-            interTimer.stop();
-            Messenger::printVerbose("Time to do interatomic forces was {}.\n", interTimer.totalTimeString());
-
-            // Calculate intramolecular forces
-            Timer intraTimer;
-            intraTimer.start();
-            intraMolecularForces(procPool, cfg, dissolve.potentialMap(), f);
-            intraTimer.stop();
+            // Calculate forces
+            totalForces(procPool, cfg, dissolve.potentialMap(), f);
 
             // Convert forces to 10J/mol
             std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });
-
-            Messenger::print("Time to do interatomic forces was {}, intramolecular forces was {} ({} comms).\n",
-                             interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 
             // If writing to a file, append it here
             if (saveData && !exportedForces_.exportData(f))
