@@ -76,14 +76,9 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     updateWindowTitle();
     updateControlsFrame();
 
-    // Initialise the available system templates
-    initialiseSystemTemplates();
-
     // Show the Start stack page (we call this mostly to ensure correct availability of other controls)
     showMainStackPage(DissolveWindow::StartStackPage);
 }
-
-DissolveWindow::~DissolveWindow() {}
 
 // Catch window close event
 void DissolveWindow::closeEvent(QCloseEvent *event)
@@ -232,30 +227,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     showMainStackPage(DissolveWindow::SimulationStackPage);
 
     return true;
-}
-
-/*
- * System Templates
- */
-
-// Initialise system templates from the main resource
-void DissolveWindow::initialiseSystemTemplates()
-{
-    // Probe our main resource object for the templates, and create local data from them
-    QDirIterator templateIterator(":/data/systemtemplates/");
-    while (templateIterator.hasNext())
-    {
-        QDir dir = templateIterator.next();
-
-        // Open the associated xml file
-        auto &sysTemp = systemTemplates_.emplace_back();
-        if (!sysTemp.read(dir))
-        {
-            Messenger::error("Error reading the template info file '{}'.\n", qPrintable(dir.filePath("info.xml")));
-            systemTemplates_.pop_back();
-            continue;
-        }
-    }
 }
 
 /*

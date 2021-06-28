@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/selectsystemtemplatedialog.h"
 #include "main/dissolve.h"
 #include <QFileDialog>
 #include <QMessageBox>
@@ -73,37 +72,6 @@ void DissolveWindow::on_FileNewAction_triggered(bool checked)
         return;
 
     startNew();
-}
-
-void DissolveWindow::on_FileNewFromTemplateAction_triggered(bool checked)
-{
-    // Make sure there is nothing to save before we try to start afresh
-    if (!checkSaveCurrentInput())
-        return;
-
-    // Select the desired system template
-    static SelectSystemTemplateDialog selectTemplateDialog(this, systemTemplates_);
-    SystemTemplate *sysTemp = selectTemplateDialog.selectTemplate();
-    if (!sysTemp)
-        return;
-
-    // Clear any data-related tabs from the UI
-    ui_.MainTabs->clearTabs();
-
-    // Load the input data
-    if (!dissolve_.loadInputFromString(qPrintable(sysTemp->inputFileData())))
-    {
-        startNew();
-        return;
-    }
-
-    localSimulation_ = true;
-
-    // Fully update GUI
-    fullUpdate();
-
-    // Make sure we are now on the Simulation stack page
-    showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
 void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
