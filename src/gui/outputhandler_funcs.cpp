@@ -3,35 +3,21 @@
 
 #include "gui/outputhandler.hui"
 #include <QColor>
-
-GUIOutputHandler::GUIOutputHandler() {}
-
-GUIOutputHandler::~GUIOutputHandler() {}
+#include <QGuiApplication>
+#include <QPalette>
 
 /*
  * Styling
  */
 
 // Set styling for warning message
-void GUIOutputHandler::styleForWarning()
-{
-    static QColor blue(0, 0, 255);
-    emit(setColour(blue));
-}
+void GUIOutputHandler::styleForWarning() { emit(setColour(Qt::blue)); }
 
 // Set styling for error message
-void GUIOutputHandler::styleForError()
-{
-    static QColor red(251, 0, 0);
-    emit(setColour(red));
-}
+void GUIOutputHandler::styleForError() { emit(setColour(Qt::red)); }
 
 // Reset styling for normal text
-void GUIOutputHandler::resetStyling()
-{
-    static QColor black(0, 0, 0);
-    emit(setColour(black));
-}
+void GUIOutputHandler::resetStyling() { emit(setColour(QGuiApplication::palette().foreground().color())); }
 
 /*
  * Output
