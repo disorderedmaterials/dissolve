@@ -20,7 +20,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 
     public:
     ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData);
-    ~ProcedureChartNodeBlock();
+    ~ProcedureChartNodeBlock() = default;
 
     /*
      * Node Target

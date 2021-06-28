@@ -8,7 +8,6 @@
 #include "gui/modulewidget.h"
 #include "main/dissolve.h"
 #include "module/module.h"
-#include "templates/variantpointer.h"
 #include <QFile>
 #include <QPainter>
 #include <QPainterPath>
@@ -170,7 +169,7 @@ void ModuleBlock::paintEvent(QPaintEvent *event)
     borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
     borderPath.closeSubpath();
 
-    painter.setBrush(Qt::white);
+    painter.setBrush(QGuiApplication::palette().background());
 
     // Ready - draw the border + fill!
     painter.drawPath(borderPath);

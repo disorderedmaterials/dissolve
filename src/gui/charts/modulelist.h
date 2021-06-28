@@ -20,7 +20,7 @@ class ModuleListChart : public ChartBase
 {
     public:
     ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration = nullptr);
-    ~ModuleListChart();
+    ~ModuleListChart() = default;
 
     /*
      * Dissolve Reference

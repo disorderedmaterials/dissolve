@@ -38,8 +38,6 @@ ModuleListChart::ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Con
     updateControls();
 }
 
-ModuleListChart::~ModuleListChart() {}
-
 /*
  * QWidget Reimplementations
  */
@@ -50,7 +48,7 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 
     // Draw the background before we do anything else
-    painter.fillRect(QRect(0, 0, width(), height()), Qt::white);
+    painter.fillRect(QRect(0, 0, width(), height()), QGuiApplication::palette().background());
     painter.drawPixmap(0, 0, QPixmap(":/images/images/cornerhexagons.png"));
 
     // Set up some QPens
