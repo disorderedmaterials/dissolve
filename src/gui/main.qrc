@@ -1,22 +1,22 @@
 <RCC>
   <qresource prefix="menu">
-    <file>icons/menu_new.svg</file>
-    <file>icons/menu_species.svg</file>
-    <file>icons/menu_wizard.svg</file>
-    <file>icons/menu_recent.svg</file>
-    <file>icons/menu_open.svg</file>
-    <file>icons/menu_save.svg</file>
-    <file>icons/menu_connect.svg</file>
+    <file>icons/menu_new.svg.png</file>
+    <file>icons/menu_species.svg.png</file>
+    <file>icons/menu_wizard.svg.png</file>
+    <file>icons/menu_recent.svg.png</file>
+    <file>icons/menu_open.svg.png</file>
+    <file>icons/menu_save.svg.png</file>
+    <file>icons/menu_connect.svg.png</file>
   </qresource>
   <qresource prefix="wizard">
-    <file>icons/wizard_allatoms.svg</file>
-    <file>icons/wizard_selectedatoms.svg</file>
+    <file>icons/wizard_allatoms.svg.png</file>
+    <file>icons/wizard_selectedatoms.svg.png</file>
   </qresource>
   <qresource prefix="data">
     <file>systemtemplates/simple_two/info.xml</file>
-    <file>systemtemplates/simple_two/icon.svg</file>
+    <file>systemtemplates/simple_two/icon.svg.png</file>
     <file>systemtemplates/simple_two/input.txt</file>
-    <file>systemtemplates/simple_one/icon.svg</file>
+    <file>systemtemplates/simple_one/icon.svg.png</file>
     <file>systemtemplates/simple_one/info.xml</file>
     <file>systemtemplates/simple_one/input.txt</file>
   </qresource>
@@ -24,32 +24,31 @@
     <file>icons/dissolve.png</file>
   </qresource>
   <qresource prefix="viewer_toolbar">
-    <file>icons/viewer_toolbar_interaction.svg</file>
-    <file>icons/viewer_toolbar_site.svg</file>
-    <file>icons/viewer_toolbar_view.svg</file>
-    <file>icons/viewer_toolbar_graph.svg</file>
-    <file>icons/viewer_toolbar_tools.svg</file>
+    <file>icons/viewer_toolbar_interaction.svg.png</file>
+    <file>icons/viewer_toolbar_site.svg.png</file>
+    <file>icons/viewer_toolbar_view.svg.png</file>
+    <file>icons/viewer_toolbar_graph.svg.png</file>
+    <file>icons/viewer_toolbar_tools.svg.png</file>
   </qresource>
   <qresource prefix="viewer">
-    <file>icons/viewer_edit.svg</file>
-    <file>icons/viewer_link.svg</file>
-    <file>icons/viewer_edit_on.svg</file>
-    <file>icons/viewer_interact.svg</file>
-    <file>icons/viewer_interact_on.svg</file>
-    <file>icons/viewer_reset.svg</file>
-    <file>icons/viewer_followx_on.svg</file>
-    <file>icons/viewer_followall.svg</file>
-    <file>icons/viewer_followall_on.svg</file>
-    <file>icons/viewer_medic.svg</file>
-    <file>icons/viewer_followx.svg</file>
-    <file>icons/viewer_axes.svg</file>
-    <file>icons/viewer_spheres.svg</file>
-    <file>icons/viewer_spheres_on.svg</file>
-    <file>icons/viewer_axes_on.svg</file>
-    <file>icons/viewer_delete.svg</file>
-    <file>icons/viewer_snapshot.svg</file>
-    <file>icons/viewer_calculatebonds.svg</file>
-    <file>icons/viewer_data.svg</file>
+    <file>icons/viewer_edit.svg.png</file>
+    <file>icons/viewer_link.svg.png</file>
+    <file>icons/viewer_edit_on.svg.png</file>
+    <file>icons/viewer_interact.svg.png</file>
+    <file>icons/viewer_interact_on.svg.png</file>
+    <file>icons/viewer_reset.svg.png</file>
+    <file>icons/viewer_followx_on.svg.png</file>
+    <file>icons/viewer_followall.svg.png</file>
+    <file>icons/viewer_followall_on.svg.png</file>
+    <file>icons/viewer_medic.svg.png</file>
+    <file>icons/viewer_followx.svg.png</file>
+    <file>icons/viewer_axes.svg.png</file>
+    <file>icons/viewer_spheres.svg.png</file>
+    <file>icons/viewer_axes_on.svg.png</file>
+    <file>icons/viewer_delete.svg.png</file>
+    <file>icons/viewer_snapshot.svg.png</file>
+    <file>icons/viewer_calculatebonds.svg.png</file>
+    <file>icons/viewer_data.svg.png</file>
   </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>
@@ -60,21 +59,21 @@
     <file>fonts/FreeSerif.ttf</file>
   </qresource>
   <qresource prefix="modules">
-    <file>icons/modules_export.svg</file>
-    <file>icons/modules_molshake.svg</file>
-    <file>icons/modules_checks.svg</file>
-    <file>icons/modules_epsr.svg</file>
-    <file>icons/modules_energy.svg</file>
-    <file>icons/modules_md.svg</file>
-    <file>icons/modules_atomshake.svg</file>
-    <file>icons/modules_calibrate.svg</file>
-    <file>icons/modules_datatest.svg</file>
-    <file>icons/modules_rdf.svg</file>
-    <file>icons/modules_intrashake.svg</file>
-    <file>icons/modules_neutronsq.svg</file>
-    <file>icons/modules_calculaterdf.svg</file>
-    <file>icons/modules_generic.svg</file>
-    <file>icons/modules_import.svg</file>
+    <file>icons/modules_export.svg.png</file>
+    <file>icons/modules_molshake.svg.png</file>
+    <file>icons/modules_checks.svg.png</file>
+    <file>icons/modules_epsr.svg.png</file>
+    <file>icons/modules_energy.svg.png</file>
+    <file>icons/modules_md.svg.png</file>
+    <file>icons/modules_atomshake.svg.png</file>
+    <file>icons/modules_calibrate.svg.png</file>
+    <file>icons/modules_datatest.svg.png</file>
+    <file>icons/modules_rdf.svg.png</file>
+    <file>icons/modules_intrashake.svg.png</file>
+    <file>icons/modules_neutronsq.svg.png</file>
+    <file>icons/modules_calculaterdf.svg.png</file>
+    <file>icons/modules_generic.svg.png</file>
+    <file>icons/modules_import.svg.png</file>
   </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
@@ -84,62 +83,62 @@
     <file>images/hexagons1.jpg</file>
   </qresource>
   <qresource prefix="tabs">
-    <file>icons/tabs_ff.svg</file>
-    <file>icons/tabs_configuration.svg</file>
-    <file>icons/tabs_workspace.svg</file>
-    <file>icons/tabs_species.svg</file>
-    <file>icons/tabs_modulelayer_disabled.svg</file>
-    <file>icons/tabs_modulelayer.svg</file>
+    <file>icons/tabs_ff.svg.png</file>
+    <file>icons/tabs_configuration.svg.png</file>
+    <file>icons/tabs_workspace.svg.png</file>
+    <file>icons/tabs_species.svg.png</file>
+    <file>icons/tabs_modulelayer_disabled.svg.png</file>
+    <file>icons/tabs_modulelayer.svg.png</file>
   </qresource>
   <qresource prefix="start">
-    <file>icons/start_connect.svg</file>
-    <file>icons/start_openrecent.svg</file>
-    <file>icons/start_template.svg</file>
-    <file>icons/start_manual.svg</file>
-    <file>icons/start_tutorials.svg</file>
-    <file>icons/start_new.svg</file>
-    <file>icons/start_openlocal.svg</file>
+    <file>icons/start_connect.svg.png</file>
+    <file>icons/start_openrecent.svg.png</file>
+    <file>icons/start_template.svg.png</file>
+    <file>icons/start_manual.svg.png</file>
+    <file>icons/start_tutorials.svg.png</file>
+    <file>icons/start_new.svg.png</file>
+    <file>icons/start_openlocal.svg.png</file>
   </qresource>
   <qresource prefix="general">
-    <file>icons/general_filter.svg</file>
-    <file>icons/general_false.svg</file>
-    <file>icons/general_true.svg</file>
-    <file>icons/general_warn.svg</file>
-    <file>icons/general_unknown.svg</file>
-    <file>icons/general_options.svg</file>
-    <file>icons/general_edit.svg</file>
-    <file>icons/general_screen.svg</file>
-    <file>icons/general_monitor.svg</file>
-    <file>icons/general_heartbeat.svg</file>
-    <file>icons/general_local.svg</file>
-    <file>icons/general_movemodule.svg</file>
-    <file>icons/general_restartfile.svg</file>
-    <file>icons/general_font.svg</file>
-    <file>icons/general_palette.svg</file>
-    <file>icons/slider-off.svg</file>
-    <file>icons/general_trash.svg</file>
-    <file>icons/general_frequency.svg</file>
-    <file>icons/slider-on.svg</file>
-    <file>icons/general_bothon.svg</file>
-    <file>icons/general_cross.svg</file>
-    <file>icons/general_lefton.svg</file>
-    <file>icons/general_module.svg</file>
-    <file>icons/general_righton.svg</file>
-    <file>icons/general_arrowdown.svg</file>
-    <file>icons/general_arrowleft.svg</file>
-    <file>icons/general_library.svg</file>
-    <file>icons/general_repeat.svg</file>
-    <file>icons/general_add.svg</file>
-    <file>icons/general_remove.svg</file>
-    <file>icons/general_arrowright.svg</file>
-    <file>icons/general_arrowup.svg</file>
+    <file>icons/general_filter.svg.png</file>
+    <file>icons/general_false.svg.png</file>
+    <file>icons/general_true.svg.png</file>
+    <file>icons/general_warn.svg.png</file>
+    <file>icons/general_unknown.svg.png</file>
+    <file>icons/general_options.svg.png</file>
+    <file>icons/general_edit.svg.png</file>
+    <file>icons/general_screen.svg.png</file>
+    <file>icons/general_monitor.svg.png</file>
+    <file>icons/general_heartbeat.svg.png</file>
+    <file>icons/general_local.svg.png</file>
+    <file>icons/general_movemodule.svg.png</file>
+    <file>icons/general_restartfile.svg.png</file>
+    <file>icons/general_font.svg.png</file>
+    <file>icons/general_palette.svg.png</file>
+    <file>icons/slider-off.svg.png</file>
+    <file>icons/general_trash.svg.png</file>
+    <file>icons/general_frequency.svg.png</file>
+    <file>icons/slider-on.svg.png</file>
+    <file>icons/general_bothon.svg.png</file>
+    <file>icons/general_cross.svg.png</file>
+    <file>icons/general_lefton.svg.png</file>
+    <file>icons/general_module.svg.png</file>
+    <file>icons/general_righton.svg.png</file>
+    <file>icons/general_arrowdown.svg.png</file>
+    <file>icons/general_arrowleft.svg.png</file>
+    <file>icons/general_library.svg.png</file>
+    <file>icons/general_repeat.svg.png</file>
+    <file>icons/general_add.svg.png</file>
+    <file>icons/general_remove.svg.png</file>
+    <file>icons/general_arrowright.svg.png</file>
+    <file>icons/general_arrowup.svg.png</file>
   </qresource>
   <qresource prefix="control">
-    <file>icons/control_pause.svg</file>
-    <file>icons/control_locked.svg</file>
-    <file>icons/control_waiting.svg</file>
-    <file>icons/control_unlocked.svg</file>
-    <file>icons/control_step.svg</file>
-    <file>icons/control_play.svg</file>
+    <file>icons/control_pause.svg.png</file>
+    <file>icons/control_locked.svg.png</file>
+    <file>icons/control_waiting.svg.png</file>
+    <file>icons/control_unlocked.svg.png</file>
+    <file>icons/control_step.svg.png</file>
+    <file>icons/control_play.svg.png</file>
   </qresource>
 </RCC>
