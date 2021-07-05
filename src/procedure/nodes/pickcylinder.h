@@ -5,7 +5,6 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/pickbase.h"
-#include "templates/array.h"
 #include <memory>
 
 // Forward Declarations
