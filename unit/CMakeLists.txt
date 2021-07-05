@@ -5,7 +5,7 @@ cmake_policy(SET CMP0054 NEW)
 
 # Get list of sources, from which we can construct the exe / test list.
 file(GLOB tests_SRC "*.cpp")
-find_package(GTest REQUIRED)
+include(GoogleTest)
 
 # Add executables and tests
 foreach(SRCFILE ${tests_SRC})
@@ -25,7 +25,7 @@ foreach(SRCFILE ${tests_SRC})
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module 'nogui' libs
            ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
+    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} CONAN_PKG::gtest
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
   )
   add_test(NAME ${NAME} COMMAND ${NAME})
