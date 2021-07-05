@@ -48,13 +48,13 @@ Configuration  'Bulk'
   # Modules
   Generator
     Parameters
-      Integer  populationA  1500
-      Integer  ratioB  2
+      Parameter  populationA  1500
+      Parameter  ratioB  2
       Parameter  rho  6.640000e-02
     EndParameters
     Box
       Lengths  1  1  1
-      Angles  120  90  90
+      Angles  90  90  120
       NonPeriodic  False
     EndBox
     AddSpecies
@@ -114,13 +114,19 @@ Layer  'RDF / Neutron S(Q)'
     Configuration  'Bulk'
   EndModule
 
+  Module  SQ  'SQ01'
+    Frequency  1
+
+    SourceRDFs  'RDF01'
+  EndModule
+
   Module  NeutronSQ  'NeutronSQ01'
     Frequency  1
 
-    Configuration  'Bulk'
+    SourceSQs  'SQ01'
     Reference  mint  'data/SiO2_NIMROD.mint01'
+      XMin  0.1
     EndReference
-    ReferenceIgnoreFirst  True
   EndModule
 EndLayer
 
@@ -130,7 +136,7 @@ Layer  'Refine (EPSR)'
   Module  EPSR  'EPSR01'
     Frequency  1
     EReq   5.00000e+01
-    Target  'NeutronSQ01'  'Default'
+    Target  'NeutronSQ01'
   EndModule
 EndLayer
 

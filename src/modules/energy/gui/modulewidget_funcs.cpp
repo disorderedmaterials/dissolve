@@ -91,13 +91,12 @@ void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
     {
         auto cfg = *optConfig;
 
-        if (processingData_.contains(fmt::format("{}//EnergyGradient", cfg->niceName()), module_->uniqueName()))
-            ui_.GradientValueLabel->setText(QString::number(
-                processingData_.value<double>(fmt::format("{}//EnergyGradient", cfg->niceName()), module_->uniqueName())));
+        if (processingData_.contains("EnergyGradient", cfg->niceName()))
+            ui_.GradientValueLabel->setText(QString::number(processingData_.value<double>("EnergyGradient", cfg->niceName())));
         else
             ui_.GradientValueLabel->setText("N/A");
 
-        if (processingData_.valueOr<bool>(fmt::format("{}//EnergyStable", cfg->niceName()), module_->uniqueName(), false))
+        if (processingData_.valueOr<bool>("EnergyStable", cfg->niceName(), false))
         {
             labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
             ui_.StableLabel->setText("Yes");
