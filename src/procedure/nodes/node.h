@@ -62,6 +62,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Parameters,
         Pick,
         PickCylinder,
+        PickProximity,
         Process1D,
         Process2D,
         Process3D,

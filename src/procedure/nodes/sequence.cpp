@@ -469,6 +469,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::PickCylinder):
                 newNode = new PickCylinderProcedureNode();
                 break;
+            case (ProcedureNode::NodeType::PickProximity):
+                newNode = new PickProximityProcedureNode();
+                break;
             case (ProcedureNode::NodeType::Process1D):
                 newNode = new Process1DProcedureNode();
                 break;
