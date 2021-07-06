@@ -19,7 +19,7 @@ class ProcedureChart : public ChartBase
 {
     public:
     ProcedureChart(Procedure *procedure, const CoreData &coreData);
-    ~ProcedureChart();
+    ~ProcedureChart() = default;
 
     /*
      * CoreData Reference
