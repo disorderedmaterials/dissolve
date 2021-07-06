@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "math/svd.h"
-#include "templates/array.h"
 #include "templates/array2d.h"
 #include <algorithm>
 

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include "gui/models/xmlAngleModel.h"
 #include <pugixml.hpp>
 
@@ -14,7 +17,7 @@ void XmlAngleModel::readFile(const pugi::xml_node &root)
     for (auto &a : root.select_nodes("/ForceField/HarmonicAngleForce/Angle"))
     {
         angles_.emplace_back(a.node().attribute("class1").as_string(), a.node().attribute("class2").as_string(),
-                             a.node().attribute("class3").as_string(), a.node().attribute("angle").as_double() * 180 / PI,
+                             a.node().attribute("class3").as_string(), a.node().attribute("angle").as_double() * 180 / M_PI,
                              a.node().attribute("k").as_double());
     }
 

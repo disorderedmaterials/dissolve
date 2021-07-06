@@ -23,15 +23,12 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != nullptr; ri = ri->next())
+    for (auto *cfg : targetConfigurations_)
     {
-        // Grab Configuration pointer
-        Configuration *cfg = ri->item();
-
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
@@ -160,7 +157,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         for (shake = 0; shake < nShakesPerTerm; ++shake)
                         {
                             // Get translation vector, normalise, and apply random delta
-                            vji = box->minimumVector(i, j);
+                            vji = box->minimumVector(i->r(), j->r());
                             vji.normalise();
                             vji *= procPool.randomPlusMinusOne() * bondStepSize;
 
@@ -214,8 +211,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         for (shake = 0; shake < nShakesPerTerm; ++shake)
                         {
                             // Get bond vectors and calculate cross product to get rotation axis
-                            vji = box->minimumVector(j, i);
-                            vjk = box->minimumVector(j, k);
+                            vji = box->minimumVector(j->r(), i->r());
+                            vjk = box->minimumVector(j->r(), k->r());
                             v = vji * vjk;
 
                             // Create suitable transformation matrix
@@ -274,7 +271,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         for (shake = 0; shake < nShakesPerTerm; ++shake)
                         {
                             // Get bond vectors j-k to get rotation axis
-                            vjk = box->minimumVector(j, k);
+                            vjk = box->minimumVector(j->r(), k->r());
 
                             // Create suitable transformation matrix
                             transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne() * torsionStepSize,

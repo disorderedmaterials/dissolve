@@ -3,10 +3,7 @@
 
 #include "classes/sitereference.h"
 
-SiteReference::SiteReference(SiteStack &siteStack, std::string_view name)
-    : ListItem<SiteReference>(), siteStack_(siteStack), name_{name}
-{
-}
+SiteReference::SiteReference(SiteStack &siteStack, std::string_view name) : siteStack_(siteStack), name_{name} {}
 
 // Return referenced stack of sites
 SiteStack &SiteReference::siteStack() const { return siteStack_; }

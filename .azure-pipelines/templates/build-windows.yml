@@ -1,0 +1,64 @@
+parameters:
+  - name: extraflags
+    default: ''
+  - name: qtver
+    default: 5.15.1
+  - name: ftrepo
+    default: git://git.sv.nongnu.org/freetype/freetype2.git
+  - name: ftglrepo
+    default: https://github.com/frankheckenbach/ftgl.git
+  - name: threading
+    default: true
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+  - script: |
+      choco install -y antlr4
+    displayName: 'Install Prerequisites'
+  - script: |
+      python -m pip install aqtinstall
+      python -m aqt install --outputdir $(Build.BinariesDirectory)\\Qt ${{ parameters.qtver }} windows desktop win64_msvc2019_64 -m qtcore qtgui qtwidgets qtprintsupport
+    displayName: 'Install Qt'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd $(Build.BinariesDirectory)
+      git clone ${{ parameters.ftrepo }} freetype-latest
+      mkdir freetype-build
+      cd freetype-build
+      cmake -G "Visual Studio 16 2019" -A "x64" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install
+      cmake --build . --target install --config Release
+    displayName: 'FreeType (Build / Install)'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd $(Build.BinariesDirectory)
+      git clone ${{ parameters.ftglrepo }} ftgl-latest
+      mkdir ftgl-build
+      cd ftgl-build
+      $env:FREETYPE_DIR = "$(Build.BinariesDirectory)\freetype-install"
+      cmake -G "Visual Studio 16 2019" -A "x64" ../ftgl-latest -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
+      cmake --build . --target install --config Release
+    displayName: 'FTGL (Build / Install)'
+  - powershell: |
+      python -m pip install conan
+      conan profile new default --detect
+      conan profile update settings.compiler="Visual Studio" default
+      conan profile update settings.compiler.version=16 default
+    displayName: 'Install Conan' 
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\msvc2019_64"
+      $env:PATH += ";$env:Qt5_DIR" + "\bin"
+      echo $env:Qt5_DIR
+      $env:INCLUDE += "$(Build.BinariesDirectory)\freetype-latest;"
+      $env:LIB += "$(Build.BinariesDirectory)\freetype-install\lib;"
+      $env:INCLUDE += "$(Build.BinariesDirectory)\ftgl-latest\src;"
+      $env:LIB += "$(Build.BinariesDirectory)\ftgl-install\lib;"
+      mkdir build
+      cd build
+      conan install .. --build missing
+      cmake ../ -G "Visual Studio 16 2019" -A "x64" -DMULTI_THREADING:bool=${{ parameters.threading }} -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DBUILD_ANTLR_LINK_LIB:string="dist\Release\antlr4-runtime.lib" -DCMAKE_BUILD_TYPE:STRING="Release" ${{ parameters.extraflags }}
+      cmake --build . --config Release --target keywordwidgets
+      cmake --build . --config Release
+    displayName: 'Build'

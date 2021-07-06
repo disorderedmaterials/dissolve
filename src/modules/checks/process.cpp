@@ -16,15 +16,12 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != nullptr; ri = ri->next())
+    for (auto *cfg : targetConfigurations_)
     {
-        // Grab Configuration pointer
-        Configuration *cfg = ri->item();
-
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
@@ -48,7 +45,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &distances = keywords_.retrieve<std::vector<Geometry>>("Distance");
         for (const auto &d : distances)
         {
-            actual = cfg->box()->minimumDistance(atoms[d.indices(0)], atoms[d.indices(1)]);
+            actual = cfg->box()->minimumDistance(atoms[d.indices(0)]->r(), atoms[d.indices(1)]->r());
             delta = fabs(actual - d.value());
             ok = delta < distanceThreshold;
             Messenger::print("Distance between Atoms {} and {} is {} Angstroms, and is {} (delta = {}, tolerance = {}).\n",
@@ -70,7 +67,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &angles = keywords_.retrieve<std::vector<Geometry>>("Angle");
         for (const auto &a : angles)
         {
-            actual = cfg->box()->angleInDegrees(atoms[a.indices(0)], atoms[a.indices(1)], atoms[a.indices(2)]);
+            actual = cfg->box()->angleInDegrees(atoms[a.indices(0)]->r(), atoms[a.indices(1)]->r(), atoms[a.indices(2)]->r());
             delta = fabs(actual - a.value());
             ok = delta < angleThreshold;
             Messenger::print("Angle between Atoms {}, {} and {} is {} degrees, and is {} (delta = {}, tolerance = {}).\n",

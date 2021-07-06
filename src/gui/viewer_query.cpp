@@ -164,12 +164,9 @@ BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
     queryRegionHeight_ = (top - bottom) + 1;
 
     // Initialise the colour arrays
-    queryRegionR_.initialise(queryRegionWidth_ * queryRegionHeight_);
-    queryRegionG_.initialise(queryRegionWidth_ * queryRegionHeight_);
-    queryRegionB_.initialise(queryRegionWidth_ * queryRegionHeight_);
-    queryRegionR_ = 1.0;
-    queryRegionG_ = 1.0;
-    queryRegionB_ = 1.0;
+    queryRegionR_.resize(queryRegionWidth_ * queryRegionHeight_, 1.0);
+    queryRegionG_.resize(queryRegionWidth_ * queryRegionHeight_, 1.0);
+    queryRegionB_.resize(queryRegionWidth_ * queryRegionHeight_, 1.0);
 
     // Flag that we are now querying, and generate a small offscreen image in order to perform the query
     queryingObjects_ = true;

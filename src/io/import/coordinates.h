@@ -4,7 +4,6 @@
 #pragma once
 
 #include "io/fileandformat.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class ProcessPool;

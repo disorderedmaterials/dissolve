@@ -865,7 +865,7 @@ Vec3<double> Axes::titleOrientation(int axis) const
         switch (parentView_.viewType())
         {
             case (View::FlatXYView):
-                return (axis == 0 ? Vec3<double>(0.0, 0.0) : Vec3<double>(0.0, 270.0, 0.0));
+                return (axis == 0 ? Vec3<double>(0.0, 0.0, 0.0) : Vec3<double>(0.0, 270.0, 0.0));
             case (View::FlatXZView):
                 return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.0) : Vec3<double>(270.0, 0.0, 90.0));
             case (View::FlatZYView):

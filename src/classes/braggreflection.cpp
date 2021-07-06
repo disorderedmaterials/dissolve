@@ -104,6 +104,7 @@ bool BraggReflection::deserialise(LineParser &parser)
     index_ = parser.argi(0);
     q_ = parser.argd(1);
     nKVectors_ = parser.argi(2);
+    hkl_ = parser.arg3i(3);
 
     // Read intensities array
     if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intensities_, parser))
@@ -116,7 +117,7 @@ bool BraggReflection::deserialise(LineParser &parser)
 bool BraggReflection::serialise(LineParser &parser) const
 {
     // Write index, Q centre, and number of contributing K-vectors
-    if (!parser.writeLineF("{}  {}  {}\n", index_, q_, nKVectors_))
+    if (!parser.writeLineF("{} {} {} {} {} {}\n", index_, q_, nKVectors_, hkl_.x, hkl_.y, hkl_.z))
         return false;
 
     // Write intensities array

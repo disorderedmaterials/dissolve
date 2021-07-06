@@ -38,15 +38,12 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != nullptr; ri = ri->next())
+    for (auto *cfg : targetConfigurations_)
     {
-        // Grab Configuration pointer
-        Configuration *cfg = ri->item();
-
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
@@ -118,7 +115,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 continue;
 
                             // Determine final forces
-                            vecji = box->minimumVector(i, j);
+                            vecji = box->minimumVector(i->r(), j->r());
                             magjisq = vecji.magnitudeSq();
                             if (magjisq > cutoffSq)
                                 continue;
@@ -150,7 +147,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 j = molM->atom(jj);
 
                                 // Determine final forces
-                                vecji = box->minimumVector(i, j);
+                                vecji = box->minimumVector(i->r(), j->r());
                                 magjisq = vecji.magnitudeSq();
                                 if (magjisq > cutoffSq)
                                     continue;
@@ -178,7 +175,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         j = molN->atom(bond.indexJ());
 
                         // Determine final forces
-                        vecji = box->minimumVector(i, j);
+                        vecji = box->minimumVector(i->r(), j->r());
                         r = vecji.magAndNormalise();
                         vecji *= bond.force(r);
 
@@ -195,8 +192,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         k = molN->atom(angle.indexK());
 
                         // Get vectors 'j-i' and 'j-k'
-                        vecji = box->minimumVector(j, i);
-                        vecjk = box->minimumVector(j, k);
+                        vecji = box->minimumVector(j->r(), i->r());
+                        vecjk = box->minimumVector(j->r(), k->r());
                         magji = vecji.magAndNormalise();
                         magjk = vecjk.magAndNormalise();
 
@@ -223,9 +220,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         l = molN->atom(torsion.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(i, j);
-                        vecjk = box->minimumVector(k, j);
-                        veckl = box->minimumVector(l, k);
+                        vecji = box->minimumVector(i->r(), j->r());
+                        vecjk = box->minimumVector(k->r(), j->r());
+                        veckl = box->minimumVector(l->r(), k->r());
 
                         // Calculate torsion force parameters
                         auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
@@ -267,9 +264,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         l = molN->atom(imp.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(i, j);
-                        vecjk = box->minimumVector(k, j);
-                        veckl = box->minimumVector(l, k);
+                        vecji = box->minimumVector(i->r(), j->r());
+                        vecjk = box->minimumVector(k->r(), j->r());
+                        veckl = box->minimumVector(l->r(), k->r());
 
                         // Calculate improper force parameters
                         auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
@@ -518,26 +515,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 fmt::format("{}//Forces", cfg->niceName()), uniqueName());
             f.resize(cfg->nAtoms());
 
-            procPool.resetAccumulatedTime();
-
-            // Calculate interatomic forces
-            Timer interTimer;
-            interTimer.start();
-            interAtomicForces(procPool, cfg, dissolve.potentialMap(), f);
-            interTimer.stop();
-            Messenger::printVerbose("Time to do interatomic forces was {}.\n", interTimer.totalTimeString());
-
-            // Calculate intramolecular forces
-            Timer intraTimer;
-            intraTimer.start();
-            intraMolecularForces(procPool, cfg, dissolve.potentialMap(), f);
-            intraTimer.stop();
+            // Calculate forces
+            totalForces(procPool, cfg, dissolve.potentialMap(), f);
 
             // Convert forces to 10J/mol
             std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });
-
-            Messenger::print("Time to do interatomic forces was {}, intramolecular forces was {} ({} comms).\n",
-                             interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 
             // If writing to a file, append it here
             if (saveData && !exportedForces_.exportData(f))

@@ -11,10 +11,10 @@
 bool ImportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
-    auto *cfg = targetConfigurations_.firstItem();
+    auto *cfg = targetConfigurations_.front();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());
@@ -37,13 +37,30 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Read the frame
-    if (!trajectoryFormat_.importData(parser, cfg))
+    std::optional<Matrix3> unitCell;
+    if (!trajectoryFormat_.importData(parser, cfg, unitCell))
         return Messenger::error("Failed to read trajectory frame data.\n");
     cfg->incrementContentsVersion();
 
     // Set the trajectory file position in the restart file
     dissolve.processingModuleData().realise<std::streampos>(streamPosName, uniqueName(), GenericItem::InRestartFileFlag) =
         parser.tellg();
+
+    // Handle the unit cell if one was provided
+    if (unitCell)
+    {
+        // Check that the unit cell has changed by an appreciable amount....
+        if ((unitCell.value() - cfg->box()->axes()).maxAbs() > 1.0e-8)
+        {
+            // Create new Box and cells for the configuration
+            cfg->createBox(unitCell.value());
+            cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), dissolve.pairPotentialRange());
+
+            // Remove all atoms from cells
+            for (auto &i : cfg->atoms())
+                i->setCell(nullptr);
+        }
+    }
 
     // Make sure that the configuration contents are up-to-date w.r.t. cell locations etc.
     cfg->updateCellContents();

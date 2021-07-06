@@ -1,27 +1,27 @@
 # Testing Code
 enable_testing()
 
-function(dissolve_system_test directory file_name count)
-  message(STATUS "... System test '${file_name}' in directory '${directory}'")
+function(dissolve_system_test test_name input_file count)
+  message(STATUS "... System test '${test_name}' in directory '${CMAKE_CURRENT_LIST_DIR}'")
   if(PARALLEL)
     foreach(nproc 1 2)
       set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
       add_test(
-        NAME ${directory}-${file_name}-${nproc}
-        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x ${file_name}.txt ${ARGN}
-        WORKING_DIRECTORY ../tests/${directory}
+        NAME ${CMAKE_CURRENT_LIST_DIR}-${test_name}-${nproc}
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x ${input_file} ${ARGN}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
       )
-      set_property(TEST ${directory}-${file_name}-${nproc} PROPERTY LABELS ${directory})
-      set_property(TEST ${directory}-${file_name}-${nproc} PROPERTY PROCESSORS ${nproc})
+      set_property(TEST ${CMAKE_CURRENT_LIST_DIR}-${test_name}-${nproc} PROPERTY LABELS ${CMAKE_CURRENT_LIST_DIR})
+      set_property(TEST ${CMAKE_CURRENT_LIST_DIR}-${test_name}-${nproc} PROPERTY PROCESSORS ${nproc})
     endforeach()
   else()
     set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
     add_test(
-      NAME ${directory}-${file_name}
-      COMMAND ${test_target_executable} -n ${count} -x ${file_name}.txt ${ARGN}
-      WORKING_DIRECTORY ../tests/${directory}
+      NAME ${CMAKE_CURRENT_LIST_DIR}-${test_name}
+      COMMAND ${test_target_executable} -n ${count} -x ${input_file} ${ARGN}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     )
-    set_property(TEST ${directory}-${file_name} PROPERTY LABELS ${directory})
+    set_property(TEST ${CMAKE_CURRENT_LIST_DIR}-${test_name} PROPERTY LABELS ${CMAKE_CURRENT_LIST_DIR})
   endif()
 endfunction()
 

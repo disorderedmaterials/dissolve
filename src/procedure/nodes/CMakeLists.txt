@@ -26,10 +26,14 @@ add_library(
   operatesitepopulationnormalise.cpp
   operatesphericalshellnormalise.cpp
   parameters.cpp
+  pick.cpp
+  pickbase.cpp
+  pickcylinder.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
   regionbase.cpp
+  removespecies.cpp
   select.cpp
   sequence.cpp
   sum1d.cpp
@@ -60,10 +64,14 @@ add_library(
   operatesitepopulationnormalise.h
   operatesphericalshellnormalise.h
   parameters.h
+  pick.h
+  pickbase.h
+  pickcylinder.h
   process1d.h
   process2d.h
   process3d.h
   regionbase.h
+  removespecies.h
   select.h
   sequence.h
   sum1d.h

@@ -5,7 +5,6 @@
 
 #include "base/messenger.h"
 #include "math/minimiser.h"
-#include "templates/array.h"
 #include <iomanip>
 #include <limits>
 

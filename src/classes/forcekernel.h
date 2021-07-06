@@ -26,8 +26,9 @@ class ForceKernel
     ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, double cutoffDistance = -1.0);
     ~ForceKernel() = default;
 
-    // alias for force storage vector
+    // Alias for force storage vector
     using ForceVector = std::vector<Vec3<double>>;
+
     /*
      * Source Data
      */

@@ -224,16 +224,15 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     baseIndex += dissolve.nSpecies();
 
     // Configurations - Global tab indices run from 1+nSpecies (first tab after last Species) to 1+nSpecies+nConfigurations
-    ListIterator<Configuration> configurationIterator(dissolve.configurations());
     currentTabIndex = 0;
-    while (Configuration *cfg = configurationIterator.iterate())
+    for (auto &cfg : dissolve.configurations())
     {
         // Loop over existing tabs
         while (currentTabIndex < configurationTabs_.size())
         {
             // If the existing tab is displaying the current Configuration already, then we can move on. Otherwise,
             // delete it
-            if (configurationTabs_[currentTabIndex]->configuration() == cfg)
+            if (configurationTabs_[currentTabIndex]->configuration() == cfg.get())
                 break;
             else
             {
@@ -246,7 +245,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         if (currentTabIndex == configurationTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(cfg->name()));
-            auto newTab = std::make_shared<ConfigurationTab>(dissolveWindow, dissolve, this, tabTitle, cfg);
+            auto newTab = std::make_shared<ConfigurationTab>(dissolveWindow, dissolve, this, tabTitle, cfg.get());
             configurationTabs_.push_back(newTab);
             allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
@@ -373,7 +372,7 @@ std::shared_ptr<MainTab> MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolv
 // Return current tab
 std::shared_ptr<MainTab> MainTabsWidget::currentTab() const
 {
-    if (currentWidget() == nullptr)
+    if (allTabs_.empty() || currentWidget() == nullptr)
         return nullptr;
 
     // Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets

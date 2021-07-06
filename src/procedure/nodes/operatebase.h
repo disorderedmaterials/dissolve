@@ -5,7 +5,6 @@
 
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class Data1D;

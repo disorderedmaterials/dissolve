@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/array.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
 

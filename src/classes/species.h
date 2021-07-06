@@ -231,6 +231,8 @@ class Species
     public:
     // Return periodic box
     const Box *box() const;
+    // Create Box definition with specified lengths and angles
+    void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
 
     /*
      * Source Forcefield (if any)

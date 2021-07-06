@@ -26,7 +26,6 @@ add_library(
   modulevector.cpp
   node.cpp
   nodeandinteger.cpp
-  nodearray.cpp
   nodebase.cpp
   nodebranch.cpp
   nodevalue.cpp
@@ -38,6 +37,7 @@ add_library(
   speciessitevector.cpp
   speciesvector.cpp
   stdstring.cpp
+  valuestore.cpp
   vec3double.cpp
   vec3integer.cpp
   vec3nodevalue.cpp
@@ -72,7 +72,6 @@ add_library(
   modulevector.h
   node.h
   nodeandinteger.h
-  nodearray.h
   nodebase.h
   nodebranch.h
   nodevalue.h
@@ -85,6 +84,7 @@ add_library(
   speciessitevector.h
   speciesvector.h
   stdstring.h
+  valuestore.h
   vec3double.h
   vec3integer.h
   vec3labels.h

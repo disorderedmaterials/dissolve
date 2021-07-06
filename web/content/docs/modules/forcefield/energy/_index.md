@@ -30,6 +30,12 @@ $E_{pairpotential}$ is calculated using standard rules for interactions occurrin
 
 Dissolve implements several functional forms for each of the distinct intra- and interatomic interaction types, and which are detailed in the [functional forms]({{< ref "forms" >}}) section.
 
+### Stability
+
+The stability of the total energy is an important thing to consider when running simulations - typically there is an equilibration or relaxation of the system at the beginning of any simulation, during which the energy changes significantly from step to step. During these periods where there are such large changes in the total energy it is unwise to run certain other calculations - for instance, one may not wish to have [molecular dynamics]({{< ref "md" >}}) kick in while the system is far from equilibrium, as this may lead to extreme forces on the atoms and potentially break your simulation. Dissolve therefore monitors the gradient of the energy and, along with a controlling threshold factor, decides whether the energy is stable (enough).
+
+The `StabilityThreshold` value is multiplied by the mean of the last N points (governed by the `StabilityWindow` size) to give an absolute threshold energy value. The absolute value of the gradient over the last N points is compared to this value and, if it is lower, the energy is considered stable.
+
 ## Configuration
 
 ### Control Keywords

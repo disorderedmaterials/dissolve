@@ -35,5 +35,5 @@ class SelectConfigurationDialog : public QDialog
     // Run the dialog, returning a single selected Configuration
     Configuration *selectConfiguration();
     // Run the dialog, returning a list of selected Configuration
-    RefList<Configuration> selectConfiguration(int minConfiguration, int maxConfiguration);
+    std::vector<Configuration *> selectConfiguration(int minConfiguration, int maxConfiguration);
 };

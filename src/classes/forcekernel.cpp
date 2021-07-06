@@ -39,7 +39,7 @@ void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f,
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
 void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double scale) const
 {
-    auto force = box_->minimumVector(i, j);
+    auto force = box_->minimumVector(i.r(), j.r());
     auto distanceSq = force.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
         return;
@@ -412,7 +412,7 @@ void ForceKernel::forces(const SpeciesBond &bond, const Atom &i, const Atom &j, 
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
     if (i.cell()->mimRequired(j.cell()))
-        vecji = box_->minimumVector(i, j);
+        vecji = box_->minimumVector(i.r(), j.r());
     else
         vecji = j.r() - i.r();
 
@@ -433,7 +433,7 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesBond &bond, const At
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
     if (i.cell()->mimRequired(j.cell()))
-        vecji = box_->minimumVector(i, j);
+        vecji = box_->minimumVector(i.r(), j.r());
     else
         vecji = j.r() - i.r();
 
@@ -490,11 +490,11 @@ void ForceKernel::forces(const SpeciesAngle &angle, const Atom &i, const Atom &j
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
 
@@ -517,11 +517,11 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesAngle &angle, const 
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
 
@@ -603,15 +603,15 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Ato
     Vec3<double> vecji, vecjk, veckl, dcos_dxpj, dcos_dxpk;
     Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(i, j);
+        vecji = box_->minimumVector(i.r(), j.r());
     else
         vecji = j.r() - i.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(k, j);
+        vecjk = box_->minimumVector(k.r(), j.r());
     else
         vecjk = j.r() - k.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(l, k);
+        veckl = box_->minimumVector(l.r(), k.r());
     else
         veckl = k.r() - l.r();
 
@@ -633,15 +633,15 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesTorsion &torsion, co
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(i, j);
+        vecji = box_->minimumVector(i.r(), j.r());
     else
         vecji = j.r() - i.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(k, j);
+        vecjk = box_->minimumVector(k.r(), j.r());
     else
         vecjk = j.r() - k.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(l, k);
+        veckl = box_->minimumVector(l.r(), k.r());
     else
         veckl = k.r() - l.r();
 
@@ -683,15 +683,15 @@ void ForceKernel::forces(const SpeciesImproper &improper, const Atom &i, const A
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(i, j);
+        vecji = box_->minimumVector(i.r(), j.r());
     else
         vecji = j.r() - i.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(k, j);
+        vecjk = box_->minimumVector(k.r(), j.r());
     else
         vecjk = j.r() - k.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(l, k);
+        veckl = box_->minimumVector(l.r(), k.r());
     else
         veckl = k.r() - l.r();
 
@@ -712,15 +712,15 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesImproper &imp, const
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(i, j);
+        vecji = box_->minimumVector(i.r(), j.r());
     else
         vecji = j.r() - i.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(k, j);
+        vecjk = box_->minimumVector(k.r(), j.r());
     else
         vecjk = j.r() - k.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(l, k);
+        veckl = box_->minimumVector(l.r(), k.r());
     else
         veckl = k.r() - l.r();
 

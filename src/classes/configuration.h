@@ -17,7 +17,6 @@
 #include "math/interpolator.h"
 #include "module/layer.h"
 #include "procedure/procedure.h"
-#include "templates/array.h"
 #include "templates/vector3.h"
 #include <deque>
 #include <memory>
@@ -29,7 +28,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration : public ListItem<Configuration>
+class Configuration
 {
     public:
     Configuration();
@@ -85,9 +84,9 @@ class Configuration : public ListItem<Configuration>
     AtomTypeList usedAtomTypes_;
     // Contents version, incremented whenever Configuration content or Atom positions change
     VersionCounter contentsVersion_;
-    // Array of Molecules
-    std::deque<std::shared_ptr<Molecule>> molecules_;
-    // Array of Atoms
+    // Molecule vector
+    std::vector<std::shared_ptr<Molecule>> molecules_;
+    // Atom vector
     std::vector<std::shared_ptr<Atom>> atoms_;
 
     public:
@@ -103,8 +102,8 @@ class Configuration : public ListItem<Configuration>
     const AtomTypeList &usedAtomTypesList() const;
     // Return number of atom types used in this Configuration
     int nUsedAtomTypes() const;
-    // Increase population of specified Species in the Configuration
-    void increaseSpeciesPopulation(const Species *sp, int population);
+    // Adjust population of specified Species in the Configuration
+    void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
     const std::vector<std::pair<const Species *, int>> &speciesPopulations() const;
     // Return if the specified Species is present in the Configuration
@@ -122,11 +121,15 @@ class Configuration : public ListItem<Configuration>
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
     addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    // Remove all Molecules of the target Species from the Configuration
+    void removeMolecules(const Species *sp);
+    // Remove specified Molecules from the Configuration
+    void removeMolecules(const std::vector<std::shared_ptr<Molecule>> &molecules);
     // Return number of Molecules in Configuration
     int nMolecules() const;
-    // Return array of Molecules
-    std::deque<std::shared_ptr<Molecule>> &molecules();
-    const std::deque<std::shared_ptr<Molecule>> &molecules() const;
+    // Return Molecule vector
+    std::vector<std::shared_ptr<Molecule>> &molecules();
+    const std::vector<std::shared_ptr<Molecule>> &molecules() const;
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
@@ -160,6 +163,8 @@ class Configuration : public ListItem<Configuration>
     public:
     // Create Box definition with specified lengths and angles
     void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+    // Create Box definition from axes matrix
+    void createBox(const Matrix3 axes);
     // Return Box
     const Box *box() const;
     // Scale Box (and associated Cells) by specified factor
@@ -198,7 +203,7 @@ class Configuration : public ListItem<Configuration>
      */
     private:
     // List of current SiteStacks
-    List<SiteStack> siteStacks_;
+    std::vector<std::unique_ptr<SiteStack>> siteStacks_;
 
     public:
     // Calculate / retrieve stack of sites for specified SpeciesSite

@@ -4,7 +4,7 @@ project(Dissolve)
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "8")
+set(VERSION_MINOR "9")
 set(VERSION_PATCH "0")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -264,12 +264,18 @@ else()
   set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
 endif()
 
-# Enable build of unit tests?
-if(BUILD_TESTS)
+# Enable build of unit / system tests?
+option(BUILD_SYSTEM_TESTS "Build system tests" OFF)
+option(BUILD_UNIT_TESTS "Build unit tests" OFF)
+if(BUILD_SYSTEM_TESTS OR BUILD_UNIT_TESTS)
   enable_testing()
-  add_subdirectory(unit)
-  add_subdirectory(tests)
-endif(BUILD_TESTS)
+  if(BUILD_SYSTEM_TESTS)
+    add_subdirectory(tests)
+  endif(BUILD_SYSTEM_TESTS)
+  if(BUILD_UNIT_TESTS)
+    add_subdirectory(unit)
+  endif(BUILD_UNIT_TESTS)
+endif(BUILD_SYSTEM_TESTS OR BUILD_UNIT_TESTS)
 
 if(BUILD_BENCHMARKS)
   # The conan package of goooglebenchmark segfaults - so lets use fetch content

@@ -10,7 +10,7 @@
 class AtomType
 {
     public:
-    AtomType();
+    AtomType() = default;
     ~AtomType() = default;
 
     /*
@@ -18,7 +18,7 @@ class AtomType
      */
     private:
     // Name
-    std::string name_;
+    std::string name_{"XX"};
     // Associated chemical element
     Elements::Element Z_{Elements::Unknown};
 
@@ -41,7 +41,7 @@ class AtomType
     // Vector of parameters for short-range potential
     std::vector<double> parameters_;
     // Atomic charge
-    double charge_;
+    double charge_{0.0};
     // Index of this type in the master type index
     int index_{-1};
 

@@ -92,7 +92,7 @@ class EnergyModule : public Module
     // Check energy stability of specified Configuration
     static EnergyStability checkStability(GenericList &processingData, const Configuration *cfg);
     // Check energy stability of specified Configurations, returning the number that are unstable
-    static int nUnstable(GenericList &processingData, const RefList<Configuration> &configurations);
+    static int nUnstable(GenericList &processingData, const std::vector<Configuration *> &configurations);
 
     /*
      * GUI Widget

@@ -1,0 +1,37 @@
+parameters:
+  - name: extraflags
+    default: ''
+  - name: threading
+    default: true
+
+steps:
+  - bash: |
+      set -ex
+      # -- General
+      brew update-reset
+      brew install antlr antlr4-cpp-runtime ftgl
+      # -- Qt
+      brew install qt5
+    displayName: 'Install Prerequisites'
+  - bash: |
+      set -ex
+      pip3 install conan
+    displayName: 'Install Conan'
+  - bash: |
+      set -ex
+      QT_INSTALL_DIR=/usr/local/Cellar/qt@5
+      QTVER=`ls -d ${QT_INSTALL_DIR}/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+      export Qt5_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5
+      export Qt5Core_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5Core
+      export Qt5Widgets_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5Widgets
+      export Qt5PrintSupport_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5PrintSupport
+      export Qt5Gui_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5Gui
+      Qt5_ROOT=${QT_INSTALL_DIR}/${QTVER}
+      ANTLR_EXE=`find /usr/local/Cellar/antlr/4.9* -iname antlr`
+      echo "Detected ANTLR exe as [$ANTLR_EXE]"
+      mkdir build
+      cd build
+      conan install .. --build missing
+      cmake -DGUI:bool=true -DMULTI_THREADING:bool=${{ parameters.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} ../
+      make
+    displayName: 'Build'

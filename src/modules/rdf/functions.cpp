@@ -361,7 +361,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 
             double distance;
             if (i->cell()->mimRequired(j->cell()))
-                distance = box->minimumDistance(i, j);
+                distance = box->minimumDistance(i->r(), j->r());
             else
                 distance = (i->r() - j->r()).magnitude();
             originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);

@@ -1,0 +1,89 @@
+parameters:
+  - name: mpi
+    default: true
+  - name: threading
+    default: true
+  - name: serial
+    default: true
+  - name: ppa
+    default: 'beineri/opt-qt-5.15.2-focal'
+  - name: qtver
+    default: 515
+
+jobs:
+  - job:
+    condition: eq('${{ parameters.threading }}', true)
+    displayName: 'Threads'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - bash: |
+          set -ex
+          sudo add-apt-repository ppa:${{ parameters.ppa }} -y
+          sudo apt-get install qt${{ parameters.qtver }}base
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests'
+        displayName: 'Download Threaded Test Artifacts'
+      - bash: |
+          set -ex
+          mkdir build && cd build
+          mv $(System.ArtifactsDirectory)/linux-tests/* ./
+          chmod +x bin/*
+          ctest -j2 --output-on-failure
+        displayName: 'Run Serial System Tests'
+  - job:
+    condition: eq('${{ parameters.serial }}', true)
+    displayName: 'Serial'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-serial'
+        displayName: 'Download Serial Test Artifacts'
+      - bash: |
+          set -ex
+          mkdir build && cd build
+          mv $(System.ArtifactsDirectory)/linux-tests-serial/* ./
+          chmod +x bin/*
+          ctest -j2 --output-on-failure
+        displayName: 'Run Serial System Tests'
+  - job:
+    condition: eq('${{ parameters.mpi }}', true)
+    displayName: 'MPI'
+    timeoutInMinutes: 90
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - bash: |
+          set -ex
+          sudo apt-get update
+          sudo apt-get install libopenmpi-dev openmpi-bin openmpi-common
+        displayName: 'Install Prerequisites'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-mpi'
+        displayName: 'Download MPI Test Artifacts'
+      - bash: |
+          set -ex
+          mkdir build && cd build
+          mv $(System.ArtifactsDirectory)/linux-tests-mpi/* ./
+          chmod +x bin/*
+          ctest --output-on-failure
+        displayName: 'Run MPI System Tests'

@@ -75,5 +75,5 @@ class SelectConfigurationWidget : public QWidget
     // Return number of species currently selected
     int nSelected() const;
     // Return the currently-selected Configuration
-    RefList<Configuration> currentConfiguration() const;
+    std::vector<Configuration *> currentConfiguration() const;
 };

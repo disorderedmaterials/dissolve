@@ -31,32 +31,6 @@ OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
  */
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> OrthorhombicBox::minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const
-{
-    auto mimVec = i->r();
-    mimVec -= ref->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec + ref->r();
-}
-
-// Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> OrthorhombicBox::minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const
-{
-    auto mimVec = i->r();
-    mimVec -= ref;
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec + ref;
-}
-
-// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
 {
     auto mimVec = i;
@@ -66,45 +40,6 @@ Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &i, const Vec3<dou
     mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
     return mimVec + ref;
-}
-
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> OrthorhombicBox::minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
-{
-    auto mimVec = j->r();
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec;
-}
-
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> OrthorhombicBox::minimumVector(const Atom &i, const Atom &j) const
-{
-    auto mimVec = j.r();
-    mimVec -= i.r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec;
-}
-
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> OrthorhombicBox::minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
-{
-    auto mimVec = j;
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec;
 }
 
 // Return minimum image vector from 'i' to 'j'
@@ -121,45 +56,6 @@ Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &i, const Vec3<do
 }
 
 // Return minimum image distance from 'i' to 'j'
-double OrthorhombicBox::minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
-{
-    auto mimVec = j->r();
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec.magnitude();
-}
-
-// Return minimum image distance from 'i' to 'j'
-double OrthorhombicBox::minimumDistance(const Atom &i, const Atom &j) const
-{
-    auto mimVec = j.r();
-    mimVec -= i.r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec.magnitude();
-}
-
-// Return minimum image distance from 'i' to 'j'
-double OrthorhombicBox::minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
-{
-    auto mimVec = j;
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec.magnitude();
-}
-
-// Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
 {
     auto mimVec = j;
@@ -170,45 +66,6 @@ double OrthorhombicBox::minimumDistance(const Vec3<double> &i, const Vec3<double
     mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
     return mimVec.magnitude();
-}
-
-// Return minimum image squared distance from 'i' to 'j'
-double OrthorhombicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
-{
-    auto mimVec = j->r();
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec.magnitudeSq();
-}
-
-// Return minimum image squared distance from 'i' to 'j'
-double OrthorhombicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
-{
-    auto mimVec = j.r();
-    mimVec -= i.r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec.magnitudeSq();
-}
-
-// Return minimum image squared distance from 'i' to 'j'
-double OrthorhombicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
-{
-    auto mimVec = j;
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
-
-    return mimVec.magnitudeSq();
 }
 
 // Return minimum image squared distance from 'i' to 'j'

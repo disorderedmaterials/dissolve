@@ -4,8 +4,6 @@
 #pragma once
 
 #include "classes/site.h"
-#include "templates/array.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 class Box;
@@ -14,7 +12,7 @@ class SpeciesSite;
 class Molecule;
 
 // Site Stack Definition
-class SiteStack : public ListItem<SiteStack>
+class SiteStack
 {
     public:
     SiteStack();

@@ -30,7 +30,6 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<std::vector<Vec3<double>>>("std::vector<Vec3<double>>");
 
     // Custom Classes / Containers
-    registerProducer<Array<SampledDouble>>("Array<SampledDouble>");
     registerProducer<Array2D<double>>("Array2D<double>");
     registerProducer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>");
     registerProducer<Array2D<Data1D>>("Array2D<Data1D>");
@@ -45,6 +44,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<PartialSet>("PartialSet");
     registerProducer<PartialSetAccumulator>("PartialSetAccumulator");
     registerProducer<SampledDouble>("SampledDouble");
+    registerProducer<SampledVector>("SampledVector");
     registerProducer<Vec3<int>>("Vec3<int>");
     registerProducer<Vec3<double>>("Vec3<double>");
     registerProducer<XRayWeights>("XRayWeights");
@@ -70,7 +70,7 @@ std::any GenericItemProducer::produce(const std::type_info &objectType) const
     return (it->second)();
 }
 
-// Produce object od named class
+// Produce object of named class
 std::any GenericItemProducer::produce(const std::string_view className) const
 {
     auto it =

@@ -47,27 +47,26 @@ bool DynamicSiteProcedureNode::mustBeNamed() const { return false; }
 void DynamicSiteProcedureNode::generateSites(const std::shared_ptr<const Molecule> &molecule)
 {
     // Loop over Atoms in the Molecule
-    for (auto n = 0; n < molecule->nAtoms(); ++n)
+    for (auto &i : molecule->atoms())
     {
         // If the element is listed in our target elements list, add this atom as a site
-        if (std::find(elements_.begin(), elements_.end(), molecule->atom(n)->speciesAtom()->Z()) != elements_.end())
+        if (std::find(elements_.begin(), elements_.end(), i->speciesAtom()->Z()) != elements_.end())
         {
-            generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+            generatedSites_.emplace_back(Site(molecule, i->r()));
             continue;
         }
 
         // If the Atom's AtomType is listed in our target AtomType list, add this atom as a site
-        auto it = std::find(atomTypes_.begin(), atomTypes_.end(), molecule->atom(n)->speciesAtom()->atomType());
-        if (atomTypes_.end() != it)
+        if (std::find(atomTypes_.begin(), atomTypes_.end(), i->speciesAtom()->atomType()) != atomTypes_.end())
         {
-            generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+            generatedSites_.emplace_back(Site(molecule, i->r()));
             continue;
         }
     }
 }
 
 // Return Array of generated sites
-const Array<Site> &DynamicSiteProcedureNode::generatedSites() const { return generatedSites_; }
+const std::vector<Site> &DynamicSiteProcedureNode::generatedSites() const { return generatedSites_; }
 
 /*
  * Execute
@@ -96,8 +95,7 @@ bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg
     else
     {
         // Loop over Molecules in the target Configuration
-        std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
-        for (const auto &molecule : molecules)
+        for (const auto &molecule : cfg->molecules())
         {
             // Check Molecule exclusions
             if (std::find(excludedMolecules.begin(), excludedMolecules.end(), molecule) != excludedMolecules.end())

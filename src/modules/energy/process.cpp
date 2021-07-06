@@ -32,15 +32,12 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != nullptr; ri = ri->next())
+    for (auto *cfg : targetConfigurations_)
     {
-        // Grab Configuration pointer
-        auto *cfg = ri->item();
-
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
         auto strategy = procPool.bestStrategy();
@@ -113,7 +110,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         j = molN->atom(jj);
 
                         // Get interatomic distance
-                        r = box->minimumDistance(i, j);
+                        r = box->minimumDistance(i->r(), j->r());
                         if (r > cutoff)
                             continue;
 
@@ -144,7 +141,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             j = molM->atom(jj);
 
                             // Get interatomic distance and check cutoff
-                            r = box->minimumDistance(i, j);
+                            r = box->minimumDistance(i->r(), j->r());
                             if (r > cutoff)
                                 continue;
 
@@ -159,7 +156,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Bond energy
                 for (const auto &bond : molN->species()->bonds())
                 {
-                    r = cfg->box()->minimumDistance(molN->atom(bond.indexI()), molN->atom(bond.indexJ()));
+                    r = cfg->box()->minimumDistance(molN->atom(bond.indexI())->r(), molN->atom(bond.indexJ())->r());
                     correctIntraEnergy += bond.energy(r);
                 }
 
@@ -167,8 +164,8 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (const auto &angle : molN->species()->angles())
                 {
                     // Get vectors 'j-i' and 'j-k'
-                    vecji = cfg->box()->minimumVector(molN->atom(angle.indexJ()), molN->atom(angle.indexI()));
-                    vecjk = cfg->box()->minimumVector(molN->atom(angle.indexJ()), molN->atom(angle.indexK()));
+                    vecji = cfg->box()->minimumVector(molN->atom(angle.indexJ())->r(), molN->atom(angle.indexI())->r());
+                    vecjk = cfg->box()->minimumVector(molN->atom(angle.indexJ())->r(), molN->atom(angle.indexK())->r());
 
                     // Calculate angle and determine angle energy
                     vecji.normalise();
@@ -180,9 +177,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (const auto &torsion : molN->species()->torsions())
                 {
                     // Get vectors 'j-i', 'j-k' and 'k-l'
-                    vecji = cfg->box()->minimumVector(molN->atom(torsion.indexJ()), molN->atom(torsion.indexI()));
-                    vecjk = cfg->box()->minimumVector(molN->atom(torsion.indexJ()), molN->atom(torsion.indexK()));
-                    veckl = cfg->box()->minimumVector(molN->atom(torsion.indexK()), molN->atom(torsion.indexL()));
+                    vecji = cfg->box()->minimumVector(molN->atom(torsion.indexJ())->r(), molN->atom(torsion.indexI())->r());
+                    vecjk = cfg->box()->minimumVector(molN->atom(torsion.indexJ())->r(), molN->atom(torsion.indexK())->r());
+                    veckl = cfg->box()->minimumVector(molN->atom(torsion.indexK())->r(), molN->atom(torsion.indexL())->r());
 
                     angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 
@@ -194,9 +191,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (const auto &imp : molN->species()->impropers())
                 {
                     // Get vectors 'j-i', 'j-k' and 'k-l'
-                    vecji = cfg->box()->minimumVector(molN->atom(imp.indexJ()), molN->atom(imp.indexI()));
-                    vecjk = cfg->box()->minimumVector(molN->atom(imp.indexJ()), molN->atom(imp.indexK()));
-                    veckl = cfg->box()->minimumVector(molN->atom(imp.indexK()), molN->atom(imp.indexL()));
+                    vecji = cfg->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexI())->r());
+                    vecjk = cfg->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexK())->r());
+                    veckl = cfg->box()->minimumVector(molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r());
 
                     angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 
@@ -361,7 +358,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
             auto &improperData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Impropers", cfg->niceName()),
                                                                                  uniqueName(), GenericItem::InRestartFileFlag);
-            torsionData.addPoint(dissolve.iteration(), improperEnergy);
+            improperData.addPoint(dissolve.iteration(), improperEnergy);
 
             // Append to arrays of total energies
             auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(

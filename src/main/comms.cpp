@@ -35,7 +35,7 @@ bool Dissolve::setUpMPIPools()
 
     // Set up pool based on selected strategy
     auto cfgIndex = 0;
-    for (auto *cfg = coreData_.configurations().first(); cfg != nullptr; cfg = cfg->next())
+    for (auto &cfg : coreData_.configurations())
     {
         Messenger::print("Configuration '{}':\n", cfg->name());
 
