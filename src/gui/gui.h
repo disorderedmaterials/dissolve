@@ -6,18 +6,15 @@
 #include "classes/referencepoint.h"
 #include "gui/maintab.h"
 #include "gui/outputhandler.hui"
-#include "gui/systemtemplate.h"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"
 #include "templates/list.h"
 
 // Forward Declarations
-class BrowserWidget;
 class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
-class QLCDNumber;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
@@ -32,7 +29,7 @@ class DissolveWindow : public QMainWindow
 
     public:
     DissolveWindow(Dissolve &dissolve);
-    ~DissolveWindow();
+    ~DissolveWindow() = default;
 
     /*
      * UI
@@ -55,12 +52,14 @@ class DissolveWindow : public QMainWindow
     bool modified_;
     // Whether window is currently refreshing
     bool refreshing_;
-    // Whether window has been shown
-    bool shown_;
     // Output handler for messaging in GUI
     GUIOutputHandler outputHandler_;
     // Whether the current simulation is on the local machine
     bool localSimulation_;
+
+    private:
+    // Prepare the simulation and run for a set count
+    void setupIteration(int count);
 
     public slots:
     // Flag that data has been modified via the GUI
@@ -92,19 +91,6 @@ class DissolveWindow : public QMainWindow
     public:
     // Open specified input file
     bool openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
-
-    /*
-     * System Templates
-     */
-    private:
-    // List of available SystemTemplates
-    std::vector<SystemTemplate> systemTemplates_;
-
-    private:
-    // Initialise system templates from the main resource
-    void initialiseSystemTemplates();
-    // Prepare the simulation and run for a set count
-    void setupIteration(int count);
 
     /*
      * Reference Points
@@ -140,7 +126,6 @@ class DissolveWindow : public QMainWindow
     private slots:
     // File
     void on_FileNewAction_triggered(bool checked);
-    void on_FileNewFromTemplateAction_triggered(bool checked);
     void on_FileOpenLocalAction_triggered(bool checked);
     void on_FileOpenRecentAction_triggered(bool checked);
     void on_FileConnectAction_triggered(bool checked);

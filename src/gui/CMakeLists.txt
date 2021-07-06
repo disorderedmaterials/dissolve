@@ -42,7 +42,6 @@ set(components_MOC_HDRS
     selectforcefielddialog.h
     selectgenericitemdialog.h
     selectspeciesdialog.h
-    selectsystemtemplatedialog.h
 )
 qt6_wrap_cpp(components_MOC_SRCS ${components_MOC_HDRS})
 
@@ -80,7 +79,6 @@ set(components_UIS
     selectforcefielddialog.ui
     selectgenericitemdialog.ui
     selectspeciesdialog.ui
-    selectsystemtemplatedialog.ui
 )
 qt6_wrap_ui(components_UIS_H ${components_UIS})
 
@@ -144,7 +142,6 @@ set(components_SRCS
     selectforcefielddialog_funcs.cpp
     selectgenericitemdialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
-    selectsystemtemplatedialog_funcs.cpp
 )
 
 # Target 'components'
@@ -177,7 +174,6 @@ set(gui_MOC_HDRS
     # Main UI
     gui.h
     stockcolours.h
-    systemtemplate.h
     outputhandler.hui
     tmdiarea.hui
     thread.hui
@@ -236,7 +232,6 @@ set(gui_SRCS
     menu_workspace.cpp
     outputhandler_funcs.cpp
     stockcolours.cpp
-    systemtemplate.cpp
     thread_funcs.cpp
     tmdiarea_funcs.cpp
 )

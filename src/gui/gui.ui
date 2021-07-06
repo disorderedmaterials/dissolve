@@ -42,7 +42,7 @@
     <item>
      <widget class="SuperStackedWidget" name="MainStack">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="StartPage">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -147,48 +147,6 @@
               <property name="icon">
                <iconset resource="main.qrc">
                 <normaloff>:/start/icons/start_new.svg</normaloff>:/start/icons/start_new.svg</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>64</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-              <property name="autoRaise">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="StartCreateFromTemplateButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>10000</width>
-                <height>10000</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>From Template</string>
-              </property>
-              <property name="icon">
-               <iconset resource="main.qrc">
-                <normaloff>:/start/icons/start_template.svg</normaloff>:/start/icons/start_template.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -1007,7 +965,7 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -1020,7 +978,6 @@
      <string>&amp;File</string>
     </property>
     <addaction name="FileNewAction"/>
-    <addaction name="FileNewFromTemplateAction"/>
     <addaction name="separator"/>
     <addaction name="FileOpenLocalAction"/>
     <addaction name="FileConnectAction"/>
@@ -1153,8 +1110,8 @@
       <rect>
        <x>749</x>
        <y>600</y>
-       <width>221</width>
-       <height>191</height>
+       <width>218</width>
+       <height>195</height>
       </rect>
      </property>
      <property name="font">

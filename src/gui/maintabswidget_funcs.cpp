@@ -215,7 +215,6 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
-            setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
         }
 
@@ -250,7 +249,6 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
-            setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
         }
 
@@ -287,7 +285,6 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
-            setTabTextColour(newTab->page(), QColor(0, 81, 0));
             if (layer->enabled())
                 setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
             else
