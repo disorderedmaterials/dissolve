@@ -95,8 +95,7 @@ bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg
     else
     {
         // Loop over Molecules in the target Configuration
-        std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
-        for (const auto &molecule : molecules)
+        for (const auto &molecule : cfg->molecules())
         {
             // Check Molecule exclusions
             if (std::find(excludedMolecules.begin(), excludedMolecules.end(), molecule) != excludedMolecules.end())
