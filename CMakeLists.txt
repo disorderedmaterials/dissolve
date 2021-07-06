@@ -92,6 +92,7 @@ if(GUI)
   # Add extra functions
   include(FindFTGL)
 
+  find_package(OpenGL REQUIRED)
   find_package(Qt6 REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
@@ -326,8 +327,8 @@ if(GUI)
             antlr4-runtime
             Qt6::Widgets
             Qt6::Core
+	    OpenGL::GL
             ${FTGL_LIBRARIES}
-            ${OPENGL_LIBRARIES}
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
