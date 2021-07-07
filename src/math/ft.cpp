@@ -55,40 +55,25 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
                    [&x, &y, &windowFunction, &broadening](const auto omega) {
                        double window, broaden, deltaX, ft = 0.0;
                        const auto nX = x.size();
-                       if (omega > 0.0)
+                       for (int m = 0; m < nX - 1; ++m)
                        {
-                           for (int m = 0; m < nX - 1; ++m)
-                           {
-                               deltaX = x[m + 1] - x[m];
+                           deltaX = x[m + 1] - x[m];
 
-                               // Get window value at this position in the function
-                               window = windowFunction.y(x[m], omega);
+                           // Get window value at this position in the function
+                           window = windowFunction.y(x[m], omega);
 
-                               // Calculate broadening
-                               broaden = broadening.yFT(x[m], omega);
+                           // Calculate broadening
+                           broaden = broadening.yFT(x[m], omega);
 
-                               ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
-                           }
-
-                           // Normalise w.r.t. omega
                            if (omega > 0.0)
-                               ft /= omega;
-                       }
-                       else
-                       {
-                           for (int m = 0; m < nX - 1; ++m)
-                           {
-                               deltaX = x[m + 1] - x[m];
-
-                               // Get window value at this position in the function
-                               window = windowFunction.y(x[m], omega);
-
-                               // Calculate broadening
-                               broaden = broadening.yFT(x[m], omega);
-
+                               ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
+                           else
                                ft += x[m] * broaden * window * y[m] * deltaX;
-                           }
                        }
+
+                       // Normalise w.r.t. omega
+                       if (omega > 0.0)
+                           ft /= omega;
 
                        // Add point
                        return ft;
