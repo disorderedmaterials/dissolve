@@ -3,6 +3,9 @@
 
 #include "math/ft.h"
 #include "math/data1d.h"
+#include <algorithm>
+#include <numeric>
+#include <vector>
 
 namespace Fourier
 {
@@ -43,10 +46,16 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
     // Create working arrays
     std::vector<double> newX, newY;
 
+    auto omega = wMin;
+    while (omega <= wMax)
+    {
+        newX.push_back(omega);
+        omega += wStep;
+    }
+
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
     double ft, deltaX;
-    double omega = wMin;
-    while (omega <= wMax)
+    for (const auto omega : newX)
     {
         ft = 0.0;
         if (omega > 0.0)
@@ -85,10 +94,7 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
         }
 
         // Add point
-        newX.push_back(omega);
         newY.push_back(ft);
-
-        omega += wStep;
     }
 
     // Apply normalisation factor
