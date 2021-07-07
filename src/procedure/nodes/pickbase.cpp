@@ -40,6 +40,20 @@ const std::vector<std::shared_ptr<Molecule>> &PickProcedureNodeBase::moleculePoo
     return cfg->molecules();
 }
 
+// Return source molecule pool name
+std::string PickProcedureNodeBase::moleculePoolName() const
+{
+    auto *node = keywords_.retrieve<const ProcedureNode *>("Source");
+    if (node)
+    {
+        auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);
+        assert(pickNode);
+        return fmt::format("picked selection '{}'", pickNode->name());
+    }
+
+    return "configuration";
+}
+
 // Return vector of picked Molecules
 std::vector<std::shared_ptr<Molecule>> &PickProcedureNodeBase::pickedMolecules() { return pickedMolecules_; }
 const std::vector<std::shared_ptr<Molecule>> &PickProcedureNodeBase::pickedMolecules() const { return pickedMolecules_; }

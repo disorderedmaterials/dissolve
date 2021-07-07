@@ -34,6 +34,8 @@ class PickProcedureNodeBase : public ProcedureNode
     protected:
     // Return source molecule pool
     const std::vector<std::shared_ptr<Molecule>> &moleculePool(const Configuration *cfg) const;
+    // Return source molecule pool name
+    std::string moleculePoolName() const;
 
     public:
     // Return vector of picked Molecules
