@@ -5,6 +5,7 @@
 #include "math/data1d.h"
 #include "templates/parallel_defs.h"
 #include <algorithm>
+#include <functional>
 #include <numeric>
 #include <vector>
 
@@ -60,21 +61,24 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
                    [normFactor, &x, &y, &windowFunction, &broadening](const auto omega) {
                        double ft = 0.0;
                        const auto nX = x.size();
-                       for (int m = 0; m < nX - 1; ++m)
-                       {
-                           const double deltaX = x[m + 1] - x[m];
-
-                           // Get window value at this position in the function
-                           const auto window = windowFunction.y(x[m], omega);
-
-                           // Calculate broadening
-                           const auto broaden = broadening.yFT(x[m], omega);
-
-                           if (omega > 0.0)
-                               ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
-                           else
-                               ft += x[m] * broaden * window * y[m] * deltaX;
-                       }
+                       std::vector<double> deltas(nX), windows(nX - 1), broadens(nX - 1), result(nX - 1);
+                       std::adjacent_difference(x.begin(), x.end(), deltas.begin());
+                       std::transform(ParallelPolicies::par, x.begin(), x.end() - 1, windows.begin(),
+                                      [omega, &windowFunction](const auto X) { return windowFunction.y(X, omega); });
+                       std::transform(ParallelPolicies::par, x.begin(), x.end() - 1, broadens.begin(),
+                                      [omega, &broadening](const auto X) { return broadening.yFT(X, omega); });
+                       std::transform(ParallelPolicies::par, x.begin(), x.end() - 1, y.begin(), result.begin(),
+                                      [](auto x, auto y) { return x * y; });
+                       std::transform(ParallelPolicies::par, result.begin(), result.end(), windows.begin(), result.begin(),
+                                      std::multiplies());
+                       std::transform(ParallelPolicies::par, result.begin(), result.end(), broadens.begin(), result.begin(),
+                                      std::multiplies());
+                       std::transform(ParallelPolicies::par, result.begin(), result.end(), deltas.begin() + 1, result.begin(),
+                                      std::multiplies());
+                       if (omega > 0.0)
+                           std::transform(ParallelPolicies::par, result.begin(), result.end(), x.begin(), result.begin(),
+                                          [omega](const auto r, const auto x) { return sin(x * omega) * r; });
+                       ft = std::reduce(result.begin(), result.end(), 0.0);
 
                        // Normalise w.r.t. omega
                        if (omega > 0.0)
