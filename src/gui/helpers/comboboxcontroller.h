@@ -15,12 +15,38 @@
  * are stored as data in the QComboBox to allow tests of equivalence.
  */
 
-template <class Iter, class Lam> Iter combo_box_updater(QComboBox *comboBox, Iter begin, Iter end, Lam getItemText)
+template <class Data> void combo_box_update_item(QComboBox *comboBox, Data item, QString itemText, int index)
+{
+    while (index < comboBox->count())
+    {
+        // If the data pointer matches, update the text and break. Otherwise, delete the item
+        auto itemData = comboBox->itemData(index, Qt::UserRole).value<Data>();
+        if (itemData == item)
+        {
+            comboBox->setItemText(index, itemText);
+            break;
+        }
+        else
+            comboBox->removeItem(index);
+    }
+
+    // If the current row index is (now) out of range, add a new row to the list
+    if (index == comboBox->count())
+        comboBox->addItem(itemText, QVariant::fromValue(item));
+}
+
+template <class Iter, class Lam>
+Iter combo_box_updater(QComboBox *comboBox, Iter begin, Iter end, Lam getItemText, bool allowNone = false)
 {
     using itemType = typename std::iterator_traits<Iter>::value_type;
 
     auto index = 0;
     Iter currentItem = end;
+
+    // Add [None] option?
+    if (allowNone)
+        combo_box_update_item<itemType>(comboBox, nullptr, QString("[None]"), index++);
+
     for (auto item = begin; item != end; ++item)
     {
         /*
@@ -32,27 +58,10 @@ template <class Iter, class Lam> Iter combo_box_updater(QComboBox *comboBox, Ite
          */
 
         // Get the text for this item (as a QString for convenience)
-        auto itemText = QString::fromStdString(std::string(getItemText(*item)));
+        auto itemText = QString::fromStdString(std::string());
 
-        while (index < comboBox->count())
-        {
-            // If the data pointer matches, update the text and break. Otherwise, delete the item
-            auto itemData = comboBox->itemData(index, Qt::UserRole).value<itemType>();
-            if (itemData == *item)
-            {
-                comboBox->setItemText(index, QString::fromStdString(std::string(getItemText(*item))));
-                break;
-            }
-            else
-                comboBox->removeItem(index);
-        }
-
-        // If the current row index is (now) out of range, add a new row to the list
-        if (index == comboBox->count())
-        {
-            // Create new item
-            comboBox->addItem(QString::fromStdString(std::string(getItemText(*item))), QVariant::fromValue(*item));
-        }
+        // Update the item
+        combo_box_update_item(comboBox, *item, QString::fromStdString(std::string(getItemText(*item))), index);
 
         // Check for current item
         if (comboBox->currentIndex() == index)
