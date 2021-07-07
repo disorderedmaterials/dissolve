@@ -50,20 +50,19 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
     }
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
-    double ft, deltaX;
     std::transform(newX.begin(), newX.end(), std::back_inserter(newY),
-                   [&x, &y, &windowFunction, &broadening](const auto omega) {
-                       double window, broaden, deltaX, ft = 0.0;
+                   [normFactor, &x, &y, &windowFunction, &broadening](const auto omega) {
+                       double ft = 0.0;
                        const auto nX = x.size();
                        for (int m = 0; m < nX - 1; ++m)
                        {
-                           deltaX = x[m + 1] - x[m];
+                           const double deltaX = x[m + 1] - x[m];
 
                            // Get window value at this position in the function
-                           window = windowFunction.y(x[m], omega);
+                           const auto window = windowFunction.y(x[m], omega);
 
                            // Calculate broadening
-                           broaden = broadening.yFT(x[m], omega);
+                           const auto broaden = broadening.yFT(x[m], omega);
 
                            if (omega > 0.0)
                                ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
@@ -76,11 +75,8 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
                            ft /= omega;
 
                        // Add point
-                       return ft;
+                       return ft * normFactor;
                    });
-
-    // Apply normalisation factor
-    std::transform(newY.begin(), newY.end(), newY.begin(), [normFactor](auto value) { return value * normFactor; });
 
     // Transfer working arrays to this object
     data.xAxis() = newX;
