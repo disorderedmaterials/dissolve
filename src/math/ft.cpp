@@ -39,10 +39,6 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    int m;
-    const auto nX = x.size();
-    double window, broaden;
-
     // Create working arrays
     std::vector<double> newX, newY;
 
@@ -55,47 +51,48 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
     double ft, deltaX;
-    for (const auto omega : newX)
-    {
-        ft = 0.0;
-        if (omega > 0.0)
-        {
-            for (m = 0; m < nX - 1; ++m)
-            {
-                deltaX = x[m + 1] - x[m];
+    std::transform(newX.begin(), newX.end(), std::back_inserter(newY),
+                   [&x, &y, &windowFunction, &broadening](const auto omega) {
+                       double window, broaden, deltaX, ft = 0.0;
+                       const auto nX = x.size();
+                       if (omega > 0.0)
+                       {
+                           for (int m = 0; m < nX - 1; ++m)
+                           {
+                               deltaX = x[m + 1] - x[m];
 
-                // Get window value at this position in the function
-                window = windowFunction.y(x[m], omega);
+                               // Get window value at this position in the function
+                               window = windowFunction.y(x[m], omega);
 
-                // Calculate broadening
-                broaden = broadening.yFT(x[m], omega);
+                               // Calculate broadening
+                               broaden = broadening.yFT(x[m], omega);
 
-                ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
-            }
+                               ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
+                           }
 
-            // Normalise w.r.t. omega
-            if (omega > 0.0)
-                ft /= omega;
-        }
-        else
-        {
-            for (m = 0; m < nX - 1; ++m)
-            {
-                deltaX = x[m + 1] - x[m];
+                           // Normalise w.r.t. omega
+                           if (omega > 0.0)
+                               ft /= omega;
+                       }
+                       else
+                       {
+                           for (int m = 0; m < nX - 1; ++m)
+                           {
+                               deltaX = x[m + 1] - x[m];
 
-                // Get window value at this position in the function
-                window = windowFunction.y(x[m], omega);
+                               // Get window value at this position in the function
+                               window = windowFunction.y(x[m], omega);
 
-                // Calculate broadening
-                broaden = broadening.yFT(x[m], omega);
+                               // Calculate broadening
+                               broaden = broadening.yFT(x[m], omega);
 
-                ft += x[m] * broaden * window * y[m] * deltaX;
-            }
-        }
+                               ft += x[m] * broaden * window * y[m] * deltaX;
+                           }
+                       }
 
-        // Add point
-        newY.push_back(ft);
-    }
+                       // Add point
+                       return ft;
+                   });
 
     // Apply normalisation factor
     std::transform(newY.begin(), newY.end(), newY.begin(), [normFactor](auto value) { return value * normFactor; });
