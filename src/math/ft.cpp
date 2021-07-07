@@ -40,7 +40,7 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
     const auto &y = data.values();
 
     // Create working arrays
-    std::vector<double> newX, newY;
+    std::vector<double> newX;
 
     auto omega = wMin;
     while (omega <= wMax)
@@ -49,8 +49,10 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
         omega += wStep;
     }
 
+    std::vector<double> newY(newX.size());
+
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
-    std::transform(newX.begin(), newX.end(), std::back_inserter(newY),
+    std::transform(newX.begin(), newX.end(), newY.begin(),
                    [normFactor, &x, &y, &windowFunction, &broadening](const auto omega) {
                        double ft = 0.0;
                        const auto nX = x.size();
