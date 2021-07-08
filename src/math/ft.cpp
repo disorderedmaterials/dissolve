@@ -52,28 +52,27 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
 
     std::vector<double> deltas(x.size()), product(x.size() - 1);
     std::adjacent_difference(x.begin(), x.end(), deltas.begin());
-    dissolve::transform(ParallelPolicies::seq, x.begin(), x.end() - 1, y.begin(), product.begin(),
+    dissolve::transform(ParallelPolicies::par, x.begin(), x.end() - 1, y.begin(), product.begin(),
                         [](auto x, auto y) { return x * y; });
-    dissolve::transform(ParallelPolicies::seq, product.begin(), product.end(), deltas.begin() + 1, product.begin(),
+    dissolve::transform(ParallelPolicies::par, product.begin(), product.end(), deltas.begin() + 1, product.begin(),
                         std::multiplies());
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
     dissolve::transform(ParallelPolicies::par, newX.begin(), newX.end(), newY.begin(),
                         [normFactor, &product, &x, &windowFunction, &broadening](const auto omega) {
                             double ft = 0.0;
-                            const auto nX = x.size();
-                            std::vector<double> result(nX - 1);
-                            std::copy(product.begin(), product.end(), result.begin());
 
-                            dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), x.begin(), result.begin(),
-                                                [omega, &windowFunction, &broadening](const auto r, const auto x) {
-                                                    return r * windowFunction.y(x, omega) * broadening.yFT(x, omega);
-                                                });
                             if (omega > 0.0)
-                                dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), x.begin(),
-                                                    result.begin(),
-                                                    [omega](const auto r, const auto x) { return sin(x * omega) * r; });
-                            ft = std::reduce(result.begin(), result.end(), 0.0);
+                                ft = std::transform_reduce(product.begin(), product.end(), x.begin(), 0.0, std::plus(),
+                                                           [omega, &windowFunction, &broadening](const auto r, const auto x) {
+                                                               return r * sin(x * omega) * windowFunction.y(x, omega) *
+                                                                      broadening.yFT(x, omega);
+                                                           });
+                            else
+                                ft = std::transform_reduce(product.begin(), product.end(), x.begin(), 0.0, std::plus(),
+                                                           [omega, &windowFunction, &broadening](const auto r, const auto x) {
+                                                               return r * windowFunction.y(x, omega) * broadening.yFT(x, omega);
+                                                           });
 
                             // Normalise w.r.t. omega
                             if (omega > 0.0)
