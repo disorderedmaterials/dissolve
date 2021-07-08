@@ -81,3 +81,19 @@ Iter combo_box_updater(QComboBox *comboBox, Iter begin, Iter end, Lam getItemTex
     else
         return currentItem;
 }
+
+template <class Data> int combo_box_set_current(QComboBox *comboBox, Data item)
+{
+    for (auto index = 0; index < comboBox->count(); ++index)
+    {
+        // If the data pointer matches, update the text and break. Otherwise, delete the item
+        auto itemData = comboBox->itemData(index, Qt::UserRole).value<Data>();
+        if (itemData == item)
+        {
+            comboBox->setCurrentIndex(index);
+            return index;
+        }
+    }
+
+    throw(std::runtime_error("Tried to set a ComboBox to an item that it doesn't contain.\n"));
+}
