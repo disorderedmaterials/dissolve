@@ -50,7 +50,7 @@ bool PickCylinderProcedureNode::execute(ProcessPool &procPool, Configuration *cf
             pickedMolecules_.push_back(mol);
     }
 
-    Messenger::print("[PickCylinder] Total molecules selected = {}.\n", pickedMolecules_.size());
+    Messenger::print("[PickCylinder] Total molecules picked = {}.\n", pickedMolecules_.size());
 
     return true;
 }

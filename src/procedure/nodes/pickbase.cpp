@@ -8,7 +8,7 @@
 PickProcedureNodeBase::PickProcedureNodeBase(ProcedureNode::NodeType nodeType)
     : ProcedureNode(nodeType, ProcedureNode::NodeClass::Pick)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "Source",
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "From",
                   "Previous selection of molecules from which to pick");
 }
 
@@ -29,7 +29,7 @@ bool PickProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context
 // Return source molecule pool
 const std::vector<std::shared_ptr<Molecule>> &PickProcedureNodeBase::moleculePool(const Configuration *cfg) const
 {
-    auto *node = keywords_.retrieve<const ProcedureNode *>("Source");
+    auto *node = keywords_.retrieve<const ProcedureNode *>("From");
     if (node)
     {
         auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);
@@ -43,7 +43,7 @@ const std::vector<std::shared_ptr<Molecule>> &PickProcedureNodeBase::moleculePoo
 // Return source molecule pool name
 std::string PickProcedureNodeBase::moleculePoolName() const
 {
-    auto *node = keywords_.retrieve<const ProcedureNode *>("Source");
+    auto *node = keywords_.retrieve<const ProcedureNode *>("From");
     if (node)
     {
         auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);

@@ -50,7 +50,7 @@ bool PickProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::
         pickedMolecules_.push_back(mol);
     }
 
-    Messenger::print("[Pick] Total molecules selected = {}.\n", pickedMolecules_.size());
+    Messenger::print("[Pick] Total molecules picked = {}.\n", pickedMolecules_.size());
 
     return true;
 }
