@@ -50,7 +50,7 @@ bool RemoveProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
         for (auto *sp : species)
             cfg->removeMolecules(sp);
 
-    // Remove molecules bu selection
+    // Remove molecules by selection
     if (node)
     {
         auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);
