@@ -38,6 +38,7 @@ add_library(
   select.cpp
   sequence.cpp
   sum1d.cpp
+  transmute.cpp
   add.h
   box.h
   calculateangle.h
@@ -74,6 +75,7 @@ add_library(
   process3d.h
   regionbase.h
   remove.h
+  transmute.h
   select.h
   sequence.h
   sum1d.h

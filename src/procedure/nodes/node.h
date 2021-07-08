@@ -69,7 +69,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Remove,
         Select,
         Sequence,
-        Sum1D
+        Sum1D,
+        Transmute
     };
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();

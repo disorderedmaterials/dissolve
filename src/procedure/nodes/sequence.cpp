@@ -499,6 +499,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
                 /* This should never be called */
                 newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
                 break;
+            case (ProcedureNode::NodeType::Transmute):
+                newNode = new TransmuteProcedureNode();
+                break;
             default:
                 throw(std::runtime_error(
                     fmt::format("Epic Developer Fail - Don't know how to create a node of type '{}'.\n", parser.argsv(0))));
