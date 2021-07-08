@@ -48,12 +48,6 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
     dissolve::transform(ParallelPolicies::par, newX.begin(), newX.end(), newX.begin(),
                         [wMin, wStep](const auto idx) { return wMin + idx * wStep; });
 
-    // auto omega = wMin;
-    // for (auto &xval : newX)
-    // {
-    //     xval = omega;
-    //     omega += wStep;
-    // }
 
     std::vector<double> newY(newX.size());
 
