@@ -12473,17 +12473,17 @@ Configuration  'PEG10'
       Lengths  200 200 200
       Angles  90.000000  90.000000  90.000000
     EndBox
-    AddSpecies
+    Add
       Species  'PEG294'
       Population  10
       BoxAction  None
-    EndAddSpecies
-    AddSpecies
+    EndAdd
+    Add
       Population  100000
       Species  'Water'
       Density  0.105125  atoms/A3
       BoxAction  ScaleVolume
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
 

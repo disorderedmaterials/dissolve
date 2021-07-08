@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/add.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
@@ -11,24 +11,24 @@
 #include "keywords/types.h"
 #include "procedure/nodes/regionbase.h"
 
-AddSpeciesProcedureNode::AddSpeciesProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
-                                                 Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::AddSpecies)
+AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
+                                   Units::DensityUnits densityUnits)
+    : ProcedureNode(ProcedureNode::NodeType::Add)
 {
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
     keywords_.add("Control", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
     keywords_.add("Control",
-                  new EnumOptionsKeyword<AddSpeciesProcedureNode::BoxActionStyle>(
-                      boxActionStyles() = AddSpeciesProcedureNode::BoxActionStyle::AddVolume),
+                  new EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>(boxActionStyles() =
+                                                                               AddProcedureNode::BoxActionStyle::AddVolume),
                   "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
     keywords_.add("Control",
                   new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
                   "Density", "Density at which to add the target species");
     keywords_.add("Control", new BoolKeyword(true), "Rotate", "Whether to randomly rotate molecules on insertion");
     keywords_.add("Control",
-                  new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(
-                      positioningTypes() = AddSpeciesProcedureNode::PositioningType::Random),
+                  new EnumOptionsKeyword<AddProcedureNode::PositioningType>(positioningTypes() =
+                                                                                AddProcedureNode::PositioningType::Random),
                   "Positioning", "Positioning type for individual molecules");
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Region, true), "Region",
                   "Region into which to add the species");
@@ -39,36 +39,36 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(const Species *sp, const NodeVa
  */
 
 // Return whether specified context is relevant for this node type
-bool AddSpeciesProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+bool AddProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
     return (context == ProcedureNode::GenerationContext);
 }
 
 // Return whether a name for the node must be provided
-bool AddSpeciesProcedureNode::mustBeNamed() const { return false; }
+bool AddProcedureNode::mustBeNamed() const { return false; }
 
 /*
  * Node Data
  */
 
 // Return enum option info for PositioningType
-EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::boxActionStyles()
+EnumOptions<AddProcedureNode::BoxActionStyle> AddProcedureNode::boxActionStyles()
 {
-    return EnumOptions<AddSpeciesProcedureNode::BoxActionStyle>(
-        "BoxAction", {{AddSpeciesProcedureNode::BoxActionStyle::None, "None"},
-                      {AddSpeciesProcedureNode::BoxActionStyle::AddVolume, "AddVolume"},
-                      {AddSpeciesProcedureNode::BoxActionStyle::ScaleVolume, "ScaleVolume"},
-                      {AddSpeciesProcedureNode::BoxActionStyle::Set, "Set"}});
+    return EnumOptions<AddProcedureNode::BoxActionStyle>("BoxAction",
+                                                         {{AddProcedureNode::BoxActionStyle::None, "None"},
+                                                          {AddProcedureNode::BoxActionStyle::AddVolume, "AddVolume"},
+                                                          {AddProcedureNode::BoxActionStyle::ScaleVolume, "ScaleVolume"},
+                                                          {AddProcedureNode::BoxActionStyle::Set, "Set"}});
 }
 
 // Return enum option info for PositioningType
-EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::positioningTypes()
+EnumOptions<AddProcedureNode::PositioningType> AddProcedureNode::positioningTypes()
 {
-    return EnumOptions<AddSpeciesProcedureNode::PositioningType>(
-        "PositioningType", {{AddSpeciesProcedureNode::PositioningType::Central, "Central"},
-                            {AddSpeciesProcedureNode::PositioningType::Current, "Current"},
-                            {AddSpeciesProcedureNode::PositioningType::Random, "Random"},
-                            {AddSpeciesProcedureNode::PositioningType::Region, "Region"}});
+    return EnumOptions<AddProcedureNode::PositioningType>("PositioningType",
+                                                          {{AddProcedureNode::PositioningType::Central, "Central"},
+                                                           {AddProcedureNode::PositioningType::Current, "Current"},
+                                                           {AddProcedureNode::PositioningType::Random, "Random"},
+                                                           {AddProcedureNode::PositioningType::Region, "Region"}});
 }
 
 /*
@@ -76,45 +76,44 @@ EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::p
  */
 
 // Prepare any necessary data, ready for execution
-bool AddSpeciesProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool AddProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // If positioning type is 'Region', must have a suitable node defined
-    auto positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
+    auto positioning = keywords_.enumeration<AddProcedureNode::PositioningType>("Positioning");
     auto *regionNode = keywords_.retrieve<const ProcedureNode *>("Region");
-    if (positioning == AddSpeciesProcedureNode::PositioningType::Region && !regionNode)
+    if (positioning == AddProcedureNode::PositioningType::Region && !regionNode)
         return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
-    else if (positioning != AddSpeciesProcedureNode::PositioningType::Region && regionNode)
+    else if (positioning != AddProcedureNode::PositioningType::Region && regionNode)
         Messenger::warn("A region has been specified ({}) but the positioning type is set to '{}'\n", regionNode->name(),
-                        AddSpeciesProcedureNode::positioningTypes().keyword(positioning));
+                        AddProcedureNode::positioningTypes().keyword(positioning));
 
     return true;
 }
 
 // Execute node, targetting the supplied Configuration
-bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                      GenericList &targetList)
+bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     auto requestedPopulation = keywords_.asInt("Population");
     auto *sp = keywords_.retrieve<const Species *>("Species");
     if (!sp)
-        return Messenger::error("No Species set in AddSpecies node.\n");
+        return Messenger::error("No Species set in Add node.\n");
     const auto nAtomsToAdd = requestedPopulation * sp->nAtoms();
 
     // Can't add the Species if it has any missing core information
     if (!sp->checkSetUp())
         return Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", sp->name());
 
-    Messenger::print("[AddSpecies] Adding species '{}' - population is {}.\n", sp->name(), requestedPopulation);
+    Messenger::print("[Add] Adding species '{}' - population is {}.\n", sp->name(), requestedPopulation);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     auto &densityAndUnits = keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
     double density = densityAndUnits.value().asDouble();
-    auto boxAction = keywords_.enumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction");
-    if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::None)
-        Messenger::print("[AddSpecies] Current box geometry / volume will remain as-is.\n");
-    else if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::AddVolume)
+    auto boxAction = keywords_.enumeration<AddProcedureNode::BoxActionStyle>("BoxAction");
+    if (boxAction == AddProcedureNode::BoxActionStyle::None)
+        Messenger::print("[Add] Current box geometry / volume will remain as-is.\n");
+    else if (boxAction == AddProcedureNode::BoxActionStyle::AddVolume)
     {
-        Messenger::print("[AddSpecies] Current box volume will be increased to accommodate volume of new species.\n");
+        Messenger::print("[Add] Current box volume will be increased to accommodate volume of new species.\n");
 
         // Get current cell volume
         auto currentVolume = cfg->box()->volume();
@@ -126,15 +125,15 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         else
             requiredVolume = ((sp->mass() * requestedPopulation) / AVOGADRO) / (density / 1.0E24);
 
-        Messenger::print("[AddSpecies] Density for new species is {} {}.\n", density,
+        Messenger::print("[Add] Density for new species is {} {}.\n", density,
                          Units::densityUnits().keyword(densityAndUnits.enumeration()));
-        Messenger::print("[AddSpecies] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
+        Messenger::print("[Add] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
         // If the current box has no atoms in it, absorb the current volume rather than adding to it
         if (cfg->nAtoms() > 0)
             requiredVolume += currentVolume;
         else
-            Messenger::print("[AddSpecies] Current box is empty, so new volume will be set to exactly {} cubic Angstroms.\n",
+            Messenger::print("[Add] Current box is empty, so new volume will be set to exactly {} cubic Angstroms.\n",
                              requiredVolume);
 
         auto scaleFactor = pow(requiredVolume / currentVolume, 1.0 / 3.0);
@@ -145,12 +144,12 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         // Scale the current Box so there is enough space for our new species
         cfg->scaleBox(scaleFactor);
 
-        Messenger::print("[AddSpecies] New box volume is {:e} cubic Angstroms (scale factor was {}).\n", cfg->box()->volume(),
+        Messenger::print("[Add] New box volume is {:e} cubic Angstroms (scale factor was {}).\n", cfg->box()->volume(),
                          scaleFactor);
     }
-    else if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::ScaleVolume)
+    else if (boxAction == AddProcedureNode::BoxActionStyle::ScaleVolume)
     {
-        Messenger::print("[AddSpecies] Box volume will be set to give supplied density.\n");
+        Messenger::print("[Add] Box volume will be set to give supplied density.\n");
 
         // Get volume required to hold current cell contents at the requested density
         double existingRequiredVolume = 0.0;
@@ -158,7 +157,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
             existingRequiredVolume = cfg->nAtoms() / density;
         else
             existingRequiredVolume = cfg->atomicMass() / (density / 1.0E24);
-        Messenger::print("[AddSpecies] Existing contents requires volume of {} cubic Angstroms at specified density.\n",
+        Messenger::print("[Add] Existing contents requires volume of {} cubic Angstroms at specified density.\n",
                          existingRequiredVolume);
 
         // Determine volume required to contain the population of the specified Species at the requested density
@@ -168,7 +167,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         else
             requiredVolume = ((sp->mass() * requestedPopulation) / AVOGADRO) / (density / 1.0E24);
 
-        Messenger::print("[AddSpecies] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
+        Messenger::print("[Add] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
         // Add on required volume for existing box contents
         if (cfg->nAtoms() > 0)
@@ -182,18 +181,18 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         // Scale the current Box so there is enough space for our new species
         cfg->scaleBox(scaleFactor);
 
-        Messenger::print("[AddSpecies] Current box scaled by {} - new volume is {:e} cubic Angstroms.\n", scaleFactor,
+        Messenger::print("[Add] Current box scaled by {} - new volume is {:e} cubic Angstroms.\n", scaleFactor,
                          cfg->box()->volume());
     }
-    else if (boxAction == AddSpeciesProcedureNode::BoxActionStyle::Set)
+    else if (boxAction == AddProcedureNode::BoxActionStyle::Set)
     {
-        Messenger::print("[AddSpecies] Box geometry will be set from the species box definition.\n");
+        Messenger::print("[Add] Box geometry will be set from the species box definition.\n");
         if (sp->box()->type() == Box::BoxType::NonPeriodic)
             return Messenger::error("Target species '{}' is not periodic!.\n", sp->name());
 
         cfg->createBox(sp->box()->axisLengths(), sp->box()->axisAngles());
 
-        Messenger::print("[AddSpecies] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
+        Messenger::print("[Add] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
                          "{:10.4e} gamma = {:10.4e}\n",
                          Box::boxTypes().keyword(cfg->box()->type()), cfg->box()->axisLengths().x, cfg->box()->axisLengths().y,
                          cfg->box()->axisLengths().z, cfg->box()->axisAngles().x, cfg->box()->axisAngles().y,
@@ -208,12 +207,12 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Get the positioning type and rotation flag
-    auto positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
+    auto positioning = keywords_.enumeration<AddProcedureNode::PositioningType>("Positioning");
     auto *regionNode = dynamic_cast<const RegionProcedureNodeBase *>(keywords_.retrieve<const ProcedureNode *>("Region"));
     auto rotate = keywords_.asBool("Rotate");
 
-    Messenger::print("[AddSpecies] Positioning type is '{}' and rotation is {}.\n",
-                     AddSpeciesProcedureNode::positioningTypes().keyword(positioning), rotate ? "on" : "off");
+    Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
+                     AddProcedureNode::positioningTypes().keyword(positioning), rotate ? "on" : "off");
 
     // Now we add the molecules
     procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
@@ -240,20 +239,20 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         // Set / generate position of Molecule
         switch (positioning)
         {
-            case (AddSpeciesProcedureNode::PositioningType::Random):
+            case (AddProcedureNode::PositioningType::Random):
                 fr.set(procPool.random(), procPool.random(), procPool.random());
                 newCentre = box->fracToReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
-            case (AddSpeciesProcedureNode::PositioningType::Region):
+            case (AddProcedureNode::PositioningType::Region):
                 mol->setCentreOfGeometry(box, box->fracToReal(regionNode->randomFractionalCoordinate()));
                 break;
-            case (AddSpeciesProcedureNode::PositioningType::Central):
+            case (AddProcedureNode::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);
                 newCentre = box->fracToReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
-            case (AddSpeciesProcedureNode::PositioningType::Current):
+            case (AddProcedureNode::PositioningType::Current):
                 break;
             default:
                 Messenger::error("Unrecognised positioning type.\n");
@@ -268,7 +267,7 @@ bool AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
         }
     }
 
-    Messenger::print("[AddSpecies] New box density is {:e} cubic Angstroms ({} g/cm3).\n", cfg->atomicDensity(),
+    Messenger::print("[Add] New box density is {:e} cubic Angstroms ({} g/cm3).\n", cfg->atomicDensity(),
                      cfg->chemicalDensity());
 
     return true;

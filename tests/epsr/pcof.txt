@@ -111,11 +111,11 @@ EndPairPotentials
 
 Configuration  'Liquid'
   Generator
-    AddSpecies
+    Add
       Density  0.876  g/cm3
       Population  200
       Species  'Benzene'
-    EndAddSpecies
+    EndAdd
   EndGenerator
   InputCoordinates  epsr  ../_data/epsr25/benzene200-neutron/boxbenz.ato
   EndInputCoordinates

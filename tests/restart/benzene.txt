@@ -135,13 +135,13 @@ Configuration  'Bulk'
       Angles  9.000000e+01  9.000000e+01  9.000000e+01
       NonPeriodic  False
     EndBox
-    AddSpecies
+    Add
       Species  'Benzene'
       Population  '200'
       Density  'rho'  g/cm3
       Rotate  True
       Positioning  Random
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
   Temperature  300.000000

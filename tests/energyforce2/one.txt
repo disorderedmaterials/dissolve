@@ -136,11 +136,11 @@ Configuration  'Liquid'
     Box
       Lengths  30.769064857500  46.153597286200  30.769064857500
     EndBox
-    AddSpecies
+    Add
       Population  1
       Species  'Hexane'
       BoxAction  None
-    EndAddSpecies
+    EndAdd
   EndGenerator
   InputCoordinates  dlpoly  '../_data/dlpoly/hexane1/CONFIG'
   EndInputCoordinates

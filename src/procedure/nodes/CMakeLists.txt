@@ -1,6 +1,6 @@
 add_library(
   procedurenodes
-  addspecies.cpp
+  add.cpp
   box.cpp
   calculateangle.cpp
   calculateaxisangle.cpp
@@ -33,11 +33,11 @@ add_library(
   process2d.cpp
   process3d.cpp
   regionbase.cpp
-  removespecies.cpp
+  remove.cpp
   select.cpp
   sequence.cpp
   sum1d.cpp
-  addspecies.h
+  add.h
   box.h
   calculateangle.h
   calculateaxisangle.h
@@ -71,7 +71,7 @@ add_library(
   process2d.h
   process3d.h
   regionbase.h
-  removespecies.h
+  remove.h
   select.h
   sequence.h
   sum1d.h

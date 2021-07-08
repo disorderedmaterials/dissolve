@@ -46,7 +46,7 @@ EndConfiguration
 
 ### Random One-Component System
 
-Simple one-component system, e.g. a pure liquid, with a set number of molecules randomly added to a cubic unit cell. The size of the cell is not explicitly specified - giving a density value (here, the atomic density in atoms/&#8491;<sup>3</sup>) to the [`AddSpecies`]({{< ref "addspeciesnode" >}}) node allows it to calculate the required volume for the number of molecules requested.
+Simple one-component system, e.g. a pure liquid, with a set number of molecules randomly added to a cubic unit cell. The size of the cell is not explicitly specified - giving a density value (here, the atomic density in atoms/&#8491;<sup>3</sup>) to the [`AddSpecies`]({{< ref "addnode" >}}) node allows it to calculate the required volume for the number of molecules requested.
 
 ```r
 Generator

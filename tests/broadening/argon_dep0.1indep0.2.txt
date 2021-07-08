@@ -15,11 +15,11 @@ Configuration 'liquid'
     Box
       Lengths  77.721314  77.721314  77.721314
     EndBox
-    AddSpecies
+    Add
       Species  'Argon'
       Population  10000
       BoxAction  None
-    EndAddSpecies
+    EndAdd
   EndGenerator
   InputCoordinates  epsr  '../_data/epsr25/argon10000_dep0.1indep0.2/argonbox.ato'
   EndInputCoordinates

@@ -337,22 +337,22 @@ Configuration  'Py5-NTf2'
       Angles  9.000000e+01  9.000000e+01  9.000000e+01
       NonPeriodic  False
     EndBox
-    AddSpecies
+    Add
       Species  'Py5'
       Population  '1'
       BoxAction  None
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random
-    EndAddSpecies
-    AddSpecies
+    EndAdd
+    Add
       Species  'NTf2'
       Population  '1'
       BoxAction  None
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random
-    EndAddSpecies
+    EndAdd
   EndGenerator
     InputCoordinates  moscito  '../_data/moscito/py5_impropers/py5-ntf2-final.str'
     EndInputCoordinates

@@ -24,7 +24,7 @@ EnumOptions<ProcedureNode::NodeClass> ProcedureNode::nodeClasses()
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
     return EnumOptions<ProcedureNode::NodeType>(
-        "NodeType", {{ProcedureNode::NodeType::AddSpecies, "AddSpecies"},
+        "NodeType", {{ProcedureNode::NodeType::Add, "Add"},
                      {ProcedureNode::NodeType::Box, "Box"},
                      {ProcedureNode::NodeType::CalculateAngle, "CalculateAngle"},
                      {ProcedureNode::NodeType::CalculateAxisAngle, "CalculateAxisAngle"},
@@ -50,7 +50,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Process1D, "Process1D"},
                      {ProcedureNode::NodeType::Process2D, "Process2D"},
                      {ProcedureNode::NodeType::Process3D, "Process3D"},
-                     {ProcedureNode::NodeType::RemoveSpecies, "RemoveSpecies"},
+                     {ProcedureNode::NodeType::Remove, "Remove"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"}});
