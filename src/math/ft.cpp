@@ -52,37 +52,36 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
 
     std::vector<double> deltas(x.size()), product(x.size() - 1);
     std::adjacent_difference(x.begin(), x.end(), deltas.begin());
-    dissolve::transform(ParallelPolicies::par, x.begin(), x.end() - 1, y.begin(), product.begin(),
+    dissolve::transform(ParallelPolicies::seq, x.begin(), x.end() - 1, y.begin(), product.begin(),
                         [](auto x, auto y) { return x * y; });
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
-    dissolve::transform(
-        ParallelPolicies::par, newX.begin(), newX.end(), newY.begin(),
-        [normFactor, &deltas, &product, &x, &y, &windowFunction, &broadening](const auto omega) {
-            double ft = 0.0;
-            const auto nX = x.size();
-            std::vector<double> result(nX - 1);
-            std::copy(product.begin(), product.end(), result.begin());
+    dissolve::transform(ParallelPolicies::par, newX.begin(), newX.end(), newY.begin(),
+                        [normFactor, &deltas, &product, &x, &windowFunction, &broadening](const auto omega) {
+                            double ft = 0.0;
+                            const auto nX = x.size();
+                            std::vector<double> result(nX - 1);
+                            std::copy(product.begin(), product.end(), result.begin());
 
-            dissolve::transform(
-                ParallelPolicies::seq, result.begin(), result.end(), x.begin(), result.begin(),
-                [omega, &windowFunction](const auto r, const auto x) { return r * windowFunction.y(x, omega); });
-            dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), x.begin(), result.begin(),
-                                [omega, &broadening](const auto r, const auto x) { return r * broadening.yFT(x, omega); });
-            dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), deltas.begin() + 1, result.begin(),
-                                std::multiplies());
-            if (omega > 0.0)
-                dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), x.begin(), result.begin(),
-                                    [omega](const auto r, const auto x) { return sin(x * omega) * r; });
-            ft = std::reduce(result.begin(), result.end(), 0.0);
+                            dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), x.begin(), result.begin(),
+                                                [omega, &windowFunction, &broadening](const auto r, const auto x) {
+                                                    return r * windowFunction.y(x, omega) * broadening.yFT(x, omega);
+                                                });
+                            dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), deltas.begin() + 1,
+                                                result.begin(), std::multiplies());
+                            if (omega > 0.0)
+                                dissolve::transform(ParallelPolicies::seq, result.begin(), result.end(), x.begin(),
+                                                    result.begin(),
+                                                    [omega](const auto r, const auto x) { return sin(x * omega) * r; });
+                            ft = std::reduce(result.begin(), result.end(), 0.0);
 
-            // Normalise w.r.t. omega
-            if (omega > 0.0)
-                ft /= omega;
+                            // Normalise w.r.t. omega
+                            if (omega > 0.0)
+                                ft /= omega;
 
-            // Add point
-            return ft * normFactor;
-        });
+                            // Add point
+                            return ft * normFactor;
+                        });
 
     // Transfer working arrays to this object
     data.xAxis() = newX;
