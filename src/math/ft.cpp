@@ -45,8 +45,8 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
     // Create working arrays
     std::vector<double> newX((wMax - wMin) / wStep);
     std::iota(newX.begin(), newX.end(), 0);
-    std::transform(ParallelPolicies::par, newX.begin(), newX.end(), newX.begin(),
-                   [wMin, wStep](const auto idx) { return wMin + idx * wStep; });
+    dissolve::transform(ParallelPolicies::par, newX.begin(), newX.end(), newX.begin(),
+                        [wMin, wStep](const auto idx) { return wMin + idx * wStep; });
 
     // auto omega = wMin;
     // for (auto &xval : newX)
