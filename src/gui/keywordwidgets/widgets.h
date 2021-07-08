@@ -5,7 +5,7 @@
 #include "gui/keywordwidgets/atomtypeselection.h"
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/bool.hui"
-#include "gui/keywordwidgets/configurationreflist.h"
+#include "gui/keywordwidgets/configurationvector.h"
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/dropwidget.hui"
 #include "gui/keywordwidgets/enumoptions.hui"

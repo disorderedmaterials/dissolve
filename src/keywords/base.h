@@ -29,7 +29,7 @@ class KeywordBase : public ListItem<KeywordBase>
         AtomTypeRefListData,
         AtomTypeSelectionData,
         BoolData,
-        ConfigurationRefListData,
+        ConfigurationVectorData,
         Data1DStoreData,
         Data2DStoreData,
         Data3DStoreData,

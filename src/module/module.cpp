@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
-#include "keywords/configurationreflist.h"
+#include "keywords/configurationvector.h"
 #include "main/dissolve.h"
 
 Module::Module(int nTargetConfiguration) : targetConfigurationsKeyword_(targetConfigurations_, nTargetConfiguration)

@@ -4,7 +4,7 @@
 #include "gui/charts/moduleblock.h"
 #include "gui/charts/modulelistmetrics.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
-#include "gui/keywordwidgets/configurationreflist.h"
+#include "gui/keywordwidgets/configurationvector.h"
 #include "gui/modulewidget.h"
 #include "main/dissolve.h"
 #include "module/module.h"
@@ -36,7 +36,7 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
     auto *cfgKeyword = module_->keywords().find("Configuration");
     if (cfgKeyword)
     {
-        auto *cfgWidget = new ConfigurationRefListKeywordWidget(nullptr, cfgKeyword, dissolve.coreData());
+        auto *cfgWidget = new ConfigurationVectorKeywordWidget(nullptr, cfgKeyword, dissolve.coreData());
         connect(cfgWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
         auto *layout = new QHBoxLayout;
         layout->setMargin(0);

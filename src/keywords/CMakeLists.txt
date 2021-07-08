@@ -4,7 +4,7 @@ add_library(
   atomtypeselection.cpp
   base.cpp
   bool.cpp
-  configurationreflist.cpp
+  configurationvector.cpp
   data1dstore.cpp
   data2dstore.cpp
   data3dstore.cpp
@@ -48,7 +48,7 @@ add_library(
   atomtypeselection.h
   base.h
   bool.h
-  configurationreflist.h
+  configurationvector.h
   data.h
   data1dstore.h
   data2dstore.h

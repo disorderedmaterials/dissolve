@@ -5,7 +5,7 @@
 
 #include "base/messenger.h"
 #include "genericitems/list.h"
-#include "keywords/configurationreflist.h"
+#include "keywords/configurationvector.h"
 #include "keywords/group.h"
 #include "keywords/list.h"
 #include "math/sampleddouble.h"
@@ -67,7 +67,7 @@ class Module : public ListItem<Module>
     // Keywords recognised by Module
     KeywordList keywords_;
     // Target configurations keyword
-    ConfigurationRefListKeyword targetConfigurationsKeyword_;
+    ConfigurationVectorKeyword targetConfigurationsKeyword_;
 
     public:
     // Return list of recognised keywords

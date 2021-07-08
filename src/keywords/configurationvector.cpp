@@ -1,41 +1,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "keywords/configurationreflist.h"
+#include "keywords/configurationvector.h"
 #include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-ConfigurationRefListKeyword::ConfigurationRefListKeyword(std::vector<Configuration *> &references, int maxListSize)
-    : KeywordData<std::vector<Configuration *> &>(KeywordBase::ConfigurationRefListData, references)
+ConfigurationVectorKeyword::ConfigurationVectorKeyword(const std::vector<Configuration *> &cfgs, int maxListSize)
+    : KeywordData<std::vector<Configuration *>>(KeywordBase::ConfigurationVectorData, cfgs)
 {
     maxListSize_ = maxListSize;
 }
 
-ConfigurationRefListKeyword::~ConfigurationRefListKeyword() = default;
+ConfigurationVectorKeyword::~ConfigurationVectorKeyword() = default;
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ConfigurationRefListKeyword::isDataEmpty() const { return data_.empty(); }
+bool ConfigurationVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return maximum number of Configurations to allow in the list
-int ConfigurationRefListKeyword::maxListSize() const { return maxListSize_; }
+int ConfigurationVectorKeyword::maxListSize() const { return maxListSize_; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int ConfigurationRefListKeyword::minArguments() const { return 1; }
+int ConfigurationVectorKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int ConfigurationRefListKeyword::maxArguments() const { return 99; }
+int ConfigurationVectorKeyword::maxArguments() const { return 99; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool ConfigurationVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Each argument is the name of a Configuration that we will add to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -62,7 +62,7 @@ bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, const C
 }
 
 // Write keyword data to specified LineParser
-bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+bool ConfigurationVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of Configuration
     std::string configurationString;
@@ -80,7 +80,7 @@ bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view key
  */
 
 // Prune any references to the supplied Configuration in the contained data
-void ConfigurationRefListKeyword::removeReferencesTo(Configuration *cfg)
+void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
 {
     data_.erase(std::remove(data_.begin(), data_.end(), cfg), data_.end());
 }

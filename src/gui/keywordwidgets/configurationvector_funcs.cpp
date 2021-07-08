@@ -4,15 +4,15 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "gui/helpers/listwidgetupdater.h"
-#include "gui/keywordwidgets/configurationreflist.h"
+#include "gui/keywordwidgets/configurationvector.h"
 #include "module/module.h"
 #include "templates/algorithms.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
 
-ConfigurationRefListKeywordWidget::ConfigurationRefListKeywordWidget(QWidget *parent, KeywordBase *keyword,
-                                                                     const CoreData &coreData)
+ConfigurationVectorKeywordWidget::ConfigurationVectorKeywordWidget(QWidget *parent, KeywordBase *keyword,
+                                                                   const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
@@ -22,9 +22,9 @@ ConfigurationRefListKeywordWidget::ConfigurationRefListKeywordWidget(QWidget *pa
     connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(itemChanged(QListWidgetItem *)));
 
     // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<ConfigurationRefListKeyword *>(keyword);
+    keyword_ = dynamic_cast<ConfigurationVectorKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into ConfigurationRefListKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '%s' into ConfigurationVectorKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -37,7 +37,7 @@ ConfigurationRefListKeywordWidget::ConfigurationRefListKeywordWidget(QWidget *pa
  */
 
 // Selection list update function
-void ConfigurationRefListKeywordWidget::updateSelectionRow(int row, Configuration *cfg, bool createItem)
+void ConfigurationVectorKeywordWidget::updateSelectionRow(int row, Configuration *cfg, bool createItem)
 {
     // Grab the target reference list
     auto &selection = keyword_->data();
@@ -57,7 +57,7 @@ void ConfigurationRefListKeywordWidget::updateSelectionRow(int row, Configuratio
 }
 
 // List item changed
-void ConfigurationRefListKeywordWidget::itemChanged(QListWidgetItem *item)
+void ConfigurationVectorKeywordWidget::itemChanged(QListWidgetItem *item)
 {
     if (refreshing_)
         return;
@@ -118,16 +118,16 @@ void ConfigurationRefListKeywordWidget::itemChanged(QListWidgetItem *item)
  */
 
 // Update value displayed in widget
-void ConfigurationRefListKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void ConfigurationVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void ConfigurationRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
+void ConfigurationVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
     refreshing_ = true;
 
     // Update the list against the global Configuration list
-    ListWidgetUpdater<ConfigurationRefListKeywordWidget, Configuration> listUpdater(
-        ui_.SelectionList, coreData_.configurations(), this, &ConfigurationRefListKeywordWidget::updateSelectionRow);
+    ListWidgetUpdater<ConfigurationVectorKeywordWidget, Configuration> listUpdater(
+        ui_.SelectionList, coreData_.configurations(), this, &ConfigurationVectorKeywordWidget::updateSelectionRow);
 
     updateSummaryText();
 
@@ -135,7 +135,7 @@ void ConfigurationRefListKeywordWidget::updateWidgetValues(const CoreData &coreD
 }
 
 // Update keyword data based on widget values
-void ConfigurationRefListKeywordWidget::updateKeywordData()
+void ConfigurationVectorKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Configurations for any that are checked
     std::vector<Configuration *> newSelection;
@@ -149,11 +149,11 @@ void ConfigurationRefListKeywordWidget::updateKeywordData()
 }
 
 // Update summary text
-void ConfigurationRefListKeywordWidget::updateSummaryText()
+void ConfigurationVectorKeywordWidget::updateSummaryText()
 {
     if (keyword_->data().empty())
         setSummaryText("<None>");
     else
         setSummaryText(
-            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &cfg) { return cfg->uniqueName(); })));
+            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &cfg) { return cfg->name(); })));
 }

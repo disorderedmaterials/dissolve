@@ -2,17 +2,14 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
-#include "classes/configuration.h"
 #include "gui/charts/moduleblock.h"
 #include "gui/gui.h"
-#include "gui/keywordwidgets/configurationreflist.h"
+#include "gui/keywordwidgets/configurationvector.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/modulewidget.h"
-#include "keywordwidgets/configurationreflist.h"
 #include "main/dissolve.h"
 #include "module/module.h"
 #include <QGridLayout>
-#include <QLabel>
 
 ModuleControlWidget::ModuleControlWidget(QWidget *parent)
 {

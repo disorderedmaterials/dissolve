@@ -8,8 +8,8 @@
 #include "templates/variantpointer.h"
 
 // Forward Declarations
-class ConfigurationRefListKeyword;
-class ConfigurationRefListKeywordWidget;
+class ConfigurationVectorKeyword;
+class ConfigurationVectorKeywordWidget;
 class Dissolve;
 class DissolveWindow;
 class Module;
@@ -67,7 +67,7 @@ class ModuleControlWidget : public QWidget
     // Main form declaration
     Ui::ModuleControlWidget ui_;
     // Keyword widget for Configuration editing
-    ConfigurationRefListKeywordWidget *configurationsWidget_;
+    ConfigurationVectorKeywordWidget *configurationsWidget_;
     // Additional controls widget for the Module (if any)
     ModuleWidget *moduleWidget_;
 

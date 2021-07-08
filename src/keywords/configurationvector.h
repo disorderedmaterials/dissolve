@@ -4,18 +4,17 @@
 #pragma once
 
 #include "keywords/data.h"
-#include "templates/reflist.h"
 #include <optional>
 
 // Forward Declarations
 class Configuration;
 
-// Keyword with Configuration RefList Data
-class ConfigurationRefListKeyword : public KeywordData<std::vector<Configuration *> &>
+// Keyword with Configuration Vector Data
+class ConfigurationVectorKeyword : public KeywordData<std::vector<Configuration *> &>
 {
     public:
-    ConfigurationRefListKeyword(std::vector<Configuration *> &references, int maxListSize);
-    ~ConfigurationRefListKeyword() override;
+    ConfigurationVectorKeyword(std::vector<Configuration *> &references, int maxListSize);
+    ~ConfigurationVectorKeyword() override;
 
     /*
      * Data
