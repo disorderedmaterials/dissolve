@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "classes/speciessite.h"
 #include "gui/keywordwidgets/speciessitevector.h"
+#include "templates/algorithms.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QListView>
@@ -119,19 +120,9 @@ void SpeciesSiteVectorKeywordWidget::updateKeywordData()
 void SpeciesSiteVectorKeywordWidget::updateSummaryText()
 {
     QString siteText;
-    if (keyword_->data().size() == 0)
-        siteText = "<None>";
+    if (keyword_->data().empty())
+        setSummaryText("<None>");
     else
-    {
-        auto first = true;
-        for (auto *site : keyword_->data())
-        {
-            if (!first)
-                siteText += ", ";
-            siteText += QString::fromStdString(fmt::format("{} ({})", site->name(), site->parent()->name()));
-            first = false;
-        }
-    }
-
-    setSummaryText(siteText);
+        setSummaryText(
+            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &site) { return site->name(); })));
 }

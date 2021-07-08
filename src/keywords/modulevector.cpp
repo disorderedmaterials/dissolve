@@ -2,11 +2,11 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/modulevector.h"
-
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "module/list.h"
 #include "module/module.h"
+#include "templates/algorithms.h"
 #include <utility>
 
 ModuleVectorKeyword::ModuleVectorKeyword(int maxModules)
@@ -60,14 +60,8 @@ bool ModuleVectorKeyword::read(LineParser &parser, int startArg, const CoreData 
         if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s) {
                                          return s == module->type();
                                      }) == moduleTypes_.cend())
-        {
-            std::string allowedTypes;
-            for (const auto &s : moduleTypes_)
-                allowedTypes += allowedTypes.empty() ? s : ", " + s;
-
             return Messenger::error("Module '{}' is of type '{}', and is not permitted in this list (allowed types = {}).\n",
-                                    parser.argsv(n), module->type(), allowedTypes);
-        }
+                                    parser.argsv(n), module->type(), joinStrings(moduleTypes_));
 
         data_.emplace_back(module);
     }
@@ -82,10 +76,8 @@ bool ModuleVectorKeyword::write(LineParser &parser, std::string_view keywordName
 {
     // Loop over list of referenced Modules
     for (auto *module : data_)
-    {
         if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, module->uniqueName()))
             return false;
-    }
 
     return true;
 }

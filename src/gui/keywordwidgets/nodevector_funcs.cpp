@@ -5,7 +5,7 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/nodevector.h"
 #include "procedure/procedure.h"
-#include "templates/variantpointer.h"
+#include "templates/algorithms.h"
 #include <QLabel>
 
 NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
@@ -87,10 +87,6 @@ void NodeVectorKeywordWidget::updateSummaryText()
     if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-    {
-        std::string text;
-        for (auto *node : keyword_->data())
-            text += fmt::format("{}{}", text.empty() ? "" : ", ", node->name());
-        setSummaryText(QString::fromStdString(text));
-    }
+        setSummaryText(
+            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &node) { return node->name(); })));
 }

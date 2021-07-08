@@ -6,6 +6,7 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/configurationreflist.h"
 #include "module/module.h"
+#include "templates/algorithms.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
@@ -150,17 +151,9 @@ void ConfigurationRefListKeywordWidget::updateKeywordData()
 // Update summary text
 void ConfigurationRefListKeywordWidget::updateSummaryText()
 {
-    // Create summary text for the KeywordDropDown button
-    auto &selection = keyword_->data();
-    if (selection.size() == 0)
+    if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-    {
-        QString summaryText;
-        for (auto *cfg : selection)
-            summaryText +=
-                QString("%1%2").arg(summaryText.isEmpty() ? "" : ", ").arg(QString::fromStdString(std::string(cfg->name())));
-
-        setSummaryText(summaryText);
-    }
+        setSummaryText(
+            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &cfg) { return cfg->uniqueName(); })));
 }
