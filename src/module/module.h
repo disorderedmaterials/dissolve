@@ -115,8 +115,6 @@ class Module : public ListItem<Module>
      * Targets
      */
     protected:
-    // Configurations that are targeted by this Module
-    std::vector<Configuration *> targetConfigurations_;
     // Whether this module is a local Module in a Configuration
     bool configurationLocal_;
 

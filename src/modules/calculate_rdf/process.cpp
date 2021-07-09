@@ -15,7 +15,7 @@ bool CalculateRDFModule::setUp(Dissolve &dissolve, ProcessPool &procPool) { retu
 bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    if (targetConfigurationsKeyword_.data().empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
@@ -26,7 +26,7 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
 
     // Grab Configuration pointer
-    auto *cfg = targetConfigurations_.front();
+    auto *cfg = targetConfigurationsKeyword_.data().front();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

@@ -10,10 +10,10 @@
 class Configuration;
 
 // Keyword with Configuration Vector Data
-class ConfigurationVectorKeyword : public KeywordData<std::vector<Configuration *> &>
+class ConfigurationVectorKeyword : public KeywordData<std::vector<Configuration *>>
 {
     public:
-    ConfigurationVectorKeyword(std::vector<Configuration *> &references, int maxListSize);
+    ConfigurationVectorKeyword(const std::vector<Configuration *> &cfgs, int maxListSize);
     ~ConfigurationVectorKeyword() override;
 
     /*

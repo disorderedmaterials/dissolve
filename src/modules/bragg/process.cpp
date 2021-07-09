@@ -21,9 +21,9 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    if (targetConfigurationsKeyword_.data().empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
-    auto *cfg = targetConfigurations_.front();
+    auto *cfg = targetConfigurationsKeyword_.data().front();
 
     const auto averaging = keywords_.asInt("Averaging");
     auto averagingScheme = Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
@@ -55,7 +55,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &combinedAtomTypes =
         dissolve.processingModuleData().realise<AtomTypeList>("SummedAtomTypes", uniqueName_, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
-    for (Configuration *cfg : targetConfigurations_)
+    for (auto *cfg : targetConfigurationsKeyword_.data())
         combinedAtomTypes.add(cfg->usedAtomTypesList());
 
     // Store unit cell information

@@ -8,7 +8,7 @@
 #include "keywords/configurationvector.h"
 #include "main/dissolve.h"
 
-Module::Module(int nTargetConfiguration) : targetConfigurationsKeyword_(targetConfigurations_, nTargetConfiguration)
+Module::Module(int nTargetConfiguration) : targetConfigurationsKeyword_({}, nTargetConfiguration)
 {
     frequency_ = 1;
     enabled_ = true;
@@ -139,9 +139,9 @@ bool Module::isDisabled() const { return !enabled_; }
 bool Module::addTargetConfiguration(Configuration *cfg)
 {
     // Check how many Configurations we accept before we do anything else
-    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.size() < nRequiredTargets()))
+    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurationsKeyword_.data().size() < nRequiredTargets()))
     {
-        targetConfigurations_.push_back(cfg);
+        targetConfigurationsKeyword_.data().push_back(cfg);
         keywords_.setAsModified("Configuration");
         return true;
     }
@@ -195,18 +195,18 @@ bool Module::addTargetConfigurations(const std::vector<std::unique_ptr<Configura
 // Remove Configuration target
 bool Module::removeTargetConfiguration(Configuration *cfg)
 {
-    auto it = std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg);
-    if (it == targetConfigurations_.end())
+    auto it = std::find(targetConfigurationsKeyword_.data().begin(), targetConfigurationsKeyword_.data().end(), cfg);
+    if (it == targetConfigurationsKeyword_.data().end())
         return Messenger::error("Can't remove Configuration '{}' from Module '{}' as it isn't currently a target.\n",
                                 cfg->name(), uniqueName());
 
-    targetConfigurations_.erase(it);
+    targetConfigurationsKeyword_.data().erase(it);
 
     return true;
 }
 
 // Return number of targeted Configurations
-int Module::nTargetConfigurations() const { return targetConfigurations_.size(); }
+int Module::nTargetConfigurations() const { return targetConfigurationsKeyword_.data().size(); }
 
 // Return whether the number of targeted Configurations is valid
 bool Module::hasValidNTargetConfigurations(bool reportError) const
@@ -239,12 +239,13 @@ bool Module::hasValidNTargetConfigurations(bool reportError) const
 }
 
 // Return first targeted Configuration
-const std::vector<Configuration *> &Module::targetConfigurations() const { return targetConfigurations_; }
+const std::vector<Configuration *> &Module::targetConfigurations() const { return targetConfigurationsKeyword_.data(); }
 
 // Return if the specified Configuration is in the targets list
 bool Module::isTargetConfiguration(Configuration *cfg) const
 {
-    return std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg) != targetConfigurations_.end();
+    return std::find(targetConfigurationsKeyword_.data().begin(), targetConfigurationsKeyword_.data().end(), cfg) !=
+           targetConfigurationsKeyword_.data().end();
 }
 
 // Copy Configuration targets from specified Module
