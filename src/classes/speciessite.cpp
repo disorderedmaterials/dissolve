@@ -384,7 +384,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     if (!originAtoms_.empty())
     {
         if (!parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
-                               joinStrings(originAtomIndices(), "  ")))
+                               joinStrings(originAtomIndices(), "  ", [](const auto i) { return i + 1; })))
             return false;
     }
 
@@ -395,14 +395,16 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     // X-Axis atom indices
     if (!xAxisAtoms_.empty())
     {
-        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(XAxisKeyword), joinStrings(xAxisAtomIndices(), "  ")))
+        if (!parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(XAxisKeyword),
+                               joinStrings(xAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
             return false;
     }
 
     // Y-Axis atom indices
     if (!yAxisAtoms_.empty())
     {
-        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(YAxisKeyword), joinStrings(yAxisAtomIndices(), "  ")))
+        if (!parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(YAxisKeyword),
+                               joinStrings(yAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
             return false;
     }
 

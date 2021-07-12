@@ -656,9 +656,8 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
             continue;
 
         // Construct a name for the master term based on the atom types
-        std::vector<std::string_view> jkl = {std::string(improper.j()->atomType()->name()),
-                                             std::string(improper.k()->atomType()->name()),
-                                             std::string(improper.l()->atomType()->name())};
+        std::vector<std::string_view> jkl = {improper.j()->atomType()->name(), improper.k()->atomType()->name(),
+                                             improper.l()->atomType()->name()};
         std::sort(jkl.begin(), jkl.end());
         generateMasterTerm(improper, fmt::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")),
                            [&coreData](std::string_view name) { return coreData.getMasterImproper(name); },
