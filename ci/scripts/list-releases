@@ -130,7 +130,7 @@ then
     echo " -- This is the highest version available. No changes will be made."
   else
     echo " -- Release version for current branch is more recent. Re-linking website..."
-    ./changeversion -s ${ON_RELEASE} -r
+    ./changeversion release -s ${ON_RELEASE}
     # Copy the old releases data, excluding the most recent (HIGHEST)
     grep -v "Version $HIGHEST" ${OLD_RELEASES_FILE}.new > ${OLD_RELEASES_FILE}
   fi
