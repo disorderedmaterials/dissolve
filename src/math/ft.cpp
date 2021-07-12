@@ -3,6 +3,12 @@
 
 #include "math/ft.h"
 #include "math/data1d.h"
+#include "templates/algorithms.h"
+#include "templates/parallel_defs.h"
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <vector>
 
 namespace Fourier
 {
@@ -36,63 +42,45 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    int m;
-    const auto nX = x.size();
-    double window, broaden;
-
     // Create working arrays
-    std::vector<double> newX, newY;
+    std::vector<double> newX((wMax - wMin) / wStep);
+    std::iota(newX.begin(), newX.end(), 0);
+    dissolve::transform(ParallelPolicies::par, newX.begin(), newX.end(), newX.begin(),
+                        [wMin, wStep](const auto idx) { return wMin + idx * wStep; });
+
+    std::vector<double> newY(newX.size());
+
+    std::vector<double> deltas(x.size()), product(x.size() - 1);
+    std::adjacent_difference(x.begin(), x.end(), deltas.begin());
+    dissolve::transform(ParallelPolicies::par, x.begin(), x.end() - 1, y.begin(), product.begin(),
+                        [](auto x, auto y) { return x * y; });
+    dissolve::transform(ParallelPolicies::par, product.begin(), product.end(), deltas.begin() + 1, product.begin(),
+                        std::multiplies());
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
-    double ft, deltaX;
-    double omega = wMin;
-    while (omega <= wMax)
-    {
-        ft = 0.0;
-        if (omega > 0.0)
-        {
-            for (m = 0; m < nX - 1; ++m)
-            {
-                deltaX = x[m + 1] - x[m];
+    dissolve::transform(ParallelPolicies::par, newX.begin(), newX.end(), newY.begin(),
+                        [normFactor, &product, &x, &windowFunction, &broadening](const auto omega) {
+                            double ft = 0.0;
 
-                // Get window value at this position in the function
-                window = windowFunction.y(x[m], omega);
+                            if (omega > 0.0)
+                                ft = std::transform_reduce(product.begin(), product.end(), x.begin(), 0.0, std::plus(),
+                                                           [omega, &windowFunction, &broadening](const auto r, const auto x) {
+                                                               return r * sin(x * omega) * windowFunction.y(x, omega) *
+                                                                      broadening.yFT(x, omega);
+                                                           });
+                            else
+                                ft = std::transform_reduce(product.begin(), product.end(), x.begin(), 0.0, std::plus(),
+                                                           [omega, &windowFunction, &broadening](const auto r, const auto x) {
+                                                               return r * windowFunction.y(x, omega) * broadening.yFT(x, omega);
+                                                           });
 
-                // Calculate broadening
-                broaden = broadening.yFT(x[m], omega);
+                            // Normalise w.r.t. omega
+                            if (omega > 0.0)
+                                ft /= omega;
 
-                ft += sin(x[m] * omega) * x[m] * broaden * window * y[m] * deltaX;
-            }
-
-            // Normalise w.r.t. omega
-            if (omega > 0.0)
-                ft /= omega;
-        }
-        else
-        {
-            for (m = 0; m < nX - 1; ++m)
-            {
-                deltaX = x[m + 1] - x[m];
-
-                // Get window value at this position in the function
-                window = windowFunction.y(x[m], omega);
-
-                // Calculate broadening
-                broaden = broadening.yFT(x[m], omega);
-
-                ft += x[m] * broaden * window * y[m] * deltaX;
-            }
-        }
-
-        // Add point
-        newX.push_back(omega);
-        newY.push_back(ft);
-
-        omega += wStep;
-    }
-
-    // Apply normalisation factor
-    std::transform(newY.begin(), newY.end(), newY.begin(), [normFactor](auto value) { return value * normFactor; });
+                            // Add point
+                            return ft * normFactor;
+                        });
 
     // Transfer working arrays to this object
     data.xAxis() = newX;
