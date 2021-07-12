@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 #include "benchmark/benchmark.h"
+#include "math/data1d.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 #include "templates/array3d.h"

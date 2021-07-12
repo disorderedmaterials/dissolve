@@ -175,6 +175,31 @@ template <typename... Args> class zip
 
 namespace dissolve
 {
+// Transform algorithms
+template <typename ParallelPolicy, class Iter, typename OutputIt, class UnaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, OutputIt out, UnaryOp unaryOp)
+{
+    return std::transform(policy, begin, end, out, unaryOp);
+}
+template <typename ParallelPolicy, class Iter, typename OutputIt, class UnaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, OutputIt out, UnaryOp unaryOp)
+{
+    return std::transform(begin, end, out, unaryOp);
+}
+template <typename ParallelPolicy, class Iter, class Jter, typename OutputIt, class BinaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, Jter other, OutputIt out, BinaryOp binaryOp)
+{
+    return std::transform(policy, begin, end, other, out, binaryOp);
+}
+template <typename ParallelPolicy, class Iter, class Jter, typename OutputIt, class BinaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, Jter other, OutputIt out, BinaryOp binaryOp)
+{
+    return std::transform(begin, end, other, out, binaryOp);
+}
 // Transform reduce algorithms
 // unaryOp transform container element into type T, which is reduced (summed) by the binaryOp
 // Base tranform_reduce, no parallel policy
