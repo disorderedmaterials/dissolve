@@ -13,17 +13,17 @@ DaySuffix() {
 }
 
 usage() {
-  echo "Usage:  $0 [-c] [-p] [-m] [-i] [-r] [-d] [-s X.Y.Z]"
-  echo "        -c	Check current version numbering"
+  echo "Usage:  $0 <TARGET> [-c] [-p] [-m] [-i] [-r] [-d] [-s X.Y.Z]"
   echo "        -M	Increase major version number (X.0.0)"
   echo "        -m	Increase minor version number (0.X.0)"
   echo "        -p	Increase patch version number (0.0.X)"
   echo "        -s	Set version explicitly to X.Y.Z"
-  echo "        -r	Release version - modify release version in web config (and date in README.md) only"
-  echo "        -d	Development version - modify development version in web config only"
   echo ""
-  echo "Default behaviour is to change version numbering in code, and installer and packaging scripts."
-  echo "Web-visible values can be changed with the -r and -d switches."
+  echo "TARGET is one of:     code - change version numbering in code, and installer and packaging scripts"
+  echo "                   release - change release version value on web and date in README.md"
+  echo "                   develop - change development version value on web"
+  echo ""
+  echo "If no options are specified the default behaviour is to print current versions across relevant files."
 }
 
 # Check for no args provided
@@ -33,41 +33,57 @@ then
   exit 1
 fi
 
-# Get current version number
-MAJOR=$(grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g')
-MINOR=$(grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g')
-PATCH=$(grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g')
-CHECK="false"
-TYPE="CODE" # CODE / RELEASE / DEVELOP
+# Get target type and shift to next option
+TYPE=$1
+shift
+if [ "$TYPE" != "code" ] && [ "$TYPE" != "release" ] && [ "$TYPE" != "develop" ]
+then
+  echo "Invalid target '${TYPE}' given (must be 'code', 'release', 'develop'"
+  exit 1
+fi
 
-while getopts ":cdmMiprs:" opt
+# Get current version number from correct target
+if [ "$TYPE" == "code" ]
+then
+  CURRENT_VERSION=$(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
+elif [ "$TYPE" == "release" ]
+then
+  CURRENT_VERSION=$(grep 'releaseVersion' web/config.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
+else
+  CURRENT_VERSION=$(grep 'devVersion' web/config.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g')
+fi
+PARTS=($(echo $CURRENT_VERSION | tr "." " "))
+MAJOR=${PARTS[0]}
+MINOR=${PARTS[1]}
+PATCH=${PARTS[2]}
+CHECK="true"
+echo "Current major version (${TYPE}) is : ${MAJOR}"
+echo "Current minor version (${TYPE}) is : ${MINOR}"
+echo "Current patch version (${TYPE}) is : ${PATCH}"
+
+while getopts ":mMps:" opt
 do
   case $opt in
-    c) CHECK="true"
-       echo "Current version numbers will be checked - no modifications will be made"
-       ;;
     M) echo "Major version number will be increased from $MAJOR to $((MAJOR+1))"
        MAJOR=$((MAJOR+1))
        MINOR=0
        PATCH=0
+       CHECK="false"
        ;;
     m) echo "Minor version number will be increased from $MINOR to $((MINOR+1))"
        MINOR=$((MINOR+1))
        PATCH=0
+       CHECK="false"
        ;;
     p) echo "Minor version number will be increased from $PATCH to $((PATCH+1))"
        PATCH=$((PATCH+1))
+       CHECK="false"
        ;;
     s) MAJOR=$(echo $OPTARG | cut -f1 -d.)
        MINOR=$(echo $OPTARG | cut -f2 -d.)
        PATCH=$(echo $OPTARG | cut -f3 -d.)
+       CHECK="false"
        echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
-       ;;
-    r) echo "Only release version and date will be set."
-       TYPE="RELEASE"
-       ;;
-    d) echo "Only development version will be set."
-       TYPE="DEVELOP"
        ;;
    \?) usage
        exit 1
@@ -84,7 +100,7 @@ done
 # Code / Installer / Packaging Versions #
 #########################################
 
-if [ "$TYPE" = "CODE" ] || [ "$CHECK" = "true" ]
+if [ "$TYPE" = "code" ]
 then
   # Program (main/version.h)
   if [ "$CHECK" = "false" ]
@@ -125,7 +141,7 @@ fi
 # Website Version / Date #
 ##########################
 
-if [ "$TYPE" = "RELEASE" ] || [ "$CHECK" = "true" ]
+if [ "$TYPE" = "release" ]
 then
   # Documentation (config.toml)
   if [ "$CHECK" = "false" ]
@@ -142,7 +158,7 @@ then
   grep 'releaseDate' web/config.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g'
 fi
 
-if [ "$TYPE" = "DEVELOP" ] || [ "$CHECK" = "true" ]
+if [ "$TYPE" = "develop" ]
 then
   # Documentation (config.toml)
   if [ "$CHECK" = "false" ]
@@ -158,7 +174,7 @@ fi
 # README.md #
 #############
 
-if [ "$TYPE" = "RELEASE" ] || [ "$CHECK" = "true" ]
+if [ "$TYPE" = "release" ]
 then
   # README.md
   if [ "$CHECK" = "false" ]
