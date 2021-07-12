@@ -57,20 +57,20 @@ Configuration  'Bulk'
       Angles  90  90  120
       NonPeriodic  False
     EndBox
-    AddSpecies
+    Add
       Species  'Si'
       Population  'populationA'
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random
-    EndAddSpecies
-    AddSpecies
+    EndAdd
+    Add
       Species  'O'
       Population  'populationA*ratioB'
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
   Temperature  298.000000

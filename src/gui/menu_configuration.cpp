@@ -6,7 +6,7 @@
 #include "gui/selectspeciesdialog.h"
 #include "io/export/coordinates.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/parameters.h"
 #include <QFileDialog>
@@ -38,7 +38,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     generator.addRootSequenceNode(paramsNode);
     generator.addRootSequenceNode(new BoxProcedureNode);
     for (const auto *sp : mixSpecies)
-        generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameters())));
+        generator.addRootSequenceNode(new AddProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameters())));
 
     // Run the generator
     newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
@@ -70,16 +70,16 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     {
         // Add a parameter for the ratio of this species to the first (or the population of the first)
         if (count == 0)
-            generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameters()),
-                                                                      NodeValue("rho", paramsNode->parameters())));
+            generator.addRootSequenceNode(new AddProcedureNode(sp, NodeValue("populationA", paramsNode->parameters()),
+                                                               NodeValue("rho", paramsNode->parameters())));
         else
         {
             auto parameterName = fmt::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
 
-            generator.addRootSequenceNode(new AddSpeciesProcedureNode(
-                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()),
-                NodeValue("rho", paramsNode->parameters())));
+            generator.addRootSequenceNode(
+                new AddProcedureNode(sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()),
+                                     NodeValue("rho", paramsNode->parameters())));
         }
 
         ++count;
@@ -105,10 +105,9 @@ void DissolveWindow::on_ConfigurationCreateEmptyFrameworkAction_triggered(bool c
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
-    auto *node = new AddSpeciesProcedureNode(framework, 1);
-    node->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction", AddSpeciesProcedureNode::BoxActionStyle::Set);
-    node->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
-                                                                   AddSpeciesProcedureNode::PositioningType::Current);
+    auto *node = new AddProcedureNode(framework, 1);
+    node->setEnumeration<AddProcedureNode::BoxActionStyle>("BoxAction", AddProcedureNode::BoxActionStyle::Set);
+    node->setEnumeration<AddProcedureNode::PositioningType>("Positioning", AddProcedureNode::PositioningType::Current);
     node->setKeyword<bool>("Rotate", false);
     generator.addRootSequenceNode(node);
 
@@ -137,10 +136,9 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
-    auto *node = new AddSpeciesProcedureNode(framework, 1);
-    node->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction", AddSpeciesProcedureNode::BoxActionStyle::Set);
-    node->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
-                                                                   AddSpeciesProcedureNode::PositioningType::Current);
+    auto *node = new AddProcedureNode(framework, 1);
+    node->setEnumeration<AddProcedureNode::BoxActionStyle>("BoxAction", AddProcedureNode::BoxActionStyle::Set);
+    node->setEnumeration<AddProcedureNode::PositioningType>("Positioning", AddProcedureNode::PositioningType::Current);
     node->setKeyword<bool>("Rotate", false);
     generator.addRootSequenceNode(node);
 
@@ -153,19 +151,18 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     for (auto *sp : adsorbates)
     {
         // Add a parameter for the ratio of this species to the first (or the population of the first)
-        AddSpeciesProcedureNode *addSpeciesNode = nullptr;
+        AddProcedureNode *addSpeciesNode = nullptr;
         if (count == 0)
-            addSpeciesNode = new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameters()));
+            addSpeciesNode = new AddProcedureNode(sp, NodeValue("populationA", paramsNode->parameters()));
         else
         {
             auto parameterName = fmt::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
 
-            addSpeciesNode = new AddSpeciesProcedureNode(
-                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
+            addSpeciesNode =
+                new AddProcedureNode(sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
         }
-        addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction",
-                                                                                AddSpeciesProcedureNode::BoxActionStyle::None);
+        addSpeciesNode->setEnumeration<AddProcedureNode::BoxActionStyle>("BoxAction", AddProcedureNode::BoxActionStyle::None);
         generator.addRootSequenceNode(addSpeciesNode);
 
         ++count;

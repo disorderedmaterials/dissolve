@@ -7,8 +7,6 @@
 #include "gui/sitewidget.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
-#include "procedure/nodes/addspecies.h"
-#include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
 SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)

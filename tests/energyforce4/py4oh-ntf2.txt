@@ -319,20 +319,20 @@ Configuration  'Py4OH-NTf2'
       Angles  9.000000e+01  9.000000e+01  9.000000e+01
       NonPeriodic  False
     EndBox
-    AddSpecies
+    Add
       Species  'Py4OH'
       Population  '1'
       BoxAction  None
       Rotate  True
       Positioning  Random
-    EndAddSpecies
-    AddSpecies
+    EndAdd
+    Add
       Species  'Ntf2'
       Population  '1'
       BoxAction  None
       Rotate  True
       Positioning  Random
-    EndAddSpecies
+    EndAdd
   EndGenerator
     InputCoordinates  moscito  '../_data/moscito/py4oh_impropers/py4oh-ntf2-final.str'
     EndInputCoordinates

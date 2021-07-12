@@ -7,7 +7,7 @@
  * Include all procedure node types at once.
  */
 
-#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/calculateangle.h"
 #include "procedure/nodes/calculatedistance.h"
@@ -33,7 +33,7 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"
-#include "procedure/nodes/removespecies.h"
+#include "procedure/nodes/remove.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodes/sum1d.h"

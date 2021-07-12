@@ -66,11 +66,11 @@ Configuration  'POE'
     Box
       Lengths  22.98582  22.98582  22.98582
     EndBox
-    AddSpecies
+    Add
       Population  64
       Species  'POE'
       BoxAction  None
-    EndAddSpecies
+    EndAdd
   EndGenerator
   InputCoordinates  moscito  '../_data/moscito/poe64_torsions/torsions-final.str'
   EndInputCoordinates

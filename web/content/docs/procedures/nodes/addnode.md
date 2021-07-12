@@ -1,7 +1,7 @@
 ---
-title: AddSpecies (Node)
-linkTitle: AddSpecies
-description: Insert a species into a box
+title: Add (Node)
+linkTitle: Add
+description: Insert molecules into a box
 ---
 
 {{< htable >}}
@@ -14,9 +14,9 @@ description: Insert a species into a box
 
 ## Overview
 
-The `AddSpecies` node is a core component of nearly all configuration generators requiring the initial construction of a suitable starting point. It adds a number of copies of a given target species to the current box, either at specific or random coordinates. By default, the box is resized to accommodate the new population of molecules based on a supplied density.
+The `Add` node is a core component of nearly all configuration generators requiring the initial construction of a suitable starting point. It adds a number of copies of a given target species to the current box, either at specific or random coordinates. By default, the box is resized to accommodate the new population of molecules based on a supplied density.
 
-If the species is periodic, the box associated with that species can be copied to the model as part of the `AddSpecies` process. In that case, an initial [`Box`]({{< ref boxnode >}}) node is not necessary in the procedure.
+If the species is periodic, the box associated with that species can be copied to the model as part of the `Add` process. In that case, an initial [`Box`]({{< ref boxnode >}}) node is not necessary in the procedure.
 
 ## Description
 

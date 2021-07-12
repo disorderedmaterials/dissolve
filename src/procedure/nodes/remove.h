@@ -10,12 +10,12 @@
 // Forward Declarations
 class Species;
 
-// RemoveSpecies Node
-class RemoveSpeciesProcedureNode : public ProcedureNode
+// Remove Node
+class RemoveProcedureNode : public ProcedureNode
 {
     public:
-    RemoveSpeciesProcedureNode();
-    ~RemoveSpeciesProcedureNode() override = default;
+    RemoveProcedureNode();
+    ~RemoveProcedureNode() override = default;
 
     /*
      * Identity

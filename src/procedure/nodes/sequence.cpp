@@ -409,8 +409,8 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argsv(0));
         switch (nt)
         {
-            case (ProcedureNode::NodeType::AddSpecies):
-                newNode = new AddSpeciesProcedureNode();
+            case (ProcedureNode::NodeType::Add):
+                newNode = new AddProcedureNode();
                 break;
             case (ProcedureNode::NodeType::Box):
                 newNode = new BoxProcedureNode();
@@ -478,8 +478,8 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::Process3D):
                 newNode = new Process3DProcedureNode();
                 break;
-            case (ProcedureNode::NodeType::RemoveSpecies):
-                newNode = new RemoveSpeciesProcedureNode();
+            case (ProcedureNode::NodeType::Remove):
+                newNode = new RemoveProcedureNode();
                 break;
             case (ProcedureNode::NodeType::Select):
                 newNode = new SelectProcedureNode();

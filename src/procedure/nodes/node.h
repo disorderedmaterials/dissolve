@@ -32,14 +32,13 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Operate,
         Pick,
         Region
-
     };
     // Return enum option info for NodeClass
     static EnumOptions<NodeClass> nodeClasses();
     // Node Types
     enum class NodeType
     {
-        AddSpecies,
+        Add,
         Box,
         CalculateAngle,
         CalculateAxisAngle,
@@ -66,7 +65,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Process1D,
         Process2D,
         Process3D,
-        RemoveSpecies,
+        Remove,
         Select,
         Sequence,
         Sum1D

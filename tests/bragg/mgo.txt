@@ -11,16 +11,16 @@ Configuration  'Crystal'
     Box
       Lengths  21.085  21.085  21.085
     EndBox
-    AddSpecies
+    Add
       Population  500
       BoxAction  None
       Species  'Mg'
-    EndAddSpecies
-    AddSpecies
+    EndAdd
+    Add
       Population  500
       BoxAction  None
       Species  'O'
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
   InputCoordinates  epsr  ../_data/epsr25/mgo500-555/mgo.ato

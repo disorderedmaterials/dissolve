@@ -14,7 +14,7 @@ description: Constructs a general region
 
 ## Overview
 
-The `GeneralRegion` node generates a region suitable for the insertion of new molecules by an [`AddSpecies`]({{< ref "addspeciesnode" >}}) node.
+The `GeneralRegion` node generates a region suitable for the insertion of new molecules by an [`AddSpecies`]({{< ref "addnode" >}}) node.
 
 ## Description
 

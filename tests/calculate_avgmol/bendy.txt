@@ -42,11 +42,11 @@ EndPairPotentials
 
 Configuration  'Single'
   Generator
-    AddSpecies
+    Add
       Density  1E-04 atoms/A3
       Population  1
       Species  'BeNDy'
-    EndAddSpecies
+    EndAdd
   EndGenerator
 EndConfiguration
 
