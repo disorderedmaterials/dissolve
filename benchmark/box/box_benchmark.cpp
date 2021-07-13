@@ -36,7 +36,19 @@ template <typename BoxType> BoxType createTestBox()
         return;
 }
 
-template <typename BoxType> static void BM_MIM(benchmark::State &state)
+template <typename BoxType> static void BM_Box_MinimumImage(benchmark::State &state)
+{
+    auto box = createTestBox<BoxType>();
+    Vec3<double> p1 = box.randomCoordinate();
+    Vec3<double> p2 = box.randomCoordinate();
+    for (auto _ : state)
+    {
+        auto dist = box.minimumImage(p1, p2);
+        benchmark::DoNotOptimize(dist);
+    }
+}
+
+template <typename BoxType> static void BM_Box_MinimumDistance(benchmark::State &state)
 {
     auto box = createTestBox<BoxType>();
     Vec3<double> p1 = box.randomCoordinate();
@@ -48,7 +60,88 @@ template <typename BoxType> static void BM_MIM(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_MIM, CubicBox);
-BENCHMARK_TEMPLATE(BM_MIM, OrthorhombicBox);
-BENCHMARK_TEMPLATE(BM_MIM, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_MIM, TriclinicBox);
+template <typename BoxType> static void BM_Box_MinimumDistanceSquared(benchmark::State &state)
+{
+    auto box = createTestBox<BoxType>();
+    Vec3<double> p1 = box.randomCoordinate();
+    Vec3<double> p2 = box.randomCoordinate();
+    for (auto _ : state)
+    {
+        auto dist = box.minimumDistanceSquared(p1, p2);
+        benchmark::DoNotOptimize(dist);
+    }
+}
+
+template <typename BoxType> static void BM_Box_MinimumVector(benchmark::State &state)
+{
+    auto box = createTestBox<BoxType>();
+    Vec3<double> p1 = box.randomCoordinate();
+    Vec3<double> p2 = box.randomCoordinate();
+    for (auto _ : state)
+    {
+        auto dist = box.minimumVector(p1, p2);
+        benchmark::DoNotOptimize(dist);
+    }
+}
+
+template <typename BoxType> static void BM_Box_RandomCoordinate(benchmark::State &state)
+{
+    auto box = createTestBox<BoxType>();
+    for (auto _ : state)
+    {
+        auto r = box.randomCoordinate();
+        benchmark::DoNotOptimize(r);
+    }
+}
+
+template <typename BoxType> static void BM_Box_Fold(benchmark::State &state)
+{
+    auto box = createTestBox<BoxType>();
+    Vec3<double> p1 = box.randomCoordinate();
+    for (auto _ : state)
+    {
+        auto r = box.fold(p1);
+        benchmark::DoNotOptimize(r);
+    }
+}
+
+template <typename BoxType> static void BM_Box_FoldFrac(benchmark::State &state)
+{
+    auto box = createTestBox<BoxType>();
+    Vec3<double> p1 = box.randomCoordinate();
+    for (auto _ : state)
+    {
+        auto r = box.foldFrac(p1);
+        benchmark::DoNotOptimize(r);
+    }
+}
+
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, CubicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, CubicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumImage, CubicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumVector, CubicBox);
+BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, CubicBox);
+BENCHMARK_TEMPLATE(BM_Box_Fold, CubicBox);
+BENCHMARK_TEMPLATE(BM_Box_FoldFrac, CubicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, OrthorhombicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, OrthorhombicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumImage, OrthorhombicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumVector, OrthorhombicBox);
+BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, OrthorhombicBox);
+BENCHMARK_TEMPLATE(BM_Box_Fold, OrthorhombicBox);
+BENCHMARK_TEMPLATE(BM_Box_FoldFrac, OrthorhombicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumVector, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_Fold, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_FoldFrac, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, TriclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, TriclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumImage, TriclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumVector, TriclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, TriclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_Fold, TriclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_FoldFrac, TriclinicBox);
