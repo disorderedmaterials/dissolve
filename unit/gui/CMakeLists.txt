@@ -28,15 +28,10 @@ foreach(SRCFILE ${tests_SRC})
   )
   target_link_libraries(
     ${NAME}
-    PUBLIC ${WHOLE_ARCHIVE_FLAG}
-           ${BASIC_LINK_LIBS}
-           models
+    PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} models
            # Module 'nogui' libs
-           ${MODULENOGUI_LINK_LIBS}
-           ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
-           Qt6::Core
-           Qt6::Widgets
+           ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
+    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main Qt6::Core Qt6::Widgets
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
   )
 
