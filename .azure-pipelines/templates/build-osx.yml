@@ -22,8 +22,8 @@ steps:
     displayName: 'Install Conan'
   - bash: |
       set -ex
-      QT_INSTALL_DIR=/usr/local/Cellar/qt@5
-      QTVER=`ls -d ${QT_INSTALL_DIR}/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+      QT_BASE_DIR="/tmp/qt"
+      QTVER={{ parameters.qtver }}
       export Qt5_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5
       export Qt5Core_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5Core
       export Qt5Widgets_DIR=${QT_INSTALL_DIR}/$QTVER/lib/cmake/Qt5Widgets
