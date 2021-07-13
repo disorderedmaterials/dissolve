@@ -35,12 +35,16 @@ Box::BoxType Box::type() const { return type_; }
 // Finalise Box, storing volume and reciprocal and inverted axes
 void Box::finalise()
 {
+    // Copy axes array
+    axesArray_ = axes_.matrix();
+
     // Calculate box volume
     volume_ = axes_.determinant();
 
     // Calculate inverse axes
     inverseAxes_ = axes_;
     inverseAxes_.invert();
+    inverseAxesArray_ = inverseAxes_.matrix();
 
     /*
      * Calculate reciprocal axes and volume.
@@ -144,125 +148,18 @@ void Box::scale(double factor)
 }
 
 /*
- * Utility Routines
+ * Coordinate Conversion
  */
 
-// Generate a suitable Box given the supplied relative lengths, angles
-std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
+// Return specified fractional coordinates converted to real-space coordinates
+Vec3<double> Box::getReal(Vec3<double> r) const
 {
-    // Determine box type from supplied lengths / angles
-    auto rightAlpha = (fabs(angles.x - 90.0) < 0.001);
-    auto rightBeta = (fabs(angles.y - 90.0) < 0.001);
-    auto rightGamma = (fabs(angles.z - 90.0) < 0.001);
-
-    if (rightAlpha && rightBeta && rightGamma)
-    {
-        auto abSame = (fabs(lengths.x - lengths.y) < 0.0001);
-        auto acSame = (fabs(lengths.x - lengths.z) < 0.0001);
-        if (abSame && acSame)
-            return std::make_unique<CubicBox>(lengths.x);
-        else
-            return std::make_unique<OrthorhombicBox>(lengths);
-    }
-    else if (rightAlpha && (!rightBeta) && rightGamma)
-        return std::make_unique<MonoclinicBox>(lengths, angles.y);
-    else
-        return std::make_unique<TriclinicBox>(lengths, angles);
-}
-
-// Return radius of largest possible inscribed sphere for box
-double Box::inscribedSphereRadius() const
-{
-    // Radius of largest inscribed sphere is the smallest of the three calculated values....
-    double mag, diameter, result = 0.0;
-    Vec3<double> cross;
-    int n, i, j;
-    for (n = 0; n < 3; ++n)
-    {
-        i = (n + 1) % 3;
-        j = (n + 2) % 3;
-        cross = axes_.columnAsVec3(i) * axes_.columnAsVec3(j);
-        mag = cross.magnitude();
-        diameter = fabs(axes_.columnAsVec3(n).dp(cross / mag));
-        if (n == 0)
-            result = diameter;
-        else if (diameter < result)
-            result = diameter;
-    }
-    return result * 0.5;
-}
-
-// Calculate the RDF normalisation for the Box
-bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth,
-                                    int nPoints) const
-{
-    // Set up array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
-    const auto binWidth = 0.1;
-    const auto rBinWidth = 1.0 / binWidth;
-    int bin, nBins = rdfRange / binWidth;
-    Data1D normData;
-    normData.initialise(nBins);
-    auto &y = normData.values();
-    for (auto n = 0; n < nBins; ++n)
-        normData.xAxis(n) = (n + 0.5) * binWidth;
-
-    auto centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
-
-    // Divide points over processes
-    const auto nPointsPerProcess = nPoints / procPool.nProcesses();
-    Messenger::print("Number of insertion points per process is {}, total is {}\n", nPointsPerProcess,
-                     nPointsPerProcess * procPool.nProcesses());
-
-    // Pre-waste random numbers so that the random number generators in all processes line up
-    for (auto n = 0; n < nPointsPerProcess * procPool.poolRank(); ++n)
-        randomCoordinate();
-
-    // Calculate the function
-    std::fill(y.begin(), y.end(), 0);
-    for (auto n = 0; n < nPointsPerProcess; ++n)
-    {
-        bin = (randomCoordinate() - centre).magnitude() * rBinWidth;
-        if (bin < nBins)
-            y[bin] += 1.0;
-    }
-    if (!procPool.allSum(y.data(), nBins))
-        return false;
-
-    // Post-waste random numbers so that the random number generators in all processes line up
-    for (auto n = 0; n < nPointsPerProcess * (procPool.nProcesses() - 1 - procPool.poolRank()); ++n)
-        randomCoordinate();
-
-    // Normalise histogram data, and scale by volume and binWidth ratio
-    std::transform(y.begin(), y.end(), y.begin(), [&](auto &value) {
-        return value * (volume_ * (rdfBinWidth / binWidth) / double(nPointsPerProcess * procPool.nProcesses()));
-    });
-
-    // Interpolate the normalisation data, and create the final function
-    nBins = rdfRange / rdfBinWidth;
-    boxNorm.clear();
-    Interpolator boxNormInterp(normData);
-
-    // Rescale against expected volume for spherical shells
-    double shellVolume, r = 0.0, maxHalf = inscribedSphereRadius(), x = 0.5 * rdfBinWidth;
-    for (auto n = 0; n < nBins; ++n)
-    {
-        // We know that up to the maximum (orthogonal) half-cell width the normalisation should be exactly 1.0...
-        if (x < maxHalf)
-            boxNorm.addPoint(x, 1.0);
-        else
-        {
-            shellVolume = (4.0 / 3.0) * PI * (pow(r + rdfBinWidth, 3.0) - pow(r, 3.0));
-            boxNorm.addPoint(x, shellVolume / boxNormInterp.y(x));
-        }
-        r += rdfBinWidth;
-        x += rdfBinWidth;
-    }
-
-    return true;
+    toReal(r);
+    return r;
 }
 
 /*
- * Utility Routines
+ * Geometry Calculation
  */
 
 // Return angle (in degrees) between coordinates
@@ -337,4 +234,93 @@ double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecj
     magxpj = xpj.magAndNormalise();
     magxpk = xpk.magAndNormalise();
     return atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), xpj.dp(xpk));
+}
+
+/*
+ * Utility Routines
+ */
+
+// Generate a suitable Box given the supplied relative lengths, angles
+std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
+{
+    // Determine box type from supplied lengths / angles
+    auto rightAlpha = (fabs(angles.x - 90.0) < 0.001);
+    auto rightBeta = (fabs(angles.y - 90.0) < 0.001);
+    auto rightGamma = (fabs(angles.z - 90.0) < 0.001);
+
+    if (rightAlpha && rightBeta && rightGamma)
+    {
+        auto abSame = (fabs(lengths.x - lengths.y) < 0.0001);
+        auto acSame = (fabs(lengths.x - lengths.z) < 0.0001);
+        if (abSame && acSame)
+            return std::make_unique<CubicBox>(lengths.x);
+        else
+            return std::make_unique<OrthorhombicBox>(lengths);
+    }
+    else if (rightAlpha && (!rightBeta) && rightGamma)
+        return std::make_unique<MonoclinicBox>(lengths, angles.y);
+    else
+        return std::make_unique<TriclinicBox>(lengths, angles);
+}
+
+// Return radius of largest possible inscribed sphere for box
+double Box::inscribedSphereRadius() const
+{
+    // Radius of largest inscribed sphere is the smallest of the three calculated values....
+    double mag, diameter, result = 0.0;
+    Vec3<double> cross;
+    int n, i, j;
+    for (n = 0; n < 3; ++n)
+    {
+        i = (n + 1) % 3;
+        j = (n + 2) % 3;
+        cross = axes_.columnAsVec3(i) * axes_.columnAsVec3(j);
+        mag = cross.magnitude();
+        diameter = fabs(axes_.columnAsVec3(n).dp(cross / mag));
+        if (n == 0)
+            result = diameter;
+        else if (diameter < result)
+            result = diameter;
+    }
+    return result * 0.5;
+}
+
+// Return random coordinate inside Box
+Vec3<double> Box::randomCoordinate() const
+{
+    Vec3<double> r(DissolveMath::random(), DissolveMath::random(), DissolveMath::random());
+    toReal(r);
+    return r;
+}
+
+// Return folded coordinate (i.e. inside current Box)
+Vec3<double> Box::fold(const Vec3<double> &r) const
+{
+    // Convert coordinate to fractional coords
+    auto frac = r;
+    toFractional(frac);
+
+    // Fold into Box
+    frac.x -= floor(frac.x);
+    frac.y -= floor(frac.y);
+    frac.z -= floor(frac.z);
+
+    toReal(frac);
+
+    return frac;
+}
+
+// Return folded fractional coordinate (i.e. inside current Box)
+Vec3<double> Box::foldFrac(const Vec3<double> &r) const
+{
+    // Convert coordinate to fractional coords
+    auto frac = r;
+    toFractional(frac);
+
+    // Fold into Box
+    frac.x -= floor(frac.x);
+    frac.y -= floor(frac.y);
+    frac.z -= floor(frac.z);
+
+    return frac;
 }

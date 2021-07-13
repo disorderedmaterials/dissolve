@@ -241,15 +241,15 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         {
             case (AddProcedureNode::PositioningType::Random):
                 fr.set(procPool.random(), procPool.random(), procPool.random());
-                newCentre = box->fracToReal(fr);
+                newCentre = box->getReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddProcedureNode::PositioningType::Region):
-                mol->setCentreOfGeometry(box, box->fracToReal(regionNode->randomFractionalCoordinate()));
+                mol->setCentreOfGeometry(box, box->getReal(regionNode->randomFractionalCoordinate()));
                 break;
             case (AddProcedureNode::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);
-                newCentre = box->fracToReal(fr);
+                newCentre = box->getReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddProcedureNode::PositioningType::Current):

@@ -34,108 +34,99 @@ MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
 }
 
 /*
- * Minimum Image Routines (virtual implementations)
+ * Coordinate Conversion
  */
 
-// Return minimum image coordinates of 'i' with respect to 'j'
-Vec3<double> MonoclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+// Convert specified fractional coordinates to real-space coordinates
+void MonoclinicBox::toReal(Vec3<double> &r) const
 {
-    // TODO Can speed this up since we know which matrix elements are zero
-    auto mim = inverseAxes_ * (r2 - r1);
-    if (mim.x < -0.5)
-        mim.x += 1.0;
-    else if (mim.x > 0.5)
-        mim.x -= 1.0;
-    if (mim.y < -0.5)
-        mim.y += 1.0;
-    else if (mim.y > 0.5)
-        mim.y -= 1.0;
-    if (mim.z < -0.5)
-        mim.z += 1.0;
-    else if (mim.z > 0.5)
-        mim.z -= 1.0;
-    return axes_ * mim + r2;
+    auto x = r.x * axesArray_[0] + r.y * axesArray_[3] + r.z * axesArray_[6];
+    auto y = r.x * axesArray_[1] + r.y * axesArray_[4] + r.z * axesArray_[7];
+    auto z = r.x * axesArray_[2] + r.y * axesArray_[5] + r.z * axesArray_[8];
+    r.x = x;
+    r.y = y;
+    r.z = z;
 }
 
-// Return minimum image vector from r1 to r2
-Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+// Convert specified real-space coordinates to fractional coordinates
+void MonoclinicBox::toFractional(Vec3<double> &r) const
 {
-    // TODO Can speed this up since we know which matrix elements are zero
-    auto mim = inverseAxes_ * (r2 - r1);
-    if (mim.x < -0.5)
-        mim.x += 1.0;
-    else if (mim.x > 0.5)
-        mim.x -= 1.0;
-    if (mim.y < -0.5)
-        mim.y += 1.0;
-    else if (mim.y > 0.5)
-        mim.y -= 1.0;
-    if (mim.z < -0.5)
-        mim.z += 1.0;
-    else if (mim.z > 0.5)
-        mim.z -= 1.0;
-    return axes_ * mim;
+    auto x = r.x * inverseAxesArray_[0] + r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
+    auto y = r.x * inverseAxesArray_[1] + r.y * inverseAxesArray_[4] + r.z * inverseAxesArray_[7];
+    auto z = r.x * inverseAxesArray_[2] + r.y * inverseAxesArray_[5] + r.z * inverseAxesArray_[8];
+    r.x = x;
+    r.y = y;
+    r.z = z;
+}
+
+/*
+ * Minimum Image Calculation
+ */
+
+// Return minimum image coordinates of r1 with respect to r2
+Vec3<double> MonoclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v21 = r1 - r2;
+    Vec3<double> rFrac(v21.x * inverseAxesArray_[0] + v21.y * inverseAxesArray_[3] + v21.z * inverseAxesArray_[6],
+                       v21.x * inverseAxesArray_[1] + v21.y * inverseAxesArray_[4] + v21.z * inverseAxesArray_[7],
+                       v21.x * inverseAxesArray_[2] + v21.y * inverseAxesArray_[5] + v21.z * inverseAxesArray_[8]);
+
+    wrap(rFrac);
+
+    v21.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6] + r2.x;
+    v21.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7] + r2.y;
+    v21.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8] + r2.z;
+
+    return v21;
 }
 
 // Return minimum image distance from r1 to r2
 double MonoclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return minimumVector(r1, r2).magnitude();
+    Vec3<double> v12 = r2 - r1;
+    Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
+                       v12.x * inverseAxesArray_[1] + v12.y * inverseAxesArray_[4] + v12.z * inverseAxesArray_[7],
+                       v12.x * inverseAxesArray_[2] + v12.y * inverseAxesArray_[5] + v12.z * inverseAxesArray_[8]);
+
+    wrap(rFrac);
+
+    v12.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6];
+    v12.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7];
+    v12.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8];
+
+    return v12.magnitude();
+}
+
+// Return minimum image vector from r1 to r2
+Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+    Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
+                       v12.x * inverseAxesArray_[1] + v12.y * inverseAxesArray_[4] + v12.z * inverseAxesArray_[7],
+                       v12.x * inverseAxesArray_[2] + v12.y * inverseAxesArray_[5] + v12.z * inverseAxesArray_[8]);
+
+    wrap(rFrac);
+
+    v12.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6];
+    v12.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7];
+    v12.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8];
+
+    return v12;
 }
 
 // Return minimum image squared distance from r1 to r2
 double MonoclinicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return minimumVector(r1, r2).magnitudeSq();
-}
+    Vec3<double> v12 = r2 - r1;
+    Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
+                       v12.x * inverseAxesArray_[1] + v12.y * inverseAxesArray_[4] + v12.z * inverseAxesArray_[7],
+                       v12.x * inverseAxesArray_[2] + v12.y * inverseAxesArray_[5] + v12.z * inverseAxesArray_[8]);
 
-/*
- * Utility Routines (Virtual Implementations)
- */
+    wrap(rFrac);
 
-// Return random coordinate inside Box
-Vec3<double> MonoclinicBox::randomCoordinate() const
-{
-    Vec3<double> pos(DissolveMath::random(), DissolveMath::random(), DissolveMath::random());
-    return axes_ * pos;
-}
+    v12.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6];
+    v12.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7];
+    v12.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8];
 
-// Return folded coordinate (i.e. inside current Box)
-Vec3<double> MonoclinicBox::fold(const Vec3<double> &r) const
-{
-    // TODO Can speed this up part since we know which matrix elements are zero
-
-    // Convert coordinate to fractional coords
-    auto frac = inverseAxes_ * r;
-
-    // Fold into Box and remultiply by inverse matrix
-    frac.x -= floor(frac.x);
-    frac.y -= floor(frac.y);
-    frac.z -= floor(frac.z);
-
-    return axes_ * frac;
-}
-
-// Return folded fractional coordinate (i.e. inside current Box)
-Vec3<double> MonoclinicBox::foldFrac(const Vec3<double> &r) const
-{
-    // TODO Can speed this up part since we know which matrix elements are zero
-
-    // Convert coordinate to fractional coords
-    auto frac = inverseAxes_ * r;
-
-    // Fold into Box and remultiply by inverse matrix
-    frac.x -= floor(frac.x);
-    frac.y -= floor(frac.y);
-    frac.z -= floor(frac.z);
-
-    return frac;
-}
-
-// Convert supplied fractional coordinates to real space
-Vec3<double> MonoclinicBox::fracToReal(const Vec3<double> &r) const
-{
-    // Multiply by axes matrix
-    // TODO Can speed this up part since we know which matrix elements are zero
-    return axes_ * r;
+    return v12.magnitudeSq();
 }
