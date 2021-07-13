@@ -3,6 +3,8 @@ parameters:
     default: ''
   - name: threading
     default: true
+  - name: qtver
+    default: 6.1.1
 
 steps:
   - bash: |
@@ -11,7 +13,8 @@ steps:
       brew update-reset
       brew install antlr antlr4-cpp-runtime ftgl
       # -- Qt
-      brew install qt5
+      sudo pip3 install aqtinstall
+      aqt install --outputdir /tmp/qt ${{ parameters.qtver }} linux desktop
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
