@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-//This include must come before the others
+// This include must come before the others
 #include "TextPrimitiveLexer.h"
 
 #include "gui/render/textprimitive.h"
