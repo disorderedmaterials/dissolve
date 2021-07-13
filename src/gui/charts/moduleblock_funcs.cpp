@@ -168,7 +168,7 @@ void ModuleBlock::paintEvent(QPaintEvent *event)
     borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
     borderPath.closeSubpath();
 
-    painter.setBrush(QGuiApplication::palette().background());
+    painter.setBrush(QGuiApplication::palette().base());
 
     // Ready - draw the border + fill!
     painter.drawPath(borderPath);
