@@ -12,17 +12,17 @@ stages:
   - stage: 'build'
     displayName: 'Build and Package'
     jobs:
-      - job: 'linux_serialgui'
-        displayName: 'Build Linux (Serial/GUI, ubuntu-latest)'
+      - job: 'linux'
+        displayName: 'Ubuntu, Threads, CLI/GUI'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/build-linux-serial-gui.yml
+          - template: templates/build-linux.yml
             parameters:
-              extraflags: '-DBUILD_TESTS:bool=true'
-          - template: templates/package-linux-serial-gui.yml
+              extraflags: '-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true'
+          - template: templates/package-linux.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
@@ -31,63 +31,61 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
-              ArtifactName: 'linux-tests-serial'
-            displayName: 'Publish Serial Test Artifacts'
-      - job: 'linux_parallel'
-        displayName: 'Build Linux (Parallel, ubuntu-latest)'
+              ArtifactName: 'linux-tests'
+            displayName: 'Publish Threaded Test Artifacts'
+      - job: 'linux_mpi'
+        displayName: 'Ubuntu, MPI, CLI'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/build-linux-parallel.yml
+          - template: templates/build-linux-mpi.yml
+            parameters:
+              extraflags: '-DBUILD_SYSTEM_TESTS:bool=true'
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
-              ArtifactName: 'linux-tests-parallel'
-            displayName: 'Publish Parallel Test Artifacts'
-      - job: 'osx_serialgui'
-        displayName: 'Build OSX (Serial/GUI, macos-latest)'
+              ArtifactName: 'linux-tests-mpi'
+            displayName: 'Publish MPI Test Artifacts'
+      - job: 'osx'
+        displayName: 'OSX, Threads, CLI/GUI'
         timeoutInMinutes: 120
         pool:
           vmImage: 'macos-latest'
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/build-osx-serial-gui.yml
-          - template: templates/package-osx-serial-gui.yml
+          - template: templates/build-osx.yml
+          - template: templates/package-osx.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
               ArtifactName: 'osx-artifacts'
             displayName: 'Publish OSX Artifacts'
-      - job: 'windows_serialgui'
-        displayName: 'Build Windows (Serial/GUI, windows-latest)'
+      - job: 'windows'
+        displayName: 'Windows, Threads, CLI/GUI'
         timeoutInMinutes: 120
         pool:
           vmImage: 'windows-latest'
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/build-windows-serial-gui.yml
-          - template: templates/package-windows-serial-gui.yml
+          - template: templates/build-windows.yml
+          - template: templates/package-windows.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
               ArtifactName: 'windows-artifacts'
             displayName: 'Publish Windows Artifacts'
 
-  # Run System Tests
-  - stage: 'system_tests_serial'
-    displayName: 'System Tests (Serial)'
+  # Run Tests
+  - stage: 'tests'
+    displayName: 'Testing'
     jobs:
-      - template: templates/system-tests.yml
-  - stage: 'system_tests_parallel'
-    displayName: 'System Tests (Parallel)'
-    jobs:
-      - template: templates/system-tests.yml
+      - template: templates/tests.yml
         parameters:
-          parallel: true
+          serial: false
 
   # Create Release
   - template: templates/create-release.yml

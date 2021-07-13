@@ -1,1 +1,1 @@
-dissolve_system_test(calculate_cn cn 95)
+dissolve_system_test(water cn.txt 95)

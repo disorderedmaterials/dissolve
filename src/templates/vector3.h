@@ -12,12 +12,8 @@
 template <class T> class Vec3
 {
     public:
-    explicit Vec3<T>(T xx = 0, T yy = 0, T zz = 0)
-    {
-        x = xx;
-        y = yy;
-        z = zz;
-    }
+    Vec3<T>() : x(T()), y(T()), z(T()){};
+    Vec3<T>(T xx, T yy, T zz) : x(xx), y(yy), z(zz){};
     // Components of vector
     T x, y, z;
 

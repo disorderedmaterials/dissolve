@@ -1,6 +1,6 @@
 add_library(
   procedurenodes
-  addspecies.cpp
+  add.cpp
   box.cpp
   calculateangle.cpp
   calculateaxisangle.cpp
@@ -26,14 +26,18 @@ add_library(
   operatesitepopulationnormalise.cpp
   operatesphericalshellnormalise.cpp
   parameters.cpp
+  pick.cpp
+  pickbase.cpp
+  pickcylinder.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
   regionbase.cpp
+  remove.cpp
   select.cpp
   sequence.cpp
   sum1d.cpp
-  addspecies.h
+  add.h
   box.h
   calculateangle.h
   calculateaxisangle.h
@@ -60,10 +64,14 @@ add_library(
   operatesitepopulationnormalise.h
   operatesphericalshellnormalise.h
   parameters.h
+  pick.h
+  pickbase.h
+  pickcylinder.h
   process1d.h
   process2d.h
   process3d.h
   regionbase.h
+  remove.h
   select.h
   sequence.h
   sum1d.h

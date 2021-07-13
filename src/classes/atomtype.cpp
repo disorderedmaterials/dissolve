@@ -5,8 +5,6 @@
 #include "data/elements.h"
 #include "templates/algorithms.h"
 
-AtomType::AtomType() : name_{"XX"} {}
-
 /*
  * Character
  */

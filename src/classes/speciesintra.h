@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/array.h"
 #include "templates/reflist.h"
 #include <vector>
 

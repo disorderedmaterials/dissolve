@@ -51,16 +51,16 @@ EndSpecies
 # Define Configuration
 Configuration  'Mix'
   Generator
-    AddSpecies
+    Add
      Density  0.1  atoms/A3
      Population  300
      Species  'Water'
-    EndAddSpecies
-    AddSpecies
+    EndAdd
+    Add
      Density  0.1  atoms/A3
      Population  600
      Species  'Methanol'
-    EndAddSpecies
+    EndAdd
   EndGenerator
   InputCoordinates  epsr  '../_data/epsr25/water300methanol600/watermeth.ato'
   EndInputCoordinates

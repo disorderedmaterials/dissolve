@@ -8,8 +8,6 @@ ModuleWidget::ModuleWidget(QWidget *parent, const GenericList &processingData)
 {
 }
 
-ModuleWidget::~ModuleWidget() {}
-
 /*
  * UI
  */

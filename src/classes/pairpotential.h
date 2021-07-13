@@ -96,6 +96,8 @@ class PairPotential
     public:
     // Set up PairPotential parameters from specified AtomTypes
     bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ);
+    // Set short-ranged type
+    void setShortRangeType(Forcefield::ShortRangeType srType);
     // Return short-ranged type
     Forcefield::ShortRangeType shortRangeType() const;
     // Return first AtomType name
@@ -108,6 +110,8 @@ class PairPotential
     std::shared_ptr<AtomType> atomTypeJ() const;
     // Set parameter specified
     void setParameter(int index, double value);
+    // Set parameters vector
+    void setParameters(std::vector<double> parameters);
     // Return parameters vector
     const std::vector<double> &parameters() const;
     // Return short-range parameter specified

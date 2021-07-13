@@ -5,7 +5,6 @@
 
 #include "gui/render/primitiveinstance.h"
 #include "math/matrix4.h"
-#include "templates/array.h"
 #include "templates/list.h"
 #include <QOpenGLFunctions>
 

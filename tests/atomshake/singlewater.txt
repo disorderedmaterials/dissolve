@@ -16,11 +16,11 @@ EndSpecies
 # Define Configuration
 Configuration  'Water'
   Generator
-    AddSpecies
+    Add
       Density  9.99999642E-05 atoms/A3
       Population  1
       Species  'Water'
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
   Temperature  0.0

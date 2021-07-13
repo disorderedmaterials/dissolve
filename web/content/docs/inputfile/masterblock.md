@@ -8,6 +8,7 @@ description: Define frequently-used intramolecular parameters for species
 The `Master` block contains definitions of named intramolecular terms (bonds, angles, torsions, and  impropers) which are referenced by one or more defined [`Species`]({{< ref "speciesblock" >}}) when describing their own intramolecular interactions. By utilising master terms repetition of identical intramolecular terms within species definitions can be avoided. In addition, if parameters within intramolecular interactions need to be edited, using master terms reduces editing to single terms within the `Master` block, rather than editing multiple terms throughout the species. Multiple `Master` blocks may be defined if required.
 
 Species may reference defined master terms by giving the name of the master term preceded by an `@` instead of the functional form of the interaction. This is illustrated in the example below.
+
 ## Keywords
 
 |Keyword|Arguments|Default|Description|

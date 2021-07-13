@@ -5,7 +5,6 @@
 
 #include "classes/cellneighbour.h"
 #include "math/matrix3.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class Box;
@@ -14,10 +13,6 @@ class Cell;
 // Cell Array
 class CellArray
 {
-    public:
-    CellArray();
-    ~CellArray();
-
     /*
      * Cell Data
      */
@@ -38,12 +33,6 @@ class CellArray
     const Box *box_{nullptr};
 
     public:
-    // Generate array for provided Box
-    bool generate(const Box *box, double cellSize, double pairPotentialRange);
-    // Scale Cells sizes by supplied factor
-    void scale(double factor);
-    // Clear Cell arrays
-    void clear();
     // Return number of Cells for box
     int nCells() const;
     // Return cell divisions along each axis
@@ -69,21 +58,39 @@ class CellArray
     Vec3<int> mimGridDelta(Vec3<int> delta) const;
 
     /*
-     * Upkeep
-     */
-    public:
-    // Update Cell location of specified Atom
-    void updateCellLocation(const std::shared_ptr<Atom> &i);
-
-    /*
-     * Cell Neighbour pairs
+     * Cell Neighbours
      */
     private:
-    CellNeighbourPairs cellNeighboursPairs_;
+    // Neighbour pair array (one-dimensional)
+    std::vector<CellNeighbourPair> neighbourPairs_;
+    // Neighbour array per Cell
+    std::vector<std::vector<CellNeighbour>> neighbours_;
 
     private:
+    // Add neighbour to cell vector
+    void addNeighbour(const Cell &cell, const Cell &nbr, bool useMim);
+    // Construct cell neighbour pairs
     void createCellNeighbourPairs();
 
     public:
-    const CellNeighbourPairs &getCellNeighbourPairs() const;
+    // Return neighbour vector for specified cell, including self as first item
+    const std::vector<CellNeighbour> &neighbours(const Cell &cell) const;
+    // Return vector of all unique cell neighbour pairs
+    const std::vector<CellNeighbourPair> &getCellNeighbourPairs() const;
+
+    /*
+     * Generation
+     */
+    public:
+    // Generate array for provided Box
+    bool generate(const Box *box, double cellSize, double pairPotentialRange);
+    // Clear Cell arrays
+    void clear();
+
+    /*
+     * Operations
+     */
+    public:
+    // Scale Cells sizes by supplied factor
+    void scale(double factor);
 };

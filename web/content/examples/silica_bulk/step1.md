@@ -9,10 +9,10 @@ Somewhat obviously, we need two atomic species for this simulation - an oxygen, 
 {{< action type="tabs" text="**Forcefield** tab, **Atom Types** section">}}
 {{< step text="Click the **[+] Add** button located at the top-right" >}}
 {{< step text="Select silicon in the periodic table dialog" >}}
-{{< action type="edit" text="Change the _Charge_ of the new atom type to `2`, the _SR Form_ to `LJ`, _Parameter 1_ (Lennard-Jones epsilon) to `0.175`, and _Parameter 2_ (Lennard-Jones sigma) to `1.03`">}}
+{{< action type="edit" text="Change the _Charge_ of the new atom type to `2`, the _SR Form_ to `LJ`, and in the _SR Parameters_ box enter `0.175, 1.03` (corresponding to the Lennard-Jones epsilon and sigma respectively)">}}
 {{< step text="Click the **[+] Add** button again, and choose oxygen from the periodic table" >}}
 
-{{< action type="edit" text="Change the _Charge_ of the oxygen atom type to `-1`, the _SR Form_ to `LJ`, _Parameter 1_ (Lennard-Jones epsilon) to `0.165`, and _Parameter 2_ (Lennard-Jones sigma) to `3.5`">}}
+{{< action type="edit" text="Change the _Charge_ of the oxygen atom type to `-1`, the _SR Form_ to `LJ`, and the _SR Parameters_ to `0.165, 3.5`" >}}
 
 {{< tip text="Atom types created in this way are named after the symbol of the relevant element." >}}
 	

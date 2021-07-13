@@ -265,23 +265,6 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
  * Utility Routines
  */
 
-// Return angle (in degrees) between Atoms
-double Box::angleInDegrees(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, const std::shared_ptr<Atom> &k) const
-{
-    Vec3<double> vecji, vecjk;
-
-    // Ge minimum image vectors 'j-i' and 'j-k'
-    vecji = minimumVector(j, i);
-    vecjk = minimumVector(j, k);
-
-    // Normalise vectors
-    vecji.normalise();
-    vecjk.normalise();
-
-    // Determine Angle
-    return angleInDegrees(vecji, vecjk);
-}
-
 // Return angle (in degrees) between coordinates
 double Box::angleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k) const
 {

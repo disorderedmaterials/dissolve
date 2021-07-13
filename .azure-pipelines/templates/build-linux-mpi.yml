@@ -1,0 +1,26 @@
+parameters:
+  - name: extraflags
+    default: ''
+  - name: threading
+    default: false
+
+steps:
+  - bash: |
+      set -ex
+      # -- General
+      sudo apt-get update -q
+      sudo apt-get install antlr4 ninja-build libopenmpi-dev openmpi-bin openmpi-common python3-setuptools uuid uuid-dev
+    displayName: 'Install Prerequisites'
+  - bash: |
+      set -ex
+      sudo pip3 install wheel
+      sudo pip3 install conan
+    displayName: 'Install Conan'
+  - bash: |
+      set -ex
+      mkdir build
+      cd build
+      conan install ../ -s compiler.libcxx=libstdc++11 --build missing
+      cmake -G "Ninja" -DMULTI_THREADING:bool=${{ parameters.threading }} -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
+      ninja
+    displayName: 'Build'

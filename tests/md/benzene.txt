@@ -135,13 +135,13 @@ Configuration  'Bulk'
       Angles  9.000000e+01  9.000000e+01  9.000000e+01
       NonPeriodic  False
     EndBox
-    AddSpecies
+    Add
       Species  'Benzene'
       Population  '200'
       Density  'rho'  g/cm3
       Rotate  True
       Positioning  Random
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
   Temperature  300.000000
@@ -167,13 +167,13 @@ Layer  'Evolve (Standard)'
   EndModule
 
   Module  Forces  'Forces01'
-   Frequency  1
+   Frequency  10
 
     Configuration  'Bulk'
-    TestReference  simple  'reference.forces'
+    TestReference  simple  '10.forces'
     EndTestReference
     Test  On
-    #SaveForces  simple  'reference.forces'
+    #SaveForces  simple  '10.forces'
     #EndSaveForces
 
   EndModule
@@ -187,4 +187,3 @@ EndLayer
 Simulation
   Seed  1234
 EndSimulation
-

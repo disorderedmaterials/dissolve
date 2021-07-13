@@ -57,11 +57,11 @@ EndPairPotentials
 
 Configuration  'Bulk'
   Generator
-    AddSpecies
+    Add
       Density  9.99999642E-02 atoms/A3
       Population  1000
       Species  'Water'
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
   InputCoordinates  epsr  '../_data/epsr25/water1000-neutron-xray/waterbox.ato'

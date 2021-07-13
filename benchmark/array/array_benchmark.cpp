@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 #include "benchmark/benchmark.h"
-#include "templates/array.h"
+#include "math/data1d.h"
+#include "math/ft.h"
 #include "templates/array2d.h"
 #include "templates/array3d.h"
 
@@ -10,33 +11,7 @@
 
 // Benchmark array
 
-// Benchmarks random access into the array structure
-
-static void BM_Array_1d(benchmark::State &state)
-{
-    int bytes = state.range(0);
-    int numVals = bytes / sizeof(int) / 2;
-    std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-    std::vector<int> indices(numVals);
-    std::iota(indices.begin(), indices.end(), 0);
-    std::shuffle(indices.begin(), indices.end(), generator);
-    Array<int> array(numVals);
-    for (int i = 0; i < array.size(); ++i)
-    {
-        array[i] = distribution(generator);
-    }
-
-    for (auto _ : state)
-    {
-        long long int sum = 0;
-        for (int i : indices)
-            sum += array[i];
-        benchmark::DoNotOptimize(sum);
-    }
-    state.SetBytesProcessed(long(state.iterations()) * long(bytes));
-    state.SetLabel(std::to_string(bytes / 1024) + "kb");
-}
+// Benchmarks random access into the array structures
 
 static void BM_Array_2d(benchmark::State &state)
 {
@@ -102,6 +77,27 @@ static void BM_Array_3d(benchmark::State &state)
     state.SetLabel(std::to_string(bytes / 1024) + "kb");
 }
 
-BENCHMARK(BM_Array_1d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
+static void BM_Fourier(benchmark::State &state)
+{
+    int bytes = state.range(0);
+    int dim = bytes >> 3;
+    std::default_random_engine generator;
+    std::uniform_real_distribution distribution(0.0, 1.0);
+    Data1D data;
+    std::vector<double> x(dim), y(dim);
+    std::iota(x.begin(), x.end(), 0);
+    std::generate(y.begin(), y.end(), [&]() { return distribution(generator); });
+    data.xAxis() = x;
+    data.values() = y;
+
+    for (auto _ : state)
+    {
+        Fourier::sineFT(data, 1, 1e-4, 1e-4, 1.0, WindowFunction(WindowFunction::Form::Lorch0));
+    }
+    state.SetBytesProcessed(long(state.iterations()) * (long(bytes)));
+    state.SetLabel(std::to_string(bytes / 1024) + "kb");
+}
+
 BENCHMARK(BM_Array_2d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
 BENCHMARK(BM_Array_3d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
+BENCHMARK(BM_Fourier)->RangeMultiplier(4)->Range(1 << 10, 1 << 18);

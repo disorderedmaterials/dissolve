@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/messenger.h"
 #include "base/processpool.h"
 #include "templates/vector3.h"
 #include <fmt/format.h>

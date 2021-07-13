@@ -29,8 +29,7 @@ void Dissolve::removeReferencesTo(Species *sp)
     KeywordBase::objectNoLongerValid<Species>(sp);
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
-    ListIterator<Configuration> configIterator(configurations());
-    while (Configuration *cfg = configIterator.iterate())
+    for (auto &cfg : configurations())
         if (cfg->containsSpecies(sp))
             cfg->empty();
 }

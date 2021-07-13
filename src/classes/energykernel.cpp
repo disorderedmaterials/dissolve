@@ -36,7 +36,7 @@ double EnergyKernel::energyWithoutMim(const Atom &i, const Atom &j)
 // Return PairPotential energy between atoms provided
 double EnergyKernel::energyWithMim(const Atom &i, const Atom &j)
 {
-    return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
+    return pairPotentialEnergy(i, j, box_->minimumDistance(j.r(), i.r()));
 }
 
 /*
@@ -61,13 +61,11 @@ double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(const Cell *centralCell, const Cell *otherCell, bool applyMim, bool interMolecular)
+double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool applyMim, bool interMolecular)
 {
-    assert(centralCell && otherCell);
-
     auto totalEnergy = 0.0;
-    auto &centralAtoms = centralCell->atoms();
-    auto &otherAtoms = otherCell->atoms();
+    auto &centralAtoms = centralCell.atoms();
+    auto &otherAtoms = otherCell.atoms();
 
     // Loop over central cell atoms
     if (applyMim)
@@ -129,12 +127,10 @@ double EnergyKernel::energy(const Cell *centralCell, const Cell *otherCell, bool
 }
 
 // Return PairPotential energy between atoms in supplied cell
-double EnergyKernel::energy(const Cell *cell, bool interMolecular)
+double EnergyKernel::energy(const Cell &cell, bool interMolecular)
 {
-    assert(cell);
-
     auto totalEnergy = 0.0;
-    auto &atoms = cell->atoms();
+    auto &atoms = cell.atoms();
 
     for (int i = 0; i < atoms.size(); ++i)
     {
@@ -166,262 +162,39 @@ double EnergyKernel::energy(const Cell *cell, bool interMolecular)
     return totalEnergy;
 }
 
-// Return PairPotential energy between Atom and Cell contents
-double EnergyKernel::energy(const Atom &i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
-{
-    assert(cell);
-
-    auto totalEnergy = 0.0;
-    Atom *jj;
-    double rSq, scale;
-    auto &otherAtoms = cell->atoms();
-
-    // Grab some information on the supplied Atom
-    auto moleculeI = i.molecule();
-    const auto rI = i.r();
-
-    // Get start/stride for specified loop context
-    auto offset = processPool_.interleavedLoopStart(strategy);
-    auto nChunks = processPool_.interleavedLoopStride(strategy);
-
-    if (flags & KernelFlags::ApplyMinimumImageFlag)
-    {
-        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), nChunks, offset);
-        // Loop over other Atoms
-        if (flags & KernelFlags::ExcludeSelfFlag)
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Check for same atom
-                if (&i == jj)
-                    continue;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = box_->minimumDistanceSquared(rI, jj->r());
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-        else if (flags & KernelFlags::ExcludeIGEJFlag)
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Check for i >= jj
-                if (i.arrayIndex() >= jj->arrayIndex())
-                    continue;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = box_->minimumDistanceSquared(rI, jj->r());
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-        else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = box_->minimumDistanceSquared(rI, jj->r());
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    // Check for i >= jj
-                    if (i.arrayIndex() >= jj->arrayIndex())
-                        continue;
-
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-        else
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = box_->minimumDistanceSquared(rI, jj->r());
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-    }
-    else
-    {
-        // Loop over atom neighbours
-        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), nChunks, offset);
-        if (flags & KernelFlags::ExcludeSelfFlag)
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Check for same atom
-                if (&i == jj)
-                    continue;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = (rI - jj->r()).magnitudeSq();
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-        else if (flags & KernelFlags::ExcludeIGEJFlag)
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Check for i >= jj
-                if (i.arrayIndex() >= jj->arrayIndex())
-                    continue;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = (rI - jj->r()).magnitudeSq();
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-        else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = (rI - jj->r()).magnitudeSq();
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    // Check for i >= jj
-                    if (i.arrayIndex() >= jj->arrayIndex())
-                        continue;
-
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-        else
-            for (auto indexJ = begin; indexJ < end; ++indexJ)
-            {
-                // Grab other Atom pointer
-                jj = *indexJ;
-
-                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                rSq = (rI - jj->r()).magnitudeSq();
-                if (rSq > cutoffDistanceSquared_)
-                    continue;
-
-                // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq));
-                else
-                {
-                    scale = i.scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(i, *jj, sqrt(rSq)) * scale;
-                }
-            }
-    }
-
-    // Perform relevant sum if requested
-    if (performSum)
-        processPool_.allSum(&totalEnergy, 1, strategy);
-
-    return totalEnergy;
-}
-
 // Return PairPotential energy of Atom with world
-double EnergyKernel::energy(const Atom &i, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const Atom &i)
 {
-    auto *cellI = i.cell();
+    // Get cell neighbours for atom i's cell
+    auto &neighbours = cells_.neighbours(*i.cell());
 
-    // This Atom with its own Cell
-    auto totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
+    return dissolve::transform_reduce(
+        ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
+        [&i, this](const auto &neighbour) {
+            auto mimRequired = neighbour.requiresMIM_;
+            auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+            return std::accumulate(
+                nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0, [&i, mimRequired, this](const auto innerAcc, const auto *j) {
+                    auto &jj = *j;
 
-    // Cell neighbours not requiring minimum image
-    for (auto *neighbour : cellI->cellNeighbours())
-        totalEnergy += energy(i, neighbour, KernelFlags::NoFlags, strategy, false);
+                    // Calculate rSquared distance between atoms, and check it against
+                    // the stored cutoff distance
+                    auto rSq = mimRequired ? box_->minimumDistanceSquared(i.r(), jj.r()) : (i.r() - jj.r()).magnitudeSq();
+                    if (rSq > cutoffDistanceSquared_)
+                        return innerAcc;
 
-    // Cell neighbours requiring minimum image
-    for (auto *neighbour : cellI->mimCellNeighbours())
-        totalEnergy += energy(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy, false);
+                    // Check for atoms in the same species
+                    if (i.molecule().get() != jj.molecule().get())
+                        return innerAcc + pairPotentialEnergy(i, jj, sqrt(rSq));
 
-    // Perform relevant sum if requested
-    if (performSum)
-        processPool_.allSum(&totalEnergy, 1, strategy);
-
-    return totalEnergy;
+                    return innerAcc;
+                });
+        });
 }
 
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    std::vector<const Cell *> allCells;
-
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
     for (auto &i : mol.atoms())
@@ -429,24 +202,21 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
 
     auto totalEnergy =
         std::accumulate(locationMap.begin(), locationMap.end(), 0.0, [&](const auto totalAcc, const auto &location) {
-            const auto *centralCell = location.first;
             const auto &centralCellAtoms = location.second;
 
-            // Create list of all cell neighbours (mim or otherwise) *and* the current cell
-            allCells.resize(centralCell->allCellNeighbours().size() + 1, nullptr);
-            std::copy(centralCell->allCellNeighbours().begin(), centralCell->allCellNeighbours().end(), allCells.begin());
-            allCells[centralCell->allCellNeighbours().size()] = centralCell;
+            // Get cell neighbours for the cell
+            auto &neighbours = cells_.neighbours(*location.first);
 
-            // All cell neighbours (all treated with minimum image)
             auto localEnergy = dissolve::transform_reduce(
-                ParallelPolicies::par, allCells.begin(), allCells.end(), 0.0, std::plus<double>(),
-                [&centralCellAtoms, centralCell, this](const auto *cell) {
-                    auto mimRequired = cell->mimRequired(centralCell);
+                ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
+                [&centralCellAtoms, this](const auto &neighbour) {
                     return std::accumulate(
                         centralCellAtoms.begin(), centralCellAtoms.end(), 0.0,
-                        [cell, centralCell, mimRequired, this](const auto acc, const auto &i) {
+                        [&neighbour, this](const auto acc, const auto &i) {
                             auto &ii = *i;
-                            return acc + std::accumulate(cell->atoms().begin(), cell->atoms().end(), 0.0,
+                            auto mimRequired = neighbour.requiresMIM_;
+                            auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+                            return acc + std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                                          [&ii, mimRequired, this](const auto innerAcc, const auto *j) {
                                                              auto &jj = *j;
 
@@ -502,26 +272,22 @@ double EnergyKernel::correct(const Atom &i)
 double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy,
                             bool performSum)
 {
-    // Get sub-strategy to use
-    ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
-
     // List of cell neighbour pairs
-    auto &cellNeighboursPairs = cellArray.getCellNeighbourPairs();
+    auto &cellNeighbourPairs = cellArray.getCellNeighbourPairs();
 
     // Set start/stride for parallel loop
     auto offset = processPool_.interleavedLoopStart(strategy);
     auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     auto totalEnergy = 0.0;
-    auto [begin, end] =
-        chop_range(cellNeighboursPairs.neighbours().begin(), cellNeighboursPairs.neighbours().end(), nChunks, offset);
+    auto [begin, end] = chop_range(cellNeighbourPairs.begin(), cellNeighbourPairs.end(), nChunks, offset);
 
     totalEnergy +=
         dissolve::transform_reduce(ParallelPolicies::par, begin, end, 0.0, std::plus<double>(), [&](const auto &pair) {
-            auto *cellI = pair.master_;
-            auto *cellJ = pair.neighbour_;
+            auto &cellI = pair.master_;
+            auto &cellJ = pair.neighbour_;
             auto mimRequired = pair.requiresMIM_;
-            if (cellI == cellJ)
+            if (&cellI == &cellJ)
                 return energy(cellI, interMolecular);
             else
                 return energy(cellI, cellJ, mimRequired, interMolecular);
@@ -543,7 +309,7 @@ double EnergyKernel::energy(const SpeciesBond &bond, const Atom &i, const Atom &
 {
     // Determine whether we need to apply minimum image to the distance calculation
     if (i.cell()->mimRequired(j.cell()))
-        return bond.energy(box_->minimumDistance(i, j));
+        return bond.energy(box_->minimumDistance(i.r(), j.r()));
     else
         return bond.energy((i.r() - j.r()).magnitude());
 }
@@ -558,11 +324,11 @@ double EnergyKernel::energy(const SpeciesAngle &angle, const Atom &i, const Atom
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
 
@@ -594,15 +360,15 @@ double EnergyKernel::energy(const SpeciesTorsion &torsion, const Atom &i, const 
 
     // Calculate vectors, ensuring we account for minimum image
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(k.r(), l.r());
     else
         veckl = l.r() - k.r();
 
@@ -623,15 +389,15 @@ double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Ato
 
     // Calculate vectors, ensuring we account for minimum image
     if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(j.r(), i.r());
     else
         vecji = i.r() - j.r();
     if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(j.r(), k.r());
     else
         vecjk = k.r() - j.r();
     if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(k.r(), l.r());
     else
         veckl = l.r() - k.r();
 

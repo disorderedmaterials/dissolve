@@ -101,7 +101,7 @@ void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         }
         else if (ui_.ConfigurationPartialsButton->isChecked())
         {
-            auto targetPrefix = fmt::format("{}//UnweightedGR", optConfig.item()->niceName());
+            auto targetPrefix = fmt::format("{}//UnweightedGR", (*optConfig)->niceName());
             targetPartials_ = processingData_.valueIf<PartialSet>(targetPrefix, module_->uniqueName());
             createPartialSetRenderables(targetPrefix);
         }

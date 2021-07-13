@@ -531,8 +531,14 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
                 return false;
             auto nPoints = parser.argi(0);
             auto partError = parser.argb(1);
+            if (partError)
+                part.addErrors();
             auto boundError = parser.argb(2);
+            if (boundError)
+                bound.addErrors();
             auto unboundError = parser.argb(3);
+            if (unboundError)
+                unbound.addErrors();
 
             part.xAxis().reserve(nPoints);
             part.values().reserve(nPoints);
@@ -585,9 +591,6 @@ std::string writeDataPoint(int i, Data1D data)
 // Write data through specified LineParser
 bool PartialSet::serialise(LineParser &parser) const
 {
-    // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
-    // common scale
-
     if (!parser.writeLineF("{}\n", fingerprint_))
         return false;
 
@@ -614,8 +617,7 @@ bool PartialSet::serialise(LineParser &parser) const
         {
             if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
                                    writeDataPoint(i, unbound)))
-                ;
-            return false;
+                return false;
         }
 
         return EarlyReturn<bool>::Continue;

@@ -118,7 +118,7 @@ bool MasterTermBondModel::setData(const QModelIndex &index, const QVariant &valu
                 SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
                 masterIntra->setForm(bf);
             }
-            catch (std::runtime_error e)
+            catch (std::runtime_error &e)
             {
                 return false;
             }
@@ -181,7 +181,7 @@ bool MasterTermAngleModel::setData(const QModelIndex &index, const QVariant &val
                 auto bf = SpeciesAngle::angleFunctions().enumeration(value.toString().toStdString());
                 masterIntra->setForm(bf);
             }
-            catch (std::runtime_error e)
+            catch (std::runtime_error &e)
             {
                 return false;
             }
@@ -244,7 +244,7 @@ bool MasterTermTorsionModel::setData(const QModelIndex &index, const QVariant &v
                 auto bf = SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
                 masterIntra->setForm(bf);
             }
-            catch (std::runtime_error e)
+            catch (std::runtime_error &e)
             {
                 return false;
             }

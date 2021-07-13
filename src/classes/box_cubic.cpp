@@ -27,38 +27,6 @@ CubicBox::CubicBox(double length) : Box()
  */
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> CubicBox::minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const
-{
-    /*
-     * This, and all other routines, use a ternary if/else test and an int() cast in order to calculate minimum image
-     * vectors, distances, and coordinates, since this is about 25-30% faster than using floor().
-     */
-    auto mimVec = i->r();
-    mimVec -= ref->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    mimVec += ref->r();
-    return mimVec;
-}
-
-// Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> CubicBox::minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const
-{
-    auto mimVec = i->r();
-    mimVec -= ref;
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    mimVec += ref;
-    return mimVec;
-}
-
-// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> CubicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
 {
     auto mimVec = i;
@@ -69,45 +37,6 @@ Vec3<double> CubicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &r
     mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
 
     mimVec += ref;
-    return mimVec;
-}
-
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> CubicBox::minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
-{
-    auto mimVec = j->r();
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec;
-}
-
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> CubicBox::minimumVector(const Atom &i, const Atom &j) const
-{
-    auto mimVec = j.r();
-    mimVec -= i.r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec;
-}
-
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> CubicBox::minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
-{
-    auto mimVec = j;
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
     return mimVec;
 }
 
@@ -125,45 +54,6 @@ Vec3<double> CubicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &
 }
 
 // Return minimum image distance from 'i' to 'j'
-double CubicBox::minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
-{
-    auto mimVec = j->r();
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec.magnitude();
-}
-
-// Return minimum image distance from 'i' to 'j'
-double CubicBox::minimumDistance(const Atom &i, const Atom &j) const
-{
-    auto mimVec = j.r();
-    mimVec -= i.r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec.magnitude();
-}
-
-// Return minimum image distance from 'i' to 'j'
-double CubicBox::minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
-{
-    auto mimVec = j;
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec.magnitude();
-}
-
-// Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
 {
     auto mimVec = j;
@@ -174,45 +64,6 @@ double CubicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) c
     mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
 
     return mimVec.magnitude();
-}
-
-// Return minimum image squared distance from 'i' to 'j' (pointers)
-double CubicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
-{
-    auto mimVec = j->r();
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec.magnitudeSq();
-}
-
-// Return minimum image squared distance from 'i' to 'j' (references)
-double CubicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
-{
-    auto mimVec = j.r();
-    mimVec -= i.r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec.magnitudeSq();
-}
-
-// Return minimum image squared distance from 'i' to 'j'
-double CubicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
-{
-    auto mimVec = j;
-    mimVec -= i->r();
-
-    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
-    mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
-
-    return mimVec.magnitudeSq();
 }
 
 // Return minimum image distance from 'i' to 'j'

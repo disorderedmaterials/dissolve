@@ -42,8 +42,6 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode 
     updateGeometry();
 }
 
-ProcedureChartNodeBlock::~ProcedureChartNodeBlock() {}
-
 /*
  * Node Target
  */
@@ -112,7 +110,7 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent *event)
     borderPath.closeSubpath();
 
     // Ready - draw the border + fill!
-    painter.setBrush(Qt::white);
+    painter.setBrush(QGuiApplication::palette().background());
     painter.drawPath(borderPath);
 
     // Draw the drag handle, updating its height first

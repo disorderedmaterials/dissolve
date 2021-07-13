@@ -14,7 +14,7 @@ class ModuleWidget : public QWidget
 {
     public:
     ModuleWidget(QWidget *parent, const GenericList &processingData);
-    virtual ~ModuleWidget();
+    virtual ~ModuleWidget() = default;
 
     /*
      * UI

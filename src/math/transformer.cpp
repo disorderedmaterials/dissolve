@@ -6,7 +6,6 @@
 #include "expression/variable.h"
 #include "math/data1d.h"
 #include "math/data2d.h"
-#include "templates/array.h"
 
 Transformer::Transformer()
 {

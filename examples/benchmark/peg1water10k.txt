@@ -12473,19 +12473,19 @@ Configuration  'PEG1'
       Lengths  91.072325  91.072325  91.072325
       Angles  90.000000  90.000000  90.000000
     EndBox
-    AddSpecies
+    Add
       Species  'PEG294'
       Population  1
       Positioning  Central
       Rotate  On
       BoxAction  None
-    EndAddSpecies
-    AddSpecies
+    EndAdd
+    Add
       Population  10000
       Species  'Water'
       Density  0.105125  atoms/A3
       BoxAction  ScaleVolume
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
 

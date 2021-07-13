@@ -4,7 +4,6 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "templates/array.h"
 
 // Keyword Interface
 template <class T> class KeywordData : public KeywordBase

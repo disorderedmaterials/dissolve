@@ -53,12 +53,12 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
                                     "it's data in the EPSR module.",
                                     rdfModule->uniqueName());
 
-        if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfModule->targetConfigurations().firstItem()))
+        if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfModule->targetConfigurations().front()))
             return Messenger::error("RDF module '{}' targets a configuration which is different from another target "
                                     "module, and which is not permitted when using it's data in the EPSR module.",
                                     rdfModule->uniqueName());
         else
-            targetConfiguration_ = rdfModule->targetConfigurations().firstItem();
+            targetConfiguration_ = rdfModule->targetConfigurations().front();
 
         rho = targetConfiguration_->atomicDensity();
     }

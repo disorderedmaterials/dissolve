@@ -21,7 +21,7 @@ Contributions to Dissolve are welcome, and can come in many forms - the ability 
 - Document an example use-case (most likely a system you're interested in) and submit it for inclusion.
 - Fix something in the code, or add a missing feature (see the current list of [issues](https://www.github.com/disorderedmaterials/dissolve/issues)).
 - Open a new [feature request issue](https://www.github.com/disorderedmaterials/dissolve/issues) describing something you'd like to see added, and why.
-- Create a new [module]({{}< ref "modules" >}}) to extend Dissolve's functionality.
+- Create a new [module]({{< ref "modules" >}}) to extend Dissolve's functionality.
 
 Most of these require at least an account on [GitHub](https://www.github.com), so if you want to contribute the first step is to register and go to the [Dissolve repository](https://www.github.com/disorderedmaterials/dissolve).
 
@@ -33,7 +33,7 @@ More details can be found in this [GitHub guide](https://help.github.com/en/arti
 
 ## Contributing to the Codebase
 
-Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with git, and is available from [https://www.github.com/disorderedmaterials/dissolve](). Dissolve adopts a simple branching model for development, with `develop` being the main branch of the repository, and versioned releases branching off from that. Any additions or fixes to the code should be made through a suitable pull request from your own forked repository.
+Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with [git](https://git-scm.com/) and hosted on GitHub at [https://www.github.com/disorderedmaterials/dissolve](). Dissolve adopts a simple branching model for development, with `develop` being the main branch of the repository, and versioned releases branching off from that. Any additions or fixes to the code should be made through a suitable pull request from your own forked repository.
 
 ### 1) Register on GitHub
 

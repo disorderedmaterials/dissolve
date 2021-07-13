@@ -6,27 +6,24 @@
 #include "base/messenger.h"
 #include <QObject>
 
-// Forward Declarations
-/* none */
-
 class GUIOutputHandler : public QObject, public OutputHandler
 {
     Q_OBJECT
 
     public:
-    GUIOutputHandler();
-    ~GUIOutputHandler();
+    GUIOutputHandler() = default;
+    ~GUIOutputHandler() = default;
 
     /*
      * Styling
      */
     public:
     // Set styling for warning message
-    void styleForWarning();
+    void styleForWarning() override;
     // Set styling for error message
-    void styleForError();
+    void styleForError() override;
     // Reset styling for normal text
-    void resetStyling();
+    void resetStyling() override;
 
     signals:
     void setColour(const QColor &);

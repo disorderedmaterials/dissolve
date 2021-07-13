@@ -82,16 +82,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     });
 
     // Custom Classes
-    registerDeserialiser<Array<SampledDouble>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        auto &v = std::any_cast<Array<SampledDouble> &>(a);
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        v.initialise(parser.argi(0));
-        for (auto n = 0; n < v.nItems(); ++n)
-            if (!v[n].deserialise(parser))
-                return false;
-        return true;
-    });
     registerDeserialiser<Array2D<char>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         auto &v = std::any_cast<Array2D<char> &>(a);
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -153,6 +143,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
+    registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);
     registerDeserialiser<Vec3<int>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         auto &v = std::any_cast<Vec3<int> &>(a);
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

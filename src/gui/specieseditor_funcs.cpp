@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "classes/coredata.h"
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
 #include "gui/specieseditor.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
 #include "modules/geomopt/geomopt.h"
-#include "procedure/nodes/addspecies.h"
-#include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
 SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)

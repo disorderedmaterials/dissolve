@@ -175,6 +175,31 @@ template <typename... Args> class zip
 
 namespace dissolve
 {
+// Transform algorithms
+template <typename ParallelPolicy, class Iter, typename OutputIt, class UnaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, OutputIt out, UnaryOp unaryOp)
+{
+    return std::transform(policy, begin, end, out, unaryOp);
+}
+template <typename ParallelPolicy, class Iter, typename OutputIt, class UnaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, OutputIt out, UnaryOp unaryOp)
+{
+    return std::transform(begin, end, out, unaryOp);
+}
+template <typename ParallelPolicy, class Iter, class Jter, typename OutputIt, class BinaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, Jter other, OutputIt out, BinaryOp binaryOp)
+{
+    return std::transform(policy, begin, end, other, out, binaryOp);
+}
+template <typename ParallelPolicy, class Iter, class Jter, typename OutputIt, class BinaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+OutputIt transform(ParallelPolicy policy, Iter begin, Iter end, Jter other, OutputIt out, BinaryOp binaryOp)
+{
+    return std::transform(begin, end, other, out, binaryOp);
+}
 // Transform reduce algorithms
 // unaryOp transform container element into type T, which is reduced (summed) by the binaryOp
 // Base tranform_reduce, no parallel policy
@@ -225,7 +250,7 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
 }
 } // namespace dissolve
 
-// Join the parameters into a comma separated string
+// Join elements into a delimited string
 template <typename Iterator> std::string joinStrings(Iterator begin, Iterator end, std::string delim = ", ")
 {
     if (begin == end)
@@ -235,11 +260,23 @@ template <typename Iterator> std::string joinStrings(Iterator begin, Iterator en
     std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << fmt::format("{}", value); });
     return stream.str();
 }
-
-// Join the parameters into a comma separated string
+template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, Iterator end, std::string delim, Lam lambda)
+{
+    if (begin == end)
+        return std::string();
+    std::stringstream stream;
+    stream << fmt::format("{}", lambda(*begin));
+    std::for_each(std::next(begin), end,
+                  [&stream, &lambda, &delim](const auto value) { stream << delim << fmt::format("{}", lambda(value)); });
+    return stream.str();
+}
 template <class Class> std::string joinStrings(Class range, std::string delim = ", ")
 {
     return joinStrings(range.begin(), range.end(), delim);
+}
+template <class Class, class Lam> std::string joinStrings(Class range, std::string delim = ", ", Lam lambda = nullptr)
+{
+    return joinStrings(range.begin(), range.end(), delim, lambda);
 }
 
 // Split a string over a delimiter and store the results in an iterator.  Returns the number of elements split, or -1 if the

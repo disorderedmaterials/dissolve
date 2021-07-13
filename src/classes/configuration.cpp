@@ -10,7 +10,7 @@
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
-Configuration::Configuration() : ListItem<Configuration>(), generator_(ProcedureNode::GenerationContext, "EndGenerator")
+Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
     box_ = nullptr;
 

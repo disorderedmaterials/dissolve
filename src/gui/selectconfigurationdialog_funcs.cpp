@@ -25,7 +25,7 @@ void SelectConfigurationDialog::on_ConfigurationWidget_speciesSelectionChanged(b
 void SelectConfigurationDialog::on_ConfigurationWidget_speciesDoubleClicked()
 {
     // Check current selection size for validity
-    if (ui_.ConfigurationWidget->currentConfiguration().nItems() != 1)
+    if (ui_.ConfigurationWidget->currentConfiguration().size() != 1)
         return;
 
     accept();
@@ -43,13 +43,13 @@ Configuration *SelectConfigurationDialog::selectConfiguration()
     show();
 
     if (exec() == QDialog::Accepted)
-        return ui_.ConfigurationWidget->currentConfiguration().firstItem();
+        return ui_.ConfigurationWidget->currentConfiguration().front();
     else
         return nullptr;
 }
 
 // Run the dialog, returning a list of selected Configuration
-RefList<Configuration> SelectConfigurationDialog::selectConfiguration(int minConfiguration, int maxConfiguration)
+std::vector<Configuration *> SelectConfigurationDialog::selectConfiguration(int minConfiguration, int maxConfiguration)
 {
     ui_.ConfigurationWidget->reset(minConfiguration, maxConfiguration);
 
@@ -58,5 +58,5 @@ RefList<Configuration> SelectConfigurationDialog::selectConfiguration(int minCon
     if (exec() == QDialog::Accepted)
         return ui_.ConfigurationWidget->currentConfiguration();
     else
-        return RefList<Configuration>();
+        return {};
 }
