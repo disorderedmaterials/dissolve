@@ -13,13 +13,13 @@ steps:
       brew update-reset
       brew install antlr antlr4-cpp-runtime ftgl
       # -- Qt
-      sudo pip3 install aqtinstall
+      sudo pip3 install conan aqtinstall
       aqt install --outputdir /tmp/qt ${{ parameters.qtver }} mac desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
     displayName: 'Install Prerequisites'
-  - bash: |
-      set -ex
-      pip3 install conan
-    displayName: 'Install Conan'
+  # - bash: |
+  #     set -ex
+  #     pip3 install conan
+  #   displayName: 'Install Conan'
   - bash: |
       set -ex
       Qt6_DIR=/tmp/qt/${{parameters.qtver}}/gcc_64/lib/cmake/Qt6
