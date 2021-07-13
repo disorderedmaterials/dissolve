@@ -14,7 +14,7 @@ steps:
       brew install antlr antlr4-cpp-runtime ftgl
       # -- Qt
       sudo pip3 install aqtinstall
-      aqt install --outputdir /tmp/qt ${{ parameters.qtver }} osx desktop
+      aqt install --outputdir /tmp/qt ${{ parameters.qtver }} mac desktop
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
