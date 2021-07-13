@@ -3,7 +3,6 @@
 
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/cell.h"
 
 TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles) : Box()
 {
@@ -44,10 +43,10 @@ TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles
  * Minimum Image Routines (virtual implementations)
  */
 
-// Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
+// Return minimum image coordinates of r1 with respect to r2
+Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    auto mim = inverseAxes_ * (ref - i);
+    auto mim = inverseAxes_ * (r2 - r1);
     if (mim.x < -0.5)
         mim.x += 1.0;
     else if (mim.x > 0.5)
@@ -60,13 +59,13 @@ Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &i, const Vec3<double
         mim.z += 1.0;
     else if (mim.z > 0.5)
         mim.z -= 1.0;
-    return axes_ * mim + ref;
+    return axes_ * mim + r2;
 }
 
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image vector from r1 to r2
+Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    auto mim = inverseAxes_ * (j - i);
+    auto mim = inverseAxes_ * (r2 - r1);
     if (mim.x < -0.5)
         mim.x += 1.0;
     else if (mim.x > 0.5)
@@ -82,16 +81,16 @@ Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &i, const Vec3<doubl
     return axes_ * mim;
 }
 
-// Return minimum image distance from 'i' to 'j'
-double TriclinicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image distance from r1 to r2
+double TriclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return minimumVector(i, j).magnitude();
+    return minimumVector(r1, r2).magnitude();
 }
 
-// Return minimum image squared distance from 'i' to 'j'
-double TriclinicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image squared distance from r1 to r2
+double TriclinicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return minimumVector(i, j).magnitudeSq();
+    return minimumVector(r1, r2).magnitudeSq();
 }
 
 /*
@@ -125,7 +124,7 @@ Vec3<double> TriclinicBox::foldFrac(const Vec3<double> &r) const
     // Convert coordinate to fractional coords
     auto frac = inverseAxes_ * r;
 
-    // Fold into Box and remultiply by inverse matrix
+    // Fold into Box
     frac.x -= floor(frac.x);
     frac.y -= floor(frac.y);
     frac.z -= floor(frac.z);

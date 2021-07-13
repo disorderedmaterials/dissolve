@@ -3,7 +3,6 @@
 
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/cell.h"
 
 NonPeriodicBox::NonPeriodicBox(double length) : Box()
 {
@@ -27,19 +26,19 @@ NonPeriodicBox::NonPeriodicBox(double length) : Box()
  * Minimum Image Routines (virtual implementations)
  */
 
-// Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const { return i; }
+// Return minimum image coordinates of r1 with respect to r2
+Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const { return r1; }
 
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const { return j - i; }
+// Return minimum image vector from r1 to r2
+Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const { return r2 - r1; }
 
-// Return minimum image distance from 'i' to 'j'
-double NonPeriodicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const { return (j - i).magnitude(); }
+// Return minimum image distance from r1 to r2
+double NonPeriodicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const { return (r2 - r1).magnitude(); }
 
-// Return minimum image squared distance from 'i' to 'j'
-double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image squared distance from r1 to r2
+double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return (j - i).magnitudeSq();
+    return (r2 - r1).magnitudeSq();
 }
 
 /*
@@ -85,8 +84,4 @@ Vec3<double> NonPeriodicBox::foldFrac(const Vec3<double> &r) const
 }
 
 // Convert supplied fractional coordinates to real space
-Vec3<double> NonPeriodicBox::fracToReal(const Vec3<double> &r) const
-{
-    // Multiply by box length
-    return r * a_;
-}
+Vec3<double> NonPeriodicBox::fracToReal(const Vec3<double> &r) const { return r * a_; }

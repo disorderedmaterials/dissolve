@@ -89,14 +89,14 @@ class Box
      * Minimum Image Routines (Pure Virtual)
      */
     public:
-    // Return minimum image coordinates of 'i' with respect to 'ref'
-    virtual Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const = 0;
-    // Return minimum image vector from 'i' to 'j'
-    virtual Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const = 0;
-    // Return minimum image distance from 'i' to 'j'
-    virtual double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const = 0;
-    // Return minimum image squared distance from 'i' to 'j'
-    virtual double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const = 0;
+    // Return minimum image coordinates of r1 with respect to r2
+    virtual Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const = 0;
+    // Return minimum image vector from r1 to r2
+    virtual Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const = 0;
+    // Return minimum image distance from r1 to r2
+    virtual double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const = 0;
+    // Return minimum image squared distance from r1 to r2
+    virtual double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const = 0;
 
     /*
      * Utility Routines
@@ -117,9 +117,9 @@ class Box
     // Return random coordinate inside Box
     virtual Vec3<double> randomCoordinate() const = 0;
     // Return folded coordinate (i.e. inside current Box)
-    virtual Vec3<double> fold(const Vec3<double> &i) const = 0;
+    virtual Vec3<double> fold(const Vec3<double> &r) const = 0;
     // Return folded fractional coordinate (i.e. inside current Box)
-    virtual Vec3<double> foldFrac(const Vec3<double> &i) const = 0;
+    virtual Vec3<double> foldFrac(const Vec3<double> &r) const = 0;
     // Convert supplied fractional coordinates to real space
     virtual Vec3<double> fracToReal(const Vec3<double> &r) const = 0;
 
@@ -160,14 +160,14 @@ class NonPeriodicBox : public Box
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
-    // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
-    // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
@@ -176,9 +176,9 @@ class NonPeriodicBox : public Box
     // Return random coordinate inside Box
     Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const override;
+    Vec3<double> fold(const Vec3<double> &r) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const override;
+    Vec3<double> foldFrac(const Vec3<double> &r) const override;
     // Convert supplied fractional coordinates to real space
     Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
@@ -194,14 +194,14 @@ class CubicBox : public Box
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
-    // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
-    // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
@@ -210,9 +210,9 @@ class CubicBox : public Box
     // Return random coordinate inside Box
     Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const override;
+    Vec3<double> fold(const Vec3<double> &r) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const override;
+    Vec3<double> foldFrac(const Vec3<double> &r) const override;
     // Convert supplied fractional coordinates to real space
     Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
@@ -228,14 +228,14 @@ class OrthorhombicBox : public Box
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
-    // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
-    // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
@@ -244,9 +244,9 @@ class OrthorhombicBox : public Box
     // Return random coordinate inside Box
     Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const override;
+    Vec3<double> fold(const Vec3<double> &r) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const override;
+    Vec3<double> foldFrac(const Vec3<double> &r) const override;
     // Convert supplied fractional coordinates to real space
     Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
@@ -262,14 +262,14 @@ class MonoclinicBox : public Box
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
-    // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
-    // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
@@ -278,9 +278,9 @@ class MonoclinicBox : public Box
     // Return random coordinate inside Box
     Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const override;
+    Vec3<double> fold(const Vec3<double> &r) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const override;
+    Vec3<double> foldFrac(const Vec3<double> &r) const override;
     // Convert supplied fractional coordinates to real space
     Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
@@ -296,14 +296,14 @@ class TriclinicBox : public Box
      * Minimum Image Routines (Virtual Implementations)
      */
     public:
-    // Return minimum image coordinates of 'i' with respect to 'ref'
-    Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const override;
-    // Return minimum image vector from 'i' to 'j'
-    Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image distance from 'i' to 'j'
-    double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const override;
-    // Return minimum image squared distance from 'i' to 'j'
-    double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const override;
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 
     /*
      * Utility Routines (Virtual Implementations)
@@ -312,9 +312,9 @@ class TriclinicBox : public Box
     // Return random coordinate inside Box
     Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &i) const override;
+    Vec3<double> fold(const Vec3<double> &r) const override;
     // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &i) const override;
+    Vec3<double> foldFrac(const Vec3<double> &r) const override;
     // Convert supplied fractional coordinates to real space
     Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };

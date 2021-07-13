@@ -3,7 +3,6 @@
 
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/cell.h"
 
 MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
 {
@@ -39,10 +38,10 @@ MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
  */
 
 // Return minimum image coordinates of 'i' with respect to 'j'
-Vec3<double> MonoclinicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
+Vec3<double> MonoclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     // TODO Can speed this up since we know which matrix elements are zero
-    auto mim = inverseAxes_ * (ref - i);
+    auto mim = inverseAxes_ * (r2 - r1);
     if (mim.x < -0.5)
         mim.x += 1.0;
     else if (mim.x > 0.5)
@@ -55,14 +54,14 @@ Vec3<double> MonoclinicBox::minimumImage(const Vec3<double> &i, const Vec3<doubl
         mim.z += 1.0;
     else if (mim.z > 0.5)
         mim.z -= 1.0;
-    return axes_ * mim + ref;
+    return axes_ * mim + r2;
 }
 
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image vector from r1 to r2
+Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     // TODO Can speed this up since we know which matrix elements are zero
-    auto mim = inverseAxes_ * (j - i);
+    auto mim = inverseAxes_ * (r2 - r1);
     if (mim.x < -0.5)
         mim.x += 1.0;
     else if (mim.x > 0.5)
@@ -78,16 +77,16 @@ Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &i, const Vec3<doub
     return axes_ * mim;
 }
 
-// Return minimum image distance from 'i' to 'j'
-double MonoclinicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image distance from r1 to r2
+double MonoclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return minimumVector(i, j).magnitude();
+    return minimumVector(r1, r2).magnitude();
 }
 
-// Return minimum image squared distance from 'i' to 'j'
-double MonoclinicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image squared distance from r1 to r2
+double MonoclinicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return minimumVector(i, j).magnitudeSq();
+    return minimumVector(r1, r2).magnitudeSq();
 }
 
 /*
