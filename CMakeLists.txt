@@ -98,11 +98,7 @@ if(GUI)
   set(Qt6GuiTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6GuiTools/")
   set(Qt6OpenGL_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6OpenGL/")
   set(Qt6OpenGLWidgets_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6OpenGLWidgets/")
-  find_package(
-    Qt6
-    COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets
-    REQUIRED
-  )
+  find_package(Qt6 COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets REQUIRED)
   # find_package(Qt6Widgets 6.0 REQUIRED) find_package(Qt6Core 6.0 REQUIRED) find_package(Qt6Gui 6.0 REQUIRED) find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
