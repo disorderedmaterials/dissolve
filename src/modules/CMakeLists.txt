@@ -26,9 +26,7 @@ macro(dissolve_add_module header modulename)
     )
     target_link_libraries(
       module_${modulename}_nogui
-      PRIVATE base
-  Qt6::OpenGL
-  Qt6::OpenGLWidgets
+      PRIVATE base Qt6::OpenGL Qt6::OpenGLWidgets
       PUBLIC ${THREADING_LINK_LIBS}
     )
   endif()
