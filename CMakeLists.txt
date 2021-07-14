@@ -91,13 +91,6 @@ if(GUI)
   # Add extra functions
   include(FindFTGL)
 
-  set(Qt6_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6/")
-  set(Qt6Widgets_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6Widgets/")
-  set(Qt6WidgetsTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6WidgetsTools/")
-  set(Qt6CoreTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6CoreTools/")
-  set(Qt6GuiTools_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6GuiTools/")
-  set(Qt6OpenGL_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6OpenGL/")
-  set(Qt6OpenGLWidgets_DIR "/home/adam/6.0.1/gcc_64/lib/cmake/Qt6OpenGLWidgets/")
   find_package(OpenGL REQUIRED)
   find_package(Qt6 COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets REQUIRED)
   # find_package(Qt6Widgets 6.0 REQUIRED) find_package(Qt6Core 6.0 REQUIRED) find_package(Qt6Gui 6.0 REQUIRED) find_package(OpenGL REQUIRED)
@@ -167,7 +160,6 @@ if(APPLE)
 
   if(GUI)
     # Find GLUT
-    set(CMAKE_PREFIX_PATH "/tmp/qt/6.1.1/clang_64")
     find_package(GLUT REQUIRED)
 
     # Adjust external include directories for GUI
