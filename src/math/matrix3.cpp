@@ -93,12 +93,14 @@ Matrix3 &Matrix3::operator*=(const double a)
     return *this;
 }
 
-// Array access (operator [])
 double &Matrix3::operator[](int index) { return matrix_[index]; }
 
 /*
  * General Routines
  */
+
+// Return the current matrix array
+const std::array<double, 9> &Matrix3::matrix() const { return matrix_; }
 
 // Reset to the identity matrix
 void Matrix3::setIdentity() { matrix_ = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0}; }
@@ -591,12 +593,12 @@ Vec3<double> Matrix3::transform(double x, double y, double z) const
 }
 
 // Transform coordinates supplied and return as Vec3<double>
-Vec3<double> Matrix3::transform(Vec3<double> vec) const
+Vec3<double> Matrix3::transform(Vec3<double> r) const
 {
     Vec3<double> result;
-    result.x = vec.x * matrix_[0] + vec.y * matrix_[3] + vec.z * matrix_[6];
-    result.y = vec.x * matrix_[1] + vec.y * matrix_[4] + vec.z * matrix_[7];
-    result.z = vec.x * matrix_[2] + vec.y * matrix_[5] + vec.z * matrix_[8];
+    result.x = r.x * matrix_[0] + r.y * matrix_[3] + r.z * matrix_[6];
+    result.y = r.x * matrix_[1] + r.y * matrix_[4] + r.z * matrix_[7];
+    result.z = r.x * matrix_[2] + r.y * matrix_[5] + r.z * matrix_[8];
     return result;
 }
 
