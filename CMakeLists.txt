@@ -342,7 +342,7 @@ if(GUI)
             antlr4-runtime
             Qt6::Widgets
             Qt6::Core
-            OpenGL:GL
+            OpenGL:OpenGL
             ${FTGL_LIBRARIES}
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
