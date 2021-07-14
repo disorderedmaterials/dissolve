@@ -15,7 +15,20 @@ class ProcessPool;
 class Box
 {
     public:
-    Box();
+    // Box Type Enum
+    enum class BoxType
+    {
+        NonPeriodic,     /* Non-periodic system - cubic box, but no minimum image calculation */
+        Cubic,           /* Cubic box with A == B == C, alphe == beta == gamma == 90 */
+        Orthorhombic,    /* Orthorhombic box with A != B != C, alphe == beta == gamma = 90 */
+        MonoclinicAlpha, /* Monoclinic box with A != B != C, alpha != 90, and beta == gamma == 90 */
+        MonoclinicBeta,  /* Monoclinic box with A != B != C, beta != 90, and alpha == gamma == 90 */
+        MonoclinicGamma, /* Monoclinic box with A != B != C, gamma != 90, and alpha == beta == 90 */
+        Triclinic        /* Triclinic box with A != B != C, alpha != beta != gamma != 90 */
+    };
+    // Return enum options for BoxType
+    static EnumOptions<BoxType> boxTypes();
+    Box(Box::BoxType boxType, const Vec3<double> lengths, const Vec3<double> angles);
     virtual ~Box() = default;
     Box &operator=(const Box &source) = default;
 
@@ -23,18 +36,6 @@ class Box
      * Basic Definition
      */
     public:
-    // Box Type Enum
-    enum class BoxType
-    {
-        NonPeriodic,  /* Non-periodic system - cubic box, but no minimum image calculation */
-        Cubic,        /* Cubic box with A == B == C, alphe == beta == gamma == 90 */
-        Orthorhombic, /* Orthorhombic box with A != B != C, alphe == beta == gamma = 90 */
-        Monoclinic,   /* Monoclinic box with A != B != C, alpha != 90, and beta == gamma == 90 */
-        Triclinic     /* Triclinic box with A != B != C, alpha != beta != gamma != 90 */
-    };
-    // Return enum options for BoxType
-    static EnumOptions<BoxType> boxTypes();
-
     protected:
     // Box type
     BoxType type_;
@@ -270,12 +271,72 @@ class OrthorhombicBox : public Box
     double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 };
 
-// Monoclinic Box Definition
-class MonoclinicBox : public Box
+// MonoclinicAlpha Box Definition
+class MonoclinicAlphaBox : public Box
 {
     public:
-    MonoclinicBox(const Vec3<double> lengths, double beta);
-    ~MonoclinicBox() override = default;
+    MonoclinicAlphaBox(const Vec3<double> lengths, double alpha);
+    ~MonoclinicAlphaBox() override = default;
+
+    /*
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
+     */
+    public:
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+};
+
+// MonoclinicBeta Box Definition
+class MonoclinicBetaBox : public Box
+{
+    public:
+    MonoclinicBetaBox(const Vec3<double> lengths, double beta);
+    ~MonoclinicBetaBox() override = default;
+
+    /*
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
+     */
+    public:
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+};
+
+// MonoclinicGamma Box Definition
+class MonoclinicGammaBox : public Box
+{
+    public:
+    MonoclinicGammaBox(const Vec3<double> lengths, double gamma);
+    ~MonoclinicGammaBox() override = default;
 
     /*
      * Coordinate Conversion

@@ -4,26 +4,7 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
-{
-    type_ = Box::BoxType::Orthorhombic;
-
-    // Construct axes_
-    axes_.setColumn(0, lengths.x, 0.0, 0.0);
-    axes_.setColumn(1, 0.0, lengths.y, 0.0);
-    axes_.setColumn(2, 0.0, 0.0, lengths.z);
-
-    // Store Box lengths
-    a_ = lengths.x;
-    b_ = lengths.y;
-    c_ = lengths.z;
-    ra_ = 1.0 / a_;
-    rb_ = 1.0 / b_;
-    rc_ = 1.0 / c_;
-
-    // Finalise associated data
-    finalise();
-}
+OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box(Box::BoxType::Orthorhombic, lengths, {90.0, 90.0, 90.0}) {}
 
 /*
  * Coordinate Conversion

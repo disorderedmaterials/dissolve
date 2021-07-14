@@ -78,8 +78,12 @@ TEST(BoxTest, Orthorhombic)
 
 TEST(BoxTest, Monoclinic)
 {
-    testBox(MonoclinicBox({30.0, 30.0, 30.0}, 66.0));
-    testBox(MonoclinicBox({10.0, 20.0, 30.0}, 66.0));
+    testBox(MonoclinicAlphaBox({30.0, 30.0, 30.0}, 66.0));
+    testBox(MonoclinicAlphaBox({10.0, 20.0, 30.0}, 120.0));
+    testBox(MonoclinicBetaBox({30.0, 30.0, 30.0}, 66.0));
+    testBox(MonoclinicBetaBox({10.0, 20.0, 30.0}, 120.0));
+    testBox(MonoclinicGammaBox({30.0, 30.0, 30.0}, 66.0));
+    testBox(MonoclinicGammaBox({10.0, 20.0, 30.0}, 120.0));
 }
 
 TEST(BoxTest, Triclinic)

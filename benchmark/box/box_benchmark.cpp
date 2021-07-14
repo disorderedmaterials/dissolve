@@ -19,10 +19,10 @@ template <typename BoxType> BoxType createTestBox()
         OrthorhombicBox box(lengths);
         return box;
     }
-    else if constexpr (std::is_same_v<BoxType, MonoclinicBox>)
+    else if constexpr (std::is_same_v<BoxType, MonoclinicAlphaBox>)
     {
         Vec3<double> lengths(1.00, 1.00, 1.00);
-        MonoclinicBox box(lengths, 45);
+        MonoclinicAlphaBox box(lengths, 45);
         return box;
     }
     else if constexpr (std::is_same_v<BoxType, TriclinicBox>)
@@ -130,14 +130,14 @@ BENCHMARK_TEMPLATE(BM_Box_MinimumVector, OrthorhombicBox);
 BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, OrthorhombicBox);
 BENCHMARK_TEMPLATE(BM_Box_Fold, OrthorhombicBox);
 BENCHMARK_TEMPLATE(BM_Box_FoldFrac, OrthorhombicBox);
-BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_Box_MinimumVector, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_Box_Fold, MonoclinicBox);
-BENCHMARK_TEMPLATE(BM_Box_FoldFrac, MonoclinicBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, MonoclinicAlphaBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, MonoclinicAlphaBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicAlphaBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumVector, MonoclinicAlphaBox);
+BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicAlphaBox);
+BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, MonoclinicAlphaBox);
+BENCHMARK_TEMPLATE(BM_Box_Fold, MonoclinicAlphaBox);
+BENCHMARK_TEMPLATE(BM_Box_FoldFrac, MonoclinicAlphaBox);
 BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_MinimumImage, TriclinicBox);

@@ -4,22 +4,7 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-CubicBox::CubicBox(double length) : Box()
-{
-    type_ = Box::BoxType::Cubic;
-
-    // Construct axes_
-    axes_.setColumn(0, length, 0.0, 0.0);
-    axes_.setColumn(1, 0.0, length, 0.0);
-    axes_.setColumn(2, 0.0, 0.0, length);
-
-    // Store box length and reciprocal
-    a_ = length;
-    ra_ = 1.0 / a_;
-
-    // Finalise associated data
-    finalise();
-}
+CubicBox::CubicBox(double length) : Box(Box::BoxType::Cubic, {length, length, length}, {90.0, 90.0, 90.0}) {}
 
 /*
  * Coordinate Conversion

@@ -4,33 +4,9 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
+MonoclinicGammaBox::MonoclinicGammaBox(const Vec3<double> lengths, double gamma)
+    : Box(Box::BoxType::MonoclinicGamma, lengths, {90.0, 90.0, gamma})
 {
-    type_ = Box::BoxType::Monoclinic;
-
-    // Construct axes
-    alpha_ = 90.0;
-    beta_ = beta;
-    gamma_ = 90.0;
-    // Assume that A lays along x-axis and C lays along the z-axis (since gamma = 90)
-    axes_.setColumn(0, 1.0, 0.0, 0.0);
-    axes_.setColumn(1, 0.0, 1.0, 0.0);
-    // The C vector will only have components in x and z
-    double cosBeta = cos(beta_ / DEGRAD);
-    axes_.setColumn(2, cosBeta, 0.0, sqrt(1.0 - cosBeta * cosBeta));
-
-    // Multiply the unit vectors to have the correct lengths
-    axes_.columnMultiply(0, lengths.x);
-    axes_.columnMultiply(1, lengths.y);
-    axes_.columnMultiply(2, lengths.z);
-
-    // Store Box lengths
-    a_ = lengths.x;
-    b_ = lengths.y;
-    c_ = lengths.z;
-
-    // Finalise associated data
-    finalise();
 }
 
 /*
@@ -38,7 +14,7 @@ MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
  */
 
 // Convert specified fractional coordinates to real-space coordinates
-void MonoclinicBox::toReal(Vec3<double> &r) const
+void MonoclinicGammaBox::toReal(Vec3<double> &r) const
 {
     auto x = r.x * axesArray_[0] + r.y * axesArray_[3] + r.z * axesArray_[6];
     auto y = r.x * axesArray_[1] + r.y * axesArray_[4] + r.z * axesArray_[7];
@@ -49,7 +25,7 @@ void MonoclinicBox::toReal(Vec3<double> &r) const
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-void MonoclinicBox::toFractional(Vec3<double> &r) const
+void MonoclinicGammaBox::toFractional(Vec3<double> &r) const
 {
     auto x = r.x * inverseAxesArray_[0] + r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
     auto y = r.x * inverseAxesArray_[1] + r.y * inverseAxesArray_[4] + r.z * inverseAxesArray_[7];
@@ -64,7 +40,7 @@ void MonoclinicBox::toFractional(Vec3<double> &r) const
  */
 
 // Return minimum image coordinates of r1 with respect to r2
-Vec3<double> MonoclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vec3<double> MonoclinicGammaBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v21 = r1 - r2;
     Vec3<double> rFrac(v21.x * inverseAxesArray_[0] + v21.y * inverseAxesArray_[3] + v21.z * inverseAxesArray_[6],
@@ -81,7 +57,7 @@ Vec3<double> MonoclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<doub
 }
 
 // Return minimum image distance from r1 to r2
-double MonoclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicGammaBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
     Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
@@ -98,7 +74,7 @@ double MonoclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double>
 }
 
 // Return minimum image vector from r1 to r2
-Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vec3<double> MonoclinicGammaBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
     Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
@@ -115,7 +91,7 @@ Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<dou
 }
 
 // Return minimum image squared distance from r1 to r2
-double MonoclinicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicGammaBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
     Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],

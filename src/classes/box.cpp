@@ -8,33 +8,43 @@
 #include "math/interpolator.h"
 #include <algorithm>
 
-Box::Box()
+Box::Box(Box::BoxType boxType, const Vec3<double> lengths, const Vec3<double> angles)
+    : type_(boxType), a_(lengths.x), b_(lengths.y), c_(lengths.z), ra_(1.0 / lengths.x), rb_(1.0 / lengths.y),
+      rc_(1.0 / lengths.z), alpha_(angles.x), beta_(angles.y), gamma_(angles.z)
 {
-    type_ = Box::BoxType::Cubic;
-    periodic_.set(true, true, true);
-    volume_ = 0.0;
-}
+    // Set periodicity flags
+    periodic_.set(type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic);
 
-/*
- * Basic Definition
- */
+    // Construct axes matrix
+    axes_.setIdentity();
 
-// Return enum options for BoxType
-EnumOptions<Box::BoxType> Box::boxTypes()
-{
-    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::NonPeriodic, "NonPeriodic"},
-                                                 {Box::BoxType::Cubic, "Cubic"},
-                                                 {Box::BoxType::Orthorhombic, "Orthorhombic"},
-                                                 {Box::BoxType::Monoclinic, "Monoclinic"},
-                                                 {Box::BoxType::Triclinic, "Triclinic"}});
-}
+    // Determine cosines of box angles, zeroing if below some tolerance to clean up matrices
+    auto cosAlpha = cos(alpha_ / DEGRAD);
+    if (fabs(cosAlpha) < 1.0e-10)
+        cosAlpha = 0;
+    auto cosBeta = cos(beta_ / DEGRAD);
+    if (fabs(cosBeta) < 1.0e-10)
+        cosBeta = 0;
+    auto cosGamma = cos(gamma_ / DEGRAD);
+    if (fabs(cosGamma) < 1.0e-10)
+        cosGamma = 0;
 
-// Return Box type
-Box::BoxType Box::type() const { return type_; }
+    // We set A={1,0,0}, so cos(gamma) equals 'x' of the B vector
+    axes_.setColumn(1, cosGamma, sqrt(1.0 - cosGamma * cosGamma), 0.0);
 
-// Finalise Box, storing volume and reciprocal and inverted axes
-void Box::finalise()
-{
+    // The C vector can now be determined in parts.
+    // - C.x = cos(beta)    (since {1,0,0}{x,y,z} = {1}{x} = cos(beta))
+    // - C.y can be determined by completing the dot product between the B and C vectors
+    // - C.z is the remainder of the unit vector
+    axes_[6] = cosBeta;
+    axes_[7] = (cosAlpha - axes_[3] * axes_[6]) / axes_[4];
+    axes_[8] = sqrt(1.0 - axes_[6] * axes_[6] - axes_[7] * axes_[7]);
+
+    // Multiply the unit vectors to have the correct lengths
+    axes_.columnMultiply(0, a_);
+    axes_.columnMultiply(1, b_);
+    axes_.columnMultiply(2, c_);
+
     // Copy axes array
     axesArray_ = axes_.matrix();
 
@@ -58,6 +68,25 @@ void Box::finalise()
     reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
     reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
+
+/*
+ * Basic Definition
+ */
+
+// Return enum options for BoxType
+EnumOptions<Box::BoxType> Box::boxTypes()
+{
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::NonPeriodic, "NonPeriodic"},
+                                                 {Box::BoxType::Cubic, "Cubic"},
+                                                 {Box::BoxType::Orthorhombic, "Orthorhombic"},
+                                                 {Box::BoxType::MonoclinicAlpha, "MonoclinicAlpha"},
+                                                 {Box::BoxType::MonoclinicBeta, "MonoclinicBeta"},
+                                                 {Box::BoxType::MonoclinicGamma, "MonoclinicGamma"},
+                                                 {Box::BoxType::Triclinic, "Triclinic"}});
+}
+
+// Return Box type
+Box::BoxType Box::type() const { return type_; }
 
 // Return volume
 double Box::volume() const { return volume_; }
@@ -244,21 +273,29 @@ double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecj
 std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
     // Determine box type from supplied lengths / angles
-    auto rightAlpha = (fabs(angles.x - 90.0) < 0.001);
-    auto rightBeta = (fabs(angles.y - 90.0) < 0.001);
-    auto rightGamma = (fabs(angles.z - 90.0) < 0.001);
+    auto rightAlpha = (fabs(angles.x - 90.0) < 1.0e-5);
+    auto rightBeta = (fabs(angles.y - 90.0) < 1.0e-5);
+    auto rightGamma = (fabs(angles.z - 90.0) < 1.0e-5);
+    int nRight = rightAlpha + rightBeta + rightGamma;
 
-    if (rightAlpha && rightBeta && rightGamma)
+    if (nRight == 3)
     {
-        auto abSame = (fabs(lengths.x - lengths.y) < 0.0001);
-        auto acSame = (fabs(lengths.x - lengths.z) < 0.0001);
+        auto abSame = (fabs(lengths.x - lengths.y) < 1.0e-5);
+        auto acSame = (fabs(lengths.x - lengths.z) < 1.0e-5);
         if (abSame && acSame)
             return std::make_unique<CubicBox>(lengths.x);
         else
             return std::make_unique<OrthorhombicBox>(lengths);
     }
-    else if (rightAlpha && (!rightBeta) && rightGamma)
-        return std::make_unique<MonoclinicBox>(lengths, angles.y);
+    else if (nRight == 2)
+    {
+        if (!rightAlpha)
+            return std::make_unique<MonoclinicAlphaBox>(lengths, angles.x);
+        else if (!rightBeta)
+            return std::make_unique<MonoclinicBetaBox>(lengths, angles.y);
+        else
+            return std::make_unique<MonoclinicGammaBox>(lengths, angles.z);
+    }
     else
         return std::make_unique<TriclinicBox>(lengths, angles);
 }
