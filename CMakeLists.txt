@@ -167,6 +167,7 @@ if(APPLE)
 
   if(GUI)
     # Find GLUT
+    set(CMAKE_PREFIX_PATH "/tmp/qt/6.1.1/clang_64")
     find_package(GLUT REQUIRED)
 
     # Adjust external include directories for GUI
@@ -345,7 +346,7 @@ if(GUI)
             antlr4-runtime
             Qt6::Widgets
             Qt6::Core
-	    OpenGL:GL
+            OpenGL:GL
             ${FTGL_LIBRARIES}
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
