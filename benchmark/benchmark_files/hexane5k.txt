@@ -213,14 +213,14 @@ Configuration  'Hexane1k'
       Angles  9.000000e+01  9.000000e+01  9.000000e+01
       NonPeriodic  False
     EndBox
-    AddSpecies
+    Add
       Species  'Hexane'
       Population  '5000'
       BoxAction  AddVolume
       Density  'rho'  g/cm3
       Rotate  True
       Positioning  Random
-    EndAddSpecies
+    EndAdd
   EndGenerator
 
   Temperature  300.0

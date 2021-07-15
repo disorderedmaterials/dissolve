@@ -11,11 +11,11 @@ EndSpecies
 # Define Configuration
 Configuration  'Box'
   Generator
-    AddSpecies
+    Add
       Density  0.05  atoms/A3
       Population  1000
       Species  'Ball'
-    EndAddSpecies
+    EndAdd
   EndGenerator
   CellDivisionLength  5.0
 
