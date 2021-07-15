@@ -16,23 +16,21 @@ TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles
 // Convert specified fractional coordinates to real-space coordinates
 void TriclinicBox::toReal(Vec3<double> &r) const
 {
-    auto x = r.x * axesArray_[0] + r.y * axesArray_[3] + r.z * axesArray_[6];
-    auto y = r.x * axesArray_[1] + r.y * axesArray_[4] + r.z * axesArray_[7];
-    auto z = r.x * axesArray_[2] + r.y * axesArray_[5] + r.z * axesArray_[8];
-    r.x = x;
-    r.y = y;
-    r.z = z;
+    r.x *= axesArray_[0];
+    r.x += r.y * axesArray_[3] + r.z * axesArray_[6];
+    r.y *= axesArray_[4];
+    r.y += r.z * axesArray_[7];
+    r.z *= axesArray_[8];
 }
 
 // Convert specified real-space coordinates to fractional coordinates
 void TriclinicBox::toFractional(Vec3<double> &r) const
 {
-    auto x = r.x * inverseAxesArray_[0] + r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
-    auto y = r.x * inverseAxesArray_[1] + r.y * inverseAxesArray_[4] + r.z * inverseAxesArray_[7];
-    auto z = r.x * inverseAxesArray_[2] + r.y * inverseAxesArray_[5] + r.z * inverseAxesArray_[8];
-    r.x = x;
-    r.y = y;
-    r.z = z;
+    r.x *= inverseAxesArray_[0];
+    r.x += r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
+    r.y *= inverseAxesArray_[4];
+    r.y += r.z * inverseAxesArray_[7];
+    r.z *= inverseAxesArray_[8];
 }
 
 /*
@@ -43,15 +41,11 @@ void TriclinicBox::toFractional(Vec3<double> &r) const
 Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v21 = r1 - r2;
-    Vec3<double> rFrac(v21.x * inverseAxesArray_[0] + v21.y * inverseAxesArray_[3] + v21.z * inverseAxesArray_[6],
-                       v21.x * inverseAxesArray_[1] + v21.y * inverseAxesArray_[4] + v21.z * inverseAxesArray_[7],
-                       v21.x * inverseAxesArray_[2] + v21.y * inverseAxesArray_[5] + v21.z * inverseAxesArray_[8]);
 
-    wrap(rFrac);
-
-    v21.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6] + r2.x;
-    v21.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7] + r2.y;
-    v21.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8] + r2.z;
+    toFractional(v21);
+    wrap(v21);
+    toReal(v21);
+    v21 += r2;
 
     return v21;
 }
@@ -60,15 +54,10 @@ Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<doubl
 double TriclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
-    Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
-                       v12.x * inverseAxesArray_[1] + v12.y * inverseAxesArray_[4] + v12.z * inverseAxesArray_[7],
-                       v12.x * inverseAxesArray_[2] + v12.y * inverseAxesArray_[5] + v12.z * inverseAxesArray_[8]);
 
-    wrap(rFrac);
-
-    v12.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6];
-    v12.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7];
-    v12.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8];
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
 
     return v12.magnitude();
 }
@@ -77,15 +66,10 @@ double TriclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> 
 Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
-    Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
-                       v12.x * inverseAxesArray_[1] + v12.y * inverseAxesArray_[4] + v12.z * inverseAxesArray_[7],
-                       v12.x * inverseAxesArray_[2] + v12.y * inverseAxesArray_[5] + v12.z * inverseAxesArray_[8]);
 
-    wrap(rFrac);
-
-    v12.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6];
-    v12.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7];
-    v12.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8];
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
 
     return v12;
 }
@@ -94,15 +78,10 @@ Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<doub
 double TriclinicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
-    Vec3<double> rFrac(v12.x * inverseAxesArray_[0] + v12.y * inverseAxesArray_[3] + v12.z * inverseAxesArray_[6],
-                       v12.x * inverseAxesArray_[1] + v12.y * inverseAxesArray_[4] + v12.z * inverseAxesArray_[7],
-                       v12.x * inverseAxesArray_[2] + v12.y * inverseAxesArray_[5] + v12.z * inverseAxesArray_[8]);
 
-    wrap(rFrac);
-
-    v12.x = rFrac.x * axesArray_[0] + rFrac.y * axesArray_[3] + rFrac.z * axesArray_[6];
-    v12.y = rFrac.x * axesArray_[1] + rFrac.y * axesArray_[4] + rFrac.z * axesArray_[7];
-    v12.z = rFrac.x * axesArray_[2] + rFrac.y * axesArray_[5] + rFrac.z * axesArray_[8];
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
 
     return v12.magnitudeSq();
 }
