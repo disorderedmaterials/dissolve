@@ -59,7 +59,11 @@ void NodeKeywordWidget::updateValue()
     auto availableNodes = keyword_->onlyInScope()
                               ? keyword_->parentNode()->nodesInScope(keyword_->nodeType(), keyword_->nodeClass())
                               : keyword_->parentNode()->nodes(keyword_->nodeType(), keyword_->nodeClass());
-    combo_box_updater(ui_.NodeCombo, availableNodes.begin(), availableNodes.end(), [](auto *item) { return item->name(); });
+    combo_box_updater(ui_.NodeCombo, availableNodes.begin(), availableNodes.end(), [](auto *item) { return item->name(); },
+                      true);
+
+    // Set the current item
+    combo_box_set_current(ui_.NodeCombo, keyword_->data());
 
     refreshing_ = false;
 }

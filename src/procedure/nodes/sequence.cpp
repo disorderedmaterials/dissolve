@@ -185,27 +185,33 @@ std::vector<const ProcedureNode *> SequenceProcedureNode::nodes(std::optional<Pr
 
 // Return named node if it is currently in scope (and matches the type / class given)
 const ProcedureNode *SequenceProcedureNode::nodeInScope(const ProcedureNode *queryingNode, std::string_view name,
+                                                        const ProcedureNode *excludeNode,
                                                         std::optional<ProcedureNode::NodeType> optNodeType,
                                                         std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
+    // If one was give, start from the querying node and work backwards...
     if (queryingNode)
+    {
         assert(sequence_.contains(queryingNode));
 
-    // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != nullptr; node = node->prev())
-    {
-        if (DissolveSys::sameString(node->name(), name))
+        for (auto *node = queryingNode; node != nullptr; node = node->prev())
         {
-            // Check type / class
-            if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
-                (optNodeClass && optNodeClass.value() == node->nodeClass()))
-                return node;
+            if (node == excludeNode)
+                continue;
+
+            if (DissolveSys::sameString(node->name(), name))
+            {
+                // Check type / class
+                if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
+                    (optNodeClass && optNodeClass.value() == node->nodeClass()))
+                    return node;
+            }
         }
     }
 
     // Not in our list. Recursively check our parent(s)
     if (parentNode_)
-        return parentNode_->nodeInScope(name, optNodeType, optNodeClass);
+        return parentNode_->nodeInScope(name, excludeNode, optNodeType, optNodeClass);
 
     // Not found
     return nullptr;
@@ -216,18 +222,20 @@ std::vector<const ProcedureNode *>
 SequenceProcedureNode::nodesInScope(const ProcedureNode *queryingNode, std::optional<ProcedureNode::NodeType> optNodeType,
                                     std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    if (queryingNode)
-        assert(sequence_.contains(queryingNode));
-
     std::vector<const ProcedureNode *> matches;
 
-    // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != nullptr; node = node->prev())
+    // If one was give, start from the querying node and work backwards...
+    if (queryingNode)
     {
-        // Check type / class
-        if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
-            (optNodeClass && optNodeClass.value() == node->nodeClass()))
-            matches.push_back(node);
+        assert(sequence_.contains(queryingNode));
+
+        for (auto *node = queryingNode->prev(); node != nullptr; node = node->prev())
+        {
+            // Check type / class
+            if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
+                (optNodeClass && optNodeClass.value() == node->nodeClass()))
+                matches.push_back(node);
+        }
     }
 
     // Not in our list. Recursively check our parent(s)
@@ -469,6 +477,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::PickCylinder):
                 newNode = new PickCylinderProcedureNode();
                 break;
+            case (ProcedureNode::NodeType::PickProximity):
+                newNode = new PickProximityProcedureNode();
+                break;
             case (ProcedureNode::NodeType::Process1D):
                 newNode = new Process1DProcedureNode();
                 break;
@@ -487,6 +498,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::Sequence):
                 /* This should never be called */
                 newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
+                break;
+            case (ProcedureNode::NodeType::Transmute):
+                newNode = new TransmuteProcedureNode();
                 break;
             default:
                 throw(std::runtime_error(

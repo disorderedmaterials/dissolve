@@ -62,13 +62,15 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Parameters,
         Pick,
         PickCylinder,
+        PickProximity,
         Process1D,
         Process2D,
         Process3D,
         Remove,
         Select,
         Sequence,
-        Sum1D
+        Sum1D,
+        Transmute
     };
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();
@@ -149,7 +151,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node if it is currently in scope (and matches the type / class given)
-    const ProcedureNode *nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+    const ProcedureNode *nodeInScope(std::string_view name, const ProcedureNode *excludeNode = nullptr,
+                                     std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                      std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes in this node's scope (and matches the type / class given)
     std::vector<const ProcedureNode *> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,

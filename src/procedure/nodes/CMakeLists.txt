@@ -29,6 +29,7 @@ add_library(
   pick.cpp
   pickbase.cpp
   pickcylinder.cpp
+  pickproximity.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
@@ -37,6 +38,7 @@ add_library(
   select.cpp
   sequence.cpp
   sum1d.cpp
+  transmute.cpp
   add.h
   box.h
   calculateangle.h
@@ -67,11 +69,13 @@ add_library(
   pick.h
   pickbase.h
   pickcylinder.h
+  pickproximity.h
   process1d.h
   process2d.h
   process3d.h
   regionbase.h
   remove.h
+  transmute.h
   select.h
   sequence.h
   sum1d.h

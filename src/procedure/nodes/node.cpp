@@ -47,13 +47,15 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Parameters, "Parameters"},
                      {ProcedureNode::NodeType::Pick, "Pick"},
                      {ProcedureNode::NodeType::PickCylinder, "PickCylinder"},
+                     {ProcedureNode::NodeType::PickProximity, "PickProximity"},
                      {ProcedureNode::NodeType::Process1D, "Process1D"},
                      {ProcedureNode::NodeType::Process2D, "Process2D"},
                      {ProcedureNode::NodeType::Process3D, "Process3D"},
                      {ProcedureNode::NodeType::Remove, "Remove"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
-                     {ProcedureNode::NodeType::Sum1D, "Sum1D"}});
+                     {ProcedureNode::NodeType::Sum1D, "Sum1D"},
+                     {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }
 
 // Return enum option info for NodeContext
@@ -137,13 +139,14 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 }
 
 // Return named node if it is currently in scope (and matches the type / class given)
-const ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+const ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, const ProcedureNode *excludeNode,
+                                                std::optional<ProcedureNode::NodeType> optNodeType,
                                                 std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
         return nullptr;
 
-    return scope_->nodeInScope(this, name, optNodeType, optNodeClass);
+    return scope_->nodeInScope(this, name, excludeNode, optNodeType, optNodeClass);
 }
 
 // Return list of nodes in this node's scope (and matches the type / class given)

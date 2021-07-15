@@ -51,6 +51,9 @@ bool SpeciesVectorKeyword::read(LineParser &parser, int startArg, const CoreData
 // Write keyword data to specified LineParser
 bool SpeciesVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (isDataEmpty())
+        return true;
+
     // Loop over list of Species
     std::string speciesString;
     for (const auto *sp : data_)

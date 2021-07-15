@@ -30,6 +30,7 @@
 #include "procedure/nodes/parameters.h"
 #include "procedure/nodes/pick.h"
 #include "procedure/nodes/pickcylinder.h"
+#include "procedure/nodes/pickproximity.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"
@@ -37,3 +38,4 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodes/sum1d.h"
+#include "procedure/nodes/transmute.h"

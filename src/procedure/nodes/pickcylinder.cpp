@@ -25,6 +25,8 @@ PickCylinderProcedureNode::PickCylinderProcedureNode(Vec3<double> originFrac, Ve
 bool PickCylinderProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                         GenericList &targetList)
 {
+    Messenger::print("[PickCylinder] Molecules will be selected from {}.\n", moleculePoolName());
+
     // Create our molecules vector
     pickedMolecules_.clear();
 
@@ -48,7 +50,7 @@ bool PickCylinderProcedureNode::execute(ProcessPool &procPool, Configuration *cf
             pickedMolecules_.push_back(mol);
     }
 
-    Messenger::print("[Pick] Total molecules selected = {}.\n", pickedMolecules_.size());
+    Messenger::print("[PickCylinder] Total molecules picked = {}.\n", pickedMolecules_.size());
 
     return true;
 }

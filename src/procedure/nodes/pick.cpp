@@ -34,6 +34,8 @@ bool PickProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Gen
 // Execute node, targetting the supplied Configuration
 bool PickProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
+    Messenger::print("[Pick] Molecules will be selected from {}.\n", moleculePoolName());
+
     // Create our molecules vector
     pickedMolecules_.clear();
 
@@ -48,7 +50,7 @@ bool PickProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::
         pickedMolecules_.push_back(mol);
     }
 
-    Messenger::print("[Pick] Total molecules selected = {}.\n", pickedMolecules_.size());
+    Messenger::print("[Pick] Total molecules picked = {}.\n", pickedMolecules_.size());
 
     return true;
 }

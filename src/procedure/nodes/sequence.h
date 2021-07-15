@@ -87,6 +87,7 @@ class SequenceProcedureNode : public ProcedureNode
                                              std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return named node if it is currently in scope (and matches the type / class given)
     const ProcedureNode *nodeInScope(const ProcedureNode *queryingNode, std::string_view name,
+                                     const ProcedureNode *excludeNode = nullptr,
                                      std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                      std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes in scope (and matching the type / class given)
