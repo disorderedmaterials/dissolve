@@ -3,7 +3,6 @@
 
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/cell.h"
 
 CubicBox::CubicBox(double length) : Box()
 {
@@ -26,25 +25,25 @@ CubicBox::CubicBox(double length) : Box()
  * Minimum Image Routines (virtual implementations)
  */
 
-// Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> CubicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
+// Return minimum image coordinates of r1 with respect to r2
+Vec3<double> CubicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    auto mimVec = i;
-    mimVec -= ref;
+    auto mimVec = r1;
+    mimVec -= r2;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
     mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
     mimVec.z -= int(mimVec.z * ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * a_;
 
-    mimVec += ref;
+    mimVec += r2;
     return mimVec;
 }
 
-// Return minimum image vector from 'i' to 'j'
-Vec3<double> CubicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image vector from r1 to r2
+Vec3<double> CubicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    auto mimVec = j;
-    mimVec -= i;
+    auto mimVec = r2;
+    mimVec -= r1;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
     mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
@@ -53,11 +52,11 @@ Vec3<double> CubicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &
     return mimVec;
 }
 
-// Return minimum image distance from 'i' to 'j'
-double CubicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image distance from r1 to r2
+double CubicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    auto mimVec = j;
-    mimVec -= i;
+    auto mimVec = r2;
+    mimVec -= r1;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
     mimVec.y -= int(mimVec.y * ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * a_;
@@ -66,10 +65,10 @@ double CubicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) c
     return mimVec.magnitude();
 }
 
-// Return minimum image distance from 'i' to 'j'
-double CubicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
+// Return minimum image distance from r1 to r2
+double CubicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    double x = j.x - i.x, y = j.y - i.y, z = j.z - i.z;
+    double x = r2.x - r1.x, y = r2.y - r1.y, z = r2.z - r1.z;
 
     x -= int(x * ra_ + (x < 0.0 ? -0.5 : 0.5)) * a_;
     y -= int(y * ra_ + (y < 0.0 ? -0.5 : 0.5)) * a_;
@@ -123,8 +122,4 @@ Vec3<double> CubicBox::foldFrac(const Vec3<double> &r) const
 }
 
 // Convert supplied fractional coordinates to real space
-Vec3<double> CubicBox::fracToReal(const Vec3<double> &r) const
-{
-    // Multiply by box length
-    return r * a_;
-}
+Vec3<double> CubicBox::fracToReal(const Vec3<double> &r) const { return r * a_; }
