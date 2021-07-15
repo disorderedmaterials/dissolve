@@ -20,6 +20,7 @@ jobs:
       - bash: |
           set -ex
           sudo pip3 install aqtinstall
+          apt-get install libgl1-mesa-glx
           aqt install --outputdir /tmp/qt ${{ parameters.qtver }} linux desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
       - task: DownloadBuildArtifacts@0
         inputs:
