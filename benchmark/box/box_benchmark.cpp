@@ -134,7 +134,6 @@ BENCHMARK_TEMPLATE(BM_Box_MinimumDistance, MonoclinicAlphaBox);
 BENCHMARK_TEMPLATE(BM_Box_MinimumDistanceSquared, MonoclinicAlphaBox);
 BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicAlphaBox);
 BENCHMARK_TEMPLATE(BM_Box_MinimumVector, MonoclinicAlphaBox);
-BENCHMARK_TEMPLATE(BM_Box_MinimumImage, MonoclinicAlphaBox);
 BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, MonoclinicAlphaBox);
 BENCHMARK_TEMPLATE(BM_Box_Fold, MonoclinicAlphaBox);
 BENCHMARK_TEMPLATE(BM_Box_FoldFrac, MonoclinicAlphaBox);
