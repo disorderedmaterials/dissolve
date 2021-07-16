@@ -6,7 +6,9 @@ add_library(
   atomtypelist.cpp
   box.cpp
   box_cubic.cpp
-  box_monoclinic.cpp
+  box_monoclinicalpha.cpp
+  box_monoclinicbeta.cpp
+  box_monoclinicgamma.cpp
   box_nonperiodic.cpp
   box_orthorhombic.cpp
   box_triclinic.cpp

@@ -4,8 +4,8 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles)
-    : Box(Box::BoxType::Triclinic, lengths, angles)
+MonoclinicAlphaBox::MonoclinicAlphaBox(const Vec3<double> lengths, double alpha)
+    : Box(Box::BoxType::MonoclinicAlpha, lengths, {alpha, 90.0, 90.0})
 {
 }
 
@@ -14,20 +14,18 @@ TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles
  */
 
 // Convert specified fractional coordinates to real-space coordinates
-void TriclinicBox::toReal(Vec3<double> &r) const
+void MonoclinicAlphaBox::toReal(Vec3<double> &r) const
 {
     r.x *= axesArray_[0];
-    r.x += r.y * axesArray_[3] + r.z * axesArray_[6];
     r.y *= axesArray_[4];
     r.y += r.z * axesArray_[7];
     r.z *= axesArray_[8];
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-void TriclinicBox::toFractional(Vec3<double> &r) const
+void MonoclinicAlphaBox::toFractional(Vec3<double> &r) const
 {
     r.x *= inverseAxesArray_[0];
-    r.x += r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
     r.y *= inverseAxesArray_[4];
     r.y += r.z * inverseAxesArray_[7];
     r.z *= inverseAxesArray_[8];
@@ -38,7 +36,7 @@ void TriclinicBox::toFractional(Vec3<double> &r) const
  */
 
 // Return minimum image coordinates of r1 with respect to r2
-Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vec3<double> MonoclinicAlphaBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v21 = r1 - r2;
 
@@ -51,7 +49,7 @@ Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<doubl
 }
 
 // Return minimum image distance from r1 to r2
-double TriclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicAlphaBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
 
@@ -63,7 +61,7 @@ double TriclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> 
 }
 
 // Return minimum image vector from r1 to r2
-Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vec3<double> MonoclinicAlphaBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
 
@@ -75,7 +73,7 @@ Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<doub
 }
 
 // Return minimum image squared distance from r1 to r2
-double TriclinicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicAlphaBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
     Vec3<double> v12 = r2 - r1;
 

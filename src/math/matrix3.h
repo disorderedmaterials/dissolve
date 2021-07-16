@@ -33,6 +33,8 @@ class Matrix3
      * General Routines
      */
     public:
+    // Return the current matrix array
+    const std::array<double, 9> &matrix() const;
     // Reset the matrix to the identity
     void setIdentity();
     // Prints the matrix to stdout
@@ -122,7 +124,7 @@ class Matrix3
     // Transform coordinates supplied and return as Vec3<double>
     Vec3<double> transform(double x, double y, double z) const;
     // Transform coordinates supplied and return as Vec3<double>
-    Vec3<double> transform(const Vec3<double> vec) const;
+    Vec3<double> transform(const Vec3<double> r) const;
 
     /*
      * Special Functions

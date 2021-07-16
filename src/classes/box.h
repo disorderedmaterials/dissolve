@@ -15,7 +15,20 @@ class ProcessPool;
 class Box
 {
     public:
-    Box();
+    // Box Type Enum
+    enum class BoxType
+    {
+        NonPeriodic,     /* Non-periodic system - cubic box, but no minimum image calculation */
+        Cubic,           /* Cubic box with A == B == C, alphe == beta == gamma == 90 */
+        Orthorhombic,    /* Orthorhombic box with A != B != C, alphe == beta == gamma = 90 */
+        MonoclinicAlpha, /* Monoclinic box with A != B != C, alpha != 90, and beta == gamma == 90 */
+        MonoclinicBeta,  /* Monoclinic box with A != B != C, beta != 90, and alpha == gamma == 90 */
+        MonoclinicGamma, /* Monoclinic box with A != B != C, gamma != 90, and alpha == beta == 90 */
+        Triclinic        /* Triclinic box with A != B != C, alpha != beta != gamma != 90 */
+    };
+    // Return enum options for BoxType
+    static EnumOptions<BoxType> boxTypes();
+    Box(Box::BoxType boxType, const Vec3<double> lengths, const Vec3<double> angles);
     virtual ~Box() = default;
     Box &operator=(const Box &source) = default;
 
@@ -23,18 +36,6 @@ class Box
      * Basic Definition
      */
     public:
-    // Box Type Enum
-    enum class BoxType
-    {
-        NonPeriodic,  /* Non-periodic system - cubic box, but no minimum image calculation */
-        Cubic,        /* Cubic box with A == B == C, alphe == beta == gamma == 90 */
-        Orthorhombic, /* Orthorhombic box with A != B != C, alphe == beta == gamma = 90 */
-        Monoclinic,   /* Monoclinic box with A != B != C, alpha != 90, and beta == gamma == 90 */
-        Triclinic     /* Triclinic box with A != B != C, alpha != beta != gamma != 90 */
-    };
-    // Return enum options for BoxType
-    static EnumOptions<BoxType> boxTypes();
-
     protected:
     // Box type
     BoxType type_;
@@ -48,8 +49,12 @@ class Box
     Vec3<bool> periodic_;
     // Axes
     Matrix3 axes_;
+    // Axes as simple array
+    std::array<double, 9> axesArray_;
     // Inverse axes
     Matrix3 inverseAxes_;
+    // Inverse axes as simple array
+    std::array<double, 9> inverseAxesArray_;
     // Reciprocal axes
     Matrix3 reciprocalAxes_;
     // Volume
@@ -86,8 +91,38 @@ class Box
     void scale(double factor);
 
     /*
-     * Minimum Image Routines (Pure Virtual)
+     * Coordinate Conversion
      */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    inline virtual void toReal(Vec3<double> &r) const = 0;
+    // Return specified fractional coordinates converted to real-space coordinates
+    Vec3<double> getReal(Vec3<double> r) const;
+    // Convert specified real-space coordinates to fractional coordinates
+    inline virtual void toFractional(Vec3<double> &r) const = 0;
+
+    /*
+     * Minimum Image Calculation
+     */
+    protected:
+    // Wrap fractional coordinate into Box assuming it can be no more than half a fractional Box length away in any one
+    // direction
+    inline void wrap(Vec3<double> &rFrac) const
+    {
+        if (rFrac.x < -0.5)
+            rFrac.x += 1.0;
+        else if (rFrac.x > 0.5)
+            rFrac.x -= 1.0;
+        if (rFrac.y < -0.5)
+            rFrac.y += 1.0;
+        else if (rFrac.y > 0.5)
+            rFrac.y -= 1.0;
+        if (rFrac.z < -0.5)
+            rFrac.z += 1.0;
+        else if (rFrac.z > 0.5)
+            rFrac.z -= 1.0;
+    }
+
     public:
     // Return minimum image coordinates of r1 with respect to r2
     virtual Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const = 0;
@@ -99,32 +134,7 @@ class Box
     virtual double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const = 0;
 
     /*
-     * Utility Routines
-     */
-    public:
-    // Generate a suitable Box given the supplied relative lengths, angles, and volume
-    static std::unique_ptr<Box> generate(Vec3<double> lengths, Vec3<double> angles);
-    // Return radius of largest possible inscribed sphere for box
-    double inscribedSphereRadius() const;
-    // Calculate the RDF normalisation for the Box
-    bool calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth,
-                                   int nPoints) const;
-
-    /*
-     * Utility Routines (Pure Virtual)
-     */
-    public:
-    // Return random coordinate inside Box
-    virtual Vec3<double> randomCoordinate() const = 0;
-    // Return folded coordinate (i.e. inside current Box)
-    virtual Vec3<double> fold(const Vec3<double> &r) const = 0;
-    // Return folded fractional coordinate (i.e. inside current Box)
-    virtual Vec3<double> foldFrac(const Vec3<double> &r) const = 0;
-    // Convert supplied fractional coordinates to real space
-    virtual Vec3<double> fracToReal(const Vec3<double> &r) const = 0;
-
-    /*
-     * Utility Routines
+     * Geometry Calculation
      */
     public:
     // Return angle (in degrees) between coordinates
@@ -147,6 +157,21 @@ class Box
     // variables
     static double torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl,
                                    Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk);
+
+    /*
+     * Utility Routines
+     */
+    public:
+    // Generate a suitable Box given the supplied relative lengths, angles, and volume
+    static std::unique_ptr<Box> generate(Vec3<double> lengths, Vec3<double> angles);
+    // Return radius of largest possible inscribed sphere for box
+    double inscribedSphereRadius() const;
+    // Return random coordinate inside Box
+    Vec3<double> randomCoordinate() const;
+    // Return folded coordinate (i.e. inside current Box)
+    Vec3<double> fold(const Vec3<double> &r) const;
+    // Return folded fractional coordinate (i.e. inside current Box)
+    Vec3<double> foldFrac(const Vec3<double> &r) const;
 };
 
 // Non-Periodic Box Definition
@@ -157,7 +182,16 @@ class NonPeriodicBox : public Box
     ~NonPeriodicBox() override = default;
 
     /*
-     * Minimum Image Routines (Virtual Implementations)
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
      */
     public:
     // Return minimum image coordinates of r1 with respect to r2
@@ -168,19 +202,6 @@ class NonPeriodicBox : public Box
     double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
     // Return minimum image squared distance from r1 to r2
     double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
-
-    /*
-     * Utility Routines (Virtual Implementations)
-     */
-    public:
-    // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const override;
-    // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &r) const override;
-    // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &r) const override;
-    // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
 
 // Cubic Box Definition
@@ -191,7 +212,16 @@ class CubicBox : public Box
     ~CubicBox() override = default;
 
     /*
-     * Minimum Image Routines (Virtual Implementations)
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
      */
     public:
     // Return minimum image coordinates of r1 with respect to r2
@@ -204,17 +234,11 @@ class CubicBox : public Box
     double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 
     /*
-     * Utility Routines (Virtual Implementations)
+     * Utility Functions
      */
     public:
-    // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const override;
     // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &r) const override;
-    // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &r) const override;
-    // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const override;
+    //    Vec3<double> fold(const Vec3<double> &r) const override;
 };
 
 // Orthorhombic Box Definition
@@ -225,7 +249,16 @@ class OrthorhombicBox : public Box
     ~OrthorhombicBox() override = default;
 
     /*
-     * Minimum Image Routines (Virtual Implementations)
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
      */
     public:
     // Return minimum image coordinates of r1 with respect to r2
@@ -236,30 +269,26 @@ class OrthorhombicBox : public Box
     double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
     // Return minimum image squared distance from r1 to r2
     double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
-
-    /*
-     * Utility Routines (Virtual Implementations)
-     */
-    public:
-    // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const override;
-    // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &r) const override;
-    // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &r) const override;
-    // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };
 
-// Monoclinic Box Definition
-class MonoclinicBox : public Box
+// MonoclinicAlpha Box Definition
+class MonoclinicAlphaBox : public Box
 {
     public:
-    MonoclinicBox(const Vec3<double> lengths, double beta);
-    ~MonoclinicBox() override = default;
+    MonoclinicAlphaBox(const Vec3<double> lengths, double alpha);
+    ~MonoclinicAlphaBox() override = default;
 
     /*
-     * Minimum Image Routines (Virtual Implementations)
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
      */
     public:
     // Return minimum image coordinates of r1 with respect to r2
@@ -270,19 +299,66 @@ class MonoclinicBox : public Box
     double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
     // Return minimum image squared distance from r1 to r2
     double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+};
+
+// MonoclinicBeta Box Definition
+class MonoclinicBetaBox : public Box
+{
+    public:
+    MonoclinicBetaBox(const Vec3<double> lengths, double beta);
+    ~MonoclinicBetaBox() override = default;
 
     /*
-     * Utility Routines (Virtual Implementations)
+     * Coordinate Conversion
      */
     public:
-    // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const override;
-    // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &r) const override;
-    // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &r) const override;
-    // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const override;
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
+     */
+    public:
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+};
+
+// MonoclinicGamma Box Definition
+class MonoclinicGammaBox : public Box
+{
+    public:
+    MonoclinicGammaBox(const Vec3<double> lengths, double gamma);
+    ~MonoclinicGammaBox() override = default;
+
+    /*
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
+     */
+    public:
+    // Return minimum image coordinates of r1 with respect to r2
+    Vec3<double> minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image vector from r1 to r2
+    Vec3<double> minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image distance from r1 to r2
+    double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
+    // Return minimum image squared distance from r1 to r2
+    double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
 };
 
 // Triclinic Box Definition
@@ -293,7 +369,16 @@ class TriclinicBox : public Box
     ~TriclinicBox() override = default;
 
     /*
-     * Minimum Image Routines (Virtual Implementations)
+     * Coordinate Conversion
+     */
+    public:
+    // Convert specified fractional coordinates to real-space coordinates
+    void toReal(Vec3<double> &r) const override;
+    // Convert specified real-space coordinates to fractional coordinates
+    void toFractional(Vec3<double> &r) const override;
+
+    /*
+     * Minimum Image Calculations
      */
     public:
     // Return minimum image coordinates of r1 with respect to r2
@@ -304,17 +389,4 @@ class TriclinicBox : public Box
     double minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const override;
     // Return minimum image squared distance from r1 to r2
     double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const override;
-
-    /*
-     * Utility Routines (Virtual Implementations)
-     */
-    public:
-    // Return random coordinate inside Box
-    Vec3<double> randomCoordinate() const override;
-    // Return folded coordinate (i.e. inside current Box)
-    Vec3<double> fold(const Vec3<double> &r) const override;
-    // Return folded fractional coordinate (i.e. inside current Box)
-    Vec3<double> foldFrac(const Vec3<double> &r) const override;
-    // Convert supplied fractional coordinates to real space
-    Vec3<double> fracToReal(const Vec3<double> &r) const override;
 };

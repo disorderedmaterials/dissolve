@@ -70,8 +70,8 @@ bool RegionProcedureNodeBase::execute(ProcessPool &procPool, Configuration *cfg,
             for (auto z = 0; z < nVoxels_.z; ++z)
                 voxelMap_[{x, y, z}] = {
                     Vec3<int>(x, y, z),
-                    isVoxelValid(cfg, box_->fracToReal(Vec3<double>((x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                                    (z + 0.5) * voxelSizeFrac_.z)))};
+                    isVoxelValid(cfg, box_->getReal(Vec3<double>((x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
+                                                                 (z + 0.5) * voxelSizeFrac_.z)))};
 
     // Create linear array of all available voxels
     auto nFreeVoxels = std::count_if(voxelMap_.begin(), voxelMap_.end(), [](const auto &voxel) { return voxel.second; });

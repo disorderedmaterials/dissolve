@@ -4,84 +4,69 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-NonPeriodicBox::NonPeriodicBox(double length) : Box()
+NonPeriodicBox::NonPeriodicBox(double length) : Box(Box::BoxType::NonPeriodic, {length, length, length}, {90.0, 90.0, 90.0}) {}
+
+/*
+ * Coordinate Conversion
+ */
+
+// Convert specified fractional coordinates to real-space coordinates
+void NonPeriodicBox::toReal(Vec3<double> &r) const
 {
-    type_ = Box::BoxType::NonPeriodic;
-    periodic_.set(false, false, false);
+    r.x *= a_;
+    r.y *= a_;
+    r.z *= a_;
+}
 
-    // Construct axes_
-    axes_.setColumn(0, length, 0.0, 0.0);
-    axes_.setColumn(1, 0.0, length, 0.0);
-    axes_.setColumn(2, 0.0, 0.0, length);
-
-    // Store Box length
-    a_ = length;
-    ra_ = 1.0 / a_;
-
-    // Finalise associated data
-    finalise();
+// Convert specified real-space coordinates to fractional coordinates
+void NonPeriodicBox::toFractional(Vec3<double> &r) const
+{
+    r.x *= ra_;
+    r.y *= ra_;
+    r.z *= ra_;
 }
 
 /*
- * Minimum Image Routines (virtual implementations)
+ * Minimum Image Calculation
  */
 
 // Return minimum image coordinates of r1 with respect to r2
-Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const { return r1; }
+Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v21 = r1 - r2;
+    toFractional(v21);
+    wrap(v21);
+    toReal(v21);
+    v21 += r2;
+    return v21;
+}
 
 // Return minimum image vector from r1 to r2
-Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const { return r2 - r1; }
+Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    return v12;
+}
 
 // Return minimum image distance from r1 to r2
-double NonPeriodicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const { return (r2 - r1).magnitude(); }
+double NonPeriodicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    return v12.magnitude();
+}
 
 // Return minimum image squared distance from r1 to r2
 double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
-    return (r2 - r1).magnitudeSq();
+    Vec3<double> v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    return v12.magnitudeSq();
 }
-
-/*
- * Utility Routines (Virtual Implementations)
- */
-
-// Return random coordinate inside Box
-Vec3<double> NonPeriodicBox::randomCoordinate() const
-{
-    static Vec3<double> pos;
-    pos.x = a_ * DissolveMath::random();
-    pos.y = a_ * DissolveMath::random();
-    pos.z = a_ * DissolveMath::random();
-    return pos;
-}
-
-// Return folded coordinate (i.e. inside current Box)
-Vec3<double> NonPeriodicBox::fold(const Vec3<double> &r) const
-{
-    // Convert coordinate to fractional coords
-    static Vec3<double> frac;
-    frac.set(r.x * ra_, r.y * ra_, r.z * ra_);
-
-    // Fold into Box and divide by integer Cell sizes
-    frac.x -= floor(frac.x);
-    frac.y -= floor(frac.y);
-    frac.z -= floor(frac.z);
-    return frac * a_;
-}
-
-// Return folded coordinate (i.e. inside current Box)
-Vec3<double> NonPeriodicBox::foldFrac(const Vec3<double> &r) const
-{
-    // Convert coordinate to fractional coords
-    static Vec3<double> frac;
-    frac.set(r.x * ra_, r.y * ra_, r.z * ra_);
-
-    // Fold into Box and divide by integer Cell sizes
-    frac.x -= floor(frac.x);
-    frac.y -= floor(frac.y);
-    frac.z -= floor(frac.z);
-    return frac;
-}
-
-// Convert supplied fractional coordinates to real space
-Vec3<double> NonPeriodicBox::fracToReal(const Vec3<double> &r) const { return r * a_; }

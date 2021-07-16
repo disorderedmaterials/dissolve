@@ -340,7 +340,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             fracCentre.z = fractionalCellSize_.z * 0.5;
             for (auto z = 0; z < divisions_.z; ++z)
             {
-                cells_[count] = Cell(count, Vec3<int>(x, y, z), box_->fracToReal(fracCentre));
+                cells_[count] = Cell(count, Vec3<int>(x, y, z), box_->getReal(fracCentre));
                 fracCentre.z += fractionalCellSize_.z;
                 ++count;
             }
