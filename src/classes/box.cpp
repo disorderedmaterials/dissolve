@@ -361,3 +361,18 @@ Vec3<double> Box::foldFrac(const Vec3<double> &r) const
 
     return frac;
 }
+
+// Determine axis scale factors to give requested volume, with scaling ratios provided
+Vec3<double> Box::scaleFactors(double requestedVolume, Vec3<bool> scalableAxes) const
+{
+    // Sanity check
+    if (!scalableAxes.x && !scalableAxes.y && !scalableAxes.z)
+        throw(std::runtime_error("No axes specified as scalable, so no scaling factor can be calculated.\n"));
+
+    // Determine root power
+    auto rootPower = 1.0 / (scalableAxes.x + scalableAxes.y + scalableAxes.z);
+
+    auto ratio = pow(requestedVolume, rootPower) / pow(volume_, rootPower);
+
+    return {scalableAxes.x ? ratio : 1.0, scalableAxes.y ? ratio : 1.0, scalableAxes.z ? ratio : 1.0};
+}
