@@ -6,6 +6,7 @@
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/modulevector.h"
 #include "module/module.h"
+#include "templates/algorithms.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
@@ -109,21 +110,9 @@ void ModuleVectorKeywordWidget::updateKeywordData()
 // Update summary text
 void ModuleVectorKeywordWidget::updateSummaryText()
 {
-    // Create summary text for the KeywordDropDown button
-    auto &selection = keyword_->data();
-    if (selection.empty())
+    if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-    {
-        QString summaryText;
-        auto first = true;
-        for (Module *module : selection)
-        {
-            if (!first)
-                summaryText += ", ";
-            summaryText += QString::fromStdString(std::string(module->uniqueName()));
-            first = false;
-        }
-        setSummaryText(summaryText);
-    }
+        setSummaryText(QString::fromStdString(
+            joinStrings(keyword_->data(), ", ", [](const auto &module) { return module->uniqueName(); })));
 }

@@ -5,7 +5,7 @@
 
 #include "base/messenger.h"
 #include "genericitems/list.h"
-#include "keywords/configurationreflist.h"
+#include "keywords/configurationvector.h"
 #include "keywords/group.h"
 #include "keywords/list.h"
 #include "math/sampleddouble.h"
@@ -67,7 +67,7 @@ class Module : public ListItem<Module>
     // Keywords recognised by Module
     KeywordList keywords_;
     // Target configurations keyword
-    ConfigurationRefListKeyword targetConfigurationsKeyword_;
+    ConfigurationVectorKeyword targetConfigurationsKeyword_;
 
     public:
     // Return list of recognised keywords
@@ -115,8 +115,6 @@ class Module : public ListItem<Module>
      * Targets
      */
     protected:
-    // Configurations that are targeted by this Module
-    std::vector<Configuration *> targetConfigurations_;
     // Whether this module is a local Module in a Configuration
     bool configurationLocal_;
 

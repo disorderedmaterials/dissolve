@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/speciesvector.h"
+#include "templates/algorithms.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
@@ -72,16 +73,8 @@ void SpeciesVectorKeywordWidget::updateKeywordData()
 // Update summary text
 void SpeciesVectorKeywordWidget::updateSummaryText()
 {
-    // Create summary text for the KeywordDropDown button
-    auto &selection = keyword_->data();
-    if (selection.empty())
+    if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-    {
-        std::string summaryText;
-        for (const auto *sp : selection)
-            summaryText += fmt::format("{}{}", summaryText.empty() ? "" : ", ", sp->name());
-
-        setSummaryText(QString::fromStdString(summaryText));
-    }
+        setSummaryText(QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &sp) { return sp->name(); })));
 }

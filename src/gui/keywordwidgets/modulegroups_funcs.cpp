@@ -148,7 +148,6 @@ void ModuleGroupsKeywordWidget::updateKeywordData()
 // Update summary text
 void ModuleGroupsKeywordWidget::updateSummaryText()
 {
-    // Create summary text for the KeywordDropDown button
     auto &groups = keyword_->data();
     if (groups.modules().nItems() == 0)
         setSummaryText("<None>");

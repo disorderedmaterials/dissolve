@@ -3,7 +3,7 @@
 # Meta-Objects
 set(keywordwidgets_MOC_HDRS
     atomtypeselection.h
-    configurationreflist.h
+    configurationvector.h
     dialog.h
     dropdown.h
     expressionvariablevector.h
@@ -40,7 +40,7 @@ qt5_wrap_cpp(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 # User Interface Files
 set(keywordwidgets_UIS
     atomtypeselection.ui
-    configurationreflist.ui
+    configurationvector.ui
     dialog.ui
     dropdown.ui
     expressionvariablevector.ui
@@ -70,7 +70,7 @@ set(keywordwidgets_SRCS
     base.cpp
     atomtypeselection_funcs.cpp
     bool_funcs.cpp
-    configurationreflist_funcs.cpp
+    configurationvector_funcs.cpp
     dialog_funcs.cpp
     double_funcs.cpp
     dropdown_funcs.cpp

@@ -15,7 +15,7 @@ bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 {
     // For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are
     // targeting it
-    for (auto *cfg : targetConfigurations_)
+    for (auto *cfg : targetConfigurationsKeyword_.data())
         dissolve.processingModuleData().realise<bool>("IsEnergyModuleTarget", cfg->niceName(), GenericItem::ProtectedFlag) =
             true;
 
@@ -32,11 +32,11 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    if (targetConfigurationsKeyword_.data().empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (auto *cfg : targetConfigurations_)
+    for (auto *cfg : targetConfigurationsKeyword_.data())
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());

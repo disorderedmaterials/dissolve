@@ -48,10 +48,10 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = boolWidget;
         base = boolWidget;
     }
-    else if (type == KeywordBase::ConfigurationRefListData)
+    else if (type == KeywordBase::ConfigurationVectorData)
     {
-        ConfigurationRefListKeywordWidget *configurationRefListWidget =
-            new ConfigurationRefListKeywordWidget(nullptr, keywordBase, coreData);
+        ConfigurationVectorKeywordWidget *configurationRefListWidget =
+            new ConfigurationVectorKeywordWidget(nullptr, keywordBase, coreData);
         connect(configurationRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = configurationRefListWidget;
         base = configurationRefListWidget;

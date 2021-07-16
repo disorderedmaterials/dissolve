@@ -15,7 +15,7 @@ bool CalculateDAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool) { r
 bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    if (targetConfigurationsKeyword_.data().empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
@@ -30,7 +30,7 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
         selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
 
     // Grab Configuration pointer
-    auto *cfg = targetConfigurations_.front();
+    auto *cfg = targetConfigurationsKeyword_.data().front();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

@@ -5,27 +5,27 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_configurationreflist.h"
-#include "keywords/configurationreflist.h"
+#include "gui/keywordwidgets/ui_configurationvector.h"
+#include "keywords/configurationvector.h"
 #include <QWidget>
 
 // Forward Declarations
 class Configuration;
 
-class ConfigurationRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    ConfigurationRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    ConfigurationVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    ConfigurationRefListKeyword *keyword_;
+    ConfigurationVectorKeyword *keyword_;
 
     /*
      * Widgets

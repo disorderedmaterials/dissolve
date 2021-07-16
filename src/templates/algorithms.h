@@ -274,7 +274,7 @@ template <class Class> std::string joinStrings(Class range, std::string delim = 
 {
     return joinStrings(range.begin(), range.end(), delim);
 }
-template <class Class, class Lam> std::string joinStrings(Class range, std::string delim = ", ", Lam lambda = nullptr)
+template <class Class, class Lam> std::string joinStrings(Class range, std::string delim, Lam lambda)
 {
     return joinStrings(range.begin(), range.end(), delim, lambda);
 }

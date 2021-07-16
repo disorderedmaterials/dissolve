@@ -7,10 +7,10 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/atomtypeselection.h"
 #include "gui/keywordwidgets/dropdown.h"
+#include "templates/algorithms.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
-#include <algorithm>
 
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
@@ -117,18 +117,9 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
 // Update summary text
 void AtomTypeSelectionKeywordWidget::updateSummaryText()
 {
-    // Create summary text for the KeywordDropDown button
-    auto &selection = keyword_->data();
-    if (selection.nItems() == 0)
+    if (keyword_->data().nItems() == 0)
         setSummaryText("<None>");
     else
-    {
-        QString summaryText = std::accumulate(
-            std::next(selection.begin()), selection.end(),
-            QString::fromStdString(std::string(selection.first().atomTypeName())), [](auto &acc, const auto &atd) {
-                acc += QString(", %1").arg(QString::fromStdString(std::string(atd.atomTypeName())));
-                return acc;
-            });
-        setSummaryText(summaryText);
-    }
+        setSummaryText(
+            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &atd) { return atd.atomTypeName(); })));
 }
