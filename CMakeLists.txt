@@ -92,7 +92,7 @@ if(GUI)
   include(FindFTGL)
 
   if(APPLE)
-    set(CMAKE_PREFIX_PATH "/tmp/qt/6.1.1/clang_64")
+    set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
   endif(APPLE)
 
   find_package(OpenGL REQUIRED)
