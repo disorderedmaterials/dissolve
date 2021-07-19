@@ -31,6 +31,6 @@ steps:
       mkdir build
       cd build
       conan install .. --build missing
-      cmake -DGUI:bool=true -DMULTI_THREADING:bool=${{ parameters.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} ../
+      cmake -DGUI:bool=true -DMULTI_THREADING:bool=${{ parameters.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       make
     displayName: 'Build'
