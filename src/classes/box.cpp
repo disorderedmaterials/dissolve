@@ -141,22 +141,30 @@ Vec3<double> Box::reciprocalAxisLengths() const
 // Return reciprocal axes matrix
 const Matrix3 &Box::reciprocalAxes() const { return reciprocalAxes_; }
 
-// Scale Box by specified factor
-void Box::scale(double factor)
+// Scale Box lengths by specified factors
+void Box::scale(Vec3<double> scaleFactors)
 {
+    // Make a check here for cubic boxes, in which case all elements in scaleFactors must be equal
+    if (type_ == BoxType::Cubic)
+    {
+        auto abSame = (fabs(scaleFactors.x - scaleFactors.y) < 1.0e-5);
+        auto acSame = (fabs(scaleFactors.x - scaleFactors.z) < 1.0e-5);
+        if (!abSame || !acSame)
+            throw(std::runtime_error(fmt::format("Irregular scaling of cubic box requested (scale factors = {}, {}, {}\n",
+                                                 scaleFactors.x, scaleFactors.y, scaleFactors.z)));
+    }
+
     // Scale lengths
-    a_ *= factor;
-    b_ *= factor;
-    c_ *= factor;
+    a_ *= scaleFactors.x;
+    b_ *= scaleFactors.y;
+    c_ *= scaleFactors.z;
     ra_ = 1.0 / a_;
     rb_ = 1.0 / b_;
     rc_ = 1.0 / c_;
 
     // Scale axes
-    axes_.columnMultiply(0, factor);
-    axes_.columnMultiply(1, factor);
-    axes_.columnMultiply(2, factor);
-
+    axes_.columnMultiply(scaleFactors);
+    axes_.print();
     // Calculate box volume
     volume_ = axes_.determinant();
 

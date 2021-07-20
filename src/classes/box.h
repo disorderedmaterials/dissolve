@@ -87,8 +87,8 @@ class Box
     Vec3<double> reciprocalAxisLengths() const;
     // Return reciprocal axes matrix
     const Matrix3 &reciprocalAxes() const;
-    // Scale Box by specified factor
-    void scale(double factor);
+    // Scale Box lengths by specified factors
+    void scale(Vec3<double> scaleFactors);
 
     /*
      * Coordinate Conversion
