@@ -175,10 +175,9 @@ void MainTabsWidget::clearTabs()
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
+    forcefieldTab_ = nullptr;
 
-    // Only remaining tab is the ForcefieldTab...
     allTabs_.clear();
-    allTabs_.push_back(forcefieldTab_);
 }
 
 // Reconcile tabs, making them consistent with the provided data

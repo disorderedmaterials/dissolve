@@ -49,6 +49,8 @@ bool DissolveWindow::checkSaveCurrentInput()
 // Clear all data and start new simulation afresh
 void DissolveWindow::startNew()
 {
+    refreshing_ = true;
+
     // Clear any data-related tabs from the UI
     ui_.MainTabs->clearTabs();
 
@@ -59,7 +61,11 @@ void DissolveWindow::startNew()
     localSimulation_ = true;
     modified_ = false;
 
-    // Fully update GUI
+    // Add in core tabs
+    ui_.MainTabs->addCoreTabs(this);
+
+    refreshing_ = false;
+
     fullUpdate();
 }
 
@@ -100,6 +106,8 @@ void DissolveWindow::on_FileCloseAction_triggered(bool checked)
     if (!checkSaveCurrentInput())
         return;
 
+    refreshing_ = true;
+
     // Clear any data-related tabs from the UI
     ui_.MainTabs->clearTabs();
 
@@ -107,6 +115,9 @@ void DissolveWindow::on_FileCloseAction_triggered(bool checked)
     dissolve_.clear();
     dissolveState_ = DissolveWindow::NoState;
     modified_ = false;
+
+    refreshing_ = false;
+
     fullUpdate();
 }
 

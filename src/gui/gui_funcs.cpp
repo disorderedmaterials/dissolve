@@ -73,8 +73,11 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     statusBar()->addPermanentWidget(localSimulationIndicator_);
 
     // Set up main tabs
-    ui_.MainTabs->addCoreTabs(this);
-    ui_.MainTabs->updateAllTabs();
+    if (dissolveState_ != DissolveWindow::NoState)
+    {
+        ui_.MainTabs->addCoreTabs(this);
+        ui_.MainTabs->updateAllTabs();
+    }
 
     updateWindowTitle();
     updateStatusBar();
@@ -274,7 +277,12 @@ void DissolveWindow::updateStatusBar()
 // Update menus
 void DissolveWindow::updateMenus()
 {
-    // Enable / disable main menu items as appropriate
+    // File Menu - always active, but available items depends on state
+    ui_.FileSaveAction->setEnabled(dissolveState_ != NoState);
+    ui_.FileSaveAsAction->setEnabled(dissolveState_ != NoState);
+    ui_.FileCloseAction->setEnabled(dissolveState_ != NoState);
+
+    // Enable / disable other menu items as appropriate
     ui_.SimulationMenu->setEnabled(dissolveState_ == EditingState);
     ui_.SpeciesMenu->setEnabled(dissolveState_ == EditingState);
     ui_.ConfigurationMenu->setEnabled(dissolveState_ == EditingState);
