@@ -23,8 +23,6 @@ MainTab::MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWid
     title_ = title;
 }
 
-MainTab::~MainTab() {}
-
 // Return enum options for TabType
 EnumOptions<MainTab::TabType> MainTab::tabTypes()
 {

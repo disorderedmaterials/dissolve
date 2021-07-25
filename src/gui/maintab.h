@@ -24,7 +24,7 @@ class MainTab
 {
     public:
     MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title, QWidget *page);
-    virtual ~MainTab();
+    virtual ~MainTab() = default;
     // Tab Types
     enum TabType
     {

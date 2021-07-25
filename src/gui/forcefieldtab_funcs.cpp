@@ -120,8 +120,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             SLOT(setModified()));
 }
 
-ForcefieldTab::~ForcefieldTab() {}
-
 /*
  * MainTab Reimplementations
  */

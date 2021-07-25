@@ -29,8 +29,6 @@ WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, M
             SLOT(currentWorkspaceGizmoChanged(QMdiSubWindow *)));
 }
 
-WorkspaceTab::~WorkspaceTab() {}
-
 /*
  * MainTab Reimplementations
  */
