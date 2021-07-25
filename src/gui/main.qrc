@@ -81,6 +81,7 @@
     <file>icons/tabs_workspace.svg</file>
     <file>icons/tabs_species.svg</file>
     <file>icons/tabs_modulelayer_disabled.svg</file>
+    <file>icons/tabs_messages.svg</file>
     <file>icons/tabs_modulelayer.svg</file>
   </qresource>
   <qresource prefix="start">

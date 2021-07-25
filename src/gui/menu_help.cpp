@@ -3,6 +3,7 @@
 
 #include "gui/gui.h"
 #include <QDesktopServices>
+#include <QUrl>
 
 void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
 {

@@ -34,8 +34,8 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     // Set up user interface
     ui_.setupUi(this);
 
-    // Set fonts
-    ui_.MessagesEdit->setFont(QFont("Cousine", 10));
+    // Set up the main tabs widget
+    ui_.MainTabs->setUp(this);
 
     // Connect signals to thread controller
     connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
@@ -71,13 +71,6 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     statusBar()->addPermanentWidget(heartbeatFileIndicator_);
     statusBar()->addPermanentWidget(restartFileIndicator_);
     statusBar()->addPermanentWidget(localSimulationIndicator_);
-
-    // Set up main tabs
-    if (dissolveState_ != DissolveWindow::NoState)
-    {
-        ui_.MainTabs->addCoreTabs(this);
-        ui_.MainTabs->updateAllTabs();
-    }
 
     updateWindowTitle();
     updateStatusBar();
@@ -135,14 +128,6 @@ Dissolve &DissolveWindow::dissolve() { return dissolve_; }
 
 const Dissolve &DissolveWindow::dissolve() const { return dissolve_; }
 
-// Link output handler in to the Messenger
-void DissolveWindow::addOutputHandler()
-{
-    Messenger::setOutputHandler(&outputHandler_);
-    connect(&outputHandler_, SIGNAL(printText(const QString &)), this, SLOT(appendMessage(const QString &)));
-    connect(&outputHandler_, SIGNAL(setColour(const QColor &)), ui_.MessagesEdit, SLOT(setTextColor(const QColor &)));
-}
-
 /*
  * File
  */
@@ -151,6 +136,8 @@ void DissolveWindow::addOutputHandler()
 bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile,
                                    bool ignoreLayoutFile)
 {
+    refreshing_ = true;
+
     // Clear any existing tabs etc.
     ui_.MainTabs->clearTabs();
 
@@ -280,7 +267,7 @@ void DissolveWindow::updateMenus()
     // File Menu - always active, but available items depends on state
     ui_.FileSaveAction->setEnabled(dissolveState_ != NoState);
     ui_.FileSaveAsAction->setEnabled(dissolveState_ != NoState);
-    ui_.FileCloseAction->setEnabled(dissolveState_ != NoState);
+    ui_.FileCloseAction->setEnabled(dissolveState_ != NoState && dissolveState_ != RunningState);
 
     // Enable / disable other menu items as appropriate
     ui_.SimulationMenu->setEnabled(dissolveState_ == EditingState);
@@ -348,3 +335,6 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 
     refreshing_ = false;
 }
+
+// Clear the messages window
+void DissolveWindow::clearMessages() { ui_.MainTabs->messagesTab()->clearMessages(); }

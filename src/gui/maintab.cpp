@@ -29,6 +29,7 @@ EnumOptions<MainTab::TabType> MainTab::tabTypes()
     return EnumOptions<MainTab::TabType>("TabType", {{MainTab::TabType::Configuration, "ConfigurationTab"},
                                                      {MainTab::TabType::Forcefield, "ForcefieldTab"},
                                                      {MainTab::TabType::Layer, "LayerTab"},
+                                                     {MainTab::TabType::Messages, "MessagesTab"},
                                                      {MainTab::TabType::Species, "SpeciesTab"},
                                                      {MainTab::TabType::Workspace, "WorkspaceTab"}});
 }

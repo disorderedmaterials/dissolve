@@ -34,6 +34,17 @@ MainTabsWidget::~MainTabsWidget()
 }
 
 /*
+ * UI
+ */
+
+// Set-up widget
+void MainTabsWidget::setUp(DissolveWindow *dissolveWindow)
+{
+    forcefieldTab_ = std::make_shared<ForcefieldTab>(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
+    messagesTab_ = std::make_shared<MessagesTab>(dissolveWindow, dissolveWindow->dissolve(), this, "Messages");
+}
+
+/*
  * Tab Data
  */
 
@@ -75,6 +86,9 @@ ModuleLayer *MainTabsWidget::currentLayer() const
     auto layerTab = std::dynamic_pointer_cast<LayerTab>(tab);
     return (layerTab ? layerTab->moduleLayer() : nullptr);
 }
+
+// Return MessagesTab
+std::shared_ptr<MessagesTab> MainTabsWidget::messagesTab() { return messagesTab_; }
 
 // Find SpeciesTab containing specified page widget
 std::shared_ptr<SpeciesTab> MainTabsWidget::speciesTab(QWidget *page)
@@ -153,18 +167,7 @@ const QString MainTabsWidget::uniqueTabName(const QString base)
  * Tab Management
  */
 
-// Add core tabs
-void MainTabsWidget::addCoreTabs(DissolveWindow *dissolveWindow)
-{
-    // Forcefield
-    forcefieldTab_ = std::make_shared<ForcefieldTab>(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
-    addTab(forcefieldTab_->page(), "Forcefield");
-    setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
-
-    allTabs_.push_back(forcefieldTab_);
-}
-
-// Remove tabs related to the current data
+// Remove all tabs, including permanent tabs
 void MainTabsWidget::clearTabs()
 {
     // Empty our list of close button references
@@ -175,9 +178,17 @@ void MainTabsWidget::clearTabs()
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
-    forcefieldTab_ = nullptr;
 
+    // Clear all tab references, and then re-add the permanent ones
     allTabs_.clear();
+    // -- Messages
+    addTab(messagesTab_->page(), "Messages");
+    setTabIcon(messagesTab_->page(), QIcon(":/tabs/icons/tabs_messages.svg"));
+    allTabs_.push_back(messagesTab_);
+    // -- Forcefield
+    addTab(forcefieldTab_->page(), "Forcefield");
+    setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
+    allTabs_.push_back(forcefieldTab_);
 }
 
 // Reconcile tabs, making them consistent with the provided data
@@ -186,7 +197,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     auto &dissolve = dissolveWindow->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
-    auto currentTabIndex = 0;
+    auto currentTabIndex = 1;
     auto baseIndex = 1;
     for (const auto &sp : dissolve.species())
     {

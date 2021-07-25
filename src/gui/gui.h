@@ -52,8 +52,6 @@ class DissolveWindow : public QMainWindow
     bool modified_;
     // Whether window is currently refreshing
     bool refreshing_;
-    // Output handler for messaging in GUI
-    GUIOutputHandler outputHandler_;
     // Whether the current simulation is on the local machine
     bool localSimulation_;
 
@@ -69,8 +67,6 @@ class DissolveWindow : public QMainWindow
     // Return reference to Dissolve
     Dissolve &dissolve();
     const Dissolve &dissolve() const;
-    // Link the Messenger in to the GUI output device
-    void addOutputHandler();
 
     /*
      * StatusBar
@@ -115,6 +111,8 @@ class DissolveWindow : public QMainWindow
     void fullUpdate();
     // Update while running
     void updateWhileRunning(int iterationsRemaining);
+    // Clear the messages window
+    void clearMessages();
 
     /*
      * Main Menu
@@ -213,10 +211,6 @@ class DissolveWindow : public QMainWindow
 
     private slots:
     void on_MainTabs_currentChanged(int index);
-    void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
-    void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
-    void clearMessages();
-    void appendMessage(const QString &msg);
 
     public:
     // Return list of all current tabs

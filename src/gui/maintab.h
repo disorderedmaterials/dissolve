@@ -31,6 +31,7 @@ class MainTab
         Configuration,
         Forcefield,
         Layer,
+        Messages,
         Species,
         Workspace
     };

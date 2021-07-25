@@ -99,7 +99,6 @@ int main(int args, char **argv)
 
     // Update and show the main window
     dissolveWindow.fullUpdate();
-    dissolveWindow.addOutputHandler();
     dissolveWindow.show();
 
     auto result = app.exec();

@@ -61,9 +61,6 @@ void DissolveWindow::startNew()
     localSimulation_ = true;
     modified_ = false;
 
-    // Add in core tabs
-    ui_.MainTabs->addCoreTabs(this);
-
     refreshing_ = false;
 
     fullUpdate();
@@ -111,12 +108,15 @@ void DissolveWindow::on_FileCloseAction_triggered(bool checked)
     // Clear any data-related tabs from the UI
     ui_.MainTabs->clearTabs();
 
-    // Clear and fully update GUI
+    // Clear the messages widget
+    ui_.MainTabs->messagesTab()->clearMessages();
+
+    refreshing_ = false;
+
+    // Clear Dissolve
     dissolve_.clear();
     dissolveState_ = DissolveWindow::NoState;
     modified_ = false;
-
-    refreshing_ = false;
 
     fullUpdate();
 }

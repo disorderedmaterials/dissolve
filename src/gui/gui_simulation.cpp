@@ -3,7 +3,6 @@
 
 #include "gui/gui.h"
 #include "main/dissolve.h"
-#include <QScrollBar>
 
 // Disable sensitive controls
 void DissolveWindow::disableSensitiveControls()
@@ -84,30 +83,3 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 
 // Return list of all current tabs
 const std::vector<std::shared_ptr<MainTab>> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
-
-/*
- * Messages
- */
-
-void DissolveWindow::on_MessagesIncreaseFontSizeButton_clicked(bool checked)
-{
-    QFont font = ui_.MessagesEdit->font();
-    font.setPointSize(font.pointSize() + 1);
-    ui_.MessagesEdit->setFont(font);
-}
-
-void DissolveWindow::on_MessagesDecreaseFontSizeButton_clicked(bool checked)
-{
-    QFont font = ui_.MessagesEdit->font();
-    font.setPointSize(font.pointSize() - 1);
-    ui_.MessagesEdit->setFont(font);
-}
-
-void DissolveWindow::clearMessages() { ui_.MessagesEdit->clear(); }
-
-void DissolveWindow::appendMessage(const QString &msg)
-{
-    ui_.MessagesEdit->verticalScrollBar()->setSliderPosition(ui_.MessagesEdit->verticalScrollBar()->maximum());
-
-    ui_.MessagesEdit->insertPlainText(msg);
-}

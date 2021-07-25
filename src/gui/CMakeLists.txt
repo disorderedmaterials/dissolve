@@ -169,6 +169,7 @@ set(gui_MOC_HDRS
     forcefieldtab.h
     layertab.h
     maintab.h
+    messagestab.h
     speciestab.h
     workspacetab.h
     # Main UI
@@ -192,6 +193,7 @@ set(gui_UIS
     configurationtab.ui
     forcefieldtab.ui
     layertab.ui
+    messagestab.ui
     speciestab.ui
     workspacetab.ui
     # Main UI
@@ -213,6 +215,7 @@ set(gui_SRCS
     maintab.cpp
     maintabsbar_funcs.cpp
     maintabswidget_funcs.cpp
+    messagestab_funcs.cpp
     speciestab_funcs.cpp
     speciestab_geometry.cpp
     speciestab_isotopologues.cpp
