@@ -315,6 +315,8 @@ void DissolveWindow::fullUpdate()
 {
     refreshing_ = true;
 
+    // Make sure correct stack page is shown
+    ui_.MainStack->setCurrentIndex(dissolveState_ == NoState ? 0 : 1);
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();
     updateWindowTitle();
