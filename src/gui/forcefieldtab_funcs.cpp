@@ -125,7 +125,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
  */
 
 // Return tab type
-MainTab::TabType ForcefieldTab::type() const { return MainTab::ForcefieldTabType; }
+MainTab::TabType ForcefieldTab::type() const { return MainTab::TabType::Forcefield; }
 
 // Return whether the tab can be closed
 bool ForcefieldTab::canClose() const { return false; }

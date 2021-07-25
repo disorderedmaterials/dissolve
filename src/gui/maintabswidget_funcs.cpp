@@ -45,7 +45,7 @@ Species *MainTabsWidget::currentSpecies() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::SpeciesTabType)
+    if (tab->type() != MainTab::TabType::Species)
         return nullptr;
 
     auto speciesTab = std::dynamic_pointer_cast<SpeciesTab>(tab);
@@ -57,7 +57,7 @@ Configuration *MainTabsWidget::currentConfiguration() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::ConfigurationTabType)
+    if (tab->type() != MainTab::TabType::Configuration)
         return nullptr;
 
     auto configurationTab = std::dynamic_pointer_cast<ConfigurationTab>(tab);
@@ -69,7 +69,7 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::LayerTabType)
+    if (tab->type() != MainTab::TabType::Layer)
         return nullptr;
 
     auto layerTab = std::dynamic_pointer_cast<LayerTab>(tab);
@@ -565,7 +565,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
         removeByPage(page);
 
         // Emit data modified signal dependent on tab type
-        if (tabType != MainTab::WorkspaceTabType)
+        if (tabType != MainTab::TabType::Workspace)
             emit(dataModified());
     }
 }

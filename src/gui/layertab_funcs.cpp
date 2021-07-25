@@ -30,7 +30,7 @@ LayerTab::~LayerTab() { dissolve_.removeProcessingLayer(moduleLayer_); }
  */
 
 // Return tab type
-MainTab::TabType LayerTab::type() const { return MainTab::LayerTabType; }
+MainTab::TabType LayerTab::type() const { return MainTab::TabType::Layer; }
 
 // Raise suitable dialog for entering / checking new tab name
 QString LayerTab::getNewTitle(bool &ok)

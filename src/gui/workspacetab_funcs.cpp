@@ -34,7 +34,7 @@ WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, M
  */
 
 // Return tab type
-MainTab::TabType WorkspaceTab::type() const { return MainTab::WorkspaceTabType; }
+MainTab::TabType WorkspaceTab::type() const { return MainTab::TabType::Workspace; }
 
 // Raise suitable dialog for entering / checking new tab name
 QString WorkspaceTab::getNewTitle(bool &ok)
