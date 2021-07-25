@@ -63,43 +63,40 @@ int main(int args, char **argv)
 
     // Create the main window
     DissolveWindow dissolveWindow(dissolve);
+    dissolveWindow.show();
 
     // If an input file was specified, load it here
     if (options.inputFile())
     {
-        if (!dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
-                                          options.ignoreRestartFile(), options.ignoreStateFile()))
+        if (dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
+                                         options.ignoreRestartFile(), options.ignoreStateFile()))
         {
-            ProcessPool::finalise();
-            return 1;
-        }
+            // Set restart file frequency and whether to write heartbeat file
+            if (options.writeNoFiles())
+            {
+                dissolve.setRestartFileFrequency(0);
+                dissolve.setWriteHeartBeat(false);
+            }
+            else
+                dissolve.setRestartFileFrequency(options.restartFileFrequency());
 
-        // Set restart file frequency and whether to write heartbeat file
-        if (options.writeNoFiles())
-        {
-            dissolve.setRestartFileFrequency(0);
-            dissolve.setWriteHeartBeat(false);
-        }
-        else
-            dissolve.setRestartFileFrequency(options.restartFileFrequency());
+            // Iterate before launching the GUI?
+            if (options.nIterations() > 0)
+            {
+                // Prepare for run
+                if (!dissolve.prepare())
+                    return 1;
 
-        // Iterate before launching the GUI?
-        if (options.nIterations() > 0)
-        {
-            // Prepare for run
-            if (!dissolve.prepare())
-                return 1;
-
-            // Run main simulation
-            auto result = dissolve.iterate(options.nIterations());
-            if (!result)
-                return 1;
+                // Run main simulation
+                auto result = dissolve.iterate(options.nIterations());
+                if (!result)
+                    return 1;
+            }
         }
     }
 
-    // Update and show the main window
+    // Update the main window and exec the app
     dissolveWindow.fullUpdate();
-    dissolveWindow.show();
 
     auto result = app.exec();
 

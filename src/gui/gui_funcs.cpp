@@ -149,14 +149,27 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
 
     // Load the input file
     Messenger::banner("Parse Input File");
+    auto loadResult = false;
     if (inputFileInfo.exists())
     {
         QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
-        if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName())))
+        try
+        {
+            loadResult = dissolve_.loadInput(qPrintable(inputFileInfo.fileName()));
+        }
+        catch (...)
+        {
+            loadResult = false;
+        }
+
+        if (!loadResult)
+        {
             QMessageBox::warning(this, "Input file contained errors.",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
+            return false;
+        }
     }
     else
         return Messenger::error("Input file does not exist.\n");
