@@ -26,26 +26,14 @@ int main(int args, char **argv)
     if (options.parse(args, argv, true) != CLIOptions::Success)
         return 1;
 
-    // Print GPL license information
-    Messenger::print("Dissolve-GUI version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info());
-    Messenger::print("Source repository: {}.\n", Version::repoUrl());
-    Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
-    Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
-    Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
-
     // Register master Modules
-    Messenger::banner("Available Modules");
     if (!dissolve.registerMasterModules())
     {
         ProcessPool::finalise();
         return 1;
     }
 
-    /*
-     * Create and launch GUI
-     */
-
-    // Create the main QApplication */
+    // Create the main QApplication
     QApplication app(args, argv);
     QCoreApplication::setOrganizationName("ProjectAten");
     QCoreApplication::setOrganizationDomain("www.projectaten.com");
@@ -64,6 +52,13 @@ int main(int args, char **argv)
     // Create the main window
     DissolveWindow dissolveWindow(dissolve);
     dissolveWindow.show();
+
+    // Print GPL license information
+    Messenger::print("Dissolve-GUI version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info());
+    Messenger::print("Source repository: {}.\n", Version::repoUrl());
+    Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
+    Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
+    Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
     // If an input file was specified, load it here
     if (options.inputFile())

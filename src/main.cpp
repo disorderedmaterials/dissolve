@@ -43,7 +43,6 @@ int main(int args, char **argv)
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
     // Check module registration
-    Messenger::banner("Available Modules");
     if (!dissolve.registerMasterModules())
     {
         ProcessPool::finalise();
