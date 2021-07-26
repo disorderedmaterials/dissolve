@@ -3,34 +3,27 @@
 
 #pragma once
 
-#include "templates/list.h"
-#include "templates/listitem.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "base/messenger.h"
 
 // Object Chunk
-template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
+template <class T> class ObjectChunk
 {
     /*
      * Chunk of objects, maintained by an ObjectFactory
      */
     public:
-    ObjectChunk<T>(int size) : ListItem<ObjectChunk<T>>(), nObjects_(size)
+  ObjectChunk<T>(int size) : nObjects_(size)
     {
-        objectArray_ = new T[nObjects_];
-        objectUsed_ = new bool[nObjects_];
+        objectArray_.resize(nObjects_);
+        objectUsed_.resize(nObjects_);
         objectSize_ = sizeof(T);
 
         markAllObjectsUnused();
     }
-    ~ObjectChunk()
-    {
-        if (objectArray_)
-            delete[] objectArray_;
-        if (objectUsed_)
-            delete[] objectUsed_;
-    }
+    ~ObjectChunk() {}
 
     /*
      * Chunk Data
@@ -41,9 +34,9 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
     // Size of individual object
     int objectSize_;
     // Object array
-    T *objectArray_;
+    std::vector<T> objectArray_;
     // Object usage flags
-    bool *objectUsed_;
+    std::vector<bool> objectUsed_;
     // Number of unused objects in chunk
     int nUnusedObjects_;
     // Index of next available object
@@ -156,7 +149,7 @@ template <class T> class ObjectFactory
     // Chunk size
     int chunkSize_;
     // List of object chunks maintained by this factory
-    List<ObjectChunk<T>> objectChunks_;
+    std::vector<std::unique_ptr<ObjectChunk<T>>> objectChunks_;
     // Current chunk from which objects are being taken
     ObjectChunk<T> *currentChunk_;
 
@@ -173,9 +166,9 @@ template <class T> class ObjectFactory
     {
         if (currentChunk_ == nullptr)
         {
-            currentChunk_ = new ObjectChunk<T>(chunkSize_);
-            objectChunks_.own(currentChunk_);
-            return currentChunk_->nextAvailable();
+	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>(chunkSize_));
+	    currentChunk_ = objectChunks_.back().get();
+	    return currentChunk_->nextAvailable();
         }
         else if (currentChunk_->hasUnusedObjects())
             return currentChunk_->nextAvailable();
@@ -183,20 +176,20 @@ template <class T> class ObjectFactory
         {
             // Must search current chunk list to see if any current chunks have available space. If not, we will
             // create a new one
-            for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != nullptr; chunk = chunk->next())
-            {
-                if (chunk == currentChunk_)
+	    for(auto& chunk : objectChunks_)
+	    {
+	        if (chunk.get() == currentChunk_)
                     continue;
                 if (chunk->hasUnusedObjects())
                 {
-                    currentChunk_ = chunk;
+		    currentChunk_ = chunk.get();
                     return currentChunk_->nextAvailable();
                 }
             }
 
             // No dice - make a new chunk
-            currentChunk_ = new ObjectChunk<T>(chunkSize_);
-            objectChunks_.own(currentChunk_);
+	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>(chunkSize_));
+	    currentChunk_ = objectChunks_.back().get();
             return currentChunk_->nextAvailable();
         }
 
