@@ -115,8 +115,7 @@ template <class T> class ObjectChunk
     // Mark all objects as unused
     void markAllObjectsUnused()
     {
-        for (auto n = 0; n < nObjects_; ++n)
-            objectUsed_[n] = false;
+        objectUsed_.fill(false);
         nextAvailableObject_ = 0;
         nUnusedObjects_ = nObjects_;
     }
