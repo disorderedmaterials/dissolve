@@ -164,13 +164,15 @@ void Box::scale(Vec3<double> scaleFactors)
 
     // Scale axes
     axes_.columnMultiply(scaleFactors);
-    axes_.print();
+    axesArray_ = axes_.matrix();
+
     // Calculate box volume
     volume_ = axes_.determinant();
 
     // Calculate inverse axes
     inverseAxes_ = axes_;
     inverseAxes_.invert();
+    inverseAxesArray_ = inverseAxes_.matrix();
 
     // Calculate reciprocal axes and volume
     // Reciprocal cell vectors are perpendicular to normal cell axes.
