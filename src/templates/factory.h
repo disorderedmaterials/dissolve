@@ -15,10 +15,8 @@ template <class T> class ObjectChunk
      * Chunk of objects, maintained by an ObjectFactory
      */
     public:
-  ObjectChunk<T>(int size) : nObjects_(size)
+  ObjectChunk<T>()
     {
-        objectArray_.resize(nObjects_);
-        objectUsed_.resize(nObjects_);
         objectSize_ = sizeof(T);
 
         markAllObjectsUnused();
@@ -30,13 +28,13 @@ template <class T> class ObjectChunk
      */
     private:
     // Number of objects in chunk
-    const int nObjects_;
+    const static int nObjects_ = 256;
     // Size of individual object
     int objectSize_;
     // Object array
-    std::vector<T> objectArray_;
+    std::array<T, nObjects_> objectArray_;
     // Object usage flags
-    std::vector<bool> objectUsed_;
+    std::array<bool, nObjects_> objectUsed_;
     // Number of unused objects in chunk
     int nUnusedObjects_;
     // Index of next available object
@@ -139,24 +137,18 @@ template <class T> class ObjectFactory
     ObjectFactory<T>()
     {
         currentChunk_ = nullptr;
-        chunkSize_ = 256;
     }
 
     /*
      * Object Store
      */
     private:
-    // Chunk size
-    int chunkSize_;
     // List of object chunks maintained by this factory
     std::vector<std::unique_ptr<ObjectChunk<T>>> objectChunks_;
     // Current chunk from which objects are being taken
     ObjectChunk<T> *currentChunk_;
 
     public:
-    // Set chunksize to use when creating new chunks
-    void setChunkSize(int chunkSize) { chunkSize_ = chunkSize; }
-
     /*
      * Object Access
      */
@@ -166,7 +158,7 @@ template <class T> class ObjectFactory
     {
         if (currentChunk_ == nullptr)
         {
-	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>(chunkSize_));
+	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>());
 	    currentChunk_ = objectChunks_.back().get();
 	    return currentChunk_->nextAvailable();
         }
@@ -188,7 +180,7 @@ template <class T> class ObjectFactory
             }
 
             // No dice - make a new chunk
-	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>(chunkSize_));
+	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>());
 	    currentChunk_ = objectChunks_.back().get();
             return currentChunk_->nextAvailable();
         }
