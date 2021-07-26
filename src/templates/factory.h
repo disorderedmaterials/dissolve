@@ -3,10 +3,10 @@
 
 #pragma once
 
+#include "base/messenger.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "base/messenger.h"
 
 // Object Chunk
 template <class T> class ObjectChunk
@@ -15,7 +15,7 @@ template <class T> class ObjectChunk
      * Chunk of objects, maintained by an ObjectFactory
      */
     public:
-  ObjectChunk<T>()
+    ObjectChunk<T>()
     {
         objectSize_ = sizeof(T);
 
@@ -69,28 +69,20 @@ template <class T> class ObjectChunk
         }
 
         // Search for next available object before we return the object
-        int nextFree = nextAvailableObject_ + 1;
         // -- First part - search to end of current array
-        while (nextFree < nObjects_)
-        {
-            if (!objectUsed_[nextFree])
+        for (auto it = objectUsed_.begin() + nextAvailableObject_; it < objectUsed_.end(); ++it)
+            if (!*it)
             {
-                nextAvailableObject_ = nextFree;
+                nextAvailableObject_ = it - objectUsed_.begin();
                 return object;
             }
-            ++nextFree;
-        }
         // -- Second part - search beginning of array up to current position
-        nextFree = 0;
-        while (nextFree < nextAvailableObject_)
-        {
-            if (!objectUsed_[nextFree])
+        for (auto it = objectUsed_.begin(); it < objectUsed_.begin() + nextAvailableObject_; ++it)
+            if (!*it)
             {
-                nextAvailableObject_ = nextFree;
+                nextAvailableObject_ = it - objectUsed_.begin();
                 return object;
             }
-            ++nextFree;
-        }
 
         // Shouldn't get here!
         Messenger::error("ObjectChunk.\n");
@@ -133,10 +125,7 @@ template <class T> class ObjectChunk
 template <class T> class ObjectFactory
 {
     public:
-    ObjectFactory<T>()
-    {
-        currentChunk_ = nullptr;
-    }
+    ObjectFactory<T>() { currentChunk_ = nullptr; }
 
     /*
      * Object Store
@@ -157,9 +146,9 @@ template <class T> class ObjectFactory
     {
         if (currentChunk_ == nullptr)
         {
-	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>());
-	    currentChunk_ = objectChunks_.back().get();
-	    return currentChunk_->nextAvailable();
+            objectChunks_.push_back(std::make_unique<ObjectChunk<T>>());
+            currentChunk_ = objectChunks_.back().get();
+            return currentChunk_->nextAvailable();
         }
         else if (currentChunk_->hasUnusedObjects())
             return currentChunk_->nextAvailable();
@@ -167,20 +156,20 @@ template <class T> class ObjectFactory
         {
             // Must search current chunk list to see if any current chunks have available space. If not, we will
             // create a new one
-	    for(auto& chunk : objectChunks_)
-	    {
-	        if (chunk.get() == currentChunk_)
+            for (auto &chunk : objectChunks_)
+            {
+                if (chunk.get() == currentChunk_)
                     continue;
                 if (chunk->hasUnusedObjects())
                 {
-		    currentChunk_ = chunk.get();
+                    currentChunk_ = chunk.get();
                     return currentChunk_->nextAvailable();
                 }
             }
 
             // No dice - make a new chunk
-	    objectChunks_.push_back(std::make_unique<ObjectChunk<T>>());
-	    currentChunk_ = objectChunks_.back().get();
+            objectChunks_.push_back(std::make_unique<ObjectChunk<T>>());
+            currentChunk_ = objectChunks_.back().get();
             return currentChunk_->nextAvailable();
         }
 
@@ -192,7 +181,7 @@ template <class T> class ObjectFactory
     void returnObject(T *object)
     {
         // Must find chunk which owns this object
-        for (auto& chunk : objectChunks_)
+        for (auto &chunk : objectChunks_)
             if (chunk->returnObject(object))
                 return;
 
@@ -202,7 +191,7 @@ template <class T> class ObjectFactory
     // Mark all objects as unused
     void markAllObjectsUnused()
     {
-        for (auto& chunk : objectChunks_)
+        for (auto &chunk : objectChunks_)
             chunk->markAllObjectsUnused();
     }
 };
