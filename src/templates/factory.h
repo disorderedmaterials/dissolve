@@ -193,7 +193,7 @@ template <class T> class ObjectFactory
     void returnObject(T *object)
     {
         // Must find chunk which owns this object
-        for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != nullptr; chunk = chunk->next())
+        for (auto& chunk : objectChunks_)
             if (chunk->returnObject(object))
                 return;
 
@@ -203,7 +203,7 @@ template <class T> class ObjectFactory
     // Mark all objects as unused
     void markAllObjectsUnused()
     {
-        for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != nullptr; chunk = chunk->next())
+        for (auto& chunk : objectChunks_)
             chunk->markAllObjectsUnused();
     }
 };
