@@ -61,7 +61,7 @@ bool Primitive::colouredVertexData() const { return colouredVertexData_; }
 void Primitive::updateMesh()
 {
     // Check instances - if there is no current instance, create one
-  if (!instances_.empty())
+    if (!instances_.empty())
         popInstance(QOpenGLContext::currentContext());
     pushInstance(QOpenGLContext::currentContext());
 }
@@ -205,7 +205,7 @@ void Primitive::popInstance(const QOpenGLContext *context)
             else if (pi->listObject() != 0)
                 glDeleteLists(pi->listObject(), 1);
         }
-	instances_.pop_back();
+        instances_.pop_back();
     }
 }
 

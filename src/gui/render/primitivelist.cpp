@@ -44,8 +44,11 @@ void PrimitiveList::add(Primitive *primitive) { primitives_.emplace_back(primiti
 int PrimitiveList::nPrimitives() const { return primitives_.size(); }
 
 // Remove specified Primitive
-void PrimitiveList::remove(Primitive *primitive) {
-  primitives_.erase(std::remove_if(primitives_.begin(), primitives_.end(), [primitive](auto &prim){ return prim.get() == primitive;}), primitives_.end());
+void PrimitiveList::remove(Primitive *primitive)
+{
+    primitives_.erase(
+        std::remove_if(primitives_.begin(), primitives_.end(), [primitive](auto &prim){ return prim.get() == primitive;}),
+	primitives_.end());
 }
 
 // Return total number of defined vertices
