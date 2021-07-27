@@ -4,8 +4,8 @@
 #pragma once
 
 #include "gui/render/primitiveinfo.h"
-#include "templates/factory.h"
 #include "templates/listitem.h"
+#include <deque>
 
 // Forward Declarations
 /* none */
@@ -22,10 +22,10 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
      */
     private:
     // Factories for all PrimitiveInfo-derived classes
-    ObjectFactory<UncolouredPrimitiveInfo> uncolouredPrimitiveFactory_;
-    ObjectFactory<ColouredPrimitiveInfo> colouredPrimitiveFactory_;
-    ObjectFactory<StylePrimitiveInfo> stylePrimitiveFactory_;
-    ObjectFactory<LineStylePrimitiveInfo> lineStylePrimitiveFactory_;
+    std::deque<UncolouredPrimitiveInfo> uncolouredPrimitiveFactory_;
+    std::deque<ColouredPrimitiveInfo> colouredPrimitiveFactory_;
+    std::deque<StylePrimitiveInfo> stylePrimitiveFactory_;
+    std::deque<LineStylePrimitiveInfo> lineStylePrimitiveFactory_;
 
     /*
      * Assembly

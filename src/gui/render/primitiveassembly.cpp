@@ -18,41 +18,41 @@ void PrimitiveAssembly::clear()
 // Add Primitive to the assembly
 void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix)
 {
-    UncolouredPrimitiveInfo *pi = uncolouredPrimitiveFactory_.produce();
-    (*pi) = UncolouredPrimitiveInfo(primitive, matrix);
-    assembly_.push_back(pi);
+    UncolouredPrimitiveInfo &pi = uncolouredPrimitiveFactory_.emplace_back();
+    pi = UncolouredPrimitiveInfo(primitive, matrix);
+    assembly_.push_back(&pi);
 }
 
 // Add Primitive with colour to the assembly
 void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, const std::array<float, 4> &rgba)
 {
-    ColouredPrimitiveInfo *pi = colouredPrimitiveFactory_.produce();
-    (*pi) = ColouredPrimitiveInfo(primitive, matrix, rgba[0], rgba[1], rgba[2], rgba[3]);
-    assembly_.push_back(pi);
+    ColouredPrimitiveInfo &pi = colouredPrimitiveFactory_.emplace_back();
+    pi = ColouredPrimitiveInfo(primitive, matrix, rgba[0], rgba[1], rgba[2], rgba[3]);
+    assembly_.push_back(&pi);
 }
 
 // Add Primitive with colour to the assembly
 void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-    ColouredPrimitiveInfo *pi = colouredPrimitiveFactory_.produce();
-    (*pi) = ColouredPrimitiveInfo(primitive, matrix, r, g, b, a);
-    assembly_.push_back(pi);
+    ColouredPrimitiveInfo &pi = colouredPrimitiveFactory_.emplace_back();
+    pi = ColouredPrimitiveInfo(primitive, matrix, r, g, b, a);
+    assembly_.push_back(&pi);
 }
 
 // Add styling information
 void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode)
 {
-    StylePrimitiveInfo *pi = stylePrimitiveFactory_.produce();
-    (*pi) = StylePrimitiveInfo(lighting, polygonFillMode);
-    assembly_.push_back(pi);
+    StylePrimitiveInfo &pi = stylePrimitiveFactory_.emplace_back();
+    pi = StylePrimitiveInfo(lighting, polygonFillMode);
+    assembly_.push_back(&pi);
 }
 
 // Add line styling information
 void PrimitiveAssembly::add(LineStyle lineStyle)
 {
-    LineStylePrimitiveInfo *pi = lineStylePrimitiveFactory_.produce();
-    (*pi) = LineStylePrimitiveInfo(lineStyle);
-    assembly_.push_back(pi);
+    LineStylePrimitiveInfo &pi = lineStylePrimitiveFactory_.emplace_back();
+    pi = LineStylePrimitiveInfo(lineStyle);
+    assembly_.push_back(&pi);
 }
 
 /*
