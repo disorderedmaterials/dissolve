@@ -4,14 +4,13 @@
 #pragma once
 
 #include "gui/render/primitiveinfo.h"
-#include "templates/listitem.h"
 #include <deque>
 
 // Forward Declarations
 /* none */
 
 // Rendering Primitive List
-class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
+class PrimitiveAssembly
 {
     public:
     PrimitiveAssembly();

@@ -5,7 +5,7 @@
 #include "base/messenger.h"
 #include <string.h>
 
-Primitive::Primitive() : ListItem<Primitive>()
+Primitive::Primitive()
 {
     colouredVertexData_ = false;
     type_ = GL_TRIANGLES;
@@ -61,7 +61,7 @@ bool Primitive::colouredVertexData() const { return colouredVertexData_; }
 void Primitive::updateMesh()
 {
     // Check instances - if there is no current instance, create one
-    if (instances_.nItems() != 0)
+  if (!instances_.empty())
         popInstance(QOpenGLContext::currentContext());
     pushInstance(QOpenGLContext::currentContext());
 }
@@ -86,7 +86,7 @@ void Primitive::pushInstance(const QOpenGLContext *context)
     QOpenGLFunctions *glFunctions = context->functions();
 
     // Create new instance
-    PrimitiveInstance *pi = instances_.add();
+    PrimitiveInstance *pi = instances_.emplace_back(std::make_unique<PrimitiveInstance>()).get();
 
     // Vertex buffer object or plain old display list?
     if (PrimitiveInstance::globalInstanceType() == PrimitiveInstance::VBOInstance)
@@ -184,7 +184,7 @@ void Primitive::popInstance(const QOpenGLContext *context)
     // Grab the QOpenGLFunctions object pointer
     QOpenGLFunctions *glFunctions = context->functions();
 
-    PrimitiveInstance *pi = instances_.last();
+    auto &pi = instances_.back();
     if (pi != nullptr)
     {
         if (pi->context() == context)
@@ -205,12 +205,12 @@ void Primitive::popInstance(const QOpenGLContext *context)
             else if (pi->listObject() != 0)
                 glDeleteLists(pi->listObject(), 1);
         }
-        instances_.removeLast();
+	instances_.pop_back();
     }
 }
 
 // Return number of instances available
-int Primitive::nInstances() const { return instances_.nItems(); }
+int Primitive::nInstances() const { return instances_.size(); }
 
 // Send to OpenGL (i.e. render)
 void Primitive::sendToGL() const
@@ -223,10 +223,8 @@ void Primitive::sendToGL() const
     if (useInstances_)
     {
         // Grab topmost instance
-        PrimitiveInstance *pi = instances_.last();
-        if (pi == nullptr)
-            Messenger::error("Internal Error: No instance on stack in primitive.\n");
-        else if (pi->type() == PrimitiveInstance::VBOInstance)
+        auto &pi = instances_.back();
+        if (pi->type() == PrimitiveInstance::VBOInstance)
         {
             // Get QOpenGLFunctions object from supplied context
             QOpenGLFunctions *functions = pi->context()->functions();

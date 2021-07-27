@@ -5,14 +5,13 @@
 
 #include "gui/render/primitiveinstance.h"
 #include "math/matrix4.h"
-#include "templates/list.h"
 #include <QOpenGLFunctions>
 
 // Forward Declarations
 /* none */
 
 // Rendering Primitive
-class Primitive : public ListItem<Primitive>
+class Primitive
 {
     public:
     Primitive();
@@ -56,7 +55,7 @@ class Primitive : public ListItem<Primitive>
      */
     private:
     // Stack of OpenGL VBO or display list IDs and the contexts in which they were created
-    List<PrimitiveInstance> instances_;
+    std::vector<std::unique_ptr<PrimitiveInstance>> instances_;
     // Flag stating whether or not instances should be used for this primitive
     bool useInstances_;
 

@@ -4,7 +4,7 @@
 #include "gui/render/primitiveassembly.h"
 #include <array>
 
-PrimitiveAssembly::PrimitiveAssembly() : ListItem<PrimitiveAssembly>() {}
+PrimitiveAssembly::PrimitiveAssembly() {}
 
 PrimitiveAssembly::~PrimitiveAssembly() {}
 

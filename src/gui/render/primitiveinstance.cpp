@@ -7,7 +7,7 @@
 // Static members
 PrimitiveInstance::InstanceType PrimitiveInstance::globalInstanceType_ = PrimitiveInstance::VBOInstance;
 
-PrimitiveInstance::PrimitiveInstance() : ListItem<PrimitiveInstance>()
+PrimitiveInstance::PrimitiveInstance()
 {
     // Private variables
     context_ = nullptr;

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/listitem.h"
 #include <QtGui/qopengl.h>
 
 // Forward Declarations
@@ -11,7 +10,7 @@ class QOpenGLContext;
 class GLExtensions;
 
 // Primitive Instance
-class PrimitiveInstance : public ListItem<PrimitiveInstance>
+class PrimitiveInstance
 {
     public:
     PrimitiveInstance();
