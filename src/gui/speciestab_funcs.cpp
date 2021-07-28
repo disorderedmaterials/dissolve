@@ -148,7 +148,7 @@ void SpeciesTab::enableSensitiveControls() { setEnabled(true); }
  */
 
 // Return tab type
-MainTab::TabType SpeciesTab::type() const { return MainTab::SpeciesTabType; }
+MainTab::TabType SpeciesTab::type() const { return MainTab::TabType::Species; }
 
 // Raise suitable dialog for entering / checking new tab name
 QString SpeciesTab::getNewTitle(bool &ok)

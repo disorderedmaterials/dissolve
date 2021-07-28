@@ -294,7 +294,7 @@ void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a LayerTab, then call its rename() function
     auto tab = ui_.MainTabs->currentTab();
-    if ((!tab) || (tab->type() != MainTab::LayerTabType))
+    if ((!tab) || (tab->type() != MainTab::TabType::Layer))
         return;
     tab->rename();
 }
@@ -303,7 +303,7 @@ void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab
     auto tab = ui_.MainTabs->currentTab();
-    if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
+    if ((!tab) || (tab->type() != MainTab::TabType::Configuration))
         return;
 
     // Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer

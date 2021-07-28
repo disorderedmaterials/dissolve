@@ -185,6 +185,8 @@ class Dissolve
     public:
     // Register master instances for all Modules
     bool registerMasterModules();
+    // Print information on all available modules
+    void printModuleInformation() const;
     // Return master Module instances
     const List<Module> &masterModules() const;
     // Search for master Module of the named type

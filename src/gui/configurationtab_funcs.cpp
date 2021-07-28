@@ -50,7 +50,7 @@ ConfigurationTab::~ConfigurationTab()
  */
 
 // Return tab type
-MainTab::TabType ConfigurationTab::type() const { return MainTab::ConfigurationTabType; }
+MainTab::TabType ConfigurationTab::type() const { return MainTab::TabType::Configuration; }
 
 // Raise suitable dialog for entering / checking new tab name
 QString ConfigurationTab::getNewTitle(bool &ok)

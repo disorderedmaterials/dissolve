@@ -34,8 +34,8 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     // Set up user interface
     ui_.setupUi(this);
 
-    // Set fonts
-    ui_.MessagesEdit->setFont(QFont("Cousine", 10));
+    // Set up the main tabs widget
+    ui_.MainTabs->setUp(this);
 
     // Connect signals to thread controller
     connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
@@ -48,7 +48,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     refreshing_ = false;
     modified_ = false;
     localSimulation_ = true;
-    dissolveState_ = EditingState;
+    dissolveState_ = NoState;
 
     // Create statusbar widgets
     localSimulationIndicator_ = new QLabel;
@@ -63,21 +63,18 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     heartbeatFileIndicator_->setPixmap(QPixmap(":/general/icons/general_heartbeat.svg"));
     heartbeatFileIndicator_->setMaximumSize(QSize(20, 20));
     heartbeatFileIndicator_->setScaledContents(true);
+    iterationLabel_ = new QLabel("00000");
     etaLabel_ = new QLabel("ETA: --:--:--");
+
+    statusBar()->addPermanentWidget(iterationLabel_);
     statusBar()->addPermanentWidget(etaLabel_);
     statusBar()->addPermanentWidget(heartbeatFileIndicator_);
     statusBar()->addPermanentWidget(restartFileIndicator_);
     statusBar()->addPermanentWidget(localSimulationIndicator_);
 
-    // Set up main tabs
-    ui_.MainTabs->addCoreTabs(this);
-    ui_.MainTabs->updateAllTabs();
-
     updateWindowTitle();
-    updateControlsFrame();
-
-    // Show the Start stack page (we call this mostly to ensure correct availability of other controls)
-    showMainStackPage(DissolveWindow::StartStackPage);
+    updateStatusBar();
+    updateMenus();
 }
 
 // Catch window close event
@@ -131,14 +128,6 @@ Dissolve &DissolveWindow::dissolve() { return dissolve_; }
 
 const Dissolve &DissolveWindow::dissolve() const { return dissolve_; }
 
-// Link output handler in to the Messenger
-void DissolveWindow::addOutputHandler()
-{
-    Messenger::setOutputHandler(&outputHandler_);
-    connect(&outputHandler_, SIGNAL(printText(const QString &)), this, SLOT(appendMessage(const QString &)));
-    connect(&outputHandler_, SIGNAL(setColour(const QColor &)), ui_.MessagesEdit, SLOT(setTextColor(const QColor &)));
-}
-
 /*
  * File
  */
@@ -147,6 +136,8 @@ void DissolveWindow::addOutputHandler()
 bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile,
                                    bool ignoreLayoutFile)
 {
+    refreshing_ = true;
+
     // Clear any existing tabs etc.
     ui_.MainTabs->clearTabs();
 
@@ -158,14 +149,27 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
 
     // Load the input file
     Messenger::banner("Parse Input File");
+    auto loadResult = false;
     if (inputFileInfo.exists())
     {
         QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
-        if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName())))
+        try
+        {
+            loadResult = dissolve_.loadInput(qPrintable(inputFileInfo.fileName()));
+        }
+        catch (...)
+        {
+            loadResult = false;
+        }
+
+        if (!loadResult)
+        {
             QMessageBox::warning(this, "Input file contained errors.",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
+            return false;
+        }
     }
     else
         return Messenger::error("Input file does not exist.\n");
@@ -223,9 +227,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     // Fully update GUI
     fullUpdate();
 
-    // Make sure we are now on the Simulation stack page
-    showMainStackPage(DissolveWindow::SimulationStackPage);
-
     return true;
 }
 
@@ -248,17 +249,11 @@ void DissolveWindow::updateWindowTitle()
     ui_.FileSaveAction->setEnabled(modified_);
 }
 
-// Update controls frame
-void DissolveWindow::updateControlsFrame()
+// Update status bar
+void DissolveWindow::updateStatusBar()
 {
-    // Update ControlFrame to reflect Dissolve's current state
-    ui_.ControlRunButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
-    ui_.ControlStepButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
-    ui_.ControlPauseButton->setEnabled(dissolveState_ == DissolveWindow::RunningState);
-    ui_.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
-
     // Set current iteration number
-    ui_.ControlIterationLabel->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
+    iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
     // Set relevant file locations
     if (localSimulation_)
@@ -282,25 +277,37 @@ void DissolveWindow::updateControlsFrame()
 // Update menus
 void DissolveWindow::updateMenus()
 {
+    // File Menu - always active, but available items depends on state
+    ui_.FileSaveAction->setEnabled(dissolveState_ != NoState);
+    ui_.FileSaveAsAction->setEnabled(dissolveState_ != NoState);
+    ui_.FileCloseAction->setEnabled(dissolveState_ != NoState && dissolveState_ != RunningState);
+
+    // Enable / disable other menu items as appropriate
+    ui_.SimulationMenu->setEnabled(dissolveState_ == EditingState);
+    ui_.SpeciesMenu->setEnabled(dissolveState_ == EditingState);
+    ui_.ConfigurationMenu->setEnabled(dissolveState_ == EditingState);
+    ui_.LayerMenu->setEnabled(dissolveState_ == EditingState);
+    ui_.WorkspaceMenu->setEnabled(dissolveState_ == EditingState);
+
     auto activeTab = ui_.MainTabs->currentTab();
     if (!activeTab)
         return;
 
     // Species Menu
-    ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesReduceForcefieldTermsMenu->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+    ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesReduceForcefieldTermsMenu->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
 
     // Configuration Menu
-    ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
-    ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
-    ui_.ConfigurationExportToMenu->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+    ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
+    ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
+    ui_.ConfigurationExportToMenu->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
 
     // Layer Menu
-    ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
-    ui_.LayerDeleteAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
+    ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Layer);
+    ui_.LayerDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Layer);
 }
 
 // Perform full update of the GUI, including tab reconciliation
@@ -308,10 +315,12 @@ void DissolveWindow::fullUpdate()
 {
     refreshing_ = true;
 
+    // Make sure correct stack page is shown
+    ui_.MainStack->setCurrentIndex(dissolveState_ == NoState ? 0 : 1);
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();
     updateWindowTitle();
-    updateControlsFrame();
+    updateStatusBar();
     updateMenus();
 
     refreshing_ = false;
@@ -323,7 +332,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     refreshing_ = true;
 
     // Set current iteration number
-    ui_.ControlIterationLabel->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
+    iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
     // Set ETA text if we can
     if (iterationsRemaining == -1)
@@ -342,19 +351,5 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     refreshing_ = false;
 }
 
-/*
- * Stack
- */
-
-// Set currently-visible main stack page
-void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
-{
-    ui_.MainStack->setCurrentIndex(page);
-
-    // Enable / disable main menu items as appropriate
-    ui_.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-    ui_.SpeciesMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-    ui_.ConfigurationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-    ui_.LayerMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-    ui_.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-}
+// Clear the messages window
+void DissolveWindow::clearMessages() { ui_.MainTabs->messagesTab()->clearMessages(); }

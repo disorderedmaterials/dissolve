@@ -129,6 +129,12 @@ bool Dissolve::registerMasterModules()
     if (!registerMasterModule(new XRaySQModule))
         return false;
 
+    return true;
+}
+
+// Print information on all available modules
+void Dissolve::printModuleInformation() const
+{
     Messenger::print("Module Information ({} available):\n", masterModules_.nItems());
     ListIterator<Module> moduleIterator(masterModules_);
     while (Module *module = moduleIterator.iterate())
@@ -136,8 +142,6 @@ bool Dissolve::registerMasterModules()
         Messenger::print(" --> {}\n", module->type());
         Messenger::print("     {}\n", module->brief());
     }
-
-    return true;
 }
 
 // Search for master Module of the named type

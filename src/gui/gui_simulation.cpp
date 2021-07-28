@@ -3,34 +3,10 @@
 
 #include "gui/gui.h"
 #include "main/dissolve.h"
-#include <QScrollBar>
-
-/*
- * Control
- */
-
-// Return current state of Dissolve
-DissolveWindow::DissolveState DissolveWindow::dissolveState() const { return dissolveState_; }
-
-void DissolveWindow::on_ControlRunButton_clicked(bool checked) { ui_.SimulationRunAction->trigger(); }
-
-void DissolveWindow::on_ControlStepButton_clicked(bool checked) { ui_.SimulationStepAction->trigger(); }
-
-void DissolveWindow::on_ControlPauseButton_clicked(bool checked) { ui_.SimulationPauseAction->trigger(); }
-
-void DissolveWindow::on_ControlReloadButton_clicked(bool checked)
-{
-    // TODO
-}
 
 // Disable sensitive controls
 void DissolveWindow::disableSensitiveControls()
 {
-    // Disable / enable run controls
-    ui_.ControlRunButton->setEnabled(false);
-    ui_.ControlStepButton->setEnabled(false);
-    ui_.ControlPauseButton->setEnabled(true);
-
     // Disable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(false);
     ui_.SimulationPauseAction->setEnabled(true);
@@ -52,12 +28,6 @@ void DissolveWindow::disableSensitiveControls()
 // Enable sensitive controls
 void DissolveWindow::enableSensitiveControls()
 {
-    // Disable / enable run controls
-    ui_.ControlRunButton->setEnabled(true);
-    ui_.ControlRunButton->setIcon(QIcon(":/control/icons/control_play.svg"));
-    ui_.ControlStepButton->setEnabled(true);
-    ui_.ControlPauseButton->setEnabled(false);
-
     // Enable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(true);
     ui_.SimulationPauseAction->setEnabled(false);
@@ -113,30 +83,3 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 
 // Return list of all current tabs
 const std::vector<std::shared_ptr<MainTab>> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
-
-/*
- * Messages
- */
-
-void DissolveWindow::on_MessagesIncreaseFontSizeButton_clicked(bool checked)
-{
-    QFont font = ui_.MessagesEdit->font();
-    font.setPointSize(font.pointSize() + 1);
-    ui_.MessagesEdit->setFont(font);
-}
-
-void DissolveWindow::on_MessagesDecreaseFontSizeButton_clicked(bool checked)
-{
-    QFont font = ui_.MessagesEdit->font();
-    font.setPointSize(font.pointSize() - 1);
-    ui_.MessagesEdit->setFont(font);
-}
-
-void DissolveWindow::clearMessages() { ui_.MessagesEdit->clear(); }
-
-void DissolveWindow::appendMessage(const QString &msg)
-{
-    ui_.MessagesEdit->verticalScrollBar()->setSliderPosition(ui_.MessagesEdit->verticalScrollBar()->maximum());
-
-    ui_.MessagesEdit->insertPlainText(msg);
-}

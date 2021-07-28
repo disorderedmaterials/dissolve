@@ -21,7 +21,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 #endif
 
     // Add positionals
-    auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load");
+    auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile);
 
     // Basic Control
     app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 0)")->group("Basic Control");
