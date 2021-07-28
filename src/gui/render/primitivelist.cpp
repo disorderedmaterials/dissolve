@@ -47,7 +47,7 @@ int PrimitiveList::nPrimitives() const { return primitives_.size(); }
 void PrimitiveList::remove(Primitive *primitive)
 {
     primitives_.erase(
-        std::remove_if(primitives_.begin(), primitives_.end(), [primitive](auto &prim){ return prim.get() == primitive;}),
+        std::remove_if(primitives_.begin(), primitives_.end(), [primitive](auto &prim) { return prim.get() == primitive; }),
         primitives_.end());
 }
 
