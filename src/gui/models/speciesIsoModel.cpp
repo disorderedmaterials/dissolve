@@ -11,7 +11,7 @@ SpeciesIsoModel::SpeciesIsoModel(Species &species) : species_(species) {}
 int SpeciesIsoModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
-        return species_.isotopologues().nItems();
+        return species_.isotopologues().size();
     return species_.isotopologue(parent.row())->isotopes().size();
 }
 
@@ -34,7 +34,7 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
 
     if (!index.parent().isValid())
     {
-        if (index.row() > species_.isotopologues().nItems())
+        if (index.row() > species_.isotopologues().size())
             return QVariant();
         if (index.column() > 0)
             return QVariant();
@@ -132,7 +132,7 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
     {
         if (index.row() != 0)
             return false;
-        if (index.row() > species_.isotopologues().nItems())
+        if (index.row() > species_.isotopologues().size())
             return false;
         auto iso = species_.isotopologue(index.row());
         iso->setName(value.toString().toStdString());

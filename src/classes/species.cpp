@@ -114,7 +114,7 @@ bool Species::checkSetUp() const
     /*
      * Check Isotopologues
      */
-    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
+    for (auto &iso : isotopologues_)
     {
         for (auto [atomType, isotope] : iso->isotopes())
         {
