@@ -24,7 +24,7 @@ class ForcefieldTab : public QWidget, public MainTab
 
     public:
     ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title);
-    ~ForcefieldTab();
+    ~ForcefieldTab() = default;
 
     /*
      * UI

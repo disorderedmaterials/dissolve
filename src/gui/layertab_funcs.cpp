@@ -23,18 +23,14 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
     ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
 }
 
-LayerTab::~LayerTab()
-{
-    // Remove the Configuration represented in this tab
-    dissolve_.removeProcessingLayer(moduleLayer_);
-}
+LayerTab::~LayerTab() { dissolve_.removeProcessingLayer(moduleLayer_); }
 
 /*
  * MainTab Reimplementations
  */
 
 // Return tab type
-MainTab::TabType LayerTab::type() const { return MainTab::LayerTabType; }
+MainTab::TabType LayerTab::type() const { return MainTab::TabType::Layer; }
 
 // Raise suitable dialog for entering / checking new tab name
 QString LayerTab::getNewTitle(bool &ok)

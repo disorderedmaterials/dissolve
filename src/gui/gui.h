@@ -52,8 +52,6 @@ class DissolveWindow : public QMainWindow
     bool modified_;
     // Whether window is currently refreshing
     bool refreshing_;
-    // Output handler for messaging in GUI
-    GUIOutputHandler outputHandler_;
     // Whether the current simulation is on the local machine
     bool localSimulation_;
 
@@ -69,8 +67,6 @@ class DissolveWindow : public QMainWindow
     // Return reference to Dissolve
     Dissolve &dissolve();
     const Dissolve &dissolve() const;
-    // Link the Messenger in to the GUI output device
-    void addOutputHandler();
 
     /*
      * StatusBar
@@ -82,6 +78,8 @@ class DissolveWindow : public QMainWindow
     QLabel *restartFileIndicator_;
     // Label for heartbeat file indicator
     QLabel *heartbeatFileIndicator_;
+    // Label for iteration number
+    QLabel *iterationLabel_;
     // Label for simulation ETA (when using RunFor)
     QLabel *etaLabel_;
 
@@ -105,14 +103,16 @@ class DissolveWindow : public QMainWindow
     public slots:
     // Update window title
     void updateWindowTitle();
-    // Update controls frame
-    void updateControlsFrame();
+    // Update status bar
+    void updateStatusBar();
     // Update menus
     void updateMenus();
     // Perform full update of the GUI, including tab reconciliation
     void fullUpdate();
     // Update while running
     void updateWhileRunning(int iterationsRemaining);
+    // Clear the messages window
+    void clearMessages();
 
     /*
      * Main Menu
@@ -190,43 +190,13 @@ class DissolveWindow : public QMainWindow
     void currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow);
 
     /*
-     * Main Stack
-     */
-    private:
-    // Stack Pages Enum
-    enum MainStackPage
-    {
-        StartStackPage,      /* Start Page - Routes to load, create, and monitor simulations */
-        SimulationStackPage, /* Simulation Page - Controls for current simulation */
-        nStackPages
-    };
-
-    private:
-    // Set currently-visible main stack page
-    void showMainStackPage(MainStackPage page);
-
-    /*
-     * 'Start' Stack Page
-     */
-    private slots:
-    // 'Create' Group
-    void on_StartCreateNewButton_clicked(bool checked);
-    void on_StartCreateFromTemplateButton_clicked(bool checked);
-    // 'Open / Connect' Group
-    void on_StartOpenLocalButton_clicked(bool checked);
-    void on_StartOpenRecentButton_clicked(bool checked);
-    void on_StartConnectButton_clicked(bool checked);
-    // Help
-    void on_StartOnlineManualButton_clicked(bool checked);
-    void on_StartOnlineTutorialsButton_clicked(bool checked);
-
-    /*
-     * 'Simulation' Stack Page - Run Control
+     * Widgets / UI
      */
     public:
     // Dissolve State Enum
     enum DissolveState
     {
+        NoState,         /* Dissolve has no active simulation */
         EditingState,    /* Dissolve is currently editing a file in the GUI */
         RunningState,    /* Dissolve is currently running in the GUI */
         MonitoringState, /* Dissolve is running in the background, and we are monitoring it via the restart file */
@@ -239,15 +209,12 @@ class DissolveWindow : public QMainWindow
     // Current state of Dissolve
     DissolveState dissolveState_;
 
-    public:
-    // Return current state of Dissolve
-    DissolveState dissolveState() const;
-
     private slots:
-    void on_ControlRunButton_clicked(bool checked);
-    void on_ControlStepButton_clicked(bool checked);
-    void on_ControlPauseButton_clicked(bool checked);
-    void on_ControlReloadButton_clicked(bool checked);
+    void on_MainTabs_currentChanged(int index);
+
+    public:
+    // Return list of all current tabs
+    const std::vector<std::shared_ptr<MainTab>> allTabs() const;
 
     public slots:
     // Disable sensitive controls
@@ -260,25 +227,6 @@ class DissolveWindow : public QMainWindow
     signals:
     void iterate(int);
     void stopIterating();
-
-    /*
-     * 'Simulation' Stack Page - Tabs
-     */
-    private slots:
-    void on_MainTabs_currentChanged(int index);
-
-    public:
-    // Return list of all current tabs
-    const std::vector<std::shared_ptr<MainTab>> allTabs() const;
-
-    /*
-     * 'Simulation' Stack Page - Messages
-     */
-    private slots:
-    void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
-    void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
-    void clearMessages();
-    void appendMessage(const QString &msg);
 
     /*
      * GUI State

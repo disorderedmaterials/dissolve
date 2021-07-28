@@ -23,16 +23,15 @@ MainTab::MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWid
     title_ = title;
 }
 
-MainTab::~MainTab() {}
-
 // Return enum options for TabType
 EnumOptions<MainTab::TabType> MainTab::tabTypes()
 {
-    return EnumOptions<MainTab::TabType>("TabType", {{MainTab::ConfigurationTabType, "ConfigurationTab"},
-                                                     {MainTab::ForcefieldTabType, "ForcefieldTab"},
-                                                     {MainTab::LayerTabType, "LayerTab"},
-                                                     {MainTab::SpeciesTabType, "SpeciesTab"},
-                                                     {MainTab::WorkspaceTabType, "WorkspaceTab"}});
+    return EnumOptions<MainTab::TabType>("TabType", {{MainTab::TabType::Configuration, "ConfigurationTab"},
+                                                     {MainTab::TabType::Forcefield, "ForcefieldTab"},
+                                                     {MainTab::TabType::Layer, "LayerTab"},
+                                                     {MainTab::TabType::Messages, "MessagesTab"},
+                                                     {MainTab::TabType::Species, "SpeciesTab"},
+                                                     {MainTab::TabType::Workspace, "WorkspaceTab"}});
 }
 
 /*

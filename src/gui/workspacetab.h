@@ -19,7 +19,7 @@ class WorkspaceTab : public QWidget, public MainTab
 
     public:
     WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title);
-    ~WorkspaceTab();
+    ~WorkspaceTab() = default;
     // Main form declaration
     Ui::WorkspaceTab ui;
 
