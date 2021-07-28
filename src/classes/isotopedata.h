@@ -4,10 +4,9 @@
 #pragma once
 
 #include "data/isotopes.h"
-#include "templates/listitem.h"
 
 // sotopeData Definition
-class IsotopeData : public ListItem<IsotopeData>
+class IsotopeData
 {
     public:
     IsotopeData(Sears91::Isotope isotope = Sears91::Isotope::Unknown, double population = 0.0, double fraction = 0.0);
