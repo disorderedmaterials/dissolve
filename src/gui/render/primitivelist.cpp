@@ -48,7 +48,7 @@ void PrimitiveList::remove(Primitive *primitive)
 {
     primitives_.erase(
         std::remove_if(primitives_.begin(), primitives_.end(), [primitive](auto &prim){ return prim.get() == primitive;}),
-	primitives_.end());
+        primitives_.end());
 }
 
 // Return total number of defined vertices
