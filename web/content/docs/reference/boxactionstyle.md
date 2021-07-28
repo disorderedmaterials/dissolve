@@ -3,7 +3,7 @@ title: Box Action Styles
 description: Box action styles for procedure nodes
 ---
 
-Box action / adjustment styles used by the [`AddSpecies`]({{< ref "addnode" >}}) procedure node.
+Box action / adjustment styles used by the [`Add`]({{< ref "addnode" >}}) procedure node.
 
 |Keyword|Parameters|Description|
 |:---:|:--------:|-----------|

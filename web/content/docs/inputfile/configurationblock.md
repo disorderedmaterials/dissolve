@@ -30,11 +30,11 @@ Configuration  'Liquid'
 	  Lengths  1.0  1.0  1.0
 	  Angles  90.0  90.0  90.0
 	EndBox
-	AddSpecies
+	Add
 	  Species  'SpeciesA'
 	  Population  '200'
 	  Density  '0.95'  g/cm3
-	EndAddSpecies
+	EndAdd
   EndGenerator
 
   Temperature  300.000000
@@ -46,7 +46,7 @@ EndConfiguration
 
 ### Random One-Component System
 
-Simple one-component system, e.g. a pure liquid, with a set number of molecules randomly added to a cubic unit cell. The size of the cell is not explicitly specified - giving a density value (here, the atomic density in atoms/&#8491;<sup>3</sup>) to the [`AddSpecies`]({{< ref "addnode" >}}) node allows it to calculate the required volume for the number of molecules requested.
+Simple one-component system, e.g. a pure liquid, with a set number of molecules randomly added to a cubic unit cell. The size of the cell is not explicitly specified - giving a density value (here, the atomic density in atoms/&#8491;<sup>3</sup>) to the [`Add`]({{< ref "addnode" >}}) node allows it to calculate the required volume for the number of molecules requested.
 
 ```r
 Generator
@@ -54,12 +54,12 @@ Generator
 	Lengths  1.0  1.0  1.0
 	Angles  90.0  90.0  90.0
   EndBox
-  AddSpecies
+  Add
 	Species  'Water'
 	Population  '1000'
 	Density  '0.1'  atoms/A3
 	Positioning  Random
-  EndAddSpecies
+  EndAdd
 EndGenerator
 ```
 
@@ -78,15 +78,15 @@ Generator
 	Angles  90.0  90.0  90.0
 	Lengths  1.0  1.0  1.0
   EndBox
-  AddSpecies
+  Add
 	Species  'Water'
 	Population  N*ratio
 	Density  rho  g/cm3
-  EndAddSpecies
-  AddSpecies
+  EndAdd
+  Add
 	Species  'Alcohol'
 	Population  N
 	Density  rho  g/cm3
-  EndAddSpecies
+  EndAdd
 EndGenerator
 ```
