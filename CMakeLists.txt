@@ -167,8 +167,6 @@ if(APPLE)
 
     # Adjust external include directories for GUI
     include_directories(${FTGL_INCLUDE_DIRS})
-
-    list(APPEND CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
   endif(GUI)
 endif(APPLE)
 

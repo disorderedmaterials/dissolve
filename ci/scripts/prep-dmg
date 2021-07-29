@@ -166,6 +166,8 @@ do
   otool -L $target
 done
 
+install_name_tool -add_path "@executable_path/../Frameworks" ${APP_ROOT}/${APP_NAME}.app/Contents/MacOS/dissolve-gui
+
 # /------------------\
 # | Generate iconset |
 # \------------------/
