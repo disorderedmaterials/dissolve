@@ -80,11 +80,11 @@ const Isotopologue *Species::findIsotopologue(std::string_view name, const Isoto
     if (DissolveSys::sameString("Natural", name))
         return naturalIsotopologue();
 
-    for (auto &iso : isotopologues_)
-        if (iso.get() == exclude)
-            continue;
-        else if (DissolveSys::sameString(name, iso->name()))
-            return iso.get();
+    auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(), [exclude, name](auto &iso) {
+        return iso.get() != exclude && DissolveSys::sameString(name, iso->name());
+    });
+    if (it != isotopologues_.end())
+        return it->get();
 
     return nullptr;
 }
