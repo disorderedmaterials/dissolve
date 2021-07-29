@@ -63,8 +63,7 @@ bool WorkspaceTab::canChangeTitle() const { return true; }
 void WorkspaceTab::updateControls()
 {
     // Update our MDI subwindows
-    ListIterator<Gizmo> gizmoIterator(gizmos_);
-    while (Gizmo *gizmo = gizmoIterator.iterate())
+    for (auto &gizmo : gizmos_)
         gizmo->updateControls();
 }
 
@@ -72,8 +71,7 @@ void WorkspaceTab::updateControls()
 void WorkspaceTab::disableSensitiveControls()
 {
     // Disable sensitive controls in subwindows
-    ListIterator<Gizmo> gizmoIterator(gizmos_);
-    while (Gizmo *gizmo = gizmoIterator.iterate())
+    for (auto &gizmo : gizmos_)
         gizmo->disableSensitiveControls();
 }
 
@@ -81,8 +79,7 @@ void WorkspaceTab::disableSensitiveControls()
 void WorkspaceTab::enableSensitiveControls()
 {
     // Enable sensitive controls in subwindows
-    ListIterator<Gizmo> gizmoIterator(gizmos_);
-    while (Gizmo *gizmo = gizmoIterator.iterate())
+    for (auto &gizmo : gizmos_)
         gizmo->enableSensitiveControls();
 }
 
@@ -101,7 +98,7 @@ void WorkspaceTab::removeGizmo(QString uniqueName)
         return;
     }
 
-    gizmos_.remove(gizmo);
+    gizmos_.erase(std::remove_if(gizmos_.begin(), gizmos_.end(), [gizmo](auto &g) { return g.get() == gizmo; }), gizmos_.end());
 }
 
 // Create Gizmo with specified type
@@ -141,7 +138,7 @@ Gizmo *WorkspaceTab::createGizmo(QString type)
 
     // Update the Gizmo's controls, and add it to our lists
     gizmo->updateControls();
-    gizmos_.own(gizmo);
+    gizmos_.emplace_back(gizmo);
 
     mdiArea_->setActiveSubWindow(window);
     dissolveWindow_->currentWorkspaceGizmoChanged(window);
@@ -157,8 +154,7 @@ Gizmo *WorkspaceTab::createGizmo(QString type)
 void WorkspaceTab::showContextMenu(const QPoint &pos)
 {
     // Check that we are not over an existing gizmo
-    ListIterator<Gizmo> gizmoIterator(gizmos_);
-    while (Gizmo *gizmo = gizmoIterator.iterate())
+    for (auto &gizmo : gizmos_)
         if (gizmo->window()->geometry().contains(pos))
             return;
 
