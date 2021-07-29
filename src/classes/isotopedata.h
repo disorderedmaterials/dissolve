@@ -5,7 +5,7 @@
 
 #include "data/isotopes.h"
 
-// sotopeData Definition
+// IsotopeData Definition
 class IsotopeData
 {
     public:
