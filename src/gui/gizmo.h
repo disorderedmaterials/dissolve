@@ -14,7 +14,7 @@ class LineParser;
 class QMdiSubWindow;
 
 // Gizmo - Base class for any widget to be displayed in a QMdiSubWindow
-class Gizmo : public ListItem<Gizmo>
+class Gizmo
 {
     public:
     Gizmo(Dissolve &dissolve, const QString uniqueName);

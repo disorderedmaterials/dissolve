@@ -8,7 +8,7 @@
 // Static Singletons
 RefList<Gizmo> Gizmo::allGizmos_;
 
-Gizmo::Gizmo(Dissolve &dissolve, const QString uniqueName) : ListItem<Gizmo>(), dissolve_(dissolve)
+Gizmo::Gizmo(Dissolve &dissolve, const QString uniqueName) : dissolve_(dissolve)
 {
     window_ = nullptr;
     uniqueName_ = uniqueName;

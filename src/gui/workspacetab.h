@@ -52,7 +52,7 @@ class WorkspaceTab : public QWidget, public MainTab
     // MDI area containing our Gizmos
     TMdiArea *mdiArea_;
     // List of current Gizmos in the MDI area
-    List<Gizmo> gizmos_;
+    std::vector<std::unique_ptr<Gizmo>> gizmos_;
 
     private slots:
     // Remove Gizmo with specified unique name
