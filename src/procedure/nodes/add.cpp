@@ -217,10 +217,25 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     // Get the positioning type and rotation flag
     auto positioning = keywords_.enumeration<AddProcedureNode::PositioningType>("Positioning");
     auto *regionNode = dynamic_cast<const RegionProcedureNodeBase *>(keywords_.retrieve<const ProcedureNode *>("Region"));
+    Region region;
     auto rotate = keywords_.asBool("Rotate");
 
     Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
                      AddProcedureNode::positioningTypes().keyword(positioning), rotate ? "on" : "off");
+    if (positioning == AddProcedureNode::PositioningType::Region)
+    {
+        if (!regionNode)
+            return Messenger::error("Positioning type set to '{}' but no region was given.\n",
+                                    AddProcedureNode::positioningTypes().keyword(positioning));
+
+        region = regionNode->generateRegion(cfg);
+        if (!region.isValid())
+            return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n",
+                                    regionNode->name());
+
+        Messenger::print("[Add] Target region ('{}') covers {:.2f}% of the box volume.\n", regionNode->name(),
+                         region.freeVoxelFraction() * 100.0);
+    }
 
     // Now we add the molecules
     procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
@@ -253,7 +268,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddProcedureNode::PositioningType::Region):
-                mol->setCentreOfGeometry(box, regionNode->randomCoordinate());
+                mol->setCentreOfGeometry(box, region.randomCoordinate());
                 break;
             case (AddProcedureNode::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);
