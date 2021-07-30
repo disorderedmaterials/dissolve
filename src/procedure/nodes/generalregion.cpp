@@ -16,13 +16,11 @@ GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBa
  */
 
 // Return whether voxel centred at supplied real coordinates is valid
-bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &vCentre) const
+bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
 {
-    const Box *box = cfg->box();
-
     // If any atom in the Configuration is less than some tolerance value to this coordinate, invalidate the voxel
     return !std::any_of(cfg->atoms().begin(), cfg->atoms().end(),
-                        [&](const auto &i) { return box->minimumDistanceSquared(i->r(), vCentre) <= toleranceSquared_; });
+                        [&](const auto &i) { return box_->minimumDistanceSquared(i->r(), r) <= toleranceSquared_; });
 }
 
 /*

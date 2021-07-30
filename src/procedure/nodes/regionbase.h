@@ -31,8 +31,6 @@ class RegionProcedureNodeBase : public ProcedureNode
      * Region Data
      */
     private:
-    // Box of target Configuration
-    const Box *box_;
     // 3D map of available voxels
     Array3D<std::pair<Vec3<int>, bool>> voxelMap_;
     // Number of voxels along each cell axis
@@ -43,14 +41,18 @@ class RegionProcedureNodeBase : public ProcedureNode
     std::vector<std::pair<Vec3<int>, bool>> freeVoxels_;
 
     protected:
+    // Box of target Configuration
+    const Box *box_;
+
+    protected:
     // Return whether voxel centred at supplied real coordinates is valid
-    virtual bool isVoxelValid(const Configuration *cfg, const Vec3<double> &vCentre) const = 0;
+    virtual bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const = 0;
 
     public:
-    // Return random fractional coordinate inside region
-    Vec3<double> randomFractionalCoordinate() const;
-    // Return whether specified coordinate is inside a valid voxel of the region
-    bool validFractionalCoordinate(const Vec3<double> &rFrac) const;
+    // Return random coordinate inside region
+    Vec3<double> randomCoordinate() const;
+    // Return whether specified coordinate is inside the region
+    bool validCoordinate(Vec3<double> r) const;
 
     /*
      * Execute

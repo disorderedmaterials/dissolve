@@ -8,7 +8,7 @@
 constexpr double voxelSize = 2.0;
 
 RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Region)
+    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Region), box_(nullptr)
 {
 }
 
@@ -29,8 +29,8 @@ bool RegionProcedureNodeBase::mustBeNamed() const { return true; }
  * Region Data
  */
 
-// Return random fractional coordinate inside region
-Vec3<double> RegionProcedureNodeBase::randomFractionalCoordinate() const
+// Return random coordinate inside region
+Vec3<double> RegionProcedureNodeBase::randomCoordinate() const
 {
     // Select a random voxel
     auto &voxel = freeVoxels_[DissolveMath::randomi(freeVoxels_.size())];
@@ -41,10 +41,11 @@ Vec3<double> RegionProcedureNodeBase::randomFractionalCoordinate() const
                         (voxel.first.z + DissolveMath::random()) * voxelSizeFrac_.z);
 }
 
-// Return whether specified fractional coordinate is inside a valid cell of the region
-bool RegionProcedureNodeBase::validFractionalCoordinate(const Vec3<double> &rFrac) const
+// Return whether specified coordinate is inside the region
+bool RegionProcedureNodeBase::validCoordinate(Vec3<double> r) const
 {
-    return voxelMap_[{rFrac.x / voxelSizeFrac_.x, rFrac.y / voxelSizeFrac_.y, rFrac.z / voxelSizeFrac_.z}].second;
+    box_->toFractional(r);
+    return voxelMap_[{r.x / voxelSizeFrac_.x, r.y / voxelSizeFrac_.y, r.z / voxelSizeFrac_.z}].second;
 }
 
 /*

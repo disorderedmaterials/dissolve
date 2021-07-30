@@ -24,7 +24,7 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase
      */
     public:
     // Return whether voxel centred at supplied real coordinates is valid
-    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &vCentre) const;
+    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const;
 
     /*
      * Execute
