@@ -16,15 +16,10 @@ steps:
       sudo pip3 install conan aqtinstall
       aqt install --outputdir /tmp/qt ${{ parameters.qtver }} mac desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
     displayName: 'Install Prerequisites'
-  # - bash: |
-  #     set -ex
-  #     pip3 install conan
-  #   displayName: 'Install Conan'
   - bash: |
       set -ex
-      ls /tmp/qt/6.1.1/clang_64/lib/cmake/Qt6
-      Qt6_DIR=/tmp/qt/${{parameters.qtver}}/clang_64/lib/cmake/Qt6
-      QT_BASE_DIR=/tmp/qt/${{parameters.qtver}}/clang_64
+      Qt6_DIR=/tmp/qt/${{ parameters.qtver }}/clang_64/lib/cmake/Qt6
+      QT_BASE_DIR=/tmp/qt/${{ parameters.qtver }}/clang_64
       QTVER=${{ parameters.qtver }}
       ANTLR_EXE=`find /usr/local/Cellar/antlr/4.9* -iname antlr`
       echo "Detected ANTLR exe as [$ANTLR_EXE]"

@@ -50,9 +50,6 @@ Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#FreetypeDir}\freetype.dll"; DestDir: "{app}\bin"
 Source: "{#ANTLRDir}\antlr4-runtime.dll"; DestDir: "{app}\bin"
 Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
-;Source: "{#MinGWDir}\bin\libgcc_s_seh-1.dll"; DestDir: "{app}\bin"
-;Source: "{#MinGWDir}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"
-;Source: "{#MinGWDir}\bin\libwinpthread-1.dll"; DestDir: "{app}\bin"
 Source: "{#QtDir}\bin\Qt6Gui.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6Core.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6OpenGL.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
