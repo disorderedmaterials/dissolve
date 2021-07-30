@@ -47,6 +47,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
         Collect1D,
         Collect2D,
         Collect3D,
+        CylindricalRegion,
         DynamicSite,
         Fit1D,
         GeneralRegion,

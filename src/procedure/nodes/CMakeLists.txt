@@ -10,6 +10,7 @@ add_library(
   collect1d.cpp
   collect2d.cpp
   collect3d.cpp
+  cylindricalregion.cpp
   dynamicsite.cpp
   fit1d.cpp
   generalregion.cpp
@@ -49,6 +50,7 @@ add_library(
   collect1d.h
   collect2d.h
   collect3d.h
+  cylindricalregion.h
   dynamicsite.h
   fit1d.h
   generalregion.h

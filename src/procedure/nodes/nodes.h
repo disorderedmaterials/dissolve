@@ -15,6 +15,7 @@
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/collect3d.h"
+#include "procedure/nodes/cylindricalregion.h"
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/fit1d.h"
 #include "procedure/nodes/generalregion.h"

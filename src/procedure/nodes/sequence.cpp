@@ -441,6 +441,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::Collect3D):
                 newNode = new Collect3DProcedureNode();
                 break;
+            case (ProcedureNode::NodeType::CylindricalRegion):
+                newNode = new CylindricalRegionProcedureNode();
+                break;
             case (ProcedureNode::NodeType::Fit1D):
                 newNode = new Fit1DProcedureNode();
                 break;
