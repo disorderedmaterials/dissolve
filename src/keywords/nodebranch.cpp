@@ -6,10 +6,11 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
-NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer,
+NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode,
                                      ProcedureNode::NodeContext branchContext)
-    : KeywordData<SequenceProcedureNode **>(KeywordData::NodeBranchData, branchPointer)
+    : KeywordData<SequenceProcedureNode *>(KeywordData::NodeBranchData, nullptr)
 {
+    data_ = new SequenceProcedureNode(branchContext, parentNode->procedure(), parentNode);
     parentNode_ = parentNode;
     branchContext_ = branchContext;
 }
@@ -21,7 +22,7 @@ NodeBranchKeyword::~NodeBranchKeyword() = default;
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool NodeBranchKeyword::isDataEmpty() const { return ((*data_) ? (*data_)->nNodes() == 0 : false); }
+bool NodeBranchKeyword::isDataEmpty() const { return data_->nNodes() == 0; }
 
 /*
  * Arguments
@@ -37,14 +38,14 @@ int NodeBranchKeyword::maxArguments() const { return 0; }
 bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Check that a branch hasn't already been defined
-    if (*data_)
+    if (data_)
         return Messenger::error("Only one {} branch may be defined in a {} node.\n", name(),
                                 ProcedureNode::nodeTypes().keyword(parentNode_->type()));
 
     // Create and parse a new branch
-    (*data_) =
+    data_ =
         new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, fmt::format("End{}", name()));
-    if (!(*data_)->deserialise(parser, coreData))
+    if (!data_->deserialise(parser, coreData))
         return false;
 
     return true;
@@ -53,7 +54,7 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &c
 // Write keyword data to specified LineParser
 bool NodeBranchKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    if (!(*data_) || ((*data_)->nNodes() == 0))
+    if (!data_ || (data_->nNodes() == 0))
         return true;
 
     // Write keyword name as the start of the branch
@@ -61,7 +62,7 @@ bool NodeBranchKeyword::write(LineParser &parser, std::string_view keywordName, 
         return false;
 
     // Write branch information
-    if (!(*data_)->write(parser, fmt::format("{}  ", prefix)))
+    if (!data_->write(parser, fmt::format("{}  ", prefix)))
         return false;
 
     // Write end keyword based on the name

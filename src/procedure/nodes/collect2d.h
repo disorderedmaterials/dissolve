@@ -40,6 +40,8 @@ class Collect2DProcedureNode : public ProcedureNode
     const CalculateProcedureNodeBase *yObservable_;
     // Index of y observable data to use (retrieved from keyword)
     int yObservableIndex_;
+    // Branch for subcollection, run if the target quantity is successfully binned (retrieved from keyword)
+    SequenceProcedureNode *subCollectBranch_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram2D> histogram_;
 
@@ -58,21 +60,6 @@ class Collect2DProcedureNode : public ProcedureNode
     double yMaximum() const;
     // Return y bin width
     double yBinWidth() const;
-
-    /*
-     * Branches
-     */
-    private:
-    // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_;
-
-    public:
-    // Add and return subcollection sequence branch
-    SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
 
     /*
      * Execute

@@ -20,11 +20,8 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
                   new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxBinwidthlabels),
                   "RangeX", "Range and binwidth of the histogram for QuantityX");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantity was binned successfully");
-
-    // Initialise branch
-    subCollectBranch_ = nullptr;
 }
 
 /*
@@ -59,25 +56,6 @@ double Collect1DProcedureNode::maximum() const { return keywords_.asVec3Double("
 double Collect1DProcedureNode::binWidth() const { return keywords_.asVec3Double("RangeX").z; }
 
 /*
- * Branches
- */
-
-// Add and return subcollection sequence branch
-SequenceProcedureNode *Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
-{
-    if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
-
-    return subCollectBranch_;
-}
-
-// Return whether this node has a branch
-bool Collect1DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
-
-// Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect1DProcedureNode::branch() { return subCollectBranch_; }
-
-/*
  * Execute
  */
 
@@ -108,8 +86,9 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
 
-    // Prepare any branches
-    if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList)))
+    // Retrieve and prep and branches
+    subCollectBranch_ = keywords_.retrieve<SequenceProcedureNode *>("SubCollect");
+    if (!subCollectBranch_->prepare(cfg, prefix, targetList))
         return false;
 
     return true;

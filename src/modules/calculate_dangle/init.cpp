@@ -133,16 +133,16 @@ void CalculateDAngleModule::initialise()
 
     // -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)'
     collectDAngle_ = new Collect2DProcedureNode(calcDistance, calcAngle, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-    SequenceProcedureNode *subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
+    auto *subCollectBranch = collectDAngle_->keywords().retrieve<SequenceProcedureNode *>("SubCollect");
     forEachC->addNode(collectDAngle_);
 
     // -- -- -- -- Collect1D:  'RDF(BC)'
     collectDistance_ = new Collect1DProcedureNode(calcDistance, 0.0, 10.0, 0.05);
-    subCollection->addNode(collectDistance_);
+    subCollectBranch->addNode(collectDistance_);
 
     // -- -- -- -- Collect1D:  'ANGLE(ABC)'
     collectAngle_ = new Collect1DProcedureNode(calcAngle, 0.0, 180.0, 1.0);
-    subCollection->addNode(collectAngle_);
+    subCollectBranch->addNode(collectAngle_);
 
     // Process1D: 'RDF(BC)'
     processDistance_ = new Process1DProcedureNode(collectDistance_);

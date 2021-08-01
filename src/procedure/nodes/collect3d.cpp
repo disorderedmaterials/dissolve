@@ -34,11 +34,8 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.0015),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range and binwidth of the z-axis of the histogram");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
-
-    // Initialise branch
-    subCollectBranch_ = nullptr;
 }
 Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
@@ -63,11 +60,8 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzOb
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range of calculation for the specified z observable");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
-
-    // Initialise branch
-    subCollectBranch_ = nullptr;
 }
 
 /*
@@ -120,24 +114,6 @@ double Collect3DProcedureNode::zMaximum() const { return keywords_.asVec3Double(
 double Collect3DProcedureNode::zBinWidth() const { return keywords_.asVec3Double("RangeZ").z; }
 
 /*
- * Branches
- */
-
-// Add and return subcollection sequence branch
-SequenceProcedureNode *Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
-{
-    if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
-
-    return subCollectBranch_;
-}
-
-// Return whether this node has a branch
-bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
-// Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect3DProcedureNode::branch() { return subCollectBranch_; }
-
-/*
  * Execute
  */
 
@@ -177,8 +153,9 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     if (!zObservable_)
         return Messenger::error("No valid z quantity set in '{}'.\n", name());
 
-    // Prepare any branches
-    if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList)))
+    // Retrieve and prep and branches
+    subCollectBranch_ = keywords_.retrieve<SequenceProcedureNode *>("SubCollect");
+    if (!subCollectBranch_->prepare(cfg, prefix, targetList))
         return false;
 
     return true;

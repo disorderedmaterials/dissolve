@@ -27,11 +27,8 @@ Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObse
                   new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeY", "Range and binwidth of the y-axis of the histogram");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
-
-    // Initialise branch
-    subCollectBranch_ = nullptr;
 }
 
 /*
@@ -128,8 +125,9 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     if (!yObservable_)
         return Messenger::error("No valid y quantity set in '{}'.\n", name());
 
-    // Prepare any branches
-    if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList)))
+    // Retrieve and prep and branches
+    subCollectBranch_ = keywords_.retrieve<SequenceProcedureNode *>("SubCollect");
+    if (!subCollectBranch_->prepare(cfg, prefix, targetList))
         return false;
 
     return true;

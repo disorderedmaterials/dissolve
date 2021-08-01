@@ -11,10 +11,10 @@ class NodeValue;
 class SequenceProcedureNode;
 
 // Keyword with NodeValue
-class NodeBranchKeyword : public KeywordData<SequenceProcedureNode **>
+class NodeBranchKeyword : public KeywordData<SequenceProcedureNode *>
 {
     public:
-    NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer,
+    NodeBranchKeyword(ProcedureNode *parentNode,
                       ProcedureNode::NodeContext branchContext);
     ~NodeBranchKeyword() override;
 

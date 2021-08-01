@@ -48,6 +48,8 @@ class Collect3DProcedureNode : public ProcedureNode
     const CalculateProcedureNodeBase *zObservable_;
     // Index of z observable data to use (retrieved from keyword)
     int zObservableIndex_;
+    // Branch for subcollection, run if the target quantity is successfully binned (retrieved from keyword)
+    SequenceProcedureNode *subCollectBranch_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram3D> histogram_;
 
@@ -72,21 +74,6 @@ class Collect3DProcedureNode : public ProcedureNode
     double zMaximum() const;
     // Return z bin width
     double zBinWidth() const;
-
-    /*
-     * Branches
-     */
-    private:
-    // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_;
-
-    public:
-    // Add and return subcollection sequence branch
-    SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
 
     /*
      * Execute

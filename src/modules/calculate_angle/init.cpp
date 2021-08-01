@@ -171,28 +171,28 @@ void CalculateAngleModule::initialise()
 
     // -- -- -- Collect3D:  'rAB vs rBC vs aABC'
     collectDDA_ = new Collect3DProcedureNode(calcAB, calcBC, calcABC, 0.0, 10.0, 0.05, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-    SequenceProcedureNode *subCollection = collectDDA_->addSubCollectBranch(ProcedureNode::AnalysisContext);
+    auto *subCollectBranch = collectDDA_->keywords().retrieve<SequenceProcedureNode *>("SubCollect");
     forEachC->addNode(collectDDA_);
 
     // -- -- -- -- Collect1D:  'RDF(AB)'
     collectAB_ = new Collect1DProcedureNode(calcAB, 0.0, 10.0, 0.05);
-    subCollection->addNode(collectAB_);
+    subCollectBranch->addNode(collectAB_);
 
     // -- -- -- -- Collect1D:  'RDF(BC)'
     collectBC_ = new Collect1DProcedureNode(calcBC, 0.0, 10.0, 0.05);
-    subCollection->addNode(collectBC_);
+    subCollectBranch->addNode(collectBC_);
 
     // -- -- -- -- Collect1D:  'ANGLE(ABC)'
     collectABC_ = new Collect1DProcedureNode(calcABC, 0.0, 180.0, 1.0);
-    subCollection->addNode(collectABC_);
+    subCollectBranch->addNode(collectABC_);
 
     // -- -- -- -- Collect2D:  'DAngle (A-B)-C'
     collectDAngleAB_ = new Collect2DProcedureNode(calcAB, calcABC, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-    subCollection->addNode(collectDAngleAB_);
+    subCollectBranch->addNode(collectDAngleAB_);
 
     // -- -- -- -- Collect3D:  'DAngle A-(B-C)'
     collectDAngleBC_ = new Collect2DProcedureNode(calcBC, calcABC, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-    subCollection->addNode(collectDAngleBC_);
+    subCollectBranch->addNode(collectDAngleBC_);
 
     // Process1D: 'RDF(AB)'
     processAB_ = new Process1DProcedureNode(collectAB_);

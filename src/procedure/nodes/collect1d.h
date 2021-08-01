@@ -35,6 +35,8 @@ class Collect1DProcedureNode : public ProcedureNode
     const CalculateProcedureNodeBase *xObservable_;
     // Index of x observable data to use (retrieved from keyword)
     int xObservableIndex_;
+    // Branch for subcollection, run if the target quantity is successfully binned (retrieved from keyword)
+    SequenceProcedureNode *subCollectBranch_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram1D> histogram_;
 
@@ -47,21 +49,6 @@ class Collect1DProcedureNode : public ProcedureNode
     double maximum() const;
     // Return bin width
     double binWidth() const;
-
-    /*
-     * Branches
-     */
-    private:
-    // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_;
-
-    public:
-    // Add and return subcollection sequence branch
-    SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
 
     /*
      * Execute
