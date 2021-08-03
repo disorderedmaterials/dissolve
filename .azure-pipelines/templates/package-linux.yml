@@ -26,7 +26,7 @@ steps:
       # Extract the version from the source
       export VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
       # Get extra dependencies needed by the App Image
-      sudo apt install libxkbcommon-x11-0 libxcb
+      sudo apt install libxkbcommon-x11 libXrender libxcb-render libxcb-render-util libxcb-shape libxcb-randr libxcb-xfixes libxcb-xkb libxcb-sync libxcb-shm libxcb-icccm libxcb-keysyms libxcb-image libxcb-util libxkbcommon libxkbcommon-x11 libfontconfig
       # Run on the targets
       ./linuxdeploy.AppImage --appdir Dissolve-continuous.AppDir --output appimage
       ./linuxdeploy.AppImage --appdir Dissolve-GUI-continuous.AppDir --plugin qt --output appimage
