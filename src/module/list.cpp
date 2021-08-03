@@ -10,7 +10,7 @@ ModuleList::ModuleList() = default;
 
 ModuleList::~ModuleList() = default;
 
-ModuleList::operator List<Module> &() { return modules_; }
+ModuleList::operator std::vector<std::unique_ptr<Module>> &() { return modules_; }
 
 /*
  * Module List
@@ -32,24 +32,30 @@ bool ModuleList::own(Module *module, Module *addBeforeThis)
             return false;
         }
         else
-            modules_.ownBefore(module, addBeforeThis);
+        {
+            auto pos = std::find_if(modules_.begin(), modules_.end(),
+                                    [addBeforeThis](auto &mod) { return mod.get() == addBeforeThis; });
+            modules_.emplace(pos, module);
+        }
     }
     else
-        modules_.own(module);
+        modules_.emplace_back(module);
 
     return true;
 }
 
 // Remove specified Module from list (but don't delete it)
-void ModuleList::cut(Module *module) { modules_.cut(module); }
+void ModuleList::cut(Module *module)
+{
+    modules_.erase(std::find_if(modules_.begin(), modules_.end(), [module](auto &mod) { return mod.get() == module; }));
+}
 
 // Find associated Module by unique name
 Module *ModuleList::find(std::string_view uniqueName) const
 {
-    ListIterator<Module> moduleIterator(modules_);
-    while (Module *module = moduleIterator.iterate())
+    for (auto &module : modules_)
         if (DissolveSys::sameString(module->uniqueName(), uniqueName))
-            return module;
+            return module.get();
 
     return nullptr;
 }
@@ -57,19 +63,18 @@ Module *ModuleList::find(std::string_view uniqueName) const
 // Return whether specified Module is present in the list
 bool ModuleList::contains(Module *searchModule) const
 {
-    ListIterator<Module> moduleIterator(modules_);
-    while (Module *module = moduleIterator.iterate())
-        if (module == searchModule)
+    for (auto &module : modules_)
+        if (module.get() == searchModule)
             return true;
 
     return false;
 }
 
 // Return total number of Modules in the list
-int ModuleList::nModules() const { return modules_.nItems(); }
+int ModuleList::nModules() const { return modules_.size(); }
 
 // Return list of Modules
-List<Module> &ModuleList::modules() { return modules_; }
+std::vector<std::unique_ptr<Module>> &ModuleList::modules() { return modules_; }
 
 /*
  * General Actions
@@ -78,8 +83,7 @@ List<Module> &ModuleList::modules() { return modules_; }
 // Run set-up stages for all modules
 bool ModuleList::setUpAll(Dissolve &dissolve, ProcessPool &procPool)
 {
-    ListIterator<Module> moduleIterator(modules_);
-    while (Module *module = moduleIterator.iterate())
+    for (auto &module : modules_)
         if (!module->setUp(dissolve, procPool))
             return false;
 

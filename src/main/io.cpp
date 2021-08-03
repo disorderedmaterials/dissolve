@@ -344,8 +344,7 @@ bool Dissolve::saveInput(std::string_view filename)
         if (!layer->enabled() && (!parser.writeLineF("  Disabled\n")))
             return false;
 
-        ListIterator<Module> processingIterator(layer->modules());
-        while (Module *module = processingIterator.iterate())
+        for (auto &module : layer->modules())
         {
             if (!parser.writeLineF("\n  {}  {}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
                                    module->type(), module->uniqueName()))

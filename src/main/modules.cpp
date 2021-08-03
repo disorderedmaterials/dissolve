@@ -245,19 +245,16 @@ std::string Dissolve::uniqueModuleName(std::string_view name, Module *excludeThi
 }
 
 // Delete specified Module instance
-bool Dissolve::deleteModuleInstance(Module *instance)
+bool Dissolve::deleteModuleInstance(std::unique_ptr<Module> instance)
 {
-    if (!moduleInstances_.contains(instance))
+    if (!moduleInstances_.contains(instance.get()))
         return Messenger::error("Can't find Module instance to remove.\n");
 
     // Remove the reference from our list
-    moduleInstances_.remove(instance);
+    moduleInstances_.remove(instance.get());
 
     // Invalidate any references to the module in keywords
-    KeywordBase::objectNoLongerValid(instance);
-
-    // Delete the actual Module - we assume that it has been removed from any ModuleList
-    delete instance;
+    KeywordBase::objectNoLongerValid(instance.get());
 
     return true;
 }

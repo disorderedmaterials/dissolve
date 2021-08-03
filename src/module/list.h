@@ -3,7 +3,8 @@
 
 #pragma once
 
-#include "templates/list.h"
+#include <memory>
+#include <vector>
 
 // Forward Declarations
 class Dissolve;
@@ -17,14 +18,14 @@ class ModuleList
     public:
     ModuleList();
     ~ModuleList();
-    operator List<Module> &();
+    operator std::vector<std::unique_ptr<Module>> &();
 
     /*
      * Module List
      */
     private:
     // List of Modules
-    List<Module> modules_;
+    std::vector<std::unique_ptr<Module>> modules_;
 
     public:
     // Clear list
@@ -40,7 +41,7 @@ class ModuleList
     // Return number of Modules in the list
     int nModules() const;
     // Return list of Modules
-    List<Module> &modules();
+    std::vector<std::unique_ptr<Module>> &modules();
 
     /*
      * General Actions

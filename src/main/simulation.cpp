@@ -156,8 +156,7 @@ bool Dissolve::iterate(int nIterations)
                 continue;
 
             auto layerExecutionCount = iteration_ / layer->frequency();
-            ListIterator<Module> processingIterator(layer->modules());
-            while (Module *module = processingIterator.iterate())
+            for (auto &module : layer->modules())
             {
                 Messenger::print("      --> {:20}  ({})\n", module->type(), module->frequencyDetails(layerExecutionCount));
 
@@ -216,8 +215,7 @@ bool Dissolve::iterate(int nIterations)
             Messenger::banner("Layer '{}'", layer->name());
             auto layerExecutionCount = iteration_ / layer->frequency();
 
-            ListIterator<Module> processingIterator(layer->modules());
-            while (auto *module = processingIterator.iterate())
+            for (auto &module : layer->modules())
             {
                 if (!module->runThisIteration(layerExecutionCount))
                     continue;
@@ -343,8 +341,7 @@ void Dissolve::printTiming()
     while (ModuleLayer *layer = processingLayerIterator.iterate())
     {
         Messenger::print("Accumulated timing for layer '{}':\n\n", layer->name());
-        ListIterator<Module> processingIterator(layer->modules());
-        while (Module *module = processingIterator.iterate())
+        for (auto &module : layer->modules())
         {
             SampledDouble timingInfo = module->processTimes();
             Messenger::print("      --> {:>20}  {:<{}}  {:7.2g} s/iter  ({} iterations)", module->type(),

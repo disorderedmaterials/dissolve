@@ -202,7 +202,7 @@ class Dissolve
     // Generate unique Module name with base name provided
     std::string uniqueModuleName(std::string_view name, Module *excludeThis = nullptr);
     // Delete specified Module instance
-    bool deleteModuleInstance(Module *instance);
+    bool deleteModuleInstance(std::unique_ptr<Module> instance);
 
     /*
      * Layers
