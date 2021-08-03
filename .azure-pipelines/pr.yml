@@ -50,6 +50,7 @@ stages:
               extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
               threading: false
               gui: false
+          - template: templates/package-linux.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
