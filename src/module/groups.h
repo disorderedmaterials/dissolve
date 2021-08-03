@@ -40,7 +40,7 @@ class ModuleGroups
      */
     private:
     // Current list of groups
-    List<ModuleGroup> groups_;
+    std::vector<std::unique_ptr<ModuleGroup>> groups_;
     // RefList of all Modules present in all groups
     RefDataList<Module, ModuleGroup *> allModules_;
 
@@ -52,7 +52,7 @@ class ModuleGroups
     // Number of Modules present of all groups
     int nModules() const;
     // Return current list of groups
-    const List<ModuleGroup> &groups() const;
+    const std::vector<std::unique_ptr<ModuleGroup>> &groups() const;
     // Return reflist of all Modules present over all groups
     const RefDataList<Module, ModuleGroup *> &modules() const;
     // Return whether the specified Module is present (in any group)

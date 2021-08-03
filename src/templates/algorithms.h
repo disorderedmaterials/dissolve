@@ -267,7 +267,7 @@ template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, 
     std::stringstream stream;
     stream << fmt::format("{}", lambda(*begin));
     std::for_each(std::next(begin), end,
-                  [&stream, &lambda, &delim](const auto value) { stream << delim << fmt::format("{}", lambda(value)); });
+                  [&stream, &lambda, &delim](const auto &value) { stream << delim << fmt::format("{}", lambda(value)); });
     return stream.str();
 }
 template <class Class> std::string joinStrings(Class range, std::string delim = ", ")
