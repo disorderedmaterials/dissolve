@@ -32,11 +32,17 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
+          - template: templates/package-linux.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
               ArtifactName: "linux-tests"
             displayName: "Publish Threaded Test Artifacts"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'linux-artifacts'
+            displayName: 'Publish Linux Artifacts'
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI"
         pool:
@@ -50,7 +56,6 @@ stages:
               extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
               threading: false
               gui: false
-          - template: templates/package-linux.yml
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
