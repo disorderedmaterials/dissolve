@@ -7,6 +7,7 @@
 #define DISSOLVEVERSION "0.9.0"
 #define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
+#define DISSOLVETYPE "Test"
 
 namespace Version
 {
@@ -30,6 +31,6 @@ std::string_view info()
 std::string_view repoUrl() { return DISSOLVEREPO; }
 
 // Return app type
-std::string_view appType() {return DISSOLVEREPO;}
+std::string_view appType() { return DISSOLVETYPE; }
 
 }; // namespace Version
