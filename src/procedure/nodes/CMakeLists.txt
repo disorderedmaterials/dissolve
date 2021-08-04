@@ -29,8 +29,8 @@ add_library(
   parameters.cpp
   pick.cpp
   pickbase.cpp
-  pickcylinder.cpp
   pickproximity.cpp
+  pickregion.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
@@ -70,8 +70,8 @@ add_library(
   parameters.h
   pick.h
   pickbase.h
-  pickcylinder.h
   pickproximity.h
+  pickregion.h
   process1d.h
   process2d.h
   process3d.h

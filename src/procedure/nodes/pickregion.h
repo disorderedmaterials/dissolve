@@ -3,20 +3,17 @@
 
 #pragma once
 
-#include "procedure/nodes/node.h"
 #include "procedure/nodes/pickbase.h"
-#include <memory>
 
 // Forward Declarations
-class Molecule;
+class RegionProcedureNodeBase;
 
-// Pick Cylinder Node
-class PickCylinderProcedureNode : public PickProcedureNodeBase
+// Pick Region Node
+class PickRegionProcedureNode : public PickProcedureNodeBase
 {
     public:
-    explicit PickCylinderProcedureNode(Vec3<double> originFrac = {0, 0, 0}, Vec3<double> direction = {0, 0, 1},
-                                       double radius = 5.0);
-    ~PickCylinderProcedureNode() override = default;
+    explicit PickRegionProcedureNode(const RegionProcedureNodeBase *region = nullptr);
+    ~PickRegionProcedureNode() override = default;
 
     /*
      * Execute
