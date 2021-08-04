@@ -254,7 +254,9 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 
         // Check the blocks either side of the hotspot to see where our Module needs to be (or has been returned to)
-        if ((draggedModule->prev() == moduleBeforeHotSpot) && (draggedModule->next() == moduleAfterHotSpot))
+        auto pos = std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
+                                [draggedModule](const auto &m) { return m.get() == draggedModule; });
+        if (((pos - 1)->get() == moduleBeforeHotSpot) && ((pos + 1)->get() == moduleAfterHotSpot))
         {
             // Dragged block has not moved. Nothing to do.
             return;

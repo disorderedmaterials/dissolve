@@ -176,7 +176,7 @@ class Dissolve
     // List of all instances of all used Modules
     RefList<Module> moduleInstances_;
     // List of master Module instances
-    List<Module> masterModules_;
+    std::vector<std::unique_ptr<Module>> masterModules_;
 
     private:
     // Register master Module
@@ -188,7 +188,7 @@ class Dissolve
     // Print information on all available modules
     void printModuleInformation() const;
     // Return master Module instances
-    const List<Module> &masterModules() const;
+    const std::vector<std::unique_ptr<Module>> &masterModules() const;
     // Search for master Module of the named type
     Module *findMasterModule(std::string_view moduleType) const;
     // Create a Module instance for the named Module type

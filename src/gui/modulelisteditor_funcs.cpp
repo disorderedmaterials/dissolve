@@ -47,8 +47,7 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
 
     // Add MimeTreeWidgetItems for each Module, adding them to a parent category item
     moduleCategories_.clear();
-    ListIterator<Module> moduleIterator(dissolveWindow->dissolve().masterModules());
-    while (const Module *module = moduleIterator.iterate())
+    for (const auto &module : dissolveWindow->dissolve().masterModules())
     {
         // Check that the category is not 'HIDDEN' (in which case we don't show it)
         if (DissolveSys::sameString("HIDDEN", module->category()))
@@ -70,10 +69,10 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
 
         // Create item for the Module
         MimeTreeWidgetItem *item = new MimeTreeWidgetItem(categoryItem, 1000);
-        item->setIcon(0, ModuleBlock::modulePixmap(module));
+        item->setIcon(0, ModuleBlock::modulePixmap(module.get()));
         item->setText(0, QString::fromStdString(std::string(module->type())));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
-        item->setData(0, Qt::UserRole, VariantPointer<const Module>(module));
+        item->setData(0, Qt::UserRole, VariantPointer<const Module>(module.get()));
         item->setToolTip(0, QString::fromStdString(std::string(module->brief())));
         item->addMimeString(MimeString::ModuleType, module->type());
     }
