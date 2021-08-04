@@ -11,6 +11,7 @@
 
 // Forward Declarations
 class Box;
+class Configuration;
 
 // Region Node Base
 class RegionProcedureNodeBase : public ProcedureNode
