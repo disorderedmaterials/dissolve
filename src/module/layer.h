@@ -4,7 +4,6 @@
 #pragma once
 
 #include "module/list.h"
-#include <string_view>
 
 // Forward Declarations
 class Module;
