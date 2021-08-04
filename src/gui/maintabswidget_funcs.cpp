@@ -197,8 +197,8 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     auto &dissolve = dissolveWindow->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
-    auto currentTabIndex = 1;
-    auto baseIndex = 1;
+    auto currentTabIndex = 0;
+    auto baseIndex = 2;
     for (const auto &sp : dissolve.species())
     {
         // Loop over existing tabs
