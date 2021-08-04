@@ -29,4 +29,7 @@ std::string_view info()
 // Return repo url
 std::string_view repoUrl() { return DISSOLVEREPO; }
 
+// Return app type
+std::string_view appType() {return DISSOLVEREPO;}
+
 }; // namespace Version
