@@ -14,17 +14,19 @@ CLIOptions::CLIOptions() {}
 int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 {
     // Create CLI object
-    CLI::App app{fmt::format("Dissolve-{} version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::appType(), Version::info())};
+    CLI::App app{fmt::format("Dissolve-{} version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::appType(),
+                             Version::info())};
     // Add positionals
     auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile);
 
     // Basic Control
     app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 0)")->group("Basic Control");
-    app.add_flag_callback("-q,--quiet", []() { Messenger::setQuiet(true); },
-                          "Be quiet - don't output any messages whatsoever (output files are still written)")
+    app.add_flag_callback(
+           "-q,--quiet", []() { Messenger::setQuiet(true); },
+           "Be quiet - don't output any messages whatsoever (output files are still written)")
         ->group("Basic Control");
-    app.add_flag_callback("-v,--verbose", []() { Messenger::setVerbose(true); },
-                          "Print lots of additional output, useful for debugging")
+    app.add_flag_callback(
+           "-v,--verbose", []() { Messenger::setVerbose(true); }, "Print lots of additional output, useful for debugging")
         ->group("Basic Control");
 
     // Input Files
@@ -51,8 +53,8 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     // Add parallel-specific options
     if (isParallel)
     {
-        app.add_flag_callback("-a,--all", []() { Messenger::setMasterOnly(false); },
-                              "Write output from all processes, not just master")
+        app.add_flag_callback(
+               "-a,--all", []() { Messenger::setMasterOnly(false); }, "Write output from all processes, not just master")
             ->group("Parallel Code Options");
         app.add_option("--redirect", redirectionBasename_,
                        "Redirect output from individual processes to files based on the supplied name")
