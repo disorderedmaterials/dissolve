@@ -147,8 +147,7 @@ bool Dissolve::iterate(int nIterations)
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
-        ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
-        while (ModuleLayer *layer = processingLayerIterator.iterate())
+        for (auto &layer : processingLayers_)
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
@@ -205,8 +204,7 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
-        processingLayerIterator.restart();
-        while (ModuleLayer *layer = processingLayerIterator.iterate())
+        for (auto &layer : processingLayers_)
         {
             // Check if this layer is due to run
             if (!layer->runThisIteration(iteration_))
@@ -337,8 +335,7 @@ void Dissolve::printTiming()
     // Add on space for brackets
     maxLength += 2;
 
-    ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
-    while (ModuleLayer *layer = processingLayerIterator.iterate())
+    for (auto &layer : processingLayers_)
     {
         Messenger::print("Accumulated timing for layer '{}':\n\n", layer->name());
         for (auto &module : layer->modules())

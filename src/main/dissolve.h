@@ -209,7 +209,7 @@ class Dissolve
      */
     private:
     // List of defined processing layers
-    List<ModuleLayer> processingLayers_;
+    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
     // Data associated with processing Modules
     GenericList processingModuleData_;
 
@@ -227,7 +227,7 @@ class Dissolve
     // Generate unique processing layer name, with base name provided
     std::string uniqueProcessingLayerName(std::string_view baseName) const;
     // Return list of processing layers
-    List<ModuleLayer> &processingLayers();
+    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
     // Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target

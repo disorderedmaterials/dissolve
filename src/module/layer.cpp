@@ -6,7 +6,7 @@
 #include "base/sysfunc.h"
 #include "module/module.h"
 
-ModuleLayer::ModuleLayer() : ModuleList(), ListItem<ModuleLayer>()
+ModuleLayer::ModuleLayer() : ModuleList()
 {
     enabled_ = true;
     frequency_ = 1;

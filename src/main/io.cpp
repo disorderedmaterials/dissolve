@@ -331,8 +331,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write processing layers
     if (!parser.writeBannerComment("Processing Layers"))
         return false;
-    ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
-    while (ModuleLayer *layer = processingLayerIterator.iterate())
+    for (auto &layer : processingLayers_)
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                                layer->name()))
