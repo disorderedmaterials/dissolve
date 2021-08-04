@@ -54,7 +54,7 @@ int main(int args, char **argv)
     dissolveWindow.show();
 
     // Print GPL license information
-    Messenger::print("Dissolve-{} version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info(), Version::appType());
+    Messenger::print("Dissolve-{} version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::appType(), Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");

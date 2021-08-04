@@ -31,6 +31,17 @@ std::string_view info()
 std::string_view repoUrl() { return DISSOLVEREPO; }
 
 // Return app type
-std::string_view appType() { return DISSOLVETYPE; }
+std::string_view appType() 
+{ 
+    #ifdef MULTITHREADING
+        #ifdef PARALLEL
+            return "MPI";
+        #else
+            return "Multithreaded";
+        #endif
+    #else
+        return "Serial";
+    #endif
+}
 
 }; // namespace Version
