@@ -37,3 +37,4 @@ changes
 *.state
 
 .vscode/launch.json
+.vscode/settings.json
