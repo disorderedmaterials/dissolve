@@ -7,7 +7,6 @@
 #define DISSOLVEVERSION "0.9.0"
 #define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
-#define DISSOLVETYPE "Test"
 
 namespace Version
 {
@@ -35,7 +34,7 @@ std::string_view appType()
 {
 #ifdef MULTITHREADING
 #ifdef PARALLEL
-    return "MPI";
+    return "MPI/Threads";
 #else
     return "Multithreaded";
 #endif
