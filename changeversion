@@ -179,31 +179,6 @@ then
   # README.md
   if [ "$CHECK" = "false" ]
   then
-  echo -n "         config.toml    (Release Date) : "
-  grep 'releaseDate' web/config.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g'
-fi
-
-if [ "$TYPE" = "develop" ]
-then
-  # Documentation (config.toml)
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/devVersion = \"[0-9\.]*\"/devVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/config.toml
-  fi
-  echo -n "         config.toml (Develop Version) : "
-  grep 'devVersion' web/config.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g'
-fi
-
-
-#############
-# README.md #
-#############
-
-if [ "$TYPE" = "release" ]
-then
-  # README.md
-  if [ "$CHECK" = "false" ]
-  then
     DAYSUFFIX=$(DaySuffix)
     TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
     sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
