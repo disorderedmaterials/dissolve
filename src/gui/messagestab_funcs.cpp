@@ -9,7 +9,7 @@ MessagesTab::MessagesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
 {
     ui_.setupUi(this);
 
-    ui_.MessagesEdit->setFont(QFont("Cousine", 10));
+    ui_.MessagesEdit->setFont(QFont("Helvetica", 10));
 
     // Link output handler in to the Messenger
     Messenger::setOutputHandler(&outputHandler_);

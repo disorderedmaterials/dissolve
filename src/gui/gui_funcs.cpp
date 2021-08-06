@@ -25,12 +25,6 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     // Initialise resources
     Q_INIT_RESOURCE(main);
 
-    // Register custom font(s)
-    QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-Regular.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-Bold.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-Italic.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-BoldItalic.ttf");
-
     // Set up user interface
     ui_.setupUi(this);
 
