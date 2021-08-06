@@ -74,7 +74,7 @@ void BaseViewer::mouseMoveEvent(QMouseEvent *event)
 void BaseViewer::wheelEvent(QWheelEvent *event)
 {
     // Handle the event
-    mouseWheeled(event->pixelDelta().y());
+    mouseWheeled(event->angleDelta().y());
 
     postRedisplay();
 }
