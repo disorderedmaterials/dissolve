@@ -3,13 +3,14 @@
 
 #include "gui/messagestab.h"
 #include <QScrollBar>
+#include <QFontDatabase>
 
 MessagesTab::MessagesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
     ui_.setupUi(this);
 
-    ui_.MessagesEdit->setFont(QFont("Helvetica", 10));
+    ui_.MessagesEdit->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
     // Link output handler in to the Messenger
     Messenger::setOutputHandler(&outputHandler_);
