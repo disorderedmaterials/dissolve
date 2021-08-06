@@ -2,8 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/messagestab.h"
-#include <QScrollBar>
 #include <QFontDatabase>
+#include <QScrollBar>
 
 MessagesTab::MessagesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
