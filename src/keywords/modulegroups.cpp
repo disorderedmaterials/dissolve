@@ -62,8 +62,7 @@ bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData 
 bool ModuleGroupsKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over defined groups
-    ListIterator<ModuleGroup> groupIterator(data_.groups());
-    while (ModuleGroup *group = groupIterator.iterate())
+    for (auto &group : data_.groups())
     {
         // Loop over list of referenced Modules in this group
         for (Module *module : group->modules())
@@ -84,8 +83,7 @@ bool ModuleGroupsKeyword::write(LineParser &parser, std::string_view keywordName
 void ModuleGroupsKeyword::removeReferencesTo(Module *module)
 {
     // Loop over defined groups
-    ListIterator<ModuleGroup> groupIterator(data_.groups());
-    while (ModuleGroup *group = groupIterator.iterate())
+    for (auto &group : data_.groups())
     {
         if (group->contains(module))
             group->remove(module);

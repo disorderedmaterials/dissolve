@@ -8,6 +8,7 @@
 #include "module/group.h"
 #include "module/groups.h"
 #include "module/module.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 #include <QComboBox>
 #include <QHBoxLayout>
@@ -153,14 +154,8 @@ void ModuleGroupsKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
     {
-        QString summaryText;
-        ListIterator<ModuleGroup> groupIterator(groups.groups());
-        while (ModuleGroup *group = groupIterator.iterate())
-        {
-            if (!groupIterator.isFirst())
-                summaryText += ", ";
-            summaryText += QString("%1 (%2)").arg(group->nModules()).arg(QString::fromStdString(std::string(group->name())));
-        }
-        setSummaryText(summaryText);
+        setSummaryText(joinStrings(groups.groups().begin(), groups.groups().end(), ", ",
+                                   [](auto &group) { return fmt::format("{} ({})", group->nModules(), group->name()); })
+                           .c_str());
     }
 }

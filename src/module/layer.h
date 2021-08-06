@@ -4,14 +4,13 @@
 #pragma once
 
 #include "module/list.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 class Module;
 class GenericList;
 
 // Module Layer - Named list of Modules with a defined processing frequency
-class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
+class ModuleLayer : public ModuleList
 {
     public:
     ModuleLayer();

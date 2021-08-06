@@ -19,7 +19,7 @@ class ModuleWidget;
 class QWidget;
 
 // Module
-class Module : public ListItem<Module>
+class Module
 {
     public:
     Module(int nTargetConfigurations);

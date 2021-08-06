@@ -6,7 +6,8 @@
 #include "gui/getmodulelayernamedialog.h"
 #include "module/layer.h"
 
-GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers) : layers_(layers)
+GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const std::vector<std::unique_ptr<ModuleLayer>> &layers)
+    : layers_(layers)
 {
     ui_.setupUi(this);
 }
@@ -42,18 +43,9 @@ void GetModuleLayerNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        ListIterator<ModuleLayer> layerIterator(layers_);
-        while (ModuleLayer *layer = layerIterator.iterate())
-        {
-            if (moduleLayer_ == layer)
-                continue;
-
-            if (DissolveSys::sameString(layer->name(), qPrintable(text)))
-            {
-                nameValid = false;
-                break;
-            }
-        }
+        nameValid = std::none_of(layers_.begin(), layers_.end(), [text, this](const auto &layer) {
+            return this->moduleLayer_ != layer.get() && DissolveSys::sameString(layer->name(), qPrintable(text));
+        });
     }
 
     // Update indicator

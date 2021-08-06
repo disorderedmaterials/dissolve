@@ -4,7 +4,7 @@
 #include "module/group.h"
 #include "base/sysfunc.h"
 
-ModuleGroup::ModuleGroup(std::string_view name) : ListItem<ModuleGroup>(), name_{name} {}
+ModuleGroup::ModuleGroup(std::string_view name) : name_{name} {}
 
 /*
  * Module Group

@@ -268,16 +268,15 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 
     // Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to
     // 1+nSpecies+nConfigurations+nProcessingLayers
-    ListIterator<ModuleLayer> processingLayerIterator(dissolve.processingLayers());
     currentTabIndex = 0;
-    while (ModuleLayer *layer = processingLayerIterator.iterate())
+    for (const auto &layer : dissolve.processingLayers())
     {
         // Loop over existing tabs
         while (currentTabIndex < processingLayerTabs_.size())
         {
             // If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise,
             // delete it
-            if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer)
+            if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer.get())
                 break;
             else
             {
@@ -290,7 +289,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         if (currentTabIndex == processingLayerTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
-            auto newTab = std::make_shared<LayerTab>(dissolveWindow, dissolve, this, tabTitle, layer);
+            auto newTab = std::make_shared<LayerTab>(dissolveWindow, dissolve, this, tabTitle, layer.get());
             processingLayerTabs_.push_back(newTab);
             allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
