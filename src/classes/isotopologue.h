@@ -6,8 +6,6 @@
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/refdatalist.h"
 #include <memory>
 #include <tuple>
 #include <vector>
@@ -19,7 +17,7 @@ class Species;
 /*
  * Isotopologue Definition
  */
-class Isotopologue : public ListItem<Isotopologue>
+class Isotopologue
 {
     public:
     Isotopologue();

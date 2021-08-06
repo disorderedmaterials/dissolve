@@ -60,18 +60,16 @@ bool Isotopologues::addNext()
     }
 
     // Find unique (unused) Isotopologue
-    Isotopologue *iso;
-    for (iso = species_->isotopologues().first(); iso != nullptr; iso = iso->next())
-        if (!contains(iso))
-            break;
+    auto it = std::find_if(species_->isotopologues().begin(), species_->isotopologues().end(),
+                           [this](auto &i) { return contains(i.get()); });
 
-    if (iso == nullptr)
+    if (it == species_->isotopologues().end())
     {
         Messenger::error("Couldn't find an unused Isotopologue in Species '{}'.\n", species_->name());
         return false;
     }
 
-    mix_.emplace_back(iso, 1.0);
+    mix_.emplace_back(it->get(), 1.0);
 
     return true;
 }

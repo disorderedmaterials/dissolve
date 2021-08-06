@@ -74,8 +74,7 @@ std::vector<std::string> IsotopologueSetKeywordWidget::availableIsotopologueName
 
     // Construct valid names list
     std::vector<std::string> validNames = {"Natural"};
-    ListIterator<Isotopologue> topeIterator(isotopologues.species()->isotopologues());
-    while (Isotopologue *tope = topeIterator.iterate())
+    for (auto &tope : isotopologues.species()->isotopologues())
         validNames.push_back(std::string(tope->name()));
 
     return validNames;
@@ -119,12 +118,11 @@ void IsotopologueSetKeywordWidget::addButton_clicked(bool checked)
             set.add(sp->naturalIsotopologue(), 1.0);
         else
         {
-            ListIterator<Isotopologue> topeIterator(sp->isotopologues());
-            while (auto *tope = topeIterator.iterate())
+            for (auto &tope : sp->isotopologues())
             {
-                if (!topes.contains(tope))
+                if (!topes.contains(tope.get()))
                 {
-                    set.add(tope, 1.0);
+                    set.add(tope.get(), 1.0);
                     break;
                 }
             }
@@ -161,12 +159,11 @@ void IsotopologueSetKeywordWidget::addButton_clicked(bool checked)
             set.add(sp->naturalIsotopologue(), 1.0);
         else
         {
-            ListIterator<Isotopologue> topeIterator(sp->isotopologues());
-            while (Isotopologue *tope = topeIterator.iterate())
+            for (auto &tope : sp->isotopologues())
             {
-                if (!topes.contains(tope))
+                if (!topes.contains(tope.get()))
                 {
-                    set.add(tope, 1.0);
+                    set.add(tope.get(), 1.0);
                     break;
                 }
             }
