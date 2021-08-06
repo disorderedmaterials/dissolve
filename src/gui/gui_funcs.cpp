@@ -163,13 +163,10 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
         }
 
         if (!loadResult)
-        {
             QMessageBox::warning(this, "Input file contained errors.",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
-            return false;
-        }
     }
     else
         return Messenger::error("Input file does not exist.\n");
