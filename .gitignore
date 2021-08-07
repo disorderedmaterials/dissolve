@@ -29,6 +29,7 @@ build-*/
 # Miscellaneous
 *swp
 changes
+*.tokens
 
 # Example files
 *.beat
