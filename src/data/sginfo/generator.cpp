@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/sg/generator.h"
+#include "data/sginfo/generator.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "data/sg/sginfo.h"
+#include "data/sginfo/sginfo.h"
 #include <cstring>
 
 // Set partial element of matrix or translation vector
