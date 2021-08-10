@@ -45,6 +45,7 @@ stages:
             displayName: 'Publish Linux Artifacts'
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI"
+        condition: eq(1,0)
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -63,6 +64,7 @@ stages:
             displayName: "Publish Serial Test Artifacts"
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI"
+        condition: eq(1,0)
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -79,6 +81,7 @@ stages:
             displayName: "Publish MPI Test Artifacts"
       - job: "osx"
         displayName: "OSX, Threads, CLI/GUI"
+        condition: eq(1,0)
         timeoutInMinutes: 120
         pool:
           vmImage: "macos-latest"
@@ -95,6 +98,7 @@ stages:
             displayName: "Publish OSX Artifacts"
       - job: "windows"
         displayName: "Windows, Threads, CLI/GUI"
+        condition: eq(1,0)
         timeoutInMinutes: 120
         pool:
           vmImage: "windows-latest"
@@ -110,8 +114,3 @@ stages:
               ArtifactName: "windows-artifacts"
             displayName: "Publish Windows Artifacts"
 
-  # Run Tests
-  - stage: "tests"
-    displayName: "Testing"
-    jobs:
-      - template: templates/tests.yml
