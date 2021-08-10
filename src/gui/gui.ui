@@ -201,6 +201,7 @@
      <addaction name="SpeciesImportFromDissolveAction"/>
      <addaction name="SpeciesImportFromXYZAction"/>
      <addaction name="SpeciesImportLigParGenAction"/>
+     <addaction name="SpeciesImportFromCIFAction"/>
     </widget>
     <widget class="QMenu" name="SpeciesReduceForcefieldTermsMenu">
      <property name="font">
@@ -839,6 +840,11 @@
   <action name="SpeciesCopyTermsAction">
    <property name="text">
     <string>C&amp;opy Terms From Species...</string>
+   </property>
+  </action>
+  <action name="SpeciesImportFromCIFAction">
+   <property name="text">
+    <string>From &amp;CIF...</string>
    </property>
   </action>
  </widget>

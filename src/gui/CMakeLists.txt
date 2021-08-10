@@ -38,6 +38,7 @@ set(components_MOC_HDRS
     getspeciesnamedialog.h
     gettabnamedialog.h
     importligpargendialog.h
+    importcifdialog.h
     importspeciesdialog.h
     selectatomtypedialog.h
     selectconfigurationdialog.h
@@ -78,6 +79,7 @@ set(components_UIS
     getspeciesnamedialog.ui
     gettabnamedialog.ui
     importligpargendialog.ui
+    importcifdialog.ui
     importspeciesdialog.ui
     selectatomtypedialog.ui
     selectconfigurationdialog.ui
@@ -144,6 +146,7 @@ set(components_SRCS
     getspeciesnamedialog_funcs.cpp
     gettabnamedialog_funcs.cpp
     importligpargendialog_funcs.cpp
+    importcifdialog_funcs.cpp
     importspeciesdialog_funcs.cpp
     selectatomtypedialog_funcs.cpp
     selectconfigurationdialog_funcs.cpp
