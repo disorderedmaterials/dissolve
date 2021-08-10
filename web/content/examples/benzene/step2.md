@@ -12,8 +12,8 @@ Time to create a suitable liquid configuration for our simulation using the pred
 In the interests of speed, we'll use the default number of molecules (100) for the simulation, but we will need to set the correct density. We'll use chemical units of g/cm<sup>3</sup> to specify it:
 
 {{< action type="settings" text="Open the settings for the `Parameters` node" >}}
-{{< step text="Check that the value of the \"rho\" variable is 0.876. Note that this is \"just a number\" - units are given in the `AddSpecies` node when we reference this value">}}
-{{< action type="settings" text="Open the settings for the `AddSpecies` node" >}}
+{{< step text="Check that the value of the \"rho\" variable is 0.876. Note that this is \"just a number\" - units are given in the `Add` node when we reference this value">}}
+{{< action type="settings" text="Open the settings for the `Add` node" >}}
 {{< step text="Make sure that the units for the **Density** are set to `g/cm3` and that it references our parameter `rho`">}}
 {{< action type="mouse" text="Click **Regenerate** to recreate the configuration with our adjusted parameters" >}}
 

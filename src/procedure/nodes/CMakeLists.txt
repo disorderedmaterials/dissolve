@@ -10,6 +10,7 @@ add_library(
   collect1d.cpp
   collect2d.cpp
   collect3d.cpp
+  cylindricalregion.cpp
   dynamicsite.cpp
   fit1d.cpp
   generalregion.cpp
@@ -28,8 +29,8 @@ add_library(
   parameters.cpp
   pick.cpp
   pickbase.cpp
-  pickcylinder.cpp
   pickproximity.cpp
+  pickregion.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
@@ -49,6 +50,7 @@ add_library(
   collect1d.h
   collect2d.h
   collect3d.h
+  cylindricalregion.h
   dynamicsite.h
   fit1d.h
   generalregion.h
@@ -68,8 +70,8 @@ add_library(
   parameters.h
   pick.h
   pickbase.h
-  pickcylinder.h
   pickproximity.h
+  pickregion.h
   process1d.h
   process2d.h
   process3d.h

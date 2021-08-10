@@ -3,7 +3,7 @@ title: Positioning Type
 description: Positioning type for inserted species
 ---
 
-Positioning types for inserted species, as used by the [`AddSpecies`]({{< ref "addnode" >}}) procedure node.
+Positioning types for inserted species, as used by the [`Add`]({{< ref "addnode" >}}) procedure node.
 
 |Keyword|Description|
 |:-----:|-----------|

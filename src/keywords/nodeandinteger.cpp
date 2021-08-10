@@ -5,14 +5,14 @@
 #include "procedure/nodes/node.h"
 
 NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                                             ProcedureNode *node, int index)
+                                             const ProcedureNode *node, int index)
     : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>(
                                                               KeywordBase::NodeAndIntegerData, {node, index})
 {
 }
 
 NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                                             ProcedureNode *node, int index)
+                                             const ProcedureNode *node, int index)
     : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>(
                                                                KeywordBase::NodeAndIntegerData, {node, index})
 {
