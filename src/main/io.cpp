@@ -331,8 +331,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write processing layers
     if (!parser.writeBannerComment("Processing Layers"))
         return false;
-    ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
-    while (ModuleLayer *layer = processingLayerIterator.iterate())
+    for (auto &layer : processingLayers_)
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                                layer->name()))
@@ -344,8 +343,7 @@ bool Dissolve::saveInput(std::string_view filename)
         if (!layer->enabled() && (!parser.writeLineF("  Disabled\n")))
             return false;
 
-        ListIterator<Module> processingIterator(layer->modules());
-        while (Module *module = processingIterator.iterate())
+        for (auto &module : layer->modules())
         {
             if (!parser.writeLineF("\n  {}  {}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
                                    module->type(), module->uniqueName()))

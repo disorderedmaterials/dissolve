@@ -44,21 +44,19 @@
 bool Dissolve::registerMasterModule(Module *masterInstance)
 {
     // Do sanity check on name
-    ListIterator<Module> moduleIterator(masterModules_);
-    while (Module *module = moduleIterator.iterate())
+    if (std::any_of(masterModules_.begin(), masterModules_.end(), [masterInstance](const auto &module) {
+            return DissolveSys::sameString(module->type(), masterInstance->type());
+        }))
     {
-        if (DissolveSys::sameString(module->type(), masterInstance->type()))
-        {
-            Messenger::error("Two modules cannot have the same name ({}).\n", module->type());
-            return false;
-        }
+        Messenger::error("Two modules cannot have the same name ({}).\n", masterInstance->type());
+        return false;
     }
 
     // Set the unique name of the Module
     masterInstance->setUniqueName(fmt::format("{}_MASTER", masterInstance->type()));
 
     // Own the module into our master instances list
-    masterModules_.own(masterInstance);
+    masterModules_.emplace_back(masterInstance);
 
     return true;
 }
@@ -129,32 +127,32 @@ bool Dissolve::registerMasterModules()
     if (!registerMasterModule(new XRaySQModule))
         return false;
 
-    Messenger::print("Module Information ({} available):\n", masterModules_.nItems());
-    ListIterator<Module> moduleIterator(masterModules_);
-    while (Module *module = moduleIterator.iterate())
+    return true;
+}
+
+// Print information on all available modules
+void Dissolve::printModuleInformation() const
+{
+    Messenger::print("Module Information ({} available):\n", masterModules_.size());
+    for (const auto &module : masterModules_)
     {
         Messenger::print(" --> {}\n", module->type());
         Messenger::print("     {}\n", module->brief());
     }
-
-    return true;
 }
 
 // Search for master Module of the named type
 Module *Dissolve::findMasterModule(std::string_view moduleType) const
 {
-    ListIterator<Module> moduleIterator(masterModules_);
-    while (Module *module = moduleIterator.iterate())
-    {
-        if (DissolveSys::sameString(module->type(), moduleType))
-            return module;
-    }
-
-    return nullptr;
+    auto it = std::find_if(masterModules_.begin(), masterModules_.end(),
+                           [moduleType](const auto &module) { return DissolveSys::sameString(module->type(), moduleType); });
+    if (it == masterModules_.end())
+        return nullptr;
+    return it->get();
 }
 
 // Return master Module instances
-const List<Module> &Dissolve::masterModules() const { return masterModules_; }
+const std::vector<std::unique_ptr<Module>> &Dissolve::masterModules() const { return masterModules_; }
 
 // Create a Module instance for the named Module type
 Module *Dissolve::createModuleInstance(std::string_view moduleType)
@@ -241,19 +239,16 @@ std::string Dissolve::uniqueModuleName(std::string_view name, Module *excludeThi
 }
 
 // Delete specified Module instance
-bool Dissolve::deleteModuleInstance(Module *instance)
+bool Dissolve::deleteModuleInstance(std::unique_ptr<Module> instance)
 {
-    if (!moduleInstances_.contains(instance))
+    if (!moduleInstances_.contains(instance.get()))
         return Messenger::error("Can't find Module instance to remove.\n");
 
     // Remove the reference from our list
-    moduleInstances_.remove(instance);
+    moduleInstances_.remove(instance.get());
 
     // Invalidate any references to the module in keywords
-    KeywordBase::objectNoLongerValid(instance);
-
-    // Delete the actual Module - we assume that it has been removed from any ModuleList
-    delete instance;
+    KeywordBase::objectNoLongerValid(instance.get());
 
     return true;
 }

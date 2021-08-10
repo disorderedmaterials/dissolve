@@ -48,7 +48,7 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 
     // Draw the background before we do anything else
-    painter.fillRect(QRect(0, 0, width(), height()), QGuiApplication::palette().background());
+    painter.fillRect(QRect(0, 0, width(), height()), QGuiApplication::palette().base());
     painter.drawPixmap(0, 0, QPixmap(":/images/images/cornerhexagons.png"));
 
     // Set up some QPens
@@ -127,11 +127,10 @@ void ModuleListChart::updateContentBlocks()
     RefList<ModuleBlock> newWidgets;
 
     // Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
-    ListIterator<Module> moduleIterator(moduleList_->modules());
-    while (Module *module = moduleIterator.iterate())
+    for (auto &module : moduleList_->modules())
     {
         // Does this Module have an existing widget?
-        ModuleBlock *block = moduleBlock(module);
+        ModuleBlock *block = moduleBlock(module.get());
         if (block)
         {
             // Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
@@ -141,7 +140,7 @@ void ModuleListChart::updateContentBlocks()
         else
         {
             // No current widget, so must create one
-            block = new ModuleBlock(this, module, dissolve_);
+            block = new ModuleBlock(this, module.get(), dissolve_);
             connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
             connect(block, SIGNAL(remove(const QString &)), this, SLOT(blockRemovalRequested(const QString &)));
             newWidgets.append(block);
@@ -255,7 +254,9 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 
         // Check the blocks either side of the hotspot to see where our Module needs to be (or has been returned to)
-        if ((draggedModule->prev() == moduleBeforeHotSpot) && (draggedModule->next() == moduleAfterHotSpot))
+        auto pos = std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
+                                [draggedModule](const auto &m) { return m.get() == draggedModule; });
+        if (((pos - 1)->get() == moduleBeforeHotSpot) && ((pos + 1)->get() == moduleAfterHotSpot))
         {
             // Dragged block has not moved. Nothing to do.
             return;
@@ -264,9 +265,21 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         {
             // Block has been dragged to a new location...
             if (moduleBeforeHotSpot)
-                moduleList_->modules().moveAfter(draggedModule, moduleBeforeHotSpot);
+            {
+                auto item = std::move(*std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
+                                                    [draggedModule](auto &mod) { return mod.get() == draggedModule; }));
+                auto pos = std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
+                                        [moduleBeforeHotSpot](auto &mod) { return mod.get() == moduleBeforeHotSpot; });
+                moduleList_->modules().insert(pos, std::move(item));
+            }
             else
-                moduleList_->modules().moveBefore(draggedModule, moduleAfterHotSpot);
+            {
+                auto item = std::move(*std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
+                                                    [draggedModule](auto &mod) { return mod.get() == draggedModule; }));
+                auto pos = std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
+                                        [moduleAfterHotSpot](auto &mod) { return mod.get() == moduleAfterHotSpot; });
+                moduleList_->modules().insert(pos + 1, std::move(item));
+            }
 
             // Flag that the current data has changed
             emit(dataModified());
@@ -283,9 +296,13 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
 
         // Add the new modele
         if (moduleAfterHotSpot)
-            moduleList_->modules().ownBefore(newModule, moduleAfterHotSpot);
+        {
+            auto pos = std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
+                                    [moduleAfterHotSpot](auto &mod) { return mod.get() == moduleAfterHotSpot; });
+            moduleList_->modules().emplace(pos + 1, newModule);
+        }
         else
-            moduleList_->modules().own(newModule);
+            moduleList_->modules().emplace_back(newModule);
 
         newModule->setConfigurationLocal(localConfiguration_ != nullptr);
 
@@ -333,7 +350,7 @@ void ModuleListChart::blockDoubleClicked(ChartBlock *block)
 void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
 {
     // Get the reference to the Module list
-    List<Module> &modules = moduleList_->modules();
+    auto &modules = moduleList_->modules();
 
     // Find the named Module in our list
     Module *module = moduleList_->find(qPrintable(blockIdentifier));
@@ -353,7 +370,9 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
 
     if (ret == QMessageBox::Yes)
     {
-        modules.cut(module);
+        auto pos = std::find_if(modules.begin(), modules.end(), [module](auto &m) { return m.get() == module; });
+        auto unique = std::move(*pos);
+        modules.erase(pos);
 
         // Notify that we are removing this Module/block
         emit(blockRemoved(blockIdentifier));
@@ -363,7 +382,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
             setCurrentModule(nullptr);
 
         // Remove the Module instance
-        dissolve_.deleteModuleInstance(module);
+        dissolve_.deleteModuleInstance(std::move(unique));
 
         emit(dataModified());
         emit(fullUpdate());

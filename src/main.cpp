@@ -32,18 +32,14 @@ int main(int args, char **argv)
     if (options.redirectionBasename())
         Messenger::enableRedirect(fmt::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
 
-#ifdef PARALLEL
-    Messenger::print("Dissolve PARALLEL version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info());
-#else
-    Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info());
-#endif
+    Messenger::print("Dissolve-{} version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::appType(),
+                     Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
     // Check module registration
-    Messenger::banner("Available Modules");
     if (!dissolve.registerMasterModules())
     {
         ProcessPool::finalise();

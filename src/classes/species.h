@@ -256,7 +256,7 @@ class Species
     // Natural Isotopologue
     Isotopologue naturalIsotopologue_;
     // List of isotopic variants defined for this species
-    List<Isotopologue> isotopologues_;
+    std::vector<std::unique_ptr<Isotopologue>> isotopologues_;
 
     public:
     // Update current Isotopologues
@@ -272,7 +272,7 @@ class Species
     // Return nth Isotopologue in the list
     Isotopologue *isotopologue(int n);
     // Return Isotopologue List
-    const List<Isotopologue> &isotopologues() const;
+    const std::vector<std::unique_ptr<Isotopologue>> &isotopologues() const;
     // Return whether the specified Isotopologue exists
     bool hasIsotopologue(const Isotopologue *iso) const;
     // Generate unique Isotopologue name with base name provided

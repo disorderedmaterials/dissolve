@@ -40,15 +40,14 @@ const std::vector<std::string> &ModuleGroups::allowedModuleTypes() const { retur
 ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
 {
     // Does the specified group exist?
-    ModuleGroup *moduleGroup;
-    for (moduleGroup = groups_.first(); moduleGroup != nullptr; moduleGroup = moduleGroup->next())
-        if (DissolveSys::sameString(moduleGroup->name(), groupName))
-            break;
+    auto moduleGroup = std::find_if(groups_.begin(), groups_.end(), [groupName](auto &moduleGroup) {
+        return DissolveSys::sameString(moduleGroup->name(), groupName);
+    });
 
-    if (moduleGroup == nullptr)
+    if (moduleGroup == groups_.end())
     {
-        moduleGroup = new ModuleGroup(groupName);
-        groups_.own(moduleGroup);
+        groups_.emplace_back(std::make_unique<ModuleGroup>(groupName));
+        moduleGroup = groups_.end() - 1;
     }
 
     // Is the Module already in the list and assigned to a group?
@@ -56,12 +55,12 @@ ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
     if (moduleItem)
         moduleItem->data()->remove(module);
     else
-        allModules_.append(module, moduleGroup);
+        allModules_.append(module, moduleGroup->get());
 
     // Add the Module to its new group
-    moduleGroup->add(module);
+    moduleGroup->get()->add(module);
 
-    return moduleGroup;
+    return moduleGroup->get();
 }
 
 // Remove Module
@@ -72,21 +71,21 @@ void ModuleGroups::removeModule(Module *module)
     if (!moduleItem)
         return;
 
-    ModuleGroup *group = moduleItem->data();
+    auto *group = moduleItem->data();
 
     group->remove(module);
     allModules_.remove(module);
 
     // Is the group now empty?
     if (group->nModules() == 0)
-        groups_.remove(group);
+        groups_.erase(std::find_if(groups_.begin(), groups_.end(), [group](auto &g) { return g.get() == group; }));
 }
 
 // Number of Modules present of all groups
 int ModuleGroups::nModules() const { return allModules_.nItems(); }
 
 // Return current list of groups
-const List<ModuleGroup> &ModuleGroups::groups() const { return groups_; }
+const std::vector<std::unique_ptr<ModuleGroup>> &ModuleGroups::groups() const { return groups_; }
 
 // Return reflist of all Modules present over all groups
 const RefDataList<Module, ModuleGroup *> &ModuleGroups::modules() const { return allModules_; }

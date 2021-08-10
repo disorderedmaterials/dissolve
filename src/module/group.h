@@ -3,14 +3,13 @@
 
 #pragma once
 
-#include "templates/listitem.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Module;
 
 // ModuleGroup
-class ModuleGroup : public ListItem<ModuleGroup>
+class ModuleGroup
 {
     public:
     ModuleGroup(std::string_view name = "");

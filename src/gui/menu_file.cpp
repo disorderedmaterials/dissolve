@@ -49,6 +49,8 @@ bool DissolveWindow::checkSaveCurrentInput()
 // Clear all data and start new simulation afresh
 void DissolveWindow::startNew()
 {
+    refreshing_ = true;
+
     // Clear any data-related tabs from the UI
     ui_.MainTabs->clearTabs();
 
@@ -59,11 +61,9 @@ void DissolveWindow::startNew()
     localSimulation_ = true;
     modified_ = false;
 
-    // Fully update GUI
-    fullUpdate();
+    refreshing_ = false;
 
-    // Make sure we are now on the Simulation stack page
-    showMainStackPage(DissolveWindow::SimulationStackPage);
+    fullUpdate();
 }
 
 void DissolveWindow::on_FileNewAction_triggered(bool checked)
@@ -103,8 +103,22 @@ void DissolveWindow::on_FileCloseAction_triggered(bool checked)
     if (!checkSaveCurrentInput())
         return;
 
-    // Make sure we are now on the Start stack page
-    showMainStackPage(DissolveWindow::StartStackPage);
+    refreshing_ = true;
+
+    // Clear any data-related tabs from the UI
+    ui_.MainTabs->clearTabs();
+
+    // Clear the messages widget
+    ui_.MainTabs->messagesTab()->clearMessages();
+
+    refreshing_ = false;
+
+    // Clear Dissolve
+    dissolve_.clear();
+    dissolveState_ = DissolveWindow::NoState;
+    modified_ = false;
+
+    fullUpdate();
 }
 
 void DissolveWindow::on_FileSaveAction_triggered(bool checked)
@@ -130,7 +144,7 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
 
     modified_ = false;
 
-    updateControlsFrame();
+    updateStatusBar();
 
     updateWindowTitle();
 }
@@ -155,7 +169,7 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
     QFileInfo inputFileInfo(newFile);
     QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
-    updateControlsFrame();
+    updateStatusBar();
 
     updateWindowTitle();
 }

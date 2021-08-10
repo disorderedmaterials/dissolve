@@ -26,26 +26,14 @@ int main(int args, char **argv)
     if (options.parse(args, argv, true) != CLIOptions::Success)
         return 1;
 
-    // Print GPL license information
-    Messenger::print("Dissolve-GUI version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info());
-    Messenger::print("Source repository: {}.\n", Version::repoUrl());
-    Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
-    Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
-    Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
-
     // Register master Modules
-    Messenger::banner("Available Modules");
     if (!dissolve.registerMasterModules())
     {
         ProcessPool::finalise();
         return 1;
     }
 
-    /*
-     * Create and launch GUI
-     */
-
-    // Create the main QApplication */
+    // Create the main QApplication
     QApplication app(args, argv);
     QCoreApplication::setOrganizationName("ProjectAten");
     QCoreApplication::setOrganizationDomain("www.projectaten.com");
@@ -63,44 +51,48 @@ int main(int args, char **argv)
 
     // Create the main window
     DissolveWindow dissolveWindow(dissolve);
+    dissolveWindow.show();
+
+    // Print GPL license information
+    Messenger::print("Dissolve-GUI {} version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::appType(),
+                     Version::info());
+    Messenger::print("Source repository: {}.\n", Version::repoUrl());
+    Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
+    Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
+    Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
     // If an input file was specified, load it here
     if (options.inputFile())
     {
-        if (!dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
-                                          options.ignoreRestartFile(), options.ignoreStateFile()))
+        if (dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
+                                         options.ignoreRestartFile(), options.ignoreStateFile()))
         {
-            ProcessPool::finalise();
-            return 1;
-        }
+            // Set restart file frequency and whether to write heartbeat file
+            if (options.writeNoFiles())
+            {
+                dissolve.setRestartFileFrequency(0);
+                dissolve.setWriteHeartBeat(false);
+            }
+            else
+                dissolve.setRestartFileFrequency(options.restartFileFrequency());
 
-        // Set restart file frequency and whether to write heartbeat file
-        if (options.writeNoFiles())
-        {
-            dissolve.setRestartFileFrequency(0);
-            dissolve.setWriteHeartBeat(false);
-        }
-        else
-            dissolve.setRestartFileFrequency(options.restartFileFrequency());
+            // Iterate before launching the GUI?
+            if (options.nIterations() > 0)
+            {
+                // Prepare for run
+                if (!dissolve.prepare())
+                    return 1;
 
-        // Iterate before launching the GUI?
-        if (options.nIterations() > 0)
-        {
-            // Prepare for run
-            if (!dissolve.prepare())
-                return 1;
-
-            // Run main simulation
-            auto result = dissolve.iterate(options.nIterations());
-            if (!result)
-                return 1;
+                // Run main simulation
+                auto result = dissolve.iterate(options.nIterations());
+                if (!result)
+                    return 1;
+            }
         }
     }
 
-    // Update and show the main window
+    // Update the main window and exec the app
     dissolveWindow.fullUpdate();
-    dissolveWindow.addOutputHandler();
-    dissolveWindow.show();
 
     auto result = app.exec();
 

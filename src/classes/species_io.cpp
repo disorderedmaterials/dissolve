@@ -772,7 +772,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         if (!parser.writeLineF("\n{}# Isotopologues\n", newPrefix))
             return false;
 
-        for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
+        for (auto &iso : isotopologues_)
         {
             if (!parser.writeLineF("{}{}  '{}'", newPrefix, keywords().keyword(Species::SpeciesKeyword::Isotopologue),
                                    iso->name()))

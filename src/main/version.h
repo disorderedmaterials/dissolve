@@ -12,5 +12,6 @@ namespace Version
 std::string_view info();
 // Return repo url
 std::string_view repoUrl();
-
+// Return app type
+std::string_view appType();
 }; // namespace Version

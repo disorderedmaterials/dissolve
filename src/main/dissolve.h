@@ -176,7 +176,7 @@ class Dissolve
     // List of all instances of all used Modules
     RefList<Module> moduleInstances_;
     // List of master Module instances
-    List<Module> masterModules_;
+    std::vector<std::unique_ptr<Module>> masterModules_;
 
     private:
     // Register master Module
@@ -185,8 +185,10 @@ class Dissolve
     public:
     // Register master instances for all Modules
     bool registerMasterModules();
+    // Print information on all available modules
+    void printModuleInformation() const;
     // Return master Module instances
-    const List<Module> &masterModules() const;
+    const std::vector<std::unique_ptr<Module>> &masterModules() const;
     // Search for master Module of the named type
     Module *findMasterModule(std::string_view moduleType) const;
     // Create a Module instance for the named Module type
@@ -200,14 +202,14 @@ class Dissolve
     // Generate unique Module name with base name provided
     std::string uniqueModuleName(std::string_view name, Module *excludeThis = nullptr);
     // Delete specified Module instance
-    bool deleteModuleInstance(Module *instance);
+    bool deleteModuleInstance(std::unique_ptr<Module> instance);
 
     /*
      * Layers
      */
     private:
     // List of defined processing layers
-    List<ModuleLayer> processingLayers_;
+    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
     // Data associated with processing Modules
     GenericList processingModuleData_;
 
@@ -225,7 +227,7 @@ class Dissolve
     // Generate unique processing layer name, with base name provided
     std::string uniqueProcessingLayerName(std::string_view baseName) const;
     // Return list of processing layers
-    List<ModuleLayer> &processingLayers();
+    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
     // Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/render/primitive.h"
-#include "templates/list.h"
+#include <vector>
 
 // Forward Declarations
 class QOpenGLContext;
@@ -21,7 +21,7 @@ class PrimitiveList
      */
     private:
     // List of Primitives owned and managed by this list
-    List<Primitive> primitives_;
+    std::vector<std::unique_ptr<Primitive>> primitives_;
 
     public:
     // Clear all existing Primitives

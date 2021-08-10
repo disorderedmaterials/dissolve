@@ -8,7 +8,7 @@
  */
 
 // Add new processing layer
-ModuleLayer *Dissolve::addProcessingLayer() { return processingLayers_.add(); }
+ModuleLayer *Dissolve::addProcessingLayer() { return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get(); }
 
 // Remove specified processing layer
 void Dissolve::removeProcessingLayer(ModuleLayer *layer)
@@ -17,44 +17,43 @@ void Dissolve::removeProcessingLayer(ModuleLayer *layer)
         return;
 
     // Remove any references to the Modules in the layer before we delete them
-    ListIterator<Module> moduleIterator(layer->modules());
-    while (Module *module = moduleIterator.iterate())
-        removeReferencesTo(module);
+    for (auto &module : layer->modules())
+        removeReferencesTo(module.get());
 
     // Delete the module instances themselves
-    moduleIterator.restart();
-    while (Module *module = moduleIterator.iterate())
-        moduleInstances_.remove(module);
+    for (auto &module : layer->modules())
+        moduleInstances_.remove(module.get());
 
     // Now safe to remove the layer
-    processingLayers_.remove(layer);
+    processingLayers_.erase(
+        std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
 }
 
 // Find named processing layer
 ModuleLayer *Dissolve::findProcessingLayer(std::string_view name) const
 {
-    ListIterator<ModuleLayer> layerIterator(processingLayers_);
-    while (ModuleLayer *layer = layerIterator.iterate())
-        if (DissolveSys::sameString(layer->name(), name))
-            return layer;
-
-    return nullptr;
+    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(),
+                           [name](auto &layer) { return DissolveSys::sameString(layer->name(), name); });
+    if (it == processingLayers_.end())
+        return nullptr;
+    return it->get();
 }
 
 // Own the specified processing layer
 bool Dissolve::ownProcessingLayer(ModuleLayer *layer)
 {
     // Sanity check - do we already own this Configuration?
-    if (processingLayers_.contains(layer))
+    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](auto &l) { return l.get() == layer; });
+    if (it != processingLayers_.end())
         return Messenger::error("Already own ModuleLayer '{}', so nothing to do.\n", layer->name());
 
-    processingLayers_.own(layer);
+    processingLayers_.emplace_back(layer);
 
     return true;
 }
 
 // Return number of defined processing layers
-int Dissolve::nProcessingLayers() const { return processingLayers_.nItems(); }
+int Dissolve::nProcessingLayers() const { return processingLayers_.size(); }
 
 // Generate unique processing layer name with base name provided
 std::string Dissolve::uniqueProcessingLayerName(std::string_view base) const
@@ -71,7 +70,7 @@ std::string Dissolve::uniqueProcessingLayerName(std::string_view base) const
 }
 
 // Return list of processing layers
-List<ModuleLayer> &Dissolve::processingLayers() { return processingLayers_; }
+std::vector<std::unique_ptr<ModuleLayer>> &Dissolve::processingLayers() { return processingLayers_; }
 
 // Return data associated with processing Modules
 GenericList &Dissolve::processingModuleData() { return processingModuleData_; }

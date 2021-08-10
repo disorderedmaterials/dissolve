@@ -17,14 +17,14 @@ class GetModuleLayerNameDialog : public QDialog
     Q_OBJECT
 
     public:
-    GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers);
+    GetModuleLayerNameDialog(QWidget *parent, const std::vector<std::unique_ptr<ModuleLayer>> &layers);
     ~GetModuleLayerNameDialog();
 
     private:
     // Main form declaration
     Ui::GetModuleLayerNameDialog ui_;
     // Layer list
-    const List<ModuleLayer> &layers_;
+    const std::vector<std::unique_ptr<ModuleLayer>> &layers_;
     // Current ModuleLayer that we are renaming
     const ModuleLayer *moduleLayer_;
 

@@ -34,6 +34,17 @@ MainTabsWidget::~MainTabsWidget()
 }
 
 /*
+ * UI
+ */
+
+// Set-up widget
+void MainTabsWidget::setUp(DissolveWindow *dissolveWindow)
+{
+    forcefieldTab_ = std::make_shared<ForcefieldTab>(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
+    messagesTab_ = std::make_shared<MessagesTab>(dissolveWindow, dissolveWindow->dissolve(), this, "Messages");
+}
+
+/*
  * Tab Data
  */
 
@@ -45,7 +56,7 @@ Species *MainTabsWidget::currentSpecies() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::SpeciesTabType)
+    if (tab->type() != MainTab::TabType::Species)
         return nullptr;
 
     auto speciesTab = std::dynamic_pointer_cast<SpeciesTab>(tab);
@@ -57,7 +68,7 @@ Configuration *MainTabsWidget::currentConfiguration() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::ConfigurationTabType)
+    if (tab->type() != MainTab::TabType::Configuration)
         return nullptr;
 
     auto configurationTab = std::dynamic_pointer_cast<ConfigurationTab>(tab);
@@ -69,12 +80,15 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::LayerTabType)
+    if (tab->type() != MainTab::TabType::Layer)
         return nullptr;
 
     auto layerTab = std::dynamic_pointer_cast<LayerTab>(tab);
     return (layerTab ? layerTab->moduleLayer() : nullptr);
 }
+
+// Return MessagesTab
+std::shared_ptr<MessagesTab> MainTabsWidget::messagesTab() { return messagesTab_; }
 
 // Find SpeciesTab containing specified page widget
 std::shared_ptr<SpeciesTab> MainTabsWidget::speciesTab(QWidget *page)
@@ -153,18 +167,7 @@ const QString MainTabsWidget::uniqueTabName(const QString base)
  * Tab Management
  */
 
-// Add core tabs
-void MainTabsWidget::addCoreTabs(DissolveWindow *dissolveWindow)
-{
-    // Forcefield
-    forcefieldTab_ = std::make_shared<ForcefieldTab>(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
-    addTab(forcefieldTab_->page(), "Forcefield");
-    setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
-
-    allTabs_.push_back(forcefieldTab_);
-}
-
-// Remove tabs related to the current data
+// Remove all tabs, including permanent tabs
 void MainTabsWidget::clearTabs()
 {
     // Empty our list of close button references
@@ -176,8 +179,15 @@ void MainTabsWidget::clearTabs()
     configurationTabs_.clear();
     speciesTabs_.clear();
 
-    // Only remaining tab is the ForcefieldTab...
+    // Clear all tab references, and then re-add the permanent ones
     allTabs_.clear();
+    // -- Messages
+    addTab(messagesTab_->page(), "Messages");
+    setTabIcon(messagesTab_->page(), QIcon(":/tabs/icons/tabs_messages.svg"));
+    allTabs_.push_back(messagesTab_);
+    // -- Forcefield
+    addTab(forcefieldTab_->page(), "Forcefield");
+    setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
     allTabs_.push_back(forcefieldTab_);
 }
 
@@ -188,7 +198,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     auto currentTabIndex = 0;
-    auto baseIndex = 1;
+    auto baseIndex = 2;
     for (const auto &sp : dissolve.species())
     {
         // Loop over existing tabs
@@ -258,16 +268,15 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 
     // Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to
     // 1+nSpecies+nConfigurations+nProcessingLayers
-    ListIterator<ModuleLayer> processingLayerIterator(dissolve.processingLayers());
     currentTabIndex = 0;
-    while (ModuleLayer *layer = processingLayerIterator.iterate())
+    for (const auto &layer : dissolve.processingLayers())
     {
         // Loop over existing tabs
         while (currentTabIndex < processingLayerTabs_.size())
         {
             // If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise,
             // delete it
-            if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer)
+            if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer.get())
                 break;
             else
             {
@@ -280,7 +289,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         if (currentTabIndex == processingLayerTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
-            auto newTab = std::make_shared<LayerTab>(dissolveWindow, dissolve, this, tabTitle, layer);
+            auto newTab = std::make_shared<LayerTab>(dissolveWindow, dissolve, this, tabTitle, layer.get());
             processingLayerTabs_.push_back(newTab);
             allTabs_.push_back(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
@@ -566,7 +575,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
         removeByPage(page);
 
         // Emit data modified signal dependent on tab type
-        if (tabType != MainTab::WorkspaceTabType)
+        if (tabType != MainTab::TabType::Workspace)
             emit(dataModified());
     }
 }

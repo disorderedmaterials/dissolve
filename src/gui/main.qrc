@@ -14,6 +14,7 @@
   </qresource>
   <qresource prefix="dissolve">
     <file>icons/dissolve.png</file>
+    <file>icons/simple.png</file>
   </qresource>
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
@@ -45,10 +46,6 @@
   </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>
-    <file>fonts/Cousine-Bold.ttf</file>
-    <file>fonts/Cousine-BoldItalic.ttf</file>
-    <file>fonts/Cousine-Italic.ttf</file>
-    <file>fonts/Cousine-Regular.ttf</file>
     <file>fonts/FreeSerif.ttf</file>
   </qresource>
   <qresource prefix="modules">
@@ -81,6 +78,7 @@
     <file>icons/tabs_workspace.svg</file>
     <file>icons/tabs_species.svg</file>
     <file>icons/tabs_modulelayer_disabled.svg</file>
+    <file>icons/tabs_messages.svg</file>
     <file>icons/tabs_modulelayer.svg</file>
   </qresource>
   <qresource prefix="start">
