@@ -19,9 +19,6 @@ steps:
       ./prep-appimage -a Dissolve-GUI -v continuous -b build/bin/dissolve-gui
     displayName: 'Prepare AppDirs'
   - bash: |
-
-    displayName: 'Download linuxdeploy Tools'
-  - bash: |
       set -ex
       # Set environment vars to locate Qt
       QT_BASE_DIR="/tmp/qt/${{ parameters.qtver }}/gcc_64"
