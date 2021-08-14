@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "math/matrix4.h"
 #include "sginfo/sginfo.h"
 #include <string>
 
@@ -36,4 +37,6 @@ class Spacegroup
     static std::string_view formattedNname(int id);
     // Return Spacegroup index in International Tables
     int internationalTableIndex() const;
+    // Return vector of symmetry group operators for the spacegroup
+    std::vector<Matrix4> symmetryOperators() const;
 };

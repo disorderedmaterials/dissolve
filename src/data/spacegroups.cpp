@@ -335,3 +335,43 @@ int Spacegroup::internationalTableIndex() const
     assert(isValid());
     return sgNameId_->SgNumber;
 }
+
+// Return vector of symmetry group operators for the spacegroup
+std::vector<Matrix4> Spacegroup::symmetryOperators() const
+{
+    auto nLoopInv = Sg_nLoopInv(&sgInfo_);
+
+    auto nTrV = sgInfo_.LatticeInfo->nTrVector;
+    auto TrV = sgInfo_.LatticeInfo->TrVector;
+
+    std::vector<Matrix4> operators;
+    const double realSTBF = double(STBF);
+    for (auto iTrV = 0; iTrV < nTrV; iTrV++, TrV += 3)
+    {
+        for (auto iLoopInv = 0; iLoopInv < nLoopInv; ++iLoopInv)
+        {
+            auto f = iLoopInv == 0 ? 1 : -1;
+
+            const auto *seitzMatrices = sgInfo_.ListSeitzMx;
+
+            for (auto iList = 0; iList < sgInfo_.nList; ++iList, ++seitzMatrices)
+            {
+                Matrix4 op;
+
+                // Set rotation matrix
+                op.setRow(0, f * seitzMatrices->s.R[0], f * seitzMatrices->s.R[1], f * seitzMatrices->s.R[2]);
+                op.setRow(1, f * seitzMatrices->s.R[3], f * seitzMatrices->s.R[4], f * seitzMatrices->s.R[5]);
+                op.setRow(2, f * seitzMatrices->s.R[6], f * seitzMatrices->s.R[7], f * seitzMatrices->s.R[8]);
+
+                // Set translation vector
+                op[12] = iModPositive(f * seitzMatrices->s.T[0] + TrV[0], realSTBF) / realSTBF;
+                op[13] = iModPositive(f * seitzMatrices->s.T[1] + TrV[1], realSTBF) / realSTBF;
+                op[14] = iModPositive(f * seitzMatrices->s.T[2] + TrV[2], realSTBF) / realSTBF;
+
+                operators.push_back(op);
+            }
+        }
+    }
+
+    return operators;
+}
