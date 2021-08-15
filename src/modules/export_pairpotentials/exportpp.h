@@ -6,9 +6,6 @@
 #include "io/export/pairpotential.h"
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // Export PairPotentials Module
 class ExportPairPotentialsModule : public Module
 {

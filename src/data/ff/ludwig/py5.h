@@ -5,9 +5,6 @@
 
 #include "data/ff/ff.h"
 
-// Forward Declarations
-/* none */
-
 // Py4OH Forcefield
 class Forcefield_Ludwig_Py5 : public Forcefield
 {

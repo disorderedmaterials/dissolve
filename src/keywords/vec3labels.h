@@ -3,9 +3,6 @@
 
 #pragma once
 
-// Forward Declarations
-/* none */
-
 // Labels for Vec3 Keyword
 class Vec3Labels
 {

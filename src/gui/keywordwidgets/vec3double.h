@@ -8,9 +8,6 @@
 #include "keywords/vec3double.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

@@ -3,9 +3,6 @@
 
 #pragma once
 
-// Forward Declarations
-/* none */
-
 // Value and Enumeration
 template <class V, class E> class Venum
 {

@@ -8,9 +8,6 @@
 #include "keywords/vec3nodevalue.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

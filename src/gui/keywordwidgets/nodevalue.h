@@ -8,9 +8,6 @@
 #include "keywords/nodevalue.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

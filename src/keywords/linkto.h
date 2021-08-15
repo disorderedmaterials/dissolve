@@ -5,9 +5,6 @@
 
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Link to Other Keyword
 class LinkToKeyword : public KeywordData<KeywordBase *>
 {

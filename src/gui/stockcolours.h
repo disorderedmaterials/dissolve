@@ -6,9 +6,6 @@
 #include "base/enumoptions.h"
 #include <QColor>
 
-// Forward Declarations
-/* none */
-
 // Stock Colours
 class StockColours
 {

@@ -5,9 +5,6 @@
 
 #include <QScrollArea>
 
-// Forward Declarations
-/* none */
-
 // Chart Scroll Area
 class ChartScrollArea : public QScrollArea
 {

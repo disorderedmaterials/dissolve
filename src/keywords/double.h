@@ -5,9 +5,6 @@
 
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Double Data
 class DoubleKeyword : public KeywordData<double>
 {

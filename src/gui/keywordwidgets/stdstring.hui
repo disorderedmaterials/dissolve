@@ -7,9 +7,6 @@
 #include "keywords/stdstring.h"
 #include <QLineEdit>
 
-// Forward Declarations
-/* none */
-
 class StringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

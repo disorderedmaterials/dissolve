@@ -7,9 +7,6 @@
 #include "math/matrix4.h"
 #include <QOpenGLFunctions>
 
-// Forward Declarations
-/* none */
-
 // Rendering Primitive
 class Primitive
 {

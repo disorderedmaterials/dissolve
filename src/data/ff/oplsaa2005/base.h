@@ -6,9 +6,6 @@
 #include "data/ff/ff.h"
 #include "templates/optionalref.h"
 
-// Forward Declarations
-/* none */
-
 // OPLS-AA (2005) Base Forcefield
 class OPLSAA2005BaseForcefield : public Forcefield
 {

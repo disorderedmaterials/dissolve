@@ -5,9 +5,6 @@
 
 #include <QPushButton>
 
-// Forward declarations
-/* none */
-
 // ColourButton
 class ColourButton : public QPushButton
 {

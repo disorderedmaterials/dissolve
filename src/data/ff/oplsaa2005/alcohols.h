@@ -5,9 +5,6 @@
 
 #include "data/ff/oplsaa2005/alkanes.h"
 
-// Forward Declarations
-/* none */
-
 // OPLS-AA/2005 Alcohols Forcefield
 class Forcefield_OPLSAA2005_Alcohols : public Forcefield_OPLSAA2005_Alkanes
 {

@@ -6,9 +6,6 @@
 #include "gui/render/primitiveinfo.h"
 #include <deque>
 
-// Forward Declarations
-/* none */
-
 // Rendering Primitive List
 class PrimitiveAssembly
 {

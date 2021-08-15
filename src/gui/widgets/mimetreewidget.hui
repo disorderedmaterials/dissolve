@@ -6,9 +6,6 @@
 #include "gui/widgets/mimestrings.h"
 #include <QTreeWidget>
 
-// Forward declarations
-/* none */
-
 // Mime Tree Widget
 class MimeTreeWidget : public QTreeWidget
 {

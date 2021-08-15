@@ -8,9 +8,6 @@
 #include <deque>
 #include <memory>
 
-// Forward Declarations
-/* none */
-
 // Molecule Distributor
 class MoleculeDistributor : public Distributor
 {

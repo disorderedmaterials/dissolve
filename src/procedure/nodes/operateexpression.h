@@ -6,9 +6,6 @@
 #include "expression/expression.h"
 #include "procedure/nodes/operatebase.h"
 
-// Forward Declarations
-/* none */
-
 // Operate Expression Node
 class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 {

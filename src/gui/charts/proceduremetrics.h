@@ -5,9 +5,6 @@
 
 #include <QMargins>
 
-// Forward Declarations
-/* none */
-
 // Procedure Chart Metrics - Style / Layout Information
 class ProcedureChartMetrics
 {

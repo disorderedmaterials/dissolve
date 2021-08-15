@@ -5,9 +5,6 @@
 
 #include <QLabel>
 
-// Forward Declarations
-/* none */
-
 // Check Indicator - simple widget display either a tick or a cross
 class CheckIndicator : public QLabel
 {

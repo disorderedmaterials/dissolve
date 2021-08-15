@@ -5,9 +5,6 @@
 
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // Skeleton Module
 class SkeletonModule : public Module
 {

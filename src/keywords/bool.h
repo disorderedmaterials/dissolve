@@ -5,9 +5,6 @@
 
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Bool Data
 class BoolKeyword : public KeywordData<bool>
 {

@@ -5,9 +5,6 @@
 
 #include "data/ff/ff.h"
 
-// Forward Declarations
-/* none */
-
 // SPC/Fw Forcefield
 class Forcefield_SPCFw : public Forcefield
 {

@@ -6,9 +6,6 @@
 #include "io/export/coordinates.h"
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // Export Coordinates Module
 class ExportCoordinatesModule : public Module
 {

@@ -6,9 +6,6 @@
 #include "gui/render/colourscale.h"
 #include <QWidget>
 
-// Forward declarations
-/* none */
-
 // Gradient Bar
 class GradientBar : public QWidget
 {

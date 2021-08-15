@@ -5,9 +5,6 @@
 
 #include "gui/ui_configurationwidget.h"
 
-// Forward Declarations
-/* none */
-
 // Configuration Widget
 class ConfigurationWidget : public QWidget
 {

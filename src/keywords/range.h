@@ -7,9 +7,6 @@
 #include "math/range.h"
 #include "vec3labels.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Double Triplet Data
 class RangeKeyword : public KeywordData<Range>
 {

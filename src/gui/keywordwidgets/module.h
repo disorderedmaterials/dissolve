@@ -8,9 +8,6 @@
 #include "keywords/module.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

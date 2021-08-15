@@ -7,9 +7,6 @@
 #include "base/version.h"
 #include "gui/render/colourscale.h"
 
-// Forward Declarations
-/* none */
-
 // Colour Definition
 class ColourDefinition
 {

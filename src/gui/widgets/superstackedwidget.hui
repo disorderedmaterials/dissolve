@@ -5,9 +5,6 @@
 
 #include <QStackedWidget>
 
-// Forward declarations
-/* none */
-
 // Super Tab Bar
 class SuperStackedWidget : public QStackedWidget
 {

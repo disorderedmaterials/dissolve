@@ -7,9 +7,6 @@
 #include <QDialog>
 #include <QObject>
 
-// Forward Declarations
-/* none */
-
 // Select Symbol Dialog
 class SelectSymbolDialog : public QDialog
 {

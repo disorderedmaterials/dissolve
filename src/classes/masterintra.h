@@ -7,9 +7,6 @@
 #include "templates/array2d.h"
 #include "templates/listitem.h"
 
-// Forward Declarations
-/* none */
-
 /*
  * MasterIntra Definition
  */

@@ -5,9 +5,6 @@
 
 #include "data/ff/oplsaa2005/base.h"
 
-// Forward Declarations
-/* none */
-
 // OPLS-AA/2005 Alkanes Forcefield
 class Forcefield_OPLSAA2005_Alkanes : public OPLSAA2005BaseForcefield
 {

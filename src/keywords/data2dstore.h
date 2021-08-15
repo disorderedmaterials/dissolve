@@ -6,9 +6,6 @@
 #include "classes/data2dstore.h"
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with a store of Data2D
 class Data2DStoreKeyword : public KeywordData<Data2DStore &>
 {

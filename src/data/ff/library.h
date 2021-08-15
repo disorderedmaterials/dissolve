@@ -7,9 +7,6 @@
 #include <memory>
 #include <string>
 
-// Forward Declarations
-/* none */
-
 // Forcefield Library
 class ForcefieldLibrary
 {

@@ -5,9 +5,6 @@
 
 #include "classes/energykernel.h"
 
-// Forward Declarations
-/* none */
-
 // Scaled Energy Kernel
 class ScaledEnergyKernel : public EnergyKernel
 {

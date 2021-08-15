@@ -3,9 +3,6 @@
 
 #pragma once
 
-// Forward Declarations
-/* none */
-
 // Kernel Flags
 class KernelFlags
 {

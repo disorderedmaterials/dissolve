@@ -5,9 +5,6 @@
 
 #include <QMimeData>
 
-// Forward declarations
-/* none */
-
 // Mime String Object
 class MimeString
 {

@@ -3,9 +3,6 @@
 
 #include "base/geometry.h"
 
-// Forward Declarations
-/* none */
-
 Geometry::Geometry()
 {
     indices_[0] = -1;

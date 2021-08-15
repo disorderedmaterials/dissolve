@@ -5,9 +5,6 @@
 
 #include "procedure/nodes/operatebase.h"
 
-// Forward Declarations
-/* none */
-
 // Operate Spherical Shell Normalise Node
 class OperateSphericalShellNormaliseProcedureNode : public OperateProcedureNodeBase
 {

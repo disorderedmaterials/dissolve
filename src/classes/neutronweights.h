@@ -9,9 +9,6 @@
 #include "templates/list.h"
 #include <vector>
 
-// Forward Declarations
-/* none */
-
 // Neutron Weights Container
 class NeutronWeights
 {

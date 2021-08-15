@@ -6,9 +6,6 @@
 #include "module/module.h"
 #include "procedure/procedure.h"
 
-// Forward Declarations
-/* none */
-
 // Analyse Module
 class AnalyseModule : public Module
 {

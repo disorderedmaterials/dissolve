@@ -8,9 +8,6 @@
 #include "keywords/nodevalueenumoptions.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

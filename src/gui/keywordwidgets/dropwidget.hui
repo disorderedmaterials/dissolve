@@ -5,9 +5,6 @@
 
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class DropWidget : public QWidget
 {
     // All Qt declarations must include this macro

@@ -3,9 +3,6 @@
 
 #pragma once
 
-// Forward Declarations
-/* none */
-
 // ModuleList Chart Metrics - Style / Layout Information
 class ModuleListChartMetrics
 {
