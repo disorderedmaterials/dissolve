@@ -5,9 +5,6 @@
 
 #include "data/ff/pcl2019/base.h"
 
-// Forward Declarations
-/* none */
-
 // Padua & Canongia Lopes Ionic Liquids (2019) Anions Forcefield
 class Forcefield_PCL2019_Anions : public PCL2019BaseForcefield
 {

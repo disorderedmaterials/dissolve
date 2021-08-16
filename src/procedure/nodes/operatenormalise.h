@@ -5,9 +5,6 @@
 
 #include "procedure/nodes/operatebase.h"
 
-// Forward Declarations
-/* none */
-
 // Operate Value Normalise Node
 class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
 {

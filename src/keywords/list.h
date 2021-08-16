@@ -8,9 +8,6 @@
 #include "keywords/group.h"
 #include "templates/list.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword List
 class KeywordList
 {

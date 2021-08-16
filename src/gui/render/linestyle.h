@@ -6,9 +6,6 @@
 #include "gui/render/linestipple.h"
 #include <QColor>
 
-// Forward Declarations
-/* none */
-
 // Line Style
 class LineStyle
 {

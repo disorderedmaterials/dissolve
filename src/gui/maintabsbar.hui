@@ -5,9 +5,6 @@
 
 #include <QTabBar>
 
-// Forward declarations
-/* none */
-
 // Main Tabs Bar
 class MainTabsBar : public QTabBar
 {

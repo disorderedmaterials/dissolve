@@ -5,9 +5,6 @@
 
 #include "classes/distributor.h"
 
-// Forward Declarations
-/* none */
-
 // Cell Distributor
 class CellDistributor : public Distributor
 {

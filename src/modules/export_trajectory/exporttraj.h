@@ -6,9 +6,6 @@
 #include "io/export/trajectory.h"
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // Export Trajectory Module
 class ExportTrajectoryModule : public Module
 {

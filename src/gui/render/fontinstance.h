@@ -8,9 +8,6 @@
 #include <QResource>
 #include <QString>
 
-// Forward Declarations
-/* none */
-
 // Font Instance
 class FontInstance
 {

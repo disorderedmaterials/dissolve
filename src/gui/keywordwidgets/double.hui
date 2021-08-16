@@ -7,9 +7,6 @@
 #include "gui/widgets/exponentialspin.hui"
 #include "keywords/double.h"
 
-// Forward Declarations
-/* none */
-
 class DoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

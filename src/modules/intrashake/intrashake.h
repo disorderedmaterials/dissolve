@@ -5,9 +5,6 @@
 
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // IntraShake Module
 class IntraShakeModule : public Module
 {

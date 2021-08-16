@@ -6,9 +6,6 @@
 #include "base/lock.h"
 #include "gui/ui_datawidget.h"
 
-// Forward Declarations
-/* none */
-
 // Data Widget
 class DataWidget : public QWidget
 {

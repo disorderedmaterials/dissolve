@@ -5,9 +5,6 @@
 
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with std::string Data
 class StringKeyword : public KeywordData<std::string>
 {

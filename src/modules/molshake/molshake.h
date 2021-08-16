@@ -5,9 +5,6 @@
 
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // MolShake Module
 class MolShakeModule : public Module
 {

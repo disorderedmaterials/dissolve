@@ -8,9 +8,6 @@
 #include "keywords/nodeandinteger.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

@@ -6,9 +6,6 @@
 #include "keywords/data.h"
 #include "vec3labels.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Integer Triplet Data
 class Vec3IntegerKeyword : public KeywordData<Vec3<int>>
 {

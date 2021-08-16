@@ -5,9 +5,6 @@
 
 #include <string>
 
-// Forward Declarations
-/* none */
-
 // Messenger output handler
 class OutputHandler
 {

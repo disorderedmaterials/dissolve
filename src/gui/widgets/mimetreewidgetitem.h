@@ -7,9 +7,6 @@
 #include "templates/list.h"
 #include <QTreeWidgetItem>
 
-// Forward declarations
-/* none */
-
 // Mime Tree Widget Item
 class MimeTreeWidgetItem : public QTreeWidgetItem
 {

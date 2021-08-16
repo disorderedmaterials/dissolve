@@ -10,9 +10,6 @@
 #include <tuple>
 #include <vector>
 
-// Forward Declarations
-/* none */
-
 // CheckSpecies Module
 class CheckSpeciesModule : public Module
 {

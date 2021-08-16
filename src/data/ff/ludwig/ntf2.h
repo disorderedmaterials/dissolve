@@ -5,9 +5,6 @@
 
 #include "data/ff/ff.h"
 
-// Forward Declarations
-/* none */
-
 // NTf2 Forcefield by Ludwig Group
 class Forcefield_Ludwig_NTf2 : public Forcefield
 {

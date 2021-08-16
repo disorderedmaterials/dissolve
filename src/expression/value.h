@@ -5,9 +5,6 @@
 
 #include <string>
 
-// Forward declarations
-/* none */
-
 // Expression Value
 class ExpressionValue
 {

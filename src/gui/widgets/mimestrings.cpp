@@ -37,7 +37,7 @@ bool MimeStrings::hasFormat(const QString &mimeType) const
 
 QStringList MimeStrings::formats() const { return QStringList() << "dissolve/mimestrings"; }
 
-QVariant MimeStrings::retrieveData(const QString &mimeType, QVariant::Type type) const { return QVariant(); }
+QVariant MimeStrings::retrieveData(const QString &mimeType, QMetaType::Type type) const { return QVariant(); }
 
 // Add mime string
 void MimeStrings::add(MimeString::MimeStringType type, std::string_view data) { strings_.emplace_back(type, data); }

@@ -5,9 +5,6 @@
 
 #include "data/ff/ff.h"
 
-// Forward Declarations
-/* none */
-
 // Kulmala 2010 Forcefield
 class Forcefield_Kulmala2010 : public Forcefield
 {

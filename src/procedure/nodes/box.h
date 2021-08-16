@@ -6,9 +6,6 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
 
-// Forward Declarations
-/* none */
-
 // Box Node
 class BoxProcedureNode : public ProcedureNode
 {

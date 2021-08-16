@@ -5,9 +5,6 @@
 
 #include <QMimeData>
 
-// Forward declarations
-/* none */
-
 // Mime String Object
 class MimeString
 {
@@ -50,7 +47,7 @@ class MimeStrings : public QMimeData
     public:
     bool hasFormat(const QString &mimeType) const;
     QStringList formats() const;
-    QVariant retrieveData(const QString &mimeType, QVariant::Type type) const;
+    QVariant retrieveData(const QString &mimeType, QMetaType::Type type) const;
 
     /*
      * Mime Data

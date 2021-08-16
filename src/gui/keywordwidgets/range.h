@@ -8,9 +8,6 @@
 #include "keywords/range.h"
 #include <QWidget>
 
-// Forward Declarations
-/* none */
-
 class RangeKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

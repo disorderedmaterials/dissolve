@@ -6,9 +6,6 @@
 #include "keywords/data.h"
 #include "procedure/procedure.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Procedure data
 class ProcedureKeyword : public KeywordData<Procedure &>
 {

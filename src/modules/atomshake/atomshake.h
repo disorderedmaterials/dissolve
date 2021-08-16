@@ -5,9 +5,6 @@
 
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // AtomShake Module
 class AtomShakeModule : public Module
 {

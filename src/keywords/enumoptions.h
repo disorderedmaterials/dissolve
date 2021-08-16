@@ -7,9 +7,6 @@
 #include "base/lineparser.h"
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // EnumOptionsKeyword base class
 class EnumOptionsBaseKeyword
 {

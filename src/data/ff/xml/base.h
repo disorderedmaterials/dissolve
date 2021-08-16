@@ -7,9 +7,6 @@
 #include "templates/optionalref.h"
 #include <string_view>
 
-// Forward Declarations
-/* none */
-
 // Forcefield whose terms are supplied by a user supplied OpenMM xml file
 class Forcefield_XML : public Forcefield
 {

@@ -5,9 +5,6 @@
 
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Integer Data
 class IntegerKeyword : public KeywordData<int>
 {

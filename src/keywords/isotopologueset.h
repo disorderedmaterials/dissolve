@@ -8,9 +8,6 @@
 #include "templates/list.h"
 #include "templates/reflist.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with IsotopologueSet Data
 class IsotopologueSetKeyword : public KeywordData<IsotopologueSet &>
 {

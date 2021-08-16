@@ -5,9 +5,6 @@
 
 #include "gui/widgets/ui_nocontrols.h"
 
-// Forward Declarations
-/* none */
-
 // No Controls Widget
 class NoControlsWidget : public QWidget
 {

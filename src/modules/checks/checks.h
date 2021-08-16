@@ -6,14 +6,11 @@
 #include "base/geometry.h"
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // Checks Module
 class ChecksModule : public Module
 {
     /*
-     * Module for making simple checkss
+     * Module for making simple checks
      */
 
     public:

@@ -6,9 +6,6 @@
 #include "data/ff/ff.h"
 #include "templates/optionalref.h"
 
-// Forward Declarations
-/* none */
-
 // Padual & Canongia Lopes IL (2019) Base Forcefield
 class PCL2019BaseForcefield : public Forcefield
 {

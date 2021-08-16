@@ -6,9 +6,6 @@
 #include "base/geometry.h"
 #include "keywords/data.h"
 
-// Forward Declarations
-/* none */
-
 // Keyword with Geometry Data
 class GeometryListKeyword : public KeywordData<std::vector<Geometry>>
 {

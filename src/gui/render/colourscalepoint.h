@@ -9,9 +9,6 @@
 #include <QColor>
 #include <QOpenGLFunctions>
 
-// Forward declarations
-/* none */
-
 // Colour Scale Point
 class ColourScalePoint
 {

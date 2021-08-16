@@ -5,9 +5,6 @@
 
 #include "procedure/nodes/operatebase.h"
 
-// Forward Declarations
-/* none */
-
 // Operate Grid Normalise Node
 class OperateGridNormaliseProcedureNode : public OperateProcedureNodeBase
 {

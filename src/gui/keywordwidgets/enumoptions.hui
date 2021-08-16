@@ -7,9 +7,6 @@
 #include "keywords/enumoptions.h"
 #include <QComboBox>
 
-// Forward Declarations
-/* none */
-
 class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

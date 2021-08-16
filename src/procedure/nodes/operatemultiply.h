@@ -5,9 +5,6 @@
 
 #include "procedure/nodes/operatebase.h"
 
-// Forward Declarations
-/* none */
-
 // Operate Multiply Node
 class OperateMultiplyProcedureNode : public OperateProcedureNodeBase
 {

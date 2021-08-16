@@ -6,9 +6,6 @@
 #include "templates/listitem.h"
 #include <map>
 
-// Forward Declarations
-/* none */
-
 // Geometry Definition
 class Geometry
 {

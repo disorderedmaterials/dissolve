@@ -5,9 +5,6 @@
 
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // Benchmark Module
 class BenchmarkModule : public Module
 {

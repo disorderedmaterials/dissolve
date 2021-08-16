@@ -5,9 +5,6 @@
 
 #include "module/module.h"
 
-// Forward Declarations
-/* none */
-
 // Test Module
 class TestModule : public Module
 {

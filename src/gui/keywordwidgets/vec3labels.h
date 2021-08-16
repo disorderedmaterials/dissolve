@@ -6,9 +6,6 @@
 #include "keywords/vec3labels.h"
 #include <QLabel>
 
-// Forward Declarations
-/* none */
-
 // Vec3 Widget Labels
 class Vec3WidgetLabels
 {

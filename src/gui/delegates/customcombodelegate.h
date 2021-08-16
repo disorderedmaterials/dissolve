@@ -8,9 +8,6 @@
 #include <QObject>
 #include <QStyledItemDelegate>
 
-// Forward Declarations
-/* none */
-
 // Custom Combo Delegate
 template <class P> class CustomComboDelegate : public QStyledItemDelegate
 {

@@ -5,9 +5,6 @@
 
 #include "math/matrix4.h"
 
-// Forward Declarations
-/* none */
-
 // Symmetry Generator
 class SymmetryGenerator
 {
