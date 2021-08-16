@@ -132,7 +132,7 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
 
         dissolve_.setInputFilename(qPrintable(newFile));
 
-        adjustForCurrentFile(newFile);
+        addRecentFile(newFile);
     }
 
     // Attempt to save the file
@@ -168,7 +168,7 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
     QFileInfo inputFileInfo(newFile);
     QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
-    adjustForCurrentFile(newFile);
+    addRecentFile(newFile);
 
     updateRecentActionList();
 

@@ -98,8 +98,8 @@ class DissolveWindow : public QMainWindow
     std::vector<ReferencePoint> referencePoints_;
 
     private:
-    QList<QAction *> recentFileActionList;
-    const int recentFileNo;
+    QList<QAction *> recentFileActionList_;
+    const int recentFileNo_;
 
     /*
      * OpenRecent Functions
@@ -110,7 +110,7 @@ class DissolveWindow : public QMainWindow
     // Fill open recent with placeholders
     void createRecentMenu();
     // Add current file to recent files
-    void adjustForCurrentFile(const QString &filePath);
+    void addRecentFile(const QString &filePath);
     // Update Recent files menu
     void updateRecentActionList();
 
