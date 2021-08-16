@@ -118,6 +118,7 @@ class DissolveWindow : public QMainWindow
      * Update Functions
      */
     public slots:
+    // Update window title
     void updateWindowTitle();
     // Update status bar
     void updateStatusBar();
