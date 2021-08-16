@@ -97,11 +97,27 @@ class DissolveWindow : public QMainWindow
     // List of ReferencePoints currently loaded
     std::vector<ReferencePoint> referencePoints_;
 
+    private:
+    QList<QAction *> recentFileActionList;
+    const int recentFileNo;
+
+    /*
+     * OpenRecent Functions
+     */
+    public slots:
+    // Manage opening of recent files
+    void openRecent();
+    // Fill open recent with placeholders
+    void createRecentMenu();
+    // Add current file to recent files
+    void adjustForCurrentFile(const QString &filePath);
+    // Update Recent files menu
+    void updateRecentActionList();
+
     /*
      * Update Functions
      */
     public slots:
-    // Update window title
     void updateWindowTitle();
     // Update status bar
     void updateStatusBar();
@@ -127,7 +143,6 @@ class DissolveWindow : public QMainWindow
     // File
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenLocalAction_triggered(bool checked);
-    void on_FileOpenRecentAction_triggered(bool checked);
     void on_FileConnectAction_triggered(bool checked);
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);

@@ -80,8 +80,8 @@ void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
         return;
 
     // Request a new file to open
-    QString inputFile =
-        QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(), "Dissolve input files (*.txt)");
+    QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(),
+                                                     "Dissolve input files (All files (*.*);;Text Files (*.txt))");
     if (inputFile.isEmpty())
         return;
 
@@ -89,11 +89,6 @@ void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
 }
 
 void DissolveWindow::on_FileConnectAction_triggered(bool checked)
-{
-    // TODO
-}
-
-void DissolveWindow::on_FileOpenRecentAction_triggered(bool checked)
 {
     // TODO
 }
@@ -136,6 +131,8 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
             return;
 
         dissolve_.setInputFilename(qPrintable(newFile));
+
+        adjustForCurrentFile(newFile);
     }
 
     // Attempt to save the file
@@ -143,6 +140,8 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
         return;
 
     modified_ = false;
+
+    updateRecentActionList();
 
     updateStatusBar();
 
@@ -168,6 +167,10 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
     // Update the current working directory to be local to the new input file
     QFileInfo inputFileInfo(newFile);
     QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
+
+    adjustForCurrentFile(newFile);
+
+    updateRecentActionList();
 
     updateStatusBar();
 
