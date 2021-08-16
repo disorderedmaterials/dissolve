@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/region.h"
 #include "math/matrix3.h"
 #include "procedure/nodes/node.h"
 #include "templates/array3d.h"
@@ -10,6 +11,7 @@
 
 // Forward Declarations
 class Box;
+class Configuration;
 
 // Region Node Base
 class RegionProcedureNodeBase : public ProcedureNode
@@ -31,26 +33,18 @@ class RegionProcedureNodeBase : public ProcedureNode
      * Region Data
      */
     private:
-    // Box of target Configuration
-    const Box *box_;
-    // 3D map of available voxels
-    Array3D<std::pair<Vec3<int>, bool>> voxelMap_;
-    // Number of voxels along each cell axis
-    Vec3<int> nVoxels_;
-    // Fractional voxel size
-    Vec3<double> voxelSizeFrac_;
-    // Lower-left corner voxel indices of free regions
-    std::vector<std::pair<Vec3<int>, bool>> freeVoxels_;
+    // Region object
+    Region region_;
 
     protected:
     // Return whether voxel centred at supplied real coordinates is valid
-    virtual bool isVoxelValid(const Configuration *cfg, const Vec3<double> &vCentre) const = 0;
+    virtual bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const = 0;
 
     public:
-    // Return random fractional coordinate inside region
-    Vec3<double> randomFractionalCoordinate() const;
-    // Return whether specified coordinate is inside a valid voxel of the region
-    bool validFractionalCoordinate(const Vec3<double> &rFrac) const;
+    // Return current region data
+    const Region &region() const;
+    // Generate and return region data based on the supplied configuration
+    const Region generateRegion(const Configuration *cfg) const;
 
     /*
      * Execute

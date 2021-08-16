@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/messagestab.h"
+#include <QFontDatabase>
 #include <QScrollBar>
 
 MessagesTab::MessagesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
@@ -9,7 +10,7 @@ MessagesTab::MessagesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
 {
     ui_.setupUi(this);
 
-    ui_.MessagesEdit->setFont(QFont("Cousine", 10));
+    ui_.MessagesEdit->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
     // Link output handler in to the Messenger
     Messenger::setOutputHandler(&outputHandler_);

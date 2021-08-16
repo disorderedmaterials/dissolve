@@ -28,11 +28,11 @@ Next, the box. We will still use relative lengths and scale the box according to
 {{< action type="settings" text="Open the settings for the `Box` node" >}}
 {{< action type="edit" text="Set the angle _&gamma;_ to 120 degrees" >}}
 
-Finally, we just need to check the ordering of the species in the `AddSpecies` nodes.
+Finally, we just need to check the ordering of the species in the `Add` nodes.
 
-{{< action type="settings" text="Open the settings for the first `AddSpecies` node" >}}
+{{< action type="settings" text="Open the settings for the first `Add` node" >}}
 {{< step text="Make sure that the target _Species_ is `Si`" >}}
-{{< action type="settings" text="Open the settings for the second `AddSpecies` node" >}}
+{{< action type="settings" text="Open the settings for the second `Add` node" >}}
 {{< step text="Make sure that the target _Species_ is `O`" >}}
 
 

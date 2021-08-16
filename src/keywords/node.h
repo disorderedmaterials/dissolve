@@ -16,8 +16,10 @@ class ProcedureNode;
 class NodeKeyword : public NodeKeywordBase, public KeywordData<const ProcedureNode *>
 {
     public:
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, ProcedureNode *node = nullptr);
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope, ProcedureNode *node = nullptr);
+    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                const ProcedureNode *node = nullptr);
+    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                const ProcedureNode *node = nullptr);
     ~NodeKeyword() override = default;
 
     /*

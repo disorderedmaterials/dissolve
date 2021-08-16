@@ -14,9 +14,9 @@ class NodeAndIntegerKeyword : public NodeKeywordBase, public KeywordData<std::pa
 {
     public:
     NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                          ProcedureNode *node = nullptr, int index = 0);
+                          const ProcedureNode *node = nullptr, int index = 0);
     NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                          ProcedureNode *node = nullptr, int index = 0);
+                          const ProcedureNode *node = nullptr, int index = 0);
     ~NodeAndIntegerKeyword() override = default;
 
     /*
