@@ -234,11 +234,8 @@ void DissolveWindow::addRecentFile(const QString &filePath)
     QStringList recentFilePaths = settings.value("recentFiles").toStringList();
     recentFilePaths.removeAll(filePath);
     recentFilePaths.prepend(filePath);
-    while (recentFilePaths.size() > recentFileNo_)
-    {
-        recentFilePaths.removeLast();
-        settings.setValue("recentFiles", recentFilePaths);
-    }
+    if (recentFilePaths.size() > recentFileNo_)
+        recentFilePaths.erase(recentFilePaths.begin() + recentFileNo_, recentFilePaths.end());
     settings.setValue("recentFiles", recentFilePaths);
     updateRecentActionList();
 }

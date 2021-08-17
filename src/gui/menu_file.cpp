@@ -81,7 +81,7 @@ void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
 
     // Request a new file to open
     QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(),
-                                                     "Dissolve input files (All files (*.*);;Text Files (*.txt))");
+                                                     "Dissolve input files (*.txt;;All Extensions (*.*);;All Files (*))");
     if (inputFile.isEmpty())
         return;
 
