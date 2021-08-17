@@ -10,6 +10,6 @@ jobs:
     name: Manage Epics
     steps:
       - name: Checkout
-        uses: projectdissolve/epicbot@v1
+        uses: projectdissolve/epicbot@test-sections
         with:
           secret-token: "${{ secrets.GITHUB_TOKEN }}"
