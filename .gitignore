@@ -36,6 +36,4 @@ changes
 *.restart.prev
 *.state
 
-.vscode/launch.json
-.vscode/settings.json
-.vscode/c_cpp_properties.json
+.vscode/
