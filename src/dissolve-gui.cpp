@@ -87,7 +87,8 @@ int main(int args, char **argv)
             }
         }
     }
-
+    // Create recent files menu
+    dissolveWindow.createRecentMenu();
     // Update the main window and exec the app
     dissolveWindow.fullUpdate();
 
