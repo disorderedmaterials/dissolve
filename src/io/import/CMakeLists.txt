@@ -25,6 +25,8 @@ set(ANTLR_OUTPUT_DIRS
 
 add_library(
   import
+  cif.cpp
+  cifclasses.cpp
   coordinates.cpp
   coordinates_dlpoly.cpp
   coordinates_epsr.cpp
@@ -44,6 +46,8 @@ add_library(
   trajectory.cpp
   trajectory_dlpoly.cpp
   values.cpp
+  cif.h
+  cifclasses.h
   coordinates.h
   data1d.h
   data2d.h
