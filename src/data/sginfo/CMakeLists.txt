@@ -1,8 +1,6 @@
 add_library(
   sginfo
-  generator.h
   sginfo.h
-  generator.cpp
   sgclib.c
   sgfind.c
   sghkl.c
