@@ -12,9 +12,7 @@
 
 Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
-    box_ = nullptr;
-
-    clear();
+    createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false);
 }
 
 Configuration::~Configuration() { clear(); }
