@@ -45,8 +45,11 @@ void ConfigurationWidget::updateToolbar()
     }
 
     // Set checkable buttons
-    ui_.ViewAxesVisibleButton->setChecked(configurationViewer()->axesVisible());
-    ui_.ViewSpheresButton->setChecked(configurationViewer()->renderableDrawStyle() != RenderableConfiguration::LinesStyle);
+    if (configurationViewer()->configuration())
+    {
+        ui_.ViewAxesVisibleButton->setChecked(configurationViewer()->axesVisible());
+        ui_.ViewSpheresButton->setChecked(configurationViewer()->renderableDrawStyle() != RenderableConfiguration::LinesStyle);
+    }
 }
 
 /*
@@ -57,6 +60,13 @@ void ConfigurationWidget::updateToolbar()
 void ConfigurationWidget::setConfiguration(Configuration *cfg)
 {
     ui_.ConfigurationView->setConfiguration(cfg);
+
+    // Persist existing style
+    if (cfg)
+    {
+        configurationViewer()->setRenderableDrawStyle(ui_.ViewSpheresButton->isChecked() ? RenderableConfiguration::SpheresStyle
+                                                                                         : RenderableConfiguration::LinesStyle);
+    }
 
     updateToolbar();
 }
