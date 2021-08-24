@@ -241,7 +241,6 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // pairpotential energy, and zero intramolecular energy
             if (cfg->nMolecules() > 1)
                 molecularEnergy *= 0.5;
-            molecularEnergy /= procPool.nProcesses();
             molecularEnergy += correctSelfEnergy;
             moleculeTimer.stop();
 
