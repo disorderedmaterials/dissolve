@@ -217,7 +217,9 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
 
     dissolveState_ = EditingState;
     // Add file to recent menu
-    addRecentFile(QString::fromStdString(std::string(inputFile)));
+    QString filePath = inputFileInfo.absoluteDir().absolutePath();
+    std::string fileName = dissolve_.inputFilename().data();
+    addRecentFile(filePath + QString::fromStdString("/"+fileName));
     // Fully update GUI
     fullUpdate();
 
@@ -284,7 +286,7 @@ void DissolveWindow::updateRecentActionList()
         if (i < recentFilePaths.size())
         {
             QString strippedName = QFileInfo(recentFilePaths.at(i)).fileName();
-            recentFileActionList_.at(i)->setText(strippedName);
+            recentFileActionList_.at(i)->setText(strippedName+"    "+recentFilePaths.at(i));
             recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
             recentFileActionList_.at(i)->setVisible(true);
         }
