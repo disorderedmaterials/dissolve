@@ -22,7 +22,7 @@
 #include <QSettings>
 
 DissolveWindow::DissolveWindow(Dissolve &dissolve)
-    : QMainWindow(nullptr), dissolve_(dissolve), threadController_(this, dissolve), recentFileNo_(10)
+    : QMainWindow(nullptr), dissolve_(dissolve), recentFileNo_(10), threadController_(this, dissolve)
 {
     // Initialise resources
     Q_INIT_RESOURCE(main);
@@ -149,9 +149,7 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     if (inputFileInfo.exists())
     {
         // Add file to recent menu
-        QString filePath = inputFileInfo.absoluteDir().absolutePath();
-        std::string fileName = dissolve_.inputFilename().data();
-        addRecentFile(filePath + QString::fromStdString("/" + fileName));
+        addRecentFile(inputFileInfo.absoluteFilePath());
         QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
         try
         {
