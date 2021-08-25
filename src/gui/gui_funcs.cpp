@@ -148,6 +148,10 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     auto loadResult = false;
     if (inputFileInfo.exists())
     {
+        // Add file to recent menu
+        QString filePath = inputFileInfo.absoluteDir().absolutePath();
+        std::string fileName = dissolve_.inputFilename().data();
+        addRecentFile(filePath + QString::fromStdString("/" + fileName));
         QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
         try
         {
@@ -216,10 +220,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     }
 
     dissolveState_ = EditingState;
-    // Add file to recent menu
-    QString filePath = inputFileInfo.absoluteDir().absolutePath();
-    std::string fileName = dissolve_.inputFilename().data();
-    addRecentFile(filePath + QString::fromStdString("/" + fileName));
     // Fully update GUI
     fullUpdate();
 
