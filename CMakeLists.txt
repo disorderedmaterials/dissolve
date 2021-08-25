@@ -263,6 +263,7 @@ set(BASIC_LINK_LIBS
     base
     math
     data
+    sginfo
     # Forcefields
     ff
     ${FF_LINK_LIBS}

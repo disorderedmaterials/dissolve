@@ -3,31 +3,40 @@
 
 #pragma once
 
-#include <string_view>
+#include "math/matrix4.h"
+#include "sginfo/sginfo.h"
+#include <string>
 
-// Spacegroup Name Data
-class SpacegroupNameData
+class Spacegroup
 {
     public:
-    SpacegroupNameData(std::string_view name, std::string_view formattedName);
+    Spacegroup();
+    ~Spacegroup();
 
+    /*
+     * Data
+     */
     private:
-    // Name of the spacegroup
-    std::string_view name_;
-    // Formatted name of the spacegroup
-    std::string_view formattedName_;
+    // Name / index information
+    const T_TabSgName *sgNameId_;
+    // SGInfo information
+    T_SgInfo sgInfo_;
 
     public:
-    // Return the name of the spacegroup
+    // Initialise for specified Hermann-Mauguin group
+    bool initialise(std::string hmName);
+    // Return whether the Spacegroup is valid
+    bool isValid() const;
+    // Return Spacegroup name
     std::string_view name() const;
-    // Return the formatted name of the spacegroup
+    // Return spacegroup name for International Tables index provided
+    static std::string_view name(int id);
+    // Return formatted Spacegroup name
     std::string_view formattedName() const;
-};
-
-// Spacegroups
-class Spacegroups
-{
-    private:
-    // Return SpacegroupNameData with index specified
-    static const SpacegroupNameData &spacegroupNameData(int id);
+    // Return formatted spacegroup name for International Tables index provided
+    static std::string_view formattedNname(int id);
+    // Return Spacegroup index in International Tables
+    int internationalTableIndex() const;
+    // Return vector of symmetry group operators for the spacegroup
+    std::vector<Matrix4> symmetryOperators() const;
 };
