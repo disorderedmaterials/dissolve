@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "neta/neta.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
-#include "neta/neta.h"
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 #include <gtest/gtest.h>
