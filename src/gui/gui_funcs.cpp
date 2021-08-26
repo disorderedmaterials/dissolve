@@ -282,11 +282,13 @@ void DissolveWindow::updateRecentActionList()
     // Fill recent menu
     for (auto i = 0u; i < recentFileNo_; ++i)
     {
+        QFileInfo fileInfo;
+        QString strippedName, filePath;
         if (i < recentFilePaths.size())
         {
-            QFileInfo fileInfo = QFileInfo(recentFilePaths.at(i));
-            QString strippedName = fileInfo.fileName();
-            QString filePath = fileInfo.absoluteDir().absolutePath();
+            fileInfo = QFileInfo(recentFilePaths.at(i));
+            strippedName = fileInfo.fileName();
+            filePath = fileInfo.absoluteDir().absolutePath();
             recentFileActionList_.at(i)->setText(strippedName + "    (" +filePath+")");
             recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
             recentFileActionList_.at(i)->setVisible(true);
