@@ -53,6 +53,7 @@ Integer: DIGIT+;
 // Keywords
 Or: '|';
 Not: '!' | '¬';
+CharacterKeyword: '?';
 ConnectionKeyword: '-';
 RingKeyword: 'r' 'i' 'n' 'g';
 

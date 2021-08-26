@@ -4,6 +4,7 @@
 #include "neta/node.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
+#include "neta/character.h"
 #include "neta/connection.h"
 #include "neta/or.h"
 #include "neta/presence.h"
@@ -13,6 +14,7 @@
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 {
     return EnumOptions<NETANode::NodeType>("NodeTypes", {{NodeType::Basic, "Basic"},
+                                                         {NodeType::Character, "Character"},
                                                          {NodeType::Connection, "Connection"},
                                                          {NodeType::Or, "Or"},
                                                          {NodeType::Presence, "Presence"},
@@ -78,6 +80,17 @@ std::shared_ptr<NETAOrNode> NETANode::createOrNode()
 {
     // Create the new node and own it
     auto node = std::make_shared<NETAOrNode>(parent_);
+    branch_.push_back(node);
+
+    return node;
+}
+
+// Create character node from current targets
+std::shared_ptr<NETACharacterNode>
+NETANode::createCharacterNode(std::vector<Elements::Element> targetElements,
+                              std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
+{
+    auto node = std::make_shared<NETACharacterNode>(parent_, targetElements, targetAtomTypes);
     branch_.push_back(node);
 
     return node;

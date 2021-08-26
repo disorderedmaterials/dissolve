@@ -4,6 +4,7 @@
 #include "neta/NETAVisitor.h"
 #include "data/ff/ff.h"
 #include "neta/NETAErrorListeners.h"
+#include "neta/character.h"
 #include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
@@ -48,7 +49,22 @@ antlrcpp::Any NETAVisitor::visitOrNode(NETAParser::OrNodeContext *context)
 
     contextStack_.pop_back();
 
-    return true;
+    return result;
+}
+
+antlrcpp::Any NETAVisitor::visitCharacterNode(NETAParser::CharacterNodeContext *context)
+{
+    auto connection = currentNETAContext()->createCharacterNode();
+    contextStack_.push_back(connection);
+
+    if (context->Not())
+        connection->setReverseLogic();
+
+    auto result = visitChildren(context);
+
+    contextStack_.pop_back();
+
+    return result;
 }
 
 antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext *context)

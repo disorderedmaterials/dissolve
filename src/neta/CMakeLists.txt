@@ -27,6 +27,7 @@ add_library(
   neta
   ${ANTLR_NETAGrammarLexer_CXX_OUTPUTS}
   ${ANTLR_NETAGrammarParser_CXX_OUTPUTS}
+  character.cpp
   connection.cpp
   neta.cpp
   node.cpp
@@ -36,6 +37,7 @@ add_library(
   root.cpp
   NETAErrorListeners.cpp
   NETAVisitor.cpp
+  character.h
   connection.h
   neta.h
   node.h

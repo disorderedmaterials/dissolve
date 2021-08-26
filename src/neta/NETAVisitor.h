@@ -37,6 +37,7 @@ class NETAVisitor : private NETAParserBaseVisitor
     private:
     // Nodes
     antlrcpp::Any visitOrNode(NETAParser::OrNodeContext *context) override;
+    antlrcpp::Any visitCharacterNode(NETAParser::CharacterNodeContext *context) override;
     antlrcpp::Any visitConnectionNode(NETAParser::ConnectionNodeContext *context) override;
     antlrcpp::Any visitPresenceNode(NETAParser::PresenceNodeContext *context) override;
     antlrcpp::Any visitRingNode(NETAParser::RingNodeContext *context) override;

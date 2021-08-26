@@ -44,7 +44,8 @@ orNode: commonNode Or commonNode
 | commonNode Or orNode;
 
 // Common Nodes
-commonNode: connectionNode
+commonNode: characterNode
+| connectionNode
 | ringNode;
 
 // Contextuals
@@ -60,6 +61,9 @@ ringOnlyNode: presenceNode
 | modifier
 | option
 | flag;
+
+// Character Node
+characterNode: Not? CharacterKeyword targetList;
 
 // Connection Node
 connectionNode: Not? ConnectionKeyword targetList OpenParenthesis nodeSequence CloseParenthesis
