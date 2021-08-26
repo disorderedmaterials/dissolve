@@ -1,0 +1,91 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-16 14:49:47 +0200 (Tue, 16 Feb 2016) $
+#$Revision: 176465 $
+#$URL: svn://www.crystallography.net/cod/cif/9/00/04/9000418.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided the American Mineralogist Crystal Structure Database,
+# http://rruff.geo.arizona.edu/AMS/amcsd.php
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_9000418
+loop_
+_publ_author_name
+'Hazen, R. M.'
+'Burnham, C. W.'
+_publ_section_title
+;
+ The crystal structures of gillespite I and II: A structure determination at
+ high pressure
+ P = 1 atm
+;
+_journal_name_full               'American Mineralogist'
+_journal_page_first              1166
+_journal_page_last               1176
+_journal_volume                  59
+_journal_year                    1974
+_chemical_formula_sum            'Ba Fe O10 Si4'
+_chemical_name_mineral           Gillespite
+_space_group_IT_number           130
+_symmetry_space_group_name_Hall  'P 4ab 2n -1ab'
+_symmetry_space_group_name_H-M   'P 4/n c c :1'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_length_a                   7.5164
+_cell_length_b                   7.5164
+_cell_length_c                   16.0768
+_cell_volume                     908.279
+_diffrn_ambient_pressure         100
+_exptl_crystal_density_diffrn    3.404
+_cod_original_sg_symbol_H-M      'P 4/n c c'
+_cod_original_formula_sum        'Ba Fe Si4 O10'
+_cod_database_code               9000418
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+1/2-y,1/2-x,1/2+z
+y,x,1/2-z
+y,-x,-z
+1/2-y,1/2+x,z
+x,-y,1/2+z
+1/2-x,1/2+y,1/2-z
+1/2+x,1/2+y,-z
+-x,-y,z
+1/2+y,1/2+x,1/2+z
+-y,-x,1/2-z
+-y,x,-z
+1/2+y,1/2-x,z
+-x,y,1/2+z
+1/2+x,1/2-y,1/2-z
+1/2-x,1/2-y,-z
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Ba 0.01245 0.01245 0.00812 0.00000 0.00000 0.00000
+Fe 0.00570 0.00570 0.01650 0.00000 0.00000 0.00000
+Si 0.00567 0.00515 0.01113 0.00000 0.00122 -0.00122
+O1 0.03320 0.03320 0.02213 -0.01059 0.01224 -0.01224
+O2 0.00744 0.02662 0.01846 -0.00172 -0.00122 0.00673
+O3 0.01603 0.00544 0.04007 0.00572 -0.01286 -0.00429
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Ba 0.00000 0.00000 0.00000
+Fe 0.00000 0.50000 0.09200
+Si 0.26910 0.18540 0.15480
+O1 0.22420 0.22420 0.25000
+O2 0.47230 0.24750 0.13770
+O3 0.14150 0.27540 0.09000
