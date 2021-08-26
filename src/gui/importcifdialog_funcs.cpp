@@ -110,8 +110,8 @@ bool ImportCIFDialog::createStructuralSpecies()
                     continue;
 
                 // Create the new atom
-                auto &i = sp->addAtom(unique.Z(), r);
-                i.setAtomType(temporaryCoreData_.findAtomType(unique.label()));
+                auto i = sp->addAtom(unique.Z(), r);
+                sp->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
             }
 
     // Bonding
