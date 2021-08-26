@@ -20,6 +20,7 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QSettings>
+#include <iostream>
 
 DissolveWindow::DissolveWindow(Dissolve &dissolve)
     : QMainWindow(nullptr), dissolve_(dissolve), recentFileNo_(10), threadController_(this, dissolve)
@@ -283,8 +284,10 @@ void DissolveWindow::updateRecentActionList()
     {
         if (i < recentFilePaths.size())
         {
-            QString strippedName = QFileInfo(recentFilePaths.at(i)).fileName();
-            recentFileActionList_.at(i)->setText(strippedName + "    " + recentFilePaths.at(i));
+            QFileInfo fileInfo = QFileInfo(recentFilePaths.at(i));
+            QString strippedName = fileInfo.fileName();
+            QString filePath = fileInfo.absoluteDir().absolutePath();
+            recentFileActionList_.at(i)->setText(strippedName + "    (" +filePath+")");
             recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
             recentFileActionList_.at(i)->setVisible(true);
         }
