@@ -289,7 +289,7 @@ void DissolveWindow::updateRecentActionList()
             fileInfo = QFileInfo(recentFilePaths.at(i));
             strippedName = fileInfo.fileName();
             filePath = fileInfo.absoluteDir().absolutePath();
-            recentFileActionList_.at(i)->setText(strippedName + "    (" +filePath+")");
+            recentFileActionList_.at(i)->setText(strippedName + "    (" + filePath + ")");
             recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
             recentFileActionList_.at(i)->setVisible(true);
         }
