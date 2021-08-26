@@ -21,20 +21,6 @@ class CIFImportSyntaxException : public std::exception
     public:
     virtual const char *what() const throw() { return message_.c_str(); }
 };
-
-// CIFImport Internal Error Exception
-class CIFImportInternalErrorException : public std::exception
-{
-    public:
-    CIFImportInternalErrorException(std::string_view message = "CIFImport internal error.") : message_{message} {}
-
-    private:
-    // Input string to CIFImport
-    std::string message_;
-
-    public:
-    virtual const char *what() const throw() { return message_.c_str(); }
-};
 } // namespace CIFImportExceptions
 
 // CIFImport Lexer Error Listener
