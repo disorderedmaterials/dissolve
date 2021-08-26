@@ -47,6 +47,8 @@ class NETADefinition
     SpeciesAtom *targetAtom_;
 
     public:
-    // Check supplied atom to see if it matches this NETA description
+    // Return score of supplied atom for the definition
     int score(const SpeciesAtom *i) const;
+    // Return whether the supplied atom matches the definition
+    bool matches(const SpeciesAtom *i) const;
 };

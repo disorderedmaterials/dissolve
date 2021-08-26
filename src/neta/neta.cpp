@@ -94,9 +94,12 @@ std::string_view NETADefinition::definitionString() const { return definitionStr
  * Matching
  */
 
-// Check supplied atom to see if it matches this NETA description
+// Return score of supplied atom for this definition
 int NETADefinition::score(const SpeciesAtom *i) const
 {
     std::vector<const SpeciesAtom *> matchPath;
     return rootNode_->score(i, matchPath);
 }
+
+// Return whether the supplied atom matches the definition
+bool NETADefinition::matches(const SpeciesAtom *i) const { return score(i) != NETANode::NoMatch; }
