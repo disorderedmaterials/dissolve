@@ -1,5 +1,5 @@
-# Get list of source files and register tests
-file(GLOB_RECURSE tests_SRC "*.cpp")
-foreach(SRCFILE ${tests_SRC})
-  dissolve_unit_test(${SRCFILE})
-endforeach(SRCFILE)
+dissolve_unit_test(datamanager.cpp)
+dissolve_unit_test(forcefieldTab.cpp)
+dissolve_unit_test(masterTerms.cpp)
+dissolve_unit_test(speciestab.cpp)
+dissolve_unit_test(xml_ff.cpp)
