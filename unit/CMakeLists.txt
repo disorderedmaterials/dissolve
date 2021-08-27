@@ -38,20 +38,11 @@ function(dissolve_unit_test src_file)
   gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
 endfunction()
 
-# Look for unit test subdirectories
-message(STATUS "Looking for unit tests in ${CMAKE_CURRENT_SOURCE_DIR}...")
-file(
-  GLOB children
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  "*"
-)
-set(UNIT_TEST_DIRS "")
-foreach(child ${children})
-  if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${child} AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${child}/CMakeLists.txt)
-    list(APPEND UNIT_TEST_DIRS ${child})
-  endif()
-endforeach()
-
-foreach(subdir ${UNIT_TEST_DIRS})
-  add_subdirectory(${subdir})
-endforeach()
+# Add unit test subdirectories
+add_subdirectory(algorithms)
+add_subdirectory(classes)
+if(GUI)
+  add_subdirectory(gui)
+endif(GUI)
+add_subdirectory(io)
+add_subdirectory(math)
