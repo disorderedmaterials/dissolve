@@ -112,7 +112,7 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 }
 
 // Return list of all current tabs
-const std::vector<std::shared_ptr<MainTab>> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
+const std::vector<MainTab *> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
 
 /*
  * Messages

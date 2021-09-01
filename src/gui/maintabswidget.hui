@@ -10,6 +10,7 @@
 #include "gui/workspacetab.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
+#include <QPointer>
 #include <QTabWidget>
 #include <memory>
 #include <vector>
@@ -40,21 +41,21 @@ class MainTabsWidget : public QTabWidget
      */
     private:
     // Reference list of all available tabs
-    std::vector<std::shared_ptr<MainTab>> allTabs_;
+    std::vector<MainTab *> allTabs_;
     // Pointer to Forcefield tab
-    std::shared_ptr<ForcefieldTab> forcefieldTab_;
+    QPointer<ForcefieldTab> forcefieldTab_;
     // List of Species tabs
-    std::vector<std::shared_ptr<SpeciesTab>> speciesTabs_;
+    std::vector<QPointer<SpeciesTab>> speciesTabs_;
     // List of Configuration tabs
-    std::vector<std::shared_ptr<ConfigurationTab>> configurationTabs_;
+    std::vector<QPointer<ConfigurationTab>> configurationTabs_;
     // List of processing layer tabs
-    std::vector<std::shared_ptr<LayerTab>> processingLayerTabs_;
+    std::vector<QPointer<LayerTab>> processingLayerTabs_;
     // List of Workspace tabs
-    std::vector<std::shared_ptr<WorkspaceTab>> workspaceTabs_;
+    std::vector<QPointer<WorkspaceTab>> workspaceTabs_;
 
     public:
     // Return reference list of all current tabs
-    const std::vector<std::shared_ptr<MainTab>> &allTabs() const;
+    const std::vector<MainTab *> &allTabs() const;
     // Return currently-selected Species (if a SpeciesTab is the current one)
     Species *currentSpecies() const;
     // Return currently-selected Configuration (if a ConfigurationTab is the current one)
@@ -62,17 +63,15 @@ class MainTabsWidget : public QTabWidget
     // Return currently-selected ModuleLayer (if a LayerTab is the current one)
     ModuleLayer *currentLayer() const;
     // Find SpeciesTab containing specified page widget
-    std::shared_ptr<SpeciesTab> speciesTab(QWidget *page);
+    QPointer<SpeciesTab> speciesTab(QWidget *page);
     // Find ConfigurationTab containing specified page widget
-    std::shared_ptr<ConfigurationTab> configurationTab(QWidget *page);
+    QPointer<ConfigurationTab> configurationTab(QWidget *page);
     // Find LayerTab containing specified page widget
-    std::shared_ptr<LayerTab> processingLayerTab(QWidget *page);
+    QPointer<LayerTab> processingLayerTab(QWidget *page);
     // Find WorkspaceTab containing specified page widget
-    std::shared_ptr<WorkspaceTab> workspaceTab(QWidget *page);
+    QPointer<WorkspaceTab> workspaceTab(QWidget *page);
     // Find tab with title specified
-    std::shared_ptr<MainTab> findTab(const QString title);
-    // Find tab with specified page widget
-    std::shared_ptr<MainTab> findTab(QWidget *page);
+    MainTab *findTab(const QString title);
     // Generate unique tab name with base name provided
     const QString uniqueTabName(const QString base);
 
@@ -89,18 +88,16 @@ class MainTabsWidget : public QTabWidget
     // Remove tab containing the specified page widget
     void removeByPage(QWidget *page);
     // Add on a new workspace tab
-    std::shared_ptr<MainTab> addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title);
+    MainTab *addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title);
 
     /*
      * Display
      */
     public:
     // Return current tab
-    std::shared_ptr<MainTab> currentTab() const;
+    MainTab *currentTab() const;
     // Make specified tab the current one
-    void setCurrentTab(std::shared_ptr<MainTab> tab);
-    // Make specified tab the current one (by index)
-    void setCurrentTab(int tabIndex);
+    void setCurrentTab(const MainTab *tab);
     // Make specified Species tab the current one
     void setCurrentTab(Species *species);
     // Make specified Configuration tab the current one
@@ -138,8 +135,6 @@ class MainTabsWidget : public QTabWidget
     private:
     // List of close buttons and their associated pageWidgets
     std::vector<std::tuple<QToolButton *, QWidget *>> closeButtons_;
-    // Overload insertTab for shared_ptr
-    int insertTab(int index, std::shared_ptr<QWidget> widget, const QString &title);
 
     private slots:
     // Tab close button clicked
