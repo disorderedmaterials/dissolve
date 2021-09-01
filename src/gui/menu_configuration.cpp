@@ -8,6 +8,7 @@
 #include "main/dissolve.h"
 #include "procedure/nodes/addspecies.h"
 #include "procedure/nodes/box.h"
+#include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/parameters.h"
 #include <QFileDialog>
 #include <QMessageBox>
@@ -137,12 +138,19 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
+
+    // Add framework species
     auto *node = new AddSpeciesProcedureNode(framework, 1);
     node->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction", AddSpeciesProcedureNode::BoxActionStyle::Set);
     node->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
                                                                    AddSpeciesProcedureNode::PositioningType::Current);
     node->setKeyword<bool>("Rotate", false);
     generator.addRootSequenceNode(node);
+
+    // Add region node for adsorbates
+    auto *regionNode = new GeneralRegionProcedureNode();
+    regionNode->setName("FreeSpace");
+    generator.addRootSequenceNode(regionNode);
 
     // Add a parameters node
     auto *paramsNode = new ParametersProcedureNode;
@@ -166,6 +174,9 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
         }
         addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction",
                                                                                 AddSpeciesProcedureNode::BoxActionStyle::None);
+        addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>(
+            "Positioning", AddSpeciesProcedureNode::PositioningType::Region);
+        addSpeciesNode->setKeyword<const ProcedureNode *>("Region", regionNode);
         generator.addRootSequenceNode(addSpeciesNode);
 
         ++count;
