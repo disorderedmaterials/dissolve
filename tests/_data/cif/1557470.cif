@@ -1,0 +1,117 @@
+#------------------------------------------------------------------------------
+#$Date: 2020-03-05 04:12:14 +0200 (Thu, 05 Mar 2020) $
+#$Revision: 249063 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/1/55/74/1557470.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1557470
+loop_
+_publ_author_name
+'Biagioni, C.'
+'Bonaccorsi, E.'
+'Camara, F.'
+'Cadoni, M.'
+'Ciriotti, M.E.'
+'Bersani, D.'
+'Kolitsch, U.'
+_publ_section_title
+;
+ Lusernaite-(Y), Y4Al(CO3)2(OH,F)11*6H2O, a new mineral species from
+ Luserna Valley, Piedmont, Italy: Description and crystal structure
+;
+_journal_name_full               'American Mineralogist'
+_journal_page_first              1322
+_journal_page_last               1329
+_journal_paper_doi               10.2138/am.4366
+_journal_volume                  98
+_journal_year                    2013
+_chemical_formula_sum
+'C2 H22.35 Al1.06 Ca0.05 Dy0.16 Er0.15 F0.65 Gd0.07 O22.35 Pb0.02 Sm0.01 Y3.41 Yb0.09'
+_chemical_name_common            Y4Al(CO3)2(OH,F)11*6H2O
+_chemical_name_mineral           Lusernaite-Y
+_space_group_IT_number           53
+_space_group_name_Hall           '-P 2ac 2'
+_space_group_name_H-M_alt        'P m n a'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_formula_units_Z            2
+_cell_length_a                   7.8412(3)
+_cell_length_b                   11.0313(5)
+_cell_length_c                   11.3870(4)
+_cell_volume                     984.96(7)
+_diffrn_ambient_pressure         100
+_diffrn_ambient_temperature      298
+_cod_data_source_file            lusernaite-Y.cif
+_cod_data_source_block           lusernaite-Y
+_cod_original_formula_sum
+'Y3.41 Dy0.16 Er0.15 Yb0.09 Gd0.07 Ca0.05 Pb0.02 Sm0.01 Al1.06 C2 O22.35 F0.65 H22.35'
+_cod_database_code               1557470
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1 x,y,z
+2 -x,-y,-z
+3 -x+1/2,-y,z+1/2
+4 x+1/2,y,-z+1/2
+5 -x+1/2,y,-z+1/2
+6 x+1/2,-y,z+1/2
+7 x,-y,-z
+8 -x,y,z
+loop_
+_atom_site_label
+_atom_site_occupancy
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_adp_type
+_atom_site_U_iso_or_equiv
+_atom_site_type_symbol
+Y1 1.0 0.250000 0.4975(2) 0.750000 Uiso 0.0170(6) Y
+Pb1a 1.0 0.250000 0.570(7) 0.750000 Uiso 0.0170(6) Pb
+Pb1b 1.0 0.250000 0.409(5) 0.750000 Uiso 0.0170(6) Pb
+Y2 1.0 0.000000 0.23040(10) 0.84870(10) Uiso 0.0203(6) Y
+Al 1.0 0.000000 0.500000 0.000000 Uiso 0.018(2) Al
+C 1.0 0.500000 0.6830(10) 0.9150(10) Uiso 0.021(3) C
+O1 1.0 -0.1624(9) 0.3949(7) 0.9272(7) Uiso 0.023(2) O
+O2 1.0 0.3570(10) 0.6424(8) 0.8746(7) Uiso 0.034(2) O
+O3 1.0 0.500000 0.7590(10) 0.9988(9) Uiso 0.026(3) O
+O4 1.0 -0.250000 0.2140(10) 0.750000 Uiso 0.027(3) O
+O5 1.0 0.000000 0.4177(8) 0.1437(8) Uiso 0.020(2) O
+O6 1.0 0.000000 0.3870(10) 0.7091(9) Uiso 0.021(2) O
+Ow1 1.0 -0.188(2) 0.1350(10) 0.9854(9) Uiso 0.055(3) O
+Ow2 1.0 0.000000 0.033(2) 0.770(2) Uiso 0.093(7) O
+Ow3 1.0 -0.250000 -0.141(4) 0.750000 Uiso 0.101(15) O
+H1 1.0 -0.201000 0.037000 0.989000 Uiso 0.05 H
+H2 1.0 -0.314000 0.158000 0.014000 Uiso 0.05 H
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Y1 0.0120(7) 0.0281(13) 0.0111(7) 0.00000 0.0007(4) 0.00000
+Pb1a 0.0120(7) 0.0281(13) 0.0111(7) 0.00000 0.0007(4) 0.00000
+Pb1b 0.0120(7) 0.0281(13) 0.0111(7) 0.00000 0.0007(4) 0.00000
+Y2 0.0166(8) 0.0282(9) 0.0160(8) 0.00000 0.00000 0.0001(6)
+Al 0.012(3) 0.034(4) 0.009(3) 0.00000 0.00000 -0.002(2)
+C 0.016(8) 0.036(9) 0.012(7) 0.00000 0.00000 0.007(6)
+O1 0.011(4) 0.046(5) 0.013(4) 0.001(3) 0.001(3) -0.001(3)
+O2 0.017(4) 0.054(6) 0.030(5) -0.007(4) 0.007(3) -0.009(4)
+O3 0.022(6) 0.038(6) 0.018(5) 0.00000 0.00000 -0.011(4)
+O4 0.016(5) 0.046(7) 0.020(5) 0.00000 0.000(3) 0.00000
+O5 0.021(6) 0.033(6) 0.006(5) 0.00000 0.00000 0.007(4)
+O6 0.019(6) 0.037(7) 0.007(5) 0.00000 0.00000 0.007(4)
+Ow1 0.052(7) 0.063(7) 0.050(7) 0.007(6) 0.016(5) 0.019(5)
+Ow2 0.09(2) 0.10(2) 0.09(2) 0.00000 0.00000 -0.036(12)
+Ow3 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000
+H1 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000
+H2 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000

@@ -1,0 +1,6 @@
+dissolve_unit_test(box.cpp)
+dissolve_unit_test(cells.cpp)
+dissolve_unit_test(elements.cpp)
+dissolve_unit_test(enumoptions.cpp)
+dissolve_unit_test(genericlist.cpp)
+dissolve_unit_test(neta.cpp)
