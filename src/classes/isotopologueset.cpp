@@ -88,8 +88,8 @@ OptionalReferenceWrapper<const Isotopologues> IsotopologueSet::getIsotopologues(
     return *it;
 }
 
-// Return number of Isotopologues defined
-int IsotopologueSet::nIsotopologues() const { return isotopologues_.size(); }
+// Return number of species covered by set
+int IsotopologueSet::nSpecies() const { return isotopologues_.size(); }
 
 // Return vector of all Isotopologues
 std::vector<Isotopologues> &IsotopologueSet::isotopologues() { return isotopologues_; }

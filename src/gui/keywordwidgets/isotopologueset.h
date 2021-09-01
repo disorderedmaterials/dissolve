@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/helpers/treewidgetupdater.h"
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/ui_isotopologueset.h"
+#include "gui/models/isotopologueSetModel.h"
 #include "keywords/isotopologueset.h"
 #include <QWidget>
 
@@ -34,16 +34,19 @@ class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidge
     private:
     // Main form declaration
     Ui::IsotopologueSetWidget ui_;
+    // Model for treeview
+    IsotopologueSetModel setModel_;
 
     private:
     // Return valid Isotopologue names for specified model index
     std::vector<std::string> availableIsotopologueNames(const QModelIndex &index);
 
     private slots:
-    void addButton_clicked(bool checked);
+    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void addSpeciesButton_clicked(bool checked);
+    void addIsotopologueButton_clicked(bool checked);
     void removeButton_clicked(bool checked);
-    void isotopologueTree_itemChanged(QTreeWidgetItem *item, int column);
-    void isotopologueTree_currentItemChanged(QTreeWidgetItem *currentItem, QTreeWidgetItem *previousItem);
+    void currentItemChanged();
 
     signals:
     // Keyword value changed
@@ -52,17 +55,6 @@ class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidge
     /*
      * Update
      */
-    private:
-    // Tree widget item managers
-    TreeWidgetItemManager<IsotopologueSetKeywordWidget, Isotopologues> isotopologuesItemManager_;
-    TreeWidgetItemManager<IsotopologueSetKeywordWidget, IsotopologueWeight> isotopologueWeightItemManager_;
-
-    private:
-    // IsotopologueTree root (Isotopologues) item update function
-    void updateIsotopologueTreeRootItem(QTreeWidgetItem *item, Isotopologues &topes, bool itemIsNew);
-    // IsotopologueTree child (IsotopologueWeight) update function
-    void updateIsotopologueTreeChildItem(QTreeWidgetItem *item, IsotopologueWeight &isoWeight, bool itemIsNew);
-
     public:
     // Update value displayed in widget
     void updateValue() override;
@@ -70,4 +62,6 @@ class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidge
     void updateWidgetValues(const CoreData &coreData) override;
     // Update keyword data based on widget values
     void updateKeywordData() override;
+    // Update summary text
+    void updateSummaryText();
 };
