@@ -20,9 +20,10 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QSettings>
+#include <iostream>
 
 DissolveWindow::DissolveWindow(Dissolve &dissolve)
-    : QMainWindow(nullptr), dissolve_(dissolve), threadController_(this, dissolve), recentFileNo_(10)
+    : QMainWindow(nullptr), dissolve_(dissolve), recentFileNo_(10), threadController_(this, dissolve)
 {
     // Initialise resources
     Q_INIT_RESOURCE(main);
@@ -148,6 +149,8 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     auto loadResult = false;
     if (inputFileInfo.exists())
     {
+        // Add file to recent menu
+        addRecentFile(inputFileInfo.absoluteFilePath());
         QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
         try
         {
@@ -216,8 +219,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     }
 
     dissolveState_ = EditingState;
-    // Add file to recent menu
-    addRecentFile(QString::fromStdString(std::string(inputFile)));
     // Fully update GUI
     fullUpdate();
 
@@ -281,10 +282,14 @@ void DissolveWindow::updateRecentActionList()
     // Fill recent menu
     for (auto i = 0u; i < recentFileNo_; ++i)
     {
+        QFileInfo fileInfo;
+        QString strippedName, filePath;
         if (i < recentFilePaths.size())
         {
-            QString strippedName = QFileInfo(recentFilePaths.at(i)).fileName();
-            recentFileActionList_.at(i)->setText(strippedName);
+            fileInfo = QFileInfo(recentFilePaths.at(i));
+            strippedName = fileInfo.fileName();
+            filePath = fileInfo.absoluteDir().absolutePath();
+            recentFileActionList_.at(i)->setText(strippedName + "    (" + filePath + ")");
             recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
             recentFileActionList_.at(i)->setVisible(true);
         }

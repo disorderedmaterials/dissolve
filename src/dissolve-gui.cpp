@@ -50,6 +50,9 @@ int main(int args, char **argv)
     DissolveWindow dissolveWindow(dissolve);
     dissolveWindow.show();
 
+    // Create recent files menu
+    dissolveWindow.createRecentMenu();
+
     // Print GPL license information
     Messenger::print("Dissolve-GUI {} version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
@@ -87,8 +90,7 @@ int main(int args, char **argv)
             }
         }
     }
-    // Create recent files menu
-    dissolveWindow.createRecentMenu();
+
     // Update the main window and exec the app
     dissolveWindow.fullUpdate();
 
