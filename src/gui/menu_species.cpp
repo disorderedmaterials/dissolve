@@ -197,7 +197,7 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
         return;
 
     // Cast up the tab to a SpeciesTab
-    auto spTab = std::dynamic_pointer_cast<SpeciesTab>(tab);
+    auto spTab = dynamic_cast<SpeciesTab *>(tab);
     if (!spTab)
         return;
 

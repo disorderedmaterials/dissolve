@@ -4,9 +4,9 @@
 #include "base/sysfunc.h"
 #include "gui/gettabnamedialog.h"
 #include "gui/maintab.h"
+#include <QPointer>
 
-GetTabNameDialog::GetTabNameDialog(QWidget *parent, const std::vector<std::shared_ptr<MainTab>> &currentTabs)
-    : currentTabs_(currentTabs)
+GetTabNameDialog::GetTabNameDialog(QWidget *parent, const std::vector<MainTab *> &currentTabs) : currentTabs_(currentTabs)
 {
     ui_.setupUi(this);
 }
@@ -42,9 +42,9 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        for (const auto tab : currentTabs_)
+        for (const auto &tab : currentTabs_)
         {
-            if (currentTab_ == tab.get())
+            if (currentTab_ == tab)
                 continue;
 
             if (tab->title() == text)

@@ -230,7 +230,7 @@ class DissolveWindow : public QMainWindow
 
     public:
     // Return list of all current tabs
-    const std::vector<std::shared_ptr<MainTab>> allTabs() const;
+    const std::vector<MainTab *> allTabs() const;
 
     public slots:
     // Disable sensitive controls
