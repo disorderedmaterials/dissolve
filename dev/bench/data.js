@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630012973443,
+  "lastUpdate": 1630487033449,
   "repoUrl": "https://github.com/disorderedmaterials/dissolve",
   "entries": {
     "Benchmark": [
@@ -64110,6 +64110,816 @@ window.BENCHMARK_DATA = {
             "value": 516.0980572000426,
             "unit": "ms/iter",
             "extra": "iterations: 5\ncpu: 515.9549369999979 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "87182630+EthanDevlinSTFC@users.noreply.github.com",
+            "name": "EthanDevlinSTFC",
+            "username": "EthanDevlinSTFC"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10fa309c5c6c72060271750f59587f3237e23c46",
+          "message": "openRecent CLI Fixes (#786)\n\n* openRecent CLI Fixes\r\n\r\n* Changing/ cleaning file name layout\r\n\r\n* Reducing object overload",
+          "timestamp": "2021-09-01T09:39:35+01:00",
+          "tree_id": "5105a0b61f8c96a3a3d79271f9fca2c793a3f0ac",
+          "url": "https://github.com/disorderedmaterials/dissolve/commit/10fa309c5c6c72060271750f59587f3237e23c46"
+        },
+        "date": 1630487031682,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "BM_CalculateGR<ProblemType::atomic, Population::small, Method::SimpleMethod>/iterations:5",
+            "value": 13.959093199991912,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 13.958910200000002 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateGR<ProblemType::atomic, Population::small, Method::CellsMethod>/iterations:5",
+            "value": 7.909483999992517,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 7.904604799999999 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateGR<ProblemType::atomic, Population::medium, Method::SimpleMethod>/iterations:5",
+            "value": 346.1254428000302,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 346.0999386 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateGR<ProblemType::atomic, Population::medium, Method::CellsMethod>/iterations:5",
+            "value": 357.3615538000013,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 357.11079580000006 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateGR<ProblemType::atomic, Population::large, Method::SimpleMethod>/iterations:5",
+            "value": 1391.95280859999,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 1391.4180342000002 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateGR<ProblemType::atomic, Population::large, Method::CellsMethod>/iterations:5",
+            "value": 1811.6413037999791,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 1810.6087584000002 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistance<CubicBox>",
+            "value": 7.450072790145742,
+            "unit": "ns/iter",
+            "extra": "iterations: 98077151\ncpu: 7.449377521172094 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistanceSquared<CubicBox>",
+            "value": 6.739197615189566,
+            "unit": "ns/iter",
+            "extra": "iterations: 108923448\ncpu: 6.738947127343974 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumImage<CubicBox>",
+            "value": 6.866974660675173,
+            "unit": "ns/iter",
+            "extra": "iterations: 102826026\ncpu: 6.866408490784212 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumVector<CubicBox>",
+            "value": 11.930048562854632,
+            "unit": "ns/iter",
+            "extra": "iterations: 56778376\ncpu: 11.928708633723563 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_RandomCoordinate<CubicBox>",
+            "value": 71.26238963711428,
+            "unit": "ns/iter",
+            "extra": "iterations: 9769475\ncpu: 71.25697798499918 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_Fold<CubicBox>",
+            "value": 14.863658856295723,
+            "unit": "ns/iter",
+            "extra": "iterations: 47001190\ncpu: 14.861622971673699 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_FoldFrac<CubicBox>",
+            "value": 12.557029457405157,
+            "unit": "ns/iter",
+            "extra": "iterations: 57017139\ncpu: 12.557059290540606 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistance<OrthorhombicBox>",
+            "value": 8.70058561538104,
+            "unit": "ns/iter",
+            "extra": "iterations: 92570656\ncpu: 8.699170361285981 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistanceSquared<OrthorhombicBox>",
+            "value": 8.230664177960765,
+            "unit": "ns/iter",
+            "extra": "iterations: 99316349\ncpu: 8.2302978737166 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumImage<OrthorhombicBox>",
+            "value": 7.330452463233977,
+            "unit": "ns/iter",
+            "extra": "iterations: 90865372\ncpu: 7.3294298844668475 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumVector<OrthorhombicBox>",
+            "value": 7.028469067660511,
+            "unit": "ns/iter",
+            "extra": "iterations: 101079601\ncpu: 7.027517471106807 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_RandomCoordinate<OrthorhombicBox>",
+            "value": 70.5625377081675,
+            "unit": "ns/iter",
+            "extra": "iterations: 9873523\ncpu: 70.55840483685515 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_Fold<OrthorhombicBox>",
+            "value": 16.07790289762565,
+            "unit": "ns/iter",
+            "extra": "iterations: 44104380\ncpu: 16.076698731509147 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_FoldFrac<OrthorhombicBox>",
+            "value": 12.231232109630376,
+            "unit": "ns/iter",
+            "extra": "iterations: 58118213\ncpu: 12.230860625394634 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistance<MonoclinicAlphaBox>",
+            "value": 8.660894359146353,
+            "unit": "ns/iter",
+            "extra": "iterations: 80364337\ncpu: 8.660106696332221 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistanceSquared<MonoclinicAlphaBox>",
+            "value": 7.80206040523567,
+            "unit": "ns/iter",
+            "extra": "iterations: 96336486\ncpu: 7.800767063477893 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumImage<MonoclinicAlphaBox>",
+            "value": 8.450836061430746,
+            "unit": "ns/iter",
+            "extra": "iterations: 94711940\ncpu: 8.450389401800836 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumVector<MonoclinicAlphaBox>",
+            "value": 11.780617776568096,
+            "unit": "ns/iter",
+            "extra": "iterations: 60838015\ncpu: 11.779011774134931 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_RandomCoordinate<MonoclinicAlphaBox>",
+            "value": 69.026751528397,
+            "unit": "ns/iter",
+            "extra": "iterations: 9898612\ncpu: 69.02697095309895 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_Fold<MonoclinicAlphaBox>",
+            "value": 16.201383047842814,
+            "unit": "ns/iter",
+            "extra": "iterations: 43019336\ncpu: 16.199748712997295 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_FoldFrac<MonoclinicAlphaBox>",
+            "value": 13.40259870316205,
+            "unit": "ns/iter",
+            "extra": "iterations: 53313361\ncpu: 13.401647328143522 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistance<TriclinicBox>",
+            "value": 10.18062098609248,
+            "unit": "ns/iter",
+            "extra": "iterations: 70480387\ncpu: 10.179900047938172 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumDistanceSquared<TriclinicBox>",
+            "value": 8.44914195656388,
+            "unit": "ns/iter",
+            "extra": "iterations: 70112243\ncpu: 8.448069362151168 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumImage<TriclinicBox>",
+            "value": 10.113291114422879,
+            "unit": "ns/iter",
+            "extra": "iterations: 69061312\ncpu: 10.11309437619713 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_MinimumVector<TriclinicBox>",
+            "value": 12.679230384097137,
+            "unit": "ns/iter",
+            "extra": "iterations: 52611127\ncpu: 12.678418293529433 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_RandomCoordinate<TriclinicBox>",
+            "value": 70.34730450539054,
+            "unit": "ns/iter",
+            "extra": "iterations: 9471527\ncpu: 70.34007019142747 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_Fold<TriclinicBox>",
+            "value": 17.745916209011067,
+            "unit": "ns/iter",
+            "extra": "iterations: 40329684\ncpu: 17.745038493234894 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Box_FoldFrac<TriclinicBox>",
+            "value": 13.074152018205535,
+            "unit": "ns/iter",
+            "extra": "iterations: 54796135\ncpu: 13.072306924566925 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/1024",
+            "value": 12.228563748818754,
+            "unit": "ns/iter",
+            "extra": "iterations: 58015263\ncpu: 12.22809471707467 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/2048",
+            "value": 12.241108726384988,
+            "unit": "ns/iter",
+            "extra": "iterations: 54145983\ncpu: 12.239829037733072 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/4096",
+            "value": 12.074187613093006,
+            "unit": "ns/iter",
+            "extra": "iterations: 57073544\ncpu: 12.074088144938058 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/8192",
+            "value": 12.327789070639001,
+            "unit": "ns/iter",
+            "extra": "iterations: 57832517\ncpu: 12.326620039726096 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/16384",
+            "value": 12.448100338684057,
+            "unit": "ns/iter",
+            "extra": "iterations: 54344266\ncpu: 12.446567426267151 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/32768",
+            "value": 11.972034540993603,
+            "unit": "ns/iter",
+            "extra": "iterations: 54610475\ncpu: 11.970345945535199 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/65536",
+            "value": 12.844687657053814,
+            "unit": "ns/iter",
+            "extra": "iterations: 58445709\ncpu: 12.842502928658167 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/131072",
+            "value": 12.851318172684083,
+            "unit": "ns/iter",
+            "extra": "iterations: 57579330\ncpu: 12.851349433902667 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/262144",
+            "value": 12.439192825203179,
+            "unit": "ns/iter",
+            "extra": "iterations: 52071051\ncpu: 12.438616727747645 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/524288",
+            "value": 14.500150200229148,
+            "unit": "ns/iter",
+            "extra": "iterations: 48854786\ncpu: 14.499055056755314 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/1048576",
+            "value": 16.20050495998481,
+            "unit": "ns/iter",
+            "extra": "iterations: 44009824\ncpu: 16.19896421308109 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/2097152",
+            "value": 14.676709437708466,
+            "unit": "ns/iter",
+            "extra": "iterations: 45031562\ncpu: 14.675017113552528 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/4194304",
+            "value": 15.23750350659367,
+            "unit": "ns/iter",
+            "extra": "iterations: 48095092\ncpu: 15.236557422532906 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/8388608",
+            "value": 14.902393720996828,
+            "unit": "ns/iter",
+            "extra": "iterations: 46954971\ncpu: 14.89995099773351 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_1d/16777216",
+            "value": 15.874964266739228,
+            "unit": "ns/iter",
+            "extra": "iterations: 38315143\ncpu: 15.873385204382505 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/1024",
+            "value": 24.064475413603876,
+            "unit": "ns/iter",
+            "extra": "iterations: 29773132\ncpu: 24.061227384475252 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/2048",
+            "value": 22.88739757132288,
+            "unit": "ns/iter",
+            "extra": "iterations: 30402497\ncpu: 22.885993114315205 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/4096",
+            "value": 24.958557452021545,
+            "unit": "ns/iter",
+            "extra": "iterations: 27660196\ncpu: 24.95463170253718 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/8192",
+            "value": 22.409541173186337,
+            "unit": "ns/iter",
+            "extra": "iterations: 26231575\ncpu: 22.408289628053293 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/16384",
+            "value": 22.738338063566086,
+            "unit": "ns/iter",
+            "extra": "iterations: 30561927\ncpu: 22.735125209872837 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/32768",
+            "value": 22.38930359090501,
+            "unit": "ns/iter",
+            "extra": "iterations: 31232332\ncpu: 22.38841265519338 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/65536",
+            "value": 22.902467995875824,
+            "unit": "ns/iter",
+            "extra": "iterations: 31006940\ncpu: 22.89583202986156 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/131072",
+            "value": 24.228616439646117,
+            "unit": "ns/iter",
+            "extra": "iterations: 28535835\ncpu: 24.222385852735748 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/262144",
+            "value": 25.745946765198447,
+            "unit": "ns/iter",
+            "extra": "iterations: 28351306\ncpu: 25.74314678837047 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/524288",
+            "value": 26.140215834336324,
+            "unit": "ns/iter",
+            "extra": "iterations: 27245803\ncpu: 26.140296544021865 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/1048576",
+            "value": 30.673277962353367,
+            "unit": "ns/iter",
+            "extra": "iterations: 24484308\ncpu: 30.669384693249242 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/2097152",
+            "value": 28.19347988202392,
+            "unit": "ns/iter",
+            "extra": "iterations: 24857587\ncpu: 28.19224054209289 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/4194304",
+            "value": 29.183346907478644,
+            "unit": "ns/iter",
+            "extra": "iterations: 23096599\ncpu: 29.179853579308308 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/8388608",
+            "value": 29.41760040256695,
+            "unit": "ns/iter",
+            "extra": "iterations: 18227049\ncpu: 29.414681608636013 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_2d/16777216",
+            "value": 33.081002337420465,
+            "unit": "ns/iter",
+            "extra": "iterations: 17587690\ncpu: 33.07387337393393 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/1024",
+            "value": 34.70935178596275,
+            "unit": "ns/iter",
+            "extra": "iterations: 19645980\ncpu: 34.706222188967054 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/2048",
+            "value": 33.41234886098496,
+            "unit": "ns/iter",
+            "extra": "iterations: 20143623\ncpu: 33.409315196179136 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/4096",
+            "value": 33.105177766890165,
+            "unit": "ns/iter",
+            "extra": "iterations: 20955617\ncpu: 33.10295339908142 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/8192",
+            "value": 33.69192532621015,
+            "unit": "ns/iter",
+            "extra": "iterations: 20588002\ncpu: 33.69132240224185 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/16384",
+            "value": 34.74877132823944,
+            "unit": "ns/iter",
+            "extra": "iterations: 20337002\ncpu: 34.74530031515943 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/32768",
+            "value": 33.06992625685741,
+            "unit": "ns/iter",
+            "extra": "iterations: 20377081\ncpu: 33.07002524061273 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/65536",
+            "value": 35.45184703607293,
+            "unit": "ns/iter",
+            "extra": "iterations: 19137742\ncpu: 35.44809596659777 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/131072",
+            "value": 36.49158162347353,
+            "unit": "ns/iter",
+            "extra": "iterations: 20133692\ncpu: 36.48993319258143 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/262144",
+            "value": 34.72650039310359,
+            "unit": "ns/iter",
+            "extra": "iterations: 19994760\ncpu: 34.72144971982668 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/524288",
+            "value": 38.823156037796416,
+            "unit": "ns/iter",
+            "extra": "iterations: 18088630\ncpu: 38.82103216219279 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/1048576",
+            "value": 40.96850760698337,
+            "unit": "ns/iter",
+            "extra": "iterations: 17018332\ncpu: 40.96189062476839 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/2097152",
+            "value": 37.704119114392064,
+            "unit": "ns/iter",
+            "extra": "iterations: 18701350\ncpu: 37.699883644763666 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/4194304",
+            "value": 40.01924149332765,
+            "unit": "ns/iter",
+            "extra": "iterations: 17075130\ncpu: 40.015329663669405 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/8388608",
+            "value": 42.15334704971318,
+            "unit": "ns/iter",
+            "extra": "iterations: 15994504\ncpu: 42.147675226440384 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_HistogramBinning_3d/16777216",
+            "value": 51.87872262087303,
+            "unit": "ns/iter",
+            "extra": "iterations: 13775644\ncpu: 51.8761318890059 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/1024",
+            "value": 458.60887508449656,
+            "unit": "ns/iter",
+            "extra": "iterations: 1645528\ncpu: 458.5335260171791 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/4096",
+            "value": 1847.0643122550794,
+            "unit": "ns/iter",
+            "extra": "iterations: 382431\ncpu: 1846.944065726901 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/16384",
+            "value": 7087.284425666769,
+            "unit": "ns/iter",
+            "extra": "iterations: 84254\ncpu: 7086.8914591592065 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/65536",
+            "value": 27860.716086230466,
+            "unit": "ns/iter",
+            "extra": "iterations: 25469\ncpu: 27859.672464565087 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/262144",
+            "value": 114202.6305743562,
+            "unit": "ns/iter",
+            "extra": "iterations: 5763\ncpu: 114197.00537914228 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/1048576",
+            "value": 480429.27616273536,
+            "unit": "ns/iter",
+            "extra": "iterations: 1376\ncpu: 480370.9840116293 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/4194304",
+            "value": 1959685.3398877683,
+            "unit": "ns/iter",
+            "extra": "iterations: 356\ncpu: 1959550.000000017 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_2d/16777216",
+            "value": 7912028.023530879,
+            "unit": "ns/iter",
+            "extra": "iterations: 85\ncpu: 7911810.329411772 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/1024",
+            "value": 839.0187679482999,
+            "unit": "ns/iter",
+            "extra": "iterations: 827368\ncpu: 838.9345418241966 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/4096",
+            "value": 3483.446546126424,
+            "unit": "ns/iter",
+            "extra": "iterations: 190641\ncpu: 3483.070441300698 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/16384",
+            "value": 11780.945953831959,
+            "unit": "ns/iter",
+            "extra": "iterations: 58265\ncpu: 11780.398112074263 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/65536",
+            "value": 54018.42117384484,
+            "unit": "ns/iter",
+            "extra": "iterations: 13460\ncpu: 54010.33610698442 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/262144",
+            "value": 215070.79169389402,
+            "unit": "ns/iter",
+            "extra": "iterations: 3058\ncpu: 215061.77240026204 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/1048576",
+            "value": 891893.8884712964,
+            "unit": "ns/iter",
+            "extra": "iterations: 798\ncpu: 891823.8421052622 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/4194304",
+            "value": 3698053.846153179,
+            "unit": "ns/iter",
+            "extra": "iterations: 195\ncpu: 3697787.1333333175 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Array_3d/16777216",
+            "value": 14814729.913041446,
+            "unit": "ns/iter",
+            "extra": "iterations: 46\ncpu: 14812810.065217387 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Fourier/1024",
+            "value": 2460389776.5000057,
+            "unit": "ns/iter",
+            "extra": "iterations: 10\ncpu: 2455312718.799999 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Fourier/4096",
+            "value": 2072683652.5000181,
+            "unit": "ns/iter",
+            "extra": "iterations: 4\ncpu: 2071869195.2499952 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Fourier/16384",
+            "value": 720227296.0000755,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 720070727.9999961 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Fourier/65536",
+            "value": 2748539962.9999847,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 2748040359.0000153 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_Fourier/262144",
+            "value": 11100415892,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 11093352153.000011 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_AtomicWorldEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 51129.60840001506,
+            "unit": "ns/iter",
+            "extra": "iterations: 10000\ncpu: 51129.749000000396 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_SpeciesInterAtomicEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 198.9603803932945,
+            "unit": "ns/iter",
+            "extra": "iterations: 3656321\ncpu: 198.94946915218227 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeBondEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 16.48527330680164,
+            "unit": "ns/iter",
+            "extra": "iterations: 42744253\ncpu: 16.484547946129933 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeAngleEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 72.2281267334789,
+            "unit": "ns/iter",
+            "extra": "iterations: 9907848\ncpu: 72.22483681622951 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 0.1319107762753261,
+            "unit": "ms/iter",
+            "extra": "iterations: 4881\ncpu: 0.13190729358738226 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_TotalIntraMolecularEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 0.1874214326203352,
+            "unit": "ms/iter",
+            "extra": "iterations: 3740\ncpu: 0.1873989807486645 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_TotalInterMolecularEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 54.10069084615106,
+            "unit": "ms/iter",
+            "extra": "iterations: 13\ncpu: 54.09331438461497 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_TotalInterAtomicEnergy<ProblemType::smallMolecule, Population::small>",
+            "value": 52.63426490000711,
+            "unit": "ms/iter",
+            "extra": "iterations: 10\ncpu: 52.61805659999936 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_AtomicWorldEnergy<ProblemType::mediumMolecule, Population::small>",
+            "value": 41223.471489629825,
+            "unit": "ns/iter",
+            "extra": "iterations: 16380\ncpu: 41220.24236874184 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_SpeciesInterAtomicEnergy<ProblemType::mediumMolecule, Population::small>",
+            "value": 31475.51897909267,
+            "unit": "ns/iter",
+            "extra": "iterations: 21471\ncpu: 31473.311443341838 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeBondEnergy<ProblemType::mediumMolecule, Population::small>",
+            "value": 16.315194614212633,
+            "unit": "ns/iter",
+            "extra": "iterations: 42597146\ncpu: 16.312936481707183 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeAngleEnergy<ProblemType::mediumMolecule, Population::small>",
+            "value": 76.44430219684054,
+            "unit": "ns/iter",
+            "extra": "iterations: 9088222\ncpu: 76.44079358976893 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeTorsionEnergy<ProblemType::mediumMolecule, Population::small>",
+            "value": 177.58190204421044,
+            "unit": "ns/iter",
+            "extra": "iterations: 3623249\ncpu: 177.56437744134803 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeEnergy<ProblemType::mediumMolecule, Population::small>",
+            "value": 0.7315183549270058,
+            "unit": "ms/iter",
+            "extra": "iterations: 1096\ncpu: 0.7112649416058514 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_MoleculeEnergy<ProblemType::mediumMolecule, Population::medium>",
+            "value": 0.6217406267190294,
+            "unit": "ms/iter",
+            "extra": "iterations: 1018\ncpu: 0.621677357563837 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_TotalIntraMolecularEnergy<ProblemType::mediumMolecule, Population::small>",
+            "value": 12.885355769229205,
+            "unit": "ms/iter",
+            "extra": "iterations: 52\ncpu: 12.862886846153724 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_TotalInterMolecularEnergy<ProblemType::mediumMolecule, Population::small>/iterations:5",
+            "value": 278.53337739998096,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 276.9221249999987 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateEnergy_TotalInterAtomicEnergy<ProblemType::mediumMolecule, Population::small>/iterations:5",
+            "value": 288.43634919999204,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 288.1247520000045 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_InterAtomic<ProblemType::smallMolecule, Population::small>",
+            "value": 2.195887665706459,
+            "unit": "ms/iter",
+            "extra": "iterations: 347\ncpu: 2.1957623775216577 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_SpeciesBond<ProblemType::smallMolecule, Population::small>",
+            "value": 40.654358164681945,
+            "unit": "ns/iter",
+            "extra": "iterations: 18429673\ncpu: 40.65122750685702 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_SpeciesAngle<ProblemType::smallMolecule, Population::small>",
+            "value": 135.27596306859633,
+            "unit": "ns/iter",
+            "extra": "iterations: 4922858\ncpu: 135.26618358684848 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_TotalIntraMolecular<ProblemType::smallMolecule, Population::small>",
+            "value": 0.25408574018690167,
+            "unit": "ms/iter",
+            "extra": "iterations: 2675\ncpu: 0.254049106168223 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_TotalInterAtomic<ProblemType::smallMolecule, Population::small>/iterations:5",
+            "value": 80.98538219996954,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 80.96075960000348 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_TotalForces<ProblemType::smallMolecule, Population::small>/iterations:5",
+            "value": 80.87042059996747,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 80.86559959999704 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_InterAtomic<ProblemType::mediumMolecule, Population::small>",
+            "value": 0.7387942411194484,
+            "unit": "ms/iter",
+            "extra": "iterations: 929\ncpu: 0.7387679278794271 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_SpeciesAngle<ProblemType::mediumMolecule, Population::small>",
+            "value": 149.44424295314872,
+            "unit": "ns/iter",
+            "extra": "iterations: 4541139\ncpu: 149.44116222824388 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_SpeciesBond<ProblemType::mediumMolecule, Population::small>",
+            "value": 41.38288893104665,
+            "unit": "ns/iter",
+            "extra": "iterations: 15840565\ncpu: 41.38185500327789 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_SpeciesTorsion<ProblemType::mediumMolecule, Population::small>",
+            "value": 565.170298527213,
+            "unit": "ns/iter",
+            "extra": "iterations: 1323564\ncpu: 565.1641786872506 ns\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_TotalInterAtomic<ProblemType::mediumMolecule, Population::small>/iterations:5",
+            "value": 507.5659946000087,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 505.9363974000007 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_TotalIntraMolecular<ProblemType::mediumMolecule, Population::small>",
+            "value": 23.56210206666371,
+            "unit": "ms/iter",
+            "extra": "iterations: 30\ncpu: 23.559228000000115 ms\nthreads: 1"
+          },
+          {
+            "name": "BM_CalculateForces_TotalForces<ProblemType::mediumMolecule, Population::small>/iterations:5",
+            "value": 540.0247130000025,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 539.9039111999969 ms\nthreads: 1"
           }
         ]
       }
