@@ -51,6 +51,17 @@ Vec3<double> CubicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> 
     return v12;
 }
 
+// Return normalised minimum image vector from r1 to r2
+Vec3<double> CubicBox::minimumVectorN(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    v12.normalise();
+    return v12;
+}
+
 // Return minimum image distance from r1 to r2
 double CubicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
 {

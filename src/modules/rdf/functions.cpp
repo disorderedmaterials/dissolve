@@ -339,6 +339,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
      */
 
     const auto *box = cfg->box();
+    const auto &cells = cfg->cells();
 
     // Set start/stride for parallel loop (pool solo)
     auto offset = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
@@ -354,13 +355,13 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     {
         auto &atoms = (*it)->atoms();
 
-        for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
+        for_each_pair(atoms.begin(), atoms.end(), [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
             // Ignore atom on itself
             if (index == jndex)
                 return;
 
             double distance;
-            if (i->cell()->mimRequired(j->cell()))
+            if (cells.minimumImageRequired(*i->cell(), *j->cell()))
                 distance = box->minimumDistance(i->r(), j->r());
             else
                 distance = (i->r() - j->r()).magnitude();

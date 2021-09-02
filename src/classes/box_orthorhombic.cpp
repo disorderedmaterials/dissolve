@@ -41,16 +41,6 @@ Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &r1, const Vec3<do
     return v21;
 }
 
-// Return minimum image distance from r1 to r2
-double OrthorhombicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
-{
-    Vec3<double> v12 = r2 - r1;
-    toFractional(v12);
-    wrap(v12);
-    toReal(v12);
-    return v12.magnitude();
-}
-
 // Return minimum image vector from r1 to r2
 Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
@@ -59,6 +49,27 @@ Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &r1, const Vec3<d
     wrap(v12);
     toReal(v12);
     return v12;
+}
+
+// Return normalised minimum image vector from r1 to r2
+Vec3<double> OrthorhombicBox::minimumVectorN(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    v12.normalise();
+    return v12;
+}
+
+// Return minimum image distance from r1 to r2
+double OrthorhombicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    return v12.magnitude();
 }
 
 // Return minimum image squared distance from r1 to r2

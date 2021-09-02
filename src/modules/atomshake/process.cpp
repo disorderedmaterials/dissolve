@@ -57,7 +57,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Create a local ChangeStore and EnergyKernel
         ChangeStore changeStore(procPool);
-        EnergyKernel kernel(procPool, cfg, dissolve.potentialMap(), cutoffDistance);
+        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), cutoffDistance);
 
         // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));

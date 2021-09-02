@@ -12,16 +12,16 @@
 #include <iterator>
 #include <numeric>
 
-EnergyKernel::EnergyKernel(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
-                           double energyCutoff)
-    : configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), processPool_(procPool)
+EnergyKernel::EnergyKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+                           std::optional<double> energyCutoff)
+    : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
 {
-    box_ = configuration_->box();
-    cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
+    cutoffDistanceSquared_ =
+        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
 }
 
 /*
- * Internal Routines
+ * Base Routines
  */
 
 // Return PairPotential energy between atoms
@@ -60,8 +60,45 @@ double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool ex
         return energyWithoutMim(i, j);
 }
 
+// Return PairPotential energy of atoms in the supplied cell with all other cells
+double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular)
+{
+    auto totalEnergy = 0.0;
+    auto &atoms = cell.atoms();
+
+    for (auto i = 0; i < atoms.size(); ++i)
+    {
+        auto &ii = atoms[i];
+        auto molI = ii->molecule();
+        auto &rI = ii->r();
+
+        // Straight loop over other cell atoms
+        for (auto j = i + 1; j < atoms.size(); ++j)
+        {
+            // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+            auto &jj = atoms[j];
+
+            auto rSq = (rI - jj->r()).magnitudeSq();
+            if (rSq > cutoffDistanceSquared_)
+                continue;
+
+            // Check for atoms in the same molecule
+            if (molI != jj->molecule())
+                totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+            else if (includeIntraMolecular)
+            {
+                auto scale = ii->scaling(jj);
+                if (scale > 1.0e-3)
+                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
+            }
+        }
+    }
+
+    return totalEnergy;
+}
+
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool applyMim, bool interMolecular)
+double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular)
 {
     auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell.atoms();
@@ -86,9 +123,9 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
                 // Check for atoms in the same species
                 if (molI != jj->molecule())
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
-                else if (!interMolecular)
+                else if (includeIntraMolecular)
                 {
-                    double scale = ii->scaling(jj);
+                    auto scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
                         totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
                 }
@@ -113,49 +150,12 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
                 // Check for atoms in the same molecule
                 if (molI != jj->molecule())
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
-
-                else if (!interMolecular)
+                else if (includeIntraMolecular)
                 {
-                    double scale = ii->scaling(jj);
+                    auto scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
                         totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
                 }
-            }
-        }
-    }
-    return totalEnergy;
-}
-
-// Return PairPotential energy between atoms in supplied cell
-double EnergyKernel::energy(const Cell &cell, bool interMolecular)
-{
-    auto totalEnergy = 0.0;
-    auto &atoms = cell.atoms();
-
-    for (int i = 0; i < atoms.size(); ++i)
-    {
-        auto &ii = atoms[i];
-        auto molI = ii->molecule();
-        auto &rI = ii->r();
-
-        // Straight loop over other cell atoms
-        for (int j = i + 1; j < atoms.size(); ++j)
-        {
-            // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-            auto &jj = atoms[j];
-
-            double rSq = (rI - jj->r()).magnitudeSq();
-            if (rSq > cutoffDistanceSquared_)
-                continue;
-
-            // Check for atoms in the same molecule
-            if (molI != jj->molecule())
-                totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
-            else if (!interMolecular)
-            {
-                double scale = ii->scaling(jj);
-                if (scale > 1.0e-3)
-                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
             }
         }
     }
@@ -166,7 +166,7 @@ double EnergyKernel::energy(const Cell &cell, bool interMolecular)
 double EnergyKernel::energy(const Atom &i)
 {
     // Get cell neighbours for atom i's cell
-    auto &neighbours = cells_.neighbours(*i.cell());
+    auto &neighbours = cellArray_.neighbours(*i.cell());
 
     return dissolve::transform_reduce(
         ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
@@ -193,7 +193,7 @@ double EnergyKernel::energy(const Atom &i)
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy)
 {
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
@@ -205,7 +205,7 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
             const auto &centralCellAtoms = location.second;
 
             // Get cell neighbours for the cell
-            auto &neighbours = cells_.neighbours(*location.first);
+            auto &neighbours = cellArray_.neighbours(*location.first);
 
             auto localEnergy = dissolve::transform_reduce(
                 ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
@@ -240,10 +240,6 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
             return totalAcc + localEnergy;
         });
 
-    // Perform relevant sum if requested
-    if (performSum)
-        processPool_.allSum(&totalEnergy, 1, strategy);
-
     return totalEnergy;
 }
 
@@ -269,8 +265,7 @@ double EnergyKernel::correct(const Atom &i)
 }
 
 // Return total interatomic PairPotential energy of the system
-double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy,
-                            bool performSum)
+double EnergyKernel::energy(const CellArray &cellArray, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy)
 {
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cellArray.getCellNeighbourPairs();
@@ -288,14 +283,10 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
             auto &cellJ = pair.neighbour_;
             auto mimRequired = pair.requiresMIM_;
             if (&cellI == &cellJ)
-                return energy(cellI, interMolecular);
+                return energy(cellI, includeIntraMolecular);
             else
-                return energy(cellI, cellJ, mimRequired, interMolecular);
+                return energy(cellI, cellJ, mimRequired, includeIntraMolecular);
         });
-
-    // Perform relevant sum if requested
-    if (performSum)
-        processPool_.allSum(&totalEnergy, 1, strategy);
 
     return totalEnergy;
 }
@@ -305,110 +296,29 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
  */
 
 // Return SpeciesBond energy at Atoms specified
-double EnergyKernel::energy(const SpeciesBond &bond, const Atom &i, const Atom &j)
+double EnergyKernel::energy(const SpeciesBond &b, const Atom &i, const Atom &j)
 {
-    // Determine whether we need to apply minimum image to the distance calculation
-    if (i.cell()->mimRequired(j.cell()))
-        return bond.energy(box_->minimumDistance(i.r(), j.r()));
-    else
-        return bond.energy((i.r() - j.r()).magnitude());
+    return b.energy(box_->minimumDistance(i.r(), j.r()));
 }
-
-// Return SpeciesBond energy
-double EnergyKernel::energy(const SpeciesBond &b) { return b.energy((b.j()->r() - b.i()->r()).magnitude()); }
 
 // Return SpeciesAngle energy at Atoms specified
-double EnergyKernel::energy(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k)
+double EnergyKernel::energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k)
 {
-    Vec3<double> vecji, vecjk;
-
-    // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-    if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j.r(), i.r());
-    else
-        vecji = i.r() - j.r();
-    if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j.r(), k.r());
-    else
-        vecjk = k.r() - j.r();
-
-    // Normalise vectors
-    vecji.normalise();
-    vecjk.normalise();
-
-    // Determine Angle energy
-    return angle.energy(Box::angleInDegrees(vecji, vecjk));
-}
-
-// Return SpeciesAngle energy
-double EnergyKernel::energy(const SpeciesAngle &angle)
-{
-    auto vecji = angle.i()->r() - angle.j()->r(), vecjk = angle.k()->r() - angle.j()->r();
-
-    // Normalise vectors
-    vecji.normalise();
-    vecjk.normalise();
-
-    // Determine Angle energy
-    return angle.energy(Box::angleInDegrees(vecji, vecjk));
+    return a.energy(Box::angleInDegrees(box_->minimumVectorN(j.r(), i.r()), box_->minimumVectorN(j.r(), k.r())));
 }
 
 // Return SpeciesTorsion energy at Atoms specified
-double EnergyKernel::energy(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
+double EnergyKernel::energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
 {
-    Vec3<double> vecji, vecjk, veckl;
-
-    // Calculate vectors, ensuring we account for minimum image
-    if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j.r(), i.r());
-    else
-        vecji = i.r() - j.r();
-    if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j.r(), k.r());
-    else
-        vecjk = k.r() - j.r();
-    if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k.r(), l.r());
-    else
-        veckl = l.r() - k.r();
-
-    return torsion.energy(Box::torsionInDegrees(vecji, vecjk, veckl));
-}
-
-// Return SpeciesTorsion energy
-double EnergyKernel::energy(const SpeciesTorsion &torsion)
-{
-    return torsion.energy(Box::torsionInDegrees(torsion.i()->r() - torsion.j()->r(), torsion.k()->r() - torsion.j()->r(),
-                                                torsion.l()->r() - torsion.k()->r()));
+    return t.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
+                                          box_->minimumVector(k.r(), l.r())));
 }
 
 // Return SpeciesImproper energy at Atoms specified
 double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
 {
-    Vec3<double> vecji, vecjk, veckl;
-
-    // Calculate vectors, ensuring we account for minimum image
-    if (j.cell()->mimRequired(i.cell()))
-        vecji = box_->minimumVector(j.r(), i.r());
-    else
-        vecji = i.r() - j.r();
-    if (j.cell()->mimRequired(k.cell()))
-        vecjk = box_->minimumVector(j.r(), k.r());
-    else
-        vecjk = k.r() - j.r();
-    if (k.cell()->mimRequired(l.cell()))
-        veckl = box_->minimumVector(k.r(), l.r());
-    else
-        veckl = l.r() - k.r();
-
-    return imp.energy(Box::torsionInDegrees(vecji, vecjk, veckl));
-}
-
-// Return SpeciesImproper energy
-double EnergyKernel::energy(const SpeciesImproper &imp)
-{
-    return imp.energy(
-        Box::torsionInDegrees(imp.i()->r() - imp.j()->r(), imp.k()->r() - imp.j()->r(), imp.l()->r() - imp.k()->r()));
+    return imp.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
+                                            box_->minimumVector(k.r(), l.r())));
 }
 
 // Return intramolecular energy for the supplied Atom
