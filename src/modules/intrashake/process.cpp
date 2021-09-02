@@ -81,7 +81,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Create a local ChangeStore and EnergyKernel
         ChangeStore changeStore(procPool);
-        EnergyKernel kernel(procPool, cfg, dissolve.potentialMap(), cutoffDistance);
+        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), cutoffDistance);
 
         // Initialise the random number buffer
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
@@ -136,7 +136,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 changeStore.add(mol);
 
                 // Calculate reference pairpotential energy for Molecule
-                ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
+                ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
 
                 // Loop over defined bonds
                 if (adjustBonds)
@@ -169,7 +169,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
+                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
                             newIntraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(bond, *i, *j);
 
                             // Trial the transformed Molecule
@@ -226,7 +226,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
+                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
                             newIntraEnergy =
                                 angle.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(angle, *i, *j, *k);
 
@@ -285,7 +285,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy), true);
+                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
                             newIntraEnergy =
                                 torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
 

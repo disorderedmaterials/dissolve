@@ -9,8 +9,8 @@
 class ScaledEnergyKernel : public EnergyKernel
 {
     public:
-    ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool, Configuration *config,
-                       const PotentialMap &potentialMap, double energyCutoff = -1.0);
+    ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool, const Box *box,
+                       const CellArray &cells, const PotentialMap &potentialMap, double energyCutoff = -1.0);
     ~ScaledEnergyKernel();
     // Clear all data
     void clear();

@@ -5,6 +5,7 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/box.h"
+#include "classes/cellarray.h"
 #include "classes/isotopologue.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"

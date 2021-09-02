@@ -19,7 +19,7 @@ TEST(AragornTest, ArithmaticSeries)
 
     EXPECT_EQ(total, size * (size + 1) >> 1);
 
-    // Try many different cut lengs
+    // Try many different cut lengths
     for (int cuts = 1; cuts < 40; ++cuts)
     {
         int count = 0;

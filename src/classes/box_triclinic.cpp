@@ -50,18 +50,6 @@ Vec3<double> TriclinicBox::minimumImage(const Vec3<double> &r1, const Vec3<doubl
     return v21;
 }
 
-// Return minimum image distance from r1 to r2
-double TriclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
-{
-    Vec3<double> v12 = r2 - r1;
-
-    toFractional(v12);
-    wrap(v12);
-    toReal(v12);
-
-    return v12.magnitude();
-}
-
 // Return minimum image vector from r1 to r2
 Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
 {
@@ -72,6 +60,29 @@ Vec3<double> TriclinicBox::minimumVector(const Vec3<double> &r1, const Vec3<doub
     toReal(v12);
 
     return v12;
+}
+
+// Return normalised minimum image vector from r1 to r2
+Vec3<double> TriclinicBox::minimumVectorN(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    v12.normalise();
+    return v12;
+}
+
+// Return minimum image distance from r1 to r2
+double TriclinicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+{
+    Vec3<double> v12 = r2 - r1;
+
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+
+    return v12.magnitude();
 }
 
 // Return minimum image squared distance from r1 to r2

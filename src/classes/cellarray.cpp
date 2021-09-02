@@ -191,20 +191,9 @@ void CellArray::createCellNeighbourPairs()
     neighbourPairs_.clear();
     neighbourPairs_.reserve(nPairs);
     for (auto &cell : cells_)
-    {
-        // Cell with itself
-        neighbourPairs_.emplace_back(cell, cell, false);
-
-        // Central cell neighbours not requiring minimum image
-        for (auto *otherCell : cell.cellNeighbours())
-            if (cell.index() < otherCell->index())
-                neighbourPairs_.emplace_back(cell, *otherCell, false);
-
-        // Central cell neighbours not requiring minimum image
-        for (auto *otherCell : cell.mimCellNeighbours())
-            if (cell.index() < otherCell->index())
-                neighbourPairs_.emplace_back(cell, *otherCell, true);
-    }
+        for (auto &nbr : neighbours(cell))
+            if (cell.index() <= nbr.neighbour_.index())
+                neighbourPairs_.emplace_back(cell, nbr.neighbour_, nbr.requiresMIM_);
 }
 
 // Return neighbour vector for specified cell, including self as first item
@@ -212,6 +201,15 @@ const std::vector<CellNeighbour> &CellArray::neighbours(const Cell &cell) const 
 
 // Return vector of all unique cell neighbour pairs
 const std::vector<CellNeighbourPair> &CellArray::getCellNeighbourPairs() const { return neighbourPairs_; }
+
+// Return whether minimum image calculation is required between the supplied cells
+bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
+{
+    auto it = std::find(neighbours_[a.index()].begin(), neighbours_[a.index()].end(), b);
+    if (it == neighbours_[a.index()].end())
+        return false;
+    return it->requiresMIM_;
+}
 
 /*
  * Generation
@@ -454,36 +452,9 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
         }
     }
 
-    // Finally, loop over Cells and set neighbours, and construct neighbour matrix
-    Messenger::print("Constructing neighbour lists for individual Cells...\n");
-    std::vector<const Cell *> nearNeighbours, mimNeighbours;
-    Vec3<int> gridRef, delta;
-    for (auto &cell : cells_)
-    {
-        // Grab grid reference of central cell
-        gridRef = cell.gridReference();
-
-        // Clear neighbour lists
-        nearNeighbours.clear();
-        mimNeighbours.clear();
-
-        // Loop over list of (relative) neighbour cell indices
-        for (auto nbrIndices : neighbourIndices)
-        {
-            // Retrieve Cell pointer
-            nbr = this->cell(gridRef.x + nbrIndices.x, gridRef.y + nbrIndices.y, gridRef.z + nbrIndices.z);
-            if (box_->type() == Box::BoxType::NonPeriodic)
-                nearNeighbours.emplace_back(nbr);
-            else if (minimumImageRequired(&cell, nbr, pairPotentialRange))
-                mimNeighbours.emplace_back(nbr);
-            else
-                nearNeighbours.emplace_back(nbr);
-        }
-
-        // Set up lists in the cell
-        cell.addCellNeighbours(nearNeighbours, mimNeighbours);
-    }
+    // Generate neighbour pairs
     createCellNeighbourPairs();
+
     return true;
 }
 

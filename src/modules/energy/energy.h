@@ -80,7 +80,7 @@ class EnergyModule : public Module
     static double intraMolecularEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                                        double &bondEnergy, double &angleEnergy, double &torsionEnergy, double &improperEnergy);
     // Return total intramolecular energy of Species
-    static double intraMolecularEnergy(ProcessPool &procPool, const Species *sp);
+    static double intraMolecularEnergy(const Species *sp);
     // Return total energy (interatomic and intramolecular)
     static double totalEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables

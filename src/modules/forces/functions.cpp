@@ -33,7 +33,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     // Grab the Cell array
     const auto &cellArray = cfg->cells();
     // Create a ForceKernel
-    const auto kernel = ForceKernel(procPool, cfg->box(), potentialMap);
+    const auto kernel = ForceKernel(procPool, cfg->box(), cfg->cells(), potentialMap);
     auto combinableForces = createCombinableForces(f);
 
     // Set start/stride for parallel loop
@@ -108,7 +108,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
      */
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg->box(), potentialMap);
+    ForceKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
     auto combinableForces = createCombinableForces(f);
 
     // Set start/stride for parallel loop
@@ -147,8 +147,9 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
                                         std::vector<Vec3<double>> &f)
 {
-    NonPeriodicBox box(1.0);
-    ForceKernel kernel(procPool, &box, potentialMap);
+    // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
+    CellArray dummyCellArray;
+    ForceKernel kernel(procPool, sp->box(), dummyCellArray, potentialMap);
 
     // Loop over bonds
     for (const auto &b : sp->bonds())

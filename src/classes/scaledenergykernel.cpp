@@ -8,8 +8,9 @@
 #include "classes/potentialmap.h"
 
 ScaledEnergyKernel::ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool,
-                                       Configuration *config, const PotentialMap &potentialMap, double energyCutoff)
-    : EnergyKernel(procPool, config, potentialMap, energyCutoff)
+                                       const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+                                       double energyCutoff)
+    : EnergyKernel(procPool, box, cells, potentialMap, energyCutoff)
 {
     interMoleculeRScale_ = interMoleculeRScale;
     intraMoleculeEScale_ = intraMoleculeEScale;
