@@ -91,7 +91,8 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
     ui_.ModulePaletteGroup->setVisible(false);
 
     // Set the currently selected module to the first one in the list
-    chartWidget_->setCurrentModule(moduleLayer_->modules().front().get());
+    if (!moduleLayer_->modules().empty())
+        chartWidget_->setCurrentModule(moduleLayer_->modules().front().get());
 
     updateControls();
 
