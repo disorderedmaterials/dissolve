@@ -7,6 +7,7 @@
 #include "base/sysfunc.h"
 #include "math/data1d.h"
 #include "math/histogram2d.h"
+#include "templates/arrayIndex2d.h"
 #include <algorithm>
 
 Data2D::Data2D() {}
@@ -355,27 +356,23 @@ bool Data2D::deserialise(LineParser &parser)
     // Read errors / valuse
     if (hasError_)
     {
-        for (auto x = 0; x < x_.size(); ++x)
+        ArrayIndex2D index(values_);
+        while (index++.hasNext())
         {
-            for (auto y = 0; y < y_.size(); ++y)
-            {
-                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                    return false;
-                values_[{x, y}] = parser.argd(0);
-                errors_[{x, y}] = parser.argd(1);
-            }
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            values_[*index] = parser.argd(0);
+            errors_[*index] = parser.argd(1);
         }
     }
     else
     {
-        for (auto x = 0; x < x_.size(); ++x)
+        ArrayIndex2D index(values_);
+        while (index++.hasNext())
         {
-            for (auto y = 0; y < y_.size(); ++y)
-            {
-                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                    return false;
-                values_[{x, y}] = parser.argd(0);
-            }
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            values_[*index] = parser.argd(0);
         }
     }
 
@@ -406,19 +403,19 @@ bool Data2D::serialise(LineParser &parser) const
     // Write values / errors
     if (hasError_)
     {
-        for (auto x = 0; x < x_.size(); ++x)
+        ArrayIndex2D index(values_);
+        while (index++.hasNext())
         {
-            for (auto y = 0; y < y_.size(); ++y)
-                if (!parser.writeLineF("{:e}  {:e}\n", values_[{x, y}], errors_[{x, y}]))
+            if (!parser.writeLineF("{:e}  {:e}\n", values_[*index], errors_[*index]))
                     return false;
         }
     }
     else
     {
-        for (auto x = 0; x < x_.size(); ++x)
+        ArrayIndex2D index(values_);
+        while (index++.hasNext())
         {
-            for (auto y = 0; y < y_.size(); ++y)
-                if (!parser.writeLineF("{:e}\n", values_[{x, y}]))
+            if (!parser.writeLineF("{:e}  {:e}\n", values_[*index], errors_[*index]))
                     return false;
         }
     }
