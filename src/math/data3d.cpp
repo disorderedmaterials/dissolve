@@ -352,7 +352,7 @@ bool Data3D::deserialise(LineParser &parser)
         while (index++.hasNext())
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                        return false;
+                return false;
             values_[*index] = parser.argd(0);
             errors_[*index] = parser.argd(1);
         }

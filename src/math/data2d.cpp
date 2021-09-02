@@ -407,7 +407,7 @@ bool Data2D::serialise(LineParser &parser) const
         while (index++.hasNext())
         {
             if (!parser.writeLineF("{:e}  {:e}\n", values_[*index], errors_[*index]))
-                    return false;
+                return false;
         }
     }
     else
@@ -416,7 +416,7 @@ bool Data2D::serialise(LineParser &parser) const
         while (index++.hasNext())
         {
             if (!parser.writeLineF("{:e}  {:e}\n", values_[*index], errors_[*index]))
-                    return false;
+                return false;
         }
     }
 
