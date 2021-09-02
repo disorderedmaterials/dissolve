@@ -209,6 +209,7 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
         loadState();
 
     localSimulation_ = true;
+    modified_ = false;
 
     // Check the beat file
     QString beatFile = QStringLiteral("%1.beat").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
@@ -219,6 +220,7 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     }
 
     dissolveState_ = EditingState;
+
     // Fully update GUI
     fullUpdate();
 
