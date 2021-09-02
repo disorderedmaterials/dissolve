@@ -174,7 +174,7 @@ void IsotopologueSetModel::addMissingSpecies(const std::vector<std::unique_ptr<S
     {
         if (!set.contains(sp.get()))
         {
-            beginInsertRows(QModelIndex(), set.nSpecies(), set.nSpecies());
+            beginInsertRows({}, set.nSpecies(), set.nSpecies());
             set.add(sp->naturalIsotopologue(), 1.0);
             endInsertRows();
             ++nAdded;
@@ -231,7 +231,7 @@ void IsotopologueSetModel::removeIndex(const QModelIndex index)
     {
         // Root item (Isotopologues)
         auto &topes = set.isotopologues()[index.row()];
-        beginRemoveRows(QModelIndex(), index.row(), index.row());
+        beginRemoveRows({}, index.row(), index.row());
         set.remove(topes.species());
         endRemoveRows();
     }

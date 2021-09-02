@@ -31,7 +31,7 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue(&angle);
 
     if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     switch (index.column())
     {
@@ -46,14 +46,14 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
         case 4:
             return QString::fromStdString(joinStrings(angle.parameters()));
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant SpeciesAngleModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -67,7 +67,7 @@ QVariant SpeciesAngleModel::headerData(int section, Qt::Orientation orientation,
         case 4:
             return "Parameters";
         default:
-            return QVariant();
+            return {};
     }
 }
 

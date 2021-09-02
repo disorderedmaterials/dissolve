@@ -52,11 +52,11 @@ QVariant XmlAngleModel::data(const QModelIndex &index, int role) const
             case 4:
                 return "k";
             default:
-                return QVariant();
+                return {};
         }
 
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     switch (index.column())
     {
@@ -71,14 +71,14 @@ QVariant XmlAngleModel::data(const QModelIndex &index, int role) const
         case 4:
             return QVariant(std::get<4>(angles_[index.row()]));
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant XmlAngleModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -92,7 +92,7 @@ QVariant XmlAngleModel::headerData(int section, Qt::Orientation orientation, int
         case 4:
             return "k";
         default:
-            return QVariant();
+            return {};
     }
 }
 

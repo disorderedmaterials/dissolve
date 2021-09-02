@@ -47,11 +47,11 @@ QVariant XmlBondModel::data(const QModelIndex &index, int role) const
             case 3:
                 return "k";
             default:
-                return QVariant();
+                return {};
         }
 
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (index.column())
     {
         case 0:
@@ -63,14 +63,14 @@ QVariant XmlBondModel::data(const QModelIndex &index, int role) const
         case 3:
             return std::get<3>(bonds_[index.row()]);
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant XmlBondModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -82,7 +82,7 @@ QVariant XmlBondModel::headerData(int section, Qt::Orientation orientation, int 
         case 3:
             return "k";
         default:
-            return QVariant();
+            return {};
     }
 }
 

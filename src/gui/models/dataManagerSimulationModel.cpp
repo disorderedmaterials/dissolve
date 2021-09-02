@@ -26,11 +26,11 @@ int DataManagerSimulationModel::columnCount(const QModelIndex &parent) const
 QVariant DataManagerSimulationModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+        return {};
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     if (index.row() > items_.items().size() || index.row() < 0)
-        return QVariant();
+        return {};
 
     int idx = 0;
     for (auto &[key, value] : items_.items())
@@ -44,15 +44,15 @@ QVariant DataManagerSimulationModel::data(const QModelIndex &index, int role) co
                 case 2:
                     return std::get<GenericItem::Version>(value);
                 default:
-                    return QVariant();
+                    return {};
             }
-    return QVariant();
+    return {};
 }
 
 QVariant DataManagerSimulationModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -62,7 +62,7 @@ QVariant DataManagerSimulationModel::headerData(int section, Qt::Orientation ori
         case 2:
             return "Version";
         default:
-            return QVariant();
+            return {};
     }
 }
 

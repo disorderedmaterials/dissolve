@@ -26,7 +26,7 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue(&item);
 
     if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     switch (index.column())
     {
@@ -41,14 +41,14 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
         case 5:
             return item.charge();
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant SpeciesAtomModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -64,7 +64,7 @@ QVariant SpeciesAtomModel::headerData(int section, Qt::Orientation orientation, 
         case 5:
             return "Charge";
         default:
-            return QVariant();
+            return {};
     }
 }
 

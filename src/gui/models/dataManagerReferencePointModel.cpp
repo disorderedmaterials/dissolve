@@ -25,7 +25,7 @@ int DataManagerReferencePointModel::columnCount(const QModelIndex &parent) const
 QVariant DataManagerReferencePointModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+        return {};
     auto &item = referencePoints_[index.row()];
 
     switch (role)
@@ -35,14 +35,14 @@ QVariant DataManagerReferencePointModel::data(const QModelIndex &index, int role
         case Qt::UserRole:
             return VariantPointer<ReferencePoint>(&item);
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant DataManagerReferencePointModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -50,7 +50,7 @@ QVariant DataManagerReferencePointModel::headerData(int section, Qt::Orientation
         case 1:
             return "Source";
         default:
-            return QVariant();
+            return {};
     }
 }
 

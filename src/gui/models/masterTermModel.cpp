@@ -49,7 +49,7 @@ Qt::ItemFlags MasterTermModel::flags(const QModelIndex &index) const
 QVariant MasterTermModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     if (orientation == Qt::Horizontal)
         switch (section)
@@ -61,10 +61,10 @@ QVariant MasterTermModel::headerData(int section, Qt::Orientation orientation, i
             case 2:
                 return "Parameters";
             default:
-                return QVariant();
+                return {};
         }
 
-    return QVariant();
+    return {};
 }
 
 // Bond model
@@ -72,13 +72,13 @@ QVariant MasterTermBondModel::data(const QModelIndex &index, int role) const
 {
 
     if (!index.isValid())
-        return QVariant();
+        return {};
 
     if (index.row() >= intras_.size() || index.row() < 0 || intras_.size() == 0)
-        return QVariant();
+        return {};
 
     if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     auto &masterIntra = intras_[index.row()];
 
@@ -92,10 +92,10 @@ QVariant MasterTermBondModel::data(const QModelIndex &index, int role) const
         case 2:
             return QString::fromStdString(joinStrings(masterIntra->parameters()));
         default:
-            return QVariant();
+            return {};
     }
 
-    return QVariant();
+    return {};
 }
 
 bool MasterTermBondModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -138,13 +138,13 @@ QVariant MasterTermAngleModel::data(const QModelIndex &index, int role) const
 {
 
     if (!index.isValid())
-        return QVariant();
+        return {};
 
     if (index.row() >= intras_.size() || index.row() < 0 || intras_.size() == 0)
-        return QVariant();
+        return {};
 
     if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     auto &masterIntra = intras_[index.row()];
     switch (index.column())
@@ -157,10 +157,10 @@ QVariant MasterTermAngleModel::data(const QModelIndex &index, int role) const
         case 2:
             return QString::fromStdString(joinStrings(masterIntra->parameters()));
         default:
-            return QVariant();
+            return {};
     }
 
-    return QVariant();
+    return {};
 }
 bool MasterTermAngleModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
@@ -201,13 +201,13 @@ QVariant MasterTermTorsionModel::data(const QModelIndex &index, int role) const
 {
 
     if (!index.isValid())
-        return QVariant();
+        return {};
 
     if (index.row() >= intras_.size() || index.row() < 0 || intras_.size() == 0)
-        return QVariant();
+        return {};
 
     if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     auto &masterIntra = intras_[index.row()];
     switch (index.column())
@@ -220,9 +220,9 @@ QVariant MasterTermTorsionModel::data(const QModelIndex &index, int role) const
         case 2:
             return QString::fromStdString(joinStrings(masterIntra->parameters()));
         default:
-            return QVariant();
+            return {};
     }
-    return QVariant();
+    return {};
 }
 
 bool MasterTermTorsionModel::setData(const QModelIndex &index, const QVariant &value, int role)

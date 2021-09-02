@@ -38,7 +38,7 @@ int BraggReflectionModel::columnCount(const QModelIndex &parent) const
 QVariant BraggReflectionModel::data(const QModelIndex &index, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     auto &reflections = reflections_->get();
 
@@ -57,14 +57,14 @@ QVariant BraggReflectionModel::data(const QModelIndex &index, int role) const
             if (index.column() - 3 < reflections[index.row()].intensities().size())
                 return QString::number(reflections[index.row()].intensities()[index.column() - 3]);
             else
-                return QVariant();
+                return {};
     }
 }
 
 QVariant BraggReflectionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     if (orientation == Qt::Horizontal)
         switch (section)
@@ -79,8 +79,8 @@ QVariant BraggReflectionModel::headerData(int section, Qt::Orientation orientati
                 if (section - 3 < intensityHeaders_.size())
                     return QVariant(QString::fromStdString(intensityHeaders_[section - 3]));
                 else
-                    return QVariant();
+                    return {};
         }
 
-    return QVariant();
+    return {};
 }

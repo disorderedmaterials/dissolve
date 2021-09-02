@@ -22,7 +22,7 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
     if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     auto &bond = bonds_[index.row()];
 
@@ -38,14 +38,14 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
         case 3:
             return QString::fromStdString(joinStrings(bond.parameters()));
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -57,7 +57,7 @@ QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, 
         case 3:
             return "Parameters";
         default:
-            return QVariant();
+            return {};
     }
 }
 
