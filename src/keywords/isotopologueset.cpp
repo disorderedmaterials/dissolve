@@ -6,10 +6,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-IsotopologueSetKeyword::IsotopologueSetKeyword(IsotopologueSet &set)
-    : KeywordData<IsotopologueSet &>(KeywordBase::IsotopologueSetData, set)
-{
-}
+IsotopologueSetKeyword::IsotopologueSetKeyword() : KeywordData<IsotopologueSet>(KeywordBase::IsotopologueSetData, {}) {}
 
 IsotopologueSetKeyword::~IsotopologueSetKeyword() = default;
 

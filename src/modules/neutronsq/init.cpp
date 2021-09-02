@@ -14,7 +14,7 @@ void NeutronSQModule::initialise()
     keywords_.add("Control", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurationsKeyword_.data()),
                   "Exchangeable", "A list of one or more atom types in the system that are exchangeable with each other",
                   "<AtomType> [AtomType...]");
-    keywords_.add("Control", new IsotopologueSetKeyword(isotopologues_), "Isotopologue",
+    keywords_.add("Control", new IsotopologueSetKeyword(), "Isotopologue",
                   "Set/add an isotopologue and its population for a particular species");
     keywords_.add("Control",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
