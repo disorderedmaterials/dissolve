@@ -63,25 +63,4 @@ class Cell
     void addAtom(Atom *atom);
     // Remove Atom from Cell
     void removeAtom(Atom *atom);
-
-    /*
-     * Neighbours
-     */
-    private:
-    // Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
-    std::vector<const Cell *> cellNeighbours_, mimCellNeighbours_;
-    // Array of all neighbouring cells
-    std::vector<const Cell *> allCellNeighbours_;
-
-    public:
-    // Add Cell neighbours
-    void addCellNeighbours(std::vector<const Cell *> &nearNeighbours, std::vector<const Cell *> &mimNeighbours);
-    // Return adjacent Cell neighbour list
-    const std::vector<const Cell *> &cellNeighbours() const;
-    // Return list of Cell neighbours requiring minimum image calculation
-    const std::vector<const Cell *> &mimCellNeighbours() const;
-    // Return if the specified Cell requires minimum image calculation
-    bool mimRequired(const Cell *otherCell) const;
-    // Return list of all Cell neighbours
-    const std::vector<const Cell *> &allCellNeighbours() const;
 };

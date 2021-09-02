@@ -83,7 +83,7 @@ TEST(CellsTest, Basic)
         auto [rCut, cellSize, refEnergy] = state;
 
         // Initialise an EnergyKernel with the specified cutoff
-        EnergyKernel energyKernel(dissolve.worldPool(), cfg, dissolve.potentialMap(), rCut);
+        EnergyKernel energyKernel(dissolve.worldPool(), cfg->box(), cfg->cells(), dissolve.potentialMap(), rCut);
 
         // Remove atoms from cells
         for (auto &i : cfg->atoms())
@@ -94,7 +94,7 @@ TEST(CellsTest, Basic)
         cfg->updateCellContents();
 
         // Calculate total Cell-based energy
-        EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->cells(), false, ProcessPool::PoolStrategy, false), 1.0e-4);
+        EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->cells(), false, ProcessPool::PoolStrategy), 1.0e-4);
 
         // Calculate atomic energy from the Ar
         EXPECT_NEAR(refEnergy, energyKernel.energy(*cfg->atom(0)), 1.0e-4);
