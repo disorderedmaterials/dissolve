@@ -36,7 +36,13 @@ function(dissolve_unit_test src_file)
   endif(GUI)
 
   # Register the test
-  gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
+  if(${ARGC} EQUAL "2")
+    message(STATUS " test working dir = ${PROJECT_SOURCE_DIR}/tests/${ARGV1}")
+    gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/${ARGV1}")
+  else(${ARGC} EQUAL "2")
+    message(STATUS " test working dir = ${PROJECT_SOURCE_DIR}/tests")
+    gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
+  endif(${ARGC} EQUAL "2")
 endfunction()
 
 # Add unit test subdirectories
