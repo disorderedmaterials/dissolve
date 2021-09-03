@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "templates/atomiterator.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/vector3.h"
 #include <memory>
