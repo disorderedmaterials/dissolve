@@ -1,0 +1,28 @@
+parameters:
+  - name: qtver
+    default: 6.1.1
+
+steps:
+  - bash: |
+      set -ex
+      sudo apt-get update
+      sudo apt-get install -y build-essential libssl-dev uuid-dev libgpgme11-dev squashfs-tools
+    displayName: 'Install Prerequisites'
+  - bash: |
+      export GOPATH=$(Agent.HomeDirectory)/go
+      go get -d github.com/sylabs/singularity
+      set -ex
+      cd ${GOPATH}/src/github.com/sylabs/singularity && git fetch
+      ./mconfig && make -C ./builddir && sudo make -C ./builddir install
+    displayName: 'Compile Singularity'
+  - bash: |
+      set -ex
+      # Extract the version from the source
+      export VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+      sudo singularity build Dissolve-${VERSION}.sif ci/singularity/leap15.2.def
+    displayName: 'Build Container'
+  - bash: |
+      set -ex
+      if [ ! -e packages/ ]; then mkdir packages; fi
+      mv Dissolve-*.sif packages
+    displayName: 'Move Artifacts'

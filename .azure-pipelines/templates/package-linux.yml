@@ -35,6 +35,6 @@ steps:
     displayName: 'Create AppImages'
   - bash: |
       set -ex
-      mkdir packages
+      if [ ! -e packages/ ]; then mkdir packages; fi
       mv Dissolve-*-x86_64.AppImage packages
     displayName: 'Move Artifacts'
