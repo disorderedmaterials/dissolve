@@ -14,7 +14,7 @@ class ModuleLayer : public ModuleList
 {
     public:
     ModuleLayer();
-    ~ModuleLayer();
+    ~ModuleLayer() override = default;
 
     /*
      * Layer Definition

@@ -77,9 +77,6 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
 // Catch window close event
 void DissolveWindow::closeEvent(QCloseEvent *event)
 {
-    // Mark the window as refreshing, so we don't try to update any more widgets
-    refreshing_ = true;
-
     if (!checkSaveCurrentInput())
     {
         event->ignore();
@@ -101,7 +98,9 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
     }
 
     // Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
+    refreshing_ = true;
     ui_.MainTabs->clearTabs();
+    ui_.MainTabs->clear();
 
     event->accept();
 }
