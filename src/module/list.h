@@ -19,7 +19,7 @@ class ModuleList
 {
     public:
     ModuleList();
-    ~ModuleList();
+    virtual ~ModuleList();
     operator std::vector<std::unique_ptr<Module>> &();
 
     /*

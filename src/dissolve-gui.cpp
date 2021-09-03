@@ -96,9 +96,6 @@ int main(int args, char **argv)
 
     auto result = app.exec();
 
-    // Clear all data
-    dissolve.clear();
-
     // End parallel communication
     ProcessPool::finalise();
 

@@ -77,9 +77,6 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
 // Catch window close event
 void DissolveWindow::closeEvent(QCloseEvent *event)
 {
-    // Mark the window as refreshing, so we don't try to update any more widgets
-    refreshing_ = true;
-
     if (!checkSaveCurrentInput())
     {
         event->ignore();
@@ -101,7 +98,9 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
     }
 
     // Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
+    refreshing_ = true;
     ui_.MainTabs->clearTabs();
+    ui_.MainTabs->clear();
 
     event->accept();
 }
@@ -209,6 +208,7 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
         loadState();
 
     localSimulation_ = true;
+    modified_ = false;
 
     // Check the beat file
     QString beatFile = QStringLiteral("%1.beat").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
@@ -219,6 +219,7 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     }
 
     dissolveState_ = EditingState;
+
     // Fully update GUI
     fullUpdate();
 
