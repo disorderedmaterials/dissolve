@@ -119,37 +119,39 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
 // Remove all Molecules of the target Species from the Configuration
 void Configuration::removeMolecules(const Species *sp)
 {
-    molecules_.erase(std::remove_if(molecules_.begin(), molecules_.end(),
-                                    [&, sp](auto &mol) {
-                                        if (mol->species() == sp)
-                                        {
-                                            for (auto &i : mol->atoms())
-                                                atoms_.erase(std::find(atoms_.begin(), atoms_.end(), i));
-                                            adjustSpeciesPopulation(mol->species(), -1);
-                                            return true;
-                                        }
-                                        else
-                                            return false;
-                                    }),
-                     molecules_.end());
+    molecules_.erase(
+        std::remove_if(molecules_.begin(), molecules_.end(),
+                       [&, sp](const auto &mol) {
+                           if (mol->species() == sp)
+                           {
+                               for (Atom *i : mol->atoms())
+                                   atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [i](Atom &j) { return i == &j; }));
+                               adjustSpeciesPopulation(mol->species(), -1);
+                               return true;
+                           }
+                           else
+                               return false;
+                       }),
+        molecules_.end());
 }
 
 // Remove specified Molecules from the Configuration
 void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>> &molecules)
 {
-    molecules_.erase(std::remove_if(molecules_.begin(), molecules_.end(),
-                                    [&, molecules](const auto &mol) {
-                                        if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
-                                        {
-                                            for (auto &i : mol->atoms())
-                                                atoms_.erase(std::find(atoms_.begin(), atoms_.end(), i));
-                                            adjustSpeciesPopulation(mol->species(), -1);
-                                            return true;
-                                        }
-                                        else
-                                            return false;
-                                    }),
-                     molecules_.end());
+    molecules_.erase(
+        std::remove_if(molecules_.begin(), molecules_.end(),
+                       [&, molecules](const auto &mol) {
+                           if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
+                           {
+                               for (Atom *i : mol->atoms())
+                                   atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [i](Atom &j) { return i == &j; }));
+                               adjustSpeciesPopulation(mol->species(), -1);
+                               return true;
+                           }
+                           else
+                               return false;
+                       }),
+        molecules_.end());
 }
 
 // Return number of Molecules in Configuration
@@ -163,25 +165,25 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
-                                             Vec3<double> r)
+Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
-    auto newAtom = std::make_shared<Atom>();
-    newAtom->setArrayIndex(atoms_.size());
-    atoms_.push_back(newAtom);
-    newAtom->setSpeciesAtom(sourceAtom);
+    // auto newAtom = std::make_shared<Atom>();
+    // atoms_.push_back(newAtom);
+    auto &newAtom = atoms_.emplace_back();
+    newAtom.setArrayIndex(atoms_.size());
+    newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(newAtom);
+    molecule->addAtom(&newAtom);
 
     // Set the position
-    newAtom->setCoordinates(r);
+    newAtom.setCoordinates(r);
 
     // Update our typeIndex (non-isotopic) and set local and master type indices
     AtomTypeData &atd = usedAtomTypes_.add(sourceAtom->atomType(), 1);
-    newAtom->setLocalTypeIndex(atd.listIndex());
-    newAtom->setMasterTypeIndex(sourceAtom->atomType()->index());
+    newAtom.setLocalTypeIndex(atd.listIndex());
+    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
 
     return newAtom;
 }
@@ -190,12 +192,12 @@ std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, cons
 int Configuration::nAtoms() const { return atoms_.size(); }
 
 // Return Atom array
-std::vector<std::shared_ptr<Atom>> &Configuration::atoms() { return atoms_; }
+std::vector<Atom> &Configuration::atoms() { return atoms_; }
 
-const std::vector<std::shared_ptr<Atom>> &Configuration::atoms() const { return atoms_; }
+const std::vector<Atom> &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
-std::shared_ptr<Atom> Configuration::atom(int n)
+Atom &Configuration::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
     return atoms_[n];

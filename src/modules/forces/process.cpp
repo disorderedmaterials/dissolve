@@ -77,7 +77,6 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
             double magjisq, magji, magjk, dp, force, r;
-            std::shared_ptr<Atom> i, j, k, l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
             Vec3<double> xpj, xpk, temp;
             double du_dphi;
@@ -103,14 +102,14 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (testInter)
                     for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
                     {
-                        i = molN->atom(ii);
+                        auto i = molN->atom(ii);
 
                         for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                         {
-                            j = molN->atom(jj);
+                            auto j = molN->atom(jj);
 
                             // Get intramolecular scaling of atom pair
-                            scale = i->scaling(j.get());
+                            scale = i->scaling(j);
                             if (scale < 1.0e-3)
                                 continue;
 
@@ -140,11 +139,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         // Double loop over atoms
                         for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                         {
-                            i = molN->atom(ii);
+                            auto i = molN->atom(ii);
 
                             for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                             {
-                                j = molM->atom(jj);
+                                auto j = molM->atom(jj);
 
                                 // Determine final forces
                                 vecji = box->minimumVector(i->r(), j->r());
@@ -171,8 +170,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &bond : molN->species()->bonds())
                     {
                         // Grab pointers to atoms involved in bond
-                        i = molN->atom(bond.indexI());
-                        j = molN->atom(bond.indexJ());
+                        auto i = molN->atom(bond.indexI());
+                        auto j = molN->atom(bond.indexJ());
 
                         // Determine final forces
                         vecji = box->minimumVector(i->r(), j->r());
@@ -187,9 +186,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &angle : molN->species()->angles())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(angle.indexI());
-                        j = molN->atom(angle.indexJ());
-                        k = molN->atom(angle.indexK());
+                        auto i = molN->atom(angle.indexI());
+                        auto j = molN->atom(angle.indexJ());
+                        auto k = molN->atom(angle.indexK());
 
                         // Get vectors 'j-i' and 'j-k'
                         vecji = box->minimumVector(j->r(), i->r());
@@ -214,10 +213,10 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &torsion : molN->species()->torsions())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(torsion.indexI());
-                        j = molN->atom(torsion.indexJ());
-                        k = molN->atom(torsion.indexK());
-                        l = molN->atom(torsion.indexL());
+                        auto i = molN->atom(torsion.indexI());
+                        auto j = molN->atom(torsion.indexJ());
+                        auto k = molN->atom(torsion.indexK());
+                        auto l = molN->atom(torsion.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
                         vecji = box->minimumVector(i->r(), j->r());
@@ -258,10 +257,10 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &imp : molN->species()->impropers())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(imp.indexI());
-                        j = molN->atom(imp.indexJ());
-                        k = molN->atom(imp.indexK());
-                        l = molN->atom(imp.indexL());
+                        auto i = molN->atom(imp.indexI());
+                        auto j = molN->atom(imp.indexJ());
+                        auto k = molN->atom(imp.indexK());
+                        auto l = molN->atom(imp.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
                         vecji = box->minimumVector(i->r(), j->r());

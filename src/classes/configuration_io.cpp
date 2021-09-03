@@ -54,7 +54,7 @@ bool Configuration::serialise(LineParser &parser) const
         return false;
     for (const auto &i : atoms_)
     {
-        if (!parser.writeLineF("{} {} {} {}\n", i->molecule()->arrayIndex(), i->x(), i->y(), i->z()))
+        if (!parser.writeLineF("{} {} {} {}\n", i.molecule()->arrayIndex(), i.x(), i.y(), i.z()))
             return false;
     }
 
@@ -133,7 +133,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
 
-        atom(n)->setCoordinates(parser.arg3d(1));
+        atom(n).setCoordinates(parser.arg3d(1));
     }
 
     // Finalise used AtomType list

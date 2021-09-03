@@ -155,7 +155,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Store atomic masses for future use
         for (auto &&[i, m] : zip(atoms, mass))
-            m = AtomicMass::mass(i->speciesAtom()->Z());
+            m = AtomicMass::mass(i.speciesAtom()->Z());
 
         // Calculate total velocity and mass over all atoms
         Vec3<double> vCom;
@@ -247,7 +247,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (auto &&[i, v, a] : zip(atoms, velocities, accelerations))
             {
                 // Propagate positions (by whole step)...
-                i->translateCoordinates(v * deltaT + a * 0.5 * deltaTSq);
+                i.translateCoordinates(v * deltaT + a * 0.5 * deltaTSq);
 
                 // ...velocities (by half step)...
                 v += a * 0.5 * deltaT;
@@ -331,7 +331,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &i : atoms)
                     {
                         if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n",
-                                                   Elements::symbol(i->speciesAtom()->Z()), i->r().x, i->r().y, i->r().z))
+                                                   Elements::symbol(i.speciesAtom()->Z()), i.r().x, i.r().y, i.r().z))
                         {
                             procPool.decideFalse();
                             return false;

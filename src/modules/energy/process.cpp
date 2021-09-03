@@ -86,7 +86,6 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0, correctSelfEnergy = 0.0;
 
             double r, angle;
-            std::shared_ptr<Atom> i, j;
             Vec3<double> vecji, vecjk, veckl;
             std::shared_ptr<Molecule> molN, molM;
             const auto *box = cfg->box();
@@ -103,11 +102,11 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Molecule self-energy
                 for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
                 {
-                    i = molN->atom(ii);
+                    auto i = molN->atom(ii);
 
                     for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                     {
-                        j = molN->atom(jj);
+                        auto j = molN->atom(jj);
 
                         // Get interatomic distance
                         r = box->minimumDistance(i->r(), j->r());
@@ -115,7 +114,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             continue;
 
                         // Get intramolecular scaling of atom pair
-                        scale = i->scaling(j.get());
+                        scale = i->scaling(j);
                         if (scale < 1.0e-3)
                             continue;
 
@@ -134,11 +133,11 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     // Double loop over atoms
                     for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                     {
-                        i = molN->atom(ii);
+                        auto i = molN->atom(ii);
 
                         for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                         {
-                            j = molM->atom(jj);
+                            auto j = molM->atom(jj);
 
                             // Get interatomic distance and check cutoff
                             r = box->minimumDistance(i->r(), j->r());

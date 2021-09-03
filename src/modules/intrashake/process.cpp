@@ -102,7 +102,6 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Vec3<double> vji, vjk, v;
         Matrix3 transform;
         const auto *box = cfg->box();
-        std::shared_ptr<Atom> i, j, k, l;
 
         Timer timer;
         procPool.resetAccumulatedTime();
@@ -143,8 +142,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &bond : mol->species()->bonds())
                     {
                         // Get Atom pointers
-                        i = mol->atom(bond.indexI());
-                        j = mol->atom(bond.indexJ());
+                        auto i = mol->atom(bond.indexI());
+                        auto j = mol->atom(bond.indexJ());
 
                         // Store current energy of this intramolecular term, or the whole Molecule if it
                         // is present in a cycle
@@ -197,9 +196,9 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &angle : mol->species()->angles())
                     {
                         // Get Atom pointers
-                        i = mol->atom(angle.indexI());
-                        j = mol->atom(angle.indexJ());
-                        k = mol->atom(angle.indexK());
+                        auto i = mol->atom(angle.indexI());
+                        auto j = mol->atom(angle.indexJ());
+                        auto k = mol->atom(angle.indexK());
 
                         // Store current energy of this intramolecular term
                         intraEnergy = angle.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(angle, *i, *j, *k);
@@ -255,10 +254,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (const auto &torsion : mol->species()->torsions())
                     {
                         // Get Atom pointers
-                        i = mol->atom(torsion.indexI());
-                        j = mol->atom(torsion.indexJ());
-                        k = mol->atom(torsion.indexK());
-                        l = mol->atom(torsion.indexL());
+                        auto i = mol->atom(torsion.indexI());
+                        auto j = mol->atom(torsion.indexJ());
+                        auto k = mol->atom(torsion.indexK());
+                        auto l = mol->atom(torsion.indexL());
 
                         // Store current energy of this intramolecular term
                         intraEnergy =

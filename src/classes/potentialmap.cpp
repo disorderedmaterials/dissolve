@@ -101,7 +101,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 }
 
 // Return analytic energy between Atom types at distance specified
-double PotentialMap::analyticEnergy(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, double r) const
+double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
 {
     assert(r >= 0.0);
     assert(i && j);
@@ -137,7 +137,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r)
 }
 
 // Return analytic force between Atom types at distance specified
-double PotentialMap::analyticForce(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, double r) const
+double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
 {
     assert(r >= 0.0);
     assert(i && j);
