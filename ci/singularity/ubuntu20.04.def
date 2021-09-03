@@ -1,0 +1,69 @@
+Bootstrap: library
+From: ubuntu:20.04
+
+Stage: init
+
+%post
+    # Install Qt via aqtinstall as a precursor to the main stage in order to avoid bringing in unnecessary dependencies.
+    # The necessary libs will be copied over in the next stage.
+    apt-get update
+    apt-get install -y software-properties-common
+    apt-add-repository universe
+    apt-get install -y --no-install-recommends python3 python3-pip
+    pip install wheel aqtinstall
+    aqt install --outputdir /opt/qt 6.1.1 linux desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
+
+Bootstrap: library
+From: ubuntu:20.04
+
+Stage: final
+
+%help
+
+    A singularity container for Dissolve, including command-line and GUI multithreaded versions.
+
+%setup
+
+    mkdir ${SINGULARITY_ROOTFS}/opt/dissolve
+    mkdir ${SINGULARITY_ROOTFS}/opt/dissolve/examples
+
+%files from init
+    
+    /opt/qt/6.1.1/gcc_64/lib/libQt6OpenGLWidgets.so.* usr/lib
+    /opt/qt/6.1.1/gcc_64/lib/libQt6Widgets.so.* usr/lib
+    /opt/qt/6.1.1/gcc_64/lib/libQt6OpenGL.so.* usr/lib
+    /opt/qt/6.1.1/gcc_64/lib/libQt6Gui.so.* usr/lib
+    /opt/qt/6.1.1/gcc_64/lib/libQt6Core.so.* usr/lib
+    /opt/qt/6.1.1/gcc_64/lib/libQt6DBus.so.* usr/lib
+
+%files
+
+    ./build/bin/dissolve opt/dissolve/
+    ./build/bin/dissolve-gui opt/dissolve/
+    ./examples/* opt/dissolve/examples
+
+%post
+
+    # Install packages required at runtime
+    apt-get update
+    apt-get install -y software-properties-common
+    apt-add-repository universe
+    apt-get install -y libfreetype6 libftgl2 libopengl0 libegl1 libxkbcommon-x11-0 libxcb-render0 libxcb-render-util0 libxcb-shape0 libxcb-randr0 libxcb-xfixes0 libxcb-xkb1 libxcb-sync1 libxcb-shm0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-util1 libfontconfig
+
+%runscript
+
+    # If the container is executed, this line will be run and all arguments will be passed to it
+    exec /opt/dissolve/dissolve-gui "$@"
+
+%apphelp dissolve
+    Dissolve command-line multithreaded version.
+
+%apprun dissolve
+    exec /opt/dissolve/dissolve "$@"
+
+%apphelp dissolve-gui
+    Dissolve GUI multithreaded version.
+
+%apprun dissolve-gui
+    exec /opt/dissolve/dissolve-gui "$@"
+

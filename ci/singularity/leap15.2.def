@@ -1,0 +1,84 @@
+BootStrap: zypper
+OSVersion: 15.2
+MirrorURL: http://download.opensuse.org/distribution/leap/15.2/repo/oss/
+UpdateURL: http://download.opensuse.org/update/leap/15.2/oss
+Include: rpm zypper
+
+Stage: build
+
+%setup
+    mkdir ${SINGULARITY_ROOTFS}/opt/dissolve-src
+    mkdir ${SINGULARITY_ROOTFS}/opt/dissolve-build
+
+%files
+    # Copy source dir in from build CI
+    /home/vsts/work/1/s/* opt/dissolve-src
+    
+%post
+    # Add KDE repo for Qt6
+    zypper addrepo --no-gpgcheck https://download.opensuse.org/repositories/KDE:/Qt6/openSUSE_Leap_15.2/ KDE-Qt6
+    zypper refresh
+
+    # Install build pre-requisites
+    zypper install -y ninja gcc9 gcc9-c++ python3-pip antlr4-tool antlr4-java libantlr4-runtime4_7_2 libantlr4-runtime-devel qt6-base-common-devel qt6-core-devel qt6-gui-devel qt6-widgets-devel qt6-opengl-devel qt6-openglwidgets-devel ftgl-devel
+    pip install conan
+
+    # Set up build
+    cd /opt/dissolve-build
+    conan install /opt/dissolve-src -s compiler.version=9
+    cmake /opt/dissolve-src -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=true -DCMAKE_CXX_COMPILER:string="g++-9" -DCMAKE_C_COMPILER:string="gcc-9"
+    ninja
+
+BootStrap: zypper
+OSVersion: 15.2
+MirrorURL: http://download.opensuse.org/distribution/leap/15.2/repo/oss/
+UpdateURL: http://download.opensuse.org/update/leap/15.2/oss
+Include: rpm zypper
+
+Stage: final
+
+%help
+
+    A singularity container for Dissolve, including command-line and GUI multithreaded versions.
+
+%files from build
+    
+    # Binaries
+    /opt/dissolve-build/bin/dissolve opt/dissolve/
+    /opt/dissolve-build/bin/dissolve-gui opt/dissolve/
+
+    # Extra Data
+    /opt/dissolve-src/examples opt/dissolve/examples
+
+    # Libraries
+    /usr/lib64/libQt6OpenGLWidgets.so* usr/lib64
+    /usr/lib64/libQt6Widgets.so* usr/lib64
+    /usr/lib64/libQt6OpenGL.so* usr/lib64
+    /usr/lib64/libQt6Gui.so* usr/lib64
+    /usr/lib64/libQt6XcbQpa.so* usr/lib64
+    /usr/lib64/libQt6Core.so* usr/lib64
+    /usr/lib64/libQt6DBus.so* usr/lib64
+    /usr/lib64/qt6 usr/lib64
+
+%post
+
+    # Install packages required at runtime
+    zypper install -y libantlr4-runtime4_7_2 libftgl2 fontconfig libxkbcommon0 libharfbuzz0 libicu-suse65_1 libdouble-conversion3 libb2-1 libpcre2-16-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render0 libxcb-render-util0 libxcb-shape0 libxcb-sync1 libxcb-xfixes0 libxcb-xkb1 libX11-xcb1 libxcb-xinput0 libxkbcommon-x11-0 libXcursor1 libxcb-glx0 dejavu-fonts
+
+%runscript
+
+    # If the container is executed, this line will be run and all arguments will be passed to it
+    exec /opt/dissolve/dissolve-gui "$@"
+
+%apphelp dissolve
+    Dissolve command-line multithreaded version.
+
+%apprun dissolve
+    exec /opt/dissolve/dissolve "$@"
+
+%apphelp dissolve-gui
+    Dissolve GUI multithreaded version.
+
+%apprun dissolve-gui
+    exec /opt/dissolve/dissolve-gui "$@"
+
