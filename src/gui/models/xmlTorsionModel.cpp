@@ -81,11 +81,11 @@ QVariant XmlTorsionModel::data(const QModelIndex &index, int role) const
                 return "phase4";
 
             default:
-                return QVariant();
+                return {};
         }
 
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     switch (index.column())
     {
@@ -126,14 +126,14 @@ QVariant XmlTorsionModel::data(const QModelIndex &index, int role) const
             return std::get<15>(torsions_[index.row()]);
 
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant XmlTorsionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -173,7 +173,7 @@ QVariant XmlTorsionModel::headerData(int section, Qt::Orientation orientation, i
             return "phase4";
 
         default:
-            return QVariant();
+            return {};
     }
 }
 

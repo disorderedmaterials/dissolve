@@ -53,7 +53,7 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
             // Element
             case (1):
                 if (role == Qt::EditRole)
-                    return QVariant();
+                    return {};
                 return QString::fromStdString(std::string(Elements::symbol(rawData(index)->Z())));
             // Charge
             case (2):
@@ -65,7 +65,7 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
             case (4):
                 return QString::fromStdString(joinStrings(rawData(index)->shortRangeParameters()));
             default:
-                return QVariant();
+                return {};
         }
     }
     else if (role == Qt::DecorationRole && iconFunction_)
@@ -73,7 +73,7 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
     else if (role == Qt::UserRole)
         return QVariant::fromValue(rawData(index));
 
-    return QVariant();
+    return {};
 }
 
 bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -125,7 +125,7 @@ Qt::ItemFlags AtomTypeModel::flags(const QModelIndex &index) const
 QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     if (orientation == Qt::Horizontal)
         switch (section)
@@ -141,8 +141,8 @@ QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int
             case (4):
                 return "SR Parameters";
             default:
-                return QVariant();
+                return {};
         }
 
-    return QVariant();
+    return {};
 }

@@ -9,10 +9,10 @@
 #include "templates/reflist.h"
 
 // Keyword with IsotopologueSet Data
-class IsotopologueSetKeyword : public KeywordData<IsotopologueSet &>
+class IsotopologueSetKeyword : public KeywordData<IsotopologueSet>
 {
     public:
-    IsotopologueSetKeyword(IsotopologueSet &set);
+    IsotopologueSetKeyword();
     ~IsotopologueSetKeyword() override;
 
     /*

@@ -48,7 +48,7 @@ QVariant SpeciesModel::data(const QModelIndex &index, int role) const
     else if (role == Qt::UserRole)
         return QVariant::fromValue(rawData(index));
 
-    return QVariant();
+    return {};
 }
 
 bool SpeciesModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -81,7 +81,7 @@ Qt::ItemFlags SpeciesModel::flags(const QModelIndex &index) const
 QVariant SpeciesModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     if (orientation == Qt::Horizontal)
         switch (section)
@@ -89,8 +89,8 @@ QVariant SpeciesModel::headerData(int section, Qt::Orientation orientation, int 
             case 0:
                 return "Name";
             default:
-                return QVariant();
+                return {};
         }
 
-    return QVariant();
+    return {};
 }

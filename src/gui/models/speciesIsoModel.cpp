@@ -21,7 +21,7 @@ QModelIndex SpeciesIsoModel::parent(const QModelIndex &index) const
 {
     quintptr root = 0;
     if (index.internalId() == 0)
-        return QModelIndex();
+        return {};
     return createIndex(index.internalId() - 1, 0, root);
 }
 
@@ -30,14 +30,14 @@ bool SpeciesIsoModel::hasChildren(const QModelIndex &parent) const { return !par
 QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
 {
     if (role != Qt::DisplayRole && role != Qt::UserRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     if (!index.parent().isValid())
     {
         if (index.row() > species_.isotopologues().size())
-            return QVariant();
+            return {};
         if (index.column() > 0)
-            return QVariant();
+            return {};
         auto iso = species_.isotopologue(index.row());
         switch (role)
         {
@@ -47,7 +47,7 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
             case Qt::UserRole:
                 return VariantPointer<Isotopologue>(iso);
             default:
-                return QVariant();
+                return {};
         }
     }
 
@@ -66,7 +66,7 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
                     else
                         return QString("%1 (bc = %2)").arg(Sears91::A(isotope)).arg(Sears91::boundCoherent(isotope));
                 default:
-                    return QVariant();
+                    return {};
             }
         case Qt::UserRole:
             switch (index.column())
@@ -76,10 +76,10 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
                 case 2:
                     return QVariant::fromValue(isotope);
                 default:
-                    return QVariant();
+                    return {};
             }
         default:
-            return QVariant();
+            return {};
     }
 }
 
@@ -91,7 +91,7 @@ QModelIndex SpeciesIsoModel::index(int row, int column, const QModelIndex &paren
     else if (parent.internalId() == 0)
         child = parent.row() + 1;
     else
-        return QModelIndex();
+        return {};
 
     return createIndex(row, column, child);
 }
@@ -99,7 +99,7 @@ QModelIndex SpeciesIsoModel::index(int row, int column, const QModelIndex &paren
 QVariant SpeciesIsoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -109,7 +109,7 @@ QVariant SpeciesIsoModel::headerData(int section, Qt::Orientation orientation, i
         case 2:
             return "Isotope";
         default:
-            return QVariant();
+            return {};
     }
 }
 

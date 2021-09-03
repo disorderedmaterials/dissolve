@@ -64,11 +64,11 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
             case 6:
                 return "Epsilon";
             default:
-                return QVariant();
+                return {};
         }
 
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     switch (index.column())
     {
@@ -87,14 +87,14 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
         case 6:
             return std::get<6>(atoms_[index.row()]);
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant XmlAtomModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -112,7 +112,7 @@ QVariant XmlAtomModel::headerData(int section, Qt::Orientation orientation, int 
         case 6:
             return "Epsilon";
         default:
-            return QVariant();
+            return {};
     }
 }
 

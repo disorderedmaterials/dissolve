@@ -40,6 +40,35 @@
       <number>4</number>
      </property>
      <item>
+      <widget class="QToolButton" name="AddSpeciesButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Add a new isotopologue reference</string>
+       </property>
+       <property name="text">
+        <string>Species</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../main.qrc">
+         <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -85,7 +114,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="AddButton">
+      <widget class="QToolButton" name="AddIsotopologueButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -96,7 +128,7 @@
         <string>Add a new isotopologue reference</string>
        </property>
        <property name="text">
-        <string>Add</string>
+        <string>Isotopologue</string>
        </property>
        <property name="icon">
         <iconset resource="../main.qrc">
@@ -116,28 +148,13 @@
     </layout>
    </item>
    <item>
-    <widget class="QTreeWidget" name="IsotopologueTree">
+    <widget class="QTreeView" name="IsotopologueTree">
      <property name="editTriggers">
-      <set>QAbstractItemView::AllEditTriggers</set>
+      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
      </property>
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
-     <column>
-      <property name="text">
-       <string>Species</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Isotopologue</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Weight</string>
-      </property>
-     </column>
     </widget>
    </item>
   </layout>

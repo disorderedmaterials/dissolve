@@ -54,11 +54,11 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
             case (5):
                 return QString::fromStdString(joinStrings(rawData(index)->parameters()));
             default:
-                return QVariant();
+                return {};
         }
     }
 
-    return QVariant();
+    return {};
 }
 
 // This function is extraneous right now, since none of the cells are
@@ -109,7 +109,7 @@ Qt::ItemFlags PairPotentialModel::flags(const QModelIndex &index) const { return
 QVariant PairPotentialModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
     if (orientation == Qt::Horizontal)
         switch (section)
@@ -127,10 +127,10 @@ QVariant PairPotentialModel::headerData(int section, Qt::Orientation orientation
             case (5):
                 return "Parameters";
             default:
-                return QVariant();
+                return {};
         }
 
-    return QVariant();
+    return {};
 }
 
 // Set source AtomType data

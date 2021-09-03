@@ -45,8 +45,6 @@ class NeutronSQModule : public Module
      * Initialisation
      */
     private:
-    // Isotopologue information
-    IsotopologueSet isotopologues_;
     // Exchangeable AtomTypes
     AtomTypeList exchangeableTypes_;
     // Reference F(Q) file and format

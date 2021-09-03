@@ -25,7 +25,7 @@ int EnumOptionsModel::rowCount(const QModelIndex &parent) const
 QVariant EnumOptionsModel::data(const QModelIndex &index, int role) const
 {
     if (role != Qt::DisplayRole || index.column() != 0)
-        return QVariant();
+        return {};
 
     return QString::fromStdString(enumOptions_->get().keywordByIndex(index.row()));
 }
@@ -39,10 +39,10 @@ Qt::ItemFlags EnumOptionsModel::flags(const QModelIndex &index) const
 QVariant EnumOptionsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
-        return QVariant();
+        return {};
 
     if (section == 0)
         return "Option";
 
-    return QVariant();
+    return {};
 }

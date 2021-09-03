@@ -50,7 +50,7 @@ QModelIndex XmlTreeModel::parent(const QModelIndex &index) const
     switch (index.internalId())
     {
         case 0:
-            return QModelIndex();
+            return {};
         case 10:
             return createIndex(0, 0, root);
         case 11:
@@ -62,7 +62,7 @@ QModelIndex XmlTreeModel::parent(const QModelIndex &index) const
         case 14:
             return createIndex(4, 0, root);
         default:
-            return QModelIndex();
+            return {};
     }
 }
 
@@ -78,9 +78,9 @@ QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
     if (!index.parent().isValid())
     {
         if (role != Qt::DisplayRole)
-            return QVariant();
+            return {};
         if (index.column() > 0)
-            return QVariant();
+            return {};
         switch (index.row())
         {
             case 0:
@@ -94,7 +94,7 @@ QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
             case 4:
                 return QString::fromStdString(fmt::format("Impropers ({})", impropers_.rowCount()));
             default:
-                return QVariant();
+                return {};
         }
     }
     switch (index.internalId())
@@ -122,7 +122,7 @@ QModelIndex XmlTreeModel::index(int row, int column, const QModelIndex &parent) 
     else if (parent.internalId() == 0)
         child = 10 + parent.row();
     else
-        return QModelIndex();
+        return {};
 
     return createIndex(row, column, child);
 }
@@ -138,7 +138,7 @@ std::shared_ptr<Forcefield_XML> XmlTreeModel::toForcefield()
 QVariant XmlTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     return "";
 }
 

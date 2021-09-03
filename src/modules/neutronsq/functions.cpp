@@ -86,11 +86,12 @@ void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeight
     // Clear weights and get species populations from RDFModule
     weights.clear();
     auto populations = rdfModule->speciesPopulations();
+    auto &isotopologues = keywords_.retrieve<IsotopologueSet>("Isotopologue");
 
     for (auto speciesPop : populations)
     {
         // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-        auto isoRef = isotopologues_.getIsotopologues(speciesPop.first);
+        auto isoRef = isotopologues.getIsotopologues(speciesPop.first);
         if (isoRef)
         {
             const Isotopologues &topes = *isoRef;

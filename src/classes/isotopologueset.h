@@ -41,8 +41,8 @@ class IsotopologueSet
     bool contains(const Species *sp) const;
     // Return Isotopologues for the specified Species
     OptionalReferenceWrapper<const Isotopologues> getIsotopologues(const Species *sp) const;
-    // Return number of Isotopologues defined
-    int nIsotopologues() const;
+    // Return number of species covered by set
+    int nSpecies() const;
     // Return vector of all Isotopologues
     std::vector<Isotopologues> &isotopologues();
     const std::vector<Isotopologues> &isotopologues() const;

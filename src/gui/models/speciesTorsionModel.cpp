@@ -31,7 +31,7 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue(&item);
 
     if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return QVariant();
+        return {};
 
     switch (index.column())
     {
@@ -47,14 +47,14 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
         case 5:
             return QString::fromStdString(joinStrings(item.parameters()));
         default:
-            return QVariant();
+            return {};
     }
 }
 
 QVariant SpeciesTorsionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-        return QVariant();
+        return {};
     switch (section)
     {
         case 0:
@@ -73,7 +73,7 @@ QVariant SpeciesTorsionModel::headerData(int section, Qt::Orientation orientatio
             return "Parameters";
 
         default:
-            return QVariant();
+            return {};
     }
 }
 
