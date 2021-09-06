@@ -101,16 +101,15 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 }
 
 // Return analytic energy between Atom types at distance specified
-double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r) const
 {
     assert(r >= 0.0);
-    assert(i && j);
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return pp->includeCoulomb() ? pp->analyticEnergy(r)
-                                : pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
+                                : pp->analyticEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r);
 }
 
 // Return force between Atoms at distance specified
@@ -137,15 +136,14 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r)
 }
 
 // Return analytic force between Atom types at distance specified
-double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r) const
 {
     assert(r >= 0.0);
-    assert(i && j);
-    assert(i->speciesAtom() && j->speciesAtom());
+    assert(i.speciesAtom() && j.speciesAtom());
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return pp->includeCoulomb() ? pp->analyticForce(r)
-                                : pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
+                                : pp->analyticForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r);
 }

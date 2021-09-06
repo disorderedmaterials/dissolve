@@ -84,7 +84,7 @@ double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular)
                 totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
             else if (includeIntraMolecular)
             {
-                auto scale = ii->scaling(&*jj);
+                auto scale = ii->scaling(*jj);
                 if (scale > 1.0e-3)
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
             }
@@ -122,7 +122,7 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
                     totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
-                    auto scale = ii.scaling(&jj);
+                    auto scale = ii.scaling(jj);
                     if (scale > 1.0e-3)
                         totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
                 }
@@ -149,7 +149,7 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
                     totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
-                    auto scale = ii.scaling(&jj);
+                    auto scale = ii.scaling(jj);
                     if (scale > 1.0e-3)
                         totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
                 }
@@ -248,7 +248,7 @@ double EnergyKernel::correct(const Atom &i)
         std::transform_reduce(atoms.begin(), atoms.end(), 0.0, std::plus<double>(), [&](auto &j) -> double {
             if (&i == &j)
                 return 0.0;
-            double scale = 1.0 - i.scaling(&j);
+            double scale = 1.0 - i.scaling(j);
             if (scale <= 1.0e-3)
                 return 0.0;
             double r = box_->minimumDistance(rI, j.r());

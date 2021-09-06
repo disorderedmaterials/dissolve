@@ -103,11 +103,10 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
  */
 
 // Return scaling factor to employ with specified Atom
-double Atom::scaling(const Atom *j) const
+double Atom::scaling(const Atom &j) const
 {
     assert(speciesAtom_ != nullptr);
-    assert(j != nullptr);
-    assert(j->speciesAtom() != nullptr);
+    assert(j.speciesAtom() != nullptr);
 
-    return speciesAtom_->scaling(j->speciesAtom());
+    return speciesAtom_->scaling(j.speciesAtom());
 }

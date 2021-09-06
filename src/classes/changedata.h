@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/list.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
@@ -32,9 +31,9 @@ class ChangeData
 
     public:
     // Set target Atom
-    void setAtom(Atom *i);
+    void setAtom(Atom &i);
     // Return target Atom
-    Atom *atom();
+    Atom &atom();
     // Return array index of stored Atom
     int atomArrayIndex() const;
     // Update stored position, and flag as moved

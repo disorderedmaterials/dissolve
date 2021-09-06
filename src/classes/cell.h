@@ -63,7 +63,7 @@ class Cell
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell
-    void addAtom(Atom *atom);
+    void addAtom(Atom &atom);
     // Remove Atom from Cell
-    void removeAtom(Atom *atom);
+    void removeAtom(Atom &atom);
 };

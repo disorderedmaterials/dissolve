@@ -114,12 +114,12 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             continue;
 
                         // Get intramolecular scaling of atom pair
-                        scale = i.scaling(&j);
+                        scale = i.scaling(j);
                         if (scale < 1.0e-3)
                             continue;
 
                         if (testAnalytic)
-                            correctSelfEnergy += potentialMap.analyticEnergy(&i, &j, r) * scale;
+                            correctSelfEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
                         else
                             correctSelfEnergy += potentialMap.energy(i, j, r) * scale;
                     }
@@ -145,7 +145,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 continue;
 
                             if (testAnalytic)
-                                correctInterEnergy += potentialMap.analyticEnergy(&i, &j, r);
+                                correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
                             else
                                 correctInterEnergy += potentialMap.energy(i, j, r);
                         }

@@ -13,18 +13,16 @@ ChangeData::ChangeData() : atom_(nullptr) {}
  */
 
 // Set target atom
-void ChangeData::setAtom(Atom *i)
+void ChangeData::setAtom(Atom &i)
 {
-    assert(i != nullptr);
-
-    atom_ = i;
+    atom_ = &i;
     moved_ = false;
-    r_ = atom_->r();
-    cell_ = i->cell();
+    r_ = i.r();
+    cell_ = i.cell();
 }
 
 // Return target Atom
-Atom *ChangeData::atom() { return atom_; }
+Atom &ChangeData::atom() { return *atom_; }
 
 // Return array index of stored Atom
 int ChangeData::atomArrayIndex() const { return atom_->arrayIndex(); }
@@ -46,8 +44,8 @@ void ChangeData::revertPosition()
     // If the cell changed with the move, revert that too
     if (cell_ != atom_->cell())
     {
-        atom_->cell()->removeAtom(atom_);
-        cell_->addAtom(atom_);
+        atom_->cell()->removeAtom(*atom_);
+        cell_->addAtom(*atom_);
     }
 }
 

@@ -109,7 +109,7 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
                     forcesWithMim(*ii, jj, f);
                 else
                 {
-                    double scale = ii->scaling(&jj);
+                    double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithMim(*ii, jj, f, scale);
                 }
@@ -136,7 +136,7 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
                     forcesWithoutMim(*ii, jj, f);
                 else
                 {
-                    double scale = ii->scaling(&jj);
+                    double scale = ii->scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithoutMim(*ii, jj, f, scale);
                 }
@@ -183,7 +183,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     forcesWithMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithMim(i, jj, f);
                 }
@@ -200,7 +200,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     forcesWithMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithMim(i, jj, f, scale);
                 }
@@ -222,7 +222,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     if (i.arrayIndex() >= jj.arrayIndex())
                         continue;
 
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithMim(i, jj, f, scale);
                 }
@@ -241,7 +241,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     forcesWithMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithMim(i, jj, f, scale);
                 }
@@ -267,7 +267,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     forcesWithoutMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithoutMim(i, jj, f, scale);
                 }
@@ -287,7 +287,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     forcesWithoutMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithoutMim(i, jj, f, scale);
                 }
@@ -307,7 +307,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     if (&i >= &jj)
                         continue;
 
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithoutMim(i, jj, f, scale);
                 }
@@ -323,7 +323,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                     forcesWithoutMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(&jj);
+                    double scale = i.scaling(jj);
                     if (scale > 1.0e-3)
                         forcesWithoutMim(i, jj, f, scale);
                 }

@@ -50,21 +50,20 @@ const ConstPackedRange<Atom> Cell::atoms() const { return ConstPackedRange<Atom>
 int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-void Cell::addAtom(Atom *atom)
+void Cell::addAtom(Atom &atom)
 {
-    assert(atom);
-    atoms_.push_back(atom->arrayIndex() - 1);
+    atoms_.push_back(atom.arrayIndex() - 1);
 
-    if (atom->cell())
+    if (atom.cell())
         Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
-                        atom->arrayIndex());
-    atom->setCell(this);
+                        atom.arrayIndex());
+    atom.setCell(this);
 }
 
 // Remove Atom from Cell
-void Cell::removeAtom(Atom *atom)
+void Cell::removeAtom(Atom &atom)
 {
-    auto it = std::find(atoms_.begin(), atoms_.end(), atom->arrayIndex() - 1);
+    auto it = std::find(atoms_.begin(), atoms_.end(), atom.arrayIndex() - 1);
     assert(it != atoms_.end());
     (*source_)[*it].setCell(nullptr);
     atoms_.erase(it);

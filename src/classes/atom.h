@@ -104,5 +104,5 @@ class Atom : public DynamicArrayObject<Atom>
      */
     public:
     // Return scaling factor to employ with specified Atom
-    double scaling(const Atom *j) const;
+    double scaling(const Atom &j) const;
 };

@@ -175,7 +175,7 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(&newAtom);
+    molecule->addAtom(newAtom);
 
     // Set the position
     newAtom.setCoordinates(r);
