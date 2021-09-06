@@ -109,19 +109,19 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         auto j = molN->atom(jj);
 
                         // Get interatomic distance
-                        r = box->minimumDistance(i->r(), j->r());
+                        r = box->minimumDistance(i.r(), j.r());
                         if (r > cutoff)
                             continue;
 
                         // Get intramolecular scaling of atom pair
-                        scale = i->scaling(j);
+                        scale = i.scaling(&j);
                         if (scale < 1.0e-3)
                             continue;
 
                         if (testAnalytic)
-                            correctSelfEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
+                            correctSelfEnergy += potentialMap.analyticEnergy(&i, &j, r) * scale;
                         else
-                            correctSelfEnergy += potentialMap.energy(*i, *j, r) * scale;
+                            correctSelfEnergy += potentialMap.energy(i, j, r) * scale;
                     }
                 }
 
@@ -133,21 +133,21 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     // Double loop over atoms
                     for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                     {
-                        auto i = molN->atom(ii);
+                        const auto &i = molN->atom(ii);
 
                         for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                         {
-                            auto j = molM->atom(jj);
+                            const auto &j = molM->atom(jj);
 
                             // Get interatomic distance and check cutoff
-                            r = box->minimumDistance(i->r(), j->r());
+                            r = box->minimumDistance(i.r(), j.r());
                             if (r > cutoff)
                                 continue;
 
                             if (testAnalytic)
-                                correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
+                                correctInterEnergy += potentialMap.analyticEnergy(&i, &j, r);
                             else
-                                correctInterEnergy += potentialMap.energy(*i, *j, r);
+                                correctInterEnergy += potentialMap.energy(i, j, r);
                         }
                     }
                 }
@@ -155,7 +155,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Bond energy
                 for (const auto &bond : molN->species()->bonds())
                 {
-                    r = cfg->box()->minimumDistance(molN->atom(bond.indexI())->r(), molN->atom(bond.indexJ())->r());
+                    r = cfg->box()->minimumDistance(molN->atom(bond.indexI()).r(), molN->atom(bond.indexJ()).r());
                     correctIntraEnergy += bond.energy(r);
                 }
 
@@ -163,8 +163,8 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (const auto &angle : molN->species()->angles())
                 {
                     // Get vectors 'j-i' and 'j-k'
-                    vecji = cfg->box()->minimumVector(molN->atom(angle.indexJ())->r(), molN->atom(angle.indexI())->r());
-                    vecjk = cfg->box()->minimumVector(molN->atom(angle.indexJ())->r(), molN->atom(angle.indexK())->r());
+                    vecji = cfg->box()->minimumVector(molN->atom(angle.indexJ()).r(), molN->atom(angle.indexI()).r());
+                    vecjk = cfg->box()->minimumVector(molN->atom(angle.indexJ()).r(), molN->atom(angle.indexK()).r());
 
                     // Calculate angle and determine angle energy
                     vecji.normalise();
@@ -176,9 +176,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (const auto &torsion : molN->species()->torsions())
                 {
                     // Get vectors 'j-i', 'j-k' and 'k-l'
-                    vecji = cfg->box()->minimumVector(molN->atom(torsion.indexJ())->r(), molN->atom(torsion.indexI())->r());
-                    vecjk = cfg->box()->minimumVector(molN->atom(torsion.indexJ())->r(), molN->atom(torsion.indexK())->r());
-                    veckl = cfg->box()->minimumVector(molN->atom(torsion.indexK())->r(), molN->atom(torsion.indexL())->r());
+                    vecji = cfg->box()->minimumVector(molN->atom(torsion.indexJ()).r(), molN->atom(torsion.indexI()).r());
+                    vecjk = cfg->box()->minimumVector(molN->atom(torsion.indexJ()).r(), molN->atom(torsion.indexK()).r());
+                    veckl = cfg->box()->minimumVector(molN->atom(torsion.indexK()).r(), molN->atom(torsion.indexL()).r());
 
                     angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 
@@ -190,9 +190,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (const auto &imp : molN->species()->impropers())
                 {
                     // Get vectors 'j-i', 'j-k' and 'k-l'
-                    vecji = cfg->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexI())->r());
-                    vecjk = cfg->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexK())->r());
-                    veckl = cfg->box()->minimumVector(molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r());
+                    vecji = cfg->box()->minimumVector(molN->atom(imp.indexJ()).r(), molN->atom(imp.indexI()).r());
+                    vecjk = cfg->box()->minimumVector(molN->atom(imp.indexJ()).r(), molN->atom(imp.indexK()).r());
+                    veckl = cfg->box()->minimumVector(molN->atom(imp.indexK()).r(), molN->atom(imp.indexL()).r());
 
                     angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 

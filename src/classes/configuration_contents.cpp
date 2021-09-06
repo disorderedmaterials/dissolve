@@ -124,8 +124,8 @@ void Configuration::removeMolecules(const Species *sp)
                        [&, sp](const auto &mol) {
                            if (mol->species() == sp)
                            {
-                               for (Atom *i : mol->atoms())
-                                   atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [i](Atom &j) { return i == &j; }));
+                               for (auto &i : mol->atoms())
+                                   atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [&i](Atom &j) { return &i == &j; }));
                                adjustSpeciesPopulation(mol->species(), -1);
                                return true;
                            }
@@ -143,8 +143,8 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                        [&, molecules](const auto &mol) {
                            if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
                            {
-                               for (Atom *i : mol->atoms())
-                                   atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [i](Atom &j) { return i == &j; }));
+                               for (auto &i : mol->atoms())
+                                   atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [&i](Atom &j) { return &i == &j; }));
                                adjustSpeciesPopulation(mol->species(), -1);
                                return true;
                            }
@@ -214,11 +214,11 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
         {
             for (auto &i : mol->atoms())
             {
-                r = i->r();
+                r = i.r();
                 box()->toFractional(r);
                 r.multiply(scaleFactors);
                 box()->toReal(r);
-                i->setCoordinates(r);
+                i.setCoordinates(r);
             }
         }
         else
@@ -234,7 +234,7 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
 
             // Loop over Atoms in Molecule, setting new coordinates as we go
             for (auto &i : mol->atoms())
-                i->setCoordinates(r + box()->minimumVector(i->r(), cog));
+                i.setCoordinates(r + box()->minimumVector(i.r(), cog));
         }
     }
 }

@@ -34,7 +34,7 @@ const Species *Molecule::species() const { return species_; }
 // Add Atom to Molecule
 void Molecule::addAtom(Atom *i)
 {
-    atoms_.push_back(i);
+    atoms_.push_back(i->arrayIndex());
 
     if (i->molecule() != nullptr)
         Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
@@ -46,11 +46,11 @@ void Molecule::addAtom(Atom *i)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms array
-std::vector<Atom *> &Molecule::atoms() { return atoms_; }
-const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
+const PackedRange<Atom> Molecule::atoms() { return PackedRange<Atom>(*source_, atoms_); }
+const ConstPackedRange<Atom> Molecule::atoms() const { return ConstPackedRange<Atom>(*source_, atoms_); }
 
 // Return nth Atom pointer
-Atom *Molecule::atom(int n) const { return atoms_[n]; }
+Atom &Molecule::atom(int n) const { return (*source_)[atoms_[n]]; }
 
 /*
  * Manipulations
@@ -66,8 +66,8 @@ void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> newCentre)
     // Apply transform
     for (auto n = 0; n < nAtoms(); ++n)
     {
-        newR = box->minimumVector(atom(n)->r(), cog) + newCentre;
-        atom(n)->setCoordinates(newR);
+        newR = box->minimumVector(atom(n).r(), cog) + newCentre;
+        atom(n).setCoordinates(newR);
     }
 }
 
@@ -78,9 +78,9 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box) const
         return Vec3<double>();
 
     // Calculate center relative to first atom in molecule
-    auto cog = atom(0)->r();
+    auto cog = atom(0).r();
     for (auto n = 1; n < nAtoms(); ++n)
-        cog += box->minimumImage(atom(n)->r(), atom(0)->r());
+        cog += box->minimumImage(atom(n).r(), atom(0).r());
 
     return (cog / nAtoms());
 }
@@ -95,8 +95,8 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
     // Apply transform
     for (auto n = 0; n < nAtoms(); ++n)
     {
-        newR = transformationMatrix * box->minimumVector(cog, atom(n)->r()) + cog;
-        atom(n)->setCoordinates(newR);
+        newR = transformationMatrix * box->minimumVector(cog, atom(n).r()) + cog;
+        atom(n).setCoordinates(newR);
     }
 }
 
@@ -106,12 +106,11 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 {
     // Loop over supplied Atoms
     Vec3<double> newR;
-    Atom *i;
     for (const auto index : targetAtoms)
     {
-        i = atom(index);
-        newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
-        i->setCoordinates(newR);
+        auto &i = atom(index);
+        newR = transformationMatrix * box->minimumVector(origin, i.r()) + origin;
+        i.setCoordinates(newR);
     }
 }
 
@@ -119,12 +118,12 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 void Molecule::translate(const Vec3<double> delta)
 {
     for (auto n = 0; n < nAtoms(); ++n)
-        atom(n)->translateCoordinates(delta);
+        atom(n).translateCoordinates(delta);
 }
 
 // Translate specified atoms by the delta specified
 void Molecule::translate(const Vec3<double> &delta, const std::vector<int> &targetAtoms)
 {
     for (const auto i : targetAtoms)
-        atom(i)->translateCoordinates(delta);
+        atom(i).translateCoordinates(delta);
 }

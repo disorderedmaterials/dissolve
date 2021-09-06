@@ -123,21 +123,21 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
         auto &fLocal = combinableForces.local();
         // Loop over bonds
         for (const auto &bond : mol->species()->bonds())
-            kernel.forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), fLocal);
+            kernel.forces(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()), fLocal);
 
         // Loop over angles
         for (const auto &angle : mol->species()->angles())
-            kernel.forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), fLocal);
+            kernel.forces(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()), fLocal);
 
         // Loop over torsions
         for (const auto &torsion : mol->species()->torsions())
-            kernel.forces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
-                          *mol->atom(torsion.indexL()), fLocal);
+            kernel.forces(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()), mol->atom(torsion.indexK()),
+                          mol->atom(torsion.indexL()), fLocal);
 
         // Loop over impropers
         for (const auto &imp : mol->species()->impropers())
-            kernel.forces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()),
-                          *mol->atom(imp.indexL()), fLocal);
+            kernel.forces(imp, mol->atom(imp.indexI()), mol->atom(imp.indexJ()), mol->atom(imp.indexK()),
+                          mol->atom(imp.indexL()), fLocal);
     };
     dissolve::for_each(ParallelPolicies::par, begin, end, unaryOp);
     combinableForces.finalize();
@@ -227,7 +227,7 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     std::vector<int> indices;
     for (const auto *mol : targetMolecules)
         for (const auto &i : mol->atoms())
-            f[i->arrayIndex()] = tempf[i->arrayIndex()];
+            f[i.arrayIndex()] = tempf[i.arrayIndex()];
 }
 
 // Calculate total forces within the specified Species

@@ -36,7 +36,8 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Species that this Molecule represents
     const Species *species_;
     // Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
-    std::vector<Atom *> atoms_;
+    std::vector<unsigned int> atoms_;
+    std::vector<Atom> *source_;
 
     public:
     // Set Species that this Molecule represents
@@ -48,11 +49,11 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Return size of Atom array
     int nAtoms() const;
     // Return Atoms array
-    std::vector<Atom *> &atoms();
+    const PackedRange<Atom> atoms();
     // Return Atoms array
-    const std::vector<Atom *> &atoms() const;
+    const ConstPackedRange<Atom> atoms() const;
     // Return nth Atom pointer
-    Atom *atom(int n) const;
+    Atom &atom(int n) const;
 
     /*
      * Manipulations

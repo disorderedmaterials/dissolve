@@ -50,16 +50,16 @@ void DynamicSiteProcedureNode::generateSites(const std::shared_ptr<const Molecul
     for (auto &i : molecule->atoms())
     {
         // If the element is listed in our target elements list, add this atom as a site
-        if (std::find(elements_.begin(), elements_.end(), i->speciesAtom()->Z()) != elements_.end())
+        if (std::find(elements_.begin(), elements_.end(), i.speciesAtom()->Z()) != elements_.end())
         {
-            generatedSites_.emplace_back(Site(molecule, i->r()));
+            generatedSites_.emplace_back(Site(molecule, i.r()));
             continue;
         }
 
         // If the Atom's AtomType is listed in our target AtomType list, add this atom as a site
-        if (std::find(atomTypes_.begin(), atomTypes_.end(), i->speciesAtom()->atomType()) != atomTypes_.end())
+        if (std::find(atomTypes_.begin(), atomTypes_.end(), i.speciesAtom()->atomType()) != atomTypes_.end())
         {
-            generatedSites_.emplace_back(Site(molecule, i->r()));
+            generatedSites_.emplace_back(Site(molecule, i.r()));
             continue;
         }
     }

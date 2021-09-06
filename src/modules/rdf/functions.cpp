@@ -361,11 +361,11 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                 return;
 
             double distance;
-            if (cells.minimumImageRequired(*i->cell(), *j->cell()))
-                distance = box->minimumDistance(i->r(), j->r());
+            if (cells.minimumImageRequired(*i.cell(), *j.cell()))
+                distance = box->minimumDistance(i.r(), j.r());
             else
-                distance = (i->r() - j->r()).magnitude();
-            originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+                distance = (i.r() - j.r()).magnitude();
+            originalgr.boundHistogram(i.localTypeIndex(), j.localTypeIndex()).bin(distance);
         });
     }
 

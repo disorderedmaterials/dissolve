@@ -191,6 +191,8 @@ class Configuration
     // Update Cell contents
     void updateCellContents();
     // Update Cell location of specified Atom
+    void updateCellLocation(Atom &i);
+    // Update Cell location of specified Atom
     void updateCellLocation(Atom *i);
     // Update Cell location of specified Molecule
     void updateCellLocation(const std::shared_ptr<Molecule> &mol);

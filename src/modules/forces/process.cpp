@@ -102,19 +102,19 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (testInter)
                     for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
                     {
-                        auto i = molN->atom(ii);
+                        const auto &i = molN->atom(ii);
 
                         for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                         {
-                            auto j = molN->atom(jj);
+                            const auto &j = molN->atom(jj);
 
                             // Get intramolecular scaling of atom pair
-                            scale = i->scaling(j);
+                            scale = i.scaling(&j);
                             if (scale < 1.0e-3)
                                 continue;
 
                             // Determine final forces
-                            vecji = box->minimumVector(i->r(), j->r());
+                            vecji = box->minimumVector(i.r(), j.r());
                             magjisq = vecji.magnitudeSq();
                             if (magjisq > cutoffSq)
                                 continue;
@@ -122,11 +122,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             vecji /= r;
 
                             if (testAnalytic)
-                                vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r) * scale;
+                                vecji *= potentialMap.analyticForce(&molN->atom(ii), &molN->atom(jj), r) * scale;
                             else
-                                vecji *= potentialMap.force(*molN->atom(ii), *molN->atom(jj), r) * scale;
-                            fInter[i->arrayIndex()] += vecji;
-                            fInter[j->arrayIndex()] -= vecji;
+                                vecji *= potentialMap.force(molN->atom(ii), molN->atom(jj), r) * scale;
+                            fInter[i.arrayIndex()] += vecji;
+                            fInter[j.arrayIndex()] -= vecji;
                         }
                     }
 
@@ -146,7 +146,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 auto j = molM->atom(jj);
 
                                 // Determine final forces
-                                vecji = box->minimumVector(i->r(), j->r());
+                                vecji = box->minimumVector(i.r(), j.r());
                                 magjisq = vecji.magnitudeSq();
                                 if (magjisq > cutoffSq)
                                     continue;
@@ -154,12 +154,12 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 vecji /= r;
 
                                 if (testAnalytic)
-                                    vecji *= potentialMap.analyticForce(i, j, r);
+                                    vecji *= potentialMap.analyticForce(&i, &j, r);
                                 else
-                                    vecji *= potentialMap.force(*i, *j, r);
+                                    vecji *= potentialMap.force(i, j, r);
 
-                                fInter[i->arrayIndex()] += vecji;
-                                fInter[j->arrayIndex()] -= vecji;
+                                fInter[i.arrayIndex()] += vecji;
+                                fInter[j.arrayIndex()] -= vecji;
                             }
                         }
                     }
@@ -174,12 +174,12 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         auto j = molN->atom(bond.indexJ());
 
                         // Determine final forces
-                        vecji = box->minimumVector(i->r(), j->r());
+                        vecji = box->minimumVector(i.r(), j.r());
                         r = vecji.magAndNormalise();
                         vecji *= bond.force(r);
 
-                        fIntra[i->arrayIndex()] -= vecji;
-                        fIntra[j->arrayIndex()] += vecji;
+                        fIntra[i.arrayIndex()] -= vecji;
+                        fIntra[j.arrayIndex()] += vecji;
                     }
 
                     // Angle forces
@@ -191,8 +191,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         auto k = molN->atom(angle.indexK());
 
                         // Get vectors 'j-i' and 'j-k'
-                        vecji = box->minimumVector(j->r(), i->r());
-                        vecjk = box->minimumVector(j->r(), k->r());
+                        vecji = box->minimumVector(j.r(), i.r());
+                        vecjk = box->minimumVector(j.r(), k.r());
                         magji = vecji.magAndNormalise();
                         magjk = vecjk.magAndNormalise();
 
@@ -204,9 +204,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         forcek *= force / magjk;
 
                         // Store forces
-                        fIntra[i->arrayIndex()] += forcei;
-                        fIntra[j->arrayIndex()] -= forcei + forcek;
-                        fIntra[k->arrayIndex()] += forcek;
+                        fIntra[i.arrayIndex()] += forcei;
+                        fIntra[j.arrayIndex()] -= forcei + forcek;
+                        fIntra[k.arrayIndex()] += forcek;
                     }
 
                     // Torsion forces
@@ -219,20 +219,20 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         auto l = molN->atom(torsion.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(i->r(), j->r());
-                        vecjk = box->minimumVector(k->r(), j->r());
-                        veckl = box->minimumVector(l->r(), k->r());
+                        vecji = box->minimumVector(i.r(), j.r());
+                        vecjk = box->minimumVector(k.r(), j.r());
+                        veckl = box->minimumVector(l.r(), k.r());
 
                         // Calculate torsion force parameters
                         auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
                         du_dphi = torsion.force(tp.phi_ * DEGRAD);
 
                         // Sum forces on Atoms
-                        fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                        fIntra[i.arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
                                                     du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
                                                     du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
-                        fIntra[j->arrayIndex()].add(
+                        fIntra[j.arrayIndex()].add(
                             du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
                                        tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
                             du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
@@ -240,7 +240,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
                                        tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
 
-                        fIntra[k->arrayIndex()].add(
+                        fIntra[k.arrayIndex()].add(
                             du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
                                        tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
                             du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
@@ -248,7 +248,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
                                        tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
-                        fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                        fIntra[l.arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
                                                     du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
                                                     du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                     }
@@ -263,20 +263,20 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         auto l = molN->atom(imp.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(i->r(), j->r());
-                        vecjk = box->minimumVector(k->r(), j->r());
-                        veckl = box->minimumVector(l->r(), k->r());
+                        vecji = box->minimumVector(i.r(), j.r());
+                        vecjk = box->minimumVector(k.r(), j.r());
+                        veckl = box->minimumVector(l.r(), k.r());
 
                         // Calculate improper force parameters
                         auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
                         du_dphi = imp.force(tp.phi_ * DEGRAD);
 
                         // Sum forces on Atoms
-                        fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                        fIntra[i.arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
                                                     du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
                                                     du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
-                        fIntra[j->arrayIndex()].add(
+                        fIntra[j.arrayIndex()].add(
                             du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
                                        tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
                             du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
@@ -284,7 +284,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
                                        tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
 
-                        fIntra[k->arrayIndex()].add(
+                        fIntra[k.arrayIndex()].add(
                             du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
                                        tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
                             du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
@@ -292,7 +292,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
                                        tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
-                        fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                        fIntra[l.arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
                                                     du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
                                                     du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                     }

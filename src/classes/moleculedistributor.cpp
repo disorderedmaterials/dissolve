@@ -26,7 +26,7 @@ std::vector<const Cell *> MoleculeDistributor::cellsToBeModifiedForObject(int ob
     std::vector<const Cell *> cells;
     for (auto i = 0; i < molecule->nAtoms(); ++i)
     {
-        auto *cell = molecule->atom(i)->cell();
+        auto *cell = molecule->atom(i).cell();
 
         // Is it already in the list?
         if (std::find(cells.begin(), cells.end(), cell) == cells.end())

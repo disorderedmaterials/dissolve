@@ -15,6 +15,9 @@ void Configuration::updateCellContents()
 }
 
 // Update Cell location of specified Atom
+void Configuration::updateCellLocation(Atom &i) { updateCellLocation(&i); }
+
+// Update Cell location of specified Atom
 void Configuration::updateCellLocation(Atom *i)
 {
     // Fold Atom coordinates into Box
