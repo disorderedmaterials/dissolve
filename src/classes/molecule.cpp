@@ -35,7 +35,7 @@ const Species *Molecule::species() const { return species_; }
 // Add Atom to Molecule
 void Molecule::addAtom(Atom *i)
 {
-    atoms_.push_back(i->arrayIndex());
+    atoms_.push_back(i->arrayIndex() - 1);
 
     if (i->molecule() != nullptr)
         Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
