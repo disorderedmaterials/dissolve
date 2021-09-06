@@ -5,6 +5,8 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
+CellArray::CellArray(std::vector<Atom> *source) : source_(source) {}
+
 /*
  * Cell Data
  */
@@ -338,7 +340,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             fracCentre.z = fractionalCellSize_.z * 0.5;
             for (auto z = 0; z < divisions_.z; ++z)
             {
-                cells_[count] = Cell(count, Vec3<int>(x, y, z), box_->getReal(fracCentre));
+                cells_[count] = Cell(source_, count, Vec3<int>(x, y, z), box_->getReal(fracCentre));
                 fracCentre.z += fractionalCellSize_.z;
                 ++count;
             }

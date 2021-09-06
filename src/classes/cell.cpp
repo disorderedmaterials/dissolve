@@ -6,8 +6,8 @@
 #include "classes/box.h"
 #include <algorithm>
 
-Cell::Cell(int index, Vec3<int> gridReference, Vec3<double> centre)
-    : gridReference_(gridReference), index_(index), centre_(centre)
+Cell::Cell(std::vector<Atom> *source, int index, Vec3<int> gridReference, Vec3<double> centre)
+    : gridReference_(gridReference), index_(index), centre_(centre), source_(source)
 {
 }
 
@@ -43,8 +43,8 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  */
 
 // Return array of contained Atoms
-std::vector<Atom *> &Cell::atoms() { return atoms_; }
-const std::vector<Atom *> &Cell::atoms() const { return atoms_; }
+const PackedRange<Atom> Cell::atoms() { return PackedRange<Atom>(*source_, atoms_); }
+const ConstPackedRange<Atom> Cell::atoms() const { return ConstPackedRange<Atom>(*source_, atoms_); }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
@@ -53,7 +53,7 @@ int Cell::nAtoms() const { return atoms_.size(); }
 void Cell::addAtom(Atom *atom)
 {
     assert(atom);
-    atoms_.push_back(atom);
+    atoms_.push_back(atom->arrayIndex() - 1);
 
     if (atom->cell())
         Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
@@ -64,8 +64,8 @@ void Cell::addAtom(Atom *atom)
 // Remove Atom from Cell
 void Cell::removeAtom(Atom *atom)
 {
-    auto it = std::find(atoms_.begin(), atoms_.end(), atom);
+    auto it = std::find(atoms_.begin(), atoms_.end(), atom->arrayIndex() - 1);
     assert(it != atoms_.end());
-    (*it)->setCell(nullptr);
+    (*source_)[*it].setCell(nullptr);
     atoms_.erase(it);
 }

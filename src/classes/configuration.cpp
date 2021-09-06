@@ -10,7 +10,7 @@
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
-Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "EndGenerator")
+Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "EndGenerator"), cells_(&atoms_)
 {
     box_ = nullptr;
 

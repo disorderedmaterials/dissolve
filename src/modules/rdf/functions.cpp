@@ -197,14 +197,14 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         // quicker than working out if we need to given the absence of a 2D look-up array
         for (auto &i : atomsI)
         {
-            auto typeI = i->localTypeIndex();
-            auto &rI = i->r();
+            auto typeI = i.localTypeIndex();
+            auto &rI = i.r();
 
             for (auto &j : atomsJ)
             {
-                auto &rJ = j->r();
+                auto &rJ = j.r();
                 auto distance = box->minimumDistance(rJ, rI);
-                histograms[{typeI, j->localTypeIndex()}].bin(distance);
+                histograms[{typeI, j.localTypeIndex()}].bin(distance);
             }
         }
     };
@@ -226,8 +226,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
             if (idx == jdx)
                 return;
             // No need to perform MIM since we're in the same cell
-            double distance = (i->r() - j->r()).magnitude();
-            partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+            double distance = (i.r() - j.r()).magnitude();
+            partialSet.fullHistogram(i.localTypeIndex(), j.localTypeIndex()).bin(distance);
         });
     }
     return true;

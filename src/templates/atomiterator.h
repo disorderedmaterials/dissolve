@@ -1,3 +1,4 @@
+#pragma once
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -38,8 +39,13 @@ template <typename T> class PackedIterator : public std::iterator<std::random_ac
 	index_ += offset;
 	return *this;
     }
-    int operator-(const PackedIterator<T> &other) { return index_ - other.index_; }
+    PackedIterator<T> operator+(const long unsigned int offset) const
+    {
+	return PackedIterator<T>(values_, indices_, index_ + offset);
+    }
+    int operator-(const PackedIterator<T> &other) const { return index_ - other.index_; }
     bool operator==(const PackedIterator<T> &other) const { return index_ == other.index_; }
+    bool operator<(const PackedIterator<T> &other) const { return index_ < other.index_; }
     bool operator!=(const PackedIterator<T> &other) const { return index_ != other.index_; }
 };
 
@@ -58,6 +64,7 @@ template <typename T> class ConstPackedIterator
     }
 
     const T &operator*() { return values_[indices_[index_]]; }
+    const T *operator->() { return &values_[indices_[index_]]; }
     ConstPackedIterator<T> operator++(int)
     {
 	auto copy = ConstPackedIterator(*this);
@@ -74,8 +81,13 @@ template <typename T> class ConstPackedIterator
 	index_--;
 	return *this;
     }
-    int operator-(const ConstPackedIterator<T> &other) { return index_ - other.index_; }
+    ConstPackedIterator<T> operator+(const long unsigned int offset) const
+    {
+	return ConstPackedIterator<T>(values_, indices_, index_ + offset);
+    }
+    int operator-(const ConstPackedIterator<T> &other) const { return index_ - other.index_; }
     bool operator==(const ConstPackedIterator<T> &other) const { return index_ == other.index_; }
+    bool operator<(const ConstPackedIterator<T> &other) const { return index_ < other.index_; }
     bool operator!=(const ConstPackedIterator<T> &other) const { return index_ != other.index_; }
 };
 
@@ -89,6 +101,7 @@ template <typename T> class PackedRange
     PackedRange(std::vector<T> &values, std::vector<unsigned int> &indices) : values_(values), indices_(indices) {}
     PackedIterator<T> begin() const { return PackedIterator<T>(values_, indices_, 0); }
     PackedIterator<T> end() const { return PackedIterator<T>(values_, indices_, indices_.size()); }
+    unsigned int size() const { return indices_.size(); }
 };
 
 template <typename T> class ConstPackedRange
@@ -104,4 +117,5 @@ template <typename T> class ConstPackedRange
     }
     ConstPackedIterator<T> begin() const { return ConstPackedIterator<T>(values_, indices_, 0); }
     ConstPackedIterator<T> end() const { return ConstPackedIterator<T>(values_, indices_, indices_.size()); }
+    unsigned int size() const { return indices_.size(); }
 };

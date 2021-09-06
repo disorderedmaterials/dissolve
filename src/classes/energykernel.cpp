@@ -66,18 +66,15 @@ double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular)
     auto totalEnergy = 0.0;
     auto &atoms = cell.atoms();
 
-    for (auto i = 0; i < atoms.size(); ++i)
+    for (auto ii = atoms.begin(); ii != atoms.end(); ++ii)
     {
-        auto &ii = atoms[i];
         auto molI = ii->molecule();
         auto &rI = ii->r();
 
         // Straight loop over other cell atoms
-        for (auto j = i + 1; j < atoms.size(); ++j)
+        for (auto jj = ii + 1; jj < atoms.end(); ++jj)
         {
             // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-            auto &jj = atoms[j];
-
             auto rSq = (rI - jj->r()).magnitudeSq();
             if (rSq > cutoffDistanceSquared_)
                 continue;
@@ -87,7 +84,7 @@ double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular)
                 totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
             else if (includeIntraMolecular)
             {
-                auto scale = ii->scaling(jj);
+                auto scale = ii->scaling(&*jj);
                 if (scale > 1.0e-3)
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
             }
@@ -109,25 +106,25 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
     {
         for (auto &ii : centralAtoms)
         {
-            auto molI = ii->molecule();
-            auto &rI = ii->r();
+            auto molI = ii.molecule();
+            auto &rI = ii.r();
 
             // Straight loop over other cell atoms
             for (const auto &jj : otherAtoms)
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                auto rSq = box_->minimumDistanceSquared(rI, jj->r());
+                auto rSq = box_->minimumDistanceSquared(rI, jj.r());
                 if (rSq > cutoffDistanceSquared_)
                     continue;
 
                 // Check for atoms in the same species
-                if (molI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+                if (molI != jj.molecule())
+                    totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
-                    auto scale = ii->scaling(jj);
+                    auto scale = ii.scaling(&jj);
                     if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
+                        totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
                 }
             }
         }
@@ -136,25 +133,25 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
     {
         for (auto &ii : centralAtoms)
         {
-            auto &molI = ii->molecule();
-            auto &rI = ii->r();
+            auto &molI = ii.molecule();
+            auto &rI = ii.r();
 
             // Straight loop over other cell atoms
             for (const auto &jj : otherAtoms)
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                auto rSq = (rI - jj->r()).magnitudeSq();
+                auto rSq = (rI - jj.r()).magnitudeSq();
                 if (rSq > cutoffDistanceSquared_)
                     continue;
 
                 // Check for atoms in the same molecule
-                if (molI != jj->molecule())
-                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+                if (molI != jj.molecule())
+                    totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
-                    auto scale = ii->scaling(jj);
+                    auto scale = ii.scaling(&jj);
                     if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
+                        totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
                 }
             }
         }
@@ -174,9 +171,7 @@ double EnergyKernel::energy(const Atom &i)
             auto mimRequired = neighbour.requiresMIM_;
             auto &nbrCellAtoms = neighbour.neighbour_.atoms();
             return std::accumulate(
-                nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0, [&i, mimRequired, this](const auto innerAcc, const auto *j) {
-                    auto &jj = *j;
-
+                nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0, [&i, mimRequired, this](const auto innerAcc, const auto &jj) {
                     // Calculate rSquared distance between atoms, and check it against
                     // the stored cutoff distance
                     auto rSq = mimRequired ? box_->minimumDistanceSquared(i.r(), jj.r()) : (i.r() - jj.r()).magnitudeSq();
@@ -217,9 +212,7 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
                             auto mimRequired = neighbour.requiresMIM_;
                             auto &nbrCellAtoms = neighbour.neighbour_.atoms();
                             return acc + std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
-                                                         [&ii, mimRequired, this](const auto innerAcc, const auto *j) {
-                                                             auto &jj = *j;
-
+                                                         [&ii, mimRequired, this](const auto innerAcc, const auto &jj) {
                                                              // Calculate rSquared distance between atoms, and check it against
                                                              // the stored cutoff distance
                                                              auto rSq = mimRequired

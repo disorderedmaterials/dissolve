@@ -91,9 +91,9 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
     if (applyMim)
     {
         auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
-        for (auto indexI = begin; indexI < end; ++indexI)
+        for (auto ii = begin; ii < end; ++ii)
         {
-            auto &ii = *indexI;
+            // auto &ii = *indexI;
             molI = ii->molecule();
             rI = ii->r();
 
@@ -101,17 +101,17 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
             for (auto &jj : otherAtoms)
             {
                 // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
+                if (excludeIgeJ && (ii->arrayIndex() >= jj.arrayIndex()))
                     continue;
 
                 // Check for atoms in the same Molecule
-                if (molI != jj->molecule())
-                    forcesWithMim(*ii, *jj, f);
+                if (molI != jj.molecule())
+                    forcesWithMim(*ii, jj, f);
                 else
                 {
-                    double scale = ii->scaling(jj);
+                    double scale = ii->scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(*ii, *jj, f, scale);
+                        forcesWithMim(*ii, jj, f, scale);
                 }
             }
         }
@@ -119,9 +119,8 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
     else
     {
         auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), nChunks, offset);
-        for (auto indexI = begin; indexI < end; ++indexI)
+        for (auto ii = begin; ii < end; ++ii)
         {
-            auto &ii = *indexI;
             molI = ii->molecule();
             rI = ii->r();
 
@@ -129,17 +128,17 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
             for (auto &jj : otherAtoms)
             {
                 // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
+                if (excludeIgeJ && (ii->arrayIndex() >= jj.arrayIndex()))
                     continue;
 
                 // Check for atoms in the same molecule
-                if (molI != jj->molecule())
-                    forcesWithoutMim(*ii, *jj, f);
+                if (molI != jj.molecule())
+                    forcesWithoutMim(*ii, jj, f);
                 else
                 {
-                    double scale = ii->scaling(jj);
+                    double scale = ii->scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(*ii, *jj, f, scale);
+                        forcesWithoutMim(*ii, jj, f, scale);
                 }
             }
         }
@@ -176,34 +175,34 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
             for (auto &jj : otherAtoms)
             {
                 // Check for same atom
-                if (&i == jj)
+                if (&i == &jj)
                     continue;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, f);
+                        forcesWithMim(i, jj, f);
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
             for (const auto &jj : otherAtoms)
             {
                 // Check for i >= jj
-                if (i.arrayIndex() >= jj->arrayIndex())
+                if (i.arrayIndex() >= jj.arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, f, scale);
+                        forcesWithMim(i, jj, f, scale);
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
@@ -215,17 +214,17 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 auto &jj = *indexJ;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithMim(i, jj, f);
                 else
                 {
                     // Check for i >= jj
-                    if (i.arrayIndex() >= jj->arrayIndex())
+                    if (i.arrayIndex() >= jj.arrayIndex())
                         continue;
 
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, f, scale);
+                        forcesWithMim(i, jj, f, scale);
                 }
             }
         }
@@ -238,13 +237,13 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 auto &jj = *indexJ;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithMim(i, *jj, f, scale);
+                        forcesWithMim(i, jj, f, scale);
                 }
             }
         }
@@ -260,17 +259,17 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 auto &jj = *indexJ;
 
                 // Check for same atom
-                if (&i == jj)
+                if (&i == &jj)
                     continue;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithoutMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, f, scale);
+                        forcesWithoutMim(i, jj, f, scale);
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
@@ -280,17 +279,17 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 auto &jj = *indexJ;
 
                 // Check for i >= jj
-                if (i.arrayIndex() >= jj->arrayIndex())
+                if (i.arrayIndex() >= jj.arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithoutMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, f, scale);
+                        forcesWithoutMim(i, jj, f, scale);
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
@@ -300,17 +299,17 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 auto &jj = *indexJ;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithoutMim(i, jj, f);
                 else
                 {
                     // Pointer comparison for i >= jj
-                    if (&i >= jj)
+                    if (&i >= &jj)
                         continue;
 
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, f, scale);
+                        forcesWithoutMim(i, jj, f, scale);
                 }
             }
         else
@@ -320,13 +319,13 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 auto &jj = *indexJ;
 
                 // Check for atoms in the same species
-                if (moleculeI != jj->molecule())
-                    forcesWithoutMim(i, *jj, f);
+                if (moleculeI != jj.molecule())
+                    forcesWithoutMim(i, jj, f);
                 else
                 {
-                    double scale = i.scaling(jj);
+                    double scale = i.scaling(&jj);
                     if (scale > 1.0e-3)
-                        forcesWithoutMim(i, *jj, f, scale);
+                        forcesWithoutMim(i, jj, f, scale);
                 }
             }
     }

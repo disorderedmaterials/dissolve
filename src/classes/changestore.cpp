@@ -34,7 +34,7 @@ void ChangeStore::add(const std::shared_ptr<Molecule> &mol)
 void ChangeStore::add(Cell *cell)
 {
     for (auto &atom : cell->atoms())
-        add(atom);
+        add(&atom);
 }
 
 /*

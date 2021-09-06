@@ -33,6 +33,7 @@ class CellArray
     const Box *box_{nullptr};
 
     public:
+    CellArray(std::vector<Atom> *source);
     // Return number of Cells for box
     int nCells() const;
     // Return cell divisions along each axis
@@ -65,6 +66,7 @@ class CellArray
     std::vector<CellNeighbourPair> neighbourPairs_;
     // Neighbour array per Cell
     std::vector<std::vector<CellNeighbour>> neighbours_;
+    std::vector<Atom> *source_;
 
     private:
     // Add neighbour to cell vector

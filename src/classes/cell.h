@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/atom.h"
+#include "templates/atomiterator.h"
 #include "templates/vector3.h"
 #include <set>
 #include <vector>
@@ -18,7 +19,8 @@ class CellNeighbour;
 class Cell
 {
     public:
-    Cell(int index = 0, Vec3<int> gridReference = Vec3<int>(), Vec3<double> centre = Vec3<double>());
+    Cell(std::vector<Atom> *source = nullptr, int index = 0, Vec3<int> gridReference = Vec3<int>(),
+	 Vec3<double> centre = Vec3<double>());
     ~Cell() = default;
 
     /*
@@ -51,12 +53,13 @@ class Cell
      */
     private:
     // Array of Atoms contained in this Cell
-    std::vector<Atom *> atoms_;
+    std::vector<Atom> *source_;
+    std::vector<unsigned int> atoms_;
 
     public:
     // Return array of contained Atoms
-    std::vector<Atom *> &atoms();
-    const std::vector<Atom *> &atoms() const;
+    const PackedRange<Atom> atoms();
+    const ConstPackedRange<Atom> atoms() const;
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell

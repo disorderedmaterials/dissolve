@@ -34,7 +34,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     const auto &cellArray = cfg->cells();
     // Create a ForceKernel
     const auto kernel = ForceKernel(procPool, cfg->box(), cfg->cells(), potentialMap);
-    auto combinableForces = createCombinableForces(f);
+    // auto combinableForces = createCombinableForces(f);
 
     // Set start/stride for parallel loop
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
@@ -43,9 +43,9 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
 
     // algorithm parameters
-    auto unaryOp = [&combinableForces, &kernel, &cellArray, strategy](const int id) {
+    auto unaryOp = [&f, &kernel, &cellArray, strategy](const int id) {
         auto *cellI = cellArray.cell(id);
-        auto &fLocal = combinableForces.local();
+        auto &fLocal = f; // combinableForces.local();
         // This cell with itself
         kernel.forces(cellI, cellI, false, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
         // Interatomic interactions between atoms in this cell and its neighbours
@@ -54,7 +54,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     // Execute lambda operator for each cell
     dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
                        unaryOp);
-    combinableForces.finalize();
+    // combinableForces.finalize();
 }
 
 // Calculate interatomic forces within the specified Species
@@ -148,7 +148,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, cons
                                         std::vector<Vec3<double>> &f)
 {
     // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
-    CellArray dummyCellArray;
+    CellArray dummyCellArray(nullptr); // FIXME
     ForceKernel kernel(procPool, sp->box(), dummyCellArray, potentialMap);
 
     // Loop over bonds

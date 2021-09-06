@@ -411,12 +411,12 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(const Cell *cell, 
     for (auto &atom : cell->atoms())
     {
         // Get the Atom's Molecule pointer
-        mol = atom->molecule();
+        mol = atom.molecule();
 
         if (DND)
             Messenger::print(
                 "  <> Molecule index is {} (from Atom index {}) and this molecule {} already in our list..\n",
-                mol->arrayIndex(), atom->arrayIndex(),
+                mol->arrayIndex(), atom.arrayIndex(),
                 std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end() ? "IS" : "IS NOT");
 
         // Have we already checked this Molecule?
