@@ -4,8 +4,9 @@
 #include "classes/molecule.h"
 #include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/species.h"
 
-Molecule::Molecule() { species_ = nullptr; }
+Molecule::Molecule(std::vector<Atom> *source) : species_(nullptr), source_(source) {}
 
 Molecule::~Molecule() = default;
 

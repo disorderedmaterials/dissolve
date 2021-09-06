@@ -93,7 +93,7 @@ std::shared_ptr<Molecule>
 Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
-    std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+    std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>(&atoms_);
     newMolecule->setArrayIndex(molecules_.size());
     molecules_.push_back(newMolecule);
     newMolecule->setSpecies(sp);

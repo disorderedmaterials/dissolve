@@ -19,7 +19,7 @@ class Species;
 class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_from_this<Molecule>
 {
     public:
-    Molecule();
+    Molecule(std::vector<Atom> *source);
     ~Molecule();
 
     /*
