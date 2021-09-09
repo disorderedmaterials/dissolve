@@ -227,14 +227,14 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     std::vector<int> indices;
     for (const auto *mol : targetMolecules)
         for (const auto &i : mol->atoms())
-            f[i.arrayIndex()] = tempf[i.arrayIndex()];
+            f[i.arrayIndex()-1] = tempf[i.arrayIndex()-1];
 }
 
 // Calculate total forces within the specified Species
-void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
+void ForcesModule::totalForces(ProcessPool &procPool, std::vector<Atom> *source, Species *sp, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f)
 {
     interAtomicForces(procPool, sp, potentialMap, f);
 
-    intraMolecularForces(procPool, sp, potentialMap, f);
+    intraMolecularForces(procPool, source, sp, potentialMap, f);
 }
