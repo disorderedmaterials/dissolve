@@ -33,8 +33,8 @@ void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f,
     auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
-    f[i.arrayIndex()] += force;
-    f[j.arrayIndex()] -= force;
+    f[i.arrayIndex() - 1] += force;
+    f[j.arrayIndex() - 1] -= force;
 }
 
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
@@ -48,8 +48,8 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, do
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
 
-    f[i.arrayIndex()] += force;
-    f[j.arrayIndex()] -= force;
+    f[i.arrayIndex()-1] += force;
+    f[j.arrayIndex()-1] -= force;
 }
 
 /*
@@ -416,8 +416,8 @@ void ForceKernel::forces(const SpeciesBond &bond, const Atom &i, const Atom &j, 
     vecji *= bond.force(distance);
 
     // Calculate forces
-    f[i.arrayIndex()] -= vecji;
-    f[j.arrayIndex()] += vecji;
+    f[i.arrayIndex() - 1] -= vecji;
+    f[j.arrayIndex() - 1] += vecji;
 }
 
 // Calculate SpeciesBond forces for specified Atom only
@@ -433,9 +433,9 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesBond &bond, const At
 
     // Calculate forces
     if (&onlyThis == &i)
-        f[onlyThis.arrayIndex()] -= vecji;
+        f[onlyThis.arrayIndex() - 1] -= vecji;
     else
-        f[onlyThis.arrayIndex()] += vecji;
+        f[onlyThis.arrayIndex() - 1] += vecji;
 }
 
 // Calculate SpeciesBond forces
@@ -483,9 +483,9 @@ void ForceKernel::forces(const SpeciesAngle &angle, const Atom &i, const Atom &j
     angleParameters.dfk_dtheta_ *= force;
 
     // Store forces
-    f[i.arrayIndex()] += angleParameters.dfi_dtheta_;
-    f[j.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
-    f[k.arrayIndex()] += angleParameters.dfk_dtheta_;
+    f[i.arrayIndex() - 1] += angleParameters.dfi_dtheta_;
+    f[j.arrayIndex() - 1] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
+    f[k.arrayIndex() - 1] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces for specified Atom only
@@ -502,11 +502,11 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesAngle &angle, const 
 
     // Store forces
     if (&onlyThis == &i)
-        f[onlyThis.arrayIndex()] += angleParameters.dfi_dtheta_;
+        f[onlyThis.arrayIndex() - 1] += angleParameters.dfi_dtheta_;
     else if (&onlyThis == &j)
-        f[onlyThis.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
+        f[onlyThis.arrayIndex() - 1] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
     else
-        f[onlyThis.arrayIndex()] += angleParameters.dfk_dtheta_;
+        f[onlyThis.arrayIndex() - 1] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces
