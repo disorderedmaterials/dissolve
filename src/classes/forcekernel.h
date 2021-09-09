@@ -23,7 +23,7 @@ class SpeciesTorsion;
 class ForceKernel
 {
     public:
-    ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+    ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap,
                 std::optional<double> energyCutoff = std::nullopt);
     ~ForceKernel() = default;
 
@@ -36,8 +36,6 @@ class ForceKernel
     protected:
     // Source Box (from Configuration)
     const Box *box_;
-    // Source CellArray (from Configuration)
-    const CellArray &cellArray_;
     // Potential map to use
     const PotentialMap &potentialMap_;
     // Squared cutoff distance to use in calculation
@@ -62,11 +60,11 @@ class ForceKernel
     void forces(const Cell *cell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
                 ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between Cell and its neighbours
-    void forces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
+    void forces(const CellArray &cellArray, const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between Atom and Cell
     void forces(const Atom &i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between atom and world
-    void forces(const Atom &i, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
+    void forces(const CellArray &cellArray, const Atom &i, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
 
     struct TorsionParameters
     {

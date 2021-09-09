@@ -13,7 +13,7 @@ template <ProblemType problem, Population population> ForceKernel createForceKer
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     auto *cfg = problemDef.cfg_;
-    ForceKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap);
     return kernel;
 }
 
@@ -27,7 +27,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     auto *cellI = cellArray.cell(1);
     for (auto _ : state)
     {
-        forceKernel.forces(cellI, true, ProcessPool::PoolStrategy, forces);
+        forceKernel.forces(cellArray, cellI, true, ProcessPool::PoolStrategy, forces);
     }
 }
 

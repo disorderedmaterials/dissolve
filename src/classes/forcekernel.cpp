@@ -11,9 +11,9 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap,
                          std::optional<double> energyCutoff)
-    : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
+    : box_(box), potentialMap_(potentialMap), processPool_(procPool)
 {
     cutoffDistanceSquared_ =
         energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
@@ -146,9 +146,9 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
 }
 
 // Calculate forces between Cell and its neighbours
-void ForceKernel::forces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
+void ForceKernel::forces(const CellArray &cellArray, const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
-    auto &neighbours = cellArray_.neighbours(*cell);
+    auto &neighbours = cellArray.neighbours(*cell);
     for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
         forces(cell, &it->neighbour_, it->requiresMIM_, excludeIgeJ, strategy, f);
 }
@@ -332,7 +332,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
 }
 
 // Calculate forces between atom and world
-void ForceKernel::forces(const Atom &i, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
+void ForceKernel::forces(const CellArray &cellArray, const Atom &i, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
     Cell *cellI = i.cell();
 
@@ -340,7 +340,7 @@ void ForceKernel::forces(const Atom &i, ProcessPool::DivisionStrategy strategy, 
     forces(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, f);
 
     // This Atom with other Atoms in neighbouring Cells
-    auto &neighbours = cellArray_.neighbours(*cellI);
+    auto &neighbours = cellArray.neighbours(*cellI);
     for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
     {
         if (it->requiresMIM_)
