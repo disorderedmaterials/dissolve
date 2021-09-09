@@ -117,7 +117,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     targetMolecules.push_back(mol.get());
                     for (const auto &i : mol->atoms())
-                        free[i.arrayIndex()] = 1;
+                        free[i.arrayIndex()-1] = 1;
                 }
 
         /*
