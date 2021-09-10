@@ -308,7 +308,7 @@ target_link_libraries(
          ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
   PRIVATE # External libs
           antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
-  INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11
+  INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11
 )
 
 # Build GUI target executables
@@ -340,6 +340,6 @@ if(GUI)
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
-    INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11 CONAN_PKG::pugixml
+    INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11 CONAN_PKG::pugixml
   )
 endif(GUI)
