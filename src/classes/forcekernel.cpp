@@ -582,10 +582,10 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Ato
     const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
-    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
-    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
-    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
+    addTorsionForceI(du_dphi, i.arrayIndex()-1, torsionParameters, f);
+    addTorsionForceJ(du_dphi, j.arrayIndex()-1, torsionParameters, f);
+    addTorsionForceK(du_dphi, k.arrayIndex()-1, torsionParameters, f);
+    addTorsionForceL(du_dphi, l.arrayIndex()-1, torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces for specified Atom only
@@ -601,13 +601,13 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesTorsion &torsion, co
 
     // Sum forces for specified atom
     if (&onlyThis == &i)
-        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceI(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
     else if (&onlyThis == &j)
-        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceJ(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
     else if (&onlyThis == &k)
-        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceK(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
     else
-        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceL(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces
@@ -639,10 +639,10 @@ void ForceKernel::forces(const SpeciesImproper &improper, const Atom &i, const A
     const auto du_dphi = improper.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
-    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
-    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
-    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
+    addTorsionForceI(du_dphi, i.arrayIndex()-1, torsionParameters, f);
+    addTorsionForceJ(du_dphi, j.arrayIndex()-1, torsionParameters, f);
+    addTorsionForceK(du_dphi, k.arrayIndex()-1, torsionParameters, f);
+    addTorsionForceL(du_dphi, l.arrayIndex()-1, torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces for specified Atom only
@@ -658,13 +658,13 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesImproper &imp, const
 
     // Sum forces for specified atom
     if (&onlyThis == &i)
-        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceI(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
     else if (&onlyThis == &j)
-        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceJ(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
     else if (&onlyThis == &k)
-        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceK(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
     else
-        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
+        addTorsionForceL(du_dphi, onlyThis.arrayIndex()-1, torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces
@@ -678,8 +678,8 @@ void ForceKernel::forces(const SpeciesImproper &imp, ForceVector &f) const
     const auto du_dphi = imp.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, imp.i()->index(), torsionParameters, f);
-    addTorsionForceJ(du_dphi, imp.j()->index(), torsionParameters, f);
-    addTorsionForceK(du_dphi, imp.k()->index(), torsionParameters, f);
-    addTorsionForceL(du_dphi, imp.l()->index(), torsionParameters, f);
+    addTorsionForceI(du_dphi, imp.i()->index()-1, torsionParameters, f);
+    addTorsionForceJ(du_dphi, imp.j()->index()-1, torsionParameters, f);
+    addTorsionForceK(du_dphi, imp.k()->index()-1, torsionParameters, f);
+    addTorsionForceL(du_dphi, imp.l()->index()-1, torsionParameters, f);
 }
