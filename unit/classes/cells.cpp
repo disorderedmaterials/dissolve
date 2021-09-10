@@ -62,7 +62,7 @@ TEST(CellsTest, Basic)
     for (auto n = 0; n < 267; ++n)
         cfg->addMolecule(water);
     for (auto &&[i, r] : zip(cfg->atoms(), refCoords))
-        i->setCoordinates(r);
+        i.setCoordinates(r);
     cfg->updateCellContents();
 
     // Prepare the main simulation, and re-generate our specific Ar-OW parameters
@@ -87,7 +87,7 @@ TEST(CellsTest, Basic)
 
         // Remove atoms from cells
         for (auto &i : cfg->atoms())
-            i->setCell(nullptr);
+            i.setCell(nullptr);
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
@@ -97,7 +97,7 @@ TEST(CellsTest, Basic)
         EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->cells(), false, ProcessPool::PoolStrategy), 1.0e-4);
 
         // Calculate atomic energy from the Ar
-        EXPECT_NEAR(refEnergy, energyKernel.energy(*cfg->atom(0)), 1.0e-4);
+        EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->atom(0)), 1.0e-4);
     }
 }
 
