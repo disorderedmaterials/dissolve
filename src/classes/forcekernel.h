@@ -60,7 +60,8 @@ class ForceKernel
     void forces(const Cell *cell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
                 ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between Cell and its neighbours
-    void forces(const CellArray &cellArray, const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
+    void forces(const CellArray &cellArray, const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy,
+                ForceVector &f) const;
     // Calculate forces between Atom and Cell
     void forces(const Atom &i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between atom and world

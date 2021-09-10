@@ -20,7 +20,7 @@ class Cell
 {
     public:
     Cell(std::vector<Atom> *source = nullptr, int index = 0, Vec3<int> gridReference = Vec3<int>(),
-	 Vec3<double> centre = Vec3<double>());
+         Vec3<double> centre = Vec3<double>());
     ~Cell() = default;
 
     /*
