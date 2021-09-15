@@ -12,7 +12,7 @@
 // Copy coordinates from supplied Configuration into reference arrays
 template <> void GeometryOptimisationModule::setReferenceCoordinates(Configuration *cfg)
 {
-    std::transform(cfg->atoms().begin(), cfg->atoms().end(), rRef_.begin(), [](const auto i) { return i->r(); });
+    std::transform(cfg->atoms().begin(), cfg->atoms().end(), rRef_.begin(), [](const auto i) { return i.r(); });
 }
 
 // Copy coordinates from supplied Species into reference arrays
@@ -25,7 +25,7 @@ template <> void GeometryOptimisationModule::setReferenceCoordinates(Species *sp
 template <> void GeometryOptimisationModule::revertToReferenceCoordinates(Configuration *cfg)
 {
     for (auto &&[ref, i] : zip(rRef_, cfg->atoms()))
-        i->setCoordinates(ref);
+        i.setCoordinates(ref);
 }
 
 // Revert Species to reference coordinates
@@ -66,7 +66,7 @@ double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, 
                                                          const PotentialMap &potentialMap, double delta)
 {
     for (auto &&[i, r, f] : zip(cfg->atoms(), rRef_, f_))
-        i->setCoordinates(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta);
+        i.setCoordinates(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta);
     cfg->updateCellContents();
 
     return EnergyModule::totalEnergy(procPool, cfg, potentialMap);

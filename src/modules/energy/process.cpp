@@ -86,7 +86,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0, correctSelfEnergy = 0.0;
 
             double r, angle;
-            std::shared_ptr<Atom> i, j;
+            Atom *i, *j;
             Vec3<double> vecji, vecjk, veckl;
             std::shared_ptr<Molecule> molN, molM;
             const auto *box = cfg->box();
@@ -115,7 +115,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             continue;
 
                         // Get intramolecular scaling of atom pair
-                        scale = i->scaling(j.get());
+                        scale = i->scaling(j);
                         if (scale < 1.0e-3)
                             continue;
 
