@@ -13,7 +13,7 @@
 Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
     box_ = nullptr;
-    atoms_.reserve(100000);
+    atoms_.reserve(1000000);
 
     clear();
 }
