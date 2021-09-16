@@ -79,10 +79,10 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 
     // Loop over Atoms and construct arrays
     auto &atoms = cfg->atoms();
-    for (n = 0; n < cfg->nAtoms(); ++n)
+    for( auto &atom : cfg->atoms())
     {
-        m = atoms[n].localTypeIndex();
-        r[m][nr[m]++] = atoms[n].r();
+        m = atom.localTypeIndex();
+        r[m][nr[m]++] = atom.r();
     }
 
     Messenger::printVerbose("Ready..\n");

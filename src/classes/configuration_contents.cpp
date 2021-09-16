@@ -194,10 +194,10 @@ std::vector<Atom> &Configuration::atoms() { return atoms_; }
 const std::vector<Atom> &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
-Atom* Configuration::atom(int n)
+Atom& Configuration::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
-    return &atoms_[n];
+    return atoms_[n];
 }
 
 // Scale contents of the box by the specified factors along each axis

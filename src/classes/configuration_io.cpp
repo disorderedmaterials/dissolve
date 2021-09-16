@@ -134,7 +134,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
 
-        atom(n)->setCoordinates(parser.arg3d(1));
+        atom(n).setCoordinates(parser.arg3d(1));
     }
 
     // Finalise used AtomType list

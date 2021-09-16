@@ -141,7 +141,7 @@ class Configuration
     std::vector<Atom> &atoms();
     const std::vector<Atom> &atoms() const;
     // Return nth Atom
-    Atom* atom(int n);
+    Atom& atom(int n);
     // Scale contents of the box by the specified factors along each axis
     void scaleContents(Vec3<double> scaleFactors);
 
