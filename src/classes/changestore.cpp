@@ -26,8 +26,8 @@ void ChangeStore::add(Atom *i)
 // Add Molecule to watch
 void ChangeStore::add(const std::shared_ptr<Molecule> &mol)
 {
-    for (auto n = 0; n < mol->nAtoms(); ++n)
-        add(mol->atom(n));
+  for (auto *atom : mol->atoms())
+	add(atom);
 }
 
 // Add Cell to watch
