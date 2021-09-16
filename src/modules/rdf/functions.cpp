@@ -78,7 +78,6 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     }
 
     // Loop over Atoms and construct arrays
-    auto &atoms = cfg->atoms();
     for( auto &atom : cfg->atoms())
     {
         m = atom.localTypeIndex();

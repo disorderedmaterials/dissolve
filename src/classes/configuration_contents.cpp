@@ -124,7 +124,7 @@ void Configuration::removeMolecules(const Species *sp)
                                         if (mol->species() == sp)
                                         {
                                             for (auto &i : mol->atoms())
-					      atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [&i](const auto at){ return i == &at;}));
+					      atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [&i](const auto &at){ return i == &at;}));
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
@@ -142,7 +142,7 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                         if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
                                         {
                                             for (auto &i : mol->atoms())
-					      atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [i](const auto at){ return i == &at;}));
+					      atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [i](const auto &at){ return i == &at;}));
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
