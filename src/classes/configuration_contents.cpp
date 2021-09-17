@@ -90,7 +90,7 @@ void Configuration::incrementContentsVersion() { ++contentsVersion_; }
 
 // Add Molecule to Configuration based on the supplied Species
 std::shared_ptr<Molecule>
-Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
+Configuration::addMolecule(AtomLock &lock, const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
     std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
@@ -106,12 +106,12 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     {
         auto r = sourceCoordinates->get();
         for (auto n = 0; n < sp->nAtoms(); ++n)
-            addAtom(&sp->atom(n), newMolecule, r[n]);
+	  addAtom(lock, &sp->atom(n), newMolecule, r[n]);
     }
     else
     {
         for (auto n = 0; n < sp->nAtoms(); ++n)
-            addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
+	  addAtom(lock, &sp->atom(n), newMolecule, sp->atom(n).r());
     }
     return newMolecule;
 }
@@ -165,7 +165,7 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
+Atom &Configuration::addAtom(AtomLock &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
     auto &newAtom = atoms_.emplace_back();

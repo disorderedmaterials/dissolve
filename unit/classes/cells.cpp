@@ -56,11 +56,12 @@ TEST(CellsTest, Basic)
 
     // Setup Configuration
     auto *cfg = dissolve.addConfiguration();
+    AtomLock lock(cfg);
     cfg->createBox({20, 20, 20}, {90, 90, 90});
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
-    cfg->addMolecule(argon);
+    cfg->addMolecule(lock, argon);
     for (auto n = 0; n < 267; ++n)
-        cfg->addMolecule(water);
+      cfg->addMolecule(lock, water);
     for (auto &&[i, r] : zip(cfg->atoms(), refCoords))
         i.setCoordinates(r);
     cfg->updateCellContents();

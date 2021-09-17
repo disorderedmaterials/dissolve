@@ -26,6 +26,7 @@ class Cell;
 class PotentialMap;
 class ProcessPool;
 class Species;
+class AtomLock;
 
 // Configuration
 class Configuration
@@ -120,7 +121,7 @@ class Configuration
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    addMolecule(AtomLock &lock, const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
     // Remove all Molecules of the target Species from the Configuration
     void removeMolecules(const Species *sp);
     // Remove specified Molecules from the Configuration
@@ -133,7 +134,7 @@ class Configuration
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
+    Atom &addAtom(AtomLock &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
     // Return Atom array
@@ -229,4 +230,12 @@ class Configuration
     bool setUpProcessPool(const std::vector<int> &worldRanks);
     // Return process pool for this Configuration
     ProcessPool &processPool();
+};
+
+class AtomLock
+{
+public:
+  AtomLock(Configuration *parent) : parent_(parent) {};
+private:
+  Configuration *parent_;
 };

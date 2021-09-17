@@ -243,13 +243,14 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     auto coordSetIt = sp->coordinateSets().begin();
     Matrix3 transform;
     const auto *box = cfg->box();
+    AtomLock lock(cfg);
     for (auto n = 0; n < requestedPopulation; ++n)
     {
         // Add the Molecule - use coordinate set if one is available
         std::shared_ptr<Molecule> mol;
         if (coordSetIt != sp->coordinateSets().end())
         {
-            mol = cfg->addMolecule(sp, *coordSetIt);
+	  mol = cfg->addMolecule(lock, sp, *coordSetIt);
 
             // Move to next coordinate set
             ++coordSetIt;
@@ -257,7 +258,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
                 coordSetIt = sp->coordinateSets().begin();
         }
         else
-            mol = cfg->addMolecule(sp);
+	  mol = cfg->addMolecule(lock, sp);
 
         // Set / generate position of Molecule
         switch (positioning)
