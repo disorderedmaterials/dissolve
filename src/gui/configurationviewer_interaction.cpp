@@ -10,7 +10,7 @@
  */
 
 // Return atom at specified coordinates
-const std::shared_ptr<Atom> ConfigurationViewer::atomAt(int x, int y)
+const Atom *ConfigurationViewer::atomAt(int x, int y)
 {
     if (!configuration_)
         return nullptr;
@@ -20,18 +20,18 @@ const std::shared_ptr<Atom> ConfigurationViewer::atomAt(int x, int y)
 
     // Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
     // provided
-    for (const auto i : configuration_->atoms())
+    for (const auto &i : configuration_->atoms())
     {
         // Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with
         // the atom's screen radius
         lengthScale = 0.3;
-        rScreen = view_.dataToScreen(i->r(), lengthScale);
+        rScreen = view_.dataToScreen(i.r(), lengthScale);
 
         // Subtract the reference coordinates and test against the screen radius
         rScreen.x -= x;
         rScreen.y -= y;
         if (sqrt(rScreen.x * rScreen.x + rScreen.y * rScreen.y) < lengthScale)
-            return i;
+            return &i;
     }
 
     return nullptr;

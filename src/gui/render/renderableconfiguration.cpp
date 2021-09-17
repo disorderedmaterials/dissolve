@@ -103,10 +103,10 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         for (const auto &i : source_->atoms())
         {
             // If the atom has no bonds draw it as a 'cross'
-            if (i->speciesAtom()->nBonds() == 0)
+            if (i.speciesAtom()->nBonds() == 0)
             {
-                const auto r = i->r();
-                auto &colour = ElementColours::colour(i->speciesAtom()->Z());
+                const auto r = i.r();
+                auto &colour = ElementColours::colour(i.speciesAtom()->Z());
 
                 lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z,
                                                   colour.data());
@@ -118,20 +118,20 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             else
             {
                 // Draw all bonds from this atom
-                for (const SpeciesBond &bond : i->speciesAtom()->bonds())
+                for (const SpeciesBond &bond : i.speciesAtom()->bonds())
                 {
                     // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is
                     // the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                    auto partner = i->molecule()->atom(bond.indexJ());
-                    if (i == partner)
+                    auto partner = i.molecule()->atom(bond.indexJ());
+                    if (&i == partner)
                         continue;
 
-                    ri = i->r();
+                    ri = i.r();
                     rj = partner->r();
 
                     // Determine half delta i-j for bond
                     const auto dij =
-                        (source_->cells().minimumImageRequired(*i->cell(), *partner->cell()) ? box->minimumVector(ri, rj)
+                        (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()) ? box->minimumVector(ri, rj)
                                                                                              : rj - ri) *
                         0.5;
 
@@ -150,32 +150,32 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(true, GL_FILL);
 
         // Draw Atoms
-        for (const auto i : source_->atoms())
+        for (const auto &i : source_->atoms())
         {
             A.setIdentity();
-            A.setTranslation(i->r());
+            A.setTranslation(i.r());
             A.applyScaling(spheresAtomRadius_);
 
             // The atom itself
-            configurationAssembly_.add(atomPrimitive_, A, ElementColours::colour(i->speciesAtom()->Z()));
+            configurationAssembly_.add(atomPrimitive_, A, ElementColours::colour(i.speciesAtom()->Z()));
 
             // Bonds from this atom
-            for (const SpeciesBond &bond : i->speciesAtom()->bonds())
+            for (const SpeciesBond &bond : i.speciesAtom()->bonds())
             {
                 // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same
                 // as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                auto partner = i->molecule()->atom(bond.indexJ());
-                if (i == partner)
+                auto partner = i.molecule()->atom(bond.indexJ());
+                if (&i == partner)
                     continue;
 
-                if (source_->cells().minimumImageRequired(*i->cell(), *partner->cell()))
+                if (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()))
                     configurationAssembly_.createCylinderBond(
-                        bondPrimitive_, i->r(), partner->r(), box->minimumVector(i->r(), partner->r()),
-                        ElementColours::colour(i->speciesAtom()->Z()), ElementColours::colour(partner->speciesAtom()->Z()),
+                        bondPrimitive_, i.r(), partner->r(), box->minimumVector(i.r(), partner->r()),
+                        ElementColours::colour(i.speciesAtom()->Z()), ElementColours::colour(partner->speciesAtom()->Z()),
                         true, spheresBondRadius_);
                 else
-                    configurationAssembly_.createCylinderBond(bondPrimitive_, i->r(), partner->r(), partner->r() - i->r(),
-                                                              ElementColours::colour(i->speciesAtom()->Z()),
+                    configurationAssembly_.createCylinderBond(bondPrimitive_, i.r(), partner->r(), partner->r() - i.r(),
+                                                              ElementColours::colour(i.speciesAtom()->Z()),
                                                               ElementColours::colour(partner->speciesAtom()->Z()), false,
                                                               spheresBondRadius_);
             }
