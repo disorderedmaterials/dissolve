@@ -133,7 +133,7 @@ class Configuration
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    Atom *addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
+    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
     // Return Atom array
