@@ -5,8 +5,8 @@
 #SBATCH -n 1
 #SBATCH --tasks-per-node=8
 #SBATCH -t 60:00
-#SBATCH -o compile-mpi-%j.log
-#SBATCH -e compile-mpi-%j.err
+#SBATCH -o compile-threads-%j.log
+#SBATCH -e compile-threads-%j.err
 
 set -e
 
