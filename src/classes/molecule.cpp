@@ -46,11 +46,11 @@ void Molecule::addAtom(Atom *i)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms array
-std::vector<Atom*> &Molecule::atoms() { return atoms_; }
-const std::vector<Atom*> &Molecule::atoms() const { return atoms_; }
+std::vector<Atom *> &Molecule::atoms() { return atoms_; }
+const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
-Atom* Molecule::atom(int n) const { return atoms_[n]; }
+Atom *Molecule::atom(int n) const { return atoms_[n]; }
 
 /*
  * Manipulations

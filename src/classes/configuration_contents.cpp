@@ -124,7 +124,8 @@ void Configuration::removeMolecules(const Species *sp)
                                         if (mol->species() == sp)
                                         {
                                             for (auto &i : mol->atoms())
-					      atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [&i](const auto &at){ return i == &at;}));
+                                                atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(),
+                                                                          [&i](const auto &at) { return i == &at; }));
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
@@ -142,7 +143,8 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                         if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
                                         {
                                             for (auto &i : mol->atoms())
-					      atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(), [i](const auto &at){ return i == &at;}));
+                                                atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(),
+                                                                          [i](const auto &at) { return i == &at; }));
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
@@ -168,7 +170,7 @@ Atom *Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
 {
     // Create new Atom object and set its source pointer
     auto &newAtom = atoms_.emplace_back();
-    newAtom.setArrayIndex(atoms_.size()-1);
+    newAtom.setArrayIndex(atoms_.size() - 1);
     newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
@@ -194,7 +196,7 @@ std::vector<Atom> &Configuration::atoms() { return atoms_; }
 const std::vector<Atom> &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
-Atom& Configuration::atom(int n)
+Atom &Configuration::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
     return atoms_[n];

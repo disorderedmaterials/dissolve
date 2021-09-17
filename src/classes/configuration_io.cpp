@@ -127,7 +127,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nAtoms = parser.argi(0);
-    atoms_.reserve(nAtoms + (nAtoms)>>2);
+    atoms_.reserve(nAtoms + (nAtoms) >> 2);
     for (auto n = 0; n < nAtoms; ++n)
     {
         // Each line contains molecule ID and coordinates only
