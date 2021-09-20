@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "classes/atomlock.h"
 #include "classes/atomtype.h"
 #include "classes/energykernel.h"
 #include "classes/species.h"

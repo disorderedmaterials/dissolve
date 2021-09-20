@@ -231,11 +231,3 @@ class Configuration
     // Return process pool for this Configuration
     ProcessPool &processPool();
 };
-
-class AtomLock
-{
-public:
-  AtomLock(Configuration *parent) : parent_(parent) {};
-private:
-  Configuration *parent_;
-};

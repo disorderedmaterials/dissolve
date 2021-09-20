@@ -1,6 +1,7 @@
 add_library(
   classes
   atom.cpp
+  atomlock.cpp
   atomtype.cpp
   atomtypedata.cpp
   atomtypelist.cpp
