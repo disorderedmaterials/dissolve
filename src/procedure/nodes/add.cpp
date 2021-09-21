@@ -244,6 +244,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     auto coordSetIt = sp->coordinateSets().begin();
     Matrix3 transform;
     const auto *box = cfg->box();
+    cfg->atoms().reserve(cfg->atoms().size() + requestedPopulation * sp->nAtoms());
     for (auto n = 0; n < requestedPopulation; ++n)
     {
         // Add the Molecule - use coordinate set if one is available
