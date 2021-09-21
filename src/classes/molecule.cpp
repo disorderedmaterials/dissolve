@@ -56,8 +56,9 @@ Atom *Molecule::atom(int n) const { return atoms_[n]; }
 
 void Molecule::updateAtoms(std::vector<Atom> &source)
 {
-    for (auto &&[idx, atom] : zip(atomIndices_, atoms_))
-        atom = &source[idx];
+  if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
+        for (auto &&[idx, atom] : zip(atomIndices_, atoms_))
+            atom = &source[idx];
 }
 
 /*
