@@ -3,10 +3,11 @@
 
 #include <classes/atomlock.h>
 
-AtomLock::AtomLock(Configuration *parent) : parent_(parent) {};
+AtomLock::AtomLock(Configuration *parent) : parent_(parent){};
 
-AtomLock::~AtomLock() {
+AtomLock::~AtomLock()
+{
     for (auto &mol : parent_->molecules())
-      mol->updateAtoms(parent_->atoms());
+        mol->updateAtoms(parent_->atoms());
     parent_->cells().updateAtoms(parent_->atoms());
 };

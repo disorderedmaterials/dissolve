@@ -7,9 +7,10 @@
 
 class AtomLock
 {
-public:
-  AtomLock(Configuration *parent);
-  ~AtomLock();
-private:
-  Configuration *parent_;
+    public:
+    AtomLock(Configuration *parent);
+    ~AtomLock();
+
+    private:
+    Configuration *parent_;
 };

@@ -119,7 +119,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
         // Set Species pointers for this range of Molecules
         auto nMols = parser.argi(0);
         for (auto n = 0; n < nMols; ++n)
-	  addMolecule(lock, sp.get());
+            addMolecule(lock, sp.get());
 
         // Increase our counter
         nMolsRead += parser.argi(0);

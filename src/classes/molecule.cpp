@@ -54,9 +54,10 @@ const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 // Return nth Atom pointer
 Atom *Molecule::atom(int n) const { return atoms_[n]; }
 
-void Molecule::updateAtoms(std::vector<Atom> &source) {
-  for(auto &&[idx, atom] : zip(atomIndices_, atoms_))
-    atom = &source[idx];
+void Molecule::updateAtoms(std::vector<Atom> &source)
+{
+    for (auto &&[idx, atom] : zip(atomIndices_, atoms_))
+        atom = &source[idx];
 }
 
 /*

@@ -76,7 +76,8 @@ void Cell::removeAtom(Atom *atom)
 }
 
 // Update array pointers after update
-void Cell::updateAtoms(std::vector<Atom> &source) {
-  for(auto &&[idx, atom] : zip(atomIndices_, atoms_))
-    atom = &source[idx];
+void Cell::updateAtoms(std::vector<Atom> &source)
+{
+    for (auto &&[idx, atom] : zip(atomIndices_, atoms_))
+        atom = &source[idx];
 }

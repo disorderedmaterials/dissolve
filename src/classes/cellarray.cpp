@@ -12,10 +12,10 @@
 // Return number of Cells for box
 int CellArray::nCells() const { return static_cast<int>(cells_.size()); }
 
-
-void CellArray::updateAtoms(std::vector<Atom> &source) {
-  for (auto &cell: cells_)
-    cell.updateAtoms(source);
+void CellArray::updateAtoms(std::vector<Atom> &source)
+{
+    for (auto &cell : cells_)
+        cell.updateAtoms(source);
 }
 
 // Return cell divisions along each axis
