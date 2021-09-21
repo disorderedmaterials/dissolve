@@ -6,7 +6,7 @@
 AtomLock::AtomLock(Configuration *parent) : parent_(parent) {};
 
 AtomLock::~AtomLock() {
-    // for (auto &mol : parent_->molecules())
-    //   mol->updateAtoms(parent_->atoms());
-    // parent_->cells().updateAtoms(parent_->atoms());
+    for (auto &mol : parent_->molecules())
+      mol->updateAtoms(parent_->atoms());
+    parent_->cells().updateAtoms(parent_->atoms());
 };

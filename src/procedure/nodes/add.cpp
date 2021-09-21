@@ -244,24 +244,31 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     auto coordSetIt = sp->coordinateSets().begin();
     Matrix3 transform;
     const auto *box = cfg->box();
-    AtomLock lock(cfg);
     for (auto n = 0; n < requestedPopulation; ++n)
     {
         // Add the Molecule - use coordinate set if one is available
-        std::shared_ptr<Molecule> mol;
-        if (coordSetIt != sp->coordinateSets().end())
-        {
-	  mol = cfg->addMolecule(lock, sp, *coordSetIt);
+      std::shared_ptr<Molecule> mol;
+      {
+	// The atom pointers need to be updated before
+	// setCentreOfGeometry is called, or else there can be a
+	// segfault due to pointer invalidation.  It would be nice if
+	// we could have a single lock for the whole loop, but that
+	// will require some thought.
+	AtomLock lock(cfg);
+	if (coordSetIt != sp->coordinateSets().end())
+	  {
+	    mol = cfg->addMolecule(lock, sp, *coordSetIt);
 
-            // Move to next coordinate set
-            ++coordSetIt;
-            if (coordSetIt == sp->coordinateSets().end())
-                coordSetIt = sp->coordinateSets().begin();
-        }
-        else
+	    // Move to next coordinate set
+	    ++coordSetIt;
+	    if (coordSetIt == sp->coordinateSets().end())
+	      coordSetIt = sp->coordinateSets().begin();
+	  }
+	else
 	  mol = cfg->addMolecule(lock, sp);
+      }
 
-        // Set / generate position of Molecule
+	// Set / generate position of Molecule
         switch (positioning)
         {
             case (AddProcedureNode::PositioningType::Random):

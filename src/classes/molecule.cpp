@@ -4,6 +4,7 @@
 #include "classes/molecule.h"
 #include "classes/atom.h"
 #include "classes/box.h"
+#include "templates/algorithms.h"
 
 Molecule::Molecule() { species_ = nullptr; }
 
@@ -35,6 +36,7 @@ const Species *Molecule::species() const { return species_; }
 void Molecule::addAtom(Atom *i)
 {
     atoms_.push_back(i);
+    atomIndices_.push_back(i->arrayIndex());
 
     if (i->molecule() != nullptr)
         Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
@@ -51,6 +53,11 @@ const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
 Atom *Molecule::atom(int n) const { return atoms_[n]; }
+
+void Molecule::updateAtoms(std::vector<Atom> &source) {
+  for(auto &&[idx, atom] : zip(atomIndices_, atoms_))
+    atom = &source[idx];
+}
 
 /*
  * Manipulations

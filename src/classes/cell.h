@@ -45,6 +45,8 @@ class Cell
     void setCentre(Vec3<double> r);
     // Return real-space Cell centre
     const Vec3<double> &centre() const;
+    // Refresh atom pointers after iterator invalidation
+    void updateAtoms(std::vector<Atom> &source);
 
     /*
      * Contents
@@ -52,6 +54,8 @@ class Cell
     private:
     // Array of Atoms contained in this Cell
     std::vector<Atom *> atoms_;
+    // Array of the atom indices (for direct interaction
+    std::vector<int> atomIndices_;
 
     public:
     // Return array of contained Atoms
