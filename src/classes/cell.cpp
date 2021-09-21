@@ -78,7 +78,7 @@ void Cell::removeAtom(Atom *atom)
 // Update array pointers after update
 void Cell::updateAtoms(std::vector<Atom> &source)
 {
-  if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
+    if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
         for (auto &&[idx, atom] : zip(atomIndices_, atoms_))
             atom = &source[idx];
 }
