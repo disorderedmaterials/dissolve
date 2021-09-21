@@ -62,7 +62,7 @@ TEST(CellsTest, Basic)
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
     cfg->addMolecule(lock, argon);
     for (auto n = 0; n < 267; ++n)
-      cfg->addMolecule(lock, water);
+        cfg->addMolecule(lock, water);
     for (auto &&[i, r] : zip(cfg->atoms(), refCoords))
         i.setCoordinates(r);
     cfg->updateCellContents();
