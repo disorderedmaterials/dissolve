@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 #pragma once
 
+#include "classes/pair_iter.h"
 #include "templates/parallel_defs.h"
 #include <fmt/format.h>
 #include <functional>
@@ -22,15 +23,11 @@ template <typename T> auto chop_range(const T begin, const T end, const int nChu
 // Perform an operation on every pair of elements in a container
 template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam lambda)
 {
-    int i = 0;
-    for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
-    {
-        int j = i;
-        for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)
-        {
-            lambda(i, *elem1, j, *elem2);
-        }
-    }
+  PairIterator start(end-begin), stop(end-begin, ((end-begin) * (end-begin+1))/2);
+  for(auto it = start; it < stop; ++it) {
+    auto [i, j] = *it;
+    lambda(i, begin[i], j, begin[j]);
+  }
 }
 
 // Perform an operation on every pair of elements in a container

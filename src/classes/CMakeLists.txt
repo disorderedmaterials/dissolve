@@ -44,6 +44,7 @@ add_library(
   neutronweights.cpp
   pairpotential.cpp
   potentialmap.cpp
+  pair_iter.cpp
   partialset.cpp
   partialsetaccumulator.cpp
   region.cpp
