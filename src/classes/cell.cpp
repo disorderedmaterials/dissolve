@@ -79,6 +79,6 @@ void Cell::removeAtom(Atom *atom)
 void Cell::updateAtoms(std::vector<Atom> &source)
 {
     if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
-        for (auto &&[idx, atom] : zip(atomIndices_, atoms_))
-            atom = &source[idx];
+        std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
+                       [&source](const auto idx) { return &source[idx]; });
 }
