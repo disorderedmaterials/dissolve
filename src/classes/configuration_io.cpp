@@ -129,6 +129,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nAtoms = parser.argi(0);
+    // Reserve space for the atoms, plus another 25% buffer
     atoms_.reserve(nAtoms + (nAtoms) >> 2);
     for (auto n = 0; n < nAtoms; ++n)
     {

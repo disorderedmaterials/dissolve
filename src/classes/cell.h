@@ -54,7 +54,7 @@ class Cell
     private:
     // Array of Atoms contained in this Cell
     std::vector<Atom *> atoms_;
-    // Array of the atom indices (for direct interaction
+    // Array of the atom indices in the main array
     std::vector<int> atomIndices_;
 
     public:
