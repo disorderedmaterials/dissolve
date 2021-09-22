@@ -48,9 +48,11 @@ template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, int nC
 // Perform an operation on every pair of elements in a range (begin <= i < end)
 template <class Lam> void for_each_pair(int begin, int end, Lam lambda)
 {
-    for (auto i = begin; i < end; ++i)
-        for (auto j = i; j < end; ++j)
-            lambda(i, j);
+  PairIterator start(end), stop(end, end*(end+1)/2);
+  for(auto it = start; it < stop; ++it) {
+    auto [i, j] = *it;
+    lambda(i, j);
+  }
 }
 
 template <typename T> class EarlyReturn
