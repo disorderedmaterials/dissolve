@@ -187,7 +187,7 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     auto absEnergyEP = 0.0;
 
-    for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+    dissolve::for_each_pair(ParallelPolicies::par, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         auto &potCoeff = coefficients[{i, j}];
 
         auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());

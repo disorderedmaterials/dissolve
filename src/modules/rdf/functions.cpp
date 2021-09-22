@@ -44,7 +44,7 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
-    for_each_pair(cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
+    dissolve::for_each_pair(ParallelPolicies::par, cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
         if (ii != jj)
             partialSet.fullHistogram(ii->localTypeIndex(), jj->localTypeIndex()).bin(box->minimumDistance(ii->r(), jj->r()));
     });
@@ -222,7 +222,7 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         auto &atomsI = cellI->atoms();
 
         // Add contributions between atoms in cellI
-        for_each_pair(atomsI.begin(), atomsI.end(), [&](const int idx, auto &i, const int jdx, auto &j) {
+        dissolve::for_each_pair(ParallelPolicies::par, atomsI.begin(), atomsI.end(), [&](const int idx, auto &i, const int jdx, auto &j) {
             if (idx == jdx)
                 return;
             // No need to perform MIM since we're in the same cell
@@ -355,7 +355,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     {
         auto &atoms = (*it)->atoms();
 
-        for_each_pair(atoms.begin(), atoms.end(), [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
+        dissolve::for_each_pair(ParallelPolicies::par, atoms.begin(), atoms.end(), [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
             // Ignore atom on itself
             if (index == jndex)
                 return;
@@ -452,19 +452,19 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
     auto &types = unweightedgr.atomTypes();
-    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+    dissolve::for_each_pair(ParallelPolicies::par, types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
         Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, false, true);
     });
 
     // Add broadened bound partials back in to full partials
-    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+    dissolve::for_each_pair(ParallelPolicies::par, types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
         unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
     });
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
-        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+        dissolve::for_each_pair(ParallelPolicies::par, types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
             Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
             Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
             Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);

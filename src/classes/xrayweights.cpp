@@ -134,7 +134,7 @@ void XRayWeights::setUpMatrices()
     preFactors_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 
     // Determine atomic concentration products and full pre-factor
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+    dissolve::for_each_pair(ParallelPolicies::par, atomTypes_.begin(), atomTypes_.end(),
                   [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
                       double ci = atd1.fraction();
                       concentrations_.at(typeI) = ci;

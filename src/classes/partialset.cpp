@@ -58,7 +58,7 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes)
     emptyBoundPartials_ = false;
 
     // Set up array matrices for partials
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
+    dissolve::for_each_pair(ParallelPolicies::par, atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
         boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
         unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
@@ -174,7 +174,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
     total_.initialise(partials_[{0, 0}]);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
-    for_each_pair(
+    dissolve::for_each_pair(ParallelPolicies::par, 
         atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
             // Calculate weighting factor if requested
             double factor = 1.0;
@@ -205,7 +205,7 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
     Data1D bound;
     bound.initialise(boundPartials_[{0, 0}]);
 
-    for_each_pair(
+    dissolve::for_each_pair(ParallelPolicies::par, 
         atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
             // Calculate weighting factor if requested
             double factor = 1.0;
@@ -234,7 +234,7 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
     Data1D unbound;
     unbound.initialise(boundPartials_[{0, 0}]);
 
-    for_each_pair(
+    dissolve::for_each_pair(ParallelPolicies::par, 
         atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
             // Calculate weighting factor if requested
             double factor = 1.0;
@@ -297,7 +297,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
+    dissolve::for_each_pair(ParallelPolicies::par, atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         partials_[{n, m}] += delta;
         boundPartials_[{n, m}] += delta;
         unboundPartials_[{n, m}] += delta;
@@ -309,7 +309,7 @@ void PartialSet::adjust(double delta)
 // Form partials from stored Histogram data
 void PartialSet::formPartials(double boxVolume)
 {
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
+    dissolve::for_each_pair(ParallelPolicies::par, atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         // Calculate RDFs from histogram data
         calculateRDF(partials_[{n, m}], fullHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
                      &at1 == &at2 ? 2.0 : 1.0);
@@ -412,7 +412,7 @@ void PartialSet::operator+=(const PartialSet &source)
 
     // Loop over partials in source set
     const auto &types = source.atomTypes();
-    for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+    dissolve::for_each_pair(ParallelPolicies::par, types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
         const auto atI = atd1.atomType();
         const auto atJ = atd2.atomType();
         int localI = atomTypes_.indexOf(atI);

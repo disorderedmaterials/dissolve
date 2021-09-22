@@ -21,16 +21,6 @@ template <typename T> auto chop_range(const T begin, const T end, const int nChu
 }
 
 // Perform an operation on every pair of elements in a container
-template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam lambda)
-{
-  PairIterator start(end-begin), stop(end-begin, ((end-begin) * (end-begin+1))/2);
-  for(auto it = start; it < stop; ++it) {
-    auto [i, j] = *it;
-    lambda(i, begin[i], j, begin[j]);
-  }
-}
-
-// Perform an operation on every pair of elements in a container
 template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, int nChunks, int index, Lam lambda)
 {
     auto [start, stop] = chop_range(begin, end, nChunks, index);
@@ -246,6 +236,17 @@ template <typename ParallelPolicy, class Iter, class UnaryOp,
 void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
 {
     dissolve::for_each(begin, end, unaryOp);
+}
+
+// Perform an operation on every pair of elements in a container
+template <typename ParallelPolicy, class Iter, class Lam> void
+for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
+{
+  PairIterator start(end-begin), stop(end-begin, ((end-begin) * (end-begin+1))/2);
+  for_each(start, stop, [&lambda, &begin](const auto pair) {
+    auto &[i, j] = pair;
+    lambda(i, begin[i], j, begin[j]);
+  });
 }
 } // namespace dissolve
 

@@ -338,7 +338,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
     double qCentre;
     int bin;
     auto &types = cfg->usedAtomTypesList();
-    for_each_pair(types.begin(), types.end(), [&](int typeI, auto &atd1, int typeJ, auto &atd2) {
+    dissolve::for_each_pair(ParallelPolicies::par, types.begin(), types.end(), [&](int typeI, auto &atd1, int typeJ, auto &atd2) {
         // Retrieve partial container and make sure its tag is set
         auto &partial = braggPartials[{typeI, typeJ}];
         partial.setTag(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));

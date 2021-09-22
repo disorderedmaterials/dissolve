@@ -155,7 +155,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                            [v0](auto &val) { return val * 2.0 * pow(M_PI, 2) / v0; });
 
         // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
-        for_each_pair(unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
+        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
                       [&braggPartials](auto i, auto &atd1, auto j, auto &atd2) {
                           // Subtract self-scattering level if types are equivalent
                           if (i == j)
