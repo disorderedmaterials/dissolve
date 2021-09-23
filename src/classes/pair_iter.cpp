@@ -29,6 +29,11 @@ bool PairIterator::operator<(const PairIterator &other) const
     return y_ < other.y_;
 }
 
+bool PairIterator::operator==(const PairIterator &other) const
+{
+  return x_ == other.x_ && y_ == other.y_;
+}
+
 bool PairIterator::operator!=(const PairIterator &other) const
 {
   return x_ != other.x_ || y_ != other.y_;
@@ -54,6 +59,11 @@ PairIterator::difference_type PairIterator::operator-(const PairIterator &other)
 PairIterator PairIterator::operator+(PairIterator::difference_type diff) const {
 
   return PairIterator(size_, diff + toIndex_());
+}
+
+PairIterator &PairIterator::operator+=(difference_type forward) {
+  fromIndex_(forward + toIndex_());
+  return *this;
 }
 
 PairIterator PairIterator::begin() const { return PairIterator(size_, 0);}
