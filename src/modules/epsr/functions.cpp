@@ -187,7 +187,10 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     auto absEnergyEP = 0.0;
 
-    dissolve::for_each_pair(ParallelPolicies::par, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+    // TODO: This could run in parallel with a transform_reduce where
+    // the unary op calculates the abs_energy and the binary op is
+    // std::min.  I'm not sure if it's worth the effort, though.
+    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         auto &potCoeff = coefficients[{i, j}];
 
         auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());

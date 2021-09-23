@@ -218,7 +218,7 @@ template <typename ParallelPolicy, class Iter, class Lam> void
 for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
   PairIterator start(end-begin), stop(end-begin, ((end-begin) * (end-begin+1))/2);
-  for_each(start, stop, [&lambda, &begin](const auto pair) {
+  for_each(policy, start, stop, [&lambda, &begin](const auto pair) {
     auto &[i, j] = pair;
     lambda(i, begin[i], j, begin[j]);
   });
