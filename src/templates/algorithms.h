@@ -20,21 +20,6 @@ template <typename T> auto chop_range(const T begin, const T end, const int nChu
     return std::make_tuple(start, stop);
 }
 
-// Perform an operation on every pair of elements in a container
-template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, int nChunks, int index, Lam lambda)
-{
-    auto [start, stop] = chop_range(begin, end, nChunks, index);
-    int i = start - begin;
-    for (auto elem1 = start; elem1 != stop; ++elem1, ++i)
-    {
-        int j = i;
-        for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)
-        {
-            lambda(i, *elem1, j, *elem2);
-        }
-    }
-}
-
 // Perform an operation on every pair of elements in a range (begin <= i < end)
 template <class Lam> void for_each_pair(int begin, int end, Lam lambda)
 {

@@ -103,8 +103,13 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
         auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
-        for_each_pair(ri, ri + maxr[typeI], nChunks, offset,
-                      [box, bins, rbin, nPoints, &histogram](int i, auto centre, int j, auto other) {
+	PairIterator pairs(maxr[typeI]);
+	auto [start, stop] = chop_range(pairs, pairs.end(), nChunks, offset);
+	std::for_each(start, stop,
+                      [box, bins, rbin, ri, nPoints, &histogram](auto it) {
+	  auto [i, j] = it;
+	  auto centre = ri[i];
+	  auto other = ri[j];
                           if (i == j)
                               return;
                           bins[j] = box->minimumDistance(centre, other) * rbin;
