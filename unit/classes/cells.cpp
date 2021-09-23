@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "classes/atomlock.h"
+#include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
 #include "classes/energykernel.h"
 #include "classes/species.h"
@@ -57,7 +57,7 @@ TEST(CellsTest, Basic)
 
     // Setup Configuration
     auto *cfg = dissolve.addConfiguration();
-    AtomLock lock(cfg);
+    AtomChangeToken lock(*cfg);
     cfg->createBox({20, 20, 20}, {90, 90, 90});
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
     cfg->addMolecule(lock, argon);

@@ -3,7 +3,7 @@
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "classes/atomlock.h"
+#include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -89,7 +89,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     const auto angles = parser.arg3d(0);
-    AtomLock lock(this);
+    AtomChangeToken lock(*this);
 
     createBox(lengths, angles, nonPeriodic);
 
@@ -129,8 +129,8 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nAtoms = parser.argi(0);
-    // Reserve space for the atoms, plus another 25% buffer
-    atoms_.reserve(nAtoms + (nAtoms) >> 2);
+    // Reserve space for the atoms, plus some buffer space
+    atoms_.reserve(nAtoms + std::min(1000, (nAtoms) >> 2));
     for (auto n = 0; n < nAtoms; ++n)
     {
         // Each line contains molecule ID and coordinates only

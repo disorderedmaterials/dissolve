@@ -90,7 +90,7 @@ void Configuration::incrementContentsVersion() { ++contentsVersion_; }
 
 // Add Molecule to Configuration based on the supplied Species
 std::shared_ptr<Molecule>
-Configuration::addMolecule(AtomLock &lock, const Species *sp,
+Configuration::addMolecule(AtomChangeToken &lock, const Species *sp,
                            OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
@@ -166,7 +166,7 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom &Configuration::addAtom(AtomLock &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
+Atom &Configuration::addAtom(AtomChangeToken &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
                              Vec3<double> r)
 {
     // Create new Atom object and set its source pointer

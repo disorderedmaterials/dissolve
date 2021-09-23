@@ -4,7 +4,7 @@
 #include "procedure/nodes/add.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "classes/atomlock.h"
+#include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -255,7 +255,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
             // segfault due to pointer invalidation.  It would be nice if
             // we could have a single lock for the whole loop, but that
             // will require some thought.
-            AtomLock lock(cfg);
+            AtomChangeToken lock(*cfg);
             if (coordSetIt != sp->coordinateSets().end())
             {
                 mol = cfg->addMolecule(lock, sp, *coordSetIt);

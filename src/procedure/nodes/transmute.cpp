@@ -4,7 +4,7 @@
 #include "procedure/nodes/transmute.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "classes/atomlock.h"
+#include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -69,7 +69,7 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
 
     // Perform the magic
     const auto *box = cfg->box();
-    AtomLock lock(cfg);
+    AtomChangeToken lock(*cfg);
     for (const auto &mol : targets)
     {
         auto newMol = cfg->addMolecule(lock, sp);
