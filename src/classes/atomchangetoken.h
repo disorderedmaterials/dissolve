@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <classes/configuration.h>
+#include "classes/configuration.h"
 
 class AtomChangeToken
 {
