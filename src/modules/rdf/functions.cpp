@@ -44,7 +44,7 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
-    dissolve::for_each_pair(ParallelPolicies::par, cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
+    dissolve::for_each_pair(ParallelPolicies::par, cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto &ii, auto j, auto &jj) {
         if (&ii != &jj)
             partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
     });
