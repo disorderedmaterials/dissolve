@@ -3,7 +3,7 @@
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "classes/atomlock.h"
+#include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
