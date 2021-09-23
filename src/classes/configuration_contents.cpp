@@ -90,7 +90,8 @@ void Configuration::incrementContentsVersion() { ++contentsVersion_; }
 
 // Add Molecule to Configuration based on the supplied Species
 std::shared_ptr<Molecule>
-Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
+Configuration::addMolecule(AtomChangeToken &lock, const Species *sp,
+                           OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
     std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
@@ -106,12 +107,12 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     {
         auto r = sourceCoordinates->get();
         for (auto n = 0; n < sp->nAtoms(); ++n)
-            addAtom(&sp->atom(n), newMolecule, r[n]);
+            addAtom(lock, &sp->atom(n), newMolecule, r[n]);
     }
     else
     {
         for (auto n = 0; n < sp->nAtoms(); ++n)
-            addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
+            addAtom(lock, &sp->atom(n), newMolecule, sp->atom(n).r());
     }
     return newMolecule;
 }
@@ -124,7 +125,8 @@ void Configuration::removeMolecules(const Species *sp)
                                         if (mol->species() == sp)
                                         {
                                             for (auto &i : mol->atoms())
-                                                atoms_.erase(std::find(atoms_.begin(), atoms_.end(), i));
+                                                atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(),
+                                                                          [&i](const auto &at) { return i == &at; }));
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
@@ -142,7 +144,8 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                         if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
                                         {
                                             for (auto &i : mol->atoms())
-                                                atoms_.erase(std::find(atoms_.begin(), atoms_.end(), i));
+                                                atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(),
+                                                                          [i](const auto &at) { return i == &at; }));
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
@@ -163,25 +166,24 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
-                                             Vec3<double> r)
+Atom &Configuration::addAtom(AtomChangeToken &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
+                             Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
-    auto newAtom = std::make_shared<Atom>();
-    newAtom->setArrayIndex(atoms_.size());
-    atoms_.push_back(newAtom);
-    newAtom->setSpeciesAtom(sourceAtom);
+    auto &newAtom = atoms_.emplace_back();
+    newAtom.setArrayIndex(atoms_.size() - 1);
+    newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(newAtom);
+    molecule->addAtom(&newAtom);
 
     // Set the position
-    newAtom->setCoordinates(r);
+    newAtom.setCoordinates(r);
 
     // Update our typeIndex (non-isotopic) and set local and master type indices
     AtomTypeData &atd = usedAtomTypes_.add(sourceAtom->atomType(), 1);
-    newAtom->setLocalTypeIndex(atd.listIndex());
-    newAtom->setMasterTypeIndex(sourceAtom->atomType()->index());
+    newAtom.setLocalTypeIndex(atd.listIndex());
+    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
 
     return newAtom;
 }
@@ -190,12 +192,12 @@ std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, cons
 int Configuration::nAtoms() const { return atoms_.size(); }
 
 // Return Atom array
-std::vector<std::shared_ptr<Atom>> &Configuration::atoms() { return atoms_; }
+std::vector<Atom> &Configuration::atoms() { return atoms_; }
 
-const std::vector<std::shared_ptr<Atom>> &Configuration::atoms() const { return atoms_; }
+const std::vector<Atom> &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
-std::shared_ptr<Atom> Configuration::atom(int n)
+Atom &Configuration::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
     return atoms_[n];

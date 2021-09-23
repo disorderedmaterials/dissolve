@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
 #include "classes/energykernel.h"
 #include "classes/species.h"
@@ -56,13 +57,14 @@ TEST(CellsTest, Basic)
 
     // Setup Configuration
     auto *cfg = dissolve.addConfiguration();
+    AtomChangeToken lock(*cfg);
     cfg->createBox({20, 20, 20}, {90, 90, 90});
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
-    cfg->addMolecule(argon);
+    cfg->addMolecule(lock, argon);
     for (auto n = 0; n < 267; ++n)
-        cfg->addMolecule(water);
+        cfg->addMolecule(lock, water);
     for (auto &&[i, r] : zip(cfg->atoms(), refCoords))
-        i->setCoordinates(r);
+        i.setCoordinates(r);
     cfg->updateCellContents();
 
     // Prepare the main simulation, and re-generate our specific Ar-OW parameters
@@ -87,7 +89,7 @@ TEST(CellsTest, Basic)
 
         // Remove atoms from cells
         for (auto &i : cfg->atoms())
-            i->setCell(nullptr);
+            i.setCell(nullptr);
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
@@ -97,7 +99,7 @@ TEST(CellsTest, Basic)
         EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->cells(), false, ProcessPool::PoolStrategy), 1.0e-4);
 
         // Calculate atomic energy from the Ar
-        EXPECT_NEAR(refEnergy, energyKernel.energy(*cfg->atom(0)), 1.0e-4);
+        EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->atom(0)), 1.0e-4);
     }
 }
 

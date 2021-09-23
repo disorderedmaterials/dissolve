@@ -98,7 +98,7 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto &jj : otherAtoms)
+            for (auto *jj : otherAtoms)
             {
                 // Check exclusion of I >= J
                 if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))

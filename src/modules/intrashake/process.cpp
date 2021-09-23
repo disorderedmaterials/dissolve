@@ -102,7 +102,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Vec3<double> vji, vjk, v;
         Matrix3 transform;
         const auto *box = cfg->box();
-        std::shared_ptr<Atom> i, j, k, l;
+        Atom *i, *j, *k, *l;
 
         Timer timer;
         procPool.resetAccumulatedTime();

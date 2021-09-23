@@ -11,7 +11,7 @@
 void Configuration::updateCellContents()
 {
     for (auto &i : atoms_)
-        updateCellLocation(i.get());
+        updateCellLocation(&i);
 }
 
 // Update Cell location of specified Atom
@@ -36,12 +36,12 @@ void Configuration::updateCellLocation(Atom *i)
 void Configuration::updateCellLocation(const std::shared_ptr<Molecule> &mol)
 {
     for (auto n = 0; n < mol->nAtoms(); ++n)
-        updateCellLocation(mol->atom(n).get());
+        updateCellLocation(mol->atom(n));
 }
 
 // Update Cell location of specified Atom indices
 void Configuration::updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset)
 {
     for (const auto i : targetAtoms)
-        updateCellLocation(atoms_[i + indexOffset].get());
+        updateCellLocation(&atoms_[i + indexOffset]);
 }

@@ -44,9 +44,9 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
-    for_each_pair(cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
-        if (ii != jj)
-            partialSet.fullHistogram(ii->localTypeIndex(), jj->localTypeIndex()).bin(box->minimumDistance(ii->r(), jj->r()));
+    for_each_pair(cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto &ii, auto j, auto &jj) {
+        if (&ii != &jj)
+            partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
     });
 
     return true;
@@ -78,11 +78,10 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     }
 
     // Loop over Atoms and construct arrays
-    auto &atoms = cfg->atoms();
-    for (n = 0; n < cfg->nAtoms(); ++n)
+    for (auto &atom : cfg->atoms())
     {
-        m = atoms[n]->localTypeIndex();
-        r[m][nr[m]++] = atoms[n]->r();
+        m = atom.localTypeIndex();
+        r[m][nr[m]++] = atom.r();
     }
 
     Messenger::printVerbose("Ready..\n");

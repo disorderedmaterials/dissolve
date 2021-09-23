@@ -88,6 +88,8 @@ class CellArray
     bool generate(const Box *box, double cellSize, double pairPotentialRange);
     // Clear Cell arrays
     void clear();
+    // Update atom pointers after invalidating the iterators
+    void updateAtoms(std::vector<Atom> &source);
 
     /*
      * Operations

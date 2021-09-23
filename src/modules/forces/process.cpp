@@ -77,7 +77,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
             double magjisq, magji, magjk, dp, force, r;
-            std::shared_ptr<Atom> i, j, k, l;
+            Atom *i, *j, *k, *l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
             Vec3<double> xpj, xpk, temp;
             double du_dphi;
@@ -110,7 +110,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             j = molN->atom(jj);
 
                             // Get intramolecular scaling of atom pair
-                            scale = i->scaling(j.get());
+                            scale = i->scaling(j);
                             if (scale < 1.0e-3)
                                 continue;
 

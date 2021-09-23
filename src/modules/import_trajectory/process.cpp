@@ -58,7 +58,7 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Remove all atoms from cells
             for (auto &i : cfg->atoms())
-                i->setCell(nullptr);
+                i.setCell(nullptr);
         }
     }
 

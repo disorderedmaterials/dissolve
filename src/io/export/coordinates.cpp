@@ -35,8 +35,8 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 
     // Export Atoms
     for (const auto &i : cfg->atoms())
-        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i->speciesAtom()->Z()), i->r().x,
-                               i->r().y, i->r().z))
+        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i.speciesAtom()->Z()), i.r().x,
+                               i.r().y, i.r().z))
             return false;
 
     return true;
@@ -84,8 +84,8 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     auto n = 0;
     for (const auto &i : cfg->atoms())
         if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n",
-                               cfg->usedAtomType(i->localTypeIndex())->name(), n++ + 1, AtomicMass::mass(i->speciesAtom()->Z()),
-                               i->r().x, i->r().y, i->r().z))
+                               cfg->usedAtomType(i.localTypeIndex())->name(), n++ + 1, AtomicMass::mass(i.speciesAtom()->Z()),
+                               i.r().x, i.r().y, i.r().z))
             return false;
 
     return true;
