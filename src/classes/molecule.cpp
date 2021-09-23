@@ -4,6 +4,7 @@
 #include "classes/molecule.h"
 #include "classes/atom.h"
 #include "classes/box.h"
+#include "templates/algorithms.h"
 
 Molecule::Molecule() { species_ = nullptr; }
 
@@ -32,9 +33,10 @@ void Molecule::setSpecies(const Species *sp) { species_ = sp; }
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(const std::shared_ptr<Atom> &i)
+void Molecule::addAtom(Atom *i)
 {
     atoms_.push_back(i);
+    atomIndices_.push_back(i->arrayIndex());
 
     if (i->molecule() != nullptr)
         Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
@@ -46,11 +48,18 @@ void Molecule::addAtom(const std::shared_ptr<Atom> &i)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms array
-std::vector<std::shared_ptr<Atom>> &Molecule::atoms() { return atoms_; }
-const std::vector<std::shared_ptr<Atom>> &Molecule::atoms() const { return atoms_; }
+std::vector<Atom *> &Molecule::atoms() { return atoms_; }
+const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
-std::shared_ptr<Atom> Molecule::atom(int n) const { return atoms_[n]; }
+Atom *Molecule::atom(int n) const { return atoms_[n]; }
+
+void Molecule::updateAtoms(std::vector<Atom> &source)
+{
+    if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
+        std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
+                       [&source](const auto idx) { return &source[idx]; });
+}
 
 /*
  * Manipulations
@@ -106,7 +115,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 {
     // Loop over supplied Atoms
     Vec3<double> newR;
-    std::shared_ptr<Atom> i;
+    Atom *i;
     for (const auto index : targetAtoms)
     {
         i = atom(index);

@@ -198,7 +198,7 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
     for (auto &i : mol.atoms())
-        locationMap[i->cell()].push_back(i.get());
+        locationMap[i->cell()].push_back(i);
 
     auto totalEnergy =
         std::accumulate(locationMap.begin(), locationMap.end(), 0.0, [&](const auto totalAcc, const auto &location) {
@@ -252,9 +252,9 @@ double EnergyKernel::correct(const Atom &i)
 
     double correctionEnergy = dissolve::transform_reduce(ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0,
                                                          std::plus<double>(), [&](auto &j) -> double {
-                                                             if (&i == j.get())
+                                                             if (&i == j)
                                                                  return 0.0;
-                                                             double scale = 1.0 - i.scaling(j.get());
+                                                             double scale = 1.0 - i.scaling(j);
                                                              if (scale <= 1.0e-3)
                                                                  return 0.0;
                                                              double r = box_->minimumDistance(rI, j->r());

@@ -4,6 +4,7 @@
 #include "procedure/nodes/transmute.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "classes/atomlock.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -68,9 +69,10 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
 
     // Perform the magic
     const auto *box = cfg->box();
+    AtomLock lock(cfg);
     for (const auto &mol : targets)
     {
-        auto newMol = cfg->addMolecule(sp);
+        auto newMol = cfg->addMolecule(lock, sp);
         newMol->setCentreOfGeometry(box, mol->centreOfGeometry(box));
     }
 

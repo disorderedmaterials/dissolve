@@ -26,6 +26,7 @@ class Cell;
 class PotentialMap;
 class ProcessPool;
 class Species;
+class AtomLock;
 
 // Configuration
 class Configuration
@@ -87,7 +88,7 @@ class Configuration
     // Molecule vector
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
-    std::vector<std::shared_ptr<Atom>> atoms_;
+    std::vector<Atom> atoms_;
 
     public:
     // Empty contents of Configuration, leaving core definitions intact
@@ -120,7 +121,8 @@ class Configuration
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    addMolecule(AtomLock &lock, const Species *sp,
+                OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
     // Remove all Molecules of the target Species from the Configuration
     void removeMolecules(const Species *sp);
     // Remove specified Molecules from the Configuration
@@ -133,15 +135,15 @@ class Configuration
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    std::shared_ptr<Atom> addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
-                                  Vec3<double> r = Vec3<double>());
+    Atom &addAtom(AtomLock &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
+                  Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
     // Return Atom array
-    std::vector<std::shared_ptr<Atom>> &atoms();
-    const std::vector<std::shared_ptr<Atom>> &atoms() const;
+    std::vector<Atom> &atoms();
+    const std::vector<Atom> &atoms() const;
     // Return nth Atom
-    std::shared_ptr<Atom> atom(int n);
+    Atom &atom(int n);
     // Scale contents of the box by the specified factors along each axis
     void scaleContents(Vec3<double> scaleFactors);
 

@@ -180,7 +180,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
     {
         // Calculate reciprocal lattice atom coordinates
         // TODO CHECK Test this in a non-cubic system!
-        v = atoms[n]->r();
+        v = atoms[n].r();
         rI.x = v.x * rAxes[0] + v.y * rAxes[1] + v.z * rAxes[2];
         rI.y = v.x * rAxes[3] + v.y * rAxes[4] + v.z * rAxes[5];
         rI.z = v.x * rAxes[6] + v.y * rAxes[7] + v.z * rAxes[8];
@@ -246,7 +246,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
     for (n = 0; n < nAtoms; ++n)
     {
         // Grab localTypeIndex and array pointers for this atom
-        localTypeIndex = atoms[n]->localTypeIndex();
+        localTypeIndex = atoms[n].localTypeIndex();
         cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
         cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);
         cosTermsL = braggAtomVectorZCos.pointerAt(n, 0);

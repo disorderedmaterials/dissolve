@@ -26,8 +26,8 @@ void ChangeStore::add(Atom *i)
 // Add Molecule to watch
 void ChangeStore::add(const std::shared_ptr<Molecule> &mol)
 {
-    for (auto n = 0; n < mol->nAtoms(); ++n)
-        add(mol->atom(n).get());
+    for (auto *atom : mol->atoms())
+        add(atom);
 }
 
 // Add Cell to watch
@@ -144,14 +144,14 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
         return false;
 
     // Apply atom changes
-    std::vector<std::shared_ptr<Atom>> &atoms = cfg->atoms();
+    auto &atoms = cfg->atoms();
     for (auto n = 0; n < nTotalChanges; ++n)
     {
         assert(indices_[n] >= 0 && indices_[n] < cfg->nAtoms());
 
         // Set new coordinates and update cell position
-        atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
-        cfg->updateCellLocation(atoms[indices_[n]].get());
+        atoms[indices_[n]].setCoordinates(x_[n], y_[n], z_[n]);
+        cfg->updateCellLocation(&atoms[indices_[n]]);
     }
 #else
     // Apply atom changes
