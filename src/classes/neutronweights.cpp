@@ -120,24 +120,24 @@ void NeutronWeights::calculateWeightingMatrices()
 
     // Determine atomic concentration products, bound coherent products, and full scattering weights
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                      ci = atd1.fraction();
-                      bi = atd1.boundCoherent() * 0.1;
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                                ci = atd1.fraction();
+                                bi = atd1.boundCoherent() * 0.1;
 
-                      // Update average scattering values
-                      if (typeI == typeJ)
-                      {
-                          boundCoherentSquareOfAverage_ += ci * bi;
-                          boundCoherentAverageOfSquares_ += ci * bi * bi;
-                      }
+                                // Update average scattering values
+                                if (typeI == typeJ)
+                                {
+                                    boundCoherentSquareOfAverage_ += ci * bi;
+                                    boundCoherentAverageOfSquares_ += ci * bi * bi;
+                                }
 
-                      cj = atd2.fraction();
-                      bj = atd2.boundCoherent() * 0.1;
+                                cj = atd2.fraction();
+                                bj = atd2.boundCoherent() * 0.1;
 
-                      concentrationProducts_[{typeI, typeJ}] = ci * cj;
-                      boundCoherentProducts_[{typeI, typeJ}] = bi * bj;
-                      weights_[{typeI, typeJ}] = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
-                  });
+                                concentrationProducts_[{typeI, typeJ}] = ci * cj;
+                                boundCoherentProducts_[{typeI, typeJ}] = bi * bj;
+                                weights_[{typeI, typeJ}] = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
+                            });
 
     // Finalise <b>**2
     boundCoherentSquareOfAverage_ *= boundCoherentSquareOfAverage_;
@@ -159,20 +159,21 @@ void NeutronWeights::calculateWeightingMatrices()
         const Species *sp = topes.species();
         const AtomTypeList &speciesAtomTypes = sp->usedAtomTypes();
         intraFlag = false;
-        dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
-                      [&](int i_, const AtomTypeData &atd1, int j_, const AtomTypeData &atd2) {
-                          // Find this AtomType in our local AtomTypeList
-                          int typeI = atomTypes_.indexOf(atd1.atomType());
-                          if (typeI == -1)
-                              Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd1.atomTypeName());
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
+            [&](int i_, const AtomTypeData &atd1, int j_, const AtomTypeData &atd2) {
+                // Find this AtomType in our local AtomTypeList
+                int typeI = atomTypes_.indexOf(atd1.atomType());
+                if (typeI == -1)
+                    Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd1.atomTypeName());
 
-                          // Get AtomType for this Atom and find it in our local AtomTypeList
-                          int typeJ = atomTypes_.indexOf(atd2.atomType());
-                          if (typeJ == -1)
-                              Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd2.atomTypeName());
+                // Get AtomType for this Atom and find it in our local AtomTypeList
+                int typeJ = atomTypes_.indexOf(atd2.atomType());
+                if (typeJ == -1)
+                    Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd2.atomTypeName());
 
-                          intraFlag[{typeI, typeJ}] = true;
-                      });
+                intraFlag[{typeI, typeJ}] = true;
+            });
 
         // Loop over Isotopologues defined for this mixture
         for (auto &isoWeight : topes.mix())
@@ -226,17 +227,17 @@ void NeutronWeights::calculateWeightingMatrices()
 
     // Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                      // Skip this pair if there are no such intramolecular interactions
-                      if (!globalFlag[{typeI, typeJ}])
-                          return;
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                                // Skip this pair if there are no such intramolecular interactions
+                                if (!globalFlag[{typeI, typeJ}])
+                                    return;
 
-                      ci = atd1.fraction();
-                      cj = atd2.fraction();
+                                ci = atd1.fraction();
+                                cj = atd2.fraction();
 
-                      intramolecularWeights_[{typeI, typeJ}] /= intraNorm[{typeI, typeJ}];
-                      intramolecularWeights_[{typeI, typeJ}] *= ci * cj * (typeI == typeJ ? 1 : 2);
-                  });
+                                intramolecularWeights_[{typeI, typeJ}] /= intraNorm[{typeI, typeJ}];
+                                intramolecularWeights_[{typeI, typeJ}] *= ci * cj * (typeI == typeJ ? 1 : 2);
+                            });
 }
 
 // Create AtomType list and matrices based on stored Isotopologues information

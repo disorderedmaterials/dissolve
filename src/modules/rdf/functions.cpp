@@ -44,10 +44,12 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
-    dissolve::for_each_pair(ParallelPolicies::seq, cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto &ii, auto j, auto &jj) {
-        if (&ii != &jj)
-            partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
-    });
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, cfg->atoms().begin(), cfg->atoms().end(),
+        [box, &partialSet](auto i, auto &ii, auto j, auto &jj) {
+            if (&ii != &jj)
+                partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
+        });
 
     return true;
 }
@@ -103,19 +105,18 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
         auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
-	PairIterator pairs(maxr[typeI]);
-	auto [start, stop] = chop_range(pairs, pairs.end(), nChunks, offset);
-	std::for_each(start, stop,
-                      [box, bins, rbin, ri, nPoints, &histogram](auto it) {
-	  auto [i, j] = it;
-	  auto centre = ri[i];
-	  auto other = ri[j];
-                          if (i == j)
-                              return;
-                          bins[j] = box->minimumDistance(centre, other) * rbin;
-                          if (bins[j] < nPoints)
-                              ++histogram[bins[j]];
-                      });
+        PairIterator pairs(maxr[typeI]);
+        auto [start, stop] = chop_range(pairs, pairs.end(), nChunks, offset);
+        std::for_each(start, stop, [box, bins, rbin, ri, nPoints, &histogram](auto it) {
+            auto [i, j] = it;
+            auto centre = ri[i];
+            auto other = ri[j];
+            if (i == j)
+                return;
+            bins[j] = box->minimumDistance(centre, other) * rbin;
+            if (bins[j] < nPoints)
+                ++histogram[bins[j]];
+        });
     }
 
     Messenger::printVerbose("Cross terms..\n");
@@ -226,13 +227,14 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         auto &atomsI = cellI->atoms();
 
         // Add contributions between atoms in cellI
-        dissolve::for_each_pair(ParallelPolicies::seq, atomsI.begin(), atomsI.end(), [&](const int idx, auto &i, const int jdx, auto &j) {
-            if (idx == jdx)
-                return;
-            // No need to perform MIM since we're in the same cell
-            double distance = (i->r() - j->r()).magnitude();
-            partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-        });
+        dissolve::for_each_pair(ParallelPolicies::seq, atomsI.begin(), atomsI.end(),
+                                [&](const int idx, auto &i, const int jdx, auto &j) {
+                                    if (idx == jdx)
+                                        return;
+                                    // No need to perform MIM since we're in the same cell
+                                    double distance = (i->r() - j->r()).magnitude();
+                                    partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+                                });
     }
     return true;
 }
@@ -359,18 +361,19 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     {
         auto &atoms = (*it)->atoms();
 
-        dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(), [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
-            // Ignore atom on itself
-            if (index == jndex)
-                return;
+        dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
+                                [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
+                                    // Ignore atom on itself
+                                    if (index == jndex)
+                                        return;
 
-            double distance;
-            if (cells.minimumImageRequired(*i->cell(), *j->cell()))
-                distance = box->minimumDistance(i->r(), j->r());
-            else
-                distance = (i->r() - j->r()).magnitude();
-            originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-        });
+                                    double distance;
+                                    if (cells.minimumImageRequired(*i->cell(), *j->cell()))
+                                        distance = box->minimumDistance(i->r(), j->r());
+                                    else
+                                        distance = (i->r() - j->r()).magnitude();
+                                    originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+                                });
     }
 
     timer.stop();
@@ -456,23 +459,26 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
     auto &types = unweightedgr.atomTypes();
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-        Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, false, true);
-    });
+    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+                                Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, false, true);
+                            });
 
     // Add broadened bound partials back in to full partials
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-        unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
-    });
+    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+                                unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
+                            });
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
-      dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-            Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
-            Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
-            Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
-        });
+        dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+                                [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+                                    Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
+                                    Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
+                                    Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
+                                });
     }
 
     // Calculate total

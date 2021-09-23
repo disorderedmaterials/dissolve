@@ -197,9 +197,8 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
         return cMax - cMin;
     };
     PairIterator pairs(dissolve.atomTypes().size());
-    return dissolve::transform_reduce(
-        ParallelPolicies::par, pairs.begin(), pairs.end(), std::numeric_limits<double>::max(),
-        [](const auto a, const auto b) { return std::min(a, b); }, unaryOp);
+    return dissolve::transform_reduce(ParallelPolicies::par, pairs.begin(), pairs.end(), std::numeric_limits<double>::max(),
+                                      [](const auto a, const auto b) { return std::min(a, b); }, unaryOp);
 }
 
 // Truncate the supplied data

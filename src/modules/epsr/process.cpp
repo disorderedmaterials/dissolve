@@ -212,9 +212,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &calculatedUnweightedSQ =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
-    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-        calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
-    });
+    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                            [&](int i, auto at1, int j, auto at2) {
+                                calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+                            });
 
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
@@ -429,13 +430,15 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Add the unweighted from this target to our combined, unweighted S(Q) data
         auto &types = unweightedSQ.atomTypes();
-        dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
-            auto globalI = atd1.atomType()->index();
-            auto globalJ = atd2.atomType()->index();
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, types.begin(), types.end(),
+            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
+                auto globalI = atd1.atomType()->index();
+                auto globalJ = atd2.atomType()->index();
 
-            const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
-            Interpolator::addInterpolated(calculatedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets.size());
-        });
+                const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
+                Interpolator::addInterpolated(calculatedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets.size());
+            });
 
         /*
          * Save Data
@@ -589,16 +592,17 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &estimatedGR =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", uniqueName_, GenericItem::InRestartFileFlag);
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-        auto &expGR = estimatedGR[{i, j}];
-        expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                            [&](int i, auto at1, int j, auto at2) {
+                                auto &expGR = estimatedGR[{i, j}];
+                                expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
 
-        // Copy experimental S(Q) and FT it
-        expGR = estimatedSQ[{i, j}];
-        Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.05, 30.0,
-                        WindowFunction(WindowFunction::Form::Lorch0));
-        expGR += 1.0;
-    });
+                                // Copy experimental S(Q) and FT it
+                                expGR = estimatedSQ[{i, j}];
+                                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.05,
+                                                30.0, WindowFunction(WindowFunction::Form::Lorch0));
+                                expGR += 1.0;
+                            });
 
     /*
      * Calculate contribution to potential coefficients.
@@ -613,17 +617,19 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
-        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
+        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                                [&](int i, auto at1, int j, auto at2) {
+                                    auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
 
-            // Halve contribution from unlike terms to avoid adding double the potential for those partials
-            if (i != j)
-                weight *= 0.5;
+                                    // Halve contribution from unlike terms to avoid adding double the potential for those
+                                    // partials
+                                    if (i != j)
+                                        weight *= 0.5;
 
-            // Store fluctuation coefficients ready for addition to potential coefficients later on.
-            for (auto n = 0; n < ncoeffp; ++n)
-                fluctuationCoefficients[{i, j, n}] += weight * fitCoefficients[n];
-        });
+                                    // Store fluctuation coefficients ready for addition to potential coefficients later on.
+                                    for (auto n = 0; n < ncoeffp; ++n)
+                                        fluctuationCoefficients[{i, j, n}] += weight * fitCoefficients[n];
+                                });
 
         // Increase dataIndex
         ++dataIndex;
@@ -635,27 +641,28 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         // Sum fluctuation coefficients in to the potential coefficients
         auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
-        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            auto &potCoeff = coefficients[{i, j}];
+        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                                [&](int i, auto at1, int j, auto at2) {
+                                    auto &potCoeff = coefficients[{i, j}];
 
-            // Zero potential before adding in fluctuation coefficients?
-            if (overwritePotentials)
-                std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
+                                    // Zero potential before adding in fluctuation coefficients?
+                                    if (overwritePotentials)
+                                        std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
-            // Perform smoothing of the fluctuation coefficients before we sum them into the potential (the
-            // un-smoothed coefficients are stored)
-            Data1D smoothedCoefficients;
-            for (auto n = 0; n < ncoeffp; ++n)
-                smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
-            Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
+                                    // Perform smoothing of the fluctuation coefficients before we sum them into the potential
+                                    // (the un-smoothed coefficients are stored)
+                                    Data1D smoothedCoefficients;
+                                    for (auto n = 0; n < ncoeffp; ++n)
+                                        smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
+                                    Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
 
-            // Add in fluctuation coefficients
-            for (auto n = 0; n < ncoeffp; ++n)
-                potCoeff[n] += weighting * smoothedCoefficients.value(n);
+                                    // Add in fluctuation coefficients
+                                    for (auto n = 0; n < ncoeffp; ++n)
+                                        potCoeff[n] += weighting * smoothedCoefficients.value(n);
 
-            // Set first term to zero (following EPSR)
-            potCoeff[0] = 0.0;
-        });
+                                    // Set first term to zero (following EPSR)
+                                    potCoeff[0] = 0.0;
+                                });
 
         // Determine absolute energy of empirical potentials
         energabs = absEnergyEP(dissolve);
@@ -715,16 +722,17 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-	  dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                          [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
-                              // Grab pointer to the relevant pair potential
-                              PairPotential *pp = dissolve.pairPotential(at1, at2);
+            dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                                        // Grab pointer to the relevant pair potential
+                                        PairPotential *pp = dissolve.pairPotential(at1, at2);
 
-                              Data1DExportFileFormat exportFormat(fmt::format("EP-{}-{}.txt", at1->name(), at2->name()));
-                              if (!exportFormat.exportData(pp->uAdditional()))
-                                  return procPool.decideFalse();
-                              return std::nullopt;
-                          });
+                                        Data1DExportFileFormat exportFormat(
+                                            fmt::format("EP-{}-{}.txt", at1->name(), at2->name()));
+                                        if (!exportFormat.exportData(pp->uAdditional()))
+                                            return procPool.decideFalse();
+                                        return std::nullopt;
+                                    });
             procPool.decideTrue();
         }
         else if (!procPool.decision())
@@ -737,19 +745,19 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
             dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                          [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
-                              // Grab reference to coefficients
-                              auto &potCoeff = coefficients[{i, j}];
+                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                                        // Grab reference to coefficients
+                                        auto &potCoeff = coefficients[{i, j}];
 
-                              LineParser fileParser;
-                              if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
-                                  return procPool.decideFalse();
-                              for (auto n : potCoeff)
-                                  if (!fileParser.writeLineF("{}\n", n))
-                                      return procPool.decideFalse();
-                              fileParser.closeFiles();
-                              return std::nullopt;
-                          });
+                                        LineParser fileParser;
+                                        if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
+                                            return procPool.decideFalse();
+                                        for (auto n : potCoeff)
+                                            if (!fileParser.writeLineF("{}\n", n))
+                                                return procPool.decideFalse();
+                                        fileParser.closeFiles();
+                                        return std::nullopt;
+                                    });
 
             procPool.decideTrue();
         }

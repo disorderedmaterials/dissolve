@@ -135,15 +135,15 @@ void XRayWeights::setUpMatrices()
 
     // Determine atomic concentration products and full pre-factor
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                      double ci = atd1.fraction();
-                      concentrations_.at(typeI) = ci;
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                                double ci = atd1.fraction();
+                                concentrations_.at(typeI) = ci;
 
-                      double cj = atd2.fraction();
+                                double cj = atd2.fraction();
 
-                      concentrationProducts_[{typeI, typeJ}] = ci * cj;
-                      preFactors_[{typeI, typeJ}] = ci * cj * (typeI == typeJ ? 1 : 2);
-                  });
+                                concentrationProducts_[{typeI, typeJ}] = ci * cj;
+                                preFactors_[{typeI, typeJ}] = ci * cj * (typeI == typeJ ? 1 : 2);
+                            });
 }
 
 // Return concentration product for type i

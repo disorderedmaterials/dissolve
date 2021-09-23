@@ -156,14 +156,14 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
         dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
-                      [&braggPartials](auto i, auto &atd1, auto j, auto &atd2) {
-                          // Subtract self-scattering level if types are equivalent
-                          if (i == j)
-                              braggPartials[{i, j}] -= atd1.fraction();
+                                [&braggPartials](auto i, auto &atd1, auto j, auto &atd2) {
+                                    // Subtract self-scattering level if types are equivalent
+                                    if (i == j)
+                                        braggPartials[{i, j}] -= atd1.fraction();
 
-                          // Remove atomic fraction normalisation
-                          braggPartials[{i, j}] /= atd1.fraction() * atd2.fraction();
-                      });
+                                    // Remove atomic fraction normalisation
+                                    braggPartials[{i, j}] /= atd1.fraction() * atd2.fraction();
+                                });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
         dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {

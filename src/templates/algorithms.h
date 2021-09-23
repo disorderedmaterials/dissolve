@@ -214,25 +214,24 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
 }
 
 // Perform an operation on every pair of elements in a container
-template <typename ParallelPolicy, class Iter, class Lam> void
-for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
+template <typename ParallelPolicy, class Iter, class Lam>
+void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
-  PairIterator start(end-begin), stop(end-begin, ((end-begin) * (end-begin+1))/2);
-  for_each(policy, start, stop, [&lambda, &begin](const auto pair) {
-    auto &[i, j] = pair;
-    lambda(i, begin[i], j, begin[j]);
-  });
+    PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
+    for_each(policy, start, stop, [&lambda, &begin](const auto pair) {
+        auto &[i, j] = pair;
+        lambda(i, begin[i], j, begin[j]);
+    });
 }
 
 // Perform an operation on every pair of elements in a range (begin <= i < end)
-template <typename ParallelPolicy, class Lam> void
-for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
+template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
 {
-  PairIterator start(end), stop(end, end*(end+1)/2);
-  for_each(policy, start, stop, [&lambda](const auto pair) {
-    auto [i, j] = pair;
-    lambda(i, j);
-  });
+    PairIterator start(end), stop(end, end * (end + 1) / 2);
+    for_each(policy, start, stop, [&lambda](const auto pair) {
+        auto [i, j] = pair;
+        lambda(i, j);
+    });
 }
 } // namespace dissolve
 
