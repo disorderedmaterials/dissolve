@@ -5,11 +5,11 @@
 
 #include <classes/configuration.h>
 
-class AtomLock
+class AtomChangeToken
 {
     public:
-    AtomLock(Configuration &parent);
-    ~AtomLock();
+    AtomChangeToken(Configuration &parent);
+    ~AtomChangeToken();
 
     private:
     Configuration &parent_;

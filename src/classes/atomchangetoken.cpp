@@ -3,9 +3,9 @@
 
 #include <classes/atomlock.h>
 
-AtomLock::AtomLock(Configuration &parent) : parent_(parent){};
+AtomChangeToken::AtomChangeToken(Configuration &parent) : parent_(parent){};
 
-AtomLock::~AtomLock()
+AtomChangeToken::~AtomChangeToken()
 {
     for (auto &mol : parent_.molecules())
         mol->updateAtoms(parent_.atoms());

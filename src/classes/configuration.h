@@ -22,7 +22,7 @@
 #include <memory>
 
 // Forward Declarations
-class AtomLock;
+class AtomChangeToken;
 class Cell;
 class PotentialMap;
 class ProcessPool;
@@ -121,7 +121,7 @@ class Configuration
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(AtomLock &lock, const Species *sp,
+    addMolecule(AtomChangeToken &lock, const Species *sp,
                 OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
     // Remove all Molecules of the target Species from the Configuration
     void removeMolecules(const Species *sp);
@@ -135,7 +135,7 @@ class Configuration
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    Atom &addAtom(AtomLock &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
+    Atom &addAtom(AtomChangeToken &lock, const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule,
                   Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
