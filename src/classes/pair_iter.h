@@ -11,7 +11,7 @@ class PairIterator
     int size_;
     int x_;
     int y_;
-    int toIndex_();
+    int toIndex_() const;
     void fromIndex_(int);
 
     public:
@@ -22,6 +22,9 @@ class PairIterator
     using iterator_category = std::random_access_iterator_tag;
 
     PairIterator(int size, int index = 0);
+
+    PairIterator begin() const;
+    PairIterator end() const;
     value_type operator*();
     value_type operator[](difference_type i) const;
 

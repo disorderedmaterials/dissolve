@@ -41,3 +41,6 @@ PairIterator &PairIterator::operator++()
     }
     return *this;
 }
+
+PairIterator PairIterator::begin() const { return PairIterator(size_, 0);}
+PairIterator PairIterator::end() const { return PairIterator(size_, size_*(size_+1)/2);}
