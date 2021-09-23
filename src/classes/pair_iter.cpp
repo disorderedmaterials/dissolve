@@ -17,6 +17,11 @@ void PairIterator::fromIndex_(int index) {
   y_ = x_ + index - ( x_ * Np - 0.5 * x_ * x_);
 }
 
+int PairIterator::toIndex_() const {
+  int front = ((2 * size_ + 1) - x_) * x_ / 2;
+  return front + y_ - x_;
+}
+
 bool PairIterator::operator<(const PairIterator &other) const
 {
     if (x_ != other.x_)
@@ -40,6 +45,15 @@ PairIterator &PairIterator::operator++()
 	y_ = x_;
     }
     return *this;
+}
+
+PairIterator::difference_type PairIterator::operator-(const PairIterator &other) const {
+  return toIndex_() - other.toIndex_();
+}
+
+PairIterator PairIterator::operator+(PairIterator::difference_type diff) const {
+
+  return PairIterator(size_, diff + toIndex_());
 }
 
 PairIterator PairIterator::begin() const { return PairIterator(size_, 0);}
