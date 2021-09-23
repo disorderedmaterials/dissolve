@@ -69,7 +69,7 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
 
     // Perform the magic
     const auto *box = cfg->box();
-    AtomLock lock(cfg);
+    AtomLock lock(*cfg);
     for (const auto &mol : targets)
     {
         auto newMol = cfg->addMolecule(lock, sp);

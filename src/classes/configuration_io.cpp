@@ -89,7 +89,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     const auto angles = parser.arg3d(0);
-    AtomLock lock(this);
+    AtomLock lock(*this);
 
     createBox(lengths, angles, nonPeriodic);
 

@@ -8,9 +8,9 @@
 class AtomLock
 {
     public:
-    AtomLock(Configuration *parent);
+    AtomLock(Configuration &parent);
     ~AtomLock();
 
     private:
-    Configuration *parent_;
+    Configuration &parent_;
 };
