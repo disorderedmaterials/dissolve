@@ -85,7 +85,7 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
     boundHistograms_.initialise(nTypes, nTypes, true);
     unboundHistograms_.initialise(nTypes, nTypes, true);
 
-    for_each_pair(0, nTypes, [&](int i, int j) {
+    dissolve::for_each_pair(ParallelPolicies::par, 0, nTypes, [&](int i, int j) {
         fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
         boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
         unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
@@ -105,7 +105,7 @@ void PartialSet::reset()
         }
 
     // Zero partials
-    for_each_pair(0, atomTypes_.nItems(), [&](int i, int j) {
+    dissolve::for_each_pair(ParallelPolicies::par, 0, atomTypes_.nItems(), [&](int i, int j) {
         std::fill(partials_[{i, j}].values().begin(), partials_[{i, j}].values().end(), 0.0);
         std::fill(boundPartials_[{i, j}].values().begin(), boundPartials_[{i, j}].values().end(), 0.0);
         std::fill(unboundPartials_[{i, j}].values().begin(), unboundPartials_[{i, j}].values().end(), 0.0);
@@ -450,7 +450,7 @@ void PartialSet::operator*=(const double factor)
 {
     auto nTypes = atomTypes_.nItems();
 
-    for_each_pair(0, nTypes, [&](auto n, auto m) {
+    dissolve::for_each_pair(ParallelPolicies::par, 0, nTypes, [&](auto n, auto m) {
         partials_[{n, m}] *= factor;
         boundPartials_[{n, m}] *= factor;
         unboundPartials_[{n, m}] *= factor;

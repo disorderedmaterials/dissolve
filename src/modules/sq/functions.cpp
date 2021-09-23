@@ -26,7 +26,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &un
     procPool.resetAccumulatedTime();
     Timer timer;
     timer.start();
-    for_each_pair(0, unweightedgr.nAtomTypes(), [&](int n, int m) {
+    dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedgr.nAtomTypes(), [&](int n, int m) {
         // Total partial
         unweightedsq.partial(n, m).copyArrays(unweightedgr.partial(n, m));
         unweightedsq.partial(n, m) -= 1.0;

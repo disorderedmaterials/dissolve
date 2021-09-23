@@ -166,7 +166,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                       });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
-        for_each_pair(0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
+        dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
             // Note: Intramolecular broadening will not be applied to bound terms within the
             // calculated Bragg scattering
             auto &bound = unweightedsq.boundPartial(i, j);

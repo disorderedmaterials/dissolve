@@ -20,16 +20,6 @@ template <typename T> auto chop_range(const T begin, const T end, const int nChu
     return std::make_tuple(start, stop);
 }
 
-// Perform an operation on every pair of elements in a range (begin <= i < end)
-template <class Lam> void for_each_pair(int begin, int end, Lam lambda)
-{
-  PairIterator start(end), stop(end, end*(end+1)/2);
-  for(auto it = start; it < stop; ++it) {
-    auto [i, j] = *it;
-    lambda(i, j);
-  }
-}
-
 template <typename T> class EarlyReturn
 {
     public:
@@ -231,6 +221,17 @@ for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
   for_each(start, stop, [&lambda, &begin](const auto pair) {
     auto &[i, j] = pair;
     lambda(i, begin[i], j, begin[j]);
+  });
+}
+
+// Perform an operation on every pair of elements in a range (begin <= i < end)
+template <typename ParallelPolicy, class Lam> void
+for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
+{
+  PairIterator start(end), stop(end, end*(end+1)/2);
+  for_each(policy, start, stop, [&lambda](const auto pair) {
+    auto [i, j] = pair;
+    lambda(i, j);
   });
 }
 } // namespace dissolve
