@@ -22,11 +22,11 @@
 #include <memory>
 
 // Forward Declarations
+class AtomLock;
 class Cell;
 class PotentialMap;
 class ProcessPool;
 class Species;
-class AtomLock;
 
 // Configuration
 class Configuration
