@@ -99,10 +99,11 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
                 const auto &atl = reflectionAtomTypesData_->get();
                 std::vector<std::string> columnHeaders;
                 columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
-                dissolve::for_each_pair(ParallelPolicies::seq, atl.begin(), atl.end(),
-                              [&columnHeaders](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                                  columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
-                              });
+                dissolve::for_each_pair(
+                    ParallelPolicies::seq, atl.begin(), atl.end(),
+                    [&columnHeaders](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                        columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
+                    });
                 braggModel_.setIntensityHeaders(columnHeaders);
             }
             else
