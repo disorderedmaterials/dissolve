@@ -61,22 +61,24 @@ void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 
     const PartialSet &ps = *targetPartials_;
 
-    dissolve::for_each_pair(ParallelPolicies::seq, ps.atomTypes().begin(), ps.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
-        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, ps.atomTypes().begin(), ps.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+            const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
-        // Full partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
-                                                      fmt::format("{} (Full)", id), "Full");
+            // Full partial
+            rdfGraph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Full)", id), "Full");
 
-        // Bound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->uniqueName(), targetPrefix, id),
-                                                      fmt::format("{} (Bound)", id), "Bound");
+            // Bound partial
+            rdfGraph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//{}//{}//Bound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Bound)", id),
+                "Bound");
 
-        // Unbound partial
-        rdfGraph_->createRenderable<RenderableData1D>(
-            fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Unbound)", id),
-            "Unbound");
-    });
+            // Unbound partial
+            rdfGraph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Unbound)", id),
+                "Unbound");
+        });
 }
 
 // Update controls within widget

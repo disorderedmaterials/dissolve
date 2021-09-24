@@ -61,14 +61,14 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         else if (ui_.PartialsButton->isChecked())
         {
             if (reflectionAtomTypesData_)
-                dissolve::for_each_pair(ParallelPolicies::seq, reflectionAtomTypesData_->get().begin(), reflectionAtomTypesData_->get().end(),
-                              [&](int n, auto &at1, int m, auto &at2) {
-                                  const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+                dissolve::for_each_pair(ParallelPolicies::seq, reflectionAtomTypesData_->get().begin(),
+                                        reflectionAtomTypesData_->get().end(), [&](int n, auto &at1, int m, auto &at2) {
+                                            const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
-                                  graph_->createRenderable<RenderableData1D>(
-                                      fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id), fmt::format("{}", id),
-                                      "Full");
-                              });
+                                            graph_->createRenderable<RenderableData1D>(
+                                                fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id),
+                                                fmt::format("{}", id), "Full");
+                                        });
         }
     }
 
