@@ -63,5 +63,7 @@ PairIterator &PairIterator::operator+=(difference_type forward)
     return *this;
 }
 
+PairIterator::value_type PairIterator::operator[](difference_type i) const { return *(*this + i); }
+
 PairIterator PairIterator::begin() const { return PairIterator(size_, 0); }
 PairIterator PairIterator::end() const { return PairIterator(size_, size_ * (size_ + 1) / 2); }
