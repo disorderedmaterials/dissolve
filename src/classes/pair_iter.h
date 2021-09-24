@@ -21,7 +21,7 @@ class PairIterator
     using pointer = std::tuple<int, int> *;
     using iterator_category = std::random_access_iterator_tag;
 
-    PairIterator(int size=0, int index = 0);
+    PairIterator(int size = 0, int index = 0);
 
     PairIterator begin() const;
     PairIterator end() const;
