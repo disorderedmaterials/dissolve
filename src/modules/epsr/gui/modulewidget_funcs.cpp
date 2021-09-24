@@ -106,7 +106,7 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         else if (ui_.EstimatedSQButton->isChecked())
         {
             // Add experimentally-determined partial S(Q)
-            for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+            dissolve::for_each_pair(ParallelPolicies::seq, dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 // Unweighted estimated partial
@@ -145,7 +145,7 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             }
 
             // Add experimentally-determined partial g(r)
-            for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto &at1, int m, auto &at2) {
+            dissolve::for_each_pair(ParallelPolicies::seq, dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto &at1, int m, auto &at2) {
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 // Experimentally-determined unweighted partial
@@ -174,7 +174,7 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         else if (ui_.PotentialsButton->isChecked())
         {
             // Add on additional potentials
-            for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+            dissolve::for_each_pair(ParallelPolicies::seq, dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 graph_->createRenderable<RenderableData1D, Data1D>(dissolve_.pairPotential(at1, at2)->uAdditional(), id, "Phi");

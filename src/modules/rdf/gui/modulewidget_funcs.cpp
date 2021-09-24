@@ -61,7 +61,7 @@ void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 
     const PartialSet &ps = *targetPartials_;
 
-    for_each_pair(ps.atomTypes().begin(), ps.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+    dissolve::for_each_pair(ParallelPolicies::seq, ps.atomTypes().begin(), ps.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
         const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
         // Full partial
