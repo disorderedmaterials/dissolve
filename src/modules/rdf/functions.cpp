@@ -215,7 +215,7 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     };
 
     // Execute lambda operator for each cell
-    dissolve::for_each(ParallelPolicies::seq, dissolve::counting_iterator<int>(cStart), dissolve::counting_iterator<int>(cEnd),
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(cStart), dissolve::counting_iterator<int>(cEnd),
                        unaryOp);
     auto histograms = combinableHistograms.finalize();
     addHistogramsToPartialSet(histograms, partialSet);
