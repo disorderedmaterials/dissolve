@@ -14,7 +14,7 @@ steps:
       brew install antlr antlr4-cpp-runtime ftgl
       # -- Qt
       sudo pip3 install conan aqtinstall
-      aqt install --outputdir /tmp/qt ${{ parameters.qtver }} mac desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
+      aqt install-qt --outputdir /tmp/qt ${{ parameters.qtver }} mac desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
