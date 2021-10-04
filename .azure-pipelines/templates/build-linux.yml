@@ -21,7 +21,7 @@ steps:
       sudo pip3 install conan
       # -- Qt
       sudo pip3 install aqtinstall
-      aqt install-qt --outputdir /tmp/qt linux ${{ parameters.qtver }} desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
+      aqt install-qt --outputdir /tmp/qt linux desktop ${{ parameters.qtver }} -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
     displayName: 'Install Conan'
   - bash: |
       set -ex
