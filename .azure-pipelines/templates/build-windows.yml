@@ -19,7 +19,7 @@ steps:
     displayName: 'Install Prerequisites'
   - script: |
       python -m pip install aqtinstall
-      python -m aqt install-qt --outputdir $(Build.BinariesDirectory)\\Qt ${{ parameters.qtver }} windows desktop win64_msvc2019_64
+      python -m aqt install-qt --outputdir $(Build.BinariesDirectory)\\Qt windows ${{ parameters.qtver }} desktop win64_msvc2019_64
     displayName: 'Install Qt'
   - powershell: |
       $ErrorActionPreference = 'Stop'
