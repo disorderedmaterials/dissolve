@@ -228,21 +228,23 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
 
         // Add contributions between atoms in cellI
         PairIterator pairs(atomsI.size());
-        partialSet = dissolve::transform_reduce(ParallelPolicies::seq, pairs.begin(), pairs.end(), partialSet,
-                                   [](auto set, auto tup) -> PartialSet {
-                                       auto [i, j, dist] = tup;
-                                       if (dist > 0)
-                                           set.fullHistogram(i, j).bin(dist);
-                                       return set;
-                                   },
-                                   [&atomsI](auto it) -> std::tuple<int, int, double> {
-                                       auto [idx, jdx] = it;
-				       if (idx == jdx) return {0, 0, -1};
-                                       auto i = atomsI[idx];
-                                       auto j = atomsI[jdx];
-                                       // No need to perform MIM since we're in the same cell
-                                       return {i->localTypeIndex(), j->localTypeIndex(), (i->r() - j->r()).magnitude() };
-                                   });
+        partialSet =
+            dissolve::transform_reduce(ParallelPolicies::seq, pairs.begin(), pairs.end(), partialSet,
+                                       [](auto set, auto tup) -> PartialSet {
+                                           auto [i, j, dist] = tup;
+                                           if (dist > 0)
+                                               set.fullHistogram(i, j).bin(dist);
+                                           return set;
+                                       },
+                                       [&atomsI](auto it) -> std::tuple<int, int, double> {
+                                           auto [idx, jdx] = it;
+                                           if (idx == jdx)
+                                               return {0, 0, -1};
+                                           auto i = atomsI[idx];
+                                           auto j = atomsI[jdx];
+                                           // No need to perform MIM since we're in the same cell
+                                           return {i->localTypeIndex(), j->localTypeIndex(), (i->r() - j->r()).magnitude()};
+                                       });
     }
     return true;
 }
