@@ -23,7 +23,7 @@ steps:
       sudo pip3 install aqtinstall
       aqt list-qt linux desktop --arch 6.1.1
       aqt list-qt linux desktop --modules 6.1.1 gcc_64
-      aqt install-qt --outputdir /tmp/qt linux desktop ${{ parameters.qtver }} -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
+      aqt install-qt --outputdir /tmp/qt linux desktop ${{ parameters.qtver }} -m qtcharts
     displayName: 'Install Conan'
   - bash: |
       set -ex
