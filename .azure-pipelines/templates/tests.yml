@@ -22,7 +22,7 @@ jobs:
           sudo pip3 install aqtinstall
           sudo apt-get update
           sudo apt-get install libgl1-mesa-glx libopengl0 libegl1 libegl1-mesa
-          aqt install --outputdir /tmp/qt ${{ parameters.qtver }} linux desktop -m qtcore qtgui qtwidgets qtopengl qtopenglwidgets
+          aqt install-qt --outputdir /tmp/qt linux desktop ${{ parameters.qtver }} -m qtcharts
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: 'current'
