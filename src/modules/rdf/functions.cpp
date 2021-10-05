@@ -230,7 +230,7 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         PairIterator pairs(atomsI.size());
         partialSet =
             dissolve::transform_reduce(ParallelPolicies::seq, pairs.begin(), pairs.end(), partialSet,
-                                       [](PartialSet set, auto tup) -> PartialSet {
+                                       [](PartialSet set, std::tuple<int, int, double> tup) -> PartialSet {
                                            auto [i, j, dist] = tup;
                                            if (dist > 0)
                                                set.fullHistogram(i, j).bin(dist);
