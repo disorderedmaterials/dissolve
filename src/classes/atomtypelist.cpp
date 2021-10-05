@@ -27,6 +27,14 @@ AtomTypeData &AtomTypeList::operator[](int n)
     return types_[n];
 }
 
+// Array access operator
+const AtomTypeData &AtomTypeList::operator[](int n) const
+{
+    assert(n >= 0 && n < types_.size());
+
+    return types_[n];
+}
+
 /*
  * Type List
  */
