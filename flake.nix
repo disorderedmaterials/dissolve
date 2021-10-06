@@ -22,20 +22,18 @@
             fmt
             fmt.dev
             freetype
-            ftgl
             jre
-            libGL
-            libglvnd
-            libglvnd.dev
-            ninja
             openmpi
+            pkgconfig
             pugixml
           ];
-          cmakeFlags = [ "-G Ninja" "-DTBB_INCLUDE=${pkgs.tbb}/include"];
-          buildPhase = ''
-            ${pkgs.ninja}/bin/ninja -j4
+          cmakeFlags = [ "-DMULTI_THREADING=OFF" ];
+          installPhase = ''
+            mkdir -p $out/bin
+            ls nix
+            mv ./$out/bin/dissolve $out/bin/
           '';
-          TBB_LIBRARIES = "${pkgs.tbb}/lib";
+
           meta = with pkgs.lib; {
             description = "";
             homepage = "";
