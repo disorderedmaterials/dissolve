@@ -8,7 +8,7 @@
 
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        dissolve = pkgs.stdenvNoCC.mkDerivation {
+        dissolve = pkgs.gcc9Stdenv.mkDerivation {
           pname = "dissolve";
           version = "0.9.0";
           src = ./.;
@@ -35,8 +35,6 @@
           buildPhase = ''
             ${pkgs.ninja}/bin/ninja -j4
           '';
-          CC = "${pkgs.gcc9}/bin/gcc";
-          CXX = "${pkgs.gcc9}/bin/g++";
           TBB_LIBRARIES = "${pkgs.tbb}/lib";
           meta = with pkgs.lib; {
             description = "";
