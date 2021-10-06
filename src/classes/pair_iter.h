@@ -15,6 +15,7 @@ class PairIterator
     void fromIndex_(int);
 
     public:
+    using value = std::tuple<int, int>;
     using value_type = std::tuple<int, int>;
     using difference_type = int;
     using reference = std::tuple<int, int> &;
