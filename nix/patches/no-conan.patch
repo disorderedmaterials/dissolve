@@ -2,7 +2,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index a9e748fc6..5f26682d0 100755
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -23,9 +23,8 @@ cmake_policy(SET CMP0020 NEW)
+@@ -23,9 +23,9 @@ cmake_policy(SET CMP0020 NEW)
  # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
  set(CMAKE_CXX_STANDARD 17)
  
@@ -11,6 +11,7 @@ index a9e748fc6..5f26682d0 100755
 -conan_basic_setup(TARGETS)
 +find_package(fmt REQUIRED)
 +find_package(CLI11 REQUIRED)
++find_package(pugixml REQUIRED)
  
  # Catch defines
  if(PARALLEL)
@@ -28,7 +29,7 @@ index a9e748fc6..5f26682d0 100755
              ${EXTRA_LINK_LIBS}
              ${THREADING_LINK_LIBS}
 -    INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11 CONAN_PKG::pugixml
-+    INTERFACE fmt::fmt CLI11::CLI11 pugixml
++    INTERFACE fmt::fmt CLI11::CLI11 pugixml::pugixml
    )
  endif(GUI)
 diff --git a/src/base/CMakeLists.txt b/src/base/CMakeLists.txt
