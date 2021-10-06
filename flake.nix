@@ -34,6 +34,7 @@
           ];
           CC = "${pkgs.gcc9}/bin/gcc";
           CXX = "${pkgs.gcc9}/bin/g++";
+          TBB_LIBRARIES = "${pkgs.tbb}/lib";
           meta = with pkgs.lib; {
             description = "";
             homepage = "";
