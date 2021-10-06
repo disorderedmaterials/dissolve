@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9e748fc6..ae13ba9f4 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,9 +23,6 @@ cmake_policy(SET CMP0020 NEW)
+ # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
+ set(CMAKE_CXX_STANDARD 17)
+ 
+-# Include Conan Packages
+-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+-conan_basic_setup(TARGETS)
+ 
+ # Catch defines
+ if(PARALLEL)
