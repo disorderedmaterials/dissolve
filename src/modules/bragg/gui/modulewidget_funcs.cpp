@@ -63,10 +63,10 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             if (reflectionAtomTypesData_)
             {
                 PairIterator pairs(reflectionAtomTypesData_->get().nItems());
-                for (std::tuple<int, int> it : pairs)
+                for (auto [first, second] : pairs)
                 {
-                    const AtomTypeData &at1 = reflectionAtomTypesData_->get()[std::get<0>(it)];
-                    const AtomTypeData &at2 = reflectionAtomTypesData_->get()[std::get<1>(it)];
+                    const AtomTypeData &at1 = reflectionAtomTypesData_->get()[first];
+                    const AtomTypeData &at2 = reflectionAtomTypesData_->get()[second];
                     const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
                     graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id),
@@ -103,11 +103,13 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
                 const auto &atl = reflectionAtomTypesData_->get();
                 std::vector<std::string> columnHeaders;
                 columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
-                dissolve::for_each_pair(
-                    ParallelPolicies::seq, atl.begin(), atl.end(),
-                    [&columnHeaders](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                        columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
-                    });
+                PairIterator pairs(atl.nItems());
+                for (auto [first, second] : pairs)
+                {
+                    auto &atd1 = atl[first];
+                    auto &atd2 = atl[second];
+                    columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
+                }
                 braggModel_.setIntensityHeaders(columnHeaders);
             }
             else
