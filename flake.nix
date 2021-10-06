@@ -43,5 +43,36 @@
             maintainers = [ maintainers.rprospero ];
           };
         };
-      in { defaultPackage = dissolve; });
+      in {
+        defaultPackage = dissolve;
+        packages = {
+          dissolve = dissolve;
+          singularity = pkgs.stdenvNoCC.mkDerivation {
+            name = "dissolve.sif";
+            version = "0.9.0";
+            src =
+              builtins.filterSource (path: type: baseNameOf path != "flake.nix")
+                ./.;
+            buildPhase = ''
+              ${pkgs.gnutar}/bin/tar czf dissolve.oci.tar.gz --directory=${
+                self.packages.${system}.container
+              } .
+            '';
+            installPhase = ''
+              mkdir -p $out
+              cp dissolve.oci.tar.gz $out/
+            '';
+          };
+
+          container = pkgs.ociTools.buildContainer {
+            args = [
+              (with pkgs;
+                writeScript "run.sh" ''
+                  #!${bash}/bin/bash
+                  exec ${self.packages.${system}.dissolve}/bin/dissolve
+                '').outPath
+            ];
+          };
+        };
+      });
 }
