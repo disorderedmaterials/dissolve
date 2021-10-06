@@ -63,14 +63,15 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             if (reflectionAtomTypesData_)
             {
                 PairIterator pairs(reflectionAtomTypesData_->get().nItems());
-                std::for_each(pairs.begin(), pairs.end(), [this](std::tuple<int, int> it) {
-                    const AtomTypeData &at1 = this->reflectionAtomTypesData_->get()[std::get<0>(it)];
-                    const AtomTypeData &at2 = this->reflectionAtomTypesData_->get()[std::get<1>(it)];
+                for (std::tuple<int, int> it : pairs)
+                {
+                    const AtomTypeData &at1 = reflectionAtomTypesData_->get()[std::get<0>(it)];
+                    const AtomTypeData &at2 = reflectionAtomTypesData_->get()[std::get<1>(it)];
                     const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
-                    this->graph_->createRenderable<RenderableData1D>(
-                        fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id), fmt::format("{}", id), "Full");
-                });
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id),
+                                                               fmt::format("{}", id), "Full");
+                };
             }
         }
     }
