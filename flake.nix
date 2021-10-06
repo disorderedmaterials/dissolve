@@ -22,7 +22,6 @@
             fmt
             freetype
             ftgl
-            gcc9
             jre
             libGL
             libglvnd
@@ -30,7 +29,6 @@
             ninja
             openmpi
             pugixml
-            tbb
           ];
           CC = "${pkgs.gcc9}/bin/gcc";
           CXX = "${pkgs.gcc9}/bin/g++";
