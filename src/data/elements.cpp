@@ -5,6 +5,7 @@
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include <cctype>
+#include <cassert>
 
 namespace Elements
 {
