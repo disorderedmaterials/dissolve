@@ -31,7 +31,7 @@
             openmpi
             pugixml
           ];
-          cmakeFlags = [ "-G Ninja" "-DFMT_INCLUDE_DIR=${pkgs.fmt.dev}/include"];
+          cmakeFlags = [ "-G Ninja" "-DTBB_INCLUDE=${pkgs.tbb}/include"];
           buildPhase = ''
             ${pkgs.ninja}/bin/ninja -j4
           '';
