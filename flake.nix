@@ -19,9 +19,11 @@
             bison
             cmake
             cli11
+            fmt
             freetype
             ftgl
             gcc9
+            jre
             libGL
             libglvnd
             libglvnd.dev
