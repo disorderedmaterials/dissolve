@@ -4,17 +4,39 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem ({
-      defaultPackage = nixpkgs.mkDerivation {
-        pname = "dissolve";
-        version = "0.9.0";
-        src = ./.;
-        meta = with nixpkgs.lib; {
-          description = "";
-          homepage = "";
-          # license = licenses.unlicense;
-          maintainers = [ maintainers.rprospero ];
+    flake-utils.lib.eachDefaultSystem (system:
+
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        dissolve = pkgs.stdenvNoCC.mkDerivation {
+          pname = "dissolve";
+          version = "0.9.0";
+          src = ./.;
+          buildInputs = with pkgs; [
+            antlr4
+            antlr4.runtime.cpp
+            bison
+            cmake
+            cli11
+            freetype
+            ftgl
+            gcc9
+            libGL
+            libglvnd
+            libglvnd.dev
+            ninja
+            openmpi
+            pugixml
+            tbb
+          ];
+          CC = "${pkgs.gcc9}/bin/gcc";
+          CXX = "${pkgs.gcc9}/bin/g++";
+          meta = with pkgs.lib; {
+            description = "";
+            homepage = "";
+            # license = licenses.unlicense;
+            maintainers = [ maintainers.rprospero ];
+          };
         };
-      };
-    });
+      in { defaultPackage = dissolve; });
 }
