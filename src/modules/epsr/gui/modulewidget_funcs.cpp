@@ -106,23 +106,25 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         else if (ui_.EstimatedSQButton->isChecked())
         {
             // Add experimentally-determined partial S(Q)
-            dissolve::for_each_pair(
-                ParallelPolicies::seq, dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(),
-                [&](int n, auto at1, int m, auto at2) {
-                    const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+            PairIterator pairs(dissolve_.atomTypes().size());
+            for (auto [first, second] : pairs)
+            {
+                auto &at1 = dissolve_.atomTypes()[first];
+                auto &at2 = dissolve_.atomTypes()[second];
+                const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-                    // Unweighted estimated partial
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedSQ//{}", module_->uniqueName(), id),
-                                                               fmt::format("{} (Estimated)", id), "Estimated");
+                // Unweighted estimated partial
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedSQ//{}", module_->uniqueName(), id),
+                                                           fmt::format("{} (Estimated)", id), "Estimated");
 
-                    // Calculated / summed partial
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}", module_->uniqueName(), id),
-                                                               fmt::format("{} (Calc)", id), "Calc");
+                // Calculated / summed partial
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}", module_->uniqueName(), id),
+                                                           fmt::format("{} (Calc)", id), "Calc");
 
-                    // Deltas
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//DeltaSQ//{}", module_->uniqueName(), id),
-                                                               fmt::format("{} (Delta)", id), "Delta");
-                });
+                // Deltas
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//DeltaSQ//{}", module_->uniqueName(), id),
+                                                           fmt::format("{} (Delta)", id), "Delta");
+            }
         }
         else if (ui_.EstimatedGRButton->isChecked())
         {
@@ -147,19 +149,21 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             }
 
             // Add experimentally-determined partial g(r)
-            dissolve::for_each_pair(
-                ParallelPolicies::seq, dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(),
-                [&](int n, auto &at1, int m, auto &at2) {
-                    const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+            PairIterator pairs(dissolve_.atomTypes().size());
+            for (auto [first, second] : pairs)
+            {
+                auto &at1 = dissolve_.atomTypes()[first];
+                auto &at2 = dissolve_.atomTypes()[second];
+                const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-                    // Experimentally-determined unweighted partial
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedGR//{}", module_->uniqueName(), id),
-                                                               fmt::format("{} (Estimated)", id), "Estimated");
+                // Experimentally-determined unweighted partial
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedGR//{}", module_->uniqueName(), id),
+                                                           fmt::format("{} (Estimated)", id), "Estimated");
 
-                    // Calculated / summed partials, taken from the RDF module referenced by the first module target
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Full", rdfModuleName, id),
-                                                               fmt::format("{} (Calc)", id), "Calc");
-                });
+                // Calculated / summed partials, taken from the RDF module referenced by the first module target
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Full", rdfModuleName, id),
+                                                           fmt::format("{} (Calc)", id), "Calc");
+            }
         }
         else if (ui_.TotalGRButton->isChecked())
         {
@@ -178,13 +182,15 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         else if (ui_.PotentialsButton->isChecked())
         {
             // Add on additional potentials
-            dissolve::for_each_pair(ParallelPolicies::seq, dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(),
-                                    [&](int n, auto at1, int m, auto at2) {
-                                        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+            PairIterator pairs(dissolve_.atomTypes().size());
+            for (auto [first, second] : pairs)
+            {
+                auto &at1 = dissolve_.atomTypes()[first];
+                auto &at2 = dissolve_.atomTypes()[second];
+                const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-                                        graph_->createRenderable<RenderableData1D, Data1D>(
-                                            dissolve_.pairPotential(at1, at2)->uAdditional(), id, "Phi");
-                                    });
+                graph_->createRenderable<RenderableData1D, Data1D>(dissolve_.pairPotential(at1, at2)->uAdditional(), id, "Phi");
+            }
         }
         else if (ui_.RFactorButton->isChecked())
         {
