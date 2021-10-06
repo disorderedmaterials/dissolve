@@ -4,6 +4,7 @@
 #include "math/histogram1d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include <cassert>
 
 Histogram1D::Histogram1D()
 {

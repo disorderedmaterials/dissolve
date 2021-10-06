@@ -4,6 +4,7 @@
 #include "data/spacegroups.h"
 #include "base/messenger.h"
 #include <stdio.h>
+#include <cassert>
 
 Spacegroup::Spacegroup() : sgNameId_(nullptr)
 {
