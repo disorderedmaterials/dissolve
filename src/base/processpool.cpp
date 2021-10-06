@@ -5,6 +5,7 @@
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "templates/algorithms.h"
+#include <cassert>
 
 // Static Members
 int ProcessPool::nWorldProcesses_ = 1;
