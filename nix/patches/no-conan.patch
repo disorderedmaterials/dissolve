@@ -1,14 +1,36 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index a9e748fc6..ae13ba9f4 100755
+index a9e748fc6..d05c121d5 100755
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -23,9 +23,6 @@ cmake_policy(SET CMP0020 NEW)
+@@ -23,9 +23,9 @@ cmake_policy(SET CMP0020 NEW)
  # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
  set(CMAKE_CXX_STANDARD 17)
  
 -# Include Conan Packages
 -include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 -conan_basic_setup(TARGETS)
++find_package(fmt REQUIRED)
++find_package(cli11 REQUIRED)
++find_package(pugixml REQUIRED)
  
  # Catch defines
  if(PARALLEL)
+diff --git a/nix/patches/no-conan.patch b/nix/patches/no-conan.patch
+index 35addcbc5..e69de29bb 100644
+--- a/nix/patches/no-conan.patch
++++ b/nix/patches/no-conan.patch
+@@ -1,14 +0,0 @@
+-diff --git a/CMakeLists.txt b/CMakeLists.txt
+-index a9e748fc6..ae13ba9f4 100755
+---- a/CMakeLists.txt
+-+++ b/CMakeLists.txt
+-@@ -23,9 +23,6 @@ cmake_policy(SET CMP0020 NEW)
+- # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
+- set(CMAKE_CXX_STANDARD 17)
+- 
+--# Include Conan Packages
+--include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+--conan_basic_setup(TARGETS)
+- 
+- # Catch defines
+- if(PARALLEL)
