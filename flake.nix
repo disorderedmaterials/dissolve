@@ -12,7 +12,7 @@
           pname = "dissolve";
           version = "0.9.0";
           src = ./.;
-          patches = [./nix/patches/no-conan.patch];
+          patches = [ ./nix/patches/no-conan.patch ];
           buildInputs = with pkgs; [
             antlr4
             antlr4.runtime.cpp
