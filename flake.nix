@@ -30,6 +30,10 @@
             openmpi
             pugixml
           ];
+          cmakeFlags = [ "-G Ninja" ];
+          buildPhase = ''
+            ${pkgs.ninja}/bin/ninja -j4
+          '';
           CC = "${pkgs.gcc9}/bin/gcc";
           CXX = "${pkgs.gcc9}/bin/g++";
           TBB_LIBRARIES = "${pkgs.tbb}/lib";
