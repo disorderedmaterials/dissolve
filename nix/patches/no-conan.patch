@@ -18,7 +18,7 @@ index a9e748fc6..5f26682d0 100755
    PRIVATE # External libs
            antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
 -  INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11
-+  INTERFACE fmt cli11
++  INTERFACE fmt::fmt cli11
  )
  
  # Build GUI target executables
@@ -27,7 +27,7 @@ index a9e748fc6..5f26682d0 100755
              ${EXTRA_LINK_LIBS}
              ${THREADING_LINK_LIBS}
 -    INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11 CONAN_PKG::pugixml
-+    INTERFACE fmt cli11 pugixml
++    INTERFACE fmt::fmt cli11 pugixml
    )
  endif(GUI)
 diff --git a/src/base/CMakeLists.txt b/src/base/CMakeLists.txt
@@ -39,7 +39,7 @@ index 2f27c755e..85e111b70 100644
  
  include_directories(base PRIVATE ${PROJECT_SOURCE_DIR}/src)
 -target_link_libraries(base PUBLIC CONAN_PKG::fmt ${THREADING_LINK_LIBS})
-+target_link_libraries(base PUBLIC fmt ${THREADING_LINK_LIBS})
++target_link_libraries(base PUBLIC fmt::fmt ${THREADING_LINK_LIBS})
 diff --git a/src/main/CMakeLists.txt b/src/main/CMakeLists.txt
 index 5e5d464ac..61b4e7185 100644
 --- a/src/main/CMakeLists.txt
@@ -49,7 +49,7 @@ index 5e5d464ac..61b4e7185 100644
  
  include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/src)
 -target_link_libraries(main PRIVATE CONAN_PKG::fmt CONAN_PKG::cli11)
-+target_link_libraries(main PRIVATE fmt cli11)
++target_link_libraries(main PRIVATE fmt::fmt cli11)
 diff --git a/unit/CMakeLists.txt b/unit/CMakeLists.txt
 index 6cc9bf4bc..ead38c01c 100644
 --- a/unit/CMakeLists.txt
@@ -59,7 +59,7 @@ index 6cc9bf4bc..ead38c01c 100644
      PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
      PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
 -    INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11
-+    INTERFACE fmt cli11
++    INTERFACE fmt::fmt cli11
    )
  
    if(GUI)
@@ -72,7 +72,7 @@ index bc806b3e9..ea2e3ef9f 100644
  
  include_directories(procedure PRIVATE ${PROJECT_SOURCE_DIR}/src)
 -target_link_libraries(procedure PRIVATE CONAN_PKG::fmt)
-+target_link_libraries(procedure PRIVATE fmt)
++target_link_libraries(procedure PRIVATE fmt::fmt)
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index a9e748fc6..8e094e414 100755
 --- a/CMakeLists.txt

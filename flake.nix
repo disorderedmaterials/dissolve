@@ -20,6 +20,7 @@
             cmake
             cli11
             fmt
+            fmt.dev
             freetype
             ftgl
             jre
@@ -30,7 +31,7 @@
             openmpi
             pugixml
           ];
-          cmakeFlags = [ "-G Ninja" ];
+          cmakeFlags = [ "-G Ninja" "-DFMT_INCLUDE_DIR=${pkgs.fmt.dev}/include"];
           buildPhase = ''
             ${pkgs.ninja}/bin/ninja -j4
           '';
