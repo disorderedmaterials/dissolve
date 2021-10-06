@@ -11,7 +11,9 @@
         dissolve = pkgs.gcc9Stdenv.mkDerivation {
           pname = "dissolve";
           version = "0.9.0";
-          src = ./.;
+          src =
+            builtins.filterSource (path: type: baseNameOf path != "flake.nix")
+            ./.;
           patches = [ ./nix/patches/no-conan.patch ];
           buildInputs = with pkgs; [
             antlr4
