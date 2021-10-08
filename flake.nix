@@ -8,71 +8,87 @@
 
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        dissolve = pkgs.gcc9Stdenv.mkDerivation {
-          pname = "dissolve";
-          version = "0.9.0";
-          src =
-            builtins.filterSource (path: type: baseNameOf path != "flake.nix")
-            ./.;
-          patches = [ ./nix/patches/no-conan.patch ];
-          buildInputs = with pkgs; [
-            antlr4
-            antlr4.runtime.cpp
-            bison
-            cmake
-            cli11
-            fmt
-            fmt.dev
-            freetype
-            jre
-            openmpi
-            pkgconfig
-            pugixml
-          ];
-          cmakeFlags = [ "-DMULTI_THREADING=OFF" ];
-          installPhase = ''
-            mkdir -p $out/bin
-            ls nix
-            mv ./$out/bin/dissolve $out/bin/
-          '';
-
-          meta = with pkgs.lib; {
-            description = "";
-            homepage = "";
-            # license = licenses.unlicense;
-            maintainers = [ maintainers.rprospero ];
-          };
-        };
-      in {
-        defaultPackage = dissolve;
-        packages = {
-          dissolve = dissolve;
-          singularity = pkgs.stdenvNoCC.mkDerivation {
-            name = "dissolve.sif";
-            version = "0.9.0";
+        exe-name = mpi: if mpi then "dissolve-mpi" else "dissolve";
+        version = "0.9.0";
+        dissolve = { mpi }:
+          pkgs.gcc9Stdenv.mkDerivation {
+            inherit version;
+            pname = exe-name mpi;
             src =
               builtins.filterSource (path: type: baseNameOf path != "flake.nix")
-                ./.;
-            buildPhase = ''
-              ${pkgs.gnutar}/bin/tar czf dissolve.oci.tar.gz --directory=${
-                self.packages.${system}.container
-              } .
-            '';
+              ./.;
+            patches = [ ./nix/patches/no-conan.patch ];
+            buildInputs = with pkgs;
+              [
+                antlr4
+                antlr4.runtime.cpp
+                bison
+                cmake
+                cli11
+                fmt
+                fmt.dev
+                freetype
+                jre
+                openmpi
+                pkgconfig
+                pugixml
+              ] ++ pkgs.lib.optional mpi pkgs.openmpi;
+            cmakeFlags = [
+              "-DMULTI_THREADING=OFF"
+              ("-DPARALLEL=" + (if mpi then "ON" else "OFF"))
+            ];
             installPhase = ''
-              mkdir -p $out
-              cp dissolve.oci.tar.gz $out/
+              mkdir -p $out/bin
+              ls nix
+              mv ./$out/bin/${exe-name mpi} $out/bin/
             '';
-          };
 
-          container = pkgs.ociTools.buildContainer {
+            meta = with pkgs.lib; {
+              description = "";
+              homepage = "";
+              # license = licenses.unlicense;
+              maintainers = [ maintainers.rprospero ];
+            };
+          };
+        mkContainer = { mpi }:
+          pkgs.ociTools.buildContainer {
             args = [
               (with pkgs;
                 writeScript "run.sh" ''
                   #!${bash}/bin/bash
-                  exec ${self.packages.${system}.dissolve}/bin/dissolve
+                  exec ${dissolve { inherit mpi; }}/bin/${exe-name mpi}
                 '').outPath
             ];
           };
+        mkSingularity = { mpi }:
+          pkgs.stdenvNoCC.mkDerivation {
+            inherit version;
+            name = "${exe-name mpi}.sif";
+            src =
+              builtins.filterSource (path: type: baseNameOf path != "flake.nix")
+              ./.;
+            buildPhase = ''
+              ${pkgs.gnutar}/bin/tar czf ${
+                exe-name mpi
+              }.oci.tar.gz --directory=${mkContainer { inherit mpi; }} .
+            '';
+            installPhase = ''
+              mkdir -p $out
+              cp ${exe-name mpi}.oci.tar.gz $out/
+            '';
+          };
+      in {
+        defaultPackage = dissolve { mpi = false; };
+
+        packages = {
+          dissolve = dissolve { mpi = false; };
+          dissolve-mpi = dissolve { mpi = true; };
+
+          singularity = mkSingularity { mpi = false; };
+          singularity-mpi = mkSingularity { mpi = true; };
+
+          container = mkContainer { mpi = false; };
+          container-mpi = mkContainer { mpi = true; };
         };
       });
 }
