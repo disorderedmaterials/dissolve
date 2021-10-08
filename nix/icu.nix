@@ -1,7 +1,6 @@
-{ version, sha256, patches ? [], patchFlags ? [] }:
+{ version, sha256, pkgs, patches ? [], patchFlags ? [] }:
 
 let
-  pkgs = import <nixpkgs> {};
   lib = pkgs.lib;
   stdenv = pkgs.stdenv;
   fetchurl = pkgs.fetchurl;

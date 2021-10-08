@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs }:
 
 let
   aqt = pkgs.python3.pkgs.buildPythonPackage rec {
@@ -68,6 +68,7 @@ in pkgs.stdenv.mkDerivation {
     pkgs.gdk-pixbuf
     pkgs.libdrm
     (import ./icu.nix {
+      inherit pkgs;
       version = "56.1";
       sha256 = "OmTpEFxzTc9jHAs+1gQEUxvObA9aZL/hpkAqTMIxSBY=";
     })
