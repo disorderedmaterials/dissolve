@@ -4,6 +4,10 @@ parameters:
   - name: mpi
     default: false
 
+variables:
+  - name: suffix
+    value: ${{ if mpi, "-mpi", ""}}
+
 steps:
   - bash: |
       set -ex
