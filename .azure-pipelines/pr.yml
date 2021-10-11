@@ -53,11 +53,6 @@ stages:
             parameters:
               threading: false
               gui: false
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "build/"
-              ArtifactName: "linux-tests-serial"
-            displayName: "Publish Serial Test Artifacts"
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI"
         pool:
