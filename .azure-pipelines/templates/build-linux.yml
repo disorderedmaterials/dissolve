@@ -4,15 +4,15 @@ parameters:
   - name: mpi
     default: false
 
-variables:
-  $[ mpi ]:
-    - name: suffix
-      value: "-mpi"
-  $[ mpi ]:
-    - name: suffix
-      value: ""
 
 steps:
+  variables:
+    $[ mpi ]:
+      - name: suffix
+        value: "-mpi"
+    $[ not(mpi) ]:
+          - name: suffix
+            value: ""
   - bash: |
       set -ex
       # -- General
