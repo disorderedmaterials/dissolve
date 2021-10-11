@@ -134,19 +134,6 @@
             mpi = false;
             gui = true;
           };
-
-          container = mkContainer {
-            mpi = false;
-            gui = false;
-          };
-          container-mpi = mkContainer {
-            mpi = true;
-            gui = false;
-          };
-          container-gui = mkContainer {
-            mpi = false;
-            gui = true;
-          };
         };
       });
 }
