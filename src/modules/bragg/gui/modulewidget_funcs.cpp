@@ -103,13 +103,8 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
                 const auto &atl = reflectionAtomTypesData_->get();
                 std::vector<std::string> columnHeaders;
                 columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
-                PairIterator pairs(atl.nItems());
-                for (auto [first, second] : pairs)
-                {
-                    auto &atd1 = atl[first];
-                    auto &atd2 = atl[second];
-                    columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
-                }
+                for (auto [first, second] : PairIterator(atl.nItems()))
+                    columnHeaders.emplace_back(fmt::format("{}-{}", atl[first].atomTypeName(), atl[second].atomTypeName()));
                 braggModel_.setIntensityHeaders(columnHeaders);
             }
             else
