@@ -51,7 +51,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
             parameters:
-              threading: false
+              mpi: false
               gui: false
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI"
