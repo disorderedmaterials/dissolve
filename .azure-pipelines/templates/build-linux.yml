@@ -1,8 +1,8 @@
 parameters:
   - name: gui
     default: true
-  - name: threading
-    default: true
+  - name: mpi
+    default: false
 
 steps:
   - bash: |
@@ -33,5 +33,5 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
-      nix build -L .#packages.x65_64-linux.dissolve${{ mpi, "-mpi"}}
+      nix build -L .#packages.x65_64-linux.dissolve${{if mpi, "-mpi") }}
     displayName: 'Build'

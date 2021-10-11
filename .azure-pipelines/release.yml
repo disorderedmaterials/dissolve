@@ -43,6 +43,7 @@ stages:
           - template: templates/build-linux-mpi.yml
             parameters:
               extraflags: '-DBUILD_SYSTEM_TESTS:bool=true'
+              mpi: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
