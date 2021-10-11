@@ -5,8 +5,12 @@ parameters:
     default: false
 
 variables:
-  - name: suffix
-    value: ${{ if mpi, "-mpi", ""}}
+  $[ mpi ]:
+    - name: suffix
+      value: "-mpi"
+  $[ mpi ]:
+    - name: suffix
+      value: ""
 
 steps:
   - bash: |
