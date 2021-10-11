@@ -230,10 +230,10 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
         PairIterator pairs(atomsI.size());
         std::for_each(pairs.begin(), pairs.end(), [&atomsI, &partialSet](auto it) {
             auto [idx, jdx] = it;
-            auto &i = atomsI[idx];
-            auto &j = atomsI[jdx];
             if (idx == jdx)
                 return;
+            auto &i = atomsI[idx];
+            auto &j = atomsI[jdx];
             // No need to perform MIM since we're in the same cell
             double distance = (i->r() - j->r()).magnitude();
             partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
