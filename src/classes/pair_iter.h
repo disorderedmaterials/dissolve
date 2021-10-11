@@ -11,8 +11,8 @@ class PairIterator
     int size_;
     int x_;
     int y_;
-    int toIndex_() const;
-    void fromIndex_(int);
+    int toIndex() const;
+    void fromIndex(int);
 
     public:
     using value = std::tuple<int, int>;
