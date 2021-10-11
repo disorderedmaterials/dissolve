@@ -2,8 +2,11 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
     flake-utils.url = "github:numtide/flake-utils";
+    flake-utils.inputs.nixpkgs.follows = "nixpkgs";
+    bundler.url = "github:matthewbauer/nix-bundle";
+    bundler.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, bundler }:
     flake-utils.lib.eachDefaultSystem (system:
 
       let
