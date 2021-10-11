@@ -6,9 +6,9 @@
 #include "base/messenger.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
+#include <cassert>
 #include <numeric>
 #include <vector>
-#include <cassert>
 
 // Array3D
 template <class A> class Array3D
