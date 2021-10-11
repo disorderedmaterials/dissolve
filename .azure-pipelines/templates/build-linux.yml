@@ -15,23 +15,24 @@ steps:
       gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
       gpg2 --verify ./install-nix-2.3.16.asc
       sh ./install-nix-2.3.16
+      ~/.nix-profile/etc/profile.d/nix.sh
     displayName: 'Install nix'
   - bash: |
       set -ex
       # -- General
-      .nix-profile/etc/profile.d/nix.sh
+      ~/.nix-profile/etc/profile.d/nix.sh
       mkdir -p ~/.config/nix/
       nix-env -iA nixpkgs.nixUnstable
       echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
     displayName: 'Install Flake Support'
   - bash: |
       set -ex
-      .nix-profile/etc/profile.d/nix.sh
+      ~/.nix-profile/etc/profile.d/nix.sh
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       cachix use dissolve-nix
     displayName: 'Install Cachix'
   - bash: |
       set -ex
-      .nix-profile/etc/profile.d/nix.sh
+      ~/.nix-profile/etc/profile.d/nix.sh
       nix build .
     displayName: 'Build'
