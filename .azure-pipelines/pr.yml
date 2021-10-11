@@ -63,8 +63,9 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
             parameters:
-              threading: false
+              mpi: true
               gui: false
+              suffix: "-mpi"
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"

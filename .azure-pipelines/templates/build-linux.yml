@@ -3,14 +3,11 @@ parameters:
     default: true
   - name: mpi
     default: false
+  - name: suffix
+    default : ""
 
 
 steps:
-  variables:
-    ${{ mpi }}:
-     suffix: "-mpi"
-    ${{ not(mpi) }}:
-     suffix: ""
   - bash: |
       set -ex
       # -- General
