@@ -7,12 +7,10 @@ parameters:
 
 steps:
   variables:
-    $[ mpi ]:
-      - name: suffix
-        value: "-mpi"
-    $[ not(mpi) ]:
-          - name: suffix
-            value: ""
+    ${{ mpi }}:
+     suffix: "-mpi"
+    ${{ not(mpi) }}:
+     suffix: ""
   - bash: |
       set -ex
       # -- General
