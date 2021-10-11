@@ -51,11 +51,7 @@ PairIterator &PairIterator::operator++()
 
 PairIterator::difference_type PairIterator::operator-(const PairIterator &other) const { return toIndex() - other.toIndex(); }
 
-PairIterator PairIterator::operator+(PairIterator::difference_type diff) const
-{
-
-    return PairIterator(size_, diff + toIndex());
-}
+PairIterator PairIterator::operator+(PairIterator::difference_type diff) const { return PairIterator(size_, diff + toIndex()); }
 
 PairIterator &PairIterator::operator+=(difference_type forward)
 {
