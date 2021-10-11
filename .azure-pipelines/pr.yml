@@ -30,8 +30,6 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
-            parameters:
-              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
           - template: templates/package-linux.yml
           - task: PublishBuildArtifacts@1
             inputs:
@@ -52,8 +50,6 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
-            parameters:
-              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
               threading: false
               gui: false
           - task: PublishBuildArtifacts@1
@@ -70,8 +66,6 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-mpi.yml
-            parameters:
-              extraflags: "-DBUILD_SYSTEM_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug"
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"
