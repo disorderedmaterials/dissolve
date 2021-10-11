@@ -50,6 +50,7 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
+            parameters:
               threading: false
               gui: false
           - task: PublishBuildArtifacts@1
