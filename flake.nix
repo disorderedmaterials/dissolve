@@ -81,7 +81,7 @@
               (with pkgs;
                 writeScript "run.sh" ''
                   #!${bash}/bin/bash
-                  exec ${dissolve { inherit mpi; }}/bin/${exe-name mpi gui}
+                  exec ${dissolve { inherit mpi gui; }}/bin/${exe-name mpi gui}
                 '').outPath
             ];
           };
@@ -95,7 +95,7 @@
             buildPhase = ''
               ${pkgs.gnutar}/bin/tar czf ${
                 exe-name mpi gui
-              }.oci.tar.gz --directory=${mkContainer { inherit mpi; }} .
+              }.oci.tar.gz --directory=${mkContainer { inherit mpi gui; }} .
             '';
             installPhase = ''
               mkdir -p $out
