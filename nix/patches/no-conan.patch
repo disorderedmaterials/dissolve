@@ -91,3 +91,15 @@ index a9e748fc6..8e094e414 100755
  endif(MULTI_THREADING)
  
  # Add local Modules dir to cmake search path
+diff --git a/src/gui/models/CMakeLists.txt b/src/gui/models/CMakeLists.txt
+index 965126088..7211da363 100644
+--- a/src/gui/models/CMakeLists.txt
++++ b/src/gui/models/CMakeLists.txt
+@@ -92,6 +92,6 @@ target_include_directories(
+   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+ )
+ 
+-target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
++target_link_libraries(models PUBLIC pugixml::pugixml ${THREADING_LINK_LIBS})
+ 
+ include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)
