@@ -106,8 +106,7 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         else if (ui_.EstimatedSQButton->isChecked())
         {
             // Add experimentally-determined partial S(Q)
-            PairIterator pairs(dissolve_.atomTypes().size());
-            for (auto [first, second] : pairs)
+            for (auto [first, second] : PairIterator(dissolve_.atomTypes().size()))
             {
                 auto &at1 = dissolve_.atomTypes()[first];
                 auto &at2 = dissolve_.atomTypes()[second];
