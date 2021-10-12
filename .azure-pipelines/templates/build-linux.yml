@@ -37,4 +37,6 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       nix build -L .#dissolve${{ parameters.suffix }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+    env:
+      CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
     displayName: 'Build'
