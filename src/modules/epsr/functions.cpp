@@ -195,11 +195,12 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
         auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
 
         auto range = cMax - cMin;
-	if (range > absEnergyEP)
-	  absEnergyEP = range;
+        if (range > absEnergyEP)
+            absEnergyEP = range;
 
         // Output information
-        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", dissolve.atomTypes()[i]->name(), dissolve.atomTypes()[j]->name(), range);
+        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", dissolve.atomTypes()[i]->name(),
+                         dissolve.atomTypes()[j]->name(), range);
     };
 
     PairIterator pairs(dissolve.atomTypes().size());
