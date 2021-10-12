@@ -30,12 +30,6 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
-          - template: templates/package-linux.yml
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "build/"
-              ArtifactName: "linux-tests"
-            displayName: "Publish Threaded Test Artifacts"
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI"
         pool:
