@@ -56,6 +56,7 @@ stages:
               gui: false
               suffix: "-mpi"
       - job: "osx"
+        condition: false
         displayName: "OSX, Threads, CLI/GUI"
         timeoutInMinutes: 120
         pool:
@@ -72,6 +73,7 @@ stages:
               ArtifactName: "osx-artifacts"
             displayName: "Publish OSX Artifacts"
       - job: "windows"
+        condition: false
         displayName: "Windows, Threads, CLI/GUI"
         timeoutInMinutes: 120
         pool:
