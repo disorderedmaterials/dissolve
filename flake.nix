@@ -7,17 +7,18 @@
     bundler.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, nixpkgs, flake-utils, bundler }:
-    flake-utils.lib.eachSystem ["x86_64-linux"] (system:
+    let
+      exe-name = mpi: gui:
+        if mpi then
+          "dissolve-mpi"
+        else
+          (if gui then "dissolve-gui" else "dissolve");
+      version = "0.9.0";
+    in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        qt6 = import ./nix/qt6.nix {inherit pkgs;};
-        exe-name = mpi: gui:
-          if mpi then
-            "dissolve-mpi"
-          else
-            (if gui then "dissolve-gui" else "dissolve");
-        version = "0.9.0";
+        qt6 = import ./nix/qt6.nix { inherit pkgs; };
         dissolve = { mpi, gui }:
           assert (!(gui && mpi));
           pkgs.gcc9Stdenv.mkDerivation rec {
@@ -50,12 +51,12 @@
                 pkgs.libglvnd.dev
               ];
 
-            QTDIR= if gui then "${qt6}/6.1.1/gcc_64" else "";
-            Qt6_DIR="${QTDIR}/lib/cmake/Qt6";
-            Qt6CoreTools_DIR="${QTDIR}/lib/cmake/Qt6CoreTools";
-            Qt6GuiTools_DIR="${QTDIR}/lib/cmake/Qt6GuiTools";
-            Qt6WidgetsTools_DIR="${QTDIR}/lib/cmake/Qt6WidgetsTools";
-            PATH="${QTDIR}/bin";
+            QTDIR = if gui then "${qt6}/6.1.1/gcc_64" else "";
+            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
+            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
+            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
+            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
+            PATH = "${QTDIR}/bin";
 
             cmakeFlags = [
               "-DMULTI_THREADING=OFF"
