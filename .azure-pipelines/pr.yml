@@ -36,11 +36,6 @@ stages:
               PathtoPublish: "build/"
               ArtifactName: "linux-tests"
             displayName: "Publish Threaded Test Artifacts"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "packages/"
-              ArtifactName: 'linux-artifacts'
-            displayName: 'Publish Linux Artifacts'
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI"
         pool:
@@ -66,11 +61,6 @@ stages:
               mpi: true
               gui: false
               suffix: "-mpi"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "build/"
-              ArtifactName: "linux-tests-mpi"
-            displayName: "Publish MPI Test Artifacts"
       - job: "osx"
         displayName: "OSX, Threads, CLI/GUI"
         timeoutInMinutes: 120
