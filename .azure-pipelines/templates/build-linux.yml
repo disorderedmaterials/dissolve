@@ -36,5 +36,5 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
-      nix build -L .#dissolve${{suffix}}
+      nix build -L .#dissolve$(suffix)
     displayName: 'Build'
