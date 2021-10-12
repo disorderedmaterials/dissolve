@@ -194,11 +194,18 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
         auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
         auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
 
-        return cMax - cMin;
+        auto range = cMax - cMin;
+	if (range > absEnergyEP)
+	  absEnergyEP = range;
+
+        // Output information
+        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", dissolve.atomTypes()[i]->name(), dissolve.atomTypes()[j]->name(), range);
     };
+
     PairIterator pairs(dissolve.atomTypes().size());
-    return dissolve::transform_reduce(ParallelPolicies::par, pairs.begin(), pairs.end(), std::numeric_limits<double>::min(),
-                                      [](const auto a, const auto b) { return std::max(a, b); }, unaryOp);
+    dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), unaryOp);
+
+    return absEnergyEP;
 }
 
 // Truncate the supplied data
