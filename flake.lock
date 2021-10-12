@@ -55,7 +55,24 @@
       "inputs": {
         "bundler": "bundler",
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "weggli": "weggli"
+      }
+    },
+    "weggli": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1634019457,
+        "narHash": "sha256-5G+dXsb1Pl2c449QDx5LbzWnqVphcysI5iiwWEIdn3A=",
+        "owner": "googleprojectzero",
+        "repo": "weggli",
+        "rev": "bb8e5fa95037fe99f14811bf6e1253ef5307adf1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "googleprojectzero",
+        "repo": "weggli",
+        "type": "github"
       }
     }
   },

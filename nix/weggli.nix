@@ -1,22 +1,18 @@
-{pkgs}:
+{ pkgs, src }:
 
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "weggli";
-  version = "12.1.1";
+  version = "0.2.2";
 
-  src = pkgs.fetchFromGitHub {
-    owner = "googleprojectzero";
-    repo = pname;
-    rev = "main";
-    sha256 = "EjfZh9wJmLQUvqrHNwj7qAZdGNQZs1aeowkyEgRztU0=";
-  };
+  inherit src;
 
-  cargoSha256 = "/aI7Gtv0NzDLCAtniGOKzEX2vAHnB+VM0ejkPoVyLpc=";
+  cargoSha256 = "9vQ58kw64ok714qtj0xkcaMUQlGwUHwxg6ycSE/gtOQ=";
   default = false;
   wayland = true;
 
   meta = with pkgs.lib; {
-    description = " fast and robust semantic search tool for C and C++ codebases";
+    description =
+      " fast and robust semantic search tool for C and C++ codebases";
     homepage = "https://github.com/googleprojectzero/weggli";
     maintainers = [ maintainers.rprospero ];
   };

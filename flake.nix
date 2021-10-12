@@ -5,8 +5,10 @@
     flake-utils.inputs.nixpkgs.follows = "nixpkgs";
     bundler.url = "github:matthewbauer/nix-bundle";
     bundler.inputs.nixpkgs.follows = "nixpkgs";
+    weggli.url = "github:googleprojectzero/weggli";
+    weggli.flake = false;
   };
-  outputs = { self, nixpkgs, flake-utils, bundler }:
+  outputs = { self, nixpkgs, flake-utils, bundler, weggli }:
     let
       exe-name = mpi: gui:
         if mpi then
@@ -14,6 +16,29 @@
         else
           (if gui then "dissolve-gui" else "dissolve");
       version = "0.9.0";
+      base_libs = pkgs:
+        with pkgs; [
+          antlr4
+          antlr4.runtime.cpp
+          bison
+          cmake
+          cli11
+          fmt
+          fmt.dev
+          freetype
+          jre
+          openmpi
+          pkgconfig
+          pugixml
+        ];
+      gui_libs = pkgs:
+        with pkgs; [
+          pkgs.freetype
+          pkgs.ftgl
+          pkgs.libGL
+          pkgs.libglvnd
+          pkgs.libglvnd.dev
+        ];
     in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
       let
@@ -28,28 +53,8 @@
               builtins.filterSource (path: type: baseNameOf path != "flake.nix")
               ./.;
             patches = [ ./nix/patches/no-conan.patch ];
-            buildInputs = with pkgs;
-              [
-                antlr4
-                antlr4.runtime.cpp
-                bison
-                cmake
-                cli11
-                fmt
-                fmt.dev
-                freetype
-                jre
-                openmpi
-                pkgconfig
-                pugixml
-              ] ++ pkgs.lib.optional mpi pkgs.openmpi
-              ++ pkgs.lib.optionals gui [
-                pkgs.freetype
-                pkgs.ftgl
-                pkgs.libGL
-                pkgs.libglvnd
-                pkgs.libglvnd.dev
-              ];
+            buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
+              ++ pkgs.lib.optionals gui (gui_libs pkgs);
 
             QTDIR = if gui then "${qt6}/6.1.1/gcc_64" else "";
             Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
@@ -110,6 +115,36 @@
         };
 
         defaultPackage = self.packages.${system}.dissolve-gui;
+
+        devShell = pkgs.mkShell rec {
+          name = "dissolve-shell";
+          buildInputs = base_libs pkgs ++ gui_libs pkgs ++ (with pkgs; [
+            ccache
+            openmpi
+            ccls
+            (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages; })
+            cmake-format
+            cmake-language-server
+            conan
+            distcc
+            gdb
+            ninja
+            valgrind
+            ((import ./nix/weggli.nix) {
+              inherit pkgs;
+              src = weggli;
+            })
+          ]);
+          CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
+          CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
+          CXXL = "${pkgs.stdenv.cc.cc.lib}";
+          QTDIR = "${qt6}/6.1.1/gcc_64";
+          Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
+          Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
+          Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
+          Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
+          PATH = "${QTDIR}/bin";
+        };
 
         packages = {
           dissolve = dissolve {
