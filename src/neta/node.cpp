@@ -40,8 +40,6 @@ NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type)
     nodeType_ = type;
 }
 
-NETANode::~NETANode() { clear(); }
-
 /*
  * Node Type and Parent
  */
@@ -69,64 +67,11 @@ bool NETANode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 }
 
 /*
- * Branching and Node Generation
+ * Node Sequence
  */
 
-// Clear all nodes
-void NETANode::clear() { branch_.clear(); }
-
-// Create logical 'or' node in the branch
-std::shared_ptr<NETAOrNode> NETANode::createOrNode()
-{
-    // Create the new node and own it
-    auto node = std::make_shared<NETAOrNode>(parent_);
-    branch_.push_back(node);
-
-    return node;
-}
-
-// Create character node from current targets
-std::shared_ptr<NETACharacterNode>
-NETANode::createCharacterNode(std::vector<Elements::Element> targetElements,
-                              std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
-{
-    auto node = std::make_shared<NETACharacterNode>(parent_, targetElements, targetAtomTypes);
-    branch_.push_back(node);
-
-    return node;
-}
-
-// Create connectivity node from current targets
-std::shared_ptr<NETAConnectionNode>
-NETANode::createConnectionNode(std::vector<Elements::Element> targetElements,
-                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
-{
-    auto node = std::make_shared<NETAConnectionNode>(parent_, targetElements, targetAtomTypes);
-    branch_.push_back(node);
-
-    return node;
-}
-
-// Create presence node in the branch
-std::shared_ptr<NETAPresenceNode>
-NETANode::createPresenceNode(std::vector<Elements::Element> targetElements,
-                             std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
-{
-    auto node = std::make_shared<NETAPresenceNode>(parent_, targetElements, targetAtomTypes);
-    branch_.push_back(node);
-
-    return node;
-}
-
-// Create ring node in the branch
-std::shared_ptr<NETARingNode> NETANode::createRingNode()
-{
-    // Create the new node and own it
-    auto node = std::make_shared<NETARingNode>(parent_);
-    branch_.push_back(node);
-
-    return node;
-}
+// Set node sequence
+void NETANode::setNodes(NETASequence nodes) { nodes_ = std::move(nodes); }
 
 /*
  * Modifiers
@@ -199,16 +144,14 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
  * Scoring
  */
 
-// Set node to use reverse logic
-void NETANode::setReverseLogic() { reverseLogic_ = true; }
-
-// Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const
+// Evaluate the provided sequence and return a score
+int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
+                            std::vector<const SpeciesAtom *> &atomData)
 {
     auto totalScore = 0;
 
-    // Loop over branch nodes in sequence
-    for (const auto &node : branch_)
+    // Loop over nodes in sequence
+    for (const auto &node : sequence)
     {
         // Get the score from the node, returning early if NoMatch is encountered
         auto nodeScore = node->score(i, atomData);
@@ -220,3 +163,9 @@ int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atom
 
     return totalScore;
 }
+
+// Set node to use reverse logic
+void NETANode::setReverseLogic() { reverseLogic_ = true; }
+
+// Evaluate the node and return its score
+int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const { return 0; }

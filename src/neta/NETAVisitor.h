@@ -5,6 +5,7 @@
 
 #include "NETAParserBaseVisitor.h"
 #include "neta/neta.h"
+#include "neta/node.h"
 #include <antlr4-runtime.h>
 
 // NETA Visitor for ANTLR
@@ -25,7 +26,7 @@ class NETAVisitor : private NETAParserBaseVisitor
 
     private:
     // Return the topmost context in the stack
-    std::shared_ptr<NETANode> currentNETAContext() const;
+    NETANode *currentContext();
 
     public:
     // Construct description within supplied object, from given tree
@@ -36,16 +37,21 @@ class NETAVisitor : private NETAParserBaseVisitor
      */
     private:
     // Nodes
-    antlrcpp::Any visitOrNode(NETAParser::OrNodeContext *context) override;
+    antlrcpp::Any visitNeta(NETAParser::NetaContext *context) override;
+    void setContextuals(std::vector<NETAParser::ModifierContext *> modifiers, std::vector<NETAParser::OptionContext *> options,
+                        std::vector<NETAParser::FlagContext *> flags);
+    antlrcpp::Any visitOrSequence(NETAParser::OrSequenceContext *context) override;
+    antlrcpp::Any visitSequence(NETAParser::SequenceContext *context) override;
+    antlrcpp::Any visitRingSequence(NETAParser::RingSequenceContext *context) override;
     antlrcpp::Any visitCharacterNode(NETAParser::CharacterNodeContext *context) override;
     antlrcpp::Any visitConnectionNode(NETAParser::ConnectionNodeContext *context) override;
     antlrcpp::Any visitPresenceNode(NETAParser::PresenceNodeContext *context) override;
     antlrcpp::Any visitRingNode(NETAParser::RingNodeContext *context) override;
     // Target List
     antlrcpp::Any visitElementOrType(NETAParser::ElementOrTypeContext *context) override;
-    antlrcpp::Any visitTargetList(NETAParser::TargetListContext *context) override;
+    antlrcpp::Any visitTargetList(NETAParser::TargetListContext *context, NETANode *node);
     // Context Modifiers
-    antlrcpp::Any visitModifier(NETAParser::ModifierContext *context) override;
-    antlrcpp::Any visitOption(NETAParser::OptionContext *context) override;
-    antlrcpp::Any visitFlag(NETAParser::FlagContext *context) override;
+    void visitModifier(NETAParser::ModifierContext *context, NETANode *contextNode);
+    void visitOption(NETAParser::OptionContext *context, NETANode *contextNode);
+    void visitFlag(NETAParser::FlagContext *context, NETANode *contextNode);
 };

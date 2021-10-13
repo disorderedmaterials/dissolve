@@ -118,6 +118,12 @@ TEST_F(NETATest, Syntax)
     EXPECT_TRUE(neta.create("-C(n>=2,-H(n=3),-N(n<4,nbonds=1,root)),nbonds<8"));
     // Rings
     EXPECT_TRUE(neta.create("ring(size=6),-C(ring(size>=5,Sc,Ti,V,Cr,Mn))"));
+    // Or'd Nodes
+    EXPECT_TRUE(neta.create("-H|-C|ring()"));
+    // Or'd Node Sequence
+    EXPECT_TRUE(neta.create("-H|-C(nh=4),ring()|-Zn"));
+    // Error - Dot not Comma
+    EXPECT_FALSE(neta.create("-H.-C,-O"));
     // Error - Double '-'
     EXPECT_FALSE(neta.create("-H,-C,--O"));
     // Error - Missing bracket 1
@@ -150,6 +156,9 @@ TEST_F(NETATest, Matching)
 
     EXPECT_TRUE(neta.create("-N,ring(n=0)"));
     testNETA("Atom adjacent to nitrogen, but not in a ring ", basic_, neta, {12});
+
+    EXPECT_TRUE(neta.create("ring(size=6), ring(size=4), -N|-N,ring(n=0)"));
+    testNETA("Either of the previous atoms", basic_, neta, {1, 12});
 
     EXPECT_TRUE(neta.create("-C(nh=3),nbonds=1"));
     testNETA("Hydrogen atoms present in CH3 group", basic_, neta, {13, 14, 15});

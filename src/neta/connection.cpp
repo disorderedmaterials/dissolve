@@ -206,7 +206,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
             // Add ourselves to the match path so we can't backtrack
             branchMatchPath.push_back(i);
 
-            auto branchScore = NETANode::score(j, branchMatchPath);
+            auto branchScore = NETANode::sequenceScore(nodes_, j, branchMatchPath);
             if (branchScore == NETANode::NoMatch)
                 continue;
 
@@ -234,7 +234,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
                 // Add ourselves to the match path so we can't backtrack
                 branchMatchPath.push_back(i);
 
-                auto branchScore = NETANode::score(j, branchMatchPath);
+                auto branchScore = NETANode::sequenceScore(nodes_, j, branchMatchPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
 

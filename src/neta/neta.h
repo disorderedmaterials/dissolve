@@ -15,7 +15,7 @@ class SpeciesAtom;
 class NETADefinition
 {
     public:
-    NETADefinition();
+    NETADefinition(std::string_view definition = "");
     ~NETADefinition() = default;
 
     /*

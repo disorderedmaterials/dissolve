@@ -15,7 +15,11 @@
 #include <cstdarg>
 #include <cstring>
 
-NETADefinition::NETADefinition() : rootNode_(nullptr) {}
+NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr)
+{
+    if (!definition.empty())
+        create(definition);
+}
 
 /*
  * Data

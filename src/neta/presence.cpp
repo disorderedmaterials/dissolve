@@ -111,7 +111,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom 
 
             // Process branch definition via the base class, using a fresh path
             std::vector<const SpeciesAtom *> emptyPath;
-            auto branchScore = NETANode::score(j, emptyPath);
+            auto branchScore = NETANode::sequenceScore(nodes_, j, emptyPath);
             if (branchScore == NETANode::NoMatch)
                 continue;
 
@@ -131,7 +131,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom 
 
                 // Process branch definition via the base class, using an empty path
                 std::vector<const SpeciesAtom *> emptyPath;
-                auto branchScore = NETANode::score(j, emptyPath);
+                auto branchScore = NETANode::sequenceScore(nodes_, j, emptyPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
 

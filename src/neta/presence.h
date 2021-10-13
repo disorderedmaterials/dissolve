@@ -17,8 +17,8 @@ class NETADefinition;
 class NETAPresenceNode : public NETANode
 {
     public:
-    NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
-                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
+    NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
+                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     ~NETAPresenceNode() override = default;
 
     /*

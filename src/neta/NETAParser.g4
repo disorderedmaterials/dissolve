@@ -28,60 +28,49 @@ options {
  * NETA Grammar
  */
 
-// Main Structure - Zero or more nodes, comma-separated
-neta: nodeSequence EOF;
+// Main Structure - single node sequence
+neta: RootNodes=nodeSequence? EOF;
 
-// Node Sequence
-nodeSequence: (node (Comma node)*)*;
-
-// Any Node
-node: commonNode
-| orNode
-| contextual;
-
-// 'Or' Node
-orNode: commonNode Or commonNode
-| commonNode Or orNode;
-
-// Common Nodes
-commonNode: characterNode
-| connectionNode
-| ringNode;
-
-// Contextuals
-contextual: modifier
-| option
-| flag;
+// Node Sequence - Zero or more nodes, comma-separated
+nodeSequence:    (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag))*      #sequence
+| LHS=nodeSequence Or RHS=nodeSequence                                                                                                                     #orSequence
+;
 
 // Ring Node Sequence
-ringNodeSequence: (ringOnlyNode (Comma ringOnlyNode)*)*;
+ringSequence: ((Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag))*)*;
+
+// Common Nodes
+node: characterNode
+| connectionNode
+| ringNode
+;
 
 // Ring-Specific Nodes
-ringOnlyNode: presenceNode
-| modifier
-| option
-| flag;
+ringOnlyNode: presenceNode;
 
 // Character Node
-characterNode: Not? CharacterKeyword targetList;
+characterNode: Not? CharacterKeyword Targets=targetList;
 
 // Connection Node
-connectionNode: Not? ConnectionKeyword targetList OpenParenthesis nodeSequence CloseParenthesis
-| Not? ConnectionKeyword targetList;
+connectionNode: Not? ConnectionKeyword Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
+| Not? ConnectionKeyword Targets=targetList
+;
 
 // Presence Node
-presenceNode: Not? targetList OpenParenthesis nodeSequence CloseParenthesis
-| Not? targetList;
+presenceNode: Not? Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
+| Not? Targets=targetList
+;
 
 // Ring Node
-ringNode: Not? RingKeyword OpenParenthesis ringNodeSequence CloseParenthesis;
+ringNode: Not? RingKeyword OpenParenthesis Sequence=ringSequence CloseParenthesis;
 
 // Target List
 elementOrType: Element
 | FFTypeName
 | FFTypeIndex;
 targetList: targets+=elementOrType
-| OpenSquareBracket targets+=elementOrType (Comma targets+=elementOrType)* CloseSquareBracket;
+| OpenSquareBracket targets+=elementOrType (Comma targets+=elementOrType)* CloseSquareBracket
+;
 
 // Contextual Modifiers (kwd op value)
 modifier: Keyword ComparisonOperator value=Integer;

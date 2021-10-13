@@ -101,10 +101,13 @@ int NETARootNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     auto totalScore = 0;
 
     // Check any specified modifier values
-    if (nBondsValue_ >= 0 && (!compareValues(i->nBonds(), nBondsValueOperator_, nBondsValue_)))
-        return NETANode::NETAResult::NoMatch;
-    else
-        ++totalScore;
+    if (nBondsValue_ != -1)
+    {
+        if (compareValues(i->nBonds(), nBondsValueOperator_, nBondsValue_))
+            ++totalScore;
+        else
+            return NETANode::NETAResult::NoMatch;
+    }
 
     if (nHydrogensValue_ >= 0)
     {
@@ -128,11 +131,12 @@ int NETARootNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     }
 
     // Process branch definition via the base class
-    auto branchScore = NETANode::score(i, matchPath);
+    auto branchScore = NETANode::sequenceScore(nodes_, i, matchPath);
     if (branchScore == NETANode::NoMatch)
         return NETANode::NoMatch;
 
     totalScore += branchScore;
 
-    return totalScore;
+    // If the score is still zero, return NoMatch
+    return totalScore == 0 ? NETANode::NoMatch : totalScore;
 }
