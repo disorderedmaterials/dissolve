@@ -187,7 +187,8 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     auto absEnergyEP = 0.0;
 
-    for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+    auto unaryOp = [&](auto pair) {
+        auto [i, j] = pair;
         auto &potCoeff = coefficients[{i, j}];
 
         auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
@@ -198,8 +199,12 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
             absEnergyEP = range;
 
         // Output information
-        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", at1->name(), at2->name(), range);
-    });
+        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", dissolve.atomTypes()[i]->name(),
+                         dissolve.atomTypes()[j]->name(), range);
+    };
+
+    PairIterator pairs(dissolve.atomTypes().size());
+    dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), unaryOp);
 
     return absEnergyEP;
 }

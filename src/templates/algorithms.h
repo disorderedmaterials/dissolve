@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 #pragma once
 
+#include "classes/pair_iter.h"
 #include "templates/parallel_defs.h"
 #include <fmt/format.h>
 #include <functional>
@@ -17,43 +18,6 @@ template <typename T> auto chop_range(const T begin, const T end, const int nChu
     T start = begin + std::ldiv((const long int)index * diff, (const long int)nChunks).quot;
     T stop = begin + std::ldiv((const long int)(index + 1) * diff, (const long int)nChunks).quot;
     return std::make_tuple(start, stop);
-}
-
-// Perform an operation on every pair of elements in a container
-template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam lambda)
-{
-    int i = 0;
-    for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
-    {
-        int j = i;
-        for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)
-        {
-            lambda(i, *elem1, j, *elem2);
-        }
-    }
-}
-
-// Perform an operation on every pair of elements in a container
-template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, int nChunks, int index, Lam lambda)
-{
-    auto [start, stop] = chop_range(begin, end, nChunks, index);
-    int i = start - begin;
-    for (auto elem1 = start; elem1 != stop; ++elem1, ++i)
-    {
-        int j = i;
-        for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)
-        {
-            lambda(i, *elem1, j, *elem2);
-        }
-    }
-}
-
-// Perform an operation on every pair of elements in a range (begin <= i < end)
-template <class Lam> void for_each_pair(int begin, int end, Lam lambda)
-{
-    for (auto i = begin; i < end; ++i)
-        for (auto j = i; j < end; ++j)
-            lambda(i, j);
 }
 
 template <typename T> class EarlyReturn
@@ -247,6 +211,27 @@ template <typename ParallelPolicy, class Iter, class UnaryOp,
 void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
 {
     dissolve::for_each(begin, end, unaryOp);
+}
+
+// Perform an operation on every pair of elements in a container
+template <typename ParallelPolicy, class Iter, class Lam>
+void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
+{
+    PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
+    for_each(policy, start, stop, [&lambda, &begin](const auto pair) {
+        auto &[i, j] = pair;
+        lambda(i, begin[i], j, begin[j]);
+    });
+}
+
+// Perform an operation on every pair of elements in a range (begin <= i < end)
+template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
+{
+    PairIterator start(end), stop(end, end * (end + 1) / 2);
+    for_each(policy, start, stop, [&lambda](const auto pair) {
+        auto [i, j] = pair;
+        lambda(i, j);
+    });
 }
 } // namespace dissolve
 

@@ -21,6 +21,7 @@ class AtomTypeList
     AtomTypeList(const AtomTypeList &source);
     void operator=(const AtomTypeList &source);
     AtomTypeData &operator[](int n);
+    const AtomTypeData &operator[](int n) const;
 
     /*
      * Type List
