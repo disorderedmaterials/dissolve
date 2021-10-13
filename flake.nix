@@ -45,7 +45,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         qt6 = import ./nix/qt6.nix { inherit pkgs; };
-        dissolve = { mpi, gui }:
+        dissolve = { mpi ? false, gui ? true }:
           assert (!(gui && mpi));
           pkgs.gcc9Stdenv.mkDerivation rec {
             inherit version;
@@ -92,7 +92,7 @@
                 '').outPath
             ];
           };
-        mkSingularity = { mpi, gui }:
+        mkSingularity = { mpi ? false, gui ? false }:
           pkgs.stdenvNoCC.mkDerivation {
             inherit version;
             name = "${exe-name mpi gui}.sif";
@@ -110,10 +110,7 @@
             '';
           };
       in {
-        checks.dissolve = dissolve {
-          mpi = false;
-          gui = false;
-        };
+        checks.dissolve = dissolve { gui = false; };
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
@@ -148,31 +145,13 @@
         };
 
         packages = {
-          dissolve = dissolve {
-            mpi = false;
-            gui = false;
-          };
-          dissolve-mpi = dissolve {
-            mpi = true;
-            gui = false;
-          };
-          dissolve-gui = dissolve {
-            mpi = false;
-            gui = true;
-          };
+          dissolve = dissolve { gui = false; };
+          dissolve-mpi = dissolve { mpi = true; };
+          dissolve-gui = dissolve { };
 
-          singularity = mkSingularity {
-            mpi = false;
-            gui = false;
-          };
-          singularity-mpi = mkSingularity {
-            mpi = true;
-            gui = false;
-          };
-          singularity-gui = mkSingularity {
-            mpi = false;
-            gui = true;
-          };
+          singularity = mkSingularity { };
+          singularity-mpi = mkSingularity { mpi = true; };
+          singularity-gui = mkSingularity { gui = true; };
         };
       });
 }
