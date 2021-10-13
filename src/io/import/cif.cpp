@@ -262,8 +262,8 @@ std::optional<int> CIFImport::getTagInt(std::string tag) const
  * Processed Data
  */
 
-// Get (add or retrieve) named assembly
-CIFAssembly &getAssembly(std::string_view name);
+// Set space group from index
+void CIFImport::setSpaceGroupFromIndex(int index) { spaceGroup_.initialise(std::string(SpaceGroup::name(index))); }
 
 // Return space group information
 const SpaceGroup &CIFImport::spaceGroup() const { return spaceGroup_; }
