@@ -26,6 +26,8 @@ class NETADefinition
     std::shared_ptr<NETARootNode> rootNode_;
     // Original definition string
     std::string definitionString_;
+    // Whether the current definition is valid
+    bool valid_;
 
     public:
     // Return root node pointer

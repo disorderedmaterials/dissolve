@@ -15,7 +15,7 @@
 #include <cstdarg>
 #include <cstring>
 
-NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr)
+NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr), valid_(false)
 {
     if (!definition.empty())
         create(definition);
@@ -33,6 +33,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
 {
     // Create a new root node, overwriting the old one
     rootNode_ = std::make_shared<NETARootNode>(this);
+    valid_ = false;
 
     // Create string stream and set up ANTLR input stream
     std::stringstream stream;
@@ -78,6 +79,8 @@ bool NETADefinition::create(const Forcefield *associatedFF)
         return Messenger::error(ex.what());
     }
 
+    valid_ = true;
+
     return true;
 }
 
@@ -93,6 +96,9 @@ void NETADefinition::setDefinitionString(std::string_view definition) { definiti
 
 // Return original generating string
 std::string_view NETADefinition::definitionString() const { return definitionString_; }
+
+// Return whether the definition is valid
+bool NETADefinition::isValid() const { return valid_; }
 
 /*
  * Matching
