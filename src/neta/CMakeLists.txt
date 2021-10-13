@@ -30,6 +30,7 @@ add_library(
   bondcount.cpp
   character.cpp
   connection.cpp
+  geometry.cpp
   hydrogencount.cpp
   neta.cpp
   node.cpp
@@ -42,6 +43,7 @@ add_library(
   bondcount.h
   character.h
   connection.h
+  geometry.h
   hydrogencount.h
   neta.h
   node.h

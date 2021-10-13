@@ -16,6 +16,7 @@ EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
     return EnumOptions<NETANode::NodeType>("NodeTypes", {{NodeType::BondCount, "BondCount"},
                                                          {NodeType::Character, "Character"},
                                                          {NodeType::Connection, "Connection"},
+                                                         {NodeType::Geometry, "Geometry"},
                                                          {NodeType::HydrogenCount, "HydrogenCount"},
                                                          {NodeType::Or, "Or"},
                                                          {NodeType::Presence, "Presence"},

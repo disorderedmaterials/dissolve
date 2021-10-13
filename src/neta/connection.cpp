@@ -16,8 +16,6 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
     allowedElements_ = std::move(targetElements);
     allowedAtomTypes_ = std::move(targetAtomTypes);
     bondType_ = bt;
-    geometry_ = SpeciesAtom::AtomGeometry::Unknown;
-    geometryOperator_ = NETANode::ComparisonOperator::EqualTo;
 
     // Modifiers
     repeatCount_ = 1;
@@ -76,44 +74,6 @@ bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperat
             break;
         default:
             return Messenger::error("Don't know how to handle modifier '{}' in connection node.\n", modifier);
-    }
-
-    return true;
-}
-
-/*
- * Options
- */
-
-// Return enum options for NETARootOptions
-EnumOptions<NETAConnectionNode::NETAConnectionOption> NETAConnectionNode::options()
-{
-    return EnumOptions<NETAConnectionNode::NETAConnectionOption>("ConnectionOption",
-                                                                 {{NETAConnectionOption::Geometry, "geometry"}});
-}
-
-// Return whether the specified option is valid for this node
-bool NETAConnectionNode::isValidOption(std::string_view s) const { return options().isValid(s); }
-
-// Set value and comparator for specified option
-bool NETAConnectionNode::setOption(std::string_view option, ComparisonOperator op, std::string_view value)
-{
-    // Check that the supplied option is valid
-    if (!options().isValid(option))
-        return Messenger::error("Invalid option '{}' passed to NETARootNode.\n", option);
-
-    switch (options().enumeration(option))
-    {
-        case (NETAConnectionNode::NETAConnectionOption::Geometry):
-            // Check that the value is a valid AtomGeometry
-            if (SpeciesAtom::geometries().isValid(value))
-                geometry_ = SpeciesAtom::geometries().enumeration(value);
-            else
-                return SpeciesAtom::geometries().errorAndPrintValid(value);
-            geometryOperator_ = op;
-            break;
-        default:
-            return Messenger::error("Don't know how to handle option '{}' in root node.\n", option);
     }
 
     return true;

@@ -43,6 +43,7 @@ ringSequence: ((Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=f
 node: bondCountNode
 | characterNode
 | connectionNode
+| geometryNode
 | hydrogenCountNode
 | ringNode
 ;
@@ -51,7 +52,7 @@ node: bondCountNode
 ringOnlyNode: presenceNode;
 
 // Bond Count Node
-bondCountNode: BondCountKeyword ComparisonOperator Integer;
+bondCountNode: BondCountKeyword comparisonOperator Integer;
 
 // Character Node
 characterNode: Not? CharacterKeyword Targets=targetList;
@@ -61,8 +62,11 @@ connectionNode: Not? ConnectionKeyword Targets=targetList OpenParenthesis Sequen
 | Not? ConnectionKeyword Targets=targetList
 ;
 
+// Geometry Node
+geometryNode: GeometryKeyword EqualityOperator geometry=Keyword;
+
 // Hydrogen Count Node
-hydrogenCountNode: HydrogenCountKeyword ComparisonOperator Integer;
+hydrogenCountNode: HydrogenCountKeyword comparisonOperator Integer;
 
 // Presence Node
 presenceNode: Not? Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
@@ -81,10 +85,15 @@ targetList: targets+=elementOrType
 ;
 
 // Contextual Modifiers (kwd op value)
-modifier: Keyword ComparisonOperator value=Integer;
+modifier: Keyword comparisonOperator value=Integer;
 
 // Option (kwd op kwd, only accepting '=' and '!=')
-option: opt=Keyword ComparisonOperator value=Keyword;
+option: opt=Keyword comparisonOperator value=Keyword;
 
 // Context Flags (kwd)
 flag: Keyword;
+
+// Comparison Operators
+comparisonOperator: SizeOperator
+| EqualityOperator
+;

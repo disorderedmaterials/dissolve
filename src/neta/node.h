@@ -23,6 +23,7 @@ class NETANode
         BondCount,
         Character,
         Connection,
+        Geometry,
         HydrogenCount,
         Or,
         Presence,

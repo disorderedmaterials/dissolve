@@ -6,6 +6,7 @@
 #include "neta/NETAErrorListeners.h"
 #include "neta/bondcount.h"
 #include "neta/character.h"
+#include "neta/geometry.h"
 #include "neta/hydrogencount.h"
 #include "neta/or.h"
 #include "neta/presence.h"
@@ -96,10 +97,10 @@ antlrcpp::Any NETAVisitor::visitBondCountNode(NETAParser::BondCountNodeContext *
     auto bondCountNode = std::make_shared<NETABondCountNode>(neta_);
 
     // Check comparison operator
-    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+    if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
-            fmt::format("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText())));
-    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+            fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
 
     bondCountNode->set(op, std::stoi(context->Integer()->getText()));
 
@@ -143,15 +144,34 @@ antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext
     return std::dynamic_pointer_cast<NETANode>(connectionNode);
 }
 
+antlrcpp::Any NETAVisitor::visitGeometryNode(NETAParser::GeometryNodeContext *context)
+{
+    auto geometryNode = std::make_shared<NETAGeometryNode>(neta_);
+
+    // Check comparison operator and geometry
+    if (!NETANode::comparisonOperators().isValid(context->EqualityOperator()->getText()))
+        throw(NETAExceptions::NETASyntaxException(fmt::format("'{}' is not a valid comparison operator (for this context).\n",
+                                                              context->EqualityOperator()->getText())));
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->EqualityOperator()->getText());
+    if (!SpeciesAtom::geometries().isValid(context->geometry->getText()))
+        throw(NETAExceptions::NETASyntaxException(
+            fmt::format("'{}' is not a valid geometry type.\n", context->geometry->getText())));
+    SpeciesAtom::AtomGeometry geom = SpeciesAtom::geometries().enumeration(context->geometry->getText());
+
+    geometryNode->set(op, geom);
+
+    return std::dynamic_pointer_cast<NETANode>(geometryNode);
+}
+
 antlrcpp::Any NETAVisitor::visitHydrogenCountNode(NETAParser::HydrogenCountNodeContext *context)
 {
     auto hydrogenCountNode = std::make_shared<NETAHydrogenCountNode>(neta_);
 
     // Check comparison operator
-    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+    if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
-            fmt::format("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText())));
-    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+            fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
 
     hydrogenCountNode->set(op, std::stoi(context->Integer()->getText()));
 
@@ -276,10 +296,10 @@ antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *contex
 void NETAVisitor::visitModifier(NETAParser::ModifierContext *context, NETANode *node)
 {
     // Check comparison operator
-    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+    if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
-            fmt::format("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText())));
-    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+            fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
     if (node->isValidModifier(context->Keyword()->getText()))
     {
         if (!node->setModifier(context->Keyword()->getText(), op, std::stoi(context->value->getText())))
@@ -296,10 +316,10 @@ void NETAVisitor::visitModifier(NETAParser::ModifierContext *context, NETANode *
 void NETAVisitor::visitOption(NETAParser::OptionContext *context, NETANode *node)
 {
     // Check comparison operator - must be either '=' or '!='
-    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+    if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
-            fmt::format("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText())));
-    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+            fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
     if (op != NETANode::ComparisonOperator::EqualTo && op != NETANode::ComparisonOperator::NotEqualTo)
         throw(NETAExceptions::NETASyntaxException(fmt::format(
             "Option '{}' may only use the equal to ('=') or not equal to ('!=') operators.", context->opt->getText())));
