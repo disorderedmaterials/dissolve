@@ -40,12 +40,14 @@
           pkgs.libglvnd
           pkgs.libglvnd.dev
         ];
+      check_libs = pkgs: with pkgs; [ gtest ];
     in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
       let
         pkgs = nixpkgs.legacyPackages.${system};
         qt6 = import ./nix/qt6.nix { inherit pkgs; };
-        dissolve = { mpi ? false, gui ? true, threading ? true }:
+        dissolve =
+          { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
           pkgs.gcc9Stdenv.mkDerivation rec {
             inherit version;
@@ -56,6 +58,7 @@
             patches = [ ./nix/patches/no-conan.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
+              ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
 
             QTDIR = if gui then "${qt6}/6.1.1/gcc_64" else "";
@@ -70,8 +73,16 @@
               ("-DMULTI_THREADING=" + (cmake-bool threading))
               ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
+              # "-DBUILD_SYSTEM_TESTS:bool=${cmake-bool checks}"
+              "-DBUILD_SYSTEM_TESTS:bool=${cmake-bool false}"
+              "-DBUILD_UNIT_TESTS:bool=${cmake-bool checks}"
+              ("-DCMAKE_BUILD_TYPE=" + (if checks then "Debug" else "Release"))
             ] ++ pkgs.lib.optional threading
               ("-DTHREADING_LINK_LIBS=${pkgs.tbb}/lib/libtbb.so");
+            checkPhase = ''
+              ctest
+            '';
+            doCheck = checks;
             installPhase = ''
               mkdir -p $out/bin
               ls nix
@@ -85,17 +96,19 @@
               maintainers = [ maintainers.rprospero ];
             };
           };
-        mkContainer = { mpi, gui , threading}:
+        mkContainer = { mpi, gui, threading }:
           pkgs.ociTools.buildContainer {
             args = [
               (with pkgs;
                 writeScript "run.sh" ''
                   #!${bash}/bin/bash
-                  exec ${dissolve { inherit mpi gui threading; }}/bin/${exe-name mpi gui}
+                  exec ${dissolve { inherit mpi gui threading; }}/bin/${
+                    exe-name mpi gui
+                  }
                 '').outPath
             ];
           };
-        mkSingularity = { mpi ? false, gui ? false , threading ? true}:
+        mkSingularity = { mpi ? false, gui ? false, threading ? true }:
           pkgs.stdenvNoCC.mkDerivation {
             inherit version;
             name = "${exe-name mpi gui}.sif";
@@ -105,7 +118,9 @@
             buildPhase = ''
               ${pkgs.gnutar}/bin/tar czf ${
                 exe-name mpi gui
-              }.oci.tar.gz --directory=${mkContainer { inherit mpi gui threading; }} .
+              }.oci.tar.gz --directory=${
+                mkContainer { inherit mpi gui threading; }
+              } .
             '';
             installPhase = ''
               mkdir -p $out
@@ -113,7 +128,17 @@
             '';
           };
       in {
-        checks.dissolve = dissolve { gui = false; };
+        checks.dissolve = dissolve { gui = false; checks = true; };
+        # checks.dissolve-mpi = dissolve {
+        #   mpi = true;
+        #   gui = false;
+        #   checks = true;
+        # };
+        # checks.dissolve-threadless = dissolve {
+        #   threading = false;
+        #   gui = false;
+        #   checks = true;
+        # };
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
