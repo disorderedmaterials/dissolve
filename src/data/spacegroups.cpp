@@ -5,7 +5,7 @@
 #include "base/messenger.h"
 #include <stdio.h>
 
-Spacegroup::Spacegroup() : sgNameId_(nullptr)
+SpaceGroup::SpaceGroup() : sgNameId_(nullptr)
 {
     // Allocate SGInfo Seitz matrix arrays
     sgInfo_.MaxList = 192;
@@ -13,7 +13,7 @@ Spacegroup::Spacegroup() : sgNameId_(nullptr)
     sgInfo_.ListRotMxInfo = new T_RotMxInfo[192];
 }
 
-Spacegroup::~Spacegroup()
+SpaceGroup::~SpaceGroup()
 {
     delete[] sgInfo_.ListSeitzMx;
     delete[] sgInfo_.ListRotMxInfo;
@@ -23,7 +23,7 @@ Spacegroup::~Spacegroup()
  * Data
  */
 
-static std::vector<std::pair<std::string, std::string>> spacegroupNameData_ = {
+static std::vector<std::pair<std::string, std::string>> spaceGroupNameData_ = {
     {"None", "None"},                      //   0
     {"P1", "<i>P</i>1"},                   //   1
     {"P-1", "<i>P</i>-1"},                 //   2
@@ -258,17 +258,17 @@ static std::vector<std::pair<std::string, std::string>> spacegroupNameData_ = {
 };
 
 // Initialise for specified Hermann-Mauguin group
-bool Spacegroup::initialise(std::string hmName)
+bool SpaceGroup::initialise(std::string hmName)
 {
     // Do a table lookup of the sg text (assume volume is 'A')
     sgNameId_ = FindTabSgNameEntry(hmName.c_str(), 'A');
     if (!sgNameId_)
-        return Messenger::error("Unable to find spacegroup '{}'.", hmName);
+        return Messenger::error("Unable to find space group '{}'.", hmName);
 
     //    // Check for hexagonal basis, and whether to force rhombohedral basis
     //    if (strcmp(sgNameId_->Extension, "H") == 0)
     //    {
-    //        if (!forceRhombohedral) Messenger::print("Warning: Spacegroup has hexagonal basis.");
+    //        if (!forceRhombohedral) Messenger::print("Warning: Space group has hexagonal basis.");
     //        else
     //        {
     //            QString newName = sgNameId_->SgLabels;
@@ -276,11 +276,10 @@ bool Spacegroup::initialise(std::string hmName)
     //            sgNameId_ = FindTabSgNameEntry(qPrintable(newName), 'A');
     //            if (sgNameId_ == NULL)
     //            {
-    //                Messenger::print("Unable to find spacegroup '%s' in rhombohedral basis.", qPrintable(name));
-    //                Messenger::exit("UnitCell::setSpacegroup");
+    //                Messenger::print("Unable to find space group '%s' in rhombohedral basis.", qPrintable(name));
     //                return false;
     //            }
-    //            Messenger::print("Spacegroup %s forced into rhombohedral basis.", sgNameId_->SgLabels);
+    //            Messenger::print("Space group %s forced into rhombohedral basis.", sgNameId_->SgLabels);
     //        }
     //    }
 
@@ -298,46 +297,46 @@ bool Spacegroup::initialise(std::string hmName)
     return true;
 }
 
-// Return whether the Spacegroup is valid
-bool Spacegroup::isValid() const { return sgNameId_; }
+// Return whether the space group is valid
+bool SpaceGroup::isValid() const { return sgNameId_; }
 
-// Return Spacegroup name
-std::string_view Spacegroup::name() const
+// Return space group name
+std::string_view SpaceGroup::name() const
 {
     assert(isValid());
-    return spacegroupNameData_[sgNameId_->SgNumber].first;
+    return spaceGroupNameData_[sgNameId_->SgNumber].first;
 }
 
-// Return spacegroup name for International Tables index provided
-std::string_view Spacegroup::name(int id)
+// Return space group name for International Tables index provided
+std::string_view SpaceGroup::name(int id)
 {
     assert(id >= 0 && id <= 230);
-    return spacegroupNameData_[id].first;
+    return spaceGroupNameData_[id].first;
 }
 
-// Return formatted Spacegroup name
-std::string_view Spacegroup::formattedName() const
+// Return formatted space group name
+std::string_view SpaceGroup::formattedName() const
 {
     assert(isValid());
-    return spacegroupNameData_[sgNameId_->SgNumber].second;
+    return spaceGroupNameData_[sgNameId_->SgNumber].second;
 }
 
-// Return formatted spacegroup name for International Tables index provided
-std::string_view Spacegroup::formattedNname(int id)
+// Return formatted space group name for International Tables index provided
+std::string_view SpaceGroup::formattedNname(int id)
 {
     assert(id >= 0 && id <= 230);
-    return spacegroupNameData_[id].second;
+    return spaceGroupNameData_[id].second;
 }
 
-// Return Spacegroup index in International Tables
-int Spacegroup::internationalTableIndex() const
+// Return space group index in International Tables
+int SpaceGroup::internationalTableIndex() const
 {
     assert(isValid());
     return sgNameId_->SgNumber;
 }
 
-// Return vector of symmetry group operators for the spacegroup
-std::vector<Matrix4> Spacegroup::symmetryOperators() const
+// Return vector of symmetry group operators for the space group
+std::vector<Matrix4> SpaceGroup::symmetryOperators() const
 {
     auto nLoopInv = Sg_nLoopInv(&sgInfo_);
 

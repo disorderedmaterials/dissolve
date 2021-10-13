@@ -50,16 +50,16 @@ class CIFImport
      * Processed Data
      */
     private:
-    // Spacegroup information
-    Spacegroup spacegroup_;
+    // Space group information
+    SpaceGroup spaceGroup_;
     // Atom assemblies
     std::vector<CIFAssembly> assemblies_;
     // Bond information
     std::vector<CIFBondingPair> bondingPairs_;
 
     public:
-    // Return spacegroup information
-    const Spacegroup &spacegroup() const;
+    // Return space group information
+    const SpaceGroup &spaceGroup() const;
     // Return cell lengths
     std::optional<Vec3<double>> getCellLengths() const;
     // Return cell angles
