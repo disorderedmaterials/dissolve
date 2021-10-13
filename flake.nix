@@ -86,7 +86,7 @@
             installPhase = ''
               mkdir -p $out/bin
               ls nix
-              mv ./$out/bin/${exe-name mpi gui} $out/bin/
+              mv ./$out/bin/* $out/bin/
             '';
 
             meta = with pkgs.lib; {
