@@ -8,17 +8,19 @@
 namespace UnitTest
 {
 
-  TEST(PairIterTest, Pairs)
-  {
+TEST(PairIterTest, Pairs)
+{
     int x, y, size = 100;
     PairIterator it(100);
-    for(x = 0; x < size; ++x) {
-      for (y = x; y < size; ++y) {
-	auto [i, j] = *it;
-	EXPECT_EQ(i, x);
-	EXPECT_EQ(j, y);
-	++it;
-      }
+    for (x = 0; x < size; ++x)
+    {
+        for (y = x; y < size; ++y)
+        {
+            auto [i, j] = *it;
+            EXPECT_EQ(i, x);
+            EXPECT_EQ(j, y);
+            ++it;
+        }
     }
-  }
 }
+} // namespace UnitTest
