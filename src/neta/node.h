@@ -10,12 +10,7 @@
 
 // Forward Declarations
 class ForcefieldAtomType;
-class NETACharacterNode;
-class NETAConnectionNode;
 class NETADefinition;
-class NETAOrNode;
-class NETAPresenceNode;
-class NETARingNode;
 class SpeciesAtom;
 
 // NETA Node
@@ -25,9 +20,10 @@ class NETANode
     // Node types
     enum class NodeType
     {
-        Basic,
+        BondCount,
         Character,
         Connection,
+        HydrogenCount,
         Or,
         Presence,
         Ring,

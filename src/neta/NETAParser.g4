@@ -40,13 +40,18 @@ nodeSequence:    (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag) (
 ringSequence: ((Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag))*)*;
 
 // Common Nodes
-node: characterNode
+node: bondCountNode
+| characterNode
 | connectionNode
+| hydrogenCountNode
 | ringNode
 ;
 
 // Ring-Specific Nodes
 ringOnlyNode: presenceNode;
+
+// Bond Count Node
+bondCountNode: BondCountKeyword ComparisonOperator Integer;
 
 // Character Node
 characterNode: Not? CharacterKeyword Targets=targetList;
@@ -55,6 +60,9 @@ characterNode: Not? CharacterKeyword Targets=targetList;
 connectionNode: Not? ConnectionKeyword Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
 | Not? ConnectionKeyword Targets=targetList
 ;
+
+// Hydrogen Count Node
+hydrogenCountNode: HydrogenCountKeyword ComparisonOperator Integer;
 
 // Presence Node
 presenceNode: Not? Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis

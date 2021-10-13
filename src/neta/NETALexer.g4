@@ -53,8 +53,10 @@ Integer: DIGIT+;
 // Keywords
 Or: '|';
 Not: '!' | '¬';
+BondCountKeyword: 'n' 'b' 'o' 'n' 'd' 's';
 CharacterKeyword: '?';
 ConnectionKeyword: '-';
+HydrogenCountKeyword: 'n' 'h';
 RingKeyword: 'r' 'i' 'n' 'g';
 
 // Named Tokens

@@ -16,10 +16,6 @@ NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Elements:
 
     repeatCount_ = 1;
     repeatCountOperator_ = NETANode::ComparisonOperator::EqualTo;
-    nBondsValue_ = -1;
-    nBondsValueOperator_ = NETANode::ComparisonOperator::EqualTo;
-    nHydrogensValue_ = -1;
-    nHydrogensValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 }
 
 /*
@@ -49,9 +45,7 @@ bool NETAPresenceNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Return enum options for NETACharacterModifiers
 EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers()
 {
-    return EnumOptions<NETAPresenceNode::NETACharacterModifier>("CharacterModifier", {{NETACharacterModifier::NBonds, "nbonds"},
-                                                                                      {NETACharacterModifier::NHydrogens, "nh"},
-                                                                                      {NETACharacterModifier::Repeat, "n"}});
+    return EnumOptions<NETAPresenceNode::NETACharacterModifier>("CharacterModifier", {{NETACharacterModifier::Repeat, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -66,14 +60,6 @@ bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETAPresenceNode::NETACharacterModifier::NBonds):
-            nBondsValue_ = value;
-            nBondsValueOperator_ = op;
-            break;
-        case (NETAPresenceNode::NETACharacterModifier::NHydrogens):
-            nHydrogensValue_ = value;
-            nHydrogensValueOperator_ = op;
-            break;
         case (NETAPresenceNode::NETACharacterModifier::Repeat):
             repeatCount_ = value;
             repeatCountOperator_ = op;
@@ -145,25 +131,6 @@ int NETAPresenceNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom 
         // Did we match the atom?
         if (atomScore == NETANode::NoMatch)
             continue;
-
-        // Check any specified modifier values
-        if (nBondsValue_ >= 0)
-        {
-            if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
-                continue;
-
-            ++atomScore;
-        }
-        if (nHydrogensValue_ >= 0)
-        {
-            // Count number of hydrogens attached to this atom
-            auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
-                                    [j](const SpeciesBond &bond) { return bond.partner(j)->Z() == Elements::H; });
-            if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
-                continue;
-
-            ++atomScore;
-        }
 
         // Found a match, so increase the match count and score, and add the matched atom to our local list
         ++nMatches;

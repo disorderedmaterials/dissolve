@@ -20,33 +20,6 @@ class NETARootNode : public NETANode
     ~NETARootNode() override = default;
 
     /*
-     * Modifiers
-     */
-    private:
-    // Number of bonds value
-    int nBondsValue_;
-    // Number of bonds value comparison operator
-    NETANode::ComparisonOperator nBondsValueOperator_;
-    // Number of hydrogens value
-    int nHydrogensValue_;
-    // Number of hydrogens value comparison operator
-    NETANode::ComparisonOperator nHydrogensValueOperator_;
-
-    public:
-    // Available modifiers
-    enum class NETARootModifier
-    {
-        NBonds,    /* 'nbonds' - Specifies number of bonds (default = -1) */
-        NHydrogens /* 'nh' - Specifies number of hydrogens (default = -1) */
-    };
-    // Return enum options for NETARootModifiers
-    static EnumOptions<NETARootNode::NETARootModifier> modifiers();
-    // Return whether the specified modifier is valid for this node
-    bool isValidModifier(std::string_view s) const override;
-    // Set value and comparator for specified modifier
-    bool setModifier(std::string_view modifier, ComparisonOperator op, int value) override;
-
-    /*
      * Options
      */
     private:

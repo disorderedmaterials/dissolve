@@ -43,8 +43,10 @@ class NETAVisitor : private NETAParserBaseVisitor
     antlrcpp::Any visitOrSequence(NETAParser::OrSequenceContext *context) override;
     antlrcpp::Any visitSequence(NETAParser::SequenceContext *context) override;
     antlrcpp::Any visitRingSequence(NETAParser::RingSequenceContext *context) override;
+    antlrcpp::Any visitBondCountNode(NETAParser::BondCountNodeContext *context) override;
     antlrcpp::Any visitCharacterNode(NETAParser::CharacterNodeContext *context) override;
     antlrcpp::Any visitConnectionNode(NETAParser::ConnectionNodeContext *context) override;
+    antlrcpp::Any visitHydrogenCountNode(NETAParser::HydrogenCountNodeContext *context) override;
     antlrcpp::Any visitPresenceNode(NETAParser::PresenceNodeContext *context) override;
     antlrcpp::Any visitRingNode(NETAParser::RingNodeContext *context) override;
     // Target List

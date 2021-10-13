@@ -22,10 +22,6 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
     // Modifiers
     repeatCount_ = 1;
     repeatCountOperator_ = NETANode::ComparisonOperator::GreaterThanEqualTo;
-    nBondsValue_ = -1;
-    nBondsValueOperator_ = NETANode::ComparisonOperator::EqualTo;
-    nHydrogensValue_ = -1;
-    nHydrogensValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 
     // Flags
     allowRootMatch_ = false;
@@ -59,9 +55,7 @@ bool NETAConnectionNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modifiers()
 {
     return EnumOptions<NETAConnectionNode::NETAConnectionModifier>("ConnectionModifier",
-                                                                   {{NETAConnectionModifier::NBonds, "nbonds"},
-                                                                    {NETAConnectionModifier::NHydrogens, "nh"},
-                                                                    {NETAConnectionModifier::Repeat, "n"}});
+                                                                   {{NETAConnectionModifier::Repeat, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -76,14 +70,6 @@ bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperat
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETAConnectionNode::NETAConnectionModifier::NBonds):
-            nBondsValue_ = value;
-            nBondsValueOperator_ = op;
-            break;
-        case (NETAConnectionNode::NETAConnectionModifier::NHydrogens):
-            nHydrogensValue_ = value;
-            nHydrogensValueOperator_ = op;
-            break;
         case (NETAConnectionNode::NETAConnectionModifier::Repeat):
             repeatCount_ = value;
             repeatCountOperator_ = op;
@@ -248,25 +234,6 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         // Did we match the atom?
         if (atomScore == NETANode::NoMatch)
             continue;
-
-        // Check any specified modifier values
-        if (nBondsValue_ >= 0)
-        {
-            if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
-                continue;
-
-            ++atomScore;
-        }
-        if (nHydrogensValue_ >= 0)
-        {
-            // Count number of hydrogens attached to this atom
-            auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
-                                    [j](const SpeciesBond &bond) { return bond.partner(j)->Z() == Elements::H; });
-            if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
-                continue;
-
-            ++atomScore;
-        }
 
         // Found a match, so increase the match count and store the score
         ++nMatches;

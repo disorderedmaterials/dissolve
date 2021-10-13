@@ -4,7 +4,9 @@
 #include "neta/NETAVisitor.h"
 #include "data/ff/ff.h"
 #include "neta/NETAErrorListeners.h"
+#include "neta/bondcount.h"
 #include "neta/character.h"
+#include "neta/hydrogencount.h"
 #include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
@@ -89,6 +91,21 @@ antlrcpp::Any NETAVisitor::visitRingSequence(NETAParser::RingSequenceContext *co
     return sequence;
 }
 
+antlrcpp::Any NETAVisitor::visitBondCountNode(NETAParser::BondCountNodeContext *context)
+{
+    auto bondCountNode = std::make_shared<NETABondCountNode>(neta_);
+
+    // Check comparison operator
+    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+        throw(NETAExceptions::NETASyntaxException(
+            fmt::format("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText())));
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+
+    bondCountNode->set(op, std::stoi(context->Integer()->getText()));
+
+    return std::dynamic_pointer_cast<NETANode>(bondCountNode);
+}
+
 antlrcpp::Any NETAVisitor::visitCharacterNode(NETAParser::CharacterNodeContext *context)
 {
     auto characterNode = std::make_shared<NETACharacterNode>(neta_);
@@ -124,6 +141,21 @@ antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext
     }
 
     return std::dynamic_pointer_cast<NETANode>(connectionNode);
+}
+
+antlrcpp::Any NETAVisitor::visitHydrogenCountNode(NETAParser::HydrogenCountNodeContext *context)
+{
+    auto hydrogenCountNode = std::make_shared<NETAHydrogenCountNode>(neta_);
+
+    // Check comparison operator
+    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+        throw(NETAExceptions::NETASyntaxException(
+            fmt::format("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText())));
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+
+    hydrogenCountNode->set(op, std::stoi(context->Integer()->getText()));
+
+    return std::dynamic_pointer_cast<NETANode>(hydrogenCountNode);
 }
 
 antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *context)
