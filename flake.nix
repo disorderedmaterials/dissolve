@@ -15,6 +15,7 @@
           "dissolve-mpi"
         else
           (if gui then "dissolve-gui" else "dissolve");
+      cmake-bool = x: if x then "ON" else "OFF";
       version = "0.9.0";
       base_libs = pkgs:
         with pkgs; [
@@ -64,9 +65,9 @@
             PATH = "${QTDIR}/bin";
 
             cmakeFlags = [
-              "-DMULTI_THREADING=OFF"
-              ("-DPARALLEL=" + (if mpi then "ON" else "OFF"))
-              ("-DGUI=" + (if gui then "ON" else "OFF"))
+              ("-DMULTI_THREADING=" + (cmake-bool false))
+              ("-DPARALLEL=" + (cmake-bool mpi))
+              ("-DGUI=" + (cmake-bool gui))
             ];
             installPhase = ''
               mkdir -p $out/bin
