@@ -323,7 +323,7 @@ std::string_view SpaceGroup::formattedName() const
 }
 
 // Return formatted space group name for International Tables index provided
-std::string_view SpaceGroup::formattedNname(int id)
+std::string_view SpaceGroup::formattedName(int id)
 {
     assert(id >= 0 && id <= 230);
     return spaceGroupNameData_[id].second;
