@@ -40,14 +40,12 @@ class NETADefinition
     void setDefinitionString(std::string_view definition);
     // Return original generating string
     std::string_view definitionString() const;
+    // Return whether the definition is valid
+    bool isValid() const;
 
     /*
      * Matching
      */
-    private:
-    // Current SpeciesAtom being typed
-    SpeciesAtom *targetAtom_;
-
     public:
     // Return score of supplied atom for the definition
     int score(const SpeciesAtom *i) const;
