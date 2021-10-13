@@ -88,6 +88,8 @@ class WizardDialog : public QDialog
     protected:
     // Go to specified page index in the widget
     bool displayPage(int index);
+    // Return current page index
+    std::optional<int> currentPage() const;
     // Return whether progression to the next page from the current page is allowed
     virtual bool progressionAllowed(int index) const;
     // Perform any necessary actions before moving to the next page
