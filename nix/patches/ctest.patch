@@ -11,3 +11,16 @@ index d36eee192..fd07c23f4 100644
        add_test(
          NAME ${CMAKE_CURRENT_LIST_DIR}-${test_name}-${nproc}
          COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x ${input_file} ${ARGN}
+diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
+index d36eee192..be6551dd4 100644
+--- a/tests/CMakeLists.txt
++++ b/tests/CMakeLists.txt
+@@ -15,7 +15,7 @@ function(dissolve_system_test test_name input_file count)
+       set_property(TEST ${CMAKE_CURRENT_LIST_DIR}-${test_name}-${nproc} PROPERTY PROCESSORS ${nproc})
+     endforeach()
+   else()
+-    set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
++    set(test_target_executable ${target_name})
+     add_test(
+       NAME ${CMAKE_CURRENT_LIST_DIR}-${test_name}
+       COMMAND ${test_target_executable} -n ${count} -x ${input_file} ${ARGN}
