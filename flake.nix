@@ -173,6 +173,14 @@
           PATH = "${QTDIR}/bin";
         };
 
+        apps = {
+          dissolve = flake-utils.lib.mkApp {drv=self.packages.${system}.dissolve;};
+          dissolve-mpi = flake-utils.lib.mkApp {drv=self.packages.${system}.dissolve-mpi;};
+            dissolve-gui = flake-utils.lib.mkApp {drv=self.packages.${system}.dissolve-gui;};
+        };
+
+        defaultApp = flake-utils.lib.mkApp {drv=self.defaultPackage.${system};};
+
         packages = {
           dissolve = dissolve { gui = false; };
           dissolve-threadless = dissolve {
