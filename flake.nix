@@ -129,16 +129,16 @@
           gui = false;
           checks = true;
         };
-        # checks.dissolve-mpi = dissolve {
-        #   mpi = true;
-        #   gui = false;
-        #   checks = true;
-        # };
-        # checks.dissolve-threadless = dissolve {
-        #   threading = false;
-        #   gui = false;
-        #   checks = true;
-        # };
+        checks.dissolve-mpi = dissolve {
+          mpi = true;
+          gui = false;
+          checks = true;
+        };
+        checks.dissolve-threadless = dissolve {
+          threading = false;
+          gui = false;
+          checks = true;
+        };
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
