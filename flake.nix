@@ -55,7 +55,8 @@
             src =
               builtins.filterSource (path: type: baseNameOf path != "flake.nix")
               ./.;
-            patches = [ ./nix/patches/no-conan.patch ];
+            patches =
+              [ ./nix/patches/no-conan.patch ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
@@ -124,7 +125,10 @@
             '';
           };
       in {
-        checks.dissolve = dissolve { gui = false; checks = true; };
+        checks.dissolve = dissolve {
+          gui = false;
+          checks = true;
+        };
         # checks.dissolve-mpi = dissolve {
         #   mpi = true;
         #   gui = false;
@@ -170,12 +174,18 @@
         };
 
         apps = {
-          dissolve = flake-utils.lib.mkApp {drv=self.packages.${system}.dissolve;};
-          dissolve-mpi = flake-utils.lib.mkApp {drv=self.packages.${system}.dissolve-mpi;};
-            dissolve-gui = flake-utils.lib.mkApp {drv=self.packages.${system}.dissolve-gui;};
+          dissolve =
+            flake-utils.lib.mkApp { drv = self.packages.${system}.dissolve; };
+          dissolve-mpi = flake-utils.lib.mkApp {
+            drv = self.packages.${system}.dissolve-mpi;
+          };
+          dissolve-gui = flake-utils.lib.mkApp {
+            drv = self.packages.${system}.dissolve-gui;
+          };
         };
 
-        defaultApp = flake-utils.lib.mkApp {drv=self.defaultPackage.${system};};
+        defaultApp =
+          flake-utils.lib.mkApp { drv = self.defaultPackage.${system}; };
 
         packages = {
           dissolve = dissolve { gui = false; };
