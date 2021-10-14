@@ -73,15 +73,11 @@
               ("-DMULTI_THREADING=" + (cmake-bool threading))
               ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
-              # "-DBUILD_SYSTEM_TESTS:bool=${cmake-bool checks}"
-              "-DBUILD_SYSTEM_TESTS:bool=${cmake-bool false}"
+              "-DBUILD_SYSTEM_TESTS:bool=${cmake-bool checks}"
               "-DBUILD_UNIT_TESTS:bool=${cmake-bool checks}"
               ("-DCMAKE_BUILD_TYPE=" + (if checks then "Debug" else "Release"))
             ] ++ pkgs.lib.optional threading
               ("-DTHREADING_LINK_LIBS=${pkgs.tbb}/lib/libtbb.so");
-            checkPhase = ''
-              ctest
-            '';
             doCheck = checks;
             installPhase = ''
               mkdir -p $out/bin
