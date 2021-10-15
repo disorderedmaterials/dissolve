@@ -52,7 +52,7 @@ int SpeciesSiteModel::rowCount(const QModelIndex &parent) const
 
 QVariant SpeciesSiteModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::DisplayRole)
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
         return QString::fromStdString(std::string(rawData(index)->name()));
     else if (role == Qt::CheckStateRole && checkedItems_)
         return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
@@ -66,7 +66,15 @@ QVariant SpeciesSiteModel::data(const QModelIndex &index, int role) const
 
 bool SpeciesSiteModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role == Qt::CheckStateRole && checkedItems_)
+    if (role == Qt::EditRole)
+    {
+        rawData(index)->setName(value.toString().toStdString());
+
+        emit dataChanged(index, index);
+
+        return true;
+    }
+    else if (role == Qt::CheckStateRole && checkedItems_)
     {
         auto &xitems = checkedItems_->get();
         if (value.value<Qt::CheckState>() == Qt::Checked)
@@ -88,7 +96,7 @@ bool SpeciesSiteModel::setData(const QModelIndex &index, const QVariant &value, 
 Qt::ItemFlags SpeciesSiteModel::flags(const QModelIndex &index) const
 {
     return checkedItems_ ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
-                         : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+                         : Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
 QVariant SpeciesSiteModel::headerData(int section, Qt::Orientation orientation, int role) const
