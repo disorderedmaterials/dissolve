@@ -41,6 +41,8 @@ void SpeciesTab::setCurrentSiteFromViewer()
     ui_.SiteList->setCurrentIndex(sites_.index(index, 0));
 
     dissolveWindow_->setModified();
+
+    dissolveWindow_->fullUpdate();
 }
 
 void SpeciesTab::on_SiteAddButton_clicked(bool checked)
@@ -49,7 +51,9 @@ void SpeciesTab::on_SiteAddButton_clicked(bool checked)
 
     sites_.setData(species_->sites());
 
-    updateSitesTab();
+    dissolveWindow_->setModified();
+
+    dissolveWindow_->fullUpdate();
 }
 
 void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
@@ -66,7 +70,6 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
     // Remove the site proper, and update the sites tab
     species_->removeSite(site);
     sites_.setData(species_->sites());
-    updateSitesTab();
 
     dissolveWindow_->setModified();
 
