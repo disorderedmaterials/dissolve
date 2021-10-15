@@ -6,8 +6,8 @@
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/ui_speciessitevector.h"
-#include "gui/models/speciesSiteFilterProxy.h"
-#include "gui/models/speciesSiteModel.h"
+#include "gui/models/sitesFilterProxy.h"
+#include "gui/models/sitesModel.h"
 #include "keywords/speciessitevector.h"
 #include <QWidget>
 
@@ -21,7 +21,7 @@ class SpeciesSiteVectorKeywordWidget : public KeywordDropDown, public KeywordWid
 
     public:
     SpeciesSiteVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
-    ~SpeciesSiteVectorKeywordWidget() override;
+    ~SpeciesSiteVectorKeywordWidget() override = default;
 
     /*
      * Keyword
@@ -35,11 +35,11 @@ class SpeciesSiteVectorKeywordWidget : public KeywordDropDown, public KeywordWid
      */
     private:
     // Main form declaration
-    Ui::SpeciesSiteRefListWidget ui_;
+    Ui::SpeciesSiteVectorWidget ui_;
     // Site models for Species
-    std::vector<SpeciesSiteModel *> models_;
+    SitesModel sites_;
     // Proxy filters for sites
-    std::vector<SpeciesSiteFilterProxy *> proxyFilters_;
+    SitesFilterProxy sitesFilterProxy_;
 
     private slots:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
