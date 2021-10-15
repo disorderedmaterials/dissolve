@@ -20,11 +20,11 @@ bool Forcefield_OPLSAA2005_Diols::setUp()
         return false;
     if (!copyAtomType(oplsAtomTypeById(170), "HO", "-&169"))
         return false;
-    if (!copyAtomType(oplsAtomTypeById(157), "CT", "nh>=2,-O"))
+    if (!copyAtomType(oplsAtomTypeById(157), "CT", "nh>=2,-O(-H)"))
         return false;
-    if (!copyAtomType(oplsAtomTypeById(158), "CT", "nh=1,-O"))
+    if (!copyAtomType(oplsAtomTypeById(158), "CT", "nh=1,-O(-H)"))
         return false;
-    if (!copyAtomType(oplsAtomTypeById(159), "CT", "nh=0,-O"))
+    if (!copyAtomType(oplsAtomTypeById(159), "CT", "nh=0,-O(-H)"))
         return false;
 
     return true;
