@@ -130,12 +130,9 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
 {
     if (!index.parent().isValid())
     {
-        if (index.row() != 0)
-            return false;
-        if (index.row() > species_.isotopologues().nItems())
-            return false;
         auto iso = species_.isotopologue(index.row());
         iso->setName(value.toString().toStdString());
+        emit(dataChanged(index, index));
         return true;
     }
 
@@ -149,6 +146,7 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
     if (Sears91::Z(isotope) != Sears91::Z(newIso))
         return false;
     isotopologue->setAtomTypeIsotope(atomType, newIso);
+    emit(dataChanged(index, index));
     return true;
 }
 
