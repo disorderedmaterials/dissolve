@@ -9,6 +9,8 @@ set(models_MOC_HDRS
     pairPotentialModel.h
     procedureNodeModel.h
     masterTermModel.h
+    sitesFilterProxy.h
+    sitesModel.h
     speciesFilterProxy.h
     speciesModel.h
     speciesSiteFilterProxy.h
@@ -40,6 +42,8 @@ set(models_SRCS
     masterTermModel.cpp
     pairPotentialModel.cpp
     procedureNodeModel.cpp
+    sitesFilterProxy.cpp
+    sitesModel.cpp
     speciesAngleModel.cpp
     speciesAtomModel.cpp
     speciesBondModel.cpp
