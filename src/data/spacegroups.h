@@ -7,11 +7,11 @@
 #include "sginfo/sginfo.h"
 #include <string>
 
-class Spacegroup
+class SpaceGroup
 {
     public:
-    Spacegroup();
-    ~Spacegroup();
+    SpaceGroup();
+    ~SpaceGroup();
 
     /*
      * Data
@@ -25,18 +25,18 @@ class Spacegroup
     public:
     // Initialise for specified Hermann-Mauguin group
     bool initialise(std::string hmName);
-    // Return whether the Spacegroup is valid
+    // Return whether the space group is valid
     bool isValid() const;
-    // Return Spacegroup name
+    // Return space group name
     std::string_view name() const;
-    // Return spacegroup name for International Tables index provided
+    // Return space group name for International Tables index provided
     static std::string_view name(int id);
-    // Return formatted Spacegroup name
+    // Return formatted space group name
     std::string_view formattedName() const;
-    // Return formatted spacegroup name for International Tables index provided
+    // Return formatted space group name for International Tables index provided
     static std::string_view formattedNname(int id);
-    // Return Spacegroup index in International Tables
+    // Return space group index in International Tables
     int internationalTableIndex() const;
-    // Return vector of symmetry group operators for the spacegroup
+    // Return vector of symmetry group operators for the space group
     std::vector<Matrix4> symmetryOperators() const;
 };

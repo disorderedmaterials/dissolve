@@ -81,7 +81,7 @@ bool CIFImport::read(std::string filename)
     if (!parse(filename, tags_))
         return Messenger::error("Failed to parse CIF file '{}'.\n", filename);
 
-    // Set up spacegroup
+    // Set up space group
     std::optional<std::string> sgName = getTagString("_space_group_name_H-M_alt");
     if (!sgName)
         sgName = getTagString("_symmetry_space_group_name_H-M");
@@ -89,12 +89,12 @@ bool CIFImport::read(std::string filename)
     {
         auto sgID = getTagInt("_space_group_IT_number");
         if (sgID)
-            sgName = Spacegroup::name(sgID.value());
+            sgName = SpaceGroup::name(sgID.value());
     }
 
     if (!sgName)
-        return Messenger::error("No suitable spacegroup information found in CIF.\n");
-    spacegroup_.initialise(sgName.value());
+        return Messenger::error("No suitable space group information found in CIF.\n");
+    spaceGroup_.initialise(sgName.value());
 
     // Create symmetry-unique atoms list
     auto atomSiteLabel = getTagStrings("_atom_site_label");
@@ -265,8 +265,8 @@ std::optional<int> CIFImport::getTagInt(std::string tag) const
 // Get (add or retrieve) named assembly
 CIFAssembly &getAssembly(std::string_view name);
 
-// Return spacegroup information
-const Spacegroup &CIFImport::spacegroup() const { return spacegroup_; }
+// Return space group information
+const SpaceGroup &CIFImport::spaceGroup() const { return spaceGroup_; }
 
 // Return cell lengths
 std::optional<Vec3<double>> CIFImport::getCellLengths() const
