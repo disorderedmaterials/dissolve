@@ -129,6 +129,23 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                                         !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
                     return false;
             }
+            else if (ui_.AtomTypesKeepCurrentRadio->isChecked())
+            {
+                for (auto &&[iMod, iOrig] : zip(modifiedSpecies_->atoms(), targetSpecies_->atoms()))
+                    iMod.setAtomType(iOrig.atomType());
+
+                // Check that we have types assigned to all atoms
+                if (std::count_if(modifiedSpecies_->atoms().begin(), modifiedSpecies_->atoms().end(), [](const auto &i) {
+                        if (i.atomType())
+                            return false;
+                        else
+                        {
+                            Messenger::warn("No atom type assigned to atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
+                            return true;
+                        }
+                    }) != 0)
+                    return false;
+            }
 
             atomTypeModel_.setData(temporaryCoreData_.atomTypes());
             checkAtomTypeConflicts();
