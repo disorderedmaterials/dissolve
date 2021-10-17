@@ -38,6 +38,10 @@ class SpeciesViewer : public BaseViewer
     // Mouse moved
     void mouseMoved(int dx, int dy);
 
+    protected slots:
+    // Context menu requested
+    void contextMenuRequested(QPoint pos);
+
     /*
      * Interaction (BaseViewer virtuals)
      */
