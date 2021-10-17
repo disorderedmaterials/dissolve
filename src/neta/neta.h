@@ -15,7 +15,8 @@ class SpeciesAtom;
 class NETADefinition
 {
     public:
-    NETADefinition(std::string_view definition = "");
+    explicit NETADefinition(std::string_view definition = "");
+    NETADefinition(const SpeciesAtom *i, int maxDepth = 1);
     ~NETADefinition() = default;
 
     /*
@@ -36,6 +37,8 @@ class NETADefinition
     bool create(const Forcefield *associatedFF = nullptr);
     // Set definition string and create definition
     bool create(std::string_view definition, const Forcefield *associatedFF = nullptr);
+    // Create from specified atom and its connectivity
+    bool create(const SpeciesAtom *i, int maxDepth = 1);
     // Set generating string
     void setDefinitionString(std::string_view definition);
     // Return original generating string
