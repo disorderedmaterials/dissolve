@@ -4,6 +4,7 @@
 #include "classes/species.h"
 #include "gui/render/renderablespecies.h"
 #include "gui/speciesviewer.hui"
+#include "neta/neta.h"
 #include <QtGui/QMouseEvent>
 
 // Mouse moved
@@ -98,4 +99,64 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 
     if (refresh)
         postRedisplay();
+}
+
+// Context menu requested
+void SpeciesViewer::contextMenuRequested(QPoint pos)
+{
+    QMenu menu(this);
+    //    menu.setFont(font());
+
+    // Reset View
+    auto *resetViewAction = menu.addAction("&Reset View");
+
+    // Copy to clipboard
+    auto *copyToClipboardAction = menu.addAction("&Copy to clipboard");
+
+    // Atom selection context menu?
+    QAction *selectSimilarDirect = nullptr, *selectSimilarPrimary = nullptr, *selectSimilarSecondary = nullptr;
+    if (species_ && species_->nSelectedAtoms() > 0)
+    {
+        menu.addSection("Current Selection");
+
+        // Atom select submenu
+        auto *selectMenu = menu.addMenu("Select similar atoms...");
+        selectMenu->setEnabled(species_->nSelectedAtoms() == 1);
+        selectSimilarDirect = selectMenu->addAction("By direct connectivity");
+        selectSimilarPrimary = selectMenu->addAction("Based on primary neighbours");
+        selectSimilarSecondary = selectMenu->addAction("Based on primary and secondary neighbours");
+    }
+
+    // Execute the menu
+    auto *selectedAction = menu.exec(mapToGlobal(pos));
+    if (selectedAction == nullptr)
+    {
+        cancelInteraction();
+        return;
+    }
+
+    // Act on the action!
+    if (selectedAction == resetViewAction)
+        view_.resetViewMatrix();
+    else if (selectedAction == copyToClipboardAction)
+        copyViewToClipboard(true);
+    else if (selectedAction == selectSimilarDirect || selectedAction == selectSimilarPrimary ||
+             selectedAction == selectSimilarSecondary)
+    {
+        // Create a NETA description from the current atom
+        NETADefinition neta(species_->selectedAtoms().front(),
+                            selectedAction == selectSimilarDirect ? 0 : (selectedAction == selectSimilarPrimary ? 1 : 2));
+        auto Z = species_->selectedAtoms().front()->Z();
+        Messenger::print("NETA definition is '{}'.\n", neta.definitionString());
+        for (auto &i : species_->atoms())
+            if (i.Z() == Z && neta.matches(&i))
+                species_->selectAtom(&i);
+        Messenger::print("Selected {} additional atoms.\n", species_->nSelectedAtoms() - 1);
+        speciesRenderable_->recreateSelectionPrimitive();
+        emit(atomsChanged());
+        postRedisplay();
+    }
+
+    // Cancel any current interaction
+    cancelInteraction();
 }
