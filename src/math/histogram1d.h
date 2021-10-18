@@ -72,6 +72,8 @@ class Histogram1D
     std::vector<long int> &bins();
     // Add source histogram data into local array
     void add(Histogram1D &other, int factor = 1);
+    // Return current data
+    Data1D data() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
 
