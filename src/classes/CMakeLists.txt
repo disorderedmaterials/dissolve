@@ -12,6 +12,7 @@ add_library(
   box_monoclinicgamma.cpp
   box_nonperiodic.cpp
   box_orthorhombic.cpp
+  box_singleimage.cpp
   box_triclinic.cpp
   braggreflection.cpp
   cell.cpp
