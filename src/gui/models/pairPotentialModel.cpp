@@ -57,6 +57,8 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
                 return QVariant();
         }
     }
+    else if (role == Qt::UserRole)
+        return QVariant::fromValue(rawData(index));
 
     return QVariant();
 }

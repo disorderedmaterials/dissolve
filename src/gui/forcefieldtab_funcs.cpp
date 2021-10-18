@@ -85,7 +85,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // -- Short Range Functional Forms
     ui_.AtomTypesTable->setItemDelegateForColumn(
         3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
-    // -- Charge / Parameters
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.AtomTypesTable->horizontalHeader()->setFont(font());
@@ -118,6 +117,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
 
     connect(&pairs_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,
             SLOT(setModified()));
+    connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
+            this, SLOT(pairPotentialTableRowChanged(const QModelIndex &, const QModelIndex &)));
 }
 
 ForcefieldTab::~ForcefieldTab() {}
@@ -147,7 +148,7 @@ void ForcefieldTab::updateControls()
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
-    // -- Automatically regenerate pair potentials (quietly)
+    // -- Automatically regenerate pair potentials (quietly)?
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
     {
         Messenger::mute();
@@ -167,7 +168,6 @@ void ForcefieldTab::updateControls()
     ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
 
     // -- Table
-    // -- Get current row index before we refresh...
     pairs_.reset();
     ui_.PairPotentialsTable->resizeColumnsToContents();
 
@@ -326,6 +326,21 @@ void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
 {
     if (checked)
         on_UpdatePairPotentialsButton_clicked(false);
+}
+
+void ForcefieldTab::pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    ui_.PairPotentialsPlotWidget->clearRenderableData();
+
+    auto *pp = pairs_.data(current, Qt::UserRole).value<const PairPotential *>();
+    if (!pp)
+        return;
+
+    ui_.PairPotentialsPlotWidget->dataViewer()->createRenderable<RenderableData1D>(
+        pp->uFull(), fmt::format("Energy {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()));
+    ui_.PairPotentialsPlotWidget->dataViewer()
+        ->createRenderable<RenderableData1D>(pp->dUFull(), fmt::format("Force {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()))
+        ->setColour(StockColours::RedStockColour);
 }
 
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }

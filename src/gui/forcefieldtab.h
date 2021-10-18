@@ -95,6 +95,7 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
     void on_UpdatePairPotentialsButton_clicked(bool checked);
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
+    void pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous);
     // Master Terms
     void on_MasterTermAddBondButton_clicked(bool checked);
     void on_MasterTermRemoveBondButton_clicked(bool checked);
