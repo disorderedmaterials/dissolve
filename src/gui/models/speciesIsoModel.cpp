@@ -3,9 +3,6 @@
 #include "gui/delegates/isotopecombo.hui"
 #include "templates/variantpointer.h"
 
-Q_DECLARE_METATYPE(Sears91::Isotope)
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
-
 SpeciesIsoModel::SpeciesIsoModel(Species &species) : species_(species) {}
 
 int SpeciesIsoModel::rowCount(const QModelIndex &parent) const
@@ -130,12 +127,9 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
 {
     if (!index.parent().isValid())
     {
-        if (index.row() != 0)
-            return false;
-        if (index.row() > species_.isotopologues().size())
-            return false;
         auto iso = species_.isotopologue(index.row());
         iso->setName(value.toString().toStdString());
+        emit(dataChanged(index, index));
         return true;
     }
 
@@ -143,12 +137,13 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
         return false;
     if (index.column() != 2)
         return false;
-    auto isotopologue = species_.isotopologue(index.parent().row());
+    auto *isotopologue = species_.isotopologue(index.parent().row());
     auto [atomType, isotope] = isotopologue->isotopes()[index.row()];
     auto newIso = value.value<Sears91::Isotope>();
     if (Sears91::Z(isotope) != Sears91::Z(newIso))
         return false;
     isotopologue->setAtomTypeIsotope(atomType, newIso);
+    emit(dataChanged(index, index));
     return true;
 }
 
