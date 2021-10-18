@@ -554,15 +554,19 @@ double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential:
 
 // Return full tabulated potential (original plus additional)
 Data1D &PairPotential::uFull() { return uFull_; }
+const Data1D &PairPotential::uFull() const { return uFull_; }
 
 // Return full tabulated derivative
 Data1D &PairPotential::dUFull() { return dUFull_; }
+const Data1D &PairPotential::dUFull() const { return dUFull_; }
 
 // Return original potential
 Data1D &PairPotential::uOriginal() { return uOriginal_; }
+const Data1D &PairPotential::uOriginal() const { return uOriginal_; }
 
 // Return additional potential
 Data1D &PairPotential::uAdditional() { return uAdditional_; }
+const Data1D &PairPotential::uAdditional() const { return uAdditional_; }
 
 // Zero additional potential
 void PairPotential::resetUAdditional()
