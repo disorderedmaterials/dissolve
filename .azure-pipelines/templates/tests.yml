@@ -10,19 +10,36 @@ parameters:
 
 jobs:
   - job:
-    condition: eq('${{ parameters.threading }}', true)
+    condition: eq('${{ parameters.serial }}', true)
     displayName: 'Threads'
     pool:
       vmImage: ubuntu-latest
     steps:
-      - checkout: self
-        fetchDepth: 1
       - bash: |
           set -ex
-          sudo pip3 install aqtinstall
-          sudo apt-get update
-          sudo apt-get install libgl1-mesa-glx libopengl0 libegl1 libegl1-mesa
-          aqt install-qt --outputdir /tmp/qt linux desktop ${{ parameters.qtver }} -m qtcharts
+          # -- General
+          sudo apt-get update -q
+          sudo apt-get install curl gpg jq
+          curl -o install-nix-2.3.16 https://releases.nixos.org/nix/nix-2.3.16/install
+          curl -o install-nix-2.3.16.asc https://releases.nixos.org/nix/nix-2.3.16/install.asc
+          gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
+          gpg2 --verify ./install-nix-2.3.16.asc
+          sh ./install-nix-2.3.16
+        displayName: 'Install nix'
+      - bash: |
+          set -ex
+          # -- General
+          source ~/.nix-profile/etc/profile.d/nix.sh
+          mkdir -p ~/.config/nix/
+          nix-env -iA nixpkgs.nixUnstable
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+        displayName: 'Install Flake Support'
+      - bash: |
+          set -ex
+          source ~/.nix-profile/etc/profile.d/nix.sh
+          nix-env -iA cachix -f https://cachix.org/api/v1/install
+          cachix use dissolve-nix
+        displayName: 'Install Cachix'
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: 'current'
@@ -32,59 +49,5 @@ jobs:
         displayName: 'Download Threaded Test Artifacts'
       - bash: |
           set -ex
-          export LD_LIBRARY_PATH=/tmp/qt/${{ parameters.qtver }}/gcc_64/lib:$LD_LIBRARY_PATH
-          mkdir build && cd build
-          mv $(System.ArtifactsDirectory)/linux-tests/* ./
-          chmod +x bin/*
-          ctest -j2 --output-on-failure
+          nix flake check -L
         displayName: 'Run Serial System Tests'
-  - job:
-    condition: eq('${{ parameters.serial }}', true)
-    displayName: 'Serial'
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - checkout: self
-        fetchDepth: 1
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          buildType: 'current'
-          specificBuildWithTriggering: true
-          downloadType: 'single'
-          artifactName: 'linux-tests-serial'
-        displayName: 'Download Serial Test Artifacts'
-      - bash: |
-          set -ex
-          mkdir build && cd build
-          mv $(System.ArtifactsDirectory)/linux-tests-serial/* ./
-          chmod +x bin/*
-          ctest -j2 --output-on-failure
-        displayName: 'Run Serial System Tests'
-  - job:
-    condition: eq('${{ parameters.mpi }}', true)
-    displayName: 'MPI'
-    timeoutInMinutes: 90
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - checkout: self
-        fetchDepth: 1
-      - bash: |
-          set -ex
-          sudo apt-get update
-          sudo apt-get install libopenmpi-dev openmpi-bin openmpi-common
-        displayName: 'Install Prerequisites'
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          buildType: 'current'
-          specificBuildWithTriggering: true
-          downloadType: 'single'
-          artifactName: 'linux-tests-mpi'
-        displayName: 'Download MPI Test Artifacts'
-      - bash: |
-          set -ex
-          mkdir build && cd build
-          mv $(System.ArtifactsDirectory)/linux-tests-mpi/* ./
-          chmod +x bin/*
-          ctest --output-on-failure
-        displayName: 'Run MPI System Tests'
