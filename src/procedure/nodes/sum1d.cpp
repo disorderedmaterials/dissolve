@@ -83,21 +83,21 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
 bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Calculate integrals
-    std::vector<std::string> rangeNames = {"A", "B", "C"}
+    const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
+        {
             if (!sum_[i].has_value())
-            {
-                sum_[i] =
-                    targetList.realise<SampledDouble>(fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), prefix, GenericItem::InRestartFileFlag);
-                sum_[i]->get() += Integrator::sum(processNode_->processedData(), range_[i]);
-            }
+                sum_[i] = targetList.realise<SampledDouble>(fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), prefix,
+                                                            GenericItem::InRestartFileFlag);
+            sum_[i]->get() += Integrator::sum(processNode_->processedData(), range_[i]);
+        }
 
     // Print info
-    for (int i=0; i < 3; ++i)
+    for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
             Messenger::print("Sum1D - Range {}: {:e} +/- {:e} over {:e} < x < {:e}.\n", rangeNames[i], sum_[i]->get().value(),
-                         sum_[i]->get().stDev(), range_[i].minimum(), range_[i].maximum());
+                             sum_[i]->get().stDev(), range_[i].minimum(), range_[i].maximum());
 
     return true;
 }
