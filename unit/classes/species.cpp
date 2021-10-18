@@ -19,9 +19,9 @@ TEST(SpeciesTest, Atomic)
 TEST(SpeciesTest, Molecule1)
 {
     Species sp;
-    auto &i = sp.addAtom(Elements::H, {3.924, 5.424, 0.000});
+    sp.addAtom(Elements::H, {3.924, 5.424, 0.000});
     auto &j = sp.addAtom(Elements::O, {5.139, 5.968, 0.000});
-    auto &k = sp.addAtom(Elements::H, {6.088, 5.120, 0.000});
+    sp.addAtom(Elements::H, {6.088, 5.120, 0.000});
     sp.addMissingBonds(1.5);
     sp.updateIntramolecularTerms();
     EXPECT_EQ(sp.nBonds(), 2);
