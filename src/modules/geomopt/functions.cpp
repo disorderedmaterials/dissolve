@@ -88,7 +88,7 @@ double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, 
  */
 
 // Geometry optimise supplied Species
-bool GeometryOptimisationModule::optimiseSpecies(Dissolve &dissolve, ProcessPool &procPool, Species *sp)
+bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMap, ProcessPool &procPool, Species *sp)
 {
     // Retrieve Module options
     nCycles_ = keywords_.asInt("NCycles");
@@ -106,7 +106,7 @@ bool GeometryOptimisationModule::optimiseSpecies(Dissolve &dissolve, ProcessPool
     rTemp_.resize(sp->nAtoms());
     f_.resize(sp->nAtoms());
 
-    optimise<Species>(dissolve, procPool, sp);
+    optimise<Species>(potentialMap, procPool, sp);
 
     return true;
 }

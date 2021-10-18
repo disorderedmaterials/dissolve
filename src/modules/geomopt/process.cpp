@@ -36,7 +36,7 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
         rTemp_.resize(cfg->nAtoms(), Vec3<double>());
         f_.resize(cfg->nAtoms(), Vec3<double>());
 
-        optimise<Configuration>(dissolve, procPool, cfg);
+        optimise<Configuration>(dissolve.potentialMap(), procPool, cfg);
     }
 
     return true;
