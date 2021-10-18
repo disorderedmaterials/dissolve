@@ -118,6 +118,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
 
     connect(&pairs_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,
             SLOT(setModified()));
+    connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
+            this, SLOT(pairPotentialTableRowChanged(const QModelIndex &, const QModelIndex &)));
 }
 
 /*
@@ -324,6 +326,21 @@ void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
 {
     if (checked)
         on_UpdatePairPotentialsButton_clicked(false);
+}
+
+void ForcefieldTab::pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    ui_.PairPotentialsPlotWidget->clearRenderableData();
+
+    auto *pp = pairs_.data(current, Qt::UserRole).value<const PairPotential *>();
+    if (!pp)
+        return;
+
+    ui_.PairPotentialsPlotWidget->dataViewer()->createRenderable<RenderableData1D>(
+        pp->uFull(), fmt::format("Energy {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()));
+    ui_.PairPotentialsPlotWidget->dataViewer()
+        ->createRenderable<RenderableData1D>(pp->dUFull(), fmt::format("Force {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()))
+        ->setColour(StockColours::RedStockColour);
 }
 
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
