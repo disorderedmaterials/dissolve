@@ -69,6 +69,7 @@
             Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
             TBB_DIR = "${pkgs.tbb}";
             PATH = "${QTDIR}/bin";
+            CTEST_OUTPUT_ON_FAILURE="ON";
 
             cmakeFlags = [
               ("-DMULTI_THREADING=" + (cmake-bool threading))

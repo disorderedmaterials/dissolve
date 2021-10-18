@@ -40,9 +40,8 @@ index 7e050a639..a1050155e 100644
          EXPECT_EQ(atom.data(atom.index(6, 0), role).toString().toStdString(), "Hydrogen");
          EXPECT_EQ(atom.data(atom.index(6, 1), role).toString().toStdString(), "HA");
          EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 2), role).toDouble(), 1.483);
--        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 3), role).toDouble(), 2.001);
+         EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 3), role).toDouble(), 2.001);
 -        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 4), role).toDouble(), 0.000);
-+        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 3), role).toDouble(), 21);
 +        EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 4), role).toDouble(), 0);
          EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 5), role).toDouble(), 0.115);
      }
@@ -167,21 +166,6 @@ diff --git a/unit/gui/masterTerms.cpp b/unit/gui/masterTerms.cpp
 index 8418f6571..5db8f27cf 100644
 --- a/unit/gui/masterTerms.cpp
 +++ b/unit/gui/masterTerms.cpp
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-3.0-or-later
-+// SPDX-License-Identifier: GPL-3-or-later
- // Copyright (c) 2021 Team Dissolve and contributors
- #include "gui/models/masterTermModel.h"
- #include "main/dissolve.h"
-@@ -46,7 +46,7 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
-         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Harmonic");
-         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Harmonic");
-         EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "3924.59, 1.4");
--        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "3071.06, 1.08");
-+        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "30716, 18");
-     }
- 
-     // Mutate table contents
 @@ -60,7 +60,7 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
      EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "EPSR");
  
@@ -235,3 +219,17 @@ index 8418f6571..5db8f27cf 100644
 -} // namespace UnitTest
 \ No newline at end of file
 +} // namespace UnitTest
+diff --git a/unit/gui/forcefieldTab.cpp b/unit/gui/forcefieldTab.cpp
+index 9f3942d16..68b429e7b 100644
+--- a/unit/gui/forcefieldTab.cpp
++++ b/unit/gui/forcefieldTab.cpp
+@@ -64,7 +64,7 @@ TEST_F(ForcefieldTabTest, PairPotentials)
+     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 3)).toDouble(), 2);
+     EXPECT_TRUE(pairs.setData(pairs.index(0, 4), -3));
+     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 4)).toDouble(), -3);
+-    EXPECT_TRUE(pairs.setData(pairs.index(0, 5), "4.0, -5.0"));
+-    EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "4.0, -5.0");
++    EXPECT_TRUE(pairs.setData(pairs.index(0, 5), "4, -5"));
++    EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "4, -5");
+ }
+ } // namespace UnitTest
