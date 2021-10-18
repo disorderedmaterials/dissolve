@@ -85,7 +85,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // -- Short Range Functional Forms
     ui_.AtomTypesTable->setItemDelegateForColumn(
         3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
-    // -- Charge / Parameters
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.AtomTypesTable->horizontalHeader()->setFont(font());
@@ -147,7 +146,7 @@ void ForcefieldTab::updateControls()
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
-    // -- Automatically regenerate pair potentials (quietly)
+    // -- Automatically regenerate pair potentials (quietly)?
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
     {
         Messenger::mute();
@@ -167,7 +166,6 @@ void ForcefieldTab::updateControls()
     ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
 
     // -- Table
-    // -- Get current row index before we refresh...
     pairs_.reset();
     ui_.PairPotentialsTable->resizeColumnsToContents();
 
