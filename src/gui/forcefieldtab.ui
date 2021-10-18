@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="Tabs">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="AtomTypesTab">
       <attribute name="title">
@@ -401,6 +401,7 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>10</pointsize>
                 <italic>true</italic>
                </font>
               </property>
@@ -448,6 +449,7 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>10</pointsize>
                 <italic>true</italic>
                </font>
               </property>
@@ -681,7 +683,7 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
+               <pointsize>10</pointsize>
                <bold>true</bold>
               </font>
              </property>
@@ -788,7 +790,7 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
+               <pointsize>10</pointsize>
                <bold>true</bold>
               </font>
              </property>
@@ -895,7 +897,7 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
+               <pointsize>10</pointsize>
                <bold>true</bold>
               </font>
              </property>
@@ -1002,7 +1004,7 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
+               <pointsize>10</pointsize>
                <bold>true</bold>
               </font>
              </property>
