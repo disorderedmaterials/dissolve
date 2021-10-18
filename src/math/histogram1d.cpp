@@ -4,6 +4,7 @@
 #include "math/histogram1d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "templates/algorithms.h"
 
 Histogram1D::Histogram1D()
 {
@@ -158,6 +159,15 @@ void Histogram1D::add(Histogram1D &other, int factor)
 
     nBinned_ += other.nBinned_;
     nMissed_ += other.nMissed_;
+}
+
+// Return current data
+Data1D Histogram1D::data() const
+{
+    Data1D result = accumulatedData_;
+    for (auto &&[y, binValue] : zip(result.values(), bins_))
+        y = binValue;
+    return result;
 }
 
 // Return accumulated (averaged) data
