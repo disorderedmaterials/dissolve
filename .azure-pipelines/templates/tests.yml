@@ -42,5 +42,6 @@ jobs:
         displayName: 'Install Cachix'
       - bash: |
           set -ex
+          source ~/.nix-profile/etc/profile.d/nix.sh
           nix flake check -L
         displayName: 'Run Serial System Tests'
