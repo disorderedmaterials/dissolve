@@ -24,3 +24,69 @@ index d36eee192..be6551dd4 100644
      add_test(
        NAME ${CMAKE_CURRENT_LIST_DIR}-${test_name}
        COMMAND ${test_target_executable} -n ${count} -x ${input_file} ${ARGN}
+diff --git a/unit/gui/masterTerms.cpp b/unit/gui/masterTerms.cpp
+index 8418f6571..fd4483df5 100644
+--- a/unit/gui/masterTerms.cpp
++++ b/unit/gui/masterTerms.cpp
+@@ -46,7 +46,7 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
+         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Harmonic");
+         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Harmonic");
+         EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "3924.59, 1.4");
+-        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "3071.06, 1.08");
++        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "30716, 18");
+     }
+ 
+     // Mutate table contents
+@@ -60,7 +60,7 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
+     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "EPSR");
+ 
+     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
+-    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3.0, 4.0");
++    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3, 4");
+ }
+ TEST_F(MasterTermsTableModelTest, MasterAngles)
+ {
+@@ -86,8 +86,8 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
+         EXPECT_EQ(model.data(model.index(1, 0), role).toString().toStdString(), "CA-CA-HA");
+         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Harmonic");
+         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Harmonic");
+-        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "527.184, 120.0");
+-        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "292.88, 120.0");
++        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "527.184, 120");
++        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "292.88, 120");
+     }
+ 
+     // Mutate table contents
+@@ -101,7 +101,7 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
+     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos");
+ 
+     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
+-    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3.0, 4.0");
++    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3, 4");
+ }
+ TEST_F(MasterTermsTableModelTest, MasterTorsions)
+ {
+@@ -129,9 +129,9 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
+         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Cos3");
+         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Cos3");
+         EXPECT_EQ(model.data(model.index(2, 1), role).toString().toStdString(), "Cos3");
+-        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "0.0, 30.334, 0.0");
+-        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "0.0, 30.334, 0.0");
+-        EXPECT_EQ(model.data(model.index(2, 2), role).toString().toStdString(), "0.0, 30.334, 0.0");
++        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "0, 30.334, 0");
++        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "0, 30.334, 0");
++        EXPECT_EQ(model.data(model.index(2, 2), role).toString().toStdString(), "0, 30.334, 0");
+     }
+ 
+     // Mutate table contents
+@@ -145,7 +145,7 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
+     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos3C");
+ 
+     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4, 5"));
+-    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3.0, 4.0, 5.0");
++    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3, 4, 5");
+ }
+ 
+-} // namespace UnitTest
+\ No newline at end of file
++} // namespace UnitTest
