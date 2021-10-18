@@ -125,7 +125,7 @@
             '';
           };
       in {
-        # checks.dissolve = dissolve { checks = true; };
+        checks.dissolve = dissolve { checks = true; };
         # checks.dissolve-mpi = dissolve {
         #   mpi = true;
         #   gui = false;
