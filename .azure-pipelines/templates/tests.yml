@@ -40,13 +40,6 @@ jobs:
           nix-env -iA cachix -f https://cachix.org/api/v1/install
           cachix use dissolve-nix
         displayName: 'Install Cachix'
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          buildType: 'current'
-          specificBuildWithTriggering: true
-          downloadType: 'single'
-          artifactName: 'linux-tests'
-        displayName: 'Download Threaded Test Artifacts'
       - bash: |
           set -ex
           nix flake check -L
