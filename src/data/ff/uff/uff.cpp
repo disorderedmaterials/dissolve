@@ -56,8 +56,8 @@ void Forcefield_UFF::createAtomTypes()
                    6.899, 0.0, 2.0);
     addUFFAtomType(Elements::N, 15, "N_1", "nbonds=1", "Nitrogen (linear)", 0.6560, 180.00, 3.6600, 0.0690, 13.407, 2.5438,
                    6.899, 0.0, 2.0);
-    addUFFAtomType(Elements::O, 16, "O_3", "", "Oxygen (tetrahedral)", 0.6580, 104.51, 3.5000, 0.0600, 14.085, 2.2998, 8.741,
-                   0.018, 2.0);
+    addUFFAtomType(Elements::O, 16, "O_3", "nbonds=2", "Oxygen (tetrahedral)", 0.6580, 104.51, 3.5000, 0.0600, 14.085, 2.2998,
+                   8.741, 0.018, 2.0);
     addUFFAtomType(Elements::O, 17, "O_3_z", "-Si", "Oxygen (in silicate)", 0.5280, 145.50, 3.5000, 0.0600, 14.085, 2.2998,
                    8.741, 0.018, 2.0);
     addUFFAtomType(Elements::O, 18, "O_R", "nbonds=2,ring()", "Oxygen (resonant)", 0.6800, 110.30, 3.5000, 0.0600, 14.085,

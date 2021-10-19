@@ -17,8 +17,8 @@ class NETADefinition;
 class NETAPresenceNode : public NETANode
 {
     public:
-    NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
-                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
+    NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
+                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     ~NETAPresenceNode() override = default;
 
     /*
@@ -44,22 +44,12 @@ class NETAPresenceNode : public NETANode
     int repeatCount_;
     // Repeat count comparison operator
     NETANode::ComparisonOperator repeatCountOperator_;
-    // Number of bonds value
-    int nBondsValue_;
-    // Number of bonds value comparison operator
-    NETANode::ComparisonOperator nBondsValueOperator_;
-    // Number of hydrogens value
-    int nHydrogensValue_;
-    // Number of hydrogens value comparison operator
-    NETANode::ComparisonOperator nHydrogensValueOperator_;
 
     public:
     // Available modifiers
     enum class NETACharacterModifier
     {
-        NBonds,     /* 'nbonds' - Specifies number of bonds (default = -1) */
-        NHydrogens, /* 'nh' - Specifies number of hydrogens (default = -1) */
-        Repeat      /* 'n' - Specifies the number of matches required (default = 1) */
+        Repeat /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETACharacterModifiers
     static EnumOptions<NETAPresenceNode::NETACharacterModifier> modifiers();

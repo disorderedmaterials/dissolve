@@ -10,11 +10,7 @@
 
 // Forward Declarations
 class ForcefieldAtomType;
-class NETAConnectionNode;
 class NETADefinition;
-class NETAOrNode;
-class NETAPresenceNode;
-class NETARingNode;
 class SpeciesAtom;
 
 // NETA Node
@@ -24,8 +20,11 @@ class NETANode
     // Node types
     enum class NodeType
     {
-        Basic,
+        BondCount,
+        Character,
         Connection,
+        Geometry,
+        HydrogenCount,
         Or,
         Presence,
         Ring,
@@ -52,7 +51,7 @@ class NETANode
     };
     NETANode(NETADefinition *parent, NodeType type);
     NETANode() = default;
-    virtual ~NETANode();
+    virtual ~NETANode() = default;
 
     /*
      * Node Type and Parent
@@ -79,27 +78,19 @@ class NETANode
     virtual bool addFFTypeTarget(const ForcefieldAtomType &ffType);
 
     /*
-     * Branching and Node Generation
+     * Node Sequence
      */
+    public:
+    // Sequence Definition
+    using NETASequence = std::vector<std::shared_ptr<NETANode>>;
+
     protected:
-    // Branch of nodes
-    std::vector<std::shared_ptr<NETANode>> branch_;
+    // Node sequence
+    NETASequence nodes_;
 
     public:
-    // Clear all nodes
-    void clear();
-    // Create logical 'or' node in the branch
-    std::shared_ptr<NETAOrNode> createOrNode();
-    // Create connectivity node in the branch
-    std::shared_ptr<NETAConnectionNode>
-    createConnectionNode(std::vector<Elements::Element> targetElements = {},
-                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
-    // Create presence node in the branch
-    std::shared_ptr<NETAPresenceNode>
-    createPresenceNode(std::vector<Elements::Element> targetElements = {},
-                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
-    // Create ring node in the branch
-    std::shared_ptr<NETARingNode> createRingNode();
+    // Set node sequence
+    void setNodes(NETASequence nodes);
 
     /*
      * Modifiers
@@ -141,6 +132,11 @@ class NETANode
     protected:
     // Whether to use reverse logic when returning the final value
     bool reverseLogic_;
+
+    protected:
+    // Evaluate the provided sequence and return a score
+    static int sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
+                             std::vector<const SpeciesAtom *> &atomData);
 
     public:
     // Set node to use reverse logic

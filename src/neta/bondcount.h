@@ -8,30 +8,25 @@
 // Forward Declarations
 class NETADefinition;
 
-// NETA Or Node
-class NETAOrNode : public NETANode
+// NETA BondCount Node
+class NETABondCountNode : public NETANode
 {
     public:
-    // Node logic types
-    enum class LogicType
-    {
-        And,
-        Or,
-        AndNot
-    };
-    NETAOrNode(NETADefinition *parent);
-    ~NETAOrNode() override = default;
+    NETABondCountNode(NETADefinition *parent);
+    ~NETABondCountNode() override = default;
 
     /*
-     * Node Sequence
+     * Bond Count
      */
     private:
-    // Node sequence
-    NETASequence altNodes_;
+    // Number of bonds value
+    int value_;
+    // Number of bonds value comparison operator
+    NETANode::ComparisonOperator operator_;
 
     public:
-    // Set alternative node sequence
-    void setAlternativeNodes(NETASequence nodes);
+    // Set bond count requirements
+    void set(ComparisonOperator op, int value);
 
     /*
      * Scoring

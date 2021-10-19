@@ -28,62 +28,72 @@ options {
  * NETA Grammar
  */
 
-// Main Structure - Zero or more nodes, comma-separated
-neta: nodeSequence EOF;
+// Main Structure - single node sequence
+neta: RootNodes=nodeSequence? EOF;
 
-// Node Sequence
-nodeSequence: (node (Comma node)*)*;
-
-// Any Node
-node: commonNode
-| orNode
-| contextual;
-
-// 'Or' Node
-orNode: commonNode Or commonNode
-| commonNode Or orNode;
-
-// Common Nodes
-commonNode: connectionNode
-| ringNode;
-
-// Contextuals
-contextual: modifier
-| option
-| flag;
+// Node Sequence - Zero or more nodes, comma-separated
+nodeSequence:    (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag))*      #sequence
+| LHS=nodeSequence Or RHS=nodeSequence                                                                                                                     #orSequence
+;
 
 // Ring Node Sequence
-ringNodeSequence: (ringOnlyNode (Comma ringOnlyNode)*)*;
+ringSequence: ((Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag))*)*;
+
+// Common Nodes
+node: bondCountNode
+| characterNode
+| connectionNode
+| geometryNode
+| hydrogenCountNode
+| ringNode
+;
 
 // Ring-Specific Nodes
-ringOnlyNode: presenceNode
-| modifier
-| option
-| flag;
+ringOnlyNode: presenceNode;
+
+// Bond Count Node
+bondCountNode: BondCountKeyword comparisonOperator Integer;
+
+// Character Node
+characterNode: Not? CharacterKeyword Targets=targetList;
 
 // Connection Node
-connectionNode: Not? ConnectionKeyword targetList OpenParenthesis nodeSequence CloseParenthesis
-| Not? ConnectionKeyword targetList;
+connectionNode: Not? ConnectionKeyword Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
+| Not? ConnectionKeyword Targets=targetList
+;
+
+// Geometry Node
+geometryNode: GeometryKeyword EqualityOperator geometry=Keyword;
+
+// Hydrogen Count Node
+hydrogenCountNode: HydrogenCountKeyword comparisonOperator Integer;
 
 // Presence Node
-presenceNode: Not? targetList OpenParenthesis nodeSequence CloseParenthesis
-| Not? targetList;
+presenceNode: Not? Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
+| Not? Targets=targetList
+;
 
 // Ring Node
-ringNode: Not? RingKeyword OpenParenthesis ringNodeSequence CloseParenthesis;
+ringNode: Not? RingKeyword OpenParenthesis Sequence=ringSequence CloseParenthesis;
 
 // Target List
 elementOrType: Element
 | FFTypeName
 | FFTypeIndex;
 targetList: targets+=elementOrType
-| OpenSquareBracket targets+=elementOrType (Comma targets+=elementOrType)* CloseSquareBracket;
+| OpenSquareBracket targets+=elementOrType (Comma targets+=elementOrType)* CloseSquareBracket
+;
 
 // Contextual Modifiers (kwd op value)
-modifier: Keyword ComparisonOperator value=Integer;
+modifier: Keyword comparisonOperator value=Integer;
 
 // Option (kwd op kwd, only accepting '=' and '!=')
-option: opt=Keyword ComparisonOperator value=Keyword;
+option: opt=Keyword comparisonOperator value=Keyword;
 
 // Context Flags (kwd)
 flag: Keyword;
+
+// Comparison Operators
+comparisonOperator: SizeOperator
+| EqualityOperator
+;
