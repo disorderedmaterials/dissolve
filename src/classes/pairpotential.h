@@ -195,12 +195,16 @@ class PairPotential
                                 PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
     // Return full tabulated potential (original plus additional)
     Data1D &uFull();
+    const Data1D &uFull() const;
     // Return full tabulated derivative
     Data1D &dUFull();
+    const Data1D &dUFull() const;
     // Return original potential
     Data1D &uOriginal();
+    const Data1D &uOriginal() const;
     // Return additional potential
     Data1D &uAdditional();
+    const Data1D &uAdditional() const;
     // Zero additional potential
     void resetUAdditional();
     // Set additional potential
