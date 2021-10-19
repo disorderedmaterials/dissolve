@@ -4,6 +4,7 @@
 #include "main/dissolve.h"
 #include <QTableView>
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <vector>
 
@@ -60,7 +61,7 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "EPSR");
 
     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
-    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3.0, 4.0");
+    EXPECT_THAT(model.data(model.index(0, 2)).toString().toStdString(), testing::AnyOf(testing::Eq("3.0, 4.0"), testing::Eq("3, 4")));
 }
 TEST_F(MasterTermsTableModelTest, MasterAngles)
 {
@@ -86,8 +87,8 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
         EXPECT_EQ(model.data(model.index(1, 0), role).toString().toStdString(), "CA-CA-HA");
         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Harmonic");
         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Harmonic");
-        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "527.184, 120.0");
-        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "292.88, 120.0");
+        EXPECT_THAT(model.data(model.index(0, 2), role).toString().toStdString(), testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
+        EXPECT_THAT(model.data(model.index(1, 2), role).toString().toStdString(), testing::AnyOf(testing::Eq("292.88, 120.0"), testing::Eq("292.88, 120")));
     }
 
     // Mutate table contents
@@ -101,7 +102,7 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos");
 
     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
-    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3.0, 4.0");
+    EXPECT_THAT(model.data(model.index(0, 2)).toString().toStdString(), testing::AnyOf(testing::Eq("3.0, 4.0"), testing::Eq("3, 4")));
 }
 TEST_F(MasterTermsTableModelTest, MasterTorsions)
 {
@@ -129,9 +130,9 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Cos3");
         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Cos3");
         EXPECT_EQ(model.data(model.index(2, 1), role).toString().toStdString(), "Cos3");
-        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "0.0, 30.334, 0.0");
-        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "0.0, 30.334, 0.0");
-        EXPECT_EQ(model.data(model.index(2, 2), role).toString().toStdString(), "0.0, 30.334, 0.0");
+        EXPECT_THAT(model.data(model.index(0, 2), role).toString().toStdString(), testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+        EXPECT_THAT(model.data(model.index(1, 2), role).toString().toStdString(), testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+        EXPECT_THAT(model.data(model.index(2, 2), role).toString().toStdString(), testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
     }
 
     // Mutate table contents
@@ -145,7 +146,7 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos3C");
 
     EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4, 5"));
-    EXPECT_EQ(model.data(model.index(0, 2)).toString().toStdString(), "3.0, 4.0, 5.0");
+    EXPECT_THAT(model.data(model.index(0, 2)).toString().toStdString(), testing::AnyOf(testing::Eq("3.0, 4.0, 5.0"), testing::Eq("3, 4, 5")));
 }
 
 } // namespace UnitTest
