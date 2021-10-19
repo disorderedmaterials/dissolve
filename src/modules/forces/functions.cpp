@@ -234,6 +234,8 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f)
 {
+    std::fill(f.begin(), f.end(), Vec3<double>());
+
     interAtomicForces(procPool, sp, potentialMap, f);
 
     intraMolecularForces(procPool, sp, potentialMap, f);

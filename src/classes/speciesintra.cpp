@@ -99,6 +99,20 @@ void SpeciesIntra::setParameters(const std::vector<double> &params)
     parameters_ = params;
 }
 
+// Set form and parameters
+void SpeciesIntra::setFormAndParameters(int form, const std::vector<double> &params)
+{
+    // Does this intramolecular interaction reference a set of master parameters?
+    if (masterParameters_)
+    {
+        Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+        return;
+    }
+
+    form_ = form;
+    parameters_ = params;
+}
+
 // Return number of parameters defined
 int SpeciesIntra::nParameters() const { return parameters().size(); }
 
