@@ -43,7 +43,12 @@ bool Sum1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  */
 
 // Return calculated sum
-const SampledDouble &Sum1DProcedureNode::sum(int index) const { return sum_[index]; }
+SampledDouble Sum1DProcedureNode::sum(int index) const
+{
+    if (sum_[index].has_value())
+        return sum_[index].value();
+    return {};
+}
 
 // Return whether range B is enabled (from keyword data)
 bool Sum1DProcedureNode::isRangeBEnabled() const { return keywords_.asBool("RangeBEnabled"); }
@@ -64,11 +69,12 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
 
     // Get ranges and status flags
-    rangeA_ = keywords_.retrieve<Range>("RangeA");
-    rangeB_ = keywords_.retrieve<Range>("RangeB");
-    rangeC_ = keywords_.retrieve<Range>("RangeC");
-    rangeBEnabled_ = keywords_.asBool("RangeBEnabled");
-    rangeCEnabled_ = keywords_.asBool("RangeCEnabled");
+    range_[0] = keywords_.retrieve<Range>("RangeA");
+    range_[1] = keywords_.retrieve<Range>("RangeB");
+    range_[2] = keywords_.retrieve<Range>("RangeC");
+    rangeEnabled_[0] = true;
+    rangeEnabled_[1] = keywords_.asBool("RangeBEnabled");
+    rangeEnabled_[2] = keywords_.asBool("RangeCEnabled");
 
     return true;
 }
@@ -77,21 +83,21 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
 bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Calculate integrals
-    sum_[0] += Integrator::sum(processNode_->processedData(), rangeA_);
-    if (rangeBEnabled_)
-        sum_[1] += Integrator::sum(processNode_->processedData(), rangeB_);
-    if (rangeCEnabled_)
-        sum_[2] += Integrator::sum(processNode_->processedData(), rangeC_);
+    const std::vector<std::string> rangeNames = {"A", "B", "C"};
+    for (int i = 0; i < 3; ++i)
+        if (rangeEnabled_[i])
+        {
+            if (!sum_[i].has_value())
+                sum_[i] = targetList.realise<SampledDouble>(fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), prefix,
+                                                            GenericItem::InRestartFileFlag);
+            sum_[i]->get() += Integrator::sum(processNode_->processedData(), range_[i]);
+        }
 
     // Print info
-    Messenger::print("Sum1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[0].value(), sum_[0].stDev(),
-                     rangeA_.minimum(), rangeA_.maximum());
-    if (rangeBEnabled_)
-        Messenger::print("Sum1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[1].value(), sum_[1].stDev(),
-                         rangeB_.minimum(), rangeB_.maximum());
-    if (rangeCEnabled_)
-        Messenger::print("Sum1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[2].value(), sum_[2].stDev(),
-                         rangeC_.minimum(), rangeC_.maximum());
+    for (int i = 0; i < 3; ++i)
+        if (rangeEnabled_[i])
+            Messenger::print("Sum1D - Range {}: {:e} +/- {:e} over {:e} < x < {:e}.\n", rangeNames[i], sum_[i]->get().value(),
+                             sum_[i]->get().stDev(), range_[i].minimum(), range_[i].maximum());
 
     return true;
 }

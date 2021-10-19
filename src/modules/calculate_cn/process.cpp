@@ -9,6 +9,7 @@
 #include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
+#include "procedure/nodes/sum1d.h"
 
 // Run main processing
 bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
@@ -34,7 +35,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto testThreshold = keywords_.asDouble("TestThreshold");
     if (keywords_.hasBeenSet("TestRangeA"))
     {
-        const auto delta = keywords_.asDouble("TestRangeA") - coordinationNumber(0).value();
+        const auto delta = keywords_.asDouble("TestRangeA") - sum1D_->sum(0);
 
         Messenger::print("Reference coordination number delta with correct value for range A is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
@@ -49,7 +50,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const auto delta = keywords_.asDouble("TestRangeB") - coordinationNumber(1).value();
+        const auto delta = keywords_.asDouble("TestRangeB") - sum1D_->sum(1);
 
         Messenger::print("Reference coordination number delta with correct value for range B is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
@@ -64,7 +65,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Test coordination number for range C supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const auto delta = keywords_.asDouble("TestRangeC") - coordinationNumber(2).value();
+        const auto delta = keywords_.asDouble("TestRangeC") - sum1D_->sum(2);
 
         Messenger::print("Reference coordination number delta with correct value for range C is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
