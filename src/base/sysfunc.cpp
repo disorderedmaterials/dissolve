@@ -311,6 +311,24 @@ std::vector<double> DissolveSys::splitStringToDoubles(std::string str, std::stri
     return values;
 }
 
+// Double any of the supplied characters in the string
+std::string DissolveSys::doubleChars(const std::string_view s, const std::string_view charsToDouble)
+{
+    std::string result(s.length() +
+                           std::count_if(s.begin(), s.end(),
+                                         [charsToDouble](const char c) { return charsToDouble.find(c) != std::string::npos; }),
+                       ' ');
+    auto pos = 0;
+    for (auto c : s)
+    {
+        if (charsToDouble.find(c) != std::string::npos)
+            result[pos++] = c;
+        result[pos++] = c;
+    }
+
+    return result;
+}
+
 /*
  * Files
  */

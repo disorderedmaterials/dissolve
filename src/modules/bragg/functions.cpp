@@ -338,27 +338,28 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
     double qCentre;
     int bin;
     auto &types = cfg->usedAtomTypesList();
-    for_each_pair(types.begin(), types.end(), [&](int typeI, auto &atd1, int typeJ, auto &atd2) {
-        // Retrieve partial container and make sure its tag is set
-        auto &partial = braggPartials[{typeI, typeJ}];
-        partial.setTag(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
+    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+                            [&](int typeI, auto &atd1, int typeJ, auto &atd2) {
+                                // Retrieve partial container and make sure its tag is set
+                                auto &partial = braggPartials[{typeI, typeJ}];
+                                partial.setTag(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
 
-        // Loop over defined Bragg reflections
-        for (auto n = 0; n < nReflections; ++n)
-        {
-            // Get q value and intensity of reflection
-            qCentre = braggReflections.at(n).q();
-            bin = qCentre / qDelta;
+                                // Loop over defined Bragg reflections
+                                for (auto n = 0; n < nReflections; ++n)
+                                {
+                                    // Get q value and intensity of reflection
+                                    qCentre = braggReflections.at(n).q();
+                                    bin = qCentre / qDelta;
 
-            partial.value(bin) += braggReflections.at(n).intensity(typeI, typeJ);
-        }
+                                    partial.value(bin) += braggReflections.at(n).intensity(typeI, typeJ);
+                                }
 
-        // Add this partial into the total function, accounting for doubling of partials between unlike atom
-        // types
-        braggTotal += partial;
-        if (typeI != typeJ)
-            braggTotal += partial;
-    });
+                                // Add this partial into the total function, accounting for doubling of partials between unlike
+                                // atom types
+                                braggTotal += partial;
+                                if (typeI != typeJ)
+                                    braggTotal += partial;
+                            });
 
     return true;
 }

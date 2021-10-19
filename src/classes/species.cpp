@@ -7,7 +7,7 @@
 
 Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {
-    box_ = std::make_unique<NonPeriodicBox>();
+    box_ = std::make_unique<SingleImageBox>();
 
     // Set up natural Isotopologue
     naturalIsotopologue_.setName("Natural");

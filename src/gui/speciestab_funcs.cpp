@@ -50,6 +50,8 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
                dissolve.masterImpropers()));
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setModel(&isos_);
+    connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,
+            SLOT(setModified()));
     ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
     ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
@@ -74,6 +76,8 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     // Set sites model and connect signals
     ui_.SiteList->setModel(&sites_);
+    connect(&sites_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,
+            SLOT(setModified()));
     connect(ui_.SiteList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(siteSelectionChanged(const QItemSelection &, const QItemSelection &)));
 

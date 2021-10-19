@@ -27,7 +27,11 @@ add_library(
   neta
   ${ANTLR_NETAGrammarLexer_CXX_OUTPUTS}
   ${ANTLR_NETAGrammarParser_CXX_OUTPUTS}
+  bondcount.cpp
+  character.cpp
   connection.cpp
+  geometry.cpp
+  hydrogencount.cpp
   neta.cpp
   node.cpp
   or.cpp
@@ -36,7 +40,11 @@ add_library(
   root.cpp
   NETAErrorListeners.cpp
   NETAVisitor.cpp
+  bondcount.h
+  character.h
   connection.h
+  geometry.h
+  hydrogencount.h
   neta.h
   node.h
   or.h

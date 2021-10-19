@@ -61,6 +61,8 @@ class DissolveSys
     static std::string replace(const std::string_view source, const std::string_view search, const std::string_view replace);
     // Split a string over a delimiter, returning a vector of converted double values
     static std::vector<double> splitStringToDoubles(std::string str, std::string_view delim = ", ");
+    // Double any of the supplied characters in the string
+    static std::string doubleChars(const std::string_view s, const std::string_view charsToDouble);
 
     /*
      * Files

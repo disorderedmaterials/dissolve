@@ -225,13 +225,13 @@ class GeometryOptimisationModule : public Module
         return energies[1];
     }
     // Geometry optimise the target object
-    template <class T> void optimise(Dissolve &dissolve, ProcessPool &procPool, T *target)
+    template <class T> void optimise(const PotentialMap &potentialMap, ProcessPool &procPool, T *target)
     {
         const auto nStepSizeResetsAllowed = 0;
 
         // Get the initial energy and forces of the Configuration
-        auto oldEnergy = EnergyModule::totalEnergy(procPool, target, dissolve.potentialMap());
-        ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), f_);
+        auto oldEnergy = EnergyModule::totalEnergy(procPool, target, potentialMap);
+        ForcesModule::totalForces(procPool, target, potentialMap, f_);
         auto oldRMSForce = rmsForce();
 
         // Set initial step size - the line minimiser will modify this as we proceed
@@ -249,11 +249,11 @@ class GeometryOptimisationModule : public Module
             setReferenceCoordinates(target);
 
             // Line minimise along the force gradient
-            auto newEnergy = lineMinimise(procPool, target, dissolve.potentialMap(), tolerance_ * 0.01, stepSize);
+            auto newEnergy = lineMinimise(procPool, target, potentialMap, tolerance_ * 0.01, stepSize);
 
             // Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine
             // new step size
-            ForcesModule::totalForces(procPool, target, dissolve.potentialMap(), f_);
+            ForcesModule::totalForces(procPool, target, potentialMap, f_);
             auto newRMSForce = rmsForce();
 
             // Calculate deltas
@@ -288,7 +288,7 @@ class GeometryOptimisationModule : public Module
 
     public:
     // Geometry optimise supplied Species
-    bool optimiseSpecies(Dissolve &dissolve, ProcessPool &procPool, Species *sp);
+    bool optimiseSpecies(const PotentialMap &potentialMap, ProcessPool &procPool, Species *sp);
 
     /*
      * GUI Widget

@@ -15,7 +15,7 @@ class SpeciesAtom;
 class NETADefinition
 {
     public:
-    NETADefinition();
+    NETADefinition(std::string_view definition = "");
     ~NETADefinition() = default;
 
     /*
@@ -26,6 +26,8 @@ class NETADefinition
     std::shared_ptr<NETARootNode> rootNode_;
     // Original definition string
     std::string definitionString_;
+    // Whether the current definition is valid
+    bool valid_;
 
     public:
     // Return root node pointer
@@ -38,15 +40,15 @@ class NETADefinition
     void setDefinitionString(std::string_view definition);
     // Return original generating string
     std::string_view definitionString() const;
+    // Return whether the definition is valid
+    bool isValid() const;
 
     /*
      * Matching
      */
-    private:
-    // Current SpeciesAtom being typed
-    SpeciesAtom *targetAtom_;
-
     public:
-    // Check supplied atom to see if it matches this NETA description
+    // Return score of supplied atom for the definition
     int score(const SpeciesAtom *i) const;
+    // Return whether the supplied atom matches the definition
+    bool matches(const SpeciesAtom *i) const;
 };

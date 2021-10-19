@@ -20,12 +20,10 @@ AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 void AtomTypeList::operator=(const AtomTypeList &source) { types_ = source.types_; }
 
 // Array access operator
-AtomTypeData &AtomTypeList::operator[](int n)
-{
-    assert(n >= 0 && n < types_.size());
+AtomTypeData &AtomTypeList::operator[](int n) { return types_[n]; }
 
-    return types_[n];
-}
+// Array access operator
+const AtomTypeData &AtomTypeList::operator[](int n) const { return types_[n]; }
 
 /*
  * Type List

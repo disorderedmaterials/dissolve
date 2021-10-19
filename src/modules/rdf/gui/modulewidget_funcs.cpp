@@ -61,7 +61,11 @@ void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 
     const PartialSet &ps = *targetPartials_;
 
-    for_each_pair(ps.atomTypes().begin(), ps.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+    PairIterator pairs(ps.atomTypes().nItems());
+    for (auto [first, second] : pairs)
+    {
+        auto &at1 = ps.atomTypes()[first];
+        auto &at2 = ps.atomTypes()[second];
         const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
         // Full partial
@@ -76,7 +80,7 @@ void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
         rdfGraph_->createRenderable<RenderableData1D>(
             fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Unbound)", id),
             "Unbound");
-    });
+    }
 }
 
 // Update controls within widget

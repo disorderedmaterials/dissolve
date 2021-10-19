@@ -23,6 +23,17 @@ class NETAOrNode : public NETANode
     ~NETAOrNode() override = default;
 
     /*
+     * Node Sequence
+     */
+    private:
+    // Node sequence
+    NETASequence altNodes_;
+
+    public:
+    // Set alternative node sequence
+    void setAlternativeNodes(NETASequence nodes);
+
+    /*
      * Scoring
      */
     public:

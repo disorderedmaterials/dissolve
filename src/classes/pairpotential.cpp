@@ -109,14 +109,14 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
     setData1DNames();
     auto &paramsI = atomTypeI_->shortRangeParameters();
     auto &paramsJ = atomTypeJ_->shortRangeParameters();
+    auto srI = atomTypeI_->shortRangeType(), srJ = atomTypeJ_->shortRangeType();
 
     // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
-    if (paramsI.empty() || paramsJ.empty())
+    if ((paramsI.empty() || paramsJ.empty()) &&
+        (srI != Forcefield::ShortRangeType::NoInteraction && srJ != Forcefield::ShortRangeType::NoInteraction))
         return Messenger::error(
             "Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
             paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
-
-    auto srI = atomTypeI_->shortRangeType(), srJ = atomTypeJ_->shortRangeType();
 
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
     if (srI == srJ)
@@ -554,15 +554,19 @@ double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential:
 
 // Return full tabulated potential (original plus additional)
 Data1D &PairPotential::uFull() { return uFull_; }
+const Data1D &PairPotential::uFull() const { return uFull_; }
 
 // Return full tabulated derivative
 Data1D &PairPotential::dUFull() { return dUFull_; }
+const Data1D &PairPotential::dUFull() const { return dUFull_; }
 
 // Return original potential
 Data1D &PairPotential::uOriginal() { return uOriginal_; }
+const Data1D &PairPotential::uOriginal() const { return uOriginal_; }
 
 // Return additional potential
 Data1D &PairPotential::uAdditional() { return uAdditional_; }
+const Data1D &PairPotential::uAdditional() const { return uAdditional_; }
 
 // Zero additional potential
 void PairPotential::resetUAdditional()

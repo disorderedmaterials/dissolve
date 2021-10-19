@@ -19,7 +19,7 @@ void NETALexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4:
     marker += '^';
     Messenger::print("{}\n", marker);
 
-    throw NETAExceptions::NETASyntaxException(fmt::format("Syntax Error: {}", message));
+    throw NETAExceptions::NETASyntaxException(fmt::format("Bad syntax: {}", DissolveSys::doubleChars(message, "{}")));
 }
 
 /*
@@ -36,5 +36,5 @@ void NETAParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4
     marker += '^';
     Messenger::print("{}\n", marker);
 
-    throw NETAExceptions::NETASyntaxException(fmt::format("Syntax Error: {}", message));
+    throw NETAExceptions::NETASyntaxException(fmt::format("Parse error: {}", DissolveSys::doubleChars(message, "{}")));
 }

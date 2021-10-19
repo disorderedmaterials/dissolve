@@ -7,18 +7,22 @@
 NETAOrNode::NETAOrNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Or) {}
 
 /*
+ * Node Sequence
+ */
+
+// Set alternative node sequence
+void NETAOrNode::setAlternativeNodes(NETASequence nodes) { altNodes_ = std::move(nodes); }
+
+/*
  * Scoring
  */
 
 // Evaluate the node and return its score
 int NETAOrNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
-    if (branch_.size() != 2)
-        throw NETAExceptions::NETAInternalErrorException("Logical 'OR' NETA node must have exactly two nodes in its branch.");
+    auto score = sequenceScore(nodes_, i, matchPath);
+    if (score != NETANode::NoMatch)
+        return score;
 
-    auto score = branch_[0]->score(i, matchPath);
-    if (score == NETANode::NoMatch)
-        score = branch_[1]->score(i, matchPath);
-
-    return score;
+    return sequenceScore(altNodes_, i, matchPath);
 }

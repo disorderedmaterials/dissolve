@@ -16,16 +16,10 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
     allowedElements_ = std::move(targetElements);
     allowedAtomTypes_ = std::move(targetAtomTypes);
     bondType_ = bt;
-    geometry_ = SpeciesAtom::AtomGeometry::Unknown;
-    geometryOperator_ = NETANode::ComparisonOperator::EqualTo;
 
     // Modifiers
     repeatCount_ = 1;
     repeatCountOperator_ = NETANode::ComparisonOperator::GreaterThanEqualTo;
-    nBondsValue_ = -1;
-    nBondsValueOperator_ = NETANode::ComparisonOperator::EqualTo;
-    nHydrogensValue_ = -1;
-    nHydrogensValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 
     // Flags
     allowRootMatch_ = false;
@@ -59,9 +53,7 @@ bool NETAConnectionNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modifiers()
 {
     return EnumOptions<NETAConnectionNode::NETAConnectionModifier>("ConnectionModifier",
-                                                                   {{NETAConnectionModifier::NBonds, "nbonds"},
-                                                                    {NETAConnectionModifier::NHydrogens, "nh"},
-                                                                    {NETAConnectionModifier::Repeat, "n"}});
+                                                                   {{NETAConnectionModifier::Repeat, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node
@@ -76,58 +68,12 @@ bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperat
 
     switch (modifiers().enumeration(modifier))
     {
-        case (NETAConnectionNode::NETAConnectionModifier::NBonds):
-            nBondsValue_ = value;
-            nBondsValueOperator_ = op;
-            break;
-        case (NETAConnectionNode::NETAConnectionModifier::NHydrogens):
-            nHydrogensValue_ = value;
-            nHydrogensValueOperator_ = op;
-            break;
         case (NETAConnectionNode::NETAConnectionModifier::Repeat):
             repeatCount_ = value;
             repeatCountOperator_ = op;
             break;
         default:
             return Messenger::error("Don't know how to handle modifier '{}' in connection node.\n", modifier);
-    }
-
-    return true;
-}
-
-/*
- * Options
- */
-
-// Return enum options for NETARootOptions
-EnumOptions<NETAConnectionNode::NETAConnectionOption> NETAConnectionNode::options()
-{
-    return EnumOptions<NETAConnectionNode::NETAConnectionOption>("ConnectionOption",
-                                                                 {{NETAConnectionOption::Geometry, "geometry"}});
-}
-
-// Return whether the specified option is valid for this node
-bool NETAConnectionNode::isValidOption(std::string_view s) const { return options().isValid(s); }
-
-// Set value and comparator for specified option
-bool NETAConnectionNode::setOption(std::string_view option, ComparisonOperator op, std::string_view value)
-{
-    // Check that the supplied option is valid
-    if (!options().isValid(option))
-        return Messenger::error("Invalid option '{}' passed to NETARootNode.\n", option);
-
-    switch (options().enumeration(option))
-    {
-        case (NETAConnectionNode::NETAConnectionOption::Geometry):
-            // Check that the value is a valid AtomGeometry
-            if (SpeciesAtom::geometries().isValid(value))
-                geometry_ = SpeciesAtom::geometries().enumeration(value);
-            else
-                return SpeciesAtom::geometries().errorAndPrintValid(value);
-            geometryOperator_ = op;
-            break;
-        default:
-            return Messenger::error("Don't know how to handle option '{}' in root node.\n", option);
     }
 
     return true;
@@ -206,7 +152,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
             // Add ourselves to the match path so we can't backtrack
             branchMatchPath.push_back(i);
 
-            auto branchScore = NETANode::score(j, branchMatchPath);
+            auto branchScore = NETANode::sequenceScore(nodes_, j, branchMatchPath);
             if (branchScore == NETANode::NoMatch)
                 continue;
 
@@ -234,7 +180,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
                 // Add ourselves to the match path so we can't backtrack
                 branchMatchPath.push_back(i);
 
-                auto branchScore = NETANode::score(j, branchMatchPath);
+                auto branchScore = NETANode::sequenceScore(nodes_, j, branchMatchPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
 
@@ -248,25 +194,6 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         // Did we match the atom?
         if (atomScore == NETANode::NoMatch)
             continue;
-
-        // Check any specified modifier values
-        if (nBondsValue_ >= 0)
-        {
-            if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
-                continue;
-
-            ++atomScore;
-        }
-        if (nHydrogensValue_ >= 0)
-        {
-            // Count number of hydrogens attached to this atom
-            auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
-                                    [j](const SpeciesBond &bond) { return bond.partner(j)->Z() == Elements::H; });
-            if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
-                continue;
-
-            ++atomScore;
-        }
 
         // Found a match, so increase the match count and store the score
         ++nMatches;

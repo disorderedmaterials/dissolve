@@ -93,6 +93,17 @@ ring(n>=2,size>=6)   # ... exists within at least two rings of six atoms or grea
 ring(C,C,N,C,C)      # ... exists in a ring containing the elemental sequence `C`, `C`, `N`, `C`, `C`
 ```
 
+### Or'ing Descriptions
+
+Multiple sequences of comma-separated keywords can be "or'd" together to allow a single description to match completely different atom environments if so desired.  The vertical bar `|` is the "or" operator.
+
+For example:
+
+```
+-C(nh=3)|-P                # ... is bound to a CH3 group or a phosphorus
+ring(size=4)|ring(size=6)  # ... is present in a ring of either size 4 or 6
+```
+
 ### Comparison Operators
 
 |Operator|Description|

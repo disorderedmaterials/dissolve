@@ -61,14 +61,18 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         else if (ui_.PartialsButton->isChecked())
         {
             if (reflectionAtomTypesData_)
-                for_each_pair(reflectionAtomTypesData_->get().begin(), reflectionAtomTypesData_->get().end(),
-                              [&](int n, auto &at1, int m, auto &at2) {
-                                  const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+            {
+                PairIterator pairs(reflectionAtomTypesData_->get().nItems());
+                for (auto [first, second] : pairs)
+                {
+                    const AtomTypeData &at1 = reflectionAtomTypesData_->get()[first];
+                    const AtomTypeData &at2 = reflectionAtomTypesData_->get()[second];
+                    const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
-                                  graph_->createRenderable<RenderableData1D>(
-                                      fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id), fmt::format("{}", id),
-                                      "Full");
-                              });
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id),
+                                                               fmt::format("{}", id), "Full");
+                };
+            }
         }
     }
 
@@ -99,10 +103,8 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
                 const auto &atl = reflectionAtomTypesData_->get();
                 std::vector<std::string> columnHeaders;
                 columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
-                for_each_pair(atl.begin(), atl.end(),
-                              [&columnHeaders](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                                  columnHeaders.emplace_back(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
-                              });
+                for (auto [first, second] : PairIterator(atl.nItems()))
+                    columnHeaders.emplace_back(fmt::format("{}-{}", atl[first].atomTypeName(), atl[second].atomTypeName()));
                 braggModel_.setIntensityHeaders(columnHeaders);
             }
             else

@@ -45,7 +45,9 @@ void Species::removeAtom(SpeciesAtom *i)
     // Now remove the atom
     auto atomIt = std::find_if(atoms_.begin(), atoms_.end(), [&](const auto &p) { return i == &p; });
     atoms_.erase(atomIt);
-    selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), i));
+    auto selAtomIt = std::find(selectedAtoms_.begin(), selectedAtoms_.end(), i);
+    if (selAtomIt != selectedAtoms_.end())
+        selectedAtoms_.erase(selAtomIt);
 
     renumberAtoms();
 

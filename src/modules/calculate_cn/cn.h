@@ -66,8 +66,6 @@ class CalculateCNModule : public Module
     OperateSitePopulationNormaliseProcedureNode *siteNormaliser_;
 
     public:
-    // Return specified coordination number (from Sum1D node)
-    const SampledDouble &coordinationNumber(int index);
     // Return whether range B is enabled
     bool isRangeBEnabled() const;
     // Return whether range C is enabled

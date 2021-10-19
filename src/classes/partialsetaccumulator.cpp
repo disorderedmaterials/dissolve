@@ -23,7 +23,7 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
         total_.clear();
 
         // Copy tags (for retrieval and sanity checking purposes)
-        for_each_pair(0, n, [&](auto i, auto j) {
+        dissolve::for_each_pair(ParallelPolicies::par, 0, n, [&](auto i, auto j) {
             partials_[{i, j}].setTag(source.partial(i, j).tag());
             boundPartials_[{i, j}].setTag(source.boundPartial(i, j).tag());
             unboundPartials_[{i, j}].setTag(source.unboundPartial(i, j).tag());
@@ -34,7 +34,7 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
     assert(n == partials_.nRows());
 
     // Accumulate the data, ensuring tags are identical - if not, we really don't want to be blindly accumulating
-    for_each_pair(0, n, [&](auto i, auto j) {
+    dissolve::for_each_pair(ParallelPolicies::par, 0, n, [&](auto i, auto j) {
         // Full partials
         if (partials_[{i, j}].tag() != source.partial(i, j).tag())
             throw(std::runtime_error(

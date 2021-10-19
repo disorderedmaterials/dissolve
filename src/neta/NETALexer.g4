@@ -34,7 +34,8 @@ fragment LCASELETTER: [a-z];
 fragment SYMBOL: [_+-];
 
 // Comparison Operators
-ComparisonOperator: '<=' | '>=' | '<' | '>' | '=' | '!=';
+SizeOperator: '<=' | '>=' | '<' | '>';
+EqualityOperator: '=' | '!=';
 
 // Punctuation
 OpenParenthesis: '(';
@@ -53,7 +54,11 @@ Integer: DIGIT+;
 // Keywords
 Or: '|';
 Not: '!' | '¬';
+BondCountKeyword: 'n' 'b' 'o' 'n' 'd' 's';
+CharacterKeyword: '?';
 ConnectionKeyword: '-';
+GeometryKeyword: 'g' 'e' 'o' 'm' 'e' 't' 'r' 'y';
+HydrogenCountKeyword: 'n' 'h';
 RingKeyword: 'r' 'i' 'n' 'g';
 
 // Named Tokens

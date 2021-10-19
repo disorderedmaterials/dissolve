@@ -15,7 +15,11 @@
 #include <cstdarg>
 #include <cstring>
 
-NETADefinition::NETADefinition() : rootNode_(nullptr) {}
+NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr), valid_(false)
+{
+    if (!definition.empty())
+        create(definition);
+}
 
 /*
  * Data
@@ -29,6 +33,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
 {
     // Create a new root node, overwriting the old one
     rootNode_ = std::make_shared<NETARootNode>(this);
+    valid_ = false;
 
     // Create string stream and set up ANTLR input stream
     std::stringstream stream;
@@ -74,6 +79,8 @@ bool NETADefinition::create(const Forcefield *associatedFF)
         return Messenger::error(ex.what());
     }
 
+    valid_ = true;
+
     return true;
 }
 
@@ -90,13 +97,19 @@ void NETADefinition::setDefinitionString(std::string_view definition) { definiti
 // Return original generating string
 std::string_view NETADefinition::definitionString() const { return definitionString_; }
 
+// Return whether the definition is valid
+bool NETADefinition::isValid() const { return valid_; }
+
 /*
  * Matching
  */
 
-// Check supplied atom to see if it matches this NETA description
+// Return score of supplied atom for this definition
 int NETADefinition::score(const SpeciesAtom *i) const
 {
     std::vector<const SpeciesAtom *> matchPath;
     return rootNode_->score(i, matchPath);
 }
+
+// Return whether the supplied atom matches the definition
+bool NETADefinition::matches(const SpeciesAtom *i) const { return score(i) != NETANode::NoMatch; }

@@ -35,12 +35,14 @@ CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, const GenericL
 void CalculateCNModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     // Update CN labels
-    ui_.RegionAResultFrame->setText(module_->coordinationNumber(0));
+    ui_.RegionAResultFrame->setText(processingData_.valueOr("Analyser//Sum1D//CN//A", module_->uniqueName(), SampledDouble()));
     auto rangeBOn = module_->isRangeBEnabled();
-    ui_.RegionBResultFrame->setText(rangeBOn ? module_->coordinationNumber(1) : SampledDouble());
+    ui_.RegionBResultFrame->setText(
+        rangeBOn ? processingData_.valueOr("Analyser//Sum1D//CN//B", module_->uniqueName(), SampledDouble()) : SampledDouble());
     ui_.RegionBResultFrame->setEnabled(rangeBOn);
     auto rangeCOn = module_->isRangeCEnabled();
-    ui_.RegionCResultFrame->setText(rangeCOn ? module_->coordinationNumber(2) : SampledDouble());
+    ui_.RegionCResultFrame->setText(
+        rangeCOn ? processingData_.valueOr("Analyser//Sum1D//CN//C", module_->uniqueName(), SampledDouble()) : SampledDouble());
     ui_.RegionCResultFrame->setEnabled(rangeCOn);
 
     // Clear and recreate graph data targets?
