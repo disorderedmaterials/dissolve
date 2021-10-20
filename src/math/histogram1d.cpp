@@ -165,8 +165,7 @@ void Histogram1D::add(Histogram1D &other, int factor)
 Data1D Histogram1D::data() const
 {
     Data1D result = accumulatedData_;
-    for (auto &&[y, binValue] : zip(result.values(), bins_))
-        y = binValue;
+    std::copy(bins_.begin(), bins_.end(), result.values().begin())
     return result;
 }
 
