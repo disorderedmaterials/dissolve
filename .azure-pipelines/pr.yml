@@ -113,9 +113,3 @@ stages:
               PathtoPublish: "packages/"
               ArtifactName: "windows-artifacts"
             displayName: "Publish Windows Artifacts"
-
-  # Run Tests
-  - stage: "tests"
-    displayName: "Testing"
-    jobs:
-      - template: templates/tests.yml
