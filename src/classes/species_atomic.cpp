@@ -188,7 +188,7 @@ void Species::selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalRefer
 }
 
 // Return current atom selection
-const std::vector<const SpeciesAtom *> &Species::selectedAtoms() const { return selectedAtoms_; }
+const std::vector<SpeciesAtom *> &Species::selectedAtoms() const { return selectedAtoms_; }
 
 // Return number of selected Atoms
 int Species::nSelectedAtoms() const { return selectedAtoms_.size(); }
