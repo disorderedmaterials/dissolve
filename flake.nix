@@ -31,6 +31,7 @@
           jre
           openmpi
           pkgconfig
+          pugixml
         ];
       gui_libs = pkgs:
         with pkgs; [
@@ -39,7 +40,6 @@
           libGL
           libglvnd
           libglvnd.dev
-          pugixml
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
     in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
