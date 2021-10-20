@@ -7,6 +7,7 @@
 #include "gui/gui.h"
 #include "gui/importligpargendialog.h"
 #include "gui/importspeciesdialog.h"
+#include "gui/selectatomtypedialog.h"
 #include "gui/selectelementdialog.h"
 #include "gui/speciestab.h"
 #include <QFileDialog>
@@ -115,6 +116,28 @@ void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
     tab->rename();
 }
 
+void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
+{
+    // Get the current tab - make sure it is a SpeciesTab
+    auto tab = ui_.MainTabs->currentTab();
+    if ((!tab) || (tab->type() != MainTab::TabType::Species))
+        return;
+
+    // Cast up the tab to a SpeciesTab
+    auto spTab = dynamic_cast<SpeciesTab *>(tab);
+    if (!spTab)
+        return;
+
+    // Check that we really want to delete the Species
+    if (!spTab->close())
+        return;
+
+    // Update the GUI
+    ui_.MainTabs->removeByPage(spTab->page());
+    setModified();
+    fullUpdate();
+}
+
 void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
@@ -130,32 +153,6 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
         setModified();
         fullUpdate();
     }
-}
-
-void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked)
-{
-    // Get the current Species (if a SpeciesTab is selected)
-    auto species = ui_.MainTabs->currentSpecies();
-    if (!species)
-        return;
-
-    // Confirm with the user
-    QMessageBox queryBox;
-    queryBox.setText(
-        "This will delete and regenerate all angle and torsion terms, and any defined improper terms.\nThis cannot be undone!");
-    queryBox.setInformativeText("Proceed?");
-    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    queryBox.setDefaultButton(QMessageBox::No);
-    auto ret = queryBox.exec();
-
-    if (ret != QMessageBox::Yes)
-        return;
-
-    species->updateIntramolecularTerms();
-
-    setModified();
-    updateWindowTitle();
-    ui_.MainTabs->currentTab()->updateControls();
 }
 
 void DissolveWindow::on_SpeciesSimplifyAtomTypesAction_triggered(bool checked)
@@ -189,24 +186,53 @@ void DissolveWindow::on_SpeciesReduceToMasterTermsAction_triggered(bool checked)
     fullUpdate();
 }
 
-void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
+void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked)
 {
-    // Get the current tab - make sure it is a SpeciesTab
-    auto tab = ui_.MainTabs->currentTab();
-    if ((!tab) || (tab->type() != MainTab::TabType::Species))
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
         return;
 
-    // Cast up the tab to a SpeciesTab
-    auto spTab = dynamic_cast<SpeciesTab *>(tab);
-    if (!spTab)
+    // Confirm with the user
+    QMessageBox queryBox;
+    queryBox.setText(
+        "This will delete and regenerate all angle and torsion terms, and any defined improper terms.\nThis cannot be undone!");
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+    auto ret = queryBox.exec();
+
+    if (ret != QMessageBox::Yes)
         return;
 
-    // Check that we really want to delete the Species
-    if (!spTab->close())
-        return;
+    species->updateIntramolecularTerms();
 
-    // Update the GUI
-    ui_.MainTabs->removeByPage(spTab->page());
     setModified();
+    updateWindowTitle();
+    ui_.MainTabs->currentTab()->updateControls();
+}
+
+void DissolveWindow::on_SpeciesSetAtomTypesInSelectionAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    // Check current selection
+    if (species->nSelectedAtoms() == 0 || !species->isSelectionSingleElement())
+        return;
+
+    SelectAtomTypeDialog atomTypeDialog(this, dissolve_.coreData(), "Select Atom Type");
+    auto at = atomTypeDialog.selectAtomType(species->selectedAtoms().front()->Z());
+    if (!at)
+        return;
+
+    for (auto *i : species->selectedAtoms())
+        i->setAtomType(at);
+    species->updateAtomTypes();
+
+    setModified();
+
     fullUpdate();
 }

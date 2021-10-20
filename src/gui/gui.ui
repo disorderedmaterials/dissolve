@@ -102,7 +102,7 @@
     </property>
     <widget class="QMenu" name="FileOpenRecentMenu">
      <property name="title">
-      <string>Open R&amp;ecent...</string>
+      <string>Open R&amp;ecent</string>
      </property>
     </widget>
     <addaction name="FileNewAction"/>
@@ -180,7 +180,7 @@
       </font>
      </property>
      <property name="title">
-      <string>&amp;Create...</string>
+      <string>&amp;Create</string>
      </property>
      <property name="icon">
       <iconset>
@@ -196,7 +196,7 @@
       </font>
      </property>
      <property name="title">
-      <string>&amp;Import...</string>
+      <string>&amp;Import</string>
      </property>
      <addaction name="SpeciesImportFromDissolveAction"/>
      <addaction name="SpeciesImportFromXYZAction"/>
@@ -209,7 +209,7 @@
       </font>
      </property>
      <property name="title">
-      <string>Red&amp;uce Forcefield Terms...</string>
+      <string>Red&amp;uce Forcefield Terms</string>
      </property>
      <addaction name="SpeciesSimplifyAtomTypesAction"/>
      <addaction name="SpeciesReduceToMasterTermsAction"/>
@@ -221,6 +221,8 @@
     <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
     <addaction name="SpeciesReduceForcefieldTermsMenu"/>
+    <addaction name="separator"/>
+    <addaction name="SpeciesSetAtomTypesInSelectionAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
@@ -238,7 +240,7 @@
       <rect>
        <x>990</x>
        <y>290</y>
-       <width>223</width>
+       <width>211</width>
        <height>172</height>
       </rect>
      </property>
@@ -248,7 +250,7 @@
       </font>
      </property>
      <property name="title">
-      <string>&amp;Create...</string>
+      <string>&amp;Create</string>
      </property>
      <property name="icon">
       <iconset>
@@ -269,7 +271,7 @@
       </font>
      </property>
      <property name="title">
-      <string>&amp;Export to...</string>
+      <string>&amp;Export to</string>
      </property>
      <addaction name="ConfigurationExportToXYZAction"/>
     </widget>
@@ -295,7 +297,7 @@
       </font>
      </property>
      <property name="title">
-      <string>&amp;Create...</string>
+      <string>&amp;Create</string>
      </property>
      <property name="icon">
       <iconset>
@@ -558,7 +560,7 @@
   </action>
   <action name="SimulationSetRandomSeedAction">
    <property name="text">
-    <string>Set &amp;Random Seed</string>
+    <string>Set &amp;Random Seed...</string>
    </property>
   </action>
   <action name="LayerAddAction">
@@ -826,6 +828,11 @@
   <action name="SpeciesReduceToMasterTermsAction">
    <property name="text">
     <string>To Master Terms</string>
+   </property>
+  </action>
+  <action name="SpeciesSetAtomTypesInSelectionAction">
+   <property name="text">
+    <string>Set Atom &amp;Types in Selection...</string>
    </property>
   </action>
  </widget>
