@@ -9,8 +9,8 @@
 #include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesTorsionModel.h"
 #include "main/dissolve.h"
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <vector>
 
 Q_DECLARE_METATYPE(Sears91::Isotope);
@@ -110,7 +110,8 @@ TEST_F(SpeciesTabTest, Bonds)
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
 
     EXPECT_TRUE(bond.setData(bond.index(3, 3), "4.0, 5.0"));
-    EXPECT_THAT(bond.data(bond.index(3, 3)).toString().toStdString(), testing::AnyOf(testing::Eq( "4.0, 5.0"), testing::Eq("4, 5")));
+    EXPECT_THAT(bond.data(bond.index(3, 3)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("4.0, 5.0"), testing::Eq("4, 5")));
 
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "@CA-CA"));
     EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "3924.59, 1.4");
@@ -137,7 +138,8 @@ TEST_F(SpeciesTabTest, Angles)
         EXPECT_EQ(angle.data(angle.index(3, 1), role).toInt(), 5);
         EXPECT_EQ(angle.data(angle.index(3, 2), role).toInt(), 6);
         EXPECT_EQ(angle.data(angle.index(3, 3), role).toString().toStdString(), "@CA-CA-CA");
-        EXPECT_THAT(angle.data(angle.index(3, 4), role).toString().toStdString(), testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
+        EXPECT_THAT(angle.data(angle.index(3, 4), role).toString().toStdString(),
+                    testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
     }
 
     // Mutate angle
@@ -150,10 +152,12 @@ TEST_F(SpeciesTabTest, Angles)
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "Harmonic"));
 
     EXPECT_TRUE(angle.setData(angle.index(3, 4), "4.0, 5.0"));
-    EXPECT_THAT(angle.data(angle.index(3, 4)).toString().toStdString(), testing::AnyOf(testing::Eq( "4.0, 5.0"), testing::Eq("4, 5")));
+    EXPECT_THAT(angle.data(angle.index(3, 4)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("4.0, 5.0"), testing::Eq("4, 5")));
 
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "@CA-CA-CA"));
-    EXPECT_THAT(angle.data(angle.index(3, 4)).toString().toStdString(), testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
+    EXPECT_THAT(angle.data(angle.index(3, 4)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
 }
 
 TEST_F(SpeciesTabTest, Torsions)
@@ -178,7 +182,8 @@ TEST_F(SpeciesTabTest, Torsions)
         EXPECT_EQ(torsion.data(torsion.index(3, 2), role).toInt(), 2);
         EXPECT_EQ(torsion.data(torsion.index(3, 3), role).toInt(), 3);
         EXPECT_EQ(torsion.data(torsion.index(3, 4), role).toString().toStdString(), "@CA-CA-CA-CA");
-        EXPECT_THAT(torsion.data(torsion.index(3, 5), role).toString().toStdString(), testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+        EXPECT_THAT(torsion.data(torsion.index(3, 5), role).toString().toStdString(),
+                    testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
     }
 
     // Mutate torsion
@@ -194,12 +199,14 @@ TEST_F(SpeciesTabTest, Torsions)
 
     EXPECT_FALSE(torsion.setData(torsion.index(3, 5), "4.0, 5.0"));
     EXPECT_TRUE(torsion.setData(torsion.index(3, 5), "4.0, 5.0, 6.0"));
-    EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(), testing::AnyOf(testing::Eq( "4.0, 5.0, 6.0"), testing::Eq("4, 5, 6")));
+    EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("4.0, 5.0, 6.0"), testing::Eq("4, 5, 6")));
 
     EXPECT_FALSE(torsion.setData(torsion.index(3, 8), 8));
     EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "@CA-CA-CA-CA"));
-    EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(), testing::AnyOf(testing::Eq( "0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+    EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
 }
 
 TEST_F(SpeciesTabTest, Impropers)
@@ -224,7 +231,8 @@ TEST_F(SpeciesTabTest, Impropers)
         EXPECT_EQ(improper.data(improper.index(3, 2), role).toInt(), 5);
         EXPECT_EQ(improper.data(improper.index(3, 3), role).toInt(), 9);
         EXPECT_EQ(improper.data(improper.index(3, 4), role).toString().toStdString(), "@impgeneral");
-	EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(), testing::AnyOf(testing::Eq( "4.606, 2.0, 180.0, 1.0"), testing::Eq("4.606, 2, 180, 1")));
+        EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(),
+                    testing::AnyOf(testing::Eq("4.606, 2.0, 180.0, 1.0"), testing::Eq("4.606, 2, 180, 1")));
     }
 
     // Mutate improper
@@ -241,10 +249,12 @@ TEST_F(SpeciesTabTest, Impropers)
     EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0, 4.0, 5.0"));
     EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0"));
     EXPECT_TRUE(improper.setData(improper.index(3, 5), "3.0, 4.0, 5.0, 6.0"));
-    EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(), testing::AnyOf(testing::Eq( "3.0, 4.0, 5.0, 6.0"), testing::Eq("3, 4, 5, 6")));
+    EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("3.0, 4.0, 5.0, 6.0"), testing::Eq("3, 4, 5, 6")));
 
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
-    EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(), testing::AnyOf(testing::Eq( "4.606, 2.0, 180.0, 1.0"), testing::Eq("4.606, 2, 180, 1")));
+    EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("4.606, 2.0, 180.0, 1.0"), testing::Eq("4.606, 2, 180, 1")));
 }
 
 TEST_F(SpeciesTabTest, Isotopologues)
