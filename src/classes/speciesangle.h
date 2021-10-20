@@ -45,6 +45,8 @@ class SpeciesAngle : public SpeciesIntra
     SpeciesAtom *j() const;
     // Return third SpeciesAtom
     SpeciesAtom *k() const;
+    // Return vector of involved atoms
+    std::vector<const SpeciesAtom *> atoms() const override;
     // Return index (in parent Species) of first SpeciesAtom
     int indexI() const;
     // Return index (in parent Species) of second (central) SpeciesAtom

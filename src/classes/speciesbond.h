@@ -39,6 +39,8 @@ class SpeciesBond : public SpeciesIntra
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
     SpeciesAtom *j() const;
+    // Return vector of involved atoms
+    std::vector<const SpeciesAtom *> atoms() const override;
     // Return the 'other' SpeciesAtom
     SpeciesAtom *partner(const SpeciesAtom *i) const;
     // Return index (in parent Species) of first SpeciesAtom

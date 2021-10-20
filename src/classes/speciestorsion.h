@@ -50,6 +50,8 @@ class SpeciesTorsion : public SpeciesIntra
     SpeciesAtom *k() const;
     // Return fourth SpeciesAtom
     SpeciesAtom *l() const;
+    // Return vector of involved atoms
+    std::vector<const SpeciesAtom *> atoms() const override;
     // Return index (in parent Species) of first SpeciesAtom
     int indexI() const;
     // Return index (in parent Species) of second SpeciesAtom
