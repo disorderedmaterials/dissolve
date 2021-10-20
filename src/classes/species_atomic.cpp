@@ -193,6 +193,13 @@ const std::vector<const SpeciesAtom *> &Species::selectedAtoms() const { return 
 // Return number of selected Atoms
 int Species::nSelectedAtoms() const { return selectedAtoms_.size(); }
 
+// Return whether the current selection comprises atoms of a single element
+bool Species::isSelectionSingleElement() const
+{
+    return std::all_of(selectedAtoms_.begin(), selectedAtoms_.end(),
+                       [&](const auto *i) { return i->Z() == selectedAtoms_.front()->Z(); });
+}
+
 // Return version of the atom selection
 int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 

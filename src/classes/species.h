@@ -103,6 +103,8 @@ class Species
     const std::vector<const SpeciesAtom *> &selectedAtoms() const;
     // Return number of selected atoms
     int nSelectedAtoms() const;
+    // Return whether the current selection comprises atoms of a single element
+    bool isSelectionSingleElement() const;
     // Return version of the atom selection
     int atomSelectionVersion() const;
     // Return total atomic mass of Species
