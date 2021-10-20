@@ -43,7 +43,7 @@ std::vector<const SpeciesAtom *> SpeciesIntra::atoms() const { return {}; }
  */
 
 // Set linked master from which parameters should be taken
-void SpeciesIntra::setMasterParameters(MasterIntra *master) { masterParameters_ = master; }
+void SpeciesIntra::setMasterParameters(const MasterIntra *master) { masterParameters_ = master; }
 
 // Return linked master from which parameters should be taken
 const MasterIntra *SpeciesIntra::masterParameters() const { return masterParameters_; }

@@ -44,7 +44,7 @@ class SpeciesIntra
 
     protected:
     // Linked master from which parameters should be taken (if relevant)
-    MasterIntra *masterParameters_;
+    const MasterIntra *masterParameters_;
     // Index of functional form of interaction
     int form_;
     // Parameters for interaction
@@ -52,7 +52,7 @@ class SpeciesIntra
 
     public:
     // Set linked master from which parameters should be taken
-    void setMasterParameters(MasterIntra *master);
+    void setMasterParameters(const MasterIntra *master);
     // Return linked master from which parameters should be taken
     const MasterIntra *masterParameters() const;
     // Detach from MasterIntra, if we are currently referencing one
