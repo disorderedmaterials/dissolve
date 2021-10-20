@@ -11,7 +11,7 @@
 class Configuration;
 
 // Keyword with vector of AtomType pointers
-class AtomTypeVectorKeyword : public KeywordData<std::vector<const AtomType *>>
+class AtomTypeVectorKeyword : public KeywordData<std::vector<std::shared_ptr<AtomType>>>
 {
     public:
     AtomTypeVectorKeyword();

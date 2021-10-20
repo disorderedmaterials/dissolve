@@ -28,7 +28,7 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
             SLOT(speciesSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set model, signals, and lambdas for atom types list
-    atomTypesModel_.setIconFunction([&](const auto *atomType) {
+    atomTypesModel_.setIconFunction([&](const std::shared_ptr<AtomType> &atomType) {
         return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
                                                               : ":/general/icons/general_true.svg");
     });
