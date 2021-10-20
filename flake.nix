@@ -128,11 +128,11 @@
           };
       in {
         checks.dissolve = dissolve { checks = true; };
-        # checks.dissolve-mpi = dissolve {
-        #   mpi = true;
-        #   gui = false;
-        #   checks = true;
-        # };
+        checks.dissolve-mpi = dissolve {
+          mpi = true;
+          gui = false;
+          checks = true;
+        };
         checks.dissolve-threadless = dissolve {
           threading = false;
           gui = false;
