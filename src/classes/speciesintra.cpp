@@ -137,7 +137,7 @@ const std::vector<double> &SpeciesIntra::parameters() const
  */
 
 // Set attached SpeciesAtoms for the terminus specified
-void SpeciesIntra::setAttachedAtoms(int terminus, const std::vector<const SpeciesAtom *> &atoms)
+void SpeciesIntra::setAttachedAtoms(int terminus, const std::vector<SpeciesAtom *> &atoms)
 {
     attached_[terminus].clear();
 
