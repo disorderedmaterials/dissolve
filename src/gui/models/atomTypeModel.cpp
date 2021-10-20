@@ -17,20 +17,24 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &specie
 }
 
 // Set function to return QIcon for item
-void AtomTypeModel::setIconFunction(std::function<QIcon(const AtomType *atomType)> func) { iconFunction_ = func; }
+void AtomTypeModel::setIconFunction(std::function<QIcon(const std::shared_ptr<AtomType> &atomType)> func)
+{
+    iconFunction_ = func;
+}
 
 // Set vector containing checked items
-void AtomTypeModel::setCheckStateData(std::vector<const AtomType *> &checkedItemsVector)
+void AtomTypeModel::setCheckStateData(std::vector<std::shared_ptr<AtomType>> &checkedItemsVector)
 {
     beginResetModel();
     checkedItems_ = checkedItemsVector;
     endResetModel();
 }
 
-AtomType *AtomTypeModel::rawData(const QModelIndex &index) const
+// Return object represented by specified model index
+const std::shared_ptr<AtomType> &AtomTypeModel::rawData(const QModelIndex &index) const
 {
     assert(atomTypes_);
-    return atomTypes_->get()[index.row()].get();
+    return atomTypes_->get()[index.row()];
 }
 
 /*
@@ -107,7 +111,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
     }
     else if (role == Qt::EditRole)
     {
-        auto *atomType = rawData(index);
+        auto &atomType = rawData(index);
         std::vector<double> values;
 
         switch (index.column())

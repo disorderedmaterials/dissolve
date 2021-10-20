@@ -6,7 +6,8 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 
-AtomTypeVectorKeyword::AtomTypeVectorKeyword() : KeywordData<std::vector<const AtomType *>>(KeywordBase::AtomTypeVectorData, {})
+AtomTypeVectorKeyword::AtomTypeVectorKeyword()
+    : KeywordData<std::vector<std::shared_ptr<AtomType>>>(KeywordBase::AtomTypeVectorData, {})
 {
 }
 
@@ -42,11 +43,11 @@ bool AtomTypeVectorKeyword::read(LineParser &parser, int startArg, const CoreDat
         auto atomType = *it;
 
         // If the AtomType is in the list already, complain
-        if (std::find(data_.begin(), data_.end(), atomType.get()) != data_.end())
+        if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
             return Messenger::error("AtomType '{}' specified in selection list twice.\n", parser.argsv(n));
 
         // All OK - add it to our selection list
-        data_.push_back(atomType.get());
+        data_.push_back(atomType);
     }
 
     set_ = true;
@@ -75,7 +76,7 @@ bool AtomTypeVectorKeyword::write(LineParser &parser, std::string_view keywordNa
 // Prune any references to the supplied AtomType in the contained data
 void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
 {
-    auto it = std::find(data_.begin(), data_.end(), at.get());
+    auto it = std::find(data_.begin(), data_.end(), at);
     if (it != data_.end())
         data_.erase(it);
 }

@@ -90,7 +90,7 @@ void AtomTypeMix::finalise()
 }
 
 // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-void AtomTypeMix::finalise(const std::vector<const AtomType *> &exchangeableTypes)
+void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     // Perform basic tasks
     finalise();
@@ -100,7 +100,7 @@ void AtomTypeMix::finalise(const std::vector<const AtomType *> &exchangeableType
     for (auto &atd : types_)
     {
         // If this type is not exchangeable, move on
-        if (std::find(exchangeableTypes.begin(), exchangeableTypes.end(), atd.atomType().get()) == exchangeableTypes.end())
+        if (std::find(exchangeableTypes.begin(), exchangeableTypes.end(), atd.atomType()) == exchangeableTypes.end())
             continue;
 
         // Sum total atomic fraction and weighted bound coherent scattering length
@@ -113,7 +113,7 @@ void AtomTypeMix::finalise(const std::vector<const AtomType *> &exchangeableType
     for (auto &atd : types_)
     {
         // If this type is not exchangaeble, move on
-        if (std::find(exchangeableTypes.begin(), exchangeableTypes.end(), atd.atomType().get()) == exchangeableTypes.end())
+        if (std::find(exchangeableTypes.begin(), exchangeableTypes.end(), atd.atomType()) == exchangeableTypes.end())
             continue;
 
         // Set the bound coherent scattering length of this component to the average of all exchangable components
