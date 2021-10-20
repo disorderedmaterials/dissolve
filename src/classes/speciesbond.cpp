@@ -85,6 +85,9 @@ SpeciesAtom *SpeciesBond::i() const { return i_; }
 // Return second SpeciesAtom involved in SpeciesBond
 SpeciesAtom *SpeciesBond::j() const { return j_; }
 
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesBond::atoms() const { return {i_, j_}; }
+
 // Return the 'other' SpeciesAtom in the SpeciesBond
 SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ ? j_ : i_); }
 

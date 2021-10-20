@@ -23,6 +23,13 @@ class SpeciesIntra
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
 
     /*
+     * SpeciesAtom Information
+     * */
+    public:
+    // Return vector of involved atoms
+    virtual std::vector<const SpeciesAtom *> atoms() const;
+
+    /*
      * Interaction Parameters
      */
     public:

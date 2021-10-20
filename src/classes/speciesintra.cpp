@@ -32,6 +32,13 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 }
 
 /*
+ * SpeciesAtom Information
+ */
+
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesIntra::atoms() const { return {}; }
+
+/*
  * Interaction Parameters
  */
 

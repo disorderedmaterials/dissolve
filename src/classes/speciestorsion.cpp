@@ -105,6 +105,9 @@ SpeciesAtom *SpeciesTorsion::k() const { return k_; }
 // Return fourth SpeciesAtom
 SpeciesAtom *SpeciesTorsion::l() const { return l_; }
 
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesTorsion::atoms() const { return {i_, j_, k_, l_}; }
+
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesTorsion::indexI() const
 {

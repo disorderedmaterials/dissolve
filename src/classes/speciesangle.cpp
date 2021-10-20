@@ -85,6 +85,9 @@ SpeciesAtom *SpeciesAngle::j() const { return j_; }
 // Return third SpeciesAtom
 SpeciesAtom *SpeciesAngle::k() const { return k_; }
 
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesAngle::atoms() const { return {i_, j_, k_}; }
+
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesAngle::indexI() const
 {
