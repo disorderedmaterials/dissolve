@@ -40,7 +40,6 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
             parameters:
-              gui: false
               package: "dissolve"
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI"
@@ -52,8 +51,6 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
             parameters:
-              mpi: true
-              gui: false
               package: "dissolve-mpi"
       - job: "test_linux_mpi"
         displayName: "Testing MPI, CLI"
@@ -65,8 +62,6 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
             parameters:
-              mpi: true
-              gui: false
               package: "checks.dissolve-mpi"
       - job: "test_linux_gui"
         displayName: "Testing GUI"

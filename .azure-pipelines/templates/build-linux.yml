@@ -1,8 +1,4 @@
 parameters:
-  - name: gui
-    default: true
-  - name: mpi
-    default: false
   - name: package
     default : "dissolve-gui"
 
