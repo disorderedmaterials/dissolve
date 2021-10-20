@@ -3,8 +3,8 @@ parameters:
     default: true
   - name: mpi
     default: false
-  - name: suffix
-    default : ""
+  - name: package
+    default : "dissolve-gui"
 
 
 steps:
@@ -36,7 +36,7 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
-      nix build -L .#dissolve${{ parameters.suffix }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+      nix build -L .#{{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
     env:
       CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
     displayName: 'Build'
