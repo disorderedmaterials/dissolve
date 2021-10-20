@@ -3,6 +3,7 @@
 
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
+#include "gui/copyspeciestermsdialog.h"
 #include "gui/editspeciesdialog.h"
 #include "gui/gui.h"
 #include "gui/importligpargendialog.h"
@@ -148,6 +149,23 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_, species);
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
+    {
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+    }
+}
+
+void DissolveWindow::on_SpeciesCopyTermsAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    CopySpeciesTermsDialog copySpeciesTermsDialog(this, dissolve_, species);
+
+    if (copySpeciesTermsDialog.exec() == QDialog::Accepted)
     {
         // Fully update GUI
         setModified();
