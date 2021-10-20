@@ -87,14 +87,18 @@ class SpeciesTab : public QWidget, public MainTab
     std::vector<std::string> validAtomTypeNames(const QModelIndex &index);
 
     private slots:
+    // Atom table item changed
+    void atomTableDataChanged(const QModelIndex &, const QModelIndex &);
     // Respond to changes in the Atom Table
     void updateAtomTableSelection();
     // Respond to selection in the underlying model
     void updateUnderlyingAtomSelection();
 
     public slots:
-    // Update Geometry tab
-    void updateGeometryTab();
+    // Update total charges
+    void updateTotalCharges();
+    // Update Geometry tablss
+    void updateGeometryTables();
 
     /*
      * Widget Functions - Isotopologues
