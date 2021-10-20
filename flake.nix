@@ -77,7 +77,7 @@
               ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
               "-DBUILD_SYSTEM_TESTS:bool=${cmake-bool checks}"
-              "-DBUILD_UNIT_TESTS:bool=${cmake-bool checks}"
+              "-DBUILD_UNIT_TESTS:bool=${cmake-bool (checks && !mpi)}"
               ("-DCMAKE_BUILD_TYPE=" + (if checks then "Debug" else "Release"))
             ] ++ pkgs.lib.optional threading
               ("-DTHREADING_LINK_LIBS=${pkgs.tbb}/lib/libtbb.so");
