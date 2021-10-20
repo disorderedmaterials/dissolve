@@ -47,25 +47,28 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
 
 QVariant SpeciesAtomModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
+    if (role != Qt::DisplayRole)
         return {};
-    switch (section)
-    {
-        case 0:
-            return "E";
-        case 1:
-            return "AtomType";
-        case 2:
-            return "X";
-        case 3:
-            return "Y";
-        case 4:
-            return "Z";
-        case 5:
-            return "Charge";
-        default:
-            return {};
-    }
+    if (orientation == Qt::Horizontal)
+        switch (section)
+        {
+            case 0:
+                return "E";
+            case 1:
+                return "AtomType";
+            case 2:
+                return "X";
+            case 3:
+                return "Y";
+            case 4:
+                return "Z";
+            case 5:
+                return "Charge";
+            default:
+                return {};
+        }
+    else
+        return section + 1;
 }
 
 Qt::ItemFlags SpeciesAtomModel::flags(const QModelIndex &index) const
