@@ -29,6 +29,7 @@ set(components_MOC_HDRS
     wizard.hui
     # Dialogs
     addforcefieldtermsdialog.h
+    copyspeciestermsdialog.h
     datamanagerdialog.h
     editspeciesdialog.h
     getconfigurationnamedialog.h
@@ -68,6 +69,7 @@ set(components_UIS
     wizardheader.ui
     # Dialogs
     addforcefieldtermsdialog.ui
+    copyspeciestermsdialog.ui
     datamanagerdialog.ui
     editspeciesdialog.ui
     getconfigurationnamedialog.ui
@@ -133,6 +135,7 @@ set(components_SRCS
     wizard_funcs.cpp
     # Dialogs
     addforcefieldtermsdialog_funcs.cpp
+    copyspeciestermsdialog_funcs.cpp
     datamanagerdialog_funcs.cpp
     editspeciesdialog_funcs.cpp
     getconfigurationnamedialog_funcs.cpp

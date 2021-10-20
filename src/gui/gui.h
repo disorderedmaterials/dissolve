@@ -170,6 +170,7 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
     void on_SpeciesSimplifyAtomTypesAction_triggered(bool checked);
     void on_SpeciesReduceToMasterTermsAction_triggered(bool checked);
+    void on_SpeciesCopyTermsAction_triggered(bool checked);
     void on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked);
     void on_SpeciesSetAtomTypesInSelectionAction_triggered(bool checked);
     // Configuration

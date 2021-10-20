@@ -221,6 +221,7 @@
     <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
     <addaction name="SpeciesReduceForcefieldTermsMenu"/>
+    <addaction name="SpeciesCopyTermsAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesSetAtomTypesInSelectionAction"/>
     <addaction name="separator"/>
@@ -833,6 +834,11 @@
   <action name="SpeciesSetAtomTypesInSelectionAction">
    <property name="text">
     <string>Set Atom &amp;Types in Selection...</string>
+   </property>
+  </action>
+  <action name="SpeciesCopyTermsAction">
+   <property name="text">
+    <string>C&amp;opy Terms From Species...</string>
    </property>
   </action>
  </widget>

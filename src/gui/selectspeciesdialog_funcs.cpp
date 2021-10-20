@@ -39,7 +39,7 @@ const Species *SelectSpeciesDialog::selectSingleSpecies(int filterProxyFlags)
     show();
 
     if (exec() == QDialog::Accepted)
-        return ui_.SpeciesWidget->currentSpecies().front();
+        return ui_.SpeciesWidget->currentSpecies().empty() ? nullptr : ui_.SpeciesWidget->currentSpecies().front();
     else
         return nullptr;
 }
