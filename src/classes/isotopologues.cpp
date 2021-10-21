@@ -6,7 +6,7 @@
 #include "base/sysfunc.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include <algorithm>
+#include <numeric>
 
 Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
     : species_(species), speciesPopulation_(speciesPopulation)
@@ -78,11 +78,11 @@ bool Isotopologues::addNext()
 void Isotopologues::add(const Isotopologue *iso, double relativeWeight)
 {
     // Search current list to see if the specified Isotopologue already exists
-    if (contains(iso))
-        Messenger::warn("Isotopologue '{}' (of Species '{}') already exists in Isotopologues, and it is being added again...\n",
-                        iso->name(), species_->name());
-
-    mix_.emplace_back(iso, relativeWeight);
+    auto it = std::find_if(mix_.begin(), mix_.end(), [iso](auto &isoWeight) { return isoWeight.isotopologue() == iso; });
+    if (it != mix_.end())
+        it->addWeight(relativeWeight);
+    else
+        mix_.emplace_back(iso, relativeWeight);
 }
 
 // Set Isotopologue component in list
@@ -142,24 +142,19 @@ const std::vector<IsotopologueWeight> &Isotopologues::mix() const { return mix_;
 // Return number of Isotopologues in list
 int Isotopologues::nIsotopologues() const { return mix_.size(); }
 
-// Return total relative population
-double Isotopologues::totalRelative() const
+// Return summed weight over all isotopologues
+double Isotopologues::summedWeight() const
 {
-    double total = 0.0;
-
-    for (const auto &isoWeight : mix_)
-        total += isoWeight.weight();
-
-    return total;
+    return std::accumulate(mix_.begin(), mix_.end(), 0.0, [](const auto acc, const auto &iso) { return acc + iso.weight(); });
 }
 
 // Normalise total relative population to 1.0
 void Isotopologues::normalise()
 {
-    double total = totalRelative();
+    auto sum = summedWeight();
 
     for (auto isoWeight : mix_)
-        isoWeight.setWeight(isoWeight.weight() / total);
+        isoWeight.setWeight(isoWeight.weight() / sum);
 }
 
 /*

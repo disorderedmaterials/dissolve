@@ -56,8 +56,8 @@ class Isotopologues
     const std::vector<IsotopologueWeight> &mix() const;
     // Return number of Isotopologues in mix
     int nIsotopologues() const;
-    // Return total relative population
-    double totalRelative() const;
+    // Return summed weight over all isotopologues
+    double summedWeight() const;
     // Normalise total relative population to 1.0
     void normalise();
 
