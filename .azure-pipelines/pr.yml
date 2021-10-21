@@ -32,6 +32,16 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               export: true
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: "linux-GUI-artifacts"
+            displayName: "Publish Linux GUI Artifacts"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "docker/"
+              ArtifactName: "linux-GUI-docker"
+            displayName: "Publish Linux GUI Docker"
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI"
         pool:
@@ -45,6 +55,16 @@ stages:
               package: "dissolve"
               docker: "docker"
               export: true
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: "linux-cli-artifacts"
+            displayName: "Publish Linux CLI Artifacts"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "docker/"
+              ArtifactName: "linux-cli-docker"
+            displayName: "Publish Linux CLI Docker"
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI"
         pool:
@@ -58,6 +78,16 @@ stages:
               package: "dissolve-mpi"
               docker: "docker-mpi"
               export: true
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: "mpi-artifacts"
+            displayName: "Publish MPI Artifacts"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "docker/"
+              ArtifactName: "mpi-docker"
+            displayName: "Publish MPI Docker"
       - job: "test_linux_mpi"
         displayName: "Testing MPI, CLI"
         pool:
