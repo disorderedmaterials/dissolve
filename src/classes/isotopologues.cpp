@@ -13,8 +13,6 @@ Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
 {
 }
 
-Isotopologues::~Isotopologues() = default;
-
 /*
  * Isotopologue Mix
  */
@@ -32,48 +30,6 @@ const Species *Isotopologues::species() const { return species_; }
 // Return associated Species population
 int Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 
-// Prune defunct Isotopologue entries
-void Isotopologues::pruneMissing()
-{
-    // Go through list of Isotopologues present in this mix, removing any that no longer exist
-    mix_.erase(std::remove_if(mix_.begin(), mix_.end(),
-                              [&](const auto &isoWeight) { return !species_->hasIsotopologue(isoWeight.isotopologue()); }),
-               mix_.end());
-}
-
-// Add next available Isotopologue to list
-bool Isotopologues::addNext()
-{
-    // NULL Pointer?
-    if (species_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL Species pointer in Isotopologues::addNextIsotopologue().\n");
-        return false;
-    }
-
-    // Check to see if the are any Isotopologues available to add
-    if (mix_.size() == species_->nIsotopologues())
-    {
-        Messenger::warn("Can't add another Isotopologue to the mixture since there are none left for Species '{}'.\n",
-                        species_->name());
-        return false;
-    }
-
-    // Find unique (unused) Isotopologue
-    auto it = std::find_if(species_->isotopologues().begin(), species_->isotopologues().end(),
-                           [this](auto &i) { return contains(i.get()); });
-
-    if (it == species_->isotopologues().end())
-    {
-        Messenger::error("Couldn't find an unused Isotopologue in Species '{}'.\n", species_->name());
-        return false;
-    }
-
-    mix_.emplace_back(it->get(), 1.0);
-
-    return true;
-}
-
 // Add specific Isotopologue to list
 void Isotopologues::add(const Isotopologue *iso, double relativeWeight)
 {
@@ -86,30 +42,19 @@ void Isotopologues::add(const Isotopologue *iso, double relativeWeight)
 }
 
 // Set Isotopologue component in list
-bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
+void Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 {
-    // NULL Pointer?
-    if (iso == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL Isotopologue passed to Isotopologues::setIsotopologue().\n");
-        return false;
-    }
+    assert(iso);
 
     // Find the specified Isotopologue
     auto it = std::find_if(mix_.begin(), mix_.end(), [iso](auto &isoWeight) { return isoWeight.isotopologue() == iso; });
 
     if (it == mix_.end())
-    {
-        Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
-                        iso->name());
+        throw(std::runtime_error(
+            fmt::format("Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
+                        iso->name())));
 
-        // TODO Raise exception
-        return false;
-    }
-    else
-        it->setWeight(relativeWeight);
-
-    return true;
+    it->setWeight(relativeWeight);
 }
 
 // Remove references to the specified Isotopologue
