@@ -81,7 +81,7 @@ stages:
             parameters:
               package: "checks.x86_64-linux.dissolve"
       - job: "test_linux_threadless"
-        displayName: "Testing GUI"
+        displayName: "Testing Threadless"
         pool:
           vmImage: "ubuntu-latest"
         steps:
