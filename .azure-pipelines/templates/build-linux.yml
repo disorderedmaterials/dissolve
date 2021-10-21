@@ -53,4 +53,4 @@ steps:
     env:
       CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
     displayName: 'Package'
-    condition: parameters.export
+    condition: eq( '${{ parameters.export }}', 'true' )
