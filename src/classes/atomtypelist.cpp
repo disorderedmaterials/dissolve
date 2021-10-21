@@ -137,7 +137,7 @@ void AtomTypeList::naturalise()
         atd.naturalise();
 }
 
-// Check for presence of AtomType in list
+// Check for presence of AtomType
 bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType) const
 {
     for (auto &atd : types_)
@@ -147,7 +147,7 @@ bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType) const
     return false;
 }
 
-// Check for presence of AtomType/Isotope pair in list
+// Check for presence of AtomType/Isotope pair
 bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType, Sears91::Isotope tope) const
 {
     return std::find_if(types_.begin(), types_.end(), [&atomType, tope](const auto &typeData) {
@@ -155,10 +155,10 @@ bool AtomTypeList::contains(const std::shared_ptr<AtomType> &atomType, Sears91::
            }) != types_.end();
 }
 
-// Return number of AtomType/Isotopes in list
+// Return number of AtomType/Isotopes
 int AtomTypeList::nItems() const { return types_.size(); }
 
-// Return first item in list
+// Return first item
 const AtomTypeData &AtomTypeList::first() const { return types_.front(); }
 
 // Return starting iterator
@@ -167,7 +167,7 @@ std::vector<AtomTypeData>::const_iterator AtomTypeList::begin() const { return t
 // Return ending iterator
 std::vector<AtomTypeData>::const_iterator AtomTypeList::end() const { return types_.end(); }
 
-// Return index of AtomType in list
+// Return index of AtomType
 int AtomTypeList::indexOf(const std::shared_ptr<AtomType> &atomtype) const
 {
     auto count = 0;
@@ -181,7 +181,7 @@ int AtomTypeList::indexOf(const std::shared_ptr<AtomType> &atomtype) const
     return -1;
 }
 
-// Return index of names AtomType in list
+// Return index of names AtomType
 int AtomTypeList::indexOf(std::string_view name) const
 {
     auto count = 0;
@@ -195,7 +195,7 @@ int AtomTypeList::indexOf(std::string_view name) const
     return -1;
 }
 
-// Return indices of AtomType pair in list
+// Return indices of AtomType pair
 std::pair<int, int> AtomTypeList::indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
 {
     auto count = 0, index = -1;
@@ -221,7 +221,7 @@ std::pair<int, int> AtomTypeList::indexOf(const std::shared_ptr<AtomType> &at1, 
     return {-1, -1};
 }
 
-// Return total population of all types in list
+// Return total population of all types
 double AtomTypeList::totalPopulation() const
 {
     double total = 0;
