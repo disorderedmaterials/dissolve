@@ -47,7 +47,7 @@ steps:
       nix bundle -L .#${{ parameters.package }}
       mkdir -p packages
       cp ${{ parameters.package }} packages
-      nix build .#{{ parameters.docker }}
+      nix build .#${{ parameters.docker }}
       mkdir -p docker
       cp result docker
     env:
