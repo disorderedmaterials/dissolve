@@ -62,7 +62,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
             parameters:
-              package: "checks.dissolve-mpi"
+              package: "checks.x86_64-linux.dissolve-mpi"
       - job: "test_linux_gui"
         displayName: "Testing GUI"
         pool:
@@ -73,7 +73,18 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
             parameters:
-              package: "checks.dissolve-gui"
+              package: "checks.x86_64-linux.dissolve"
+      - job: "test_linux_threadless"
+        displayName: "Testing GUI"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
+          - template: templates/build-linux.yml
+            parameters:
+              package: "checks.x86_64-linux.dissolve-threadless"
       - job: "osx"
         condition: false
         displayName: "OSX, Threads, CLI/GUI"
