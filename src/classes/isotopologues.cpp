@@ -153,7 +153,7 @@ void Isotopologues::normalise()
 {
     auto sum = summedWeight();
 
-    for (auto isoWeight : mix_)
+    for (auto &isoWeight : mix_)
         isoWeight.setWeight(isoWeight.weight() / sum);
 }
 
