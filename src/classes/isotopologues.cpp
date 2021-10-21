@@ -160,7 +160,7 @@ void Isotopologues::normalise()
 {
     double total = totalRelative();
 
-    for (auto isoWeight : mix_)
+    for (auto &isoWeight : mix_)
         isoWeight.setWeight(isoWeight.weight() / total);
 }
 
