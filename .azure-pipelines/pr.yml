@@ -43,7 +43,7 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               package: "dissolve"
-              docker:: "docker"
+              docker: "docker"
               export: true
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI"
