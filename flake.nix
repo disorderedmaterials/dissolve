@@ -213,9 +213,15 @@
           };
 
           docker-gui = pkgs.dockerTools.buildImage {
-            name = "dissolve";
+            name = "dissolve-gui";
             tag = "latest";
             config.ENTRYPOINT = [ "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui" ];
+          };
+
+          docker-mpi = pkgs.dockerTools.buildImage {
+            name = "dissolve-mpi";
+            tag = "latest";
+            config.ENTRYPOINT = [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
 
         };

@@ -30,6 +30,8 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
+            parameters:
+              export: true
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI"
         pool:
@@ -41,6 +43,8 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               package: "dissolve"
+              docker:: "docker"
+              export: true
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI"
         pool:
@@ -52,6 +56,8 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               package: "dissolve-mpi"
+              docker: "docker-mpi"
+              export: true
       - job: "test_linux_mpi"
         displayName: "Testing MPI, CLI"
         pool:

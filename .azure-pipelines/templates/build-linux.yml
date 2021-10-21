@@ -1,6 +1,10 @@
 parameters:
   - name: package
     default : "dissolve-gui"
+  - name: export
+    default : false
+  - name: docker
+    default: "docker-gui"
 
 
 steps:
@@ -36,3 +40,17 @@ steps:
     env:
       CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
     displayName: 'Build'
+  - bash: |
+      set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      cachix use dissolve-nix
+      nix bundle -L .#${{ parameters.package }}
+      mkdir -p packages
+      cp ${{ parameters.package }} packages
+      nix build .#{{ parameters.docker }}
+      mkdir -p docker
+      cp result docker
+    env:
+      CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
+    displayName: 'Package'
+    condition: export
