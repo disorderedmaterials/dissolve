@@ -205,6 +205,19 @@
             gui = false;
             threading = false;
           };
+
+          docker = pkgs.dockerTools.buildImage {
+            name = "dissolve";
+            tag = "latest";
+            config.Cmd = [ "${self.packages.${system}.dissolve}/bin/dissolve" ];
+          };
+
+          docker-gui = pkgs.dockerTools.buildImage {
+            name = "dissolve";
+            tag = "latest";
+            config.ENTRYPOINT = [ "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui" ];
+          };
+
         };
       });
 }
