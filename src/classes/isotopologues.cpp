@@ -32,7 +32,7 @@ const Species *Isotopologues::species() const { return species_; }
 // Return associated Species population
 int Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 
-/// Prune defunct Isotopologue entries
+// Prune defunct Isotopologue entries
 void Isotopologues::pruneMissing()
 {
     // Go through list of Isotopologues present in this mix, removing any that no longer exist

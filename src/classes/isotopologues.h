@@ -37,7 +37,7 @@ class Isotopologues
     const Species *species() const;
     // Return associated Species population
     int speciesPopulation() const;
-    /// Prune defunct Isotopologue entries
+    // Prune defunct Isotopologue entries
     void pruneMissing();
     // Add next available Isotopologue to list
     bool addNext();
