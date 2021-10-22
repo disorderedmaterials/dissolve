@@ -63,8 +63,8 @@ class Species
     std::vector<const SpeciesAtom *> selectedAtoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
-    // List of AtomTypes, and their populations, used in the Species
-    AtomTypeMix usedAtomTypes_;
+    // AtomType mixture present in the Species
+    AtomTypeMix atomTypes_;
 
     public:
     // Add a new atom to the Species
@@ -108,9 +108,9 @@ class Species
     // Return total atomic mass of Species
     double mass() const;
     // Update used atom types
-    void updateUsedAtomTypes();
+    void updateAtomTypes();
     // Return used atom types
-    const AtomTypeMix &usedAtomTypes() const;
+    const AtomTypeMix &atomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters

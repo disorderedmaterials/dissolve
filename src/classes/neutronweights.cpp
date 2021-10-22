@@ -155,8 +155,8 @@ void NeutronWeights::calculateWeightingMatrices()
         auto speciesWeight = double(topes.speciesPopulation());
 
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
-        const Species *sp = topes.species();
-        const AtomTypeMix &speciesAtomTypes = sp->usedAtomTypes();
+        const auto *sp = topes.species();
+        const auto &speciesAtomTypes = sp->atomTypes();
         intraFlag = false;
         dissolve::for_each_pair(
             ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
@@ -181,7 +181,7 @@ void NeutronWeights::calculateWeightingMatrices()
             // fractional Isotopologue weight in the mix.
             double weight = speciesWeight * isoWeight.weight();
 
-            const Isotopologue *tope = isoWeight.isotopologue();
+            const auto *tope = isoWeight.isotopologue();
 
             for (auto atd1 = speciesAtomTypes.begin(); atd1 != speciesAtomTypes.end(); ++atd1)
             {

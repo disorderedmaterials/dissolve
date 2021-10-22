@@ -206,19 +206,19 @@ double Species::mass() const
 }
 
 // Update used atom types
-void Species::updateUsedAtomTypes()
+void Species::updateAtomTypes()
 {
-    usedAtomTypes_.clear();
+    atomTypes_.clear();
     for (const auto &i : atoms_)
         if (i.atomType())
-            usedAtomTypes_.add(i.atomType(), 1);
+            atomTypes_.add(i.atomType(), 1);
 
     // Update our isotopologue definitions while we're here
     updateIsotopologues();
 }
 
 // Return used atom types list
-const AtomTypeMix &Species::usedAtomTypes() const { return usedAtomTypes_; }
+const AtomTypeMix &Species::atomTypes() const { return atomTypes_; }
 
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()
@@ -226,7 +226,7 @@ void Species::clearAtomTypes()
     for (auto &i : atoms_)
         i.setAtomType(nullptr);
 
-    usedAtomTypes_.clear();
+    atomTypes_.clear();
 }
 
 // Simplify atom types, merging together those with identical parameters
@@ -246,7 +246,7 @@ int Species::simplifyAtomTypes()
         ++nModified;
     }
 
-    updateUsedAtomTypes();
+    updateAtomTypes();
 
     return nModified;
 }
