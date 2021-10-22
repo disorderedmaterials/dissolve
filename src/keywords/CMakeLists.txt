@@ -43,6 +43,7 @@ add_library(
   vec3nodevalue.cpp
   vector_intdouble.cpp
   vector_intstring.cpp
+  vector_stringdouble.cpp
   vector_stringpair.cpp
   atomtypereflist.h
   atomtypeselection.h
@@ -91,6 +92,7 @@ add_library(
   vec3nodevalue.h
   vector_intdouble.h
   vector_intstring.h
+  vector_stringdouble.h
   vector_stringpair.h
 )
 

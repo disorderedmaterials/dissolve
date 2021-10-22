@@ -64,6 +64,7 @@ std::string_view KeywordDataTypeKeywords[] = {"AtomTypeRefList",
                                               "Vec3<NodeValue>",
                                               "Vector<Integer,Double>",
                                               "Vector<Integer,String>",
+                                              "Vector<String,Double>",
                                               "Vector<String,String>"};
 
 // Return ValueType name

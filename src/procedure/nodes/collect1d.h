@@ -39,6 +39,8 @@ class Collect1DProcedureNode : public ProcedureNode
     OptionalReferenceWrapper<Histogram1D> histogram_;
 
     public:
+    // Return current data
+    Data1D data() const;
     // Return accumulated data
     const Data1D &accumulatedData() const;
     // Return range minimum

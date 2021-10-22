@@ -84,6 +84,24 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");
     }
 
+    // Loop over reference values supplied for SampledDouble objects
+    for (auto &[tag, value] : keywords_.retrieve<StringDoubleVectorKeywordData>("SampledDouble"))
+    {
+        // Locate the target reference data
+        auto optData = dissolve.processingModuleData().search<const SampledDouble>(tag);
+        if (!optData)
+            return Messenger::error("No data with tag '{}' exists.\n", tag);
+        const SampledDouble &data = optData->get();
+        Messenger::print("Located reference data '{}'.\n", tag);
+
+        // Generate the error estimate and compare against the threshold value
+        auto error = fabs(value - data.value());
+        Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
+                         error, std::isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
+        if (std::isnan(error) || error > testThreshold)
+            return false;
+    }
+
     // Loop over reference values supplied for SampledVector objects
     for (auto &[tag, referenceData, format] : testSampledVectorData_.data())
     {

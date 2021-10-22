@@ -60,6 +60,12 @@ template <> GenericItemSearcher<const SampledData1D>::GenericItemSearcher()
 }
 
 /*
+ * SampledDouble
+ */
+
+template <> GenericItemSearcher<const SampledDouble>::GenericItemSearcher() {}
+
+/*
  * SampledVector
  */
 
