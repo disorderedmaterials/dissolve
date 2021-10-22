@@ -168,7 +168,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Create, print, and store weights
     Messenger::print("Isotopologue and isotope composition:\n\n");
-    weights.createFromIsotopologues(exchangeableTypes_);
+    weights.createFromIsotopologues(keywords_.retrieve<std::vector<const AtomType *>>("Exchangeable"));
     weights.print();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?

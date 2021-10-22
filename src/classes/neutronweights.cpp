@@ -240,7 +240,7 @@ void NeutronWeights::calculateWeightingMatrices()
 }
 
 // Create AtomType list and matrices based on stored Isotopologues information
-void NeutronWeights::createFromIsotopologues(const AtomTypeMix &exchangeableTypes)
+void NeutronWeights::createFromIsotopologues(const std::vector<const AtomType *> &exchangeableTypes)
 {
     // Loop over Isotopologues entries and ensure relative populations of Isotopologues sum to 1.0
     for (auto &topes : isotopologueMixtures_)

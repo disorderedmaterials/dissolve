@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 // General include for all KeywordWidget types
-#include "gui/keywordwidgets/atomtypeselection.h"
+#include "gui/keywordwidgets/atomtypevector.h"
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/bool.hui"
 #include "gui/keywordwidgets/configurationvector.h"
