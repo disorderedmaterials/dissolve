@@ -21,7 +21,7 @@ class NeutronWeights
      * Construction
      */
     private:
-    // List of Isotopologues for Species
+    // Vector of Isotopologues for Species
     std::vector<Isotopologues> isotopologueMixtures_;
 
     public:
