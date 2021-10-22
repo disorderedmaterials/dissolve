@@ -10,13 +10,13 @@
 #include <utility>
 
 ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, int maxModules)
-    : KeywordBase(typeid(this), KeywordBase::ModuleRefListData), data_(data), maxModules_(maxModules)
+    : KeywordBase(typeid(this)), data_(data), maxModules_(maxModules)
 {
 }
 
 ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes,
                                          int maxModules)
-    : KeywordBase(typeid(this), KeywordBase::ModuleRefListData), data_(data), moduleTypes_(std::move(allowedModuleTypes)),
+    : KeywordBase(typeid(this)), data_(data), moduleTypes_(std::move(allowedModuleTypes)),
       maxModules_(maxModules)
 {
 }

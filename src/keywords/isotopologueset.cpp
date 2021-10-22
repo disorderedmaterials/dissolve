@@ -7,7 +7,7 @@
 #include "classes/species.h"
 
 IsotopologueSetKeyword::IsotopologueSetKeyword(IsotopologueSet &data)
-    : KeywordBase(typeid(this), KeywordBase::IsotopologueSetData), data_(data)
+    : KeywordBase(typeid(this)), data_(data)
 {
 }
 

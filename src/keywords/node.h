@@ -13,11 +13,11 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
     NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this), KeywordBase::NodeData)
+        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this))
     {
     }
     NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this), KeywordBase::NodeData)
+        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this))
     {
     }
     ~NodeKeywordBase() override = default;

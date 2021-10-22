@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-StringKeyword::StringKeyword(std::string &data) : KeywordBase(typeid(this), KeywordBase::StringData), data_(data) {}
+StringKeyword::StringKeyword(std::string &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data

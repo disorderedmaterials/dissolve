@@ -7,8 +7,8 @@
 // Static Singletons
 RefList<KeywordBase> KeywordBase::allKeywords_;
 
-KeywordBase::KeywordBase(const std::type_index typeIndex, KeywordDataType type)
-    : type_(type), typeIndex_(typeIndex), set_(false)
+KeywordBase::KeywordBase(const std::type_index typeIndex)
+    : typeIndex_(typeIndex), set_(false)
 {
     // Add ourselves to the master reference list of keywords
     allKeywords_.append(this);
@@ -19,54 +19,6 @@ KeywordBase::~KeywordBase()
     // Remove ourselves from the master reference list of keywords
     allKeywords_.remove(this);
 }
-
-// Value Keyword Data Type Keywords
-std::string_view KeywordDataTypeKeywords[] = {"AtomTypeVector",
-                                              "Bool",
-                                              "ConfigurationRefList",
-                                              "Data1DStore",
-                                              "Data2DStore",
-                                              "Data3DStore",
-                                              "Double",
-                                              "DynamicSites",
-                                              "ElementVector",
-                                              "EnumOptions",
-                                              "Expression",
-                                              "ExpressionVariableList",
-                                              "FileAndFormat",
-                                              "Function1D",
-                                              "GeometryList",
-                                              "Integer",
-                                              "IsotopologueList",
-                                              "IsotopologueSet",
-                                              "LinkToKeyword",
-                                              "Module",
-                                              "ModuleGroups",
-                                              "ModuleRefList",
-                                              "Node",
-                                              "NodeAndInteger",
-                                              "NodeBranch",
-                                              "NodeValue",
-                                              "NodeValueEnumOptions",
-                                              "NodeVector",
-                                              "Procedure",
-                                              "Range",
-                                              "Species",
-                                              "SpeciesSite",
-                                              "SpeciesSiteVector",
-                                              "SpeciesVector",
-                                              "String",
-                                              "ValueStore",
-                                              "Vec3<Double>",
-                                              "Vec3<Integer>",
-                                              "Vec3<NodeValue>",
-                                              "Vector<Integer,Double>",
-                                              "Vector<Integer,String>",
-                                              "Vector<String,Double>",
-                                              "Vector<String,String>"};
-
-// Return ValueType name
-std::string_view KeywordBase::keywordDataType(KeywordDataType kdt) { return KeywordDataTypeKeywords[kdt]; }
 
 /*
  * Keyword Description
@@ -84,12 +36,6 @@ void KeywordBase::setOptionMask(int opttionMask) { optionMask_ = opttionMask; }
 
 // Flag that data has been set by some other means
 void KeywordBase::setAsModified() { set_ = true; }
-
-// Return data type stored by keyword
-KeywordBase::KeywordDataType KeywordBase::type() const { return type_; }
-
-// Return name of data type stored by keyword
-std::string_view KeywordBase::typeName() const { return KeywordDataTypeKeywords[type_]; }
 
 // Return keyword name
 std::string_view KeywordBase::name() const { return name_; }
@@ -118,12 +64,12 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
 {
     if (nArgsProvided < minArguments())
     {
-        Messenger::error("Not enough arguments given to {} keyword '{}'.\n", typeName(), name());
+        Messenger::error("Not enough arguments given to keyword '{}'.\n", name());
         return false;
     }
     if ((maxArguments() >= 0) && (nArgsProvided > maxArguments()))
     {
-        Messenger::error("Too many arguments given to {} keyword '{}'.\n", typeName(), name());
+        Messenger::error("Too many arguments given to keyword '{}'.\n", name());
         return false;
     }
 

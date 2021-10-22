@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/data3dstore.h"
 
-Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data) : KeywordBase(typeid(this), KeywordBase::Data3DStoreData), data_(data)
+Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data) : KeywordBase(typeid(this)), data_(data)
 {
 }
 

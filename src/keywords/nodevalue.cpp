@@ -6,7 +6,7 @@
 #include "procedure/nodes/node.h"
 
 NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
-    : KeywordBase(typeid(this), KeywordBase::NodeValueData), data_(data), parentNode_(parentNode)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
 {
 }
 

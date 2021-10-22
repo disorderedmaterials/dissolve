@@ -6,7 +6,7 @@
 #include "base/sysfunc.h"
 
 IntegerKeyword::IntegerKeyword(int &data, std::optional<int> minValue, std::optional<int> maxValue)
-    : KeywordBase(typeid(this), KeywordBase::IntegerData), data_(data)
+    : KeywordBase(typeid(this)), data_(data)
 {
     minimumLimit_ = minValue;
     maximumLimit_ = maxValue;
