@@ -31,8 +31,8 @@ AtomTypeData &Configuration::usedAtomTypeData(int index) { return usedAtomTypes_
 // Return first AtomTypeData for this Configuration
 const AtomTypeData &Configuration::usedAtomTypes() const { return usedAtomTypes_.first(); }
 
-// Return AtomTypeList for this Configuration
-const AtomTypeList &Configuration::usedAtomTypesList() const { return usedAtomTypes_; }
+// Return AtomTypeMix for this Configuration
+const AtomTypeMix &Configuration::usedAtomTypesMix() const { return usedAtomTypes_; }
 
 // Return number of atom types used in this Configuration
 int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }

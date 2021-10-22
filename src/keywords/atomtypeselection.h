@@ -3,18 +3,18 @@
 
 #pragma once
 
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "keywords/data.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Configuration;
 
-// Keyword with AtomTypeList Data
-class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
+// Keyword with AtomTypeMix Data
+class AtomTypeSelectionKeyword : public KeywordData<AtomTypeMix &>
 {
     public:
-    AtomTypeSelectionKeyword(AtomTypeList &selection_, const std::vector<Configuration *> &sourceConfigurations);
+    AtomTypeSelectionKeyword(AtomTypeMix &selection, const std::vector<Configuration *> &sourceConfigurations);
     ~AtomTypeSelectionKeyword() override;
 
     /*
@@ -30,7 +30,7 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
     // Check selection and make sure it is consistent based on the source Configurations
     void checkSelection();
     // Return selection after checking it for validity
-    AtomTypeList &selection();
+    AtomTypeMix &selection();
 
     /*
      * Arguments

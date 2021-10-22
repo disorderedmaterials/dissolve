@@ -337,7 +337,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
     int bin;
-    auto &types = cfg->usedAtomTypesList();
+    auto &types = cfg->usedAtomTypesMix();
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
                             [&](int typeI, auto &atd1, int typeJ, auto &atd2) {
                                 // Retrieve partial container and make sure its tag is set
@@ -396,7 +396,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPoo
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        auto &types = cfg->usedAtomTypesList();
+        auto &types = cfg->usedAtomTypesMix();
         int typeI = 0;
         for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {

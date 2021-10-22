@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "classes/box.h"
 #include "classes/cellarray.h"
 #include "classes/isotopologue.h"
@@ -64,7 +64,7 @@ class Species
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
     // List of AtomTypes, and their populations, used in the Species
-    AtomTypeList usedAtomTypes_;
+    AtomTypeMix usedAtomTypes_;
 
     public:
     // Add a new atom to the Species
@@ -109,8 +109,8 @@ class Species
     double mass() const;
     // Update used atom types
     void updateUsedAtomTypes();
-    // Return used atom types list
-    const AtomTypeList &usedAtomTypes() const;
+    // Return used atom types
+    const AtomTypeMix &usedAtomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters

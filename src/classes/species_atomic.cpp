@@ -218,7 +218,7 @@ void Species::updateUsedAtomTypes()
 }
 
 // Return used atom types list
-const AtomTypeList &Species::usedAtomTypes() const { return usedAtomTypes_; }
+const AtomTypeMix &Species::usedAtomTypes() const { return usedAtomTypes_; }
 
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()

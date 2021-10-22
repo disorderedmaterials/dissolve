@@ -46,7 +46,7 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 
     // Check / update summed atom types data
     if (!reflectionAtomTypesData_)
-        reflectionAtomTypesData_ = processingData_.valueIf<const AtomTypeList>("SummedAtomTypes", module_->uniqueName());
+        reflectionAtomTypesData_ = processingData_.valueIf<const AtomTypeMix>("SummedAtomTypes", module_->uniqueName());
 
     // Need to recreate renderables if requested as the updateType
     if (updateType == ModuleWidget::UpdateType::RecreateRenderables)

@@ -4,13 +4,13 @@
 #include "keywords/atomtypeselection.h"
 #include "base/lineparser.h"
 #include "classes/atomtype.h"
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList &selection,
+AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeMix &selection,
                                                    const std::vector<Configuration *> &sourceConfigurations)
-    : KeywordData<AtomTypeList &>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
+    : KeywordData<AtomTypeMix &>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 
@@ -26,7 +26,7 @@ bool AtomTypeSelectionKeyword::isDataEmpty() const { return data_.nItems() == 0;
 // Check AtomType selection and make sure it is consistent based on the source Configurations
 void AtomTypeSelectionKeyword::checkSelection()
 {
-    AtomTypeList newSelection;
+    AtomTypeMix newSelection;
 
     // Loop over existing selection, checking for each AtomType existing in any source Configuration
     for (const AtomTypeData &atd : data_)
@@ -34,7 +34,7 @@ void AtomTypeSelectionKeyword::checkSelection()
         auto found = false;
         for (auto cfg : sourceConfigurations_)
         {
-            if (cfg->usedAtomTypesList().contains(atd.atomType()))
+            if (cfg->usedAtomTypesMix().contains(atd.atomType()))
             {
                 found = true;
                 break;
@@ -50,7 +50,7 @@ void AtomTypeSelectionKeyword::checkSelection()
 }
 
 // Return list of AtomTpe/bool references
-AtomTypeList &AtomTypeSelectionKeyword::selection()
+AtomTypeMix &AtomTypeSelectionKeyword::selection()
 {
     // Update the list first, in case a Configuration has changed
     checkSelection();

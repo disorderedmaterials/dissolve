@@ -70,7 +70,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     int *bins;
 
     n = 0;
-    for (auto &atd : cfg->usedAtomTypesList())
+    for (auto &atd : cfg->usedAtomTypesMix())
     {
         maxr[n] = atd.population();
         nr[n] = 0;
@@ -299,7 +299,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth);
+        originalgr.setUp(cfg->usedAtomTypesMix(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -461,7 +461,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
-    auto &types = unweightedgr.atomTypes();
+    auto &types = unweightedgr.atomTypeMix();
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
                             [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
                                 Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, false, true);
@@ -496,10 +496,10 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
 {
     // Realise an AtomTypeList containing the sum of atom types over all target configurations
     auto &combinedAtomTypes =
-        processingData.realise<AtomTypeList>("SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
+        processingData.realise<AtomTypeMix>("SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (Configuration *cfg : parentModule->targetConfigurations())
-        combinedAtomTypes.add(cfg->usedAtomTypesList());
+        combinedAtomTypes.add(cfg->usedAtomTypesMix());
 
     // Finalise and save the combined AtomTypes matrix
     combinedAtomTypes.finalise();
@@ -578,14 +578,14 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
     // Calculate overall density of combined system, normalising the Configuration weights as we go, and create an
     // AtomTypeList to cover all used types
     double rho0 = 0.0;
-    AtomTypeList combinedAtomTypes;
+    AtomTypeMix combinedAtomTypes;
     RefDataListIterator<Configuration, double> weightsIterator(configWeights);
     while (Configuration *cfg = weightsIterator.iterate())
     {
         weightsIterator.setCurrentData(weightsIterator.currentData() / totalWeight);
         rho0 += weightsIterator.currentData() / cfg->atomicDensity();
 
-        combinedAtomTypes.add(cfg->usedAtomTypesList());
+        combinedAtomTypes.add(cfg->usedAtomTypesMix());
     }
     rho0 = 1.0 / rho0;
     Messenger::print("Effective density for summed unweighted g(r) over group is {} atoms/Angstrom**3.\n", rho0);
@@ -626,7 +626,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
 bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold)
 {
     // Get a copy of the AtomTypeList to work from
-    AtomTypeList atomTypes = setA.atomTypes();
+    auto atomTypes = setA.atomTypeMix();
     double error;
 
     for_each_pair_early(
@@ -689,8 +689,8 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
     else
     {
         // Get indices of AtomTypes
-        auto indexI = partials.atomTypes().indexOf(typeIorTotal);
-        auto indexJ = partials.atomTypes().indexOf(typeJ);
+        auto indexI = partials.atomTypeMix().indexOf(typeIorTotal);
+        auto indexJ = partials.atomTypeMix().indexOf(typeJ);
         if ((indexI == -1) || (indexJ == -1))
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 

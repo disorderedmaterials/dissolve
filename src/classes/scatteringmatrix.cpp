@@ -378,7 +378,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
 
     // Set coefficients in A_
     const auto nUsedTypes = dataWeights.nUsedTypes();
-    const auto &usedTypes = dataWeights.atomTypes();
+    const auto &usedTypes = dataWeights.atomTypeMix();
     for (int n = 0; n < nUsedTypes; ++n)
     {
         for (int m = n; m < nUsedTypes; ++m)

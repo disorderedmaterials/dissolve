@@ -132,7 +132,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
                 return false;
         return true;
     });
-    registerDeserialiser<AtomTypeList>(simpleDeserialiseCore<AtomTypeList>);
+    registerDeserialiser<AtomTypeMix>(simpleDeserialiseCore<AtomTypeMix>);
     registerDeserialiser<Data1D>(simpleDeserialise<Data1D>);
     registerDeserialiser<Data2D>(simpleDeserialise<Data2D>);
     registerDeserialiser<Data3D>(simpleDeserialise<Data3D>);

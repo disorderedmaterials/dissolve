@@ -12,14 +12,14 @@
 // Forward Declarations
 class AtomType;
 
-// AtomTypeList
-class AtomTypeList
+// AtomTypeMix
+class AtomTypeMix
 {
     public:
-    AtomTypeList();
-    ~AtomTypeList();
-    AtomTypeList(const AtomTypeList &source);
-    void operator=(const AtomTypeList &source);
+    AtomTypeMix() = default;
+    ~AtomTypeMix() = default;
+    AtomTypeMix(const AtomTypeMix &source);
+    void operator=(const AtomTypeMix &source);
     AtomTypeData &operator[](int n);
     const AtomTypeData &operator[](int n) const;
 
@@ -38,7 +38,7 @@ class AtomTypeList
     // Add the specified AtomType, returning the AtomTypeData
     AtomTypeData &add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
     // Add the AtomTypes in the supplied object into this one, increasing populations etc.
-    void add(const AtomTypeList &source);
+    void add(const AtomTypeMix &source);
     // Remove specified AtomType
     void remove(std::shared_ptr<AtomType> atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType
@@ -46,7 +46,7 @@ class AtomTypeList
     // Finalise, calculating fractional populations etc.
     void finalise();
     // Finalise, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-    void finalise(const AtomTypeList &exchangeable);
+    void finalise(const AtomTypeMix &exchangeable);
     // Make all AtomTypeData reference only their natural isotope
     void naturalise();
     // Check for presence of AtomType

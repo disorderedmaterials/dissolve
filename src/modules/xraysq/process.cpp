@@ -179,7 +179,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedSQ, wSQtatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     if (wSQtatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes());
+        weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
@@ -190,7 +190,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (saveFormFactors)
     {
         auto result = for_each_pair_early(
-            unweightedSQ.atomTypes().begin(), unweightedSQ.atomTypes().end(),
+            unweightedSQ.atomTypeMix().begin(), unweightedSQ.atomTypeMix().end(),
             [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
                 if (i == j)
                 {
@@ -240,7 +240,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.setUpPartials(unweightedSQ.atomTypes());
+        weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);

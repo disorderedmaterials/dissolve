@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "classes/coredata.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/atomtypeselection.h"
@@ -104,7 +104,7 @@ void AtomTypeSelectionKeywordWidget::updateWidgetValues(const CoreData &coreData
 void AtomTypeSelectionKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated AtomTypes for any that are checked
-    AtomTypeList newSelection;
+    AtomTypeMix newSelection;
     for (auto n = 0; n < ui.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui.SelectionList->item(n);
