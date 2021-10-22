@@ -40,7 +40,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
 
     // Grab some useful values
     const auto *box = cfg->box();
-    auto nTypes = cfg->nUsedAtomTypes();
+    auto nTypes = cfg->nAtomTypes();
     auto nAtoms = cfg->nAtoms();
     auto &atoms = cfg->atoms();
 
@@ -305,7 +305,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
     const auto nReflections = braggReflections.size();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
-    const auto nTypes = cfg->nUsedAtomTypes();
+    const auto nTypes = cfg->nAtomTypes();
     auto braggPartialsObject =
         moduleData.realiseIf<Array2D<Data1D>>("OriginalBragg", uniqueName(), GenericItem::InRestartFileFlag);
     auto &braggPartials = braggPartialsObject.first;
@@ -337,7 +337,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
     int bin;
-    auto &types = cfg->usedAtomTypesMix();
+    auto &types = cfg->atomTypes();
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
                             [&](int typeI, auto &atd1, int typeJ, auto &atd2) {
                                 // Retrieve partial container and make sure its tag is set
@@ -372,7 +372,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPoo
     const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", uniqueName());
     const auto nReflections = braggReflections.size();
 
-    const auto nTypes = cfg->nUsedAtomTypes();
+    const auto nTypes = cfg->nAtomTypes();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
@@ -396,7 +396,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPoo
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        auto &types = cfg->usedAtomTypesMix();
+        auto &types = cfg->atomTypes();
         int typeI = 0;
         for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {

@@ -141,7 +141,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     }
 
     // Finalise used AtomType list
-    usedAtomTypes_.finalise();
+    atomTypes_.finalise();
 
     // Set-up Cells for the Box
     cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);

@@ -13,7 +13,7 @@ void Configuration::empty()
 {
     molecules_.clear();
     atoms_.clear();
-    usedAtomTypes_.clear();
+    atomTypes_.clear();
     box_ = std::make_unique<CubicBox>(1.0);
     cells_.clear();
     appliedSizeFactor_ = 1.0;
@@ -22,20 +22,11 @@ void Configuration::empty()
     ++contentsVersion_;
 }
 
-// Return specified used type
-std::shared_ptr<AtomType> Configuration::usedAtomType(int index) { return usedAtomTypes_.atomType(index); }
-
-// Return specified used type data
-AtomTypeData &Configuration::usedAtomTypeData(int index) { return usedAtomTypes_[index]; }
-
-// Return first AtomTypeData for this Configuration
-const AtomTypeData &Configuration::usedAtomTypes() const { return usedAtomTypes_.first(); }
-
 // Return AtomTypeMix for this Configuration
-const AtomTypeMix &Configuration::usedAtomTypesMix() const { return usedAtomTypes_; }
+const AtomTypeMix &Configuration::atomTypes() const { return atomTypes_; }
 
 // Return number of atom types used in this Configuration
-int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
+int Configuration::nAtomTypes() const { return atomTypes_.nItems(); }
 
 // Adjust population of specified Species in the Configuration
 void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
@@ -181,7 +172,7 @@ Atom &Configuration::addAtom(AtomChangeToken &lock, const SpeciesAtom *sourceAto
     newAtom.setCoordinates(r);
 
     // Update our typeIndex (non-isotopic) and set local and master type indices
-    AtomTypeData &atd = usedAtomTypes_.add(sourceAtom->atomType(), 1);
+    AtomTypeData &atd = atomTypes_.add(sourceAtom->atomType(), 1);
     newAtom.setLocalTypeIndex(atd.listIndex());
     newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
 

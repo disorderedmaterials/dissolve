@@ -70,7 +70,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     int *bins;
 
     n = 0;
-    for (auto &atd : cfg->usedAtomTypesMix())
+    for (auto &atd : cfg->atomTypes())
     {
         maxr[n] = atd.population();
         nr[n] = 0;
@@ -299,7 +299,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->usedAtomTypesMix(), rdfRange, rdfBinWidth);
+        originalgr.setUp(cfg->atomTypes(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -499,7 +499,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
         processingData.realise<AtomTypeMix>("SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (Configuration *cfg : parentModule->targetConfigurations())
-        combinedAtomTypes.add(cfg->usedAtomTypesMix());
+        combinedAtomTypes.add(cfg->atomTypes());
 
     // Finalise and save the combined AtomTypes matrix
     combinedAtomTypes.finalise();
@@ -585,7 +585,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
         weightsIterator.setCurrentData(weightsIterator.currentData() / totalWeight);
         rho0 += weightsIterator.currentData() / cfg->atomicDensity();
 
-        combinedAtomTypes.add(cfg->usedAtomTypesMix());
+        combinedAtomTypes.add(cfg->atomTypes());
     }
     rho0 = 1.0 / rho0;
     Messenger::print("Effective density for summed unweighted g(r) over group is {} atoms/Angstrom**3.\n", rho0);

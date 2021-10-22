@@ -34,7 +34,7 @@ void AtomTypeSelectionKeyword::checkSelection()
         auto found = false;
         for (auto cfg : sourceConfigurations_)
         {
-            if (cfg->usedAtomTypesMix().contains(atd.atomType()))
+            if (cfg->atomTypes().contains(atd.atomType()))
             {
                 found = true;
                 break;

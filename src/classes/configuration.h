@@ -82,7 +82,7 @@ class Configuration
     // Species populations present in the Configuration
     std::vector<std::pair<const Species *, int>> speciesPopulations_;
     // AtomType mix, containing unique (non-isotopic) atom types over all Species used in this configuration
-    AtomTypeMix usedAtomTypes_;
+    AtomTypeMix atomTypes_;
     // Contents version, incremented whenever Configuration content or Atom positions change
     VersionCounter contentsVersion_;
     // Molecule vector
@@ -94,15 +94,11 @@ class Configuration
     // Empty contents of Configuration, leaving core definitions intact
     void empty();
     // Return specified used type
-    std::shared_ptr<AtomType> usedAtomType(int index);
-    // Return specified used type data
-    AtomTypeData &usedAtomTypeData(int index);
-    // Return first AtomTypeData for this Configuration
-    const AtomTypeData &usedAtomTypes() const;
+    std::shared_ptr<AtomType> atomTypes(int index);
     // Return AtomTypeMix for this Configuration
-    const AtomTypeMix &usedAtomTypesMix() const;
+    const AtomTypeMix &atomTypes() const;
     // Return number of atom types used in this Configuration
-    int nUsedAtomTypes() const;
+    int nAtomTypes() const;
     // Adjust population of specified Species in the Configuration
     void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
