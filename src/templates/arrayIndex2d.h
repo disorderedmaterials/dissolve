@@ -1,22 +1,35 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "base/messenger.h"
-#include "templates/array2d.h"
-#include "templates/list.h"
-#include "templates/vector3.h"
-#include <numeric>
-#include <tuple>
-#include <vector>
-
-template <class A> class ArrayIndex2D
+class ArrayIndex2D
 {
     public:
-    ArrayIndex2D(A &inArray) : arr_(inArray)
+    ArrayIndex2D(Array2D<double> inArray)
     {
         nX_ = inArray.nRows();
         nY_ = inArray.nColumns();
-        ptr_ = &inArray[{0, 0}];
+        ptr_ = 0;
+    }
+
+    ArrayIndex2D(Array2D<double> inArray, std::tuple<int, int> position)
+    {
+        nX_ = inArray.nRows();
+        nY_ = inArray.nColumns();
+        ptr_ = nX_ * nY_;
+    }
+
+    ArrayIndex2D(int nX, int nY)
+    {
+        nX_ = nX;
+        nY_ = nY;
+        ptr_ = 0;
+    }
+
+    ArrayIndex2D(int nX, int nY, std::tuple<int, int> position)
+    {
+        nX_ = nX;
+        nY_ = nY;
+        ptr_ = nX_ * nY_;
     }
 
     ArrayIndex2D &operator++()
@@ -52,24 +65,24 @@ template <class A> class ArrayIndex2D
         return *this;
     }
 
-    std::tuple<int, int> operator*()
+    bool operator==(const ArrayIndex2D &rhs)
     {
-        int rawIndex = ptr_ - &arr_[{0, 0}];
-        int x = rawIndex / nY_;
-        int y = rawIndex % nY_;
-        std::tuple<int, int> arrayIndex = std::make_tuple(x, y);
-        return arrayIndex;
+        if (*this == rhs)
+            return true;
+        else
+            return false;
     }
 
-    std::tuple<int, int> begin() { return std::make_tuple(0, 0); }
+    bool operator!=(const ArrayIndex2D &rhs) { return !(*this == rhs); }
 
-    std::tuple<int, int> end() { return std::make_tuple(nX_, nY_); }
+    std::tuple<int, int> operator*() { return {ptr_ / nY_, ptr_ % nY_}; }
 
-    bool hasNext() { return ptr_ <= &arr_[{nX_, nY_}]; }
+    ArrayIndex2D begin() { return ArrayIndex2D(nX_, nY_); }
+
+    ArrayIndex2D end() { return ArrayIndex2D(nX_, nY_, {nX_ - 1, nY_ - 1}); }
 
     private:
     int nX_;
     int nY_;
-    const double *ptr_;
-    const A &arr_;
+    int ptr_;
 };
