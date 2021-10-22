@@ -348,13 +348,12 @@ bool Data3D::deserialise(LineParser &parser)
     // Read errors / valuse
     if (hasError_)
     {
-        ArrayIndex3D index(values_);
-        while (index++.hasNext())
+        for (auto index : ArrayIndex3D(values_))
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            values_[*index] = parser.argd(0);
-            errors_[*index] = parser.argd(1);
+            values_[index] = parser.argd(0);
+            errors_[index] = parser.argd(1);
         }
     }
     else
@@ -399,10 +398,9 @@ bool Data3D::serialise(LineParser &parser) const
     // Write values / errors
     if (hasError_)
     {
-        ArrayIndex3D index(values_);
-        while (index++.hasNext())
+        for (auto index : ArrayIndex3D(values_))
         {
-            if (!parser.writeLineF("{:e}  {:e}\n", values_[*index], errors_[*index]))
+            if (!parser.writeLineF("{:e}  {:e}\n", values_[index], errors_[index]))
                 return false;
         }
     }

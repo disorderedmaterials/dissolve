@@ -356,7 +356,6 @@ bool Data2D::deserialise(LineParser &parser)
     // Read errors / valuse
     if (hasError_)
     {
-        // for each (object.begin(), object.end(), *object)
         for (auto index : ArrayIndex2D(values_))
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

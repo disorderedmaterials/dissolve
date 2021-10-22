@@ -1,24 +1,40 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "base/messenger.h"
-#include "templates/array3d.h"
-#include "templates/list.h"
-#include "templates/vector3.h"
-#include <numeric>
-#include <tuple>
-#include <vector>
-
-template <class A> class ArrayIndex3D
+class ArrayIndex3D
 {
 
     public:
-    ArrayIndex3D(const A &inArray) : arr_(inArray)
+    ArrayIndex3D(Array3D<double> inArray)
     {
         nX_ = inArray.nX();
         nY_ = inArray.nY();
         nZ_ = inArray.nZ();
-        ptr_ = &inArray[{0, 0, 0}];
+        ptr_ = 0;
+    }
+
+    ArrayIndex3D(Array3D<double> inArray, std::tuple<int, int, int> position)
+    {
+        nX_ = inArray.nX();
+        nY_ = inArray.nY();
+        nZ_ = inArray.nZ();
+        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
+    }
+
+    ArrayIndex3D(int nX, int nY, int nZ)
+    {
+        nX_ = nX;
+        nY_ = nY;
+        nZ_ = nZ;
+        ptr_ = 0;
+    }
+
+    ArrayIndex3D(int nX, int nY, int nZ, std::tuple<int, int, int> position)
+    {
+        nX_ = nX;
+        nY_ = nY;
+        nZ_ = nZ;
+        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
     }
 
     ArrayIndex3D &operator++()
@@ -54,26 +70,25 @@ template <class A> class ArrayIndex3D
         return *this;
     }
 
-    std::tuple<int, int, int> operator*()
+    bool operator==(const ArrayIndex3D &rhs)
     {
-        int rawIndex = ptr_ - &arr_[{0, 0, 0}];
-        int x = rawIndex / (nY_ * nZ_);
-        int y = rawIndex % nY_ / nZ_;
-        int z = rawIndex % nY_ % nZ_;
-        std::tuple<int, int, int> arrayIndex = std::make_tuple(x, y, z);
-        return arrayIndex;
+        if (*this == rhs)
+            return true;
+        else
+            return false;
     }
 
-    std::tuple<int, int, int> begin() { return std::make_tuple(0, 0, 0); }
+    bool operator!=(const ArrayIndex3D &rhs) { return !(*this == rhs); }
 
-    std::tuple<int, int, int> end() { return std::make_tuple(nX_, nY_, nZ_); }
+    std::tuple<int, int, int> operator*() { return {ptr_ / (nY_ * nZ_), ptr_ % nY_ / nZ_, ptr_ % nY_ % nZ_}; }
 
-    bool hasNext() { return (ptr_ <= &arr_[{nX_, nY_, nZ_}]); }
+    ArrayIndex3D begin() { return ArrayIndex3D(nX_, nY_, nZ_); }
+
+    ArrayIndex3D end() { return ArrayIndex3D(nX_, nY_, nZ_, {nX_ - 1, nY_ - 1, nZ_ - 1}); }
 
     private:
     int nX_;
     int nY_;
     int nZ_;
-    const double *ptr_;
-    const A &arr_;
+    int ptr_;
 };
