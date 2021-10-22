@@ -10,7 +10,7 @@
 class AtomType
 {
     public:
-    AtomType() = default;
+    AtomType(Elements::Element Z = Elements::Unknown);
     ~AtomType() = default;
 
     /*
@@ -20,7 +20,7 @@ class AtomType
     // Name
     std::string name_{"XX"};
     // Associated chemical element
-    Elements::Element Z_{Elements::Unknown};
+    Elements::Element Z_;
 
     public:
     // Set name of AtomType

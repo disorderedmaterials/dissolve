@@ -5,6 +5,8 @@
 #include "data/elements.h"
 #include "templates/algorithms.h"
 
+AtomType::AtomType(Elements::Element Z) : Z_(Z) {}
+
 /*
  * Character
  */

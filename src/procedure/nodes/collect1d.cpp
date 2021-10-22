@@ -41,6 +41,14 @@ bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Data
  */
 
+// Return current data
+Data1D Collect1DProcedureNode::data() const
+{
+    assert(histogram_);
+
+    return histogram_->get().data();
+}
+
 // Return accumulated data
 const Data1D &Collect1DProcedureNode::accumulatedData() const
 {

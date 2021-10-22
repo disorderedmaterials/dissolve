@@ -68,6 +68,7 @@ class KeywordBase : public ListItem<KeywordBase>
         Vec3NodeValueData,
         VectorIntegerDoubleData,
         VectorIntegerStringData,
+        VectorDoublePairData,
         VectorStringPairData
     };
     KeywordBase(KeywordDataType type);

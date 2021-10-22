@@ -17,6 +17,8 @@ void DataTestModule::initialise()
                   "Type of error calculation to use");
     keywords_.add("Test", new StringPairVectorKeyword(internal1DData_), "InternalData1D",
                   "Specify one-dimensional internal reference and test data", "<target1> <target2>");
+    keywords_.add("Test", new StringDoubleVectorKeyword(), "SampledDouble",
+                  "Specify test reference values for named SampledDouble (value) data", "<target> <value> [...]");
     keywords_.add("Test", new ValueStoreKeyword(testSampledVectorData_), "SampledVector",
                   "Specify test reference values for named SampledVector data",
                   "<target> <fileformat> <filename> [options...]");

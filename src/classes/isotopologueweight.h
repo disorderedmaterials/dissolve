@@ -36,6 +36,8 @@ class IsotopologueWeight
     const Isotopologue *isotopologue() const;
     // Set relative weight
     void setWeight(double weight);
+    // Add to relative weight
+    void addWeight(double weight);
     // Return relative weight
     double weight() const;
 };

@@ -72,7 +72,7 @@ class AtomTypeList
     // Return nth referenced AtomType
     const std::shared_ptr<AtomType> atomType(int n) const;
     // Return AtomTypeData for specified AtomType
-    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(const std::shared_ptr<AtomType> &atomType);
+    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(const std::shared_ptr<AtomType> &atomType) const;
     // Print AtomType populations
     void print() const;
 

@@ -287,9 +287,14 @@ Module CalculateCN  'CN(COM-COM)'
   RangeA  0.0  3.3
   RangeB  3.3  5.6
   RangeBEnabled  True
-  TestRangeA  4.32359551
-  TestRangeB  19.413049
+  Frequency  1
+EndModule
+
+Module DataTest
   Frequency  95
+  SampledDouble  'CN(COM-COM)//Analyser//Sum1D//CN//A'   4.32359551
+  SampledDouble  'CN(COM-COM)//Analyser//Sum1D//CN//B'  19.413049
+  Threshold  0.025
 EndModule
 
 Module DataTest

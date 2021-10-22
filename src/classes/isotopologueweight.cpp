@@ -25,5 +25,8 @@ const Isotopologue *IsotopologueWeight::isotopologue() const { return isotopolog
 // Set relative weight
 void IsotopologueWeight::setWeight(double weight) { weight_ = weight; }
 
+// Add to relative weight
+void IsotopologueWeight::addWeight(double weight) { weight_ += weight; }
+
 // Return relative weight
 double IsotopologueWeight::weight() const { return weight_; }
