@@ -15,7 +15,7 @@ class ArrayIndex2D
     {
         nX_ = inArray.nRows();
         nY_ = inArray.nColumns();
-        ptr_ = nX_ * nY_;
+        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position);
     }
 
     ArrayIndex2D(int nX, int nY)
@@ -29,7 +29,7 @@ class ArrayIndex2D
     {
         nX_ = nX;
         nY_ = nY;
-        ptr_ = nX_ * nY_;
+        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position);
     }
 
     ArrayIndex2D &operator++()
