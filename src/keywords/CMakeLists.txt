@@ -1,6 +1,5 @@
 add_library(
   keywords
-  atomtypereflist.cpp
   atomtypevector.cpp
   base.cpp
   bool.cpp
@@ -45,7 +44,6 @@ add_library(
   vector_intstring.cpp
   vector_stringdouble.cpp
   vector_stringpair.cpp
-  atomtypereflist.h
   atomtypevector.h
   base.h
   bool.h
