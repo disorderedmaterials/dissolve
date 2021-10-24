@@ -6,10 +6,7 @@
 #include "classes/data1dstore.h"
 #include "io/import/data1d.h"
 
-Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data1DStore)
-    : KeywordData<Data1DStore &>(KeywordBase::Data1DStoreData, data1DStore)
-{
-}
+Data1DStoreKeyword::Data1DStoreKeyword() : KeywordData<Data1DStore>(KeywordBase::Data1DStoreData, {}) {}
 
 Data1DStoreKeyword::~Data1DStoreKeyword() = default;
 

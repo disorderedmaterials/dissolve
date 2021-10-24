@@ -53,21 +53,6 @@ class DataTestModule : public Module
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
-     * Functions
-     */
-    private:
-    // Internal 1D data testing
-    std::vector<std::pair<std::string, std::string>> internal1DData_;
-    // Test 1D datasets
-    Data1DStore test1DData_;
-    // Test 2D datasets
-    Data2DStore test2DData_;
-    // Test 3D datasets
-    Data3DStore test3DData_;
-    // Test SampledValue datasets
-    ValueStore testSampledVectorData_;
-
-    /*
      * GUI Widget
      */
     public:

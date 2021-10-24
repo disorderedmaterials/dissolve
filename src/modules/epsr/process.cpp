@@ -133,6 +133,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto testMode = keywords_.asBool("Test");
     const auto overwritePotentials = keywords_.asBool("OverwritePotentials");
     const auto testThreshold = keywords_.asDouble("TestThreshold");
+    const auto &testData = keywords_.retrieve<Data1DStore>("TestReference");
     const auto weighting = keywords_.asDouble("Weighting");
 
     // EPSR constants
@@ -489,9 +490,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (testMode)
         {
             testDataName = fmt::format("WeightedFR-{}-total", module->uniqueName());
-            if (testData_.containsData(testDataName))
+            if (testData.containsData(testDataName))
             {
-                auto optRefData = testData_.data(testDataName);
+                auto optRefData = testData.data(testDataName);
                 if (!optRefData)
                     return Messenger::error("Reference data '{}' not found.\n", testDataName);
                 auto error = Error::percent(simulatedFR, *optRefData);
@@ -570,7 +571,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
-                                auto optRefData = testData_.data(testDataName);
+                                auto optRefData = testData.data(testDataName);
                                 if (optRefData)
                                 {
                                     auto error = Error::percent(estimatedSQ[{i, j}], *optRefData);

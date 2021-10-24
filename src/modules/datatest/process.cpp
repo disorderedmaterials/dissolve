@@ -2,6 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
+#include "keywords/vector_stringdouble.h"
+#include "keywords/vector_stringpair.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/sampleddata1d.h"
@@ -24,7 +26,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     // Loop over reference one-dimensional data supplied
-    for (auto &[referenceData, format] : test1DData_.data())
+    for (auto &[referenceData, format] : keywords_.retrieve<Data1DStore>("Data1D").data())
     {
         // Locate the target reference data
         auto optData = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
@@ -43,7 +45,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Loop over internal one-dimensional data tests
-    for (auto &[tag1, tag2] : internal1DData_)
+    for (auto &[tag1, tag2] : keywords_.retrieve<StringPairVectorKeywordData>("InternalData1D"))
     {
         // Locate the target reference datasets
         auto optData1 = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag1);
@@ -66,7 +68,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Loop over reference two-dimensional data supplied
-    for (auto &[referenceData, format] : test2DData_.data())
+    for (auto &[referenceData, format] : keywords_.retrieve<Data2DStore>("Data2D").data())
     {
         // Locate the target reference data
         auto optData = dissolve.processingModuleData().search<const Data2D>(referenceData.tag());
@@ -103,7 +105,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Loop over reference values supplied for SampledVector objects
-    for (auto &[tag, referenceData, format] : testSampledVectorData_.data())
+    for (auto &[tag, referenceData, format] : keywords_.retrieve<ValueStore>("SampledVector").data())
     {
         // Locate the target reference data
         auto optData = dissolve.processingModuleData().search<const SampledVector>(tag);

@@ -4,7 +4,6 @@
 #pragma once
 
 #include "io/fileandformat.h"
-#include "keywords/types.h"
 
 // Forward Declarations
 class Data1D;

@@ -7,10 +7,10 @@
 #include "keywords/data.h"
 
 // Keyword with a store of Data3D
-class Data3DStoreKeyword : public KeywordData<Data3DStore &>
+class Data3DStoreKeyword : public KeywordData<Data3DStore>
 {
     public:
-    Data3DStoreKeyword(Data3DStore &dataStore);
+    Data3DStoreKeyword();
     ~Data3DStoreKeyword() override;
 
     /*

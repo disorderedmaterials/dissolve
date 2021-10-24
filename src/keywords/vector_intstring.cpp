@@ -5,9 +5,8 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-IntegerStringVectorKeyword::IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers,
-                                                       std::optional<int> nRequiredValues)
-    : KeywordData<IntegerStringVectorKeywordData &>(KeywordBase::VectorIntegerStringData, data),
+IntegerStringVectorKeyword::IntegerStringVectorKeyword(int nRequiredIntegers, std::optional<int> nRequiredValues)
+    : KeywordData<IntegerStringVectorKeywordData>(KeywordBase::VectorIntegerStringData, {}),
       nRequiredIntegers_(nRequiredIntegers), nRequiredValues_(nRequiredValues)
 {
 }

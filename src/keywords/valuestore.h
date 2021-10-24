@@ -3,16 +3,14 @@
 
 #pragma once
 
+#include "classes/valuestore.h"
 #include "keywords/data.h"
 
-// Forward Declarations
-class ValueStore;
-
 // Keyword with a store of values
-class ValueStoreKeyword : public KeywordData<ValueStore &>
+class ValueStoreKeyword : public KeywordData<ValueStore>
 {
     public:
-    ValueStoreKeyword(ValueStore &dataStore);
+    ValueStoreKeyword();
     ~ValueStoreKeyword() override;
 
     /*

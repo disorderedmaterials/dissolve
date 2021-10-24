@@ -4,8 +4,8 @@
 #include "keywords/vector_stringpair.h"
 #include "base/lineparser.h"
 
-StringPairVectorKeyword::StringPairVectorKeyword(StringPairVectorKeywordData &data)
-    : KeywordData<StringPairVectorKeywordData &>(KeywordBase::VectorStringPairData, data)
+StringPairVectorKeyword::StringPairVectorKeyword()
+    : KeywordData<StringPairVectorKeywordData>(KeywordBase::VectorStringPairData, {})
 {
 }
 
