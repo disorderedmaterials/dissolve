@@ -250,18 +250,16 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
     // Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other'
     // tab at the end
     RefList<KeywordBase> remainingKeywords;
-    ListIterator<KeywordBase> keywordIterator(keywords.keywords());
-    while (KeywordBase *keyword = keywordIterator.iterate())
+    for (auto *keyword : keywords.keywords())
         remainingKeywords.append(keyword);
 
-    ListIterator<KeywordGroup> groupIterator(keywords.groups());
-    while (KeywordGroup *group = groupIterator.iterate())
+    for (auto &group : keywords.groups())
     {
         // If this is the 'HIDDEN' group, don't display any of its widgets
-        if (DissolveSys::sameString(group->name(), "HIDDEN"))
+        if (DissolveSys::sameString(group.name(), "HIDDEN"))
         {
             // Remove all keywords in this group from the remainingKeywords list
-            for (KeywordBase *keyword : group->keywords())
+            for (KeywordBase *keyword : group.keywords())
                 remainingKeywords.remove(keyword);
 
             continue;
@@ -272,7 +270,7 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
         QFormLayout *groupLayout = new QFormLayout(groupWidget);
 
         // Loop over keywords in the group and add them to our groupbox
-        for (KeywordBase *keyword : group->keywords())
+        for (auto *keyword : group.keywords())
         {
             // Create / setup the keyword widget
             QWidget *widget = createKeywordWidget(keywordWidgets_, keyword, coreData);
@@ -299,7 +297,7 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
         }
 
         // Group is finished, so add the widget as a new tab in our QToolBox
-        addItem(groupWidget, QString::fromStdString(std::string(group->name())));
+        addItem(groupWidget, QString::fromStdString(std::string(group.name())));
     }
 
     // If there are any 'group-orphaned' keywords, add these at the bottom

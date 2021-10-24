@@ -25,7 +25,7 @@ bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_vi
                       int optionMask)
 {
     // Take ownership of the passed object, and set its basic information
-    keywords_.own(object);
+    keywords_.push_back(object);
     object->set(name, description, arguments, optionMask);
 
     return true;
@@ -35,16 +35,16 @@ bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_vi
 bool KeywordList::add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
                       int optionMask)
 {
-    KeywordGroup *group = addGroup(groupName);
-    return group->add(object, name, description, optionMask);
+    auto &group = addGroup(groupName);
+    return group.add(object, name, description, optionMask);
 }
 
 // Add keyword to named group (including argument description)
 bool KeywordList::add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
                       std::string_view arguments, int optionMask)
 {
-    KeywordGroup *group = addGroup(groupName);
-    return group->add(object, name, description, arguments, optionMask);
+    auto &group = addGroup(groupName);
+    return group.add(object, name, description, arguments, optionMask);
 }
 
 // Add link to specified keyword that exists elsewhere
@@ -72,44 +72,45 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
 // Find named keyword
 KeywordBase *KeywordList::find(std::string_view name) const
 {
-    for (auto *kwd = keywords_.first(); kwd != nullptr; kwd = kwd->next())
-        if (DissolveSys::sameString(name, kwd->name()))
-            return kwd->base();
+    auto it = std::find_if(keywords_.begin(), keywords_.end(),
+                           [name](const auto *kwd) { return DissolveSys::sameString(name, kwd->name()); });
+    if (it != keywords_.end())
+        return (*it)->base();
 
     return nullptr;
 }
 
 // Cut keyword from list
-void KeywordList::cut(KeywordBase *kwd) { keywords_.cut(kwd); }
+void KeywordList::cut(KeywordBase *kwd)
+{
+    auto it = std::find(keywords_.begin(), keywords_.end(), kwd);
+    if (it != keywords_.end())
+        keywords_.erase(it);
+}
 
 // Return first keyword in list
-const List<KeywordBase> &KeywordList::keywords() const { return keywords_; }
+const std::vector<KeywordBase *> &KeywordList::keywords() const { return keywords_; }
 
 /*
  * Groups
  */
 
 // Create and/or return named keyword group
-KeywordGroup *KeywordList::addGroup(std::string_view name)
+KeywordGroup &KeywordList::addGroup(std::string_view name)
 {
-    // Check that a group with the specified name doesn't already exist
-    KeywordGroup *group = nullptr;
-    for (group = groups_.first(); group != nullptr; group = group->next())
-        if (DissolveSys::sameString(name, group->name()))
-            break;
+    auto it = std::find_if(groups_.begin(), groups_.end(),
+                           [name](const auto &group) { return DissolveSys::sameString(name, group.name()); });
+    if (it != groups_.end())
+        return *it;
 
-    if (!group)
-    {
-        group = new KeywordGroup(*this);
-        group->setName(name);
-        groups_.own(group);
-    }
+    auto &group = groups_.emplace_back(*this);
+    group.setName(name);
 
     return group;
 }
 
 // Return defined groups
-const List<KeywordGroup> &KeywordList::groups() const { return groups_; }
+const std::vector<KeywordGroup> &KeywordList::groups() const { return groups_; }
 
 /*
  * Conversion
@@ -257,8 +258,7 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &
 // Write all keywords to specified LineParser
 bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
-    ListIterator<KeywordBase> keywordIterator(keywords_);
-    while (KeywordBase *keyword = keywordIterator.iterate())
+    for (auto *keyword : keywords_)
     {
         // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
         if (onlyIfSet && (!keyword->base()->hasBeenSet()))
@@ -278,12 +278,11 @@ bool KeywordList::writeGroups(LineParser &parser, std::string_view prefix, bool 
 {
     // Loop over keyword groups
     auto firstGroup = true;
-    ListIterator<KeywordGroup> groupsIterator(groups_);
-    while (KeywordGroup *group = groupsIterator.iterate())
+    for (auto &group : groups_)
     {
         // Loop over keywords in group
         auto firstWritten = true;
-        for (KeywordBase *keyword : group->keywords())
+        for (auto *keyword : group.keywords())
         {
             // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
             if (onlyIfSet && (!keyword->base()->hasBeenSet()))
@@ -296,7 +295,7 @@ bool KeywordList::writeGroups(LineParser &parser, std::string_view prefix, bool 
                 if ((!firstGroup) && (!parser.writeLineF("\n")))
                     return false;
 
-                if (!parser.writeLineF("{}# {}\n", prefix, group->name()))
+                if (!parser.writeLineF("{}# {}\n", prefix, group.name()))
                     return false;
             }
 

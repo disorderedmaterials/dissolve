@@ -17,7 +17,7 @@ FileAndFormatKeyword::~FileAndFormatKeyword() = default;
  */
 
 // Return whether the underlying FileAndFormat has any options
-bool FileAndFormatKeyword::hasOptions() const { return (data_.keywords().keywords().nItems() > 0); }
+bool FileAndFormatKeyword::hasOptions() const { return !data_.keywords().keywords().empty(); }
 
 /*
  * Arguments

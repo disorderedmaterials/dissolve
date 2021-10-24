@@ -6,7 +6,7 @@
 #include "base/enumoptions.h"
 #include "keywords/data.h"
 #include "keywords/group.h"
-#include "templates/list.h"
+#include <list>
 
 // Keyword List
 class KeywordList
@@ -20,7 +20,7 @@ class KeywordList
      */
     private:
     // List of defined keywords
-    List<KeywordBase> keywords_;
+    std::vector<KeywordBase *> keywords_;
 
     public:
     // Add keyword
@@ -45,22 +45,22 @@ class KeywordList
     // Cut keyword from list
     void cut(KeywordBase *kwd);
     // Return keywords list
-    const List<KeywordBase> &keywords() const;
+    const std::vector<KeywordBase *> &keywords() const;
 
     /*
      * Groups
      */
     private:
     // Keywords organised by group
-    List<KeywordGroup> groups_;
+    std::vector<KeywordGroup> groups_;
 
     private:
     // Create and/or return named keyword group
-    KeywordGroup *addGroup(std::string_view name);
+    KeywordGroup &addGroup(std::string_view name);
 
     public:
     // Return defined groups
-    const List<KeywordGroup> &groups() const;
+    const std::vector<KeywordGroup> &groups() const;
 
     /*
      * Set / Get
