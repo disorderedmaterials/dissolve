@@ -86,6 +86,7 @@ set(keywordwidgets_SRCS
     nodevalue_funcs.cpp
     nodevalueenumoptions_funcs.cpp
     nodevector_funcs.cpp
+    producers.cpp
     range_funcs.cpp
     species_funcs.cpp
     speciessite_funcs.cpp
@@ -98,6 +99,7 @@ set(keywordwidgets_SRCS
     vec3labels.cpp
     vec3nodevalue_funcs.cpp
     base.h
+    producers.h
 )
 
 # Target 'keywordwidgets'

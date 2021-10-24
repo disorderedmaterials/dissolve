@@ -8,8 +8,7 @@
 
 NodeBranchKeyword::NodeBranchKeyword(SequenceProcedureNode *&data, ProcedureNode *parentNode,
                                      ProcedureNode::NodeContext branchContext)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode),
-      branchContext_(branchContext)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), branchContext_(branchContext)
 {
 }
 

@@ -11,10 +11,7 @@
 class EnumOptionsBaseKeyword : public KeywordBase
 {
     public:
-    explicit EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions)
-        : KeywordBase(typeid(this)), baseOptions_(baseOptions)
-    {
-    }
+    explicit EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : KeywordBase(typeid(this)), baseOptions_(baseOptions) {}
 
     /*
      * Source Options

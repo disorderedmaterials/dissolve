@@ -12,9 +12,11 @@ class AtomType;
 class Configuration;
 class CoreData;
 class Isotopologue;
+class KeywordWidgetBase;
 class LineParser;
 class Module;
 class ProcedureNode;
+class QWidget;
 class Species;
 class SpeciesSite;
 
@@ -55,6 +57,8 @@ class KeywordBase
     public:
     // Set base keyword information
     void setBaseInfo(std::string_view name, std::string_view description);
+    // Return typeindex for the keyword
+    const std::type_index typeIndex() const;
     // Set option mask
     void setOptionMask(int opttionMask);
     // Flag that data has been set by some other means

@@ -7,8 +7,7 @@
 // Static Singletons
 RefList<KeywordBase> KeywordBase::allKeywords_;
 
-KeywordBase::KeywordBase(const std::type_index typeIndex)
-    : typeIndex_(typeIndex), set_(false)
+KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false)
 {
     // Add ourselves to the master reference list of keywords
     allKeywords_.append(this);
@@ -31,8 +30,11 @@ void KeywordBase::setBaseInfo(std::string_view name, std::string_view descriptio
     description_ = description;
 }
 
+// Return typeindex for the keyword
+const std::type_index KeywordBase::typeIndex() const { return typeIndex_; }
+
 // Set option mask
-void KeywordBase::setOptionMask(int opttionMask) { optionMask_ = opttionMask; }
+void KeywordBase::setOptionMask(int optionMask) { optionMask_ = optionMask; }
 
 // Flag that data has been set by some other means
 void KeywordBase::setAsModified() { set_ = true; }

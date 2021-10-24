@@ -16,8 +16,7 @@ ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, int maxMod
 
 ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes,
                                          int maxModules)
-    : KeywordBase(typeid(this)), data_(data), moduleTypes_(std::move(allowedModuleTypes)),
-      maxModules_(maxModules)
+    : KeywordBase(typeid(this)), data_(data), moduleTypes_(std::move(allowedModuleTypes)), maxModules_(maxModules)
 {
 }
 

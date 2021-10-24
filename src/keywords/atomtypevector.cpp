@@ -7,7 +7,9 @@
 #include "classes/coredata.h"
 
 AtomTypeVectorKeyword::AtomTypeVectorKeyword(std::vector<std::shared_ptr<AtomType>> &data)
-    : KeywordBase(typeid(this)), data_(data) {}
+    : KeywordBase(typeid(this)), data_(data)
+{
+}
 
 /*
  * Data

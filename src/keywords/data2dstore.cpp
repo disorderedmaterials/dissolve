@@ -5,9 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/data2dstore.h"
 
-Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data) : KeywordBase(typeid(this)), data_(data)
-{
-}
+Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data
