@@ -21,7 +21,7 @@ std::string_view KeywordGroup::name() const { return name_; }
  */
 
 // Add specified keyword to the group
-void KeywordGroup::addKeywordToGroup(KeywordBase *object) { keywords_.append(object); }
+void KeywordGroup::addKeywordToGroup(KeywordBase *object) { keywords_.push_back(object); }
 
 // Add keyword (pass-thru to KeywordList)
 bool KeywordGroup::add(KeywordBase *object, std::string_view keyword, std::string_view description, int optionMask)
@@ -47,4 +47,4 @@ bool KeywordGroup::add(KeywordBase *object, std::string_view keyword, std::strin
 }
 
 // Return first keyword in list
-RefList<KeywordBase> &KeywordGroup::keywords() { return keywords_; }
+const std::vector<KeywordBase *> &KeywordGroup::keywords() const { return keywords_; }

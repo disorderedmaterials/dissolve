@@ -75,8 +75,7 @@ void Module::printValidKeywords()
 {
     Messenger::print("Valid keywords for '{}' Module are:\n", type());
 
-    ListIterator<KeywordBase> keywordIterator(keywords_.keywords());
-    while (KeywordBase *keyword = keywordIterator.iterate())
+    for (auto *keyword : keywords_.keywords())
         Messenger::print("  {:30}  {}\n", keyword->name(), keyword->description());
 }
 

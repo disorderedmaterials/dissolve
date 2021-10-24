@@ -603,8 +603,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module Keyword Data
     for (Module *module : moduleInstances_)
     {
-        ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
-        while (KeywordBase *keyword = keywordIterator.iterate())
+        for (auto *keyword : module->keywords().keywords())
         {
             // If the keyword is not flagged to be saved in the restart file, skip it
             if (!keyword->isOptionSet(KeywordBase::InRestartFileOption))

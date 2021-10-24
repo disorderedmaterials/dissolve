@@ -36,7 +36,7 @@ class KeywordGroup : public ListItem<KeywordGroup>
     // Associated KeywordList
     KeywordList &keywordList_;
     // List of keywords (in the referenced KeywordList) that are in this group
-    RefList<KeywordBase> keywords_;
+    std::vector<KeywordBase *> keywords_;
 
     private:
     // Add specified keyword to the group
@@ -50,5 +50,5 @@ class KeywordGroup : public ListItem<KeywordGroup>
     bool add(KeywordBase *object, std::string_view keyword, std::string_view description, std::string_view arguments,
              int optionMask = KeywordBase::NoOptions);
     // Return reference list of keywords in group
-    RefList<KeywordBase> &keywords();
+    const std::vector<KeywordBase *> &keywords() const;
 };
