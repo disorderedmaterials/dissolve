@@ -97,16 +97,4 @@ class CheckSpeciesModule : public Module
 
         return !result;
     }
-
-    private:
-    // Atom types to check against indices
-    std::vector<std::tuple<std::vector<int>, std::vector<std::string>>> atomTypes_;
-    // Bond parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> bondParameters_;
-    // Angle parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> angleParameters_;
-    // Torsion parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> torsionParameters_;
-    // Improper parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> improperParameters_;
 };

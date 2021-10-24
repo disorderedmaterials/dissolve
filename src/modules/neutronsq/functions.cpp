@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "classes/isotopologueset.h"
 #include "classes/species.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"

@@ -4,10 +4,7 @@
 #include "keywords/data3dstore.h"
 #include "base/lineparser.h"
 
-Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data3DStore)
-    : KeywordData<Data3DStore &>(KeywordBase::Data3DStoreData, data3DStore)
-{
-}
+Data3DStoreKeyword::Data3DStoreKeyword() : KeywordData<Data3DStore>(KeywordBase::Data3DStoreData, {}) {}
 
 Data3DStoreKeyword::~Data3DStoreKeyword() = default;
 

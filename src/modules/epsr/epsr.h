@@ -78,8 +78,6 @@ class EPSRModule : public Module
      * Functions
      */
     private:
-    // Test datasets (if any)
-    Data1DStore testData_;
     // Target Configuration (determined from target modules)
     Configuration *targetConfiguration_;
 

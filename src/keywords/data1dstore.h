@@ -3,16 +3,14 @@
 
 #pragma once
 
+#include "classes/data1dstore.h"
 #include "keywords/data.h"
 
-// Forward Declarations
-class Data1DStore;
-
 // Keyword with a store of Data1D
-class Data1DStoreKeyword : public KeywordData<Data1DStore &>
+class Data1DStoreKeyword : public KeywordData<Data1DStore>
 {
     public:
-    Data1DStoreKeyword(Data1DStore &dataStore);
+    Data1DStoreKeyword();
     ~Data1DStoreKeyword() override;
 
     /*

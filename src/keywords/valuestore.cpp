@@ -5,10 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/valuestore.h"
 
-ValueStoreKeyword::ValueStoreKeyword(ValueStore &data1DStore)
-    : KeywordData<ValueStore &>(KeywordBase::ValueStoreData, data1DStore)
-{
-}
+ValueStoreKeyword::ValueStoreKeyword() : KeywordData<ValueStore>(KeywordBase::ValueStoreData, {}) {}
 
 ValueStoreKeyword::~ValueStoreKeyword() = default;
 

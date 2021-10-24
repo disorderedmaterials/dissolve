@@ -5,6 +5,7 @@
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
+#include "math/function1d.h"
 #include "module/module.h"
 
 // Forward Declarations
@@ -69,10 +70,6 @@ class RDFModule : public Module
     /*
      * Members / Functions
      */
-    private:
-    // Test data
-    Data1DStore testData_;
-
     private:
     // Calculate partial g(r) in serial with simple double-loop
     bool calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);

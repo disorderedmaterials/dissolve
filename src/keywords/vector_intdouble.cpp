@@ -5,10 +5,9 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data,
-                                                                                   int nRequiredIntegers,
+IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword(int nRequiredIntegers,
                                                                                    std::optional<int> nRequiredValues)
-    : KeywordData<IntegerDoubleVectorKeywordData &>(KeywordBase::VectorIntegerDoubleData, data),
+    : KeywordData<IntegerDoubleVectorKeywordData>(KeywordBase::VectorIntegerDoubleData, {}),
       nRequiredIntegers_(nRequiredIntegers), nRequiredValues_(nRequiredValues)
 {
 }
