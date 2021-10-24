@@ -51,8 +51,7 @@ void CalculateCNModuleWidget::updateControls(ModuleWidget::UpdateType updateType
         rdfGraph_->clearRenderables();
 
         // Get target RDF module
-        auto found = false;
-        auto *rdfModule = module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
+        auto *rdfModule = module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF");
         if (!rdfModule)
             return;
 

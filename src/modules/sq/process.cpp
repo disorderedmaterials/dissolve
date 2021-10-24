@@ -20,7 +20,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * This is a serial routine, with each process constructing its own copy of the data.
      */
 
-    const RDFModule *rdfModule = keywords_.retrieve<const RDFModule *>("SourceRDFs", nullptr);
+    const RDFModule *rdfModule = keywords_.retrieve<const RDFModule *>("SourceRDFs");
     if (!rdfModule)
         return Messenger::error("A source RDF module must be provided.\n");
     const auto averaging = keywords_.asInt("Averaging");

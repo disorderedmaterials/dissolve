@@ -67,19 +67,12 @@ class KeywordList
      */
     public:
     // Retrieve named item from specified list as template-guided type
-    template <class T> T &retrieve(std::string_view name, T defaultValue = T(), bool *found = nullptr)
+    template <class T> T &retrieve(std::string_view name)
     {
         // Find item in the list
-        KeywordBase *item = find(name);
+        auto *item = find(name);
         if (!item)
-        {
-            Messenger::printVerbose("No item named '{}' in the keyword list - default value item will be returned.\n", name);
-            static T dummy;
-            dummy = defaultValue;
-            if (found != nullptr)
-                (*found) = false;
-            return dummy;
-        }
+            throw std::runtime_error(fmt::format("KeywordList::retrieve({}) failed - named data does not exist.", name));
 
         // Attempt to cast to specified type
         auto *castItem = dynamic_cast<KeywordData<T> *>(item);
@@ -87,23 +80,14 @@ class KeywordList
             throw std::runtime_error(
                 fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
 
-        if (found != nullptr)
-            (*found) = true;
         return castItem->data();
     }
-    template <class T> const T &retrieve(std::string_view name, T defaultValue = T(), bool *found = nullptr) const
+    template <class T> const T &retrieve(std::string_view name) const
     {
         // Find item in the list
-        KeywordBase *item = find(name);
+        auto *item = find(name);
         if (!item)
-        {
-            Messenger::printVerbose("No item named '{}' in the keyword list - default value item will be returned.\n", name);
-            static T dummy;
-            dummy = defaultValue;
-            if (found != nullptr)
-                (*found) = false;
-            return dummy;
-        }
+            throw std::runtime_error(fmt::format("KeywordList::retrieve({}) failed - named data does not exist.", name));
 
         // Attempt to cast to specified type
         auto *castItem = dynamic_cast<KeywordData<T> *>(item);
@@ -111,8 +95,6 @@ class KeywordList
             throw std::runtime_error(
                 fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
 
-        if (found != nullptr)
-            (*found) = true;
         return castItem->data();
     }
     // Set named item from specified list as a template-guided type
