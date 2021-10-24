@@ -31,10 +31,10 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get dependent modules
-        const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
+        const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs");
         if (!sqModule)
             return Messenger::error("A source SQ module must be provided.\n");
-        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
         if (!rdfModule)
             return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
@@ -121,10 +121,10 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
+    const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs");
     if (!sqModule)
         return Messenger::error("A source SQ module must be provided.\n");
-    const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+    const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     auto formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");

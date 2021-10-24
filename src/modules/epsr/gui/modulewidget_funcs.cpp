@@ -132,14 +132,14 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             const auto &targets = module_->keywords().retrieve<std::vector<Module *>>("Target");
             if (!targets.empty())
             {
-                const SQModule *sqModule = targets[0]->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+                const SQModule *sqModule = targets[0]->keywords().retrieve<const SQModule *>("SourceSQs");
                 if (!sqModule)
                     Messenger::error("Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will "
                                      "be unavailable.",
                                      module_->uniqueName());
                 else
                 {
-                    auto *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+                    auto *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
                     if (rdfModule)
                         rdfModuleName = rdfModule->uniqueName();
                     else

@@ -15,9 +15,8 @@
 bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for valid CalculateRDF pointer
-    auto found = false;
-    const auto *rdfModule = keywords_.retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
-    if ((!found) || (!rdfModule))
+    const auto *rdfModule = keywords_.retrieve<const CalculateRDFModule *>("SourceRDF");
+    if (!rdfModule)
         return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 
     // Set the target Collect1D and normalisation nodes in the Process1D

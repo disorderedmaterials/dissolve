@@ -36,12 +36,12 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     for (auto *module : targets)
     {
         // Retrieve source SQ module, and then the related RDF module
-        const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+        const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs");
         if (!sqModule)
             return Messenger::error(
                 "Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
                 module->uniqueName());
-        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
         if (!rdfModule)
             return Messenger::error("Target '{}'s S(Q) module doesn't reference an RDFModule, it can't be used as a target "
                                     "for the EPSR module.",
@@ -235,7 +235,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
-        const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+        const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs");
         if (!sqModule)
             return Messenger::error(
                 "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
