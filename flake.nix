@@ -133,7 +133,7 @@
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
-        devShell = pkgs.mkShell rec {
+        devShell = pkgs.gcc9Stdenv.mkDerivation rec {
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ (with pkgs; [
             (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages; })
