@@ -96,6 +96,10 @@ target_include_directories(
   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 )
 
-target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
+if(CONAN)
+  target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
+else(CONAN)
+  target_link_libraries(models PUBLIC pugixml::pugixml ${THREADING_LINK_LIBS})
+endif(CONAN)
 
 include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)

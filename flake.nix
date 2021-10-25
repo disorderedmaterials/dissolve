@@ -47,8 +47,7 @@
             src =
               builtins.filterSource (path: type: baseNameOf path != "flake.nix")
               ./.;
-            patches =
-              [ ./nix/patches/no-conan.patch ./nix/patches/ctest.patch ];
+            patches = [ ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
@@ -58,6 +57,7 @@
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
             cmakeFlags = [
+              "-DCONAN=OFF"
               ("-DMULTI_THREADING=" + (cmake-bool threading))
               ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
@@ -135,24 +135,25 @@
 
         devShell = pkgs.gcc9Stdenv.mkDerivation rec {
           name = "dissolve-shell";
-          buildInputs = base_libs pkgs ++ gui_libs pkgs ++ (with pkgs; [
-            (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages; })
-            ccache
-            ccls
-            cmake-format
-            cmake-language-server
-            conan
-            distcc
-            gdb
-            ninja
-            openmpi
-            tbb
-            valgrind
-            ((import ./nix/weggli.nix) {
-              inherit pkgs;
-              src = weggli;
-            })
-          ]);
+          buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
+            ++ (with pkgs; [
+              (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages; })
+              ccache
+              ccls
+              cmake-format
+              cmake-language-server
+              conan
+              distcc
+              gdb
+              ninja
+              openmpi
+              tbb
+              valgrind
+              ((import ./nix/weggli.nix) {
+                inherit pkgs;
+                src = weggli;
+              })
+            ]);
           CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
@@ -162,6 +163,7 @@
           Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
           Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
           PATH = "${QTDIR}/bin";
+          THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
         };
 
         apps = {

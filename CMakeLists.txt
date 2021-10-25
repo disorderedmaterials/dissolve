@@ -24,8 +24,15 @@ cmake_policy(SET CMP0020 NEW)
 set(CMAKE_CXX_STANDARD 17)
 
 # Include Conan Packages
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+option(CONAN "Use conan to find dependencies" ON)
+if(CONAN)
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  conan_basic_setup(TARGETS)
+else(CONAN)
+  find_package(fmt REQUIRED)
+  find_package(CLI11 REQUIRED)
+  find_package(pugixml REQUIRED)
+endif(CONAN)
 
 # Catch defines
 if(PARALLEL)
@@ -39,7 +46,12 @@ endif(PARALLEL)
 option(MULTI_THREADING "Enable threading using tbb" ON)
 if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
-  set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::tbb)
+  if(CONAN)
+    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::tbb)
+  else(CONAN)
+    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} $ENV{THREADING_LINK_LIBS})
+  endif(CONAN)
+  message("Threading Link Libs: ${THREADING_LINK_LIBS}")
 endif(MULTI_THREADING)
 
 # Add local Modules dir to cmake search path
@@ -96,7 +108,11 @@ if(GUI)
   endif(APPLE)
 
   find_package(OpenGL REQUIRED)
-  find_package(Qt6 COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets REQUIRED)
+  find_package(
+    Qt6
+    COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets
+    REQUIRED
+  )
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
   find_package(Qt6OpenGL 6.0 REQUIRED)
@@ -315,7 +331,6 @@ target_link_libraries(
          ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
   PRIVATE # External libs
           antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
-  INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11
 )
 
 # Build GUI target executables
@@ -347,6 +362,5 @@ if(GUI)
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
-    INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11 CONAN_PKG::pugixml
   )
 endif(GUI)
