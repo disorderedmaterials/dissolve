@@ -5,7 +5,8 @@ parameters:
     default : false
   - name: docker
     default: "docker-gui"
-
+  - name: nix-version
+    default: 2.3.16
 
 steps:
   - bash: |
@@ -13,11 +14,11 @@ steps:
       # -- General
       sudo apt-get update -q
       sudo apt-get install curl gpg jq
-      curl -o install-nix-2.3.16 https://releases.nixos.org/nix/nix-2.3.16/install
-      curl -o install-nix-2.3.16.asc https://releases.nixos.org/nix/nix-2.3.16/install.asc
+      curl -o install-nix${{ parameters.nix-version }} https://releases.nixos.org/nix/nix-2.3.16/install
+      curl -o install-nix${{ parameters.nix-version }}.asc https://releases.nixos.org/nix/nix-2.3.16/install.asc
       gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
-      gpg2 --verify ./install-nix-2.3.16.asc
-      sh ./install-nix-2.3.16
+      gpg2 --verify ./install-nix${{ parameters.nix-version }}.asc
+      sh ./install-nix${{ parameters.nix-version }}
     displayName: 'Install nix'
   - bash: |
       set -ex
