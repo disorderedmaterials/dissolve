@@ -50,7 +50,7 @@
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
-          pkgs.gcc9Stdenv.mkDerivation rec {
+          pkgs.gcc9Stdenv.mkDerivation {
             inherit version;
             pname = exe-name mpi gui;
             src =
@@ -63,13 +63,7 @@
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
 
-            QTDIR = if gui then "${qt6}/6.1.1/gcc_64" else "";
-            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
-            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
-            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
-            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
             TBB_DIR = "${pkgs.tbb}";
-            PATH = "${QTDIR}/bin";
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
             cmakeFlags = [
@@ -94,6 +88,13 @@
               # license = licenses.unlicense;
               maintainers = [ maintainers.rprospero ];
             };
+          } // pkgs.lib.optionalAttrs gui rec {
+            PATH = "${QTDIR}/bin";
+            QTDIR = "${qt6}/6.1.1/gcc_64";
+            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
+            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
+            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
+            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
           };
         mkContainer = { mpi, gui, threading }:
           pkgs.ociTools.buildContainer {
