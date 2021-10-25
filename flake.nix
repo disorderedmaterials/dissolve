@@ -29,18 +29,10 @@
           freetype
           inetutils # for rsh
           jre
-          openmpi
           pkgconfig
           pugixml
         ];
-      gui_libs = pkgs:
-        with pkgs; [
-          freetype
-          ftgl
-          libGL
-          libglvnd
-          libglvnd.dev
-        ];
+      gui_libs = pkgs: with pkgs; [ freetype ftgl libGL libglvnd libglvnd.dev ];
       check_libs = pkgs: with pkgs; [ gtest ];
     in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
@@ -216,13 +208,15 @@
           docker-gui = pkgs.dockerTools.buildImage {
             name = "dissolve-gui";
             tag = "latest";
-            config.ENTRYPOINT = [ "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui" ];
+            config.ENTRYPOINT =
+              [ "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui" ];
           };
 
           docker-mpi = pkgs.dockerTools.buildImage {
             name = "dissolve-mpi";
             tag = "latest";
-            config.ENTRYPOINT = [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
+            config.ENTRYPOINT =
+              [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
 
         };
