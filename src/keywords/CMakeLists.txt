@@ -21,7 +21,6 @@ add_library(
   linkto.cpp
   list.cpp
   module.cpp
-  modulegroups.cpp
   modulevector.cpp
   node.cpp
   nodeandinteger.cpp
@@ -67,7 +66,6 @@ add_library(
   linkto.h
   list.h
   module.h
-  modulegroups.h
   modulevector.h
   node.h
   nodeandinteger.h

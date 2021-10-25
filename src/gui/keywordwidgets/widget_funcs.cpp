@@ -113,13 +113,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = moduleWidget;
         base = moduleWidget;
     }
-    else if (type == KeywordBase::ModuleGroupsData)
-    {
-        ModuleGroupsKeywordWidget *moduleGroupsWidget = new ModuleGroupsKeywordWidget(nullptr, keywordBase, coreData);
-        connect(moduleGroupsWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = moduleGroupsWidget;
-        base = moduleGroupsWidget;
-    }
     else if (type == KeywordBase::ModuleRefListData)
     {
         ModuleVectorKeywordWidget *ModuleVectorWidget = new ModuleVectorKeywordWidget(nullptr, keywordBase, coreData);
