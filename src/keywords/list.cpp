@@ -6,15 +6,10 @@
 #include "base/sysfunc.h"
 #include "keywords/linkto.h"
 
-KeywordList::KeywordList() = default;
-
-KeywordList::~KeywordList() = default;
-
 /*
  * Keyword List
  */
 
-// Add keyword
 bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_view description, int optionMask)
 {
     // Take ownership of the passed object, and set its basic information
@@ -64,6 +59,12 @@ void KeywordList::cut(KeywordBase *kwd)
 
 // Return first keyword in list
 const std::vector<KeywordBase *> &KeywordList::keywords() const { return keywords_; }
+
+// Return keywords
+const std::map<std::string_view, KeywordInfo> KeywordList::keywordsNEW() const { return keywordsNEW_; }
+
+// Return keyword group mappings
+const std::map<std::string_view, std::vector<std::string_view>> KeywordList::displayGroups() const { return displayGroups_; };
 
 /*
  * Groups

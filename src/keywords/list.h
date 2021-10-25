@@ -7,13 +7,29 @@
 #include "keywords/data.h"
 #include "keywords/group.h"
 #include <list>
+#include <map>
+#include <typeindex>
+
+struct KeywordInfo
+{
+    // Referenced keyword (via base class)
+    KeywordBase *keyword;
+    // Type index of derived class
+    const std::type_index typeIndex;
+    // Keyword name
+    const std::string_view name;
+    // Keyword description
+    const std::string_view description;
+    // Option mask
+    int optionMask;
+};
 
 // Keyword List
 class KeywordList
 {
     public:
-    KeywordList();
-    ~KeywordList();
+    KeywordList() = default;
+    ~KeywordList() = default;
 
     /*
      * Keyword List
@@ -21,9 +37,33 @@ class KeywordList
     private:
     // List of defined keywords
     std::vector<KeywordBase *> keywords_;
+    // Keywords
+    std::map<std::string_view, KeywordInfo> keywordsNEW_;
+    // Keyword group mappings
+    std::map<std::string_view, std::vector<std::string_view>> displayGroups_;
 
     public:
-    // Add keyword
+    // Add keyword (no group)
+    template <class K, typename... Args>
+    KeywordInfo &addKeyword(std::string_view name, std::string_view description, Args... args)
+    {
+        // Check for keyword of this name already
+        if (keywordsNEW_.find(name) != keywordsNEW_.end())
+            throw(std::runtime_error(fmt::format("Keyword named '{}' already exists, and can't be added again.", name)));
+
+        // Create new keyword using the supplied arguments
+        return keywordsNEW_.emplace(name, KeywordInfo{new K(args...), typeid(K), name, description, 0}).first->second;
+    }
+    // Add keyword (displaying in named group)
+    template <class K, typename... Args>
+    KeywordInfo &add(std::string_view displayGroup, std::string_view name, std::string_view description, Args... args)
+    {
+        auto &ki = addKeyword<K>(name, description, args...);
+
+        displayGroups_[displayGroup].push_back(name);
+
+        return ki;
+    }
     bool add(KeywordBase *object, std::string_view name, std::string_view description, int optionMask = KeywordBase::NoOptions);
     // Add keyword to named group
     bool add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
@@ -37,6 +77,10 @@ class KeywordList
     void cut(KeywordBase *kwd);
     // Return keywords list
     const std::vector<KeywordBase *> &keywords() const;
+    // Return keywords
+    const std::map<std::string_view, KeywordInfo> keywordsNEW() const;
+    // Return keyword group mappings
+    const std::map<std::string_view, std::vector<std::string_view>> displayGroups() const;
 
     /*
      * Groups
