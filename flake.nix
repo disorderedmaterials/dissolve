@@ -21,7 +21,6 @@
         with pkgs; [
           antlr4
           antlr4.runtime.cpp
-          bison
           cmake
           cli11
           fmt
