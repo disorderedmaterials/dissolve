@@ -17,16 +17,9 @@ KeywordList::~KeywordList() = default;
 // Add keyword
 bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_view description, int optionMask)
 {
-    return add(object, name, description, "", optionMask);
-}
-
-// Add keyword (including argument description)
-bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_view description, std::string_view arguments,
-                      int optionMask)
-{
     // Take ownership of the passed object, and set its basic information
     keywords_.push_back(object);
-    object->set(name, description, arguments, optionMask);
+    object->set(name, description, optionMask);
 
     return true;
 }
@@ -39,14 +32,6 @@ bool KeywordList::add(std::string_view groupName, KeywordBase *object, std::stri
     return group.add(object, name, description, optionMask);
 }
 
-// Add keyword to named group (including argument description)
-bool KeywordList::add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-                      std::string_view arguments, int optionMask)
-{
-    auto &group = addGroup(groupName);
-    return group.add(object, name, description, arguments, optionMask);
-}
-
 // Add link to specified keyword that exists elsewhere
 bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
                        int optionMask)
@@ -56,17 +41,6 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
             fmt::format("Invalid KeywordBase* passed to KeywordList::link() (linked keyword name = '{}').\n", name)));
 
     return add(groupName, new LinkToKeyword(object), name, description, optionMask);
-}
-
-// Add link to specified keyword that exists elsewhere (including argument description)
-bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-                       std::string_view arguments, int optionMask)
-{
-    if (!object)
-        throw(std::runtime_error(
-            fmt::format("Invalid KeywordBase* passed to KeywordList::link() (linked keyword name = '{}').\n", name)));
-
-    return add(groupName, new LinkToKeyword(object), name, description, arguments, optionMask);
 }
 
 // Find named keyword

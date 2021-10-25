@@ -22,7 +22,7 @@ void XRaySQModule::initialise()
 
     // Reference Data
     keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
-                  "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
+                  KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add("Reference Data",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
@@ -40,15 +40,15 @@ void XRaySQModule::initialise()
 
     // Export
     keywords_.add("Export", new BoolKeyword(false), "SaveFormFactors",
-                  "Whether to save combined form factor weightings for atomtype pairs", "<True|False>");
+                  "Whether to save combined form factor weightings for atomtype pairs");
     keywords_.add("Export", new BoolKeyword(false), "SaveGR",
-                  "Whether to save weighted g(r) and G(r) to disk after calculation", "<True|False>");
+                  "Whether to save weighted g(r) and G(r) to disk after calculation");
     keywords_.add("Export", new BoolKeyword(false), "SaveReference",
-                  "Whether to save the reference data and its Fourier transform", "<True|False>");
+                  "Whether to save the reference data and its Fourier transform");
     keywords_.add("Export", new BoolKeyword(false), "SaveRepresentativeGR",
                   "Save representative G(r), obtained from Fourier transform of the calculated F(Q)");
     keywords_.add("Export", new BoolKeyword(false), "SaveSQ",
-                  "Whether to save weighted S(Q) and F(Q) to disk after calculation", "<True|False>");
+                  "Whether to save weighted S(Q) and F(Q) to disk after calculation");
 }
 
 // Return file and format for reference total F(Q)

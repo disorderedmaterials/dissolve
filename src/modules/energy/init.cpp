@@ -9,7 +9,7 @@ void EnergyModule::initialise()
 {
     // Control
     keywords_.add("Control", new DoubleKeyword(0.001), "StabilityThreshold",
-                  "Threshold value at which energy is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
+                  "Threshold value at which energy is deemed stable over the defined windowing period");
     keywords_.add("Control", new IntegerKeyword(10), "StabilityWindow",
                   "Number of points over which to assess the stability of the energy (per Configuration)");
 

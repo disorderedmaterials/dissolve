@@ -25,7 +25,7 @@ void EPSRModule::initialise()
     keywords_.add("Control", new BoolKeyword(true), "ModifyPotential",
                   "Whether to apply generated perturbations to interatomic potentials");
     keywords_.add("Control", new ModuleVectorKeyword({"NeutronSQ", "XRaySQ"}), "Target",
-                  "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName>");
+                  "Add specified Module (and it's Reference data) as a refinement target");
     keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax",
                   "Maximum Q value over which to generate potentials from total scattering data");
     keywords_.add("Control", new DoubleKeyword(0.5, -1.0), "QMin",
@@ -57,22 +57,17 @@ void EPSRModule::initialise()
                   "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
 
     // Test
-    keywords_.add("Test", new BoolKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
-    keywords_.add("Test", new Data1DStoreKeyword(), "TestReference", "Specify test reference data",
-                  "<target> <fileformat> <filename> [x=1] [y=2]");
-    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%error) above which test fails",
-                  "<threshold[0.1]>");
+    keywords_.add("Test", new BoolKeyword(false), "Test", "Test against supplied reference data");
+    keywords_.add("Test", new Data1DStoreKeyword(), "TestReference", "Specify test reference data");
+    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%error) above which test fails");
     keywords_.add("Test", new BoolKeyword(false), "OverwritePotentials",
-                  "Overwrite potentials each time rather than summing them", "<True|False>");
+                  "Overwrite potentials each time rather than summing them");
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "SaveDifferenceFunctions", "Whether to save difference function and fit",
-                  "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveEmpiricalPotentials", "Whether to save empirical potentials",
-                  "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials",
-                  "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SavePCof", "Whether to save potential coefficients", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveDifferenceFunctions", "Whether to save difference function and fit");
+    keywords_.add("Export", new BoolKeyword(false), "SaveEmpiricalPotentials", "Whether to save empirical potentials");
+    keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials");
+    keywords_.add("Export", new BoolKeyword(false), "SavePCof", "Whether to save potential coefficients");
     keywords_.add("Export", new BoolKeyword(false), "SaveSimulatedFR",
-                  "Whether to save simulated F(r) (Fourier transform of calculated F(Q))", "<True|False>");
+                  "Whether to save simulated F(r) (Fourier transform of calculated F(Q))");
 }

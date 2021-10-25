@@ -100,8 +100,6 @@ class KeywordBase : public ListItem<KeywordBase>
     KeywordDataType type_;
     // Keyword name
     std::string name_;
-    // Arguments string (for information)
-    std::string arguments_;
     // Description of keyword, if any
     std::string description_;
     // Keyword option mask
@@ -113,7 +111,7 @@ class KeywordBase : public ListItem<KeywordBase>
 
     public:
     // Set name, description, arguments, and option mask
-    void set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask = NoOptions);
+    void set(std::string_view name, std::string_view description, int optionMask = NoOptions);
     // Flag that data has been set by some other means
     void setAsModified();
     // Return data type stored by keyword
@@ -122,8 +120,6 @@ class KeywordBase : public ListItem<KeywordBase>
     std::string_view typeName() const;
     // Return keyword name
     std::string_view name() const;
-    // Return arguments string
-    std::string_view arguments() const;
     // Return keyword description
     std::string_view description() const;
     // Return keyword option mask

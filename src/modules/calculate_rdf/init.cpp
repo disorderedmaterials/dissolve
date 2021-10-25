@@ -94,14 +94,13 @@ void CalculateRDFModule::initialise()
     keywords_.add(
         "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels),
-        "DistanceRange", "Range (min, max, delta) of distance axis", "<min> <max> <delta> (Angstroms)");
+        "DistanceRange", "Range (min, max, delta) of distance axis");
     keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
-                   "Set the site(s) 'A' which are to represent the origin of the RDF", "<Species> <Site>");
+                   "Set the site(s) 'A' which are to represent the origin of the RDF");
     keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
-                   "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
-                   "<Species> <Site>");
+                   "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated");
     keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMolecule",
-                  "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+                  "Whether to exclude correlations between sites on the same molecule");
 
     // Export
     keywords_.link("Export", processDistance_->keywords().find("Export"), "Export",

@@ -9,13 +9,12 @@ void ChecksModule::initialise()
 {
     // Distance
     keywords_.add("Distance", new GeometryListKeyword({}, Geometry::DistanceType), "Distance",
-                  "Define a distance between Atoms to be checked", "<i> <j> <referenceDistance>");
+                  "Define a distance between Atoms to be checked");
     keywords_.add("Distance", new DoubleKeyword(0.001, 1.0e-5), "DistanceThreshold",
-                  "Threshold at which distance checks will fail (Angstroms)", "<threshold[0.001]>");
+                  "Threshold at which distance checks will fail (Angstroms)");
 
     // Angle
     keywords_.add("Angle", new GeometryListKeyword({}, Geometry::AngleType), "Angle",
-                  "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
-    keywords_.add("Angle", new DoubleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail",
-                  "<threshold[0.05]>");
+                  "Define an angle between Atoms to be checked");
+    keywords_.add("Angle", new DoubleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail");
 }

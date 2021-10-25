@@ -256,27 +256,27 @@ void CalculateAngleModule::initialise()
     keywords_.add(
         "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "RangeAB", "Range (min, max, binwidth) of A-B distance axis", "<min> <max> <binwidth> (Angstroms)");
+        "RangeAB", "Range (min, max, binwidth) of A-B distance axis");
     keywords_.add(
         "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "RangeBC", "Range (min, max, binwidth) of B-C distance axis", "<min> <max> <binwidth> (Angstroms)");
+        "RangeBC", "Range (min, max, binwidth) of B-C distance axis");
     keywords_.add(
         "Control",
         new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
+        "AngleRange", "Range (min, max, binwidth) of angle axis");
     keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
-                   "Add site(s) which represent 'A' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
+                   "Add site(s) which represent 'A' in the interaction A-B-C");
     keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
-                   "Add site(s) which represent 'B' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
+                   "Add site(s) which represent 'B' in the interaction A-B-C");
     keywords_.link("Control", selectC_->keywords().find("Site"), "SiteC",
-                   "Add site(s) which represent 'C' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
+                   "Add site(s) which represent 'C' in the interaction A-B-C");
     keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeAB",
-                  "Whether to exclude correlations between A and B sites on the same molecule", "<True|False>");
+                  "Whether to exclude correlations between A and B sites on the same molecule");
     keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeBC",
-                  "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
+                  "Whether to exclude correlations between B and C sites on the same molecule");
     keywords_.add("Control", new BoolKeyword(false), "ExcludeSameSiteAC",
-                  "Whether to exclude correlations between A and C sites on the same molecule", "<True|False>");
+                  "Whether to exclude correlations between A and C sites on the same molecule");
 
     // Export
     keywords_.link("Export", processAB_->keywords().find("Export"), "ExportAB",

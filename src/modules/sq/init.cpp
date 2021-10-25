@@ -20,11 +20,11 @@ void SQModule::initialise()
     keywords_.add("Control", new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms()), "WindowFunction",
                   "Window function to apply in Fourier-transform of g(r) to S(Q)");
     keywords_.add("Control", new IntegerKeyword(1, 1), "Averaging",
-                  "Number of historical partial sets to combine into final partials", "<1>");
+                  "Number of historical partial sets to combine into final partials");
     keywords_.add(
         "Control",
         new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
-        "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
+        "AveragingScheme", "Weighting scheme to use when averaging partials");
 
     // Bragg Scattering
     keywords_.add("Bragg Scattering", new ModuleKeyword<const BraggModule>("Bragg"), "IncludeBragg",
@@ -33,6 +33,5 @@ void SQModule::initialise()
                   "Broadening function to apply to Bragg reflections when generating S(Q)");
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation",
-                  "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation");
 }

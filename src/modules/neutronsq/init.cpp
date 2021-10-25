@@ -12,8 +12,7 @@ void NeutronSQModule::initialise()
     keywords_.add("Control", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
                   "Source unweighted S(Q) to transform into neutron-weighted S(Q)");
     keywords_.add("Control", new AtomTypeVectorKeyword(), "Exchangeable",
-                  "A list of one or more atom types in the system that are exchangeable with each other",
-                  "<AtomType> [AtomType...]");
+                  "A list of one or more atom types in the system that are exchangeable with each other");
     keywords_.add("Control", new IsotopologueSetKeyword(), "Isotopologue",
                   "Set/add an isotopologue and its population for a particular species");
     keywords_.add("Control",
@@ -23,7 +22,7 @@ void NeutronSQModule::initialise()
 
     // Reference Data
     keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
-                  "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
+                  KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add("Reference Data",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
@@ -41,13 +40,11 @@ void NeutronSQModule::initialise()
                   KeywordBase::ModificationRequiresSetUpOption);
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "SaveGR", "Save weighted g(r) and G(r)", "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveReference", "Save the reference data and its Fourier transform",
-                  "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveGR", "Save weighted g(r) and G(r)");
+    keywords_.add("Export", new BoolKeyword(false), "SaveReference", "Save the reference data and its Fourier transform");
     keywords_.add("Export", new BoolKeyword(false), "SaveRepresentativeGR",
                   "Save representative G(r), obtained from Fourier transform of the calculated F(Q)");
-    keywords_.add("Export", new BoolKeyword(false), "SaveSQ", "Save weighted partial and total structure factors",
-                  "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveSQ", "Save weighted partial and total structure factors");
 }
 
 // Return file and format for reference total F(Q)

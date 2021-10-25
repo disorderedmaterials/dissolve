@@ -9,18 +9,15 @@
 void DataTestModule::initialise()
 {
     // Test
-    keywords_.add("Test", new Data1DStoreKeyword(), "Data1D", "Specify one-dimensional test reference data",
-                  "<target> <fileformat> <filename> [options...]");
-    keywords_.add("Test", new Data2DStoreKeyword(), "Data2D", "Specify two-dimensional test reference data",
-                  "<target> <fileformat> <filename> [options...]");
+    keywords_.add("Test", new Data1DStoreKeyword(), "Data1D", "Specify one-dimensional test reference data");
+    keywords_.add("Test", new Data2DStoreKeyword(), "Data2D", "Specify two-dimensional test reference data");
     keywords_.add("Test", new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::EuclideanError), "ErrorType",
                   "Type of error calculation to use");
     keywords_.add("Test", new StringPairVectorKeyword(), "InternalData1D",
-                  "Specify one-dimensional internal reference and test data", "<target1> <target2>");
+                  "Specify one-dimensional internal reference and test data");
     keywords_.add("Test", new StringDoubleVectorKeyword(), "SampledDouble",
-                  "Specify test reference values for named SampledDouble (value) data", "<target> <value> [...]");
+                  "Specify test reference values for named SampledDouble (value) data");
     keywords_.add("Test", new ValueStoreKeyword(), "SampledVector",
-                  "Specify test reference values for named SampledVector data",
-                  "<target> <fileformat> <filename> [options...]");
+                  "Specify test reference values for named SampledVector data");
     keywords_.add("Test", new DoubleKeyword(5.0e-3, 1.0e-15), "Threshold", "Threshold for error metric above which test fails");
 }

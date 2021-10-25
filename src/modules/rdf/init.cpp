@@ -22,13 +22,13 @@ void RDFModule::initialise()
     keywords_.add("Control", new DoubleKeyword(15.0, 0.1), "Range",
                   "Maximum r to calculate g(r) out to, unless UseHalfCellRange is true");
     keywords_.add("Control", new BoolKeyword(true), "UseHalfCellRange",
-                  "Whether to use the maximal RDF range possible that avoids periodic images", "<True|False>");
+                  "Whether to use the maximal RDF range possible that avoids periodic images");
     keywords_.add("Control", new IntegerKeyword(5, 0), "Averaging",
-                  "Number of historical partial sets to combine into final partials", "<5>");
+                  "Number of historical partial sets to combine into final partials");
     keywords_.add(
         "Control",
         new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
-        "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
+        "AveragingScheme", "Weighting scheme to use when averaging partials");
     keywords_.add("Control", new Function1DKeyword(Functions::Function1DWrapper(), FunctionProperties::Normalisation),
                   "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
     keywords_.add("Control",
@@ -40,14 +40,11 @@ void RDFModule::initialise()
 
     // Test
     keywords_.add("Test", new BoolKeyword(false), "InternalTest",
-                  "Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop",
-                  "<True|False>");
+                  "Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop");
     keywords_.add("Test", new BoolKeyword(false), "Test",
-                  "Test calculated total and partials against reference data (specified with `TestReference`)", "<True|False>");
-    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%error) above which test fails",
-                  "<threshold[0.1]>");
+                  "Test calculated total and partials against reference data (specified with `TestReference`)");
+    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%error) above which test fails");
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials and total functions to disk",
-                  "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials and total functions to disk");
 }

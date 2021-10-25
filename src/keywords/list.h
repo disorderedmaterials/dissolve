@@ -25,21 +25,12 @@ class KeywordList
     public:
     // Add keyword
     bool add(KeywordBase *object, std::string_view name, std::string_view description, int optionMask = KeywordBase::NoOptions);
-    // Add keyword (including argument description)
-    bool add(KeywordBase *object, std::string_view name, std::string_view description, std::string_view arguments,
-             int optionMask = KeywordBase::NoOptions);
     // Add keyword to named group
     bool add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
              int optionMask = KeywordBase::NoOptions);
-    // Add keyword to named group (including argument description)
-    bool add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-             std::string_view arguments, int optionMask = KeywordBase::NoOptions);
     // Add link to specified keyword that exists elsewhere
     bool link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
               int optionMask = KeywordBase::NoOptions);
-    // Add link to specified keyword that exists elsewhere (including argument description)
-    bool link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-              std::string_view arguments, int optionMask = KeywordBase::NoOptions);
     // Find named keyword
     KeywordBase *find(std::string_view name) const;
     // Cut keyword from list

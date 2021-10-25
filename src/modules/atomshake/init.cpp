@@ -12,11 +12,9 @@ void AtomShakeModule::initialise()
                   "Interatomic cutoff distance to use for energy calculation");
     keywords_.add("Control", new IntegerKeyword(1, 1, 1000), "ShakesPerAtom", "Number of shakes to attempt per atom");
     keywords_.add("Control", new DoubleKeyword(0.05), "StepSize", "Step size in Angstroms to use in Monte Carlo moves",
-                  "<stepsize>", KeywordBase::InRestartFileOption);
-    keywords_.add("Control", new DoubleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)",
-                  "<stepsize>");
-    keywords_.add("Control", new DoubleKeyword(0.001), "StepSizeMin", "Minimum allowed value for step size, in Angstroms",
-                  "<stepsize>");
+                  KeywordBase::InRestartFileOption);
+    keywords_.add("Control", new DoubleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)");
+    keywords_.add("Control", new DoubleKeyword(0.001), "StepSizeMin", "Minimum allowed value for step size, in Angstroms");
     keywords_.add("Control", new DoubleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate",
                   "Target acceptance rate for Monte Carlo moves");
 }

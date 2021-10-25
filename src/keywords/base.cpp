@@ -81,10 +81,9 @@ KeywordBase *KeywordBase::base() { return this; }
  */
 
 // Set name, description, arguments, and option mask
-void KeywordBase::set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask)
+void KeywordBase::set(std::string_view name, std::string_view description, int optionMask)
 {
     name_ = name;
-    arguments_ = arguments;
     description_ = description;
     optionMask_ = optionMask;
 }
