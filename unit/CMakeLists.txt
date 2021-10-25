@@ -25,13 +25,13 @@ function(dissolve_unit_test src_file)
       PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
       PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
       INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11
-      )
+    )
   else(CONAN)
     target_link_libraries(
       ${TEST_NAME}
       PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
       PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
-      )
+    )
   endif(CONAN)
 
   if(GUI)
