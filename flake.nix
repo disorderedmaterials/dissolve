@@ -41,7 +41,7 @@
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
-          pkgs.gcc9Stdenv.mkDerivation {
+          pkgs.gcc9Stdenv.mkDerivation rec {
             inherit version;
             pname = exe-name mpi gui;
             src =
@@ -73,19 +73,19 @@
               mv ./$out/bin/* $out/bin/
             '';
 
+            QTDIR = "${qt6}/6.1.1/gcc_64";
+            PATH = "${QTDIR}/bin";
+            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
+            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
+            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
+            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
+
             meta = with pkgs.lib; {
               description = "";
               homepage = "";
               # license = licenses.unlicense;
               maintainers = [ maintainers.rprospero ];
             };
-          } // pkgs.lib.optionalAttrs gui rec {
-            PATH = "${QTDIR}/bin";
-            QTDIR = "${qt6}/6.1.1/gcc_64";
-            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
-            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
-            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
-            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
           };
         mkContainer = { mpi, gui, threading }:
           pkgs.ociTools.buildContainer {
