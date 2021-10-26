@@ -168,14 +168,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Create, print, and store weights
     Messenger::print("Isotopologue and isotope composition:\n\n");
-    weights.createFromIsotopologues(exchangeableTypes_);
+    weights.createFromIsotopologues(keywords_.retrieve<std::vector<const AtomType *>>("Exchangeable"));
     weights.print();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     auto [weightedSQ, wSQstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     if (wSQstatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes());
+        weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
@@ -197,7 +197,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.setUpPartials(unweightedGR.atomTypes());
+        weightedGR.setUpPartials(unweightedGR.atomTypeMix());
 
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);

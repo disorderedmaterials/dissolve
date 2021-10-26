@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AtomTypeSelectionWidget</class>
- <widget class="QWidget" name="AtomTypeSelectionWidget">
+ <class>AtomTypeVectorWidget</class>
+ <widget class="QWidget" name="AtomTypeVectorWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -35,7 +35,7 @@
     <number>4</number>
    </property>
    <item row="0" column="0">
-    <widget class="QListWidget" name="SelectionList"/>
+    <widget class="QListView" name="AtomTypeList"/>
    </item>
   </layout>
  </widget>

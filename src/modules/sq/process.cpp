@@ -81,7 +81,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     auto &unweightedsq = uSQObject.first;
     if (uSQObject.second == GenericItem::ItemStatus::Created)
-        unweightedsq.setUpPartials(unweightedgr.atomTypes());
+        unweightedsq.setUpPartials(unweightedgr.atomTypeMix());
 
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
@@ -113,7 +113,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          "Angstroms**-1).\n",
                          braggModule->uniqueName(), nReflections, braggQMax);
         const auto &braggAtomTypes =
-            dissolve.processingModuleData().value<AtomTypeList>("SummedAtomTypes", braggModule->uniqueName());
+            dissolve.processingModuleData().value<AtomTypeMix>("SummedAtomTypes", braggModule->uniqueName());
         const auto &v0 = dissolve.processingModuleData().value<double>("V0", braggModule->uniqueName());
 
         // Prepare a temporary object for the Bragg partials
@@ -124,7 +124,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
         auto result = for_each_pair_early(
-            unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
+            unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
             [&braggReflections, &braggAtomTypes, &braggQBroadening, &braggPartials, &qDelta](auto i, auto &at1, auto j,
                                                                                              auto &at2) -> EarlyReturn<bool> {
                 // Locate the corresponding Bragg intensities for this atom type pair
@@ -155,7 +155,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                            [v0](auto &val) { return val * 2.0 * pow(M_PI, 2) / v0; });
 
         // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
-        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
+        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
                                 [&braggPartials](auto i, auto &atd1, auto j, auto &atd2) {
                                     // Subtract self-scattering level if types are equivalent
                                     if (i == j)

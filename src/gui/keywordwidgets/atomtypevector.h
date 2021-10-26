@@ -5,8 +5,9 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_atomtypeselection.h"
-#include "keywords/atomtypeselection.h"
+#include "gui/keywordwidgets/ui_atomtypevector.h"
+#include "gui/models/atomTypeModel.h"
+#include "keywords/atomtypevector.h"
 #include <QWidget>
 #include <memory>
 #include <vector>
@@ -14,34 +15,32 @@
 // Forward Declarations
 class AtomType;
 
-class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class AtomTypeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
-    // Main form declaration
-    Ui::AtomTypeSelectionWidget ui;
+    AtomTypeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    AtomTypeSelectionKeyword *keyword_;
-    std::vector<std::shared_ptr<AtomType>> atomTypes_;
+    AtomTypeVectorKeyword *keyword_;
 
     /*
-     * Signals / Slots
+     * Widgets
      */
     private:
-    // Selection list update function
-    void updateSelectionRow(int row, std::shared_ptr<AtomType> atomType, bool createItem);
+    // Main form declaration
+    Ui::AtomTypeVectorWidget ui_;
+    // AtomType model
+    AtomTypeModel atomTypeModel_;
 
     private slots:
-    // List item changed
-    void itemChanged(QListWidgetItem *item);
+    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
     // Keyword value changed

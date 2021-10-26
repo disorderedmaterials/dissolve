@@ -45,8 +45,6 @@ class NeutronSQModule : public Module
      * Initialisation
      */
     private:
-    // Exchangeable AtomTypes
-    AtomTypeList exchangeableTypes_;
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
 

@@ -53,10 +53,10 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one, but we're
     // future-proofing)
     auto &combinedAtomTypes =
-        dissolve.processingModuleData().realise<AtomTypeList>("SummedAtomTypes", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", uniqueName_, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (auto *cfg : targetConfigurationsKeyword_.data())
-        combinedAtomTypes.add(cfg->usedAtomTypesList());
+        combinedAtomTypes.add(cfg->atomTypes());
 
     // Store unit cell information
     auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", uniqueName_, GenericItem::InRestartFileFlag);
@@ -166,7 +166,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         braggParser.closeFiles();
 
         // Save intensity data
-        auto &types = cfg->usedAtomTypesList();
+        auto &types = cfg->atomTypes();
         auto success = for_each_pair_early(
             types.begin(), types.end(),
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool> {

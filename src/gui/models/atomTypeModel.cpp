@@ -19,6 +19,14 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &specie
 // Set function to return QIcon for item
 void AtomTypeModel::setIconFunction(std::function<QIcon(const AtomType *atomType)> func) { iconFunction_ = func; }
 
+// Set vector containing checked items
+void AtomTypeModel::setCheckStateData(std::vector<const AtomType *> &checkedItemsVector)
+{
+    beginResetModel();
+    checkedItems_ = checkedItemsVector;
+    endResetModel();
+}
+
 AtomType *AtomTypeModel::rawData(const QModelIndex &index) const
 {
     assert(atomTypes_);
@@ -70,6 +78,10 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::DecorationRole && iconFunction_)
         return QVariant(iconFunction_(rawData(index)));
+    else if (role == Qt::CheckStateRole && checkedItems_)
+        return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
+                   ? Qt::Unchecked
+                   : Qt::Checked;
     else if (role == Qt::UserRole)
         return QVariant::fromValue(rawData(index));
 
@@ -78,48 +90,70 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
 
 bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole)
-        return false;
-
-    auto *atomType = rawData(index);
-    std::vector<double> values;
-
-    switch (index.column())
+    if (role == Qt::CheckStateRole && checkedItems_)
     {
-        // Name
-        case (0):
-            atomType->setName(value.toString().toStdString());
-            break;
-        // Element
-        case (1):
-            return false;
-        // Charge
-        case (2):
-            atomType->setCharge(value.toDouble());
-            break;
-        // Short Range Form
-        case (3):
-            atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(value.toString().toStdString()));
-            break;
-        // Short Range Parameters
-        case (4):
-            values = DissolveSys::splitStringToDoubles(value.toString().toStdString());
-            if (!Forcefield::shortRangeTypes().validNArgs(atomType->shortRangeType(), values.size()))
+        auto &xitems = checkedItems_->get();
+        if (value.value<Qt::CheckState>() == Qt::Checked)
+        {
+            if (std::find(xitems.begin(), xitems.end(), rawData(index)) == xitems.end())
+                xitems.push_back(rawData(index));
+        }
+        else
+            xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
+
+        emit dataChanged(index, index);
+
+        return true;
+    }
+    else if (role == Qt::EditRole)
+    {
+        auto *atomType = rawData(index);
+        std::vector<double> values;
+
+        switch (index.column())
+        {
+            // Name
+            case (0):
+                atomType->setName(value.toString().toStdString());
+                break;
+            // Element
+            case (1):
                 return false;
-            atomType->setShortRangeParameters(values);
-        default:
-            return false;
+            // Charge
+            case (2):
+                atomType->setCharge(value.toDouble());
+                break;
+            // Short Range Form
+            case (3):
+                atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(value.toString().toStdString()));
+                break;
+            // Short Range Parameters
+            case (4):
+                values = DissolveSys::splitStringToDoubles(value.toString().toStdString());
+                if (!Forcefield::shortRangeTypes().validNArgs(atomType->shortRangeType(), values.size()))
+                    return false;
+                atomType->setShortRangeParameters(values);
+            default:
+                return false;
+        }
+
+        emit dataChanged(index, index);
+
+        return true;
     }
 
-    emit dataChanged(index, index);
-
-    return true;
+    return false;
 }
 
 Qt::ItemFlags AtomTypeModel::flags(const QModelIndex &index) const
 {
-    return index.column() == 1 ? Qt::ItemIsSelectable | Qt::ItemIsEnabled
-                               : Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+    if (index.column() == 0)
+        return checkedItems_ ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
+                             : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    if (index.column() == 1)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    else
+        return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
 QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int role) const

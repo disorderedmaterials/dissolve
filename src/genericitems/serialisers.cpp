@@ -88,7 +88,7 @@ GenericItemSerialiser::GenericItemSerialiser()
                 return false;
         return true;
     });
-    registerSerialiser<AtomTypeList>(simpleSerialise<AtomTypeList>);
+    registerSerialiser<AtomTypeMix>(simpleSerialise<AtomTypeMix>);
     registerSerialiser<Data1D>(simpleSerialise<Data1D>);
     registerSerialiser<Data2D>(simpleSerialise<Data2D>);
     registerSerialiser<Data3D>(simpleSerialise<Data3D>);

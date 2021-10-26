@@ -4,7 +4,7 @@ add_library(
   atomchangetoken.cpp
   atomtype.cpp
   atomtypedata.cpp
-  atomtypelist.cpp
+  atomtypemix.cpp
   box.cpp
   box_cubic.cpp
   box_monoclinicalpha.cpp
@@ -77,7 +77,7 @@ add_library(
   atom.h
   atomtypedata.h
   atomtype.h
-  atomtypelist.h
+  atomtypemix.h
   box.h
   braggreflection.h
   cell.h

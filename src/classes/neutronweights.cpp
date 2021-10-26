@@ -21,7 +21,6 @@ NeutronWeights::NeutronWeights(const NeutronWeights &source) { (*this) = source;
 
 void NeutronWeights::operator=(const NeutronWeights &source)
 {
-    // Isotopologue Mix
     isotopologueMixtures_ = source.isotopologueMixtures_;
     atomTypes_ = source.atomTypes_;
     boundCoherentProducts_ = source.boundCoherentProducts_;
@@ -156,18 +155,18 @@ void NeutronWeights::calculateWeightingMatrices()
         auto speciesWeight = double(topes.speciesPopulation());
 
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
-        const Species *sp = topes.species();
-        const AtomTypeList &speciesAtomTypes = sp->usedAtomTypes();
+        const auto *sp = topes.species();
+        const auto &speciesAtomTypes = sp->atomTypes();
         intraFlag = false;
         dissolve::for_each_pair(
             ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
             [&](int i_, const AtomTypeData &atd1, int j_, const AtomTypeData &atd2) {
-                // Find this AtomType in our local AtomTypeList
+                // Find this AtomType in our local AtomTypeMix
                 int typeI = atomTypes_.indexOf(atd1.atomType());
                 if (typeI == -1)
                     Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd1.atomTypeName());
 
-                // Get AtomType for this Atom and find it in our local AtomTypeList
+                // Get AtomType for this Atom and find it in our local AtomTypeMix
                 int typeJ = atomTypes_.indexOf(atd2.atomType());
                 if (typeJ == -1)
                     Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd2.atomTypeName());
@@ -182,7 +181,7 @@ void NeutronWeights::calculateWeightingMatrices()
             // fractional Isotopologue weight in the mix.
             double weight = speciesWeight * isoWeight.weight();
 
-            const Isotopologue *tope = isoWeight.isotopologue();
+            const auto *tope = isoWeight.isotopologue();
 
             for (auto atd1 = speciesAtomTypes.begin(); atd1 != speciesAtomTypes.end(); ++atd1)
             {
@@ -241,7 +240,7 @@ void NeutronWeights::calculateWeightingMatrices()
 }
 
 // Create AtomType list and matrices based on stored Isotopologues information
-void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTypes)
+void NeutronWeights::createFromIsotopologues(const std::vector<const AtomType *> &exchangeableTypes)
 {
     // Loop over Isotopologues entries and ensure relative populations of Isotopologues sum to 1.0
     for (auto &topes : isotopologueMixtures_)
@@ -280,8 +279,8 @@ void NeutronWeights::naturalise()
     valid_ = true;
 }
 
-// Return AtomTypeList
-const AtomTypeList &NeutronWeights::atomTypes() const { return atomTypes_; }
+// Return AtomTypeMix
+const AtomTypeMix &NeutronWeights::atomTypes() const { return atomTypes_; }
 
 // Return number of used AtomTypes
 int NeutronWeights::nUsedTypes() const { return atomTypes_.nItems(); }
@@ -322,7 +321,7 @@ bool NeutronWeights::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
-    // Read AtomTypeList
+    // Read AtomTypeMix
     if (!atomTypes_.deserialise(parser, coreData))
         return false;
 
@@ -360,7 +359,7 @@ bool NeutronWeights::deserialise(LineParser &parser, const CoreData &coreData)
 // Write data through specified LineParser
 bool NeutronWeights::serialise(LineParser &parser) const
 {
-    // Write AtomTypeList
+    // Write AtomTypeMix
     if (!atomTypes_.serialise(parser))
         return false;
 

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "classes/neutronweights.h"
 #include "math/data1d.h"
 #include "math/histogram1d.h"
@@ -25,8 +25,8 @@ class PartialSet
      * Partials Data
      */
     private:
-    // AtomTypes used to generate matrices
-    AtomTypeList atomTypes_;
+    // AtomTypeMix used to generate matrices
+    AtomTypeMix atomTypeMix_;
     // RDF range used to initialise arrays
     double rdfRange_;
     // RDF bin width used to initialise arrays
@@ -52,17 +52,17 @@ class PartialSet
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
-    bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth);
+    bool setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth);
     // Set up PartialSet without initialising histogram arrays
-    bool setUpPartials(const AtomTypeList &atomTypes);
+    bool setUpPartials(const AtomTypeMix &atomTypMix);
     // Set up histogram arrays for g(r) calculation
     void setUpHistograms(double rdfRange, double binWidth);
     // Reset partial arrays
     void reset();
     // Return number of AtomTypes used to generate matrices
     int nAtomTypes() const;
-    // Return atom types list
-    const AtomTypeList &atomTypes() const;
+    // Return atom types mis
+    const AtomTypeMix &atomTypeMix() const;
     // Return RDF range used to initialise arrays
     double rdfRange() const;
     // Return RDF bin width used to initialise arrays

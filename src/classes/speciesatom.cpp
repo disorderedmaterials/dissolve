@@ -61,7 +61,7 @@ void SpeciesAtom::setAtomType(const std::shared_ptr<AtomType> &at)
 
     atomType_ = at;
     if (parent_)
-        parent_->updateUsedAtomTypes();
+        parent_->updateAtomTypes();
 }
 
 // Return SpeciesAtomType of SpeciesAtom

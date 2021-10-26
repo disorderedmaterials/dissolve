@@ -17,7 +17,7 @@ class Isotopologues
 {
     public:
     Isotopologues(const Species *species = nullptr, int speciesPopulation = 0);
-    ~Isotopologues();
+    ~Isotopologues() = default;
 
     /*
      * Isotopologue Mixture Data
@@ -37,14 +37,10 @@ class Isotopologues
     const Species *species() const;
     // Return associated Species population
     int speciesPopulation() const;
-    // Prune defunct Isotopologue entries
-    void pruneMissing();
-    // Add next available Isotopologue to list
-    bool addNext();
     // Add specific Isotopologue to list
     void add(const Isotopologue *iso, double relativeWeight);
     // Set Isotopologue component in list
-    bool set(const Isotopologue *iso, double relativeWeight);
+    void set(const Isotopologue *iso, double relativeWeight);
     // Remove references to the specified Isotopologue
     void remove(const Isotopologue *iso);
     // Remove the specified IsotopologueWeight

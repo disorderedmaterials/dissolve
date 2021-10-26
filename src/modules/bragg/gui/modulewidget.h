@@ -11,7 +11,7 @@
 #include "templates/optionalref.h"
 
 // Forward Declarations
-class AtomTypeList;
+class AtomTypeMix;
 class BraggModule;
 class Configuration;
 class Dissolve;
@@ -46,7 +46,7 @@ class BraggModuleWidget : public ModuleWidget
     // Reflection data to display
     OptionalReferenceWrapper<const std::vector<BraggReflection>> reflectionData_;
     // Reflection atom types data
-    OptionalReferenceWrapper<const AtomTypeList> reflectionAtomTypesData_;
+    OptionalReferenceWrapper<const AtomTypeMix> reflectionAtomTypesData_;
     // Last version of reflection data displayed
     int reflectionDataDisplayVersion_;
 
