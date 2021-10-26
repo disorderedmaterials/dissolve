@@ -40,8 +40,20 @@ class SQModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Number of historical partial sets to combine into final partials
+    int averagingLength_{1};
+    // Step size in Q for S(Q) calculation
+    double qDelta_{0.05};
+    // Maximum Q for calculated S(Q)
+    double qMax_{30.0};
+    // Minimum Q for calculated S(Q)
+    double qMin_{0.01};
+    // Whether to save partials to disk after calculation
+    bool save_{false};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

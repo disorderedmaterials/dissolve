@@ -11,7 +11,7 @@ CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
 {
     keywords_.add("Control", new Vec3DoubleKeyword({0.0, 0.0, 0.0}, Vec3Labels::XYZLabels), "OriginFrac",
                   "Origin of vector in fractional coordinates");
-    keywords_.add("Control", new DoubleKeyword(5.0, 1.0e-3), "Radius", "Cylinder radius");
+    keywords_.add<DoubleKeyword>("Control", "Radius", "Cylinder radius", radius_, 1.0e-3);
     keywords_.add("Control", new Vec3DoubleKeyword({0.0, 0.0, 1.0}, Vec3Labels::XYZLabels), "Vector", "Cylinder vector");
 }
 
@@ -31,5 +31,5 @@ bool CylindricalRegionProcedureNode::isVoxelValid(const Configuration *cfg, cons
     auto num = ((p0 - l0) * (p0 - l1)).magnitude();
 
     // Check distance vs cylinder radius
-    return (num / denominator) <= keywords_.asDouble("Radius");
+    return (num / denominator) <= radius_;
 }

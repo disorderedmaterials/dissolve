@@ -8,32 +8,43 @@
 void IntraShakeModule::initialise()
 {
     // Control
-    keywords_.add("Control", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-    keywords_.add("Control", new IntegerKeyword(1), "ShakesPerTerm", "Number of shakes per term");
-    keywords_.add("Control", new DoubleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
-    keywords_.add("Control", new BoolKeyword(false), "TermEnergyOnly",
-                  "Whether only the energy of the intramolecular term is calculated and assessed");
+    keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to employ", cutoffDistance_, -1.0);
+    keywords_.add<IntegerKeyword>("Control", "ShakesPerTerm", "Number of shakes per term", nShakesPerTerm_, 1);
+    keywords_.add<DoubleKeyword>("Control", "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves",
+                                 targetAcceptanceRate_, 0.001, 1.0);
+    keywords_.add<BoolKeyword>("Control", "TermEnergyOnly",
+                               "Whether only the energy of the intramolecular term is calculated and assessed",
+                               termEnergyOnly_);
 
     // Bonds
-    keywords_.add("Bonds", new BoolKeyword(true), "AdjustBonds", "Whether Bonds in the molecule should be shaken");
-    keywords_.add("Bonds", new DoubleKeyword(0.01), "BondStepSize", "Step size for Bond adjustments (Angstroms)",
-                  KeywordBase::InRestartFileOption);
-    keywords_.add("Bonds", new DoubleKeyword(0.001), "BondStepSizeMin", "Minimum step size for Bond adjustments (Angstroms)");
-    keywords_.add("Bonds", new DoubleKeyword(0.2), "BondStepSizeMax", "Maximum step size for Bond adjustments (Angstroms)");
+    keywords_.add<BoolKeyword>("Bonds", "AdjustBonds", "Whether Bonds in the molecule should be shaken", adjustBonds_);
+    keywords_
+        .add<DoubleKeyword>("Bonds", "BondStepSize", "Step size for Bond adjustments (Angstroms)", bondStepSize_, 0.001, 1.0)
+        .optionMask = KeywordBase::InRestartFileOption;
+    keywords_.add<DoubleKeyword>("Bonds", "BondStepSizeMin", "Minimum step size for Bond adjustments (Angstroms)",
+                                 bondStepSizeMin_, 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("Bonds", "BondStepSizeMax", "Maximum step size for Bond adjustments (Angstroms)",
+                                 bondStepSizeMax_, 0.001, 1.0);
 
     // Angles
-    keywords_.add("Angles", new BoolKeyword(true), "AdjustAngles", "Whether Angles in the molecule should be shaken");
-    keywords_.add("Angles", new DoubleKeyword(5.0), "AngleStepSize", "Step size for Angle adjustments (degrees)",
-                  KeywordBase::InRestartFileOption);
-    keywords_.add("Angles", new DoubleKeyword(0.01), "AngleStepSizeMin", "Minimum step size for Angle adjustments (degrees)");
-    keywords_.add("Angles", new DoubleKeyword(20.0), "AngleStepSizeMax", "Maximum step size for Angle adjustments (degrees)");
+    keywords_.add<BoolKeyword>("Angles", "AdjustAngles", "Whether Angles in the molecule should be shaken", adjustAngles_);
+    keywords_
+        .add<DoubleKeyword>("Angles", "AngleStepSize", "Step size for Angle adjustments (degrees)", angleStepSize_, 0.01, 45.0)
+        .optionMask = KeywordBase::InRestartFileOption;
+    keywords_.add<DoubleKeyword>("Angles", "AngleStepSizeMin", "Minimum step size for Angle adjustments (degrees)",
+                                 angleStepSizeMin_, 0.01, 45.0);
+    keywords_.add<DoubleKeyword>("Angles", "AngleStepSizeMax", "Maximum step size for Angle adjustments (degrees)",
+                                 angleStepSizeMax_, 0.01, 45.0);
 
     // Torsions
-    keywords_.add("Torsions", new BoolKeyword(true), "AdjustTorsions", "Whether Torsions in the molecule should be shaken");
-    keywords_.add("Torsions", new DoubleKeyword(10.0), "TorsionStepSize", "Step size for Torsion adjustments (degrees)",
-                  KeywordBase::InRestartFileOption);
-    keywords_.add("Torsions", new DoubleKeyword(0.5), "TorsionStepSizeMin",
-                  "Minimum step size for Torsion adjustments (degrees)");
-    keywords_.add("Torsions", new DoubleKeyword(45.0), "TorsionStepSizeMax",
-                  "Maximum step size for Torsion adjustments (degrees)");
+    keywords_.add<BoolKeyword>("Torsions", "AdjustTorsions", "Whether Torsions in the molecule should be shaken",
+                               adjustTorsions_);
+    keywords_
+        .add<DoubleKeyword>("Torsions", "TorsionStepSize", "Step size for Torsion adjustments (degrees)", torsionStepSize_,
+                            0.01, 45.0)
+        .optionMask = KeywordBase::InRestartFileOption;
+    keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMin", "Minimum step size for Torsion adjustments (degrees)",
+                                 torsionStepSizeMin_, 0.01, 45.0);
+    keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMax", "Maximum step size for Torsion adjustments (degrees)",
+                                 torsionStepSizeMax_, 0.01, 45.0);
 }

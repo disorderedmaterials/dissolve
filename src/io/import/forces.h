@@ -26,6 +26,10 @@ class ForceImportFileFormat : public FileAndFormat
      * Keyword Options
      */
     private:
+    // Factor by which to multiply incoming forces
+    double factor_{1.0};
+
+    private:
     // Set up keywords for the format
     void setUpKeywords();
 

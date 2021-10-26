@@ -27,6 +27,22 @@ class Data1DImportFileFormat : public FileAndFormat
      * Keyword Options
      */
     private:
+    // X value from which to calculate average Y and remove
+    double removeAverageFromX_{-1.0};
+    // Minimum x value to permit when reading data
+    double xMin_{0.0};
+    // Maximum x value to permit when reading data
+    double xMax_{0.0};
+    // Column index to use for x values
+    int xColumn_{1};
+    // Column index to use for y values
+    int yColumn_{2};
+    // Column index to use for error values
+    int errorColumn_{0};
+    // Remove a number of points from the start of the data
+    int nPointsToRemove_{0};
+
+    private:
     // Set up keywords for the format
     void setUpKeywords();
 

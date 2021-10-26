@@ -16,58 +16,67 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 void EPSRModule::initialise()
 {
     // Control
-    keywords_.add("Control", new BoolKeyword(true), "OnlyWhenEnergyStable",
-                  "Assesses the energy of all involved Configurations, refining the potential only when all their total "
-                  "energies are stable");
-    keywords_.add("Control", new DoubleKeyword(3.0, -1.0), "EReq",
-                  "Limit of magnitude of additional potential for any one pair potential");
-    keywords_.add("Control", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
-    keywords_.add("Control", new BoolKeyword(true), "ModifyPotential",
-                  "Whether to apply generated perturbations to interatomic potentials");
+    keywords_.add<BoolKeyword>(
+        "Control", "OnlyWhenEnergyStable",
+        "Assesses the energy of all involved Configurations, refining the potential only when all their total "
+        "energies are stable",
+        onlyWhenEnergyStable_);
+    keywords_.add<DoubleKeyword>("Control", "EReq", "Limit of magnitude of additional potential for any one pair potential",
+                                 eReq_, 0.0);
+    keywords_.add<DoubleKeyword>("Control", "Feedback", "Confidence factor", feedback_, 0.0, 1.0);
+    keywords_.add<BoolKeyword>("Control", "ModifyPotential",
+                               "Whether to apply generated perturbations to interatomic potentials", modifyPotential_);
     keywords_.add("Control", new ModuleVectorKeyword({"NeutronSQ", "XRaySQ"}), "Target",
                   "Add specified Module (and it's Reference data) as a refinement target");
-    keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax",
-                  "Maximum Q value over which to generate potentials from total scattering data");
-    keywords_.add("Control", new DoubleKeyword(0.5, -1.0), "QMin",
-                  "Minimum Q value over which to generate potentials from total scattering data");
-    keywords_.add("Control", new DoubleKeyword(1.0, 0.0, 10.0), "Weighting",
-                  "Factor used when adding fluctuation coefficients to pair potentials");
+    keywords_.add<DoubleKeyword>("Control", "QMax",
+                                 "Maximum Q value over which to generate potentials from total scattering data", qMax_, 0.0);
+    keywords_.add<DoubleKeyword>("Control", "QMin",
+                                 "Minimum Q value over which to generate potentials from total scattering data", qMin_, 0.0);
+    keywords_.add<DoubleKeyword>("Control", "Weighting", "Factor used when adding fluctuation coefficients to pair potentials",
+                                 weighting_, 0.0, 100.0);
 
     // Expansion Function
     keywords_.add("Expansion Function",
                   new EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>(EPSRModule::expansionFunctionTypes() =
                                                                                 EPSRModule::PoissonExpansionFunction),
                   "ExpansionFunction", "Form of expansion function to use when fitting difference data");
-    keywords_.add("Expansion Function", new DoubleKeyword(0.1, 0.001, 1.0), "GSigma1",
-                  "Width for Gaussian function in reciprocal space");
-    keywords_.add("Expansion Function", new DoubleKeyword(0.2, 0.001, 1.0), "GSigma2",
-                  "Width for Gaussian function in real space");
-    keywords_.add("Expansion Function", new IntegerKeyword(-1, -1), "NCoeffP",
-                  "Number of coefficients used to define the empirical potential (-1 for automatic)");
-    keywords_.add("Expansion Function", new IntegerKeyword(1000, 0), "NPItSs", "Number of steps for refining the potential");
+    keywords_.add<DoubleKeyword>("Expansion Function", "GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_,
+                                 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("Expansion Function", "GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001,
+                                 1.0);
+    keywords_.add<IntegerKeyword>("Expansion Function", "NCoeffP",
+                                  "Number of coefficients used to define the empirical potential (-1 for automatic)", nCoeffP_,
+                                  -1);
+    keywords_.add<IntegerKeyword>("Expansion Function", "NPItSs", "Number of steps for refining the potential", nPItSs_, 1);
     keywords_.add("Expansion Function", new StringKeyword(""), "PCofFile",
                   "EPSR pcof file from which to read starting coefficients from");
-    keywords_.add("Expansion Function", new DoubleKeyword(0.01, 0.001, 1.0), "PSigma1",
-                  "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");
-    keywords_.add("Expansion Function", new DoubleKeyword(0.01, 0.001, 1.0), "PSigma2",
-                  "Width for Poisson functions in real space");
-    keywords_.add("Expansion Function", new DoubleKeyword(-1.0), "RMaxPT",
-                  "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)");
-    keywords_.add("Expansion Function", new DoubleKeyword(-1.0), "RMinPT",
-                  "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
+    keywords_.add<DoubleKeyword>("Expansion Function", "PSigma1",
+                                 "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_,
+                                 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("Expansion Function", "PSigma2", "Width for Poisson functions in real space", pSigma2_, 0.001,
+                                 1.0);
+    keywords_.add<DoubleKeyword>("Expansion Function", "RMaxPT",
+                                 "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)",
+                                 rMaxPT_, -1.0);
+    keywords_.add<DoubleKeyword>("Expansion Function", "RMinPT",
+                                 "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)",
+                                 rMinPT_, -1.0);
 
     // Test
-    keywords_.add("Test", new BoolKeyword(false), "Test", "Test against supplied reference data");
+    keywords_.add<BoolKeyword>("Test", "Test", "Test against supplied reference data", test_);
     keywords_.add("Test", new Data1DStoreKeyword(), "TestReference", "Specify test reference data");
-    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%error) above which test fails");
-    keywords_.add("Test", new BoolKeyword(false), "OverwritePotentials",
-                  "Overwrite potentials each time rather than summing them");
+    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Test threshold (%error) above which test fails", testThreshold_,
+                                 1.0e-5);
+    keywords_.add<BoolKeyword>("Test", "OverwritePotentials", "Overwrite potentials each time rather than summing them",
+                               overwritePotentials_);
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "SaveDifferenceFunctions", "Whether to save difference function and fit");
-    keywords_.add("Export", new BoolKeyword(false), "SaveEmpiricalPotentials", "Whether to save empirical potentials");
-    keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials");
-    keywords_.add("Export", new BoolKeyword(false), "SavePCof", "Whether to save potential coefficients");
-    keywords_.add("Export", new BoolKeyword(false), "SaveSimulatedFR",
-                  "Whether to save simulated F(r) (Fourier transform of calculated F(Q))");
+    keywords_.add<BoolKeyword>("Export", "SaveDifferenceFunctions", "Whether to save difference function and fit",
+                               saveDifferenceFunctions_);
+    keywords_.add<BoolKeyword>("Export", "SaveEmpiricalPotentials", "Whether to save empirical potentials",
+                               saveEmpiricalPotentials_);
+    keywords_.add<BoolKeyword>("Export", "SaveEstimatedPartials", "Whether to save estimated partials", saveEstimatedPartials_);
+    keywords_.add<BoolKeyword>("Export", "SavePCof", "Whether to save potential coefficients", savePotentialCoefficients_);
+    keywords_.add<BoolKeyword>("Export", "SaveSimulatedFR",
+                               "Whether to save simulated F(r) (Fourier transform of calculated F(Q))", saveSimulatedFR_);
 }

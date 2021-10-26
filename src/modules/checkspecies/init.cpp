@@ -13,9 +13,10 @@ void CheckSpeciesModule::initialise()
     // Checks
     keywords_.add("Atoms", new IntegerStringVectorKeyword(1, 1), "AtomType",
                   "Check that atom index <id> has the atom type <type>");
-    keywords_.add("Atoms", new DoubleKeyword(1.0e-3), "ChargeTolerance", "Tolerance beyond which charges are said to differ");
-    keywords_.add("Atoms", new DoubleKeyword(0.0), "TotalCharge",
-                  "Check the total charge of the species against the specified value");
+    keywords_.add<DoubleKeyword>("Atoms", "ChargeTolerance", "Tolerance beyond which charges are said to differ",
+                                 chargeTolerance_, 1.0e-5);
+    keywords_.add<DoubleKeyword>("Atoms", "TotalCharge", "Check the total charge of the species against the specified value",
+                                 totalCharge_);
     keywords_.add("Intramolecular", new IntegerDoubleVectorKeyword(2), "Bond",
                   "Check that the bond <i>-<j> has the correct parameters");
     keywords_.add("Intramolecular", new IntegerDoubleVectorKeyword(3), "Angle",
@@ -24,6 +25,6 @@ void CheckSpeciesModule::initialise()
                   "Check that the torsion <i>-<j>-<k>-<l> has the correct parameters");
     keywords_.add("Intramolecular", new IntegerDoubleVectorKeyword(4), "Improper",
                   "Check that the improper <i>-<j>-<k>-<l> has the correct parameters");
-    keywords_.add("Intramolecular", new DoubleKeyword(1.0e-3), "Tolerance",
-                  "Tolerance beyond which parameters are said to differ");
+    keywords_.add<DoubleKeyword>("Intramolecular", "Tolerance", "Tolerance beyond which parameters are said to differ",
+                                 tolerance_, 1.0e-5);
 }

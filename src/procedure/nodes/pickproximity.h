@@ -18,6 +18,19 @@ class PickProximityProcedureNode : public PickProcedureNodeBase
     ~PickProximityProcedureNode() override = default;
 
     /*
+     * Control
+     */
+    private:
+    // Minimum distance (Angstroms)
+    double minDistance_{0.0};
+    // Maximum distance (Angstroms)
+    double maxDistance_{0.0};
+    // Minimum number to pick
+    int minCount_{0};
+    // Maximum number to pick
+    int maxCount_{0};
+
+    /*
      * Execute
      */
     public:

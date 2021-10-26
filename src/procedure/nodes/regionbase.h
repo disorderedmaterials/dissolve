@@ -17,7 +17,7 @@ class Configuration;
 class RegionProcedureNodeBase : public ProcedureNode
 {
     public:
-    RegionProcedureNodeBase(ProcedureNode::NodeType nodeType);
+    explicit RegionProcedureNodeBase(ProcedureNode::NodeType nodeType);
     ~RegionProcedureNodeBase() override = default;
 
     /*
@@ -33,8 +33,12 @@ class RegionProcedureNodeBase : public ProcedureNode
      * Region Data
      */
     private:
+    // Invert the logic used to determine free space in the region
+    bool invert_{false};
     // Region object
     Region region_;
+    // Voxel size (Angstroms)
+    double voxelSize_{1.0};
 
     protected:
     // Return whether voxel centred at supplied real coordinates is valid

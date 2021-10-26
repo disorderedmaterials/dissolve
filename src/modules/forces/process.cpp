@@ -49,14 +49,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Retrieve control parameters
         const auto saveData = exportedForces_.hasFilename();
-        const auto testMode = keywords_.asBool("Test");
-        const auto testAnalytic = keywords_.asBool("TestAnalytic");
-        const auto testInter = keywords_.asBool("TestInter");
-        const auto testIntra = keywords_.asBool("TestIntra");
-        const auto testThreshold = keywords_.asDouble("TestThreshold");
 
         // Calculate the total forces
-        if (testMode)
+        if (test_)
         {
             /*
              * Calculate the total forces in the system using basic loops.
@@ -65,9 +60,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
              */
 
             Messenger::print("Calculating forces for Configuration '{}' in serial test mode...\n", cfg->name());
-            if (testAnalytic)
+            if (testAnalytic_)
                 Messenger::print("Exact (analytic) forces will be calculated.\n");
-            Messenger::print("Test threshold for failure is {}%.\n", testThreshold);
+            Messenger::print("Test threshold for failure is {}%.\n", testThreshold_);
 
             /*
              * Calculation Begins
@@ -100,7 +95,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 molN = cfg->molecule(n);
 
                 // Intramolecular forces (excluding bound terms) in molecule N
-                if (testInter)
+                if (testInter_)
                     for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
                     {
                         i = molN->atom(ii);
@@ -122,7 +117,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             r = sqrt(magjisq);
                             vecji /= r;
 
-                            if (testAnalytic)
+                            if (testAnalytic_)
                                 vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r) * scale;
                             else
                                 vecji *= potentialMap.force(*molN->atom(ii), *molN->atom(jj), r) * scale;
@@ -132,7 +127,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                 // Forces between molecule N and molecule M
-                if (testInter)
+                if (testInter_)
                     for (auto m = n + 1; m < cfg->nMolecules(); ++m)
                     {
                         molM = cfg->molecule(m);
@@ -154,7 +149,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 r = sqrt(magjisq);
                                 vecji /= r;
 
-                                if (testAnalytic)
+                                if (testAnalytic_)
                                     vecji *= potentialMap.analyticForce(i, j, r);
                                 else
                                     vecji *= potentialMap.force(*i, *j, r);
@@ -165,7 +160,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         }
                     }
 
-                if (testIntra)
+                if (testIntra_)
                 {
                     // Bond forces
                     for (const auto &bond : molN->species()->bonds())
@@ -318,7 +313,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("Calculating total forces for Configuration '{}'...\n", cfg->name());
 
             // Calculate interatomic forces
-            if (testInter)
+            if (testInter_)
             {
                 Timer interTimer;
                 interTimer.start();
@@ -332,7 +327,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Calculate intramolecular forces
-            if (testIntra)
+            if (testIntra_)
             {
                 Timer intraTimer;
                 intraTimer.start();
@@ -372,12 +367,12 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     if (fabs(fInter[n].get(i)) > 1.0e-6)
                         interRatio[i] *= 100.0 / fInter[n].get(i);
-                    if (fabs(interRatio[i]) > testThreshold)
+                    if (fabs(interRatio[i]) > testThreshold_)
                         failed = true;
 
                     if (fabs(fIntra[n].get(i)) > 1.0e-6)
                         intraRatio[i] *= 100.0 / fIntra[n].get(i);
-                    if (fabs(intraRatio[i]) > testThreshold)
+                    if (fabs(intraRatio[i]) > testThreshold_)
                         failed = true;
                 }
 
@@ -430,11 +425,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(fInter[n].z + fIntra[n].z) > 1.0e-6)
                         totalRatio.z *= 100.0 / (fInter[n].z + fIntra[n].z);
 
-                    if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
+                    if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold_)
                         failed = true;
-                    else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
+                    else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold_)
                         failed = true;
-                    else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
+                    else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold_)
                         failed = true;
                     else
                         failed = false;
@@ -470,11 +465,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(fInterCheck[n].z + fIntraCheck[n].z) > 1.0e-6)
                         totalRatio.z *= 100.0 / (fInterCheck[n].z + fIntraCheck[n].z);
 
-                    if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
+                    if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold_)
                         failed = true;
-                    else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
+                    else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold_)
                         failed = true;
-                    else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
+                    else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold_)
                         failed = true;
                     else
                         failed = false;

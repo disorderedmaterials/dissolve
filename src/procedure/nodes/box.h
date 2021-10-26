@@ -24,6 +24,13 @@ class BoxProcedureNode : public ProcedureNode
     bool mustBeNamed() const override;
 
     /*
+     * Node Data
+     */
+    private:
+    // Whether the box is non-periodic
+    bool nonPeriodic_{false};
+
+    /*
      * Execute
      */
     public:

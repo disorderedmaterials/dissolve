@@ -13,7 +13,7 @@ BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bo
 {
     keywords_.add("Control", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
     keywords_.add("Control", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");
-    keywords_.add("Control", new BoolKeyword(false), "NonPeriodic", "Whether the box is non-periodic");
+    keywords_.add<BoolKeyword>("Control", "NonPeriodic", "Whether the box is non-periodic", nonPeriodic_);
 }
 
 /*
@@ -42,10 +42,9 @@ bool BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     // Retrieve necessary parameters
     auto lengths = keywords_.asVec3Double("Lengths");
     auto angles = keywords_.asVec3Double("Angles");
-    auto nonPeriodic = keywords_.asBool("NonPeriodic");
 
     // Create a Box in the target Configuration with our lengths and angles
-    cfg->createBox(lengths, angles, nonPeriodic);
+    cfg->createBox(lengths, angles, nonPeriodic_);
 
     Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", cfg->box()->volume(),
                      cfg->box()->reciprocalVolume());

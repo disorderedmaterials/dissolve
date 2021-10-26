@@ -9,3 +9,4 @@ void TestModule::initialise()
 {
     // 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
+// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");

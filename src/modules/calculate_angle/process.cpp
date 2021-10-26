@@ -33,15 +33,18 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
     collectDAngleAB_->setKeyword<Vec3<double>>("RangeY", angleRange);
     collectDAngleBC_->setKeyword<Vec3<double>>("RangeX", rangeBC);
     collectDAngleBC_->setKeyword<Vec3<double>>("RangeY", angleRange);
-    const bool excludeSameMoleculeAB = keywords_.asBool("ExcludeSameMoleculeAB");
-    if (excludeSameMoleculeAB)
+    if (excludeSameMoleculeAB_)
         selectA_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectB_});
-    const bool excludeSameMoleculeBC = keywords_.asBool("ExcludeSameMoleculeBC");
-    if (excludeSameMoleculeBC)
+    else
+        selectA_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
+    if (excludeSameMoleculeBC_)
         selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectB_});
-    const bool excludeSameSiteAC = keywords_.asBool("ExcludeSameSiteAC");
-    if (excludeSameSiteAC)
+    else
+        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
+    if (excludeSameSiteAC_)
         selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {selectA_});
+    else
+        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurationsKeyword_.data().front();

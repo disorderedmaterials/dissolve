@@ -63,9 +63,8 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
-        auto ftQMin = keywords_.hasBeenSet("ReferenceFTQMin") ? keywords_.asDouble("ReferenceFTQMin") : 0.0;
-        auto ftQMax = keywords_.hasBeenSet("ReferenceFTQMax") ? keywords_.asDouble("ReferenceFTQMax")
-                                                              : referenceData.xAxis().back() + 1.0;
+        auto ftQMin = keywords_.hasBeenSet("ReferenceFTQMin") ? referenceFTQMin_ : 0.0;
+        auto ftQMax = keywords_.hasBeenSet("ReferenceFTQMax") ? referenceFTQMax_ : referenceData.xAxis().back() + 1.0;
         const auto wf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
         if (wf == WindowFunction::Form::None)
             Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
@@ -85,13 +84,13 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
-        auto deltaR = keywords_.asDouble("ReferenceFTDeltaR");
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), deltaR, deltaR, 30.0, WindowFunction(wf));
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
+                        WindowFunction(wf));
 
         // Save data?
-        if (keywords_.asBool("SaveReference"))
+        if (saveReference_)
         {
             if (procPool.isMaster())
             {
@@ -130,10 +129,6 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
     auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
-    const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
-    const bool saveGR = keywords_.asBool("SaveGR");
-    const bool saveSQ = keywords_.asBool("SaveSQ");
-    const auto saveRepresentativeGR = keywords_.asBool("SaveRepresentativeGR");
 
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
@@ -149,13 +144,13 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("XRaySQ: Window function to be applied when calculating representative g(r) from S(Q) is {}.",
                          WindowFunction::forms().keyword(rwf));
-    if (saveFormFactors)
+    if (saveFormFactors_)
         Messenger::print("XRaySQ: Combined form factor weightings for atomtype pairs will be saved.\n");
-    if (saveSQ)
+    if (saveSQ_)
         Messenger::print("XRaySQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
-    if (saveGR)
+    if (saveGR_)
         Messenger::print("XRaySQ: Weighted partial g(r) and total G(r) will be saved.\n");
-    if (saveRepresentativeGR)
+    if (saveRepresentativeGR_)
         Messenger::print("XRaySQ: Representative G(r) will be saved.\n");
     Messenger::print("\n");
 
@@ -185,9 +180,9 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
+    if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
         return false;
-    if (saveFormFactors)
+    if (saveFormFactors_)
     {
         auto result = for_each_pair_early(
             unweightedSQ.atomTypeMix().begin(), unweightedSQ.atomTypeMix().end(),
@@ -255,7 +250,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
 
     // Save data if requested
-    if (saveRepresentativeGR)
+    if (saveRepresentativeGR_)
     {
         if (procPool.isMaster())
         {

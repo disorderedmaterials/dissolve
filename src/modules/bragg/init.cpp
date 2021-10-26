@@ -9,21 +9,21 @@
 void BraggModule::initialise()
 {
     // Control
-    keywords_.add("Control", new IntegerKeyword(5, 1), "Averaging",
-                  "Number of historical data sets to combine into final reflection data");
+    keywords_.add<IntegerKeyword>("Control", "Averaging",
+                                  "Number of historical data sets to combine into final reflection data", averagingLength_, 0);
     keywords_.add(
         "Control",
         new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
         "AveragingScheme", "Weighting scheme to use when averaging reflection data");
-    keywords_.add("Control", new DoubleKeyword(0.001), "QDelta",
-                  "Resolution (bin width) in Q space to use when calculating Bragg reflections");
-    keywords_.add("Control", new DoubleKeyword(1.0), "QMax", "Maximum Q value for Bragg calculation");
-    keywords_.add("Control", new DoubleKeyword(0.01), "QMin", "Minimum Q value for Bragg calculation");
+    keywords_.add<DoubleKeyword>(
+        "Control", "QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections", qDelta_, 1.0e-5);
+    keywords_.add<DoubleKeyword>("Control", "QMax", "Maximum Q value for Bragg calculation", qMax_, 0.0);
+    keywords_.add<DoubleKeyword>("Control", "QMin", "Minimum Q value for Bragg calculation", qMin_, 0.0);
     keywords_.add("Control", new Vec3IntegerKeyword(Vec3<int>(1, 1, 1), Vec3<int>(1, 1, 1), Vec3Labels::HKLLabels),
                   "Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration");
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "SaveReflections", "Whether to save Bragg reflection data to disk");
+    keywords_.add<BoolKeyword>("Export", "SaveReflections", "Whether to save Bragg reflection data to disk", saveReflections_);
 
     // Test
     keywords_.add("HIDDEN", new StringKeyword(), "TestReflections",

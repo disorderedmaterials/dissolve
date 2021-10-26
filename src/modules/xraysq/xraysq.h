@@ -43,11 +43,27 @@ class XRaySQModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
     private:
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
+    // Set the minimum Q value to use when Fourier-transforming the data
+    double referenceFTQMin_{0.0};
+    // Set the maximum Q value to use when Fourier-transforming the data
+    double referenceFTQMax_{0.0};
+    // Set the spacing in r to use when generating the Fourier-transformed data
+    double referenceFTDeltaR_{0.05};
+    // Whether to save combined form factor weightings for atomtype pairs
+    bool saveFormFactors_{false};
+    // Whether to save weighted g(r) and G(r) to disk after calculation
+    bool saveGR_{false};
+    // Whether to save the reference data and its Fourier transform
+    bool saveReference_{false};
+    // Save representative G(r), obtained from Fourier transform of the calculated F(Q)
+    bool saveRepresentativeGR_{false};
+    // Whether to save weighted S(Q) and F(Q) to disk after calculation
+    bool saveSQ_{false};
 
     protected:
     // Perform any necessary initialisation for the Module

@@ -8,9 +8,9 @@
 RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType)
     : ProcedureNode(nodeType, ProcedureNode::NodeClass::Region)
 {
-    keywords_.add("Control", new DoubleKeyword(1.0, 0.1), "VoxelSize",
-                  "Voxel size (length) guiding the coarseness / detail of the region");
-    keywords_.add("Control", new BoolKeyword(false), "Invert", "Invert the logic used to determine free space in the region");
+    keywords_.add<DoubleKeyword>("Control", "VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region",
+                                 voxelSize_, 0.1);
+    keywords_.add<BoolKeyword>("Control", "Invert", "Invert the logic used to determine free space in the region", invert_);
 }
 
 /*
@@ -36,10 +36,9 @@ const Region &RegionProcedureNodeBase::region() const { return region_; }
 // Regenerate and return region data
 const Region RegionProcedureNodeBase::generateRegion(const Configuration *cfg) const
 {
-    auto validState = !keywords_.asBool("Invert");
     Region newRegion;
-    newRegion.generate(cfg, keywords_.asDouble("VoxelSize"),
-                       [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) == validState; });
+    newRegion.generate(cfg, voxelSize_,
+                       [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) == !invert_; });
     return newRegion;
 }
 
@@ -52,6 +51,6 @@ bool RegionProcedureNodeBase::execute(ProcessPool &procPool, Configuration *cfg,
                                       GenericList &targetList)
 {
     auto validState = !keywords_.asBool("Invert");
-    return region_.generate(cfg, keywords_.asDouble("VoxelSize"),
+    return region_.generate(cfg, voxelSize_,
                             [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) == validState; });
 }

@@ -10,8 +10,14 @@ class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
     OperateNormaliseProcedureNode(double value = 1.0);
-    OperateNormaliseProcedureNode(int value);
     ~OperateNormaliseProcedureNode() override = default;
+
+    /*
+     * Node Data
+     */
+    private:
+    // Whether to normalise absolute sum of values rather than direct sum
+    bool absolute_{true};
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

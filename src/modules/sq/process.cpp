@@ -23,29 +23,24 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const RDFModule *rdfModule = keywords_.retrieve<const RDFModule *>("SourceRDFs");
     if (!rdfModule)
         return Messenger::error("A source RDF module must be provided.\n");
-    const auto averaging = keywords_.asInt("Averaging");
     const auto *braggModule = keywords_.retrieve<const BraggModule *>("IncludeBragg");
     const auto &braggQBroadening = keywords_.retrieve<Functions::Function1DWrapper>("BraggQBroadening");
     const auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     const auto &qBroadening = keywords_.retrieve<Functions::Function1DWrapper>("QBroadening");
-    const auto qDelta = keywords_.asDouble("QDelta");
-    const auto qMin = keywords_.asDouble("QMin");
-    const auto qMax = keywords_.asDouble("QMax");
-    const auto saveData = keywords_.asBool("Save");
     const auto wf = keywords_.enumeration<WindowFunction::Form>("WindowFunction");
 
     // Print argument/parameter summary
-    Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin,
-                     qMax, qDelta);
+    Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin_,
+                     qMax_, qDelta_);
     Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", rdfModule->uniqueName());
     if (wf == WindowFunction::Form::None)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
         Messenger::print("SQ: Window function to be applied in Fourier transforms is {}.", WindowFunction::forms().keyword(wf));
-    if (averaging <= 1)
+    if (averagingLength_ <= 1)
         Messenger::print("SQ: No averaging of partials will be performed.\n");
     else
-        Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averaging,
+        Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
                          Averaging::averagingSchemes().keyword(averagingScheme));
     if (qBroadening.type() == Functions::Function1D::None)
         Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
@@ -61,7 +56,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("SQ: Broadening to be applied in calculated Bragg S(Q) is {} ({}).",
                              Functions::function1D().keyword(braggQBroadening.type()), braggQBroadening.parameterSummary());
     }
-    Messenger::print("SQ: Save data is {}.\n", DissolveSys::onOff(saveData));
+    Messenger::print("SQ: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");
 
     /*
@@ -94,7 +89,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin, qDelta, qMax, rho, WindowFunction(wf), qBroadening))
+    if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, rho, WindowFunction(wf),
+                               qBroadening))
         return false;
 
     // Include Bragg scattering?
@@ -125,8 +121,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
         auto result = for_each_pair_early(
             unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
-            [&braggReflections, &braggAtomTypes, &braggQBroadening, &braggPartials, &qDelta](auto i, auto &at1, auto j,
-                                                                                             auto &at2) -> EarlyReturn<bool> {
+            [&braggReflections, &braggAtomTypes, &braggQBroadening, &braggPartials](auto i, auto &at1, auto j,
+                                                                                    auto &at2) -> EarlyReturn<bool> {
                 // Locate the corresponding Bragg intensities for this atom type pair
                 auto pairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
                 if (pairIndex.first == -1 || pairIndex.second == -1)
@@ -191,12 +187,12 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
-    if (averaging > 1)
+    if (averagingLength_ > 1)
     {
         // Store the current fingerprint, since we must ensure we retain it in the averaged data.
         std::string currentFingerprint{unweightedsq.fingerprint()};
 
-        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, averaging,
+        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, averagingLength_,
                                        averagingScheme);
 
         // Re-set the object names and fingerprints of the partials
@@ -207,8 +203,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     unweightedsq.setFingerprint(
         fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
                     braggModule ? dissolve.processingModuleData().version("Reflections", braggModule->uniqueName()) : -1));
+
     // Save data if requested
-    if (saveData && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
+    if (save_ && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
         return false;
 
     return true;

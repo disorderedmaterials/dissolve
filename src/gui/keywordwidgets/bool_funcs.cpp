@@ -44,7 +44,7 @@ void BoolKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setChecked(keyword_->asBool());
+    setChecked(keyword_->data());
 
     refreshing_ = false;
 }

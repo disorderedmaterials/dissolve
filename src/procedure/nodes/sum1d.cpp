@@ -20,10 +20,10 @@ Sum1DProcedureNode::Sum1DProcedureNode(Process1DProcedureNode *target) : Procedu
                   "Process1D node containing the data to sum");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first summation region");
-    keywords_.add("Control", new BoolKeyword(false), "RangeBEnabled", "Whether the second summation region is enabled");
+    keywords_.add<BoolKeyword>("Control", "RangeBEnabled", "Whether the second summation region is enabled", rangeEnabled_[1]);
     keywords_.add("Control", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
                   "X range for second summation region");
-    keywords_.add("Control", new BoolKeyword(false), "RangeCEnabled", "Whether the second summation region is enabled");
+    keywords_.add<BoolKeyword>("Control", "RangeCEnabled", "Whether the second summation region is enabled", rangeEnabled_[2]);
     keywords_.add("Control", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
                   "X range for third summation region");
 }
@@ -72,9 +72,6 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
     range_[0] = keywords_.retrieve<Range>("RangeA");
     range_[1] = keywords_.retrieve<Range>("RangeB");
     range_[2] = keywords_.retrieve<Range>("RangeC");
-    rangeEnabled_[0] = true;
-    rangeEnabled_[1] = keywords_.asBool("RangeBEnabled");
-    rangeEnabled_[2] = keywords_.asBool("RangeCEnabled");
 
     return true;
 }

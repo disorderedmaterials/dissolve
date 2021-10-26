@@ -33,8 +33,12 @@ class AccumulateModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Whether to save the accumulated partials to disk
+    bool save_{false};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

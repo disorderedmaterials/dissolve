@@ -8,15 +8,18 @@
 void ForcesModule::initialise()
 {
     // Test
-    keywords_.add("Test", new BoolKeyword(false), "Test",
-                  "Test parallel force routines against basic serial versions and supplied reference values (if provided)");
-    keywords_.add("Test", new BoolKeyword(false), "TestAnalytic",
-                  "Use analytic interatomic forces rather than (production) tabulated potentials for tests");
-    keywords_.add("Test", new BoolKeyword(true), "TestInter", "Include interatomic forces in test");
-    keywords_.add("Test", new BoolKeyword(true), "TestIntra", "Include intramolecular forces in test");
+    keywords_.add<BoolKeyword>(
+        "Test", "Test",
+        "Test parallel force routines against basic serial versions and supplied reference values (if provided)", test_);
+    keywords_.add<BoolKeyword>("Test", "TestAnalytic",
+                               "Use analytic interatomic forces rather than (production) tabulated potentials for tests",
+                               testAnalytic_);
+    keywords_.add<BoolKeyword>("Test", "TestInter", "Include interatomic forces in test", testInter_);
+    keywords_.add<BoolKeyword>("Test", "TestIntra", "Include intramolecular forces in test", testIntra_);
     keywords_.add("Test", new FileAndFormatKeyword(referenceForces_, "EndTestReference"), "TestReference",
                   "Reference forces to test calculated forces against");
-    keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold of force (%) at which test comparison will fail");
+    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold of force (%) at which test comparison will fail",
+                                 testThreshold_, 0.0);
 
     // Export
     keywords_.add("Export", new FileAndFormatKeyword(exportedForces_, "EndSaveForces"), "SaveForces",

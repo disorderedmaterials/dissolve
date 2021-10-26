@@ -19,5 +19,5 @@ void DataTestModule::initialise()
                   "Specify test reference values for named SampledDouble (value) data");
     keywords_.add("Test", new ValueStoreKeyword(), "SampledVector",
                   "Specify test reference values for named SampledVector data");
-    keywords_.add("Test", new DoubleKeyword(5.0e-3, 1.0e-15), "Threshold", "Threshold for error metric above which test fails");
+    keywords_.add<DoubleKeyword>("Test", "Threshold", "Threshold for error metric above which test fails", threshold_, 1.0e-15);
 }

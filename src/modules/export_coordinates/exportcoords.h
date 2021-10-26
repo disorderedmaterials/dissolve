@@ -38,8 +38,12 @@ class ExportCoordinatesModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Whether to tag (suffix) the filename with the current iteration index
+    bool tagWithIteration_{false};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

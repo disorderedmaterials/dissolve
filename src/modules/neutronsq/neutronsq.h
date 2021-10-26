@@ -42,11 +42,25 @@ class NeutronSQModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
     private:
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
+    // Set the minimum Q value to use when Fourier-transforming the data
+    double referenceFTQMin_{0.0};
+    // Set the maximum Q value to use when Fourier-transforming the data
+    double referenceFTQMax_{0.0};
+    // Set the spacing in r to use when generating the Fourier-transformed data
+    double referenceFTDeltaR_{0.05};
+    // Save weighted g(r) and G(r)
+    bool saveGR_{false};
+    // Save the reference data and its Fourier transform
+    bool saveReference_{false};
+    // Save representative G(r), obtained from Fourier transform of the calculated F(Q)
+    bool saveRepresentativeGR_{false};
+    // Save weighted partial and total structure factors
+    bool saveSQ_{false};
 
     protected:
     // Perform any necessary initialisation for the Module

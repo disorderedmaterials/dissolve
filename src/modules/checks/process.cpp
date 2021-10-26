@@ -25,12 +25,8 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
-        // Retrieve control parameters from Configuration
-        const auto angleThreshold = keywords_.asDouble("AngleThreshold");
-        const auto distanceThreshold = keywords_.asDouble("DistanceThreshold");
-
-        Messenger::print("Checks: Threshold for distance checks is {} Angstroms\n", distanceThreshold);
-        Messenger::print("Checks: Threshold for angle checks is {} degrees\n", angleThreshold);
+        Messenger::print("Checks: Threshold for distance checks is {} Angstroms\n", distanceThreshold_);
+        Messenger::print("Checks: Threshold for angle checks is {} degrees\n", angleThreshold_);
 
         auto &atoms = cfg->atoms();
 
@@ -47,9 +43,9 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             actual = cfg->box()->minimumDistance(atoms[d.indices(0)].r(), atoms[d.indices(1)].r());
             delta = fabs(actual - d.value());
-            ok = delta < distanceThreshold;
+            ok = delta < distanceThreshold_;
             Messenger::print("Distance between Atoms {} and {} is {} Angstroms, and is {} (delta = {}, tolerance = {}).\n",
-                             d.indices(0) + 1, d.indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold);
+                             d.indices(0) + 1, d.indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold_);
 
             // Check consistency between processes
             if (!procPool.allTrue(ok))
@@ -69,10 +65,10 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             actual = cfg->box()->angleInDegrees(atoms[a.indices(0)].r(), atoms[a.indices(1)].r(), atoms[a.indices(2)].r());
             delta = fabs(actual - a.value());
-            ok = delta < angleThreshold;
+            ok = delta < angleThreshold_;
             Messenger::print("Angle between Atoms {}, {} and {} is {} degrees, and is {} (delta = {}, tolerance = {}).\n",
                              a.indices(0) + 1, a.indices(1) + 1, a.indices(2) + 1, actual, ok ? "OK" : "NOT OK", delta,
-                             angleThreshold);
+                             angleThreshold_);
 
             // Check consistency between processes
             if (!procPool.allTrue(ok))

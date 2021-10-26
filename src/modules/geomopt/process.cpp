@@ -10,13 +10,8 @@
 // Run main processing
 bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    // Retrieve Module options
-    nCycles_ = keywords_.asInt("NCycles");
-    tolerance_ = keywords_.asDouble("Tolerance");
-    initialStepSize_ = keywords_.asDouble("StepSize");
-
     // Print argument/parameter summary
-    Messenger::print("Optimise: Maximum number of cycles is {}.\n", nCycles_);
+    Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
     Messenger::print("Optimise: Base convergence tolerance is {:e}.\n", tolerance_);
     Messenger::print("Optimise: Initial step size to be used is {:e}.\n", initialStepSize_);
     Messenger::print("\n");

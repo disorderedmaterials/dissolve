@@ -28,7 +28,6 @@ bool AccumulateModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targets.empty())
         return Messenger::error("No target module set.");
     const auto targetData = keywords_.enumeration<AccumulateModule::TargetPartialSet>("Data");
-    const auto saveData = keywords_.asBool("Save");
 
     // Get the module and decide on the PartialSet data name we're looking for
     const auto *targetModule = targets.front();
@@ -38,7 +37,7 @@ bool AccumulateModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print summary of parameters
     Messenger::print("Accumulate: Source module is '{}'.\n", targetModule->uniqueName());
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetData));
-    Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(saveData));
+    Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");
 
     // Is the target module / data type a valid combination?
@@ -71,7 +70,7 @@ bool AccumulateModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Save data if requested
     std::vector<std::string> suffixes = {"gr", "sq", "gr"};
     std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
-    if (saveData && (!MPIRunMaster(procPool, accumulated.save(uniqueName_, dataName, suffixes[targetData], units[targetData]))))
+    if (save_ && (!MPIRunMaster(procPool, accumulated.save(uniqueName_, dataName, suffixes[targetData], units[targetData]))))
         return false;
 
     return true;

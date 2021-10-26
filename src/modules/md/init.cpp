@@ -8,25 +8,27 @@
 void MDModule::initialise()
 {
     // Control
-    keywords_.add("Control", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-    keywords_.add("Control", new IntegerKeyword(50), "NSteps", "Number of MD steps to perform");
-    keywords_.add("Control", new BoolKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
-    keywords_.add("Control", new DoubleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
-    keywords_.add("Control", new DoubleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
-    keywords_.add("Control", new BoolKeyword(true), "OnlyWhenEnergyStable",
-                  "Only run MD when target Configuration energies are stable");
-    keywords_.add("Control", new BoolKeyword(true), "VariableTimestep",
-                  "Whether a variable timestep should be used, determined from the maximal force vector");
-    keywords_.add("Control", new BoolKeyword(false), "RandomVelocities",
-                  "Whether random velocities should always be assigned before beginning MD simulation");
+    keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to employ", cutoffDistance_, -1.0);
+    keywords_.add<IntegerKeyword>("Control", "NSteps", "Number of MD steps to perform", nSteps_, 1);
+    keywords_.add<BoolKeyword>("Control", "CapForces", "Control whether atomic forces are capped every step", capForces_);
+    keywords_.add<DoubleKeyword>("Control", "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
+    keywords_.add<DoubleKeyword>("Control", "DeltaT", "Timestep (ps) to use in MD simulation", deltaT_, 0.0);
+    keywords_.add<BoolKeyword>("Control", "OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable",
+                               onlyWhenEnergyStable_);
+    keywords_.add<BoolKeyword>("Control", "VariableTimestep",
+                               "Whether a variable timestep should be used, determined from the maximal force vector",
+                               variableTimestep_);
+    keywords_.add<BoolKeyword>("Control", "RandomVelocities",
+                               "Whether random velocities should always be assigned before beginning MD simulation",
+                               randomVelocities_);
     keywords_.add("Control", new SpeciesVectorKeyword(), "RestrictToSpecies",
                   "Restrict the calculation to the specified Species");
 
     // Output
-    keywords_.add("Output", new IntegerKeyword(10), "EnergyFrequency",
-                  "Frequency at which to calculate total system energy (or 0 to inhibit)");
-    keywords_.add("Output", new IntegerKeyword(5), "OutputFrequency",
-                  "Frequency at which to output step information (or 0 to inhibit)");
-    keywords_.add("Output", new IntegerKeyword(0), "TrajectoryFrequency",
-                  "Write frequency for trajectory file (or 0 to inhibit)");
+    keywords_.add<IntegerKeyword>("Output", "EnergyFrequency",
+                                  "Frequency at which to calculate total system energy (or 0 to inhibit)", energyFrequency_, 0);
+    keywords_.add<IntegerKeyword>("Output", "OutputFrequency",
+                                  "Frequency at which to output step information (or 0 to inhibit)", outputFrequency_, 0);
+    keywords_.add<IntegerKeyword>("Output", "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)",
+                                  trajectoryFrequency_, 0);
 }

@@ -19,11 +19,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Get options
-    const auto N = keywords_.asInt("N");
-    const auto saveTimings = keywords_.asBool("Save");
-
-    Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", N, N == 1 ? "run" : "runs");
-    Messenger::print("Benchmark: Test timings {} be saved to disk.\n", saveTimings ? "will" : "will not");
+    Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");
+    Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
 
     // Loop over target Configurations
@@ -36,10 +33,10 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         /*
          * Configuration Generation
          */
-        if (keywords_.asBool("TestGenerator"))
+        if (testGenerator_)
         {
             SampledDouble timing;
-            for (auto n = 0; n < N; ++n)
+            for (auto n = 0; n < nRepeats_; ++n)
             {
                 srand(dissolve.seed());
 
@@ -50,16 +47,16 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 timing += timer.split();
             }
             printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "Generator"),
-                              "Configuration generator", timing, saveTimings);
+                              "Configuration generator", timing, save_);
         }
 
         /*
          * RDF Calculation - Cells method, to maximum range allowed by box
          */
-        if (keywords_.asBool("TestRDFCells"))
+        if (testRDFCells_)
         {
             SampledDouble timing;
-            for (auto n = 0; n < N; ++n)
+            for (auto n = 0; n < nRepeats_; ++n)
             {
                 RDFModule rdfModule;
                 rdfModule.addTargetConfiguration(cfg);
@@ -76,16 +73,16 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 timing += timer.split();
             }
             printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RDFCells"),
-                              "RDF (Cells) to half-cell limit", timing, saveTimings);
+                              "RDF (Cells) to half-cell limit", timing, save_);
         }
 
         /*
          * RDF Calculation - Simple method, to maximum range allowed by box
          */
-        if (keywords_.asBool("TestRDFSimple"))
+        if (testRDFSimple_)
         {
             SampledDouble timing;
-            for (auto n = 0; n < N; ++n)
+            for (auto n = 0; n < nRepeats_; ++n)
             {
                 RDFModule rdfModule;
                 rdfModule.addTargetConfiguration(cfg);
@@ -102,16 +99,16 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 timing += timer.split();
             }
             printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RDFSimple"),
-                              "RDF (Simple) to half-cell limit", timing, saveTimings);
+                              "RDF (Simple) to half-cell limit", timing, save_);
         }
 
         /*
          * Energy Calculation - Intramolecular Terms
          */
-        if (keywords_.asBool("TestIntraEnergy"))
+        if (testIntraEnergy_)
         {
             SampledDouble timing;
-            for (auto n = 0; n < N; ++n)
+            for (auto n = 0; n < nRepeats_; ++n)
             {
                 Timer timer;
                 Messenger::mute();
@@ -120,16 +117,16 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 timing += timer.split();
             }
             printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "IntraEnergy"),
-                              "Intramolecular energy", timing, saveTimings);
+                              "Intramolecular energy", timing, save_);
         }
 
         /*
          * Energy Calculation - Intermolecular Terms
          */
-        if (keywords_.asBool("TestInterEnergy"))
+        if (testInterEnergy_)
         {
             SampledDouble timing;
-            for (auto n = 0; n < N; ++n)
+            for (auto n = 0; n < nRepeats_; ++n)
             {
                 Timer timer;
                 Messenger::mute();
@@ -138,16 +135,16 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 timing += timer.split();
             }
             printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "InterEnergy"), "Interatomic energy",
-                              timing, saveTimings);
+                              timing, save_);
         }
 
         /*
          * Distributors
          */
-        if (keywords_.asBool("TestDistributors"))
+        if (testDistributors_)
         {
             SampledDouble timing;
-            for (auto n = 0; n < N; ++n)
+            for (auto n = 0; n < nRepeats_; ++n)
             {
                 // Create a Molecule distributor
                 RegionalDistributor distributor(cfg->nMolecules(), cfg->cells(), procPool, strategy);
@@ -178,7 +175,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 timing += timer.split();
             }
             printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RegionalDist"),
-                              "Distributor (regional)", timing, saveTimings);
+                              "Distributor (regional)", timing, save_);
         }
     }
 

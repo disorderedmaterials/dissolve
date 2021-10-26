@@ -38,8 +38,20 @@ class BraggModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Number of historical data sets to combine into final reflection data
+    int averagingLength_{5};
+    // Resolution (bin width) in Q space to use when calculating Bragg reflections
+    double qDelta_{0.001};
+    // Maximum Q value for Bragg calculation
+    double qMax_{1.0};
+    // Minimum Q value for Bragg calculation
+    double qMin_{0.01};
+    // Whether to save Bragg reflection data to disk
+    bool saveReflections_{false};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

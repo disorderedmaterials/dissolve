@@ -31,23 +31,16 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters from Configuration
-        double cutoffDistance = keywords_.asDouble("CutoffDistance");
-        if (cutoffDistance < 0.0)
-            cutoffDistance = dissolve.pairPotentialRange();
-        const auto nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
-        const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-        auto &stepSize = keywords_.retrieve<double>("StepSize");
-        const auto stepSizeMax = keywords_.asDouble("StepSizeMax");
-        const auto stepSizeMin = keywords_.asDouble("StepSizeMin");
+        auto rCut = cutoffDistance_ < 0.0 ? dissolve.pairPotentialRange() : cutoffDistance_;
         const auto termScale = 1.0;
         const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
-        Messenger::print("AtomShake: Cutoff distance is {}\n", cutoffDistance);
-        Messenger::print("AtomShake: Performing {} shake(s) per Atom\n", nShakesPerAtom);
+        Messenger::print("AtomShake: Cutoff distance is {}\n", rCut);
+        Messenger::print("AtomShake: Performing {} shake(s) per Atom\n", nShakesPerAtom_);
         Messenger::print("AtomShake: Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n",
-                         stepSize, stepSizeMin, stepSizeMax);
-        Messenger::print("AtomShake: Target acceptance rate is {}.\n", targetAcceptanceRate);
+                         stepSize_, stepSizeMin_, stepSizeMax_);
+        Messenger::print("AtomShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
         Messenger::print("\n");
 
         ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -57,7 +50,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Create a local ChangeStore and EnergyKernel
         ChangeStore changeStore(procPool);
-        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), cutoffDistance);
+        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), rCut);
 
         // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
@@ -107,11 +100,11 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     currentIntraEnergy = kernel.intramolecularEnergy(*mol, *i) * termScale;
 
                     // Loop over number of shakes per Atom
-                    for (shake = 0; shake < nShakesPerAtom; ++shake)
+                    for (shake = 0; shake < nShakesPerAtom_; ++shake)
                     {
                         // Create a random translation vector
-                        rDelta.set(procPool.randomPlusMinusOne() * stepSize, procPool.randomPlusMinusOne() * stepSize,
-                                   procPool.randomPlusMinusOne() * stepSize);
+                        rDelta.set(procPool.randomPlusMinusOne() * stepSize_, procPool.randomPlusMinusOne() * stepSize_,
+                                   procPool.randomPlusMinusOne() * stepSize_);
 
                         // Translate Atom and update its Cell position
                         i->translateCoordinates(rDelta);
@@ -163,7 +156,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             changeStore.reset();
         }
 
-        // Collect statistics across all processe
+        // Collect statistics across all processes
         if (!procPool.allSum(&nAccepted, 1, strategy))
             return false;
         if (!procPool.allSum(&nAttempts, 1, strategy))
@@ -184,13 +177,14 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          nAttempts);
 
         // Update and set translation step size
-        stepSize *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate;
-        if (stepSize < stepSizeMin)
-            stepSize = stepSizeMin;
-        else if (stepSize > stepSizeMax)
-            stepSize = stepSizeMax;
+        stepSize_ *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate_;
+        if (stepSize_ < stepSizeMin_)
+            stepSize_ = stepSizeMin_;
+        else if (stepSize_ > stepSizeMax_)
+            stepSize_ = stepSizeMax_;
+        keywords_.setAsModified("StepSize");
 
-        Messenger::print("Updated step size is {} Angstroms.\n", stepSize);
+        Messenger::print("Updated step size is {} Angstroms.\n", stepSize_);
 
         // Increase contents version in Configuration
         if (nAccepted > 0)

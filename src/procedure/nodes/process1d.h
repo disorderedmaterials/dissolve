@@ -30,6 +30,8 @@ class Process1DProcedureNode : public ProcedureNode
      * Data
      */
     private:
+    // Whether to use only the current binned data of the histogram, rather than the accumulated average
+    bool currentDataOnly_{false};
     // Collect1D node that we are processing (retrieved from keyword 'SourceData')
     const Collect1DProcedureNode *collectNode_;
     // Pointer to processed data (stored in processing data list)

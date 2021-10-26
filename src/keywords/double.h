@@ -6,34 +6,31 @@
 #include "keywords/data.h"
 
 // Keyword with Double Data
-class DoubleKeyword : public KeywordData<double>
+class DoubleKeyword : public KeywordBase
 {
     public:
-    DoubleKeyword(double value);
-    DoubleKeyword(double value, double minValue);
-    DoubleKeyword(double value, double minValue, double maxValue);
-    ~DoubleKeyword() override;
+    explicit DoubleKeyword(double &data, std::optional<double> minValue = std::nullopt,
+                           std::optional<double> maxValue = std::nullopt);
+    ~DoubleKeyword() override = default;
 
     /*
-     * Data Validation
+     * Data
      */
     private:
+    // Reference to target data
+    double &data_;
     // Validation limits to apply (if any)
-    bool minimumLimit_, maximumLimit_;
-    // Validation range (if appropriate)
-    double min_, max_;
+    std::optional<double> minimumLimit_, maximumLimit_;
 
     public:
-    // Return whether a minimum validation limit has been set
-    bool hasValidationMin();
+    // Set data
+    bool setData(double value);
+    // Return data
+    double data() const;
     // Return validation minimum limit
-    double validationMin();
-    // Return whether a maximum validation limit has been set
-    bool hasValidationMax();
+    std::optional<double> validationMin();
     // Return validation maximum limit
-    double validationMax();
-    // Validate supplied value
-    bool isValid(double value) override;
+    std::optional<double> validationMax();
 
     /*
      * Arguments
@@ -47,17 +44,4 @@ class DoubleKeyword : public KeywordData<double>
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as bool)
-    bool asBool() override;
-    // Return value (as int)
-    int asInt() override;
-    // Return value (as double)
-    double asDouble() override;
-    // Return value (as string)
-    std::string asString() override;
 };

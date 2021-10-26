@@ -38,8 +38,16 @@ class CheckSpeciesModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Tolerance beyond which charges are said to differ
+    double chargeTolerance_{1.0e-3};
+    // Check the total charge of the species against the specified value
+    double totalCharge_{0.0};
+    // Tolerance beyond which parameters are said to differ
+    double tolerance_{1.0e-3};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

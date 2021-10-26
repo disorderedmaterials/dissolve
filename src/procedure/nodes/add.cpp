@@ -23,13 +23,13 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
                   new EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>(boxActionStyles() =
                                                                                AddProcedureNode::BoxActionStyle::AddVolume),
                   "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
-    keywords_.add("Control", new BoolKeyword(true), "ScaleA", "Scale box length A when modifying volume");
-    keywords_.add("Control", new BoolKeyword(true), "ScaleB", "Scale box length B when modifying volume");
-    keywords_.add("Control", new BoolKeyword(true), "ScaleC", "Scale box length C when modifying volume");
+    keywords_.add<BoolKeyword>("Control", "ScaleA", "Scale box length A when modifying volume", scaleA_);
+    keywords_.add<BoolKeyword>("Control", "ScaleB", "Scale box length B when modifying volume", scaleB_);
+    keywords_.add<BoolKeyword>("Control", "ScaleC", "Scale box length C when modifying volume", scaleC_);
     keywords_.add("Control",
                   new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
                   "Density", "Density at which to add the target species");
-    keywords_.add("Control", new BoolKeyword(true), "Rotate", "Whether to randomly rotate molecules on insertion");
+    keywords_.add<BoolKeyword>("Control", "Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
     keywords_.add("Control",
                   new EnumOptionsKeyword<AddProcedureNode::PositioningType>(positioningTypes() =
                                                                                 AddProcedureNode::PositioningType::Random),
@@ -117,7 +117,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     auto &densityAndUnits = keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
     double density = densityAndUnits.value().asDouble();
     auto boxAction = keywords_.enumeration<AddProcedureNode::BoxActionStyle>("BoxAction");
-    Vec3<bool> scalableAxes(keywords_.asBool("ScaleA"), keywords_.asBool("ScaleB"), keywords_.asBool("ScaleC"));
+    Vec3<bool> scalableAxes(scaleA_, scaleB_, scaleC_);
     if (boxAction == AddProcedureNode::BoxActionStyle::None)
         Messenger::print("[Add] Current box geometry / volume will remain as-is.\n");
     else if (boxAction == AddProcedureNode::BoxActionStyle::AddVolume)
@@ -219,10 +219,9 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     auto positioning = keywords_.enumeration<AddProcedureNode::PositioningType>("Positioning");
     auto *regionNode = dynamic_cast<const RegionProcedureNodeBase *>(keywords_.retrieve<const ProcedureNode *>("Region"));
     Region region;
-    auto rotate = keywords_.asBool("Rotate");
 
     Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
-                     AddProcedureNode::positioningTypes().keyword(positioning), rotate ? "on" : "off");
+                     AddProcedureNode::positioningTypes().keyword(positioning), rotate_ ? "on" : "off");
     if (positioning == AddProcedureNode::PositioningType::Region)
     {
         if (!regionNode)
@@ -293,7 +292,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         }
 
         // Generate and apply a random rotation matrix
-        if (rotate)
+        if (rotate_)
         {
             transform.createRotationXY(procPool.randomPlusMinusOne() * 180.0, procPool.randomPlusMinusOne() * 180.0);
             mol->transform(box, transform);

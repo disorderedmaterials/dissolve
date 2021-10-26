@@ -38,8 +38,14 @@ class ChecksModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Threshold at which distance checks will fail (Angstroms)
+    double distanceThreshold_{0.001};
+    // Threshold at which angle checks will fail (degrees)
+    double angleThreshold_{0.05};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

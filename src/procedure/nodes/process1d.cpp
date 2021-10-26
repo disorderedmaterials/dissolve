@@ -19,8 +19,9 @@ Process1DProcedureNode::Process1DProcedureNode(Collect1DProcedureNode *target)
 {
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect1D, false, target), "SourceData",
                   "Collect1D node containing the histogram data to process");
-    keywords_.add("Control", new BoolKeyword(false), "CurrentDataOnly",
-                  "Whether to use only the current binned data of the histogram, rather than the accumulated average");
+    keywords_.add<BoolKeyword>(
+        "Control", "CurrentDataOnly",
+        "Whether to use only the current binned data of the histogram, rather than the accumulated average", currentDataOnly_);
     keywords_.add("Control", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
@@ -118,7 +119,7 @@ bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     data.setTag(name());
 
     // Copy the averaged data from the associated Process1D node
-    if (keywords_.asBool("CurrentDataOnly"))
+    if (currentDataOnly_)
         data = collectNode_->data();
     else
         data = collectNode_->accumulatedData();

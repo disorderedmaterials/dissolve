@@ -10,13 +10,11 @@
 // Run main processing
 bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    const auto tagWithIteration = keywords_.asBool("TagWithIteration");
-
     if (!coordinatesFormat_.hasFilename())
         Messenger::error("No valid file/format set for coordinate export.\n");
 
     std::string originalFilename{coordinatesFormat_.filename()};
-    if (tagWithIteration)
+    if (tagWithIteration_)
         coordinatesFormat_.setFilename(fmt::format("{}.{}", coordinatesFormat_.filename(), dissolve.iteration()));
 
     // Check for zero Configuration targets

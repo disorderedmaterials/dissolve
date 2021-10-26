@@ -46,7 +46,7 @@ class EPSRModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
     public:
     // Expansion Function Type Enum
@@ -58,6 +58,54 @@ class EPSRModule : public Module
     };
     // Return enum option info for ExpansionFunctionType
     static EnumOptions<EPSRModule::ExpansionFunctionType> expansionFunctionTypes();
+
+    private:
+    // Limit of magnitude of additional potential for any one pair potential
+    double eReq_{3.0};
+    // Confidence factor
+    double feedback_{0.8};
+    // Maximum Q value over which to generate potentials from total scattering data
+    double qMax_{30.0};
+    // Minimum Q value over which to generate potentials from total scattering data
+    double qMin_{0.5};
+    // Factor used when adding fluctuation coefficients to pair potentials
+    double weighting_{1.0};
+    // Width for Gaussian function in reciprocal space
+    double gSigma1_{0.1};
+    // Width for Gaussian function in real space
+    double gSigma2_{0.2};
+    // Whether to apply generated perturbations to interatomic potentials
+    bool modifyPotential_{true};
+    // Number of coefficients used to define the empirical potential (-1 for automatic)
+    int nCoeffP_{-1};
+    // Number of steps for refining the potential
+    int nPItSs_{1000};
+    // Whether to only modify potentials if configuration energy(s) are stable
+    bool onlyWhenEnergyStable_{true};
+    // Overwrite potentials each time rather than summing them
+    bool overwritePotentials_{false};
+    // Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)
+    double pSigma1_{0.01};
+    // Width for Poisson functions in real space
+    double pSigma2_{0.01};
+    // Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)
+    double rMaxPT_{-1.0};
+    // Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)
+    double rMinPT_{-1.0};
+    // Whether to save difference function and fit
+    bool saveDifferenceFunctions_{false};
+    // Whether to save empirical potentials
+    bool saveEmpiricalPotentials_{false};
+    // Whether to save estimated partials
+    bool saveEstimatedPartials_{false};
+    // Whether to save potential coefficients
+    bool savePotentialCoefficients_{false};
+    // Whether to save simulated F(r) (Fourier transform of calculated F(Q))
+    bool saveSimulatedFR_{false};
+    // Test against supplied reference data
+    bool test_{false};
+    // Test threshold (%error) above which test fails
+    double testThreshold_{0.1};
 
     protected:
     // Perform any necessary initialisation for the Module

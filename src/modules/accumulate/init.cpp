@@ -11,5 +11,5 @@ void AccumulateModule::initialise()
                   "Module containing the target partial set data to accumulate");
     keywords_.add("Control", new EnumOptionsKeyword<AccumulateModule::TargetPartialSet>(AccumulateModule::targetPartialSet()),
                   "Data", "Data type to accumulate");
-    keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save the accumulated partials to disk");
+    keywords_.add<BoolKeyword>("Export", "Save", "Whether to save the accumulated partials to disk", save_);
 }

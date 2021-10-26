@@ -271,12 +271,15 @@ void CalculateAngleModule::initialise()
                    "Add site(s) which represent 'B' in the interaction A-B-C");
     keywords_.link("Control", selectC_->keywords().find("Site"), "SiteC",
                    "Add site(s) which represent 'C' in the interaction A-B-C");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeAB",
-                  "Whether to exclude correlations between A and B sites on the same molecule");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeBC",
-                  "Whether to exclude correlations between B and C sites on the same molecule");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameSiteAC",
-                  "Whether to exclude correlations between A and C sites on the same molecule");
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeAB",
+                               "Whether to exclude correlations between A and B sites on the same molecule",
+                               excludeSameMoleculeAB_);
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeBC",
+                               "Whether to exclude correlations between B and C sites on the same molecule",
+                               excludeSameMoleculeBC_);
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameSiteAC",
+                               "Whether to exclude correlations between A and C sites on the same molecule",
+                               excludeSameSiteAC_);
 
     // Export
     keywords_.link("Export", processAB_->keywords().find("Export"), "ExportAB",

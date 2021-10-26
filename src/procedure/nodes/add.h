@@ -52,6 +52,12 @@ class AddProcedureNode : public ProcedureNode
     // Return enum option info for PositioningType
     static EnumOptions<PositioningType> positioningTypes();
 
+    private:
+    // Flags controlling box axis scaling
+    bool scaleA_{true}, scaleB_{true}, scaleC_{true};
+    // Whether to rotate molecules on insertion
+    bool rotate_{true};
+
     /*
      * Execute
      */

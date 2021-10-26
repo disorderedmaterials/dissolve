@@ -39,8 +39,12 @@ class DataTestModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Threshold for error metric above which test fails
+    double threshold_;
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

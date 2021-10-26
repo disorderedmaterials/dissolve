@@ -36,7 +36,7 @@ class Sum1DProcedureNode : public ProcedureNode
     // Ranges for sums (retrieved from keywords)
     Range range_[3];
     // Flags for ranges
-    bool rangeEnabled_[3];
+    bool rangeEnabled_[3] = {true, false, false};
     // Calculated sums (stored in processing data list)
     OptionalReferenceWrapper<SampledDouble> sum_[3];
 

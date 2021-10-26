@@ -21,9 +21,10 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Ensure any parameters in our nodes are set correctly
     const auto distanceRange = keywords_.asVec3Double("DistanceRange");
     collectDistance_->setKeyword<Vec3<double>>("RangeX", distanceRange);
-    const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
-    if (excludeSameMolecule)
+    if (excludeSameMolecule_)
         selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+    else
+        selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurationsKeyword_.data().front();

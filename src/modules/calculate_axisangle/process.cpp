@@ -25,9 +25,10 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool
     collectAngle_->setKeyword<Vec3<double>>("RangeX", angleRange);
     collectDAngle_->setKeyword<Vec3<double>>("RangeX", distanceRange);
     collectDAngle_->setKeyword<Vec3<double>>("RangeY", angleRange);
-    const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
-    if (excludeSameMolecule)
+    if (excludeSameMolecule_)
         selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+    else
+        selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurationsKeyword_.data().front();

@@ -53,11 +53,15 @@ void CalculateCNModule::initialise()
                    "Distance range for third coordination number");
 
     // Test
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestRangeA",
-                  "Reference coordination number for range A against which calculated value should be tested");
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestRangeB",
-                  "Reference coordination number for range B against which calculated value should be tested");
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestRangeC",
-                  "Reference coordination number for range C against which calculated value should be tested");
-    keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold difference at which test comparisons will fail");
+    keywords_.add<DoubleKeyword>("Test", "TestRangeA",
+                                 "Reference coordination number for range A against which calculated value should be tested",
+                                 testRangeA_);
+    keywords_.add<DoubleKeyword>("Test", "TestRangeB",
+                                 "Reference coordination number for range B against which calculated value should be tested",
+                                 testRangeB_);
+    keywords_.add<DoubleKeyword>("Test", "TestRangeC",
+                                 "Reference coordination number for range C against which calculated value should be tested",
+                                 testRangeC_);
+    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold difference at which test comparisons will fail",
+                                 testThreshold_, 1.0e-5);
 }

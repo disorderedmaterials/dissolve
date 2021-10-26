@@ -13,6 +13,13 @@ class CylindricalRegionProcedureNode : public RegionProcedureNodeBase
     ~CylindricalRegionProcedureNode() override = default;
 
     /*
+     * Control
+     */
+    private:
+    // Radius of cylindrical region
+    double radius_{5.0};
+
+    /*
      * Region Data
      */
     public:

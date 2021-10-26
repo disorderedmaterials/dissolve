@@ -43,35 +43,27 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto strategy = procPool.bestStrategy();
 
         // Retrieve control parameters from Configuration
-        const auto saveData = keywords_.asBool("Save");
-        const auto stabilityThreshold = keywords_.asDouble("StabilityThreshold");
-        const auto stabilityWindow = keywords_.asInt("StabilityWindow");
-        const auto testAnalytic = keywords_.asBool("TestAnalytic");
-        const auto testMode = keywords_.asBool("Test");
-        const auto testThreshold = keywords_.asDouble("TestThreshold");
         auto hasReferenceInter = keywords_.hasBeenSet("TestReferenceInter");
-        const auto testReferenceInter = keywords_.asDouble("TestReferenceInter");
         auto hasReferenceIntra = keywords_.hasBeenSet("TestReferenceIntra");
-        const auto testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
 
         // Print parameter summary
-        if (testMode)
+        if (test_)
         {
             Messenger::print("Energy: All energies will be calculated in serial test mode and compared to "
                              "production values.\n");
-            if (testAnalytic)
+            if (testAnalytic_)
                 Messenger::print("Energy: Exact, analytical potential will be used in test.");
             if (hasReferenceInter)
-                Messenger::print("Energy: Reference interatomic energy is {:15.9e} kJ/mol.\n", testReferenceInter);
+                Messenger::print("Energy: Reference interatomic energy is {:15.9e} kJ/mol.\n", testReferenceInter_);
             if (hasReferenceIntra)
-                Messenger::print("Energy: Reference intramolecular energy is {:15.9e} kJ/mol.\n", testReferenceIntra);
+                Messenger::print("Energy: Reference intramolecular energy is {:15.9e} kJ/mol.\n", testReferenceIntra_);
         }
 
         Messenger::print("\n");
 
         Messenger::print("Calculating total energy for Configuration '{}'...\n", cfg->name());
         // Calculate the total energy
-        if (testMode)
+        if (test_)
         {
             /*
              * Calculate the total energy of the system using a basic loop on each process, and then compare with
@@ -119,7 +111,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         if (scale < 1.0e-3)
                             continue;
 
-                        if (testAnalytic)
+                        if (testAnalytic_)
                             correctSelfEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
                         else
                             correctSelfEnergy += potentialMap.energy(*i, *j, r) * scale;
@@ -145,7 +137,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             if (r > cutoff)
                                 continue;
 
-                            if (testAnalytic)
+                            if (testAnalytic_)
                                 correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
                             else
                                 correctInterEnergy += potentialMap.energy(*i, *j, r);
@@ -260,34 +252,34 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double delta;
             if (hasReferenceInter)
             {
-                delta = testReferenceInter - correctInterEnergy;
+                delta = testReferenceInter_ - correctInterEnergy;
                 Messenger::print("Reference interatomic energy delta with correct value is {:15.9e} kJ/mol and "
                                  "is {} (threshold is {:10.3e} kJ/mol)\n",
-                                 delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-                if (!procPool.allTrue(fabs(delta) < testThreshold))
+                                 delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                if (!procPool.allTrue(fabs(delta) < testThreshold_))
                     return false;
 
-                delta = testReferenceInter - interEnergy;
+                delta = testReferenceInter_ - interEnergy;
                 Messenger::print("Reference interatomic energy delta with production value is {:15.9e} kJ/mol "
                                  "and is {} (threshold is {:10.3e} kJ/mol)\n",
-                                 delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-                if (!procPool.allTrue(fabs(delta) < testThreshold))
+                                 delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                if (!procPool.allTrue(fabs(delta) < testThreshold_))
                     return false;
             }
             if (hasReferenceIntra)
             {
-                delta = testReferenceIntra - correctIntraEnergy;
+                delta = testReferenceIntra_ - correctIntraEnergy;
                 Messenger::print("Reference intramolecular energy delta with correct value is {:15.9e} kJ/mol "
                                  "and is {} (threshold is {:10.3e} kJ/mol)\n",
-                                 delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-                if (!procPool.allTrue(fabs(delta) < testThreshold))
+                                 delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                if (!procPool.allTrue(fabs(delta) < testThreshold_))
                     return false;
 
-                delta = testReferenceIntra - intraEnergy;
+                delta = testReferenceIntra_ - intraEnergy;
                 Messenger::print("Reference intramolecular energy delta with production value is {:15.9e} kJ/mol "
                                  "and is {} (threshold is {:10.3e} kJ/mol)\n",
-                                 delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-                if (!procPool.allTrue(fabs(delta) < testThreshold))
+                                 delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                if (!procPool.allTrue(fabs(delta) < testThreshold_))
                     return false;
             }
 
@@ -297,15 +289,15 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto moleculeDelta = correctInterEnergy - molecularEnergy;
             Messenger::print("Comparing 'correct' with production values...\n");
             Messenger::print("Interatomic energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
-                             interDelta, fabs(interDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+                             interDelta, fabs(interDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
             Messenger::print("Intramolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
-                             intraDelta, fabs(intraDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+                             intraDelta, fabs(intraDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
             Messenger::print("Intermolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
-                             moleculeDelta, fabs(moleculeDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+                             moleculeDelta, fabs(moleculeDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
 
             // All OK?
-            if (!procPool.allTrue((fabs(interDelta) < testThreshold) && (fabs(intraDelta) < testThreshold) &&
-                                  (fabs(moleculeDelta) < testThreshold)))
+            if (!procPool.allTrue((fabs(interDelta) < testThreshold_) && (fabs(intraDelta) < testThreshold_) &&
+                                  (fabs(moleculeDelta) < testThreshold_)))
                 return false;
         }
         else
@@ -368,18 +360,18 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Check number of points already stored for the Configuration
             auto grad = 0.0;
             auto stable = false;
-            if (stabilityWindow > totalEnergyArray.nValues())
+            if (stabilityWindow_ > totalEnergyArray.nValues())
                 Messenger::print("Too few points to assess stability.\n");
             else
             {
                 auto yMean = 0.0;
-                grad = Regression::linear(totalEnergyArray, stabilityWindow, yMean);
-                auto thresholdValue = fabs(stabilityThreshold * yMean);
+                grad = Regression::linear(totalEnergyArray, stabilityWindow_, yMean);
+                auto thresholdValue = fabs(stabilityThreshold_ * yMean);
                 stable = fabs(grad) < thresholdValue;
 
                 Messenger::print("Gradient of last {} points is {:e} kJ/mol/step (absolute threshold value is "
                                  "{:e}, stable = {}).\n",
-                                 stabilityWindow, grad, thresholdValue, DissolveSys::btoa(stable));
+                                 stabilityWindow_, grad, thresholdValue, DissolveSys::btoa(stable));
             }
 
             // Set energy data under the configuration's prefix
@@ -389,7 +381,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 stable;
 
             // If writing to a file, append it here
-            if (saveData)
+            if (save_)
             {
                 LineParser parser;
                 std::string filename = fmt::format("{}.energy.txt", cfg->niceName());

@@ -41,8 +41,24 @@ class RDFModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Number of historical partial sets to combine into final partials
+    int averagingLength_{5};
+    // Bin width (spacing in r) to use
+    double binWidth_{0.025};
+    // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
+    bool internalTest_{false};
+    // Degree of smoothing to apply
+    int nSmooths_{0};
+    // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
+    double requestedRange_{15.0};
+    // Whether to save partials and total functions to disk
+    bool save_{false};
+    // Whether to use the maximal RDF range possible that avoids periodic images
+    bool useHalfCellRange_{true};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

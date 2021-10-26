@@ -111,8 +111,8 @@ void CalculateSDFModule::initialise()
                    "Set the site(s) 'A' which are to represent the origin of the SDF");
     keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
                    "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated");
-    keywords_.add("Control", new BoolKeyword(true), "ExcludeSameMolecule",
-                  "Whether to exclude correlations between sites on the same molecule");
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
+                               "Whether to exclude correlations between sites on the same molecule", excludeSameMolecule_);
 
     // Export
     keywords_.add("Export", new FileAndFormatKeyword(sdfFileAndFormat_, "EndExportSDF"), "ExportSDF",

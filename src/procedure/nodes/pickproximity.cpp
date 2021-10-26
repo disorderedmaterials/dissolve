@@ -11,10 +11,10 @@
 PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase(ProcedureNode::NodeType::PickProximity)
 {
     keywords_.add("Control", new SpeciesVectorKeyword, "Species", "Species to count");
-    keywords_.add("Control", new IntegerKeyword(0), "MinCount", "Minimum number");
-    keywords_.add("Control", new IntegerKeyword(0), "MaxCount", "Maximum number");
-    keywords_.add("Control", new DoubleKeyword(0.0, 0.0), "MinDistance", "Minimum distance");
-    keywords_.add("Control", new DoubleKeyword(0.0, 0.0), "MaxDistance", "Maximum distance");
+    keywords_.add<IntegerKeyword>("Control", "MinCount", "Minimum number", minCount_, 0);
+    keywords_.add<IntegerKeyword>("Control", "MaxCount", "Maximum number", maxCount_, 0);
+    keywords_.add<DoubleKeyword>("Control", "MinDistance", "Minimum distance for picking (Angstroms)", minDistance_, 0.0);
+    keywords_.add<DoubleKeyword>("Control", "MaxDistance", "Maximum distance for picking (Angstroms)", maxDistance_, 0.0);
 }
 
 /*
@@ -31,14 +31,14 @@ bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *c
     pickedMolecules_.clear();
 
     // Retrieve control values
-    auto rMin = keywords_.hasBeenSet("MinDistance") ? keywords_.asDouble("MinDistance") : 0.0;
+    auto rMin = keywords_.hasBeenSet("MinDistance") ? minDistance_ : 0.0;
     std::optional<double> rMax;
     if (keywords_.hasBeenSet("MaxDistance"))
-        rMax = keywords_.asDouble("MaxDistance");
-    auto nMin = keywords_.hasBeenSet("MinCount") ? keywords_.asInt("MinCount") : 0;
+        rMax = maxDistance_;
+    auto nMin = keywords_.hasBeenSet("MinCount") ? minCount_ : 0;
     std::optional<int> nMax;
     if (keywords_.hasBeenSet("MaxCount"))
-        nMax = keywords_.asInt("MaxCount");
+        nMax = maxCount_;
     auto &species = keywords_.retrieve<std::vector<const Species *>>("Species");
 
     // Print info

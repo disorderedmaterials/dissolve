@@ -17,12 +17,11 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Get options
-    const auto testThreshold = keywords_.asDouble("Threshold");
     auto errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
 
     // Print summary
     Messenger::print("DataTest: Error calculation is '{}', threshold is {:e}.", Error::errorTypes().keyword(errorType),
-                     testThreshold);
+                     threshold_);
     Messenger::print("\n");
 
     // Loop over reference one-dimensional data supplied
@@ -38,9 +37,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, referenceData, true);
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n",
-                         referenceData.tag(), error, std::isnan(error) || error > testThreshold ? "NOT OK" : "OK",
-                         testThreshold);
-        if (std::isnan(error) || error > testThreshold)
+                         referenceData.tag(), error, std::isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
+        if (std::isnan(error) || error > threshold_)
             return false;
     }
 
@@ -62,8 +60,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data1, data2, true);
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e})\n\n", tag1,
-                         error, tag2, std::isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
-        if (std::isnan(error) || error > testThreshold)
+                         error, tag2, std::isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
+        if (std::isnan(error) || error > threshold_)
             return false;
     }
 
@@ -80,8 +78,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         // 		double error = Error::error(errorType, data, *testData2D, true);
         // 		Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold
-        // is {:6.3e})\n\n", testData2D->name(), error, isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
-        // if (isnan(error) || error > testThreshold) return false;
+        // is {:6.3e})\n\n", testData2D->name(), error, isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
+        // if (isnan(error) || error > threshold_) return false;
 
         return Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");
     }
@@ -99,8 +97,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         auto error = fabs(value - data.value());
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
-                         error, std::isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
-        if (std::isnan(error) || error > testThreshold)
+                         error, std::isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
+        if (std::isnan(error) || error > threshold_)
             return false;
     }
 
@@ -117,8 +115,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data.values(), referenceData, true);
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
-                         error, std::isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
-        if (std::isnan(error) || error > testThreshold)
+                         error, std::isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
+        if (std::isnan(error) || error > threshold_)
             return false;
     }
 

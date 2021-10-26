@@ -42,8 +42,12 @@ class CalculateAxisAngleModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Whether to exclude correlations between B and C sites on the same molecule
+    bool excludeSameMolecule_{false};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

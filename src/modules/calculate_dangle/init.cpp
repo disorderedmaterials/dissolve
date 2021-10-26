@@ -196,8 +196,9 @@ void CalculateDAngleModule::initialise()
                    "Add site(s) which represent 'B' in the interaction A-B...C");
     keywords_.link("Control", selectC_->keywords().find("Site"), "SiteC",
                    "Add site(s) which represent 'C' in the interaction A-B...C");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMolecule",
-                  "Whether to exclude correlations between B and C sites on the same molecule");
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
+                               "Whether to exclude correlations between B and C sites on the same molecule",
+                               excludeSameMolecule_);
 
     // Export
     keywords_.link("Export", processDistance_->keywords().find("Export"), "ExportRDF",

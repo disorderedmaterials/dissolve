@@ -12,13 +12,7 @@ OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNormalise)
 {
     keywords_.add("Control", new NodeValueKeyword(this, value), "Value", "Constant value to normalise to");
-    keywords_.add("Control", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
-}
-OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(int value)
-    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNormalise)
-{
-    keywords_.add("Control", new NodeValueKeyword(this, value), "Value", "Constant value to normalise to");
-    keywords_.add("Control", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
+    keywords_.add<BoolKeyword>("Control", "Absolute", "Normalise absolute sum of values rather than direct sum", absolute_);
 }
 
 /*
@@ -30,10 +24,9 @@ bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configu
 {
     // Evaluate the expression to get the value
     const auto value = keywords_.asDouble("Value");
-    const bool absolute = keywords_.asBool("Absolute");
 
     // Get sum of absolute values
-    double sum = absolute ? Integrator::absSum(*targetData1D_) : Integrator::sum(*targetData1D_);
+    auto sum = absolute_ ? Integrator::absSum(*targetData1D_) : Integrator::sum(*targetData1D_);
     (*targetData1D_) /= sum;
     (*targetData1D_) *= value;
 

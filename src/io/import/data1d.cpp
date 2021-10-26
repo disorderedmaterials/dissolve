@@ -26,15 +26,16 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
 // Set up keywords for the format
 void Data1DImportFileFormat::setUpKeywords()
 {
-    keywords_.add("Columns", new IntegerKeyword(1, 1), "X", "Column index to use for x values");
-    keywords_.add("Columns", new IntegerKeyword(2, 1), "Y", "Column index to use for y values");
-    keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
-    keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage",
-                  "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
-    keywords_.add("Manipulations", new DoubleKeyword(0.0), "XMin", "Set the minimum X value to allow when reading in the data");
-    keywords_.add("Manipulations", new DoubleKeyword(0.0), "XMax", "Set the maximum X value to allow when reading in the data");
-    keywords_.add("Manipulations", new IntegerKeyword(0, 0), "RemovePoints",
-                  "Remove a number of points from the start of the data");
+    keywords_.add<IntegerKeyword>("Columns", "X", "Column index to use for x values", xColumn_, 1);
+    keywords_.add<IntegerKeyword>("Columns", "Y", "Column index to use for y values", yColumn_, 1);
+    keywords_.add<IntegerKeyword>("Columns", "Error", "Column index to use for error values", errorColumn_, 0);
+    keywords_.add<DoubleKeyword>("Manipulations", "RemoveAverage",
+                                 "X axis value from which to form average value to subtract from data (-1 for no subtraction)",
+                                 removeAverageFromX_, -1.0);
+    keywords_.add<DoubleKeyword>("Manipulations", "XMin", "Set the minimum X value to allow when reading in the data", xMin_);
+    keywords_.add<DoubleKeyword>("Manipulations", "XMax", "Set the maximum X value to allow when reading in the data", xMax_);
+    keywords_.add<IntegerKeyword>("Manipulations", "RemovePoints", "Remove a number of points from the start of the data",
+                                  nPointsToRemove_, 0);
 }
 
 /*
@@ -83,21 +84,20 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 
     // Handle any additional options
     // -- Remove points from the start of the data?
-    for (auto n = 0; n < keywords_.asInt("RemovePoints"); ++n)
+    for (auto n = 0; n < nPointsToRemove_; ++n)
         data.removeFirstPoint();
     // -- Trim range?
     if (keywords_.hasBeenSet("XMin") || keywords_.hasBeenSet("XMax"))
     {
-        auto xMin = keywords_.hasBeenSet("XMin") ? keywords_.asDouble("XMin") : data.xAxis().front() - 1.0;
-        auto xMax = keywords_.hasBeenSet("XMax") ? keywords_.asDouble("XMax") : data.xAxis().back() + 1.0;
+        auto xMin = keywords_.hasBeenSet("XMin") ? xMin_ : data.xAxis().front() - 1.0;
+        auto xMax = keywords_.hasBeenSet("XMax") ? xMax_ : data.xAxis().back() + 1.0;
         Filters::trim(data, xMin, xMax);
     }
     // -- Subtract average level from data?
-    const auto removeAverage = keywords_.asDouble("RemoveAverage");
-    if (removeAverage > 0.0)
+    if (removeAverageFromX_ > 0.0)
     {
-        double level = Filters::subtractAverage(data, removeAverage);
-        Messenger::print("Removed average level of {} from data, forming average over x >= {}.\n", level, removeAverage);
+        double level = Filters::subtractAverage(data, removeAverageFromX_);
+        Messenger::print("Removed average level of {} from data, forming average over x >= {}.\n", level, removeAverageFromX_);
     }
 
     return result;

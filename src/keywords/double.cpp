@@ -5,65 +5,37 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-DoubleKeyword::DoubleKeyword(double value) : KeywordData<double>(KeywordBase::DoubleData, value)
+DoubleKeyword::DoubleKeyword(double &data, std::optional<double> minValue, std::optional<double> maxValue)
+    : KeywordBase(KeywordBase::DoubleData), data_(data)
 {
-    minimumLimit_ = false;
-    maximumLimit_ = false;
+    minimumLimit_ = minValue;
+    maximumLimit_ = maxValue;
 }
-
-DoubleKeyword::DoubleKeyword(double value, double minValue) : KeywordData<double>(KeywordBase::DoubleData, value)
-{
-    minimumLimit_ = true;
-    min_ = minValue;
-    maximumLimit_ = false;
-}
-
-DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue)
-    : KeywordData<double>(KeywordBase::DoubleData, value)
-{
-    minimumLimit_ = true;
-    min_ = minValue;
-    maximumLimit_ = true;
-    max_ = maxValue;
-}
-
-DoubleKeyword::~DoubleKeyword() = default;
 
 /*
- * Data Validation
+ * Data
  */
 
-// Return whether a minimum validation limit has been set
-bool DoubleKeyword::hasValidationMin() { return minimumLimit_; }
-
-// Return validation minimum limit
-double DoubleKeyword::validationMin() { return min_; }
-
-// Return whether a maximum validation limit has been set
-bool DoubleKeyword::hasValidationMax() { return maximumLimit_; }
-
-// Return validation maximum limit
-double DoubleKeyword::validationMax() { return max_; }
-
-// Validate supplied value
-bool DoubleKeyword::isValid(double value)
+// Set data
+bool DoubleKeyword::setData(double value)
 {
-    // Check minimum limit
-    if (minimumLimit_)
-    {
-        if (value < min_)
-            return false;
-    }
+    if ((minimumLimit_ && value < minimumLimit_.value()) || (maximumLimit_ && value > maximumLimit_))
+        return false;
 
-    // Check maximum limit
-    if (maximumLimit_)
-    {
-        if (value > max_)
-            return false;
-    }
+    data_ = value;
+    set_ = true;
 
     return true;
 }
+
+// Return data
+double DoubleKeyword::data() const { return data_; }
+
+// Return validation minimum limit
+std::optional<double> DoubleKeyword::validationMin() { return minimumLimit_; }
+
+// Return validation maximum limit
+std::optional<double> DoubleKeyword::validationMax() { return maximumLimit_; }
 
 /*
  * Arguments
@@ -80,23 +52,23 @@ bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreD
 {
     if (parser.hasArg(startArg))
     {
-        if (!setData(parser.argd(startArg)))
+        auto x = parser.argd(startArg);
+        if (!setData(x))
         {
             if (minimumLimit_ && maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", parser.argd(startArg),
-                                 min_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", x,
+                                 minimumLimit_.value(), maximumLimit_.value());
             else if (minimumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", parser.argd(startArg),
-                                 min_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", x, minimumLimit_.value());
             else
-                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", parser.argd(startArg),
-                                 max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", x, maximumLimit_.value());
 
             return false;
         }
 
         return true;
     }
+
     return false;
 }
 
@@ -105,19 +77,3 @@ bool DoubleKeyword::write(LineParser &parser, std::string_view keywordName, std:
 {
     return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_);
 }
-
-/*
- * Conversion
- */
-
-// Return value (as bool)
-bool DoubleKeyword::asBool() { return data_; }
-
-// Return value (as int)
-int DoubleKeyword::asInt() { return data_; }
-
-// Return value (as double)
-double DoubleKeyword::asDouble() { return data_; }
-
-// Return value (as string)
-std::string DoubleKeyword::asString() { return fmt::format("{}", data_); }
