@@ -16,12 +16,12 @@ Process3DProcedureNode::Process3DProcedureNode(Collect3DProcedureNode *target)
 {
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect3D, false, target), "SourceData",
                   "Collect3D node containing the histogram data to process");
-    keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
-    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
-    keywords_.add("Control", new StringKeyword("Z"), "LabelZ", "Label for the z axis");
-    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
-                  "File format and file name under which to save processed data");
+    keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
+    keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
+    keywords_.add<StringKeyword>("Control", "LabelY", "Label for the y axis", labelY_);
+    keywords_.add<StringKeyword>("Control", "LabelZ", "Label for the z axis", labelZ_);
+    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
+                                        exportFileAndFormat_, "EndExport");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 
@@ -60,16 +60,16 @@ const Data3D &Process3DProcedureNode::processedData() const
 }
 
 // Return value label
-std::string Process3DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process3DProcedureNode::valueLabel() const { return labelValue_; }
 
 // Return x axis label
-std::string Process3DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process3DProcedureNode::xAxisLabel() const { return labelX_; }
 
 // Return y axis label
-std::string Process3DProcedureNode::yAxisLabel() const { return keywords_.asString("LabelY"); }
+std::string Process3DProcedureNode::yAxisLabel() const { return labelY_; }
 
 // Return z axis label
-std::string Process3DProcedureNode::zAxisLabel() const { return keywords_.asString("LabelZ"); }
+std::string Process3DProcedureNode::zAxisLabel() const { return labelZ_; }
 
 /*
  * Branches

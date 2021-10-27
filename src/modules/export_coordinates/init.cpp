@@ -8,8 +8,7 @@
 void ExportCoordinatesModule::initialise()
 {
     // Format
-    keywords_.add("Format", new FileAndFormatKeyword(coordinatesFormat_, "EndFormat"), "Format",
-                  "File / format for coordinates");
+    keywords_.add<FileAndFormatKeyword>("Format", "Format", "File / format for coordinates", coordinatesFormat_, "EndFormat");
     keywords_.add<BoolKeyword>("Format", "TagWithIteration",
                                "Whether to tag (suffix) the filename with the current iteration index", tagWithIteration_);
 }

@@ -27,7 +27,8 @@ void StringKeywordWidget::myTextChanged(const QString &text)
     if (refreshing_)
         return;
 
-    keyword_->setData(qPrintable(text));
+    keyword_->data() = qPrintable(text);
+    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }

@@ -3,18 +3,29 @@
 
 #pragma once
 
-#include "keywords/data.h"
-#include "templates/list.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class Species;
 
 // Keyword with Species Data
-class SpeciesKeyword : public KeywordData<const Species *>
+class SpeciesKeyword : public KeywordBase
 {
     public:
-    SpeciesKeyword(const Species *sp = nullptr);
-    ~SpeciesKeyword() override;
+    explicit SpeciesKeyword(const Species *&data);
+    ~SpeciesKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    const Species *&data_;
+
+    public:
+    // Return reference to data
+    const Species *&data();
+    const Species *&data() const;
 
     /*
      * Arguments

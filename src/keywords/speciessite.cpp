@@ -6,17 +6,18 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite *site, bool axesRequired)
-    : KeywordData<SpeciesSite *>(KeywordBase::SpeciesSiteData, site)
+SpeciesSiteKeyword::SpeciesSiteKeyword(const SpeciesSite *&data, bool axesRequired)
+    : KeywordBase(KeywordBase::SpeciesSiteData), data_(data), axesRequired_(axesRequired)
 {
-    axesRequired_ = axesRequired;
 }
 
-SpeciesSiteKeyword::~SpeciesSiteKeyword() = default;
-
 /*
- * Specification
+ * Data
  */
+
+// Return reference to data
+const SpeciesSite *&SpeciesSiteKeyword::data() { return data_; }
+const SpeciesSite *&SpeciesSiteKeyword::data() const { return data_; }
 
 // Return whether axes are required for the site
 bool SpeciesSiteKeyword::axesRequired() const { return axesRequired_; }

@@ -22,7 +22,6 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-    auto &intraBroadening = keywords_.retrieve<Functions::Function1DWrapper>("IntraBroadening");
     auto method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
 
     // Print argument/parameter summary
@@ -36,11 +35,11 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
                          Averaging::averagingSchemes().keyword(averagingScheme));
-    if (intraBroadening.type() == Functions::Function1D::None)
+    if (intraBroadening_.type() == Functions::Function1D::None)
         Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
     else
         Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is {} ({}).",
-                         Functions::function1D().keyword(intraBroadening.type()), intraBroadening.parameterSummary());
+                         Functions::function1D().keyword(intraBroadening_.type()), intraBroadening_.parameterSummary());
     Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(method));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("RDF: Degree of nSmooths_ to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
@@ -110,7 +109,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
         auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
             fmt::format("{}//UnweightedGR", cfg->niceName()), uniqueName_, GenericItem::InRestartFileFlag);
-        calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, nSmooths_);
+        calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_);
 
         // Save data if requested
         if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(uniqueName_, "UnweightedGR", "gr", "r, Angstroms"))))

@@ -16,12 +16,12 @@ void ForcesModule::initialise()
                                testAnalytic_);
     keywords_.add<BoolKeyword>("Test", "TestInter", "Include interatomic forces in test", testInter_);
     keywords_.add<BoolKeyword>("Test", "TestIntra", "Include intramolecular forces in test", testIntra_);
-    keywords_.add("Test", new FileAndFormatKeyword(referenceForces_, "EndTestReference"), "TestReference",
-                  "Reference forces to test calculated forces against");
+    keywords_.add<FileAndFormatKeyword>("Test", "TestReference", "Reference forces to test calculated forces against",
+                                        referenceForces_, "EndTestReference");
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold of force (%) at which test comparison will fail",
                                  testThreshold_, 0.0);
 
     // Export
-    keywords_.add("Export", new FileAndFormatKeyword(exportedForces_, "EndSaveForces"), "SaveForces",
-                  "Save calculated energies to the specified file / format");
+    keywords_.add<FileAndFormatKeyword>("Export", "SaveForces", "Save calculated energies to the specified file / format",
+                                        exportedForces_, "EndSaveForces");
 }

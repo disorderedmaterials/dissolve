@@ -5,19 +5,25 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> data, Geometry::GeometryType type)
-    : KeywordData<std::vector<Geometry>>(KeywordBase::GeometryListData, data), type_(type)
+GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> &data, Geometry::GeometryType geometryType)
+    : KeywordBase(KeywordBase::GeometryListData), data_(data), geometryType_(geometryType)
 {
 }
 
-GeometryListKeyword::~GeometryListKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to vector of data
+std::vector<Geometry> &GeometryListKeyword::data() { return data_; };
+const std::vector<Geometry> &GeometryListKeyword::data() const { return data_; }
 
 // Return minimum number of arguments accepted
 int GeometryListKeyword::minArguments() const
 {
-    if (type_ == Geometry::DistanceType)
+    if (geometryType_ == Geometry::DistanceType)
         return 3;
-    else if (type_ == Geometry::AngleType)
+    else if (geometryType_ == Geometry::AngleType)
         return 4;
     else
         return 5;
@@ -26,9 +32,9 @@ int GeometryListKeyword::minArguments() const
 // Return maximum number of arguments accepted
 int GeometryListKeyword::maxArguments() const
 {
-    if (type_ == Geometry::DistanceType)
+    if (geometryType_ == Geometry::DistanceType)
         return 3;
-    else if (type_ == Geometry::AngleType)
+    else if (geometryType_ == Geometry::AngleType)
         return 4;
     else
         return 5;

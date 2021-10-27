@@ -21,8 +21,8 @@ void XRaySQModule::initialise()
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");
 
     // Reference Data
-    keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
-                  KeywordBase::ModificationRequiresSetUpOption);
+    keywords_.add<FileAndFormatKeyword>("Reference Data", "Reference", "F(Q) reference data", referenceFQ_, "EndReference")
+        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
     keywords_.add("Reference Data",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),

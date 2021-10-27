@@ -3,24 +3,31 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class FileAndFormat;
 
 // Keyword with a file format
-class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
+class FileAndFormatKeyword : public KeywordBase
 {
     public:
     FileAndFormatKeyword(FileAndFormat &fileAndFormat, std::string_view endKeyword);
-    ~FileAndFormatKeyword() override;
+    ~FileAndFormatKeyword() override = default;
 
     /*
-     * End Keyword
+     * Data
      */
     private:
+    // Reference to data
+    FileAndFormat &data_;
     // Keyword that signals the end of 'block' for the data
     std::string endKeyword_;
+
+    public:
+    // Return reference to data
+    FileAndFormat &data();
+    const FileAndFormat &data() const;
 
     /*
      * Keyword Options

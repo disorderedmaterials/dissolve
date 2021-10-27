@@ -4,16 +4,18 @@
 #include "keywords/range.h"
 #include "base/lineparser.h"
 
-RangeKeyword::RangeKeyword(Range value, Vec3Labels::LabelType labelType) : KeywordData<Range>(KeywordBase::RangeData, value)
+RangeKeyword::RangeKeyword(Range &data, Vec3Labels::LabelType labelType)
+    : KeywordBase(KeywordBase::RangeData), data_(data), labelType_(labelType)
 {
-    labelType_ = labelType;
 }
 
-RangeKeyword::~RangeKeyword() = default;
-
 /*
- * Label Type
+ * Data
  */
+
+// Return reference to data
+Range &RangeKeyword::data() { return data_; }
+const Range &RangeKeyword::data() const { return data_; }
 
 // Label type to display in GUI
 Vec3Labels::LabelType RangeKeyword::labelType() const { return labelType_; }
@@ -33,7 +35,8 @@ bool RangeKeyword::read(LineParser &parser, int startArg, const CoreData &coreDa
 {
     if (parser.hasArg(startArg + 1))
     {
-        setData(Range(parser.argd(startArg), parser.argd(startArg + 1)));
+        data_.set(parser.argd(startArg), parser.argd(startArg + 1));
+        set_ = true;
 
         return true;
     }

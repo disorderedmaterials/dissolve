@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/data1dstore.h"
+#include "classes/isotopologueset.h"
 #include "classes/partialset.h"
 #include "data/structurefactors.h"
 #include "io/import/data1d.h"
@@ -12,7 +13,6 @@
 // Forward Declarations
 class PartialSet;
 class RDFModule;
-class Weights;
 
 // SQ Module
 class NeutronSQModule : public Module
@@ -47,6 +47,8 @@ class NeutronSQModule : public Module
     private:
     // Exchangeable atom types
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
+    // Isotopologues to use in weighting
+    IsotopologueSet isotopologueSet_;
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Set the minimum Q value to use when Fourier-transforming the data

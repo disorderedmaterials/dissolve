@@ -33,10 +33,18 @@ class Process3DProcedureNode : public ProcedureNode
     private:
     // Collect3D node that we are processing
     const Collect3DProcedureNode *collectNode_;
-    // Pointer to processed data (stored in processing data list)
-    Data3D *processedData_;
     // Export file and format
     Data3DExportFileFormat exportFileAndFormat_;
+    // Label for the value axis
+    std::string labelValue_{"Counts"};
+    // Label for the x axis
+    std::string labelX_{"X"};
+    // Label for the y axis
+    std::string labelY_{"Y"};
+    // Label for the z axis
+    std::string labelZ_{"Z"};
+    // Pointer to processed data (stored in processing data list)
+    Data3D *processedData_;
 
     public:
     // Return processed data

@@ -84,6 +84,8 @@ class EPSRModule : public Module
     bool onlyWhenEnergyStable_{true};
     // Overwrite potentials each time rather than summing them
     bool overwritePotentials_{false};
+    // EPSR pcof file from which to read starting coefficients from
+    std::string pCofFilename_;
     // Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)
     double pSigma1_{0.01};
     // Width for Poisson functions in real space

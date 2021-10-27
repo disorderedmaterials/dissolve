@@ -49,8 +49,8 @@ void EPSRModule::initialise()
                                   "Number of coefficients used to define the empirical potential (-1 for automatic)", nCoeffP_,
                                   -1);
     keywords_.add<IntegerKeyword>("Expansion Function", "NPItSs", "Number of steps for refining the potential", nPItSs_, 1);
-    keywords_.add("Expansion Function", new StringKeyword(""), "PCofFile",
-                  "EPSR pcof file from which to read starting coefficients from");
+    keywords_.add<StringKeyword>("Expansion Function", "PCofFile",
+                                 "EPSR pcof file from which to read starting coefficients from", pCofFilename_);
     keywords_.add<DoubleKeyword>("Expansion Function", "PSigma1",
                                  "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_,
                                  0.001, 1.0);

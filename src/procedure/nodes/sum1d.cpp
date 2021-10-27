@@ -18,14 +18,14 @@ Sum1DProcedureNode::Sum1DProcedureNode(Process1DProcedureNode *target) : Procedu
 {
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
                   "Process1D node containing the data to sum");
-    keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
-                  "X range for first summation region");
+    keywords_.add<RangeKeyword>("Control", "RangeA", "X range for first summation region", range_[0],
+                                Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<BoolKeyword>("Control", "RangeBEnabled", "Whether the second summation region is enabled", rangeEnabled_[1]);
-    keywords_.add("Control", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
-                  "X range for second summation region");
+    keywords_.add<RangeKeyword>("Control", "RangeB", "X range for second summation region", range_[1],
+                                Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<BoolKeyword>("Control", "RangeCEnabled", "Whether the second summation region is enabled", rangeEnabled_[2]);
-    keywords_.add("Control", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
-                  "X range for third summation region");
+    keywords_.add<RangeKeyword>("Control", "RangeC", "X range for third summation region", range_[2],
+                                Vec3Labels::MinMaxDeltaLabels);
 }
 
 /*
@@ -67,11 +67,6 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
     processNode_ = dynamic_cast<const Process1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
     if (!processNode_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
-
-    // Get ranges and status flags
-    range_[0] = keywords_.retrieve<Range>("RangeA");
-    range_[1] = keywords_.retrieve<Range>("RangeB");
-    range_[2] = keywords_.retrieve<Range>("RangeC");
 
     return true;
 }

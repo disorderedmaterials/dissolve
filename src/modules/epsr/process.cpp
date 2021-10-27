@@ -63,13 +63,12 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // If a pcof file was provided, read in the parameters from it here
-    auto pcofFile = keywords_.asString("PCofFile");
-    if (!pcofFile.empty())
+    if (!pCofFilename_.empty())
     {
-        Messenger::print("Reading potential coefficients from '{}'...\n", pcofFile);
+        Messenger::print("Reading potential coefficients from '{}'...\n", pCofFilename_);
 
         // Read in the coefficients / setup from the supplied file
-        if (!readPCof(dissolve, procPool, pcofFile))
+        if (!readPCof(dissolve, procPool, pCofFilename_))
             return Messenger::error("Failed to read in potential coefficients from EPSR pcof file.\n");
 
         // Set up the additional potentials - reconstruct them from the current coefficients

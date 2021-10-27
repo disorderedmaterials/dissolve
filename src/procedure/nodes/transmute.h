@@ -30,6 +30,8 @@ class TransmuteProcedureNode : public ProcedureNode
      * Control
      */
     private:
+    // Target species to transmute in to
+    const Species *targetSpecies_;
     // Species to transmute
     std::vector<const Species *> speciesToTransmute_;
 

@@ -45,6 +45,10 @@ class SQModule : public Module
     private:
     // Number of historical partial sets to combine into final partials
     int averagingLength_{1};
+    // Broadening function to apply to Bragg S(Q)
+    Functions::Function1DWrapper braggQBroadening_{Functions::Function1D::GaussianC2, {0.0, 0.02}};
+    // Broadening function to apply to S(Q)
+    Functions::Function1DWrapper qBroadening_;
     // Step size in Q for S(Q) calculation
     double qDelta_{0.05};
     // Maximum Q for calculated S(Q)

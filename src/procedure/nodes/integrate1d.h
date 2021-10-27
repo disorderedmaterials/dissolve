@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "math/range.h"
 #include "math/sampleddouble.h"
 #include "procedure/nodes/node.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class Process1DProcedureNode;
@@ -32,6 +32,8 @@ class Integrate1DProcedureNode : public ProcedureNode
     private:
     // Process1D node that we are targetting (retrieved from keyword 'SourceData')
     const Process1DProcedureNode *processNode_;
+    // Ranges for integration regions
+    Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Calculated integral (stored in processing data list)
     SampledDouble integral_[3];
 

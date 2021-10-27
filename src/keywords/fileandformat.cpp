@@ -5,12 +5,18 @@
 #include "base/lineparser.h"
 #include "io/fileandformat.h"
 
-FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, std::string_view endKeyword)
-    : KeywordData<FileAndFormat &>(KeywordBase::FileAndFormatData, fileAndFormat), endKeyword_{endKeyword}
+FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &data, std::string_view endKeyword)
+    : KeywordBase(KeywordBase::FileAndFormatData), data_(data), endKeyword_{endKeyword}
 {
 }
 
-FileAndFormatKeyword::~FileAndFormatKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+FileAndFormat &FileAndFormatKeyword::data() { return data_; }
+const FileAndFormat &FileAndFormatKeyword::data() const { return data_; }
 
 /*
  * Keyword Options

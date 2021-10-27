@@ -24,9 +24,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module must be provided.\n");
     const auto *braggModule = keywords_.retrieve<const BraggModule *>("IncludeBragg");
-    const auto &braggQBroadening = keywords_.retrieve<Functions::Function1DWrapper>("BraggQBroadening");
     const auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-    const auto &qBroadening = keywords_.retrieve<Functions::Function1DWrapper>("QBroadening");
     const auto wf = keywords_.enumeration<WindowFunction::Form>("WindowFunction");
 
     // Print argument/parameter summary
@@ -42,19 +40,19 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
                          Averaging::averagingSchemes().keyword(averagingScheme));
-    if (qBroadening.type() == Functions::Function1D::None)
+    if (qBroadening_.type() == Functions::Function1D::None)
         Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
     else
         Messenger::print("SQ: Broadening to be applied in calculated S(Q) is {} ({}).",
-                         Functions::function1D().keyword(qBroadening.type()), qBroadening.parameterSummary());
+                         Functions::function1D().keyword(qBroadening_.type()), qBroadening_.parameterSummary());
     if (braggModule)
     {
         Messenger::print("SQ: Bragg scattering from module '{}' will be included.\n", braggModule->uniqueName());
-        if (braggQBroadening.type() == Functions::Function1D::None)
+        if (braggQBroadening_.type() == Functions::Function1D::None)
             Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
         else
             Messenger::print("SQ: Broadening to be applied in calculated Bragg S(Q) is {} ({}).",
-                             Functions::function1D().keyword(braggQBroadening.type()), braggQBroadening.parameterSummary());
+                             Functions::function1D().keyword(braggQBroadening_.type()), braggQBroadening_.parameterSummary());
     }
     Messenger::print("SQ: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");
@@ -90,7 +88,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Transform g(r) into S(Q)
     if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, rho, WindowFunction(wf),
-                               qBroadening))
+                               qBroadening_))
         return false;
 
     // Include Bragg scattering?
@@ -121,8 +119,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
         auto result = for_each_pair_early(
             unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
-            [&braggReflections, &braggAtomTypes, &braggQBroadening, &braggPartials](auto i, auto &at1, auto j,
-                                                                                    auto &at2) -> EarlyReturn<bool> {
+            [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool> {
                 // Locate the corresponding Bragg intensities for this atom type pair
                 auto pairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
                 if (pairIndex.first == -1 || pairIndex.second == -1)
@@ -136,7 +133,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     const auto intensity = reflxn.intensity(pairIndex.first, pairIndex.second);
                     for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
-                        by += braggQBroadening.y(q - reflxn.q(), q) * intensity * braggQBroadening.normalisation(q) /
+                        by += braggQBroadening_.y(q - reflxn.q(), q) * intensity * braggQBroadening_.normalisation(q) /
                               (reflxn.q() * q);
                 }
 

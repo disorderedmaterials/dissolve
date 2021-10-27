@@ -53,6 +53,8 @@ class BraggModule : public Module
     double qMin_{0.01};
     // Whether to save Bragg reflection data to disk
     bool saveReflections_{false};
+    // File containing reflection data to test against
+    std::string testReflectionsFile_;
 
     protected:
     // Perform any necessary initialisation for the Module

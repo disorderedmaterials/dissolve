@@ -22,10 +22,10 @@ Process1DProcedureNode::Process1DProcedureNode(Collect1DProcedureNode *target)
     keywords_.add<BoolKeyword>(
         "Control", "CurrentDataOnly",
         "Whether to use only the current binned data of the histogram, rather than the accumulated average", currentDataOnly_);
-    keywords_.add("Control", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
-    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
-                  "File format and file name under which to save processed data");
+    keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
+    keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
+    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
+                                        exportFileAndFormat_, "EndExport");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 
@@ -67,10 +67,10 @@ const Data1D &Process1DProcedureNode::processedData() const
 }
 
 // Return value label
-std::string Process1DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process1DProcedureNode::valueLabel() const { return labelValue_; }
 
 // Return x axis label
-std::string Process1DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process1DProcedureNode::xAxisLabel() const { return labelX_; }
 
 /*
  * Branches

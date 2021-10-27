@@ -34,10 +34,14 @@ class Process1DProcedureNode : public ProcedureNode
     bool currentDataOnly_{false};
     // Collect1D node that we are processing (retrieved from keyword 'SourceData')
     const Collect1DProcedureNode *collectNode_;
-    // Pointer to processed data (stored in processing data list)
-    Data1D *processedData_;
     // Export file and format for processed data
     Data1DExportFileFormat exportFileAndFormat_;
+    // Label for the value axis
+    std::string labelValue_{"Y"};
+    // Label for the x axis
+    std::string labelX_{"X"};
+    // Pointer to processed data (stored in processing data list)
+    Data1D *processedData_;
 
     public:
     // Return whether processed data exists

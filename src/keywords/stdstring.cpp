@@ -5,9 +5,15 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-StringKeyword::StringKeyword(std::string_view value) : KeywordData<std::string>(KeywordBase::StringData, std::string(value)) {}
+StringKeyword::StringKeyword(std::string &data) : KeywordBase(KeywordBase::StringData), data_(data) {}
 
-StringKeyword::~StringKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+std::string &StringKeyword::data() { return data_; }
+const std::string &StringKeyword::data() const { return data_; }
 
 /*
  * Arguments
@@ -24,8 +30,8 @@ bool StringKeyword::read(LineParser &parser, int startArg, const CoreData &coreD
 {
     if (parser.hasArg(startArg))
     {
-        if (!setData(std::string(parser.argsv(startArg))))
-            return false;
+        data_ = parser.argsv(startArg);
+        set_ = true;
 
         return true;
     }
@@ -38,19 +44,3 @@ bool StringKeyword::write(LineParser &parser, std::string_view keywordName, std:
 {
     return parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_);
 }
-
-/*
- * Conversion
- */
-
-// Return value (as bool)
-bool StringKeyword::asBool() { return DissolveSys::stob(data_); }
-
-// Return value (as int)
-int StringKeyword::asInt() { return std::stoi(data_); }
-
-// Return value (as double)
-double StringKeyword::asDouble() { return std::stof(data_); }
-
-// Return value (as string)
-std::string StringKeyword::asString() { return data_; }

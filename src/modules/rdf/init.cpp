@@ -29,8 +29,8 @@ void RDFModule::initialise()
         "Control",
         new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
         "AveragingScheme", "Weighting scheme to use when averaging partials");
-    keywords_.add("Control", new Function1DKeyword(Functions::Function1DWrapper(), FunctionProperties::Normalisation),
-                  "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
+    keywords_.add<Function1DKeyword>("Control", "IntraBroadening", "Type of broadening to apply to intramolecular g(r)",
+                                     intraBroadening_, FunctionProperties::Normalisation);
     keywords_.add("Control",
                   new EnumOptionsKeyword<RDFModule::PartialsMethod>(RDFModule::partialsMethods() = RDFModule::AutoMethod),
                   "Method", "Calculation method for partial radial distribution functions");

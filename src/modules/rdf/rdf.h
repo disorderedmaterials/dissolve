@@ -50,6 +50,8 @@ class RDFModule : public Module
     double binWidth_{0.025};
     // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
     bool internalTest_{false};
+    // Type of broadening to apply to intramolecular g(r)
+    Functions::Function1DWrapper intraBroadening_{Functions::Function1D::Gaussian, {0.18}};
     // Degree of smoothing to apply
     int nSmooths_{0};
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true

@@ -6,9 +6,18 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-IsotopologueSetKeyword::IsotopologueSetKeyword() : KeywordData<IsotopologueSet>(KeywordBase::IsotopologueSetData, {}) {}
+IsotopologueSetKeyword::IsotopologueSetKeyword(IsotopologueSet &data)
+    : KeywordBase(KeywordBase::IsotopologueSetData), data_(data)
+{
+}
 
-IsotopologueSetKeyword::~IsotopologueSetKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+IsotopologueSet &IsotopologueSetKeyword::data() { return data_; }
+const IsotopologueSet &IsotopologueSetKeyword::data() const { return data_; }
 
 /*
  * Arguments

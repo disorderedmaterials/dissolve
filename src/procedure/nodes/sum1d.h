@@ -33,8 +33,8 @@ class Sum1DProcedureNode : public ProcedureNode
     private:
     // Process1D node that we are targetting (retrieved from keyword 'SourceData')
     const Process1DProcedureNode *processNode_;
-    // Ranges for sums (retrieved from keywords)
-    Range range_[3];
+    // Ranges for sums
+    Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Flags for ranges
     bool rangeEnabled_[3] = {true, false, false};
     // Calculated sums (stored in processing data list)

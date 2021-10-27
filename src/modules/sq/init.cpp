@@ -15,8 +15,8 @@ void SQModule::initialise()
     keywords_.add<DoubleKeyword>("Control", "QDelta", "Step size in Q for S(Q) calculation", qDelta_, 1.0e-5);
     keywords_.add<DoubleKeyword>("Control", "QMax", "Maximum Q for calculated S(Q)", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
-    keywords_.add("Control", new Function1DKeyword({Functions::Function1D::GaussianC2, {0.0, 0.02}}), "QBroadening",
-                  "Instrument broadening function to apply when calculating S(Q)");
+    keywords_.add<Function1DKeyword>("Control", "QBroadening", "Instrument broadening function to apply when calculating S(Q)",
+                                     qBroadening_);
     keywords_.add("Control", new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms()), "WindowFunction",
                   "Window function to apply in Fourier-transform of g(r) to S(Q)");
     keywords_.add<IntegerKeyword>("Control", "Averaging", "Number of historical partial sets to combine into final partials",
@@ -29,8 +29,9 @@ void SQModule::initialise()
     // Bragg Scattering
     keywords_.add("Bragg Scattering", new ModuleKeyword<const BraggModule>("Bragg"), "IncludeBragg",
                   "Include Bragg scattering from specified module");
-    keywords_.add("Bragg Scattering", new Function1DKeyword, "BraggQBroadening",
-                  "Broadening function to apply to Bragg reflections when generating S(Q)");
+    keywords_.add<Function1DKeyword>("Bragg Scattering", "BraggQBroadening",
+                                     "Broadening function to apply to Bragg reflections when generating S(Q)",
+                                     braggQBroadening_);
 
     // Export
     keywords_.add<BoolKeyword>("Export", "Save", "Whether to save partials to disk after calculation", save_);

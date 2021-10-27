@@ -38,8 +38,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over distances to check
-        auto &distances = keywords_.retrieve<std::vector<Geometry>>("Distance");
-        for (const auto &d : distances)
+        for (const auto &d : distances_)
         {
             actual = cfg->box()->minimumDistance(atoms[d.indices(0)].r(), atoms[d.indices(1)].r());
             delta = fabs(actual - d.value());
@@ -60,8 +59,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over angles to check
-        auto &angles = keywords_.retrieve<std::vector<Geometry>>("Angle");
-        for (const auto &a : angles)
+        for (const auto &a : angles_)
         {
             actual = cfg->box()->angleInDegrees(atoms[a.indices(0)].r(), atoms[a.indices(1)].r(), atoms[a.indices(2)].r());
             delta = fabs(actual - a.value());

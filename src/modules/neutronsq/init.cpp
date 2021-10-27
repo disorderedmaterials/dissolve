@@ -13,16 +13,16 @@ void NeutronSQModule::initialise()
                   "Source unweighted S(Q) to transform into neutron-weighted S(Q)");
     keywords_.add<AtomTypeVectorKeyword>(
         "Control", "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
-    keywords_.add("Control", new IsotopologueSetKeyword(), "Isotopologue",
-                  "Set/add an isotopologue and its population for a particular species");
+    keywords_.add<IsotopologueSetKeyword>(
+        "Control", "Isotopologue", "Set/add an isotopologue and its population for a particular species", isotopologueSet_);
     keywords_.add("Control",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");
 
     // Reference Data
-    keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
-                  KeywordBase::ModificationRequiresSetUpOption);
+    keywords_.add<FileAndFormatKeyword>("Reference Data", "Reference", "F(Q) reference data", referenceFQ_, "EndReference")
+        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
     keywords_.add("Reference Data",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),

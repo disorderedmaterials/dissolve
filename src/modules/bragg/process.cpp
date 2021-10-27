@@ -26,7 +26,6 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto *cfg = targetConfigurations_.front();
 
     auto averagingScheme = Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
-    const auto testReflections = keywords_.asString("TestReflections");
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
@@ -81,13 +80,13 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     formReflectionFunctions(dissolve.processingModuleData(), procPool, cfg, qMin_, qDelta_, qMax_);
 
     // Test reflection data
-    if (!testReflections.empty())
+    if (!testReflectionsFile_.empty())
     {
         Messenger::print("Testing calculated intensity data against reference...\n");
 
         // Attempt to load the specified file
         LineParser reflectionParser(&procPool);
-        if (!reflectionParser.openInput(testReflections))
+        if (!reflectionParser.openInput(testReflectionsFile_))
             return false;
 
         // Retrieve BraggReflection data from the Configuration's module data
