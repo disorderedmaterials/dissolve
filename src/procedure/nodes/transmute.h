@@ -27,6 +27,13 @@ class TransmuteProcedureNode : public ProcedureNode
     bool mustBeNamed() const override;
 
     /*
+     * Control
+     */
+    private:
+    // Species to transmute
+    std::vector<const Species *> speciesToTransmute_;
+
+    /*
      * Execute
      */
     public:

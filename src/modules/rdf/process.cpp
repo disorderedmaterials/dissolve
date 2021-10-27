@@ -18,7 +18,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
@@ -52,7 +52,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * multiple independent Configurations, we must loop over the specified targetConfigurations_ and calculate the partials
      * for each.
      */
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());

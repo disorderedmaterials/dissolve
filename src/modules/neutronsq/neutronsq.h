@@ -45,6 +45,8 @@ class NeutronSQModule : public Module
      * Control
      */
     private:
+    // Exchangeable atom types
+    std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Set the minimum Q value to use when Fourier-transforming the data

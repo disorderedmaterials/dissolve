@@ -21,6 +21,8 @@ class PickProximityProcedureNode : public PickProcedureNodeBase
      * Control
      */
     private:
+    // Species to pick
+    std::vector<const Species *> speciesToPick_;
     // Minimum distance (Angstroms)
     double minDistance_{0.0};
     // Maximum distance (Angstroms)

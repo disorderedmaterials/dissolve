@@ -14,7 +14,7 @@
 RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Remove)
 {
     // Set up keywords
-    keywords_.add("Control", new SpeciesVectorKeyword(), "Species", "Target species to remove");
+    keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Target species to remove", speciesToRemove_);
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "Selection",
                   "Picked selection of molecules to remove");
 }
@@ -39,15 +39,14 @@ bool RemoveProcedureNode::mustBeNamed() const { return false; }
 // Execute node, targetting the supplied Configuration
 bool RemoveProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    auto &species = keywords_.retrieve<std::vector<const Species *>>("Species");
     auto *node = keywords_.retrieve<const ProcedureNode *>("Selection");
 
     // Store current molecule population
     auto nStartMolecules = cfg->nMolecules();
 
     // Remove molecules by Species type
-    if (!species.empty())
-        for (auto *sp : species)
+    if (!speciesToRemove_.empty())
+        for (auto *sp : speciesToRemove_)
             cfg->removeMolecules(sp);
 
     // Remove molecules by selection

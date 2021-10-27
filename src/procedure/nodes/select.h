@@ -36,12 +36,12 @@ class SelectProcedureNode : public ProcedureNode
      * Selection Targets
      */
     private:
-    // Whether sites must have a defined orientation
-    bool axesRequired_;
-    // Vector of sites to select (retrieved from keyword)
+    // Vector of sites to select
     std::vector<const SpeciesSite *> speciesSites_;
     // List of DynamicSites to select, if any
     RefList<DynamicSiteProcedureNode> dynamicSites_;
+    // Whether sites must have a defined orientation
+    bool axesRequired_;
 
     /*
      * Selection Control

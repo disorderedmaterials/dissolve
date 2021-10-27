@@ -8,20 +8,15 @@
 #include "keywords/configurationvector.h"
 #include "main/dissolve.h"
 
-Module::Module(int nTargetConfiguration) : targetConfigurationsKeyword_({}, nTargetConfiguration)
+Module::Module(int nTargetConfiguration)
 {
     frequency_ = 1;
     enabled_ = true;
     configurationLocal_ = true;
 
     // Set up basic keywords for the Module
-    keywords_.add("HIDDEN", &targetConfigurationsKeyword_, "Configuration", "Set target configuration(s) for the module");
-}
-
-Module::~Module()
-{
-    // Need to remove our local keywords from the list before it gets destructed to avoid a double free
-    keywords_.cut(&targetConfigurationsKeyword_);
+    keywords_.addKeyword<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                     targetConfigurations_, nTargetConfiguration);
 }
 
 /*
@@ -138,9 +133,9 @@ bool Module::isDisabled() const { return !enabled_; }
 bool Module::addTargetConfiguration(Configuration *cfg)
 {
     // Check how many Configurations we accept before we do anything else
-    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurationsKeyword_.data().size() < nRequiredTargets()))
+    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.size() < nRequiredTargets()))
     {
-        targetConfigurationsKeyword_.data().push_back(cfg);
+        targetConfigurations_.push_back(cfg);
         keywords_.setAsModified("Configuration");
         return true;
     }
@@ -194,18 +189,18 @@ bool Module::addTargetConfigurations(const std::vector<std::unique_ptr<Configura
 // Remove Configuration target
 bool Module::removeTargetConfiguration(Configuration *cfg)
 {
-    auto it = std::find(targetConfigurationsKeyword_.data().begin(), targetConfigurationsKeyword_.data().end(), cfg);
-    if (it == targetConfigurationsKeyword_.data().end())
+    auto it = std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg);
+    if (it == targetConfigurations_.end())
         return Messenger::error("Can't remove Configuration '{}' from Module '{}' as it isn't currently a target.\n",
                                 cfg->name(), uniqueName());
 
-    targetConfigurationsKeyword_.data().erase(it);
+    targetConfigurations_.erase(it);
 
     return true;
 }
 
 // Return number of targeted Configurations
-int Module::nTargetConfigurations() const { return targetConfigurationsKeyword_.data().size(); }
+int Module::nTargetConfigurations() const { return targetConfigurations_.size(); }
 
 // Return whether the number of targeted Configurations is valid
 bool Module::hasValidNTargetConfigurations(bool reportError) const
@@ -238,13 +233,12 @@ bool Module::hasValidNTargetConfigurations(bool reportError) const
 }
 
 // Return first targeted Configuration
-const std::vector<Configuration *> &Module::targetConfigurations() const { return targetConfigurationsKeyword_.data(); }
+const std::vector<Configuration *> &Module::targetConfigurations() const { return targetConfigurations_; }
 
 // Return if the specified Configuration is in the targets list
 bool Module::isTargetConfiguration(Configuration *cfg) const
 {
-    return std::find(targetConfigurationsKeyword_.data().begin(), targetConfigurationsKeyword_.data().end(), cfg) !=
-           targetConfigurationsKeyword_.data().end();
+    return std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg) != targetConfigurations_.end();
 }
 
 // Copy Configuration targets from specified Module

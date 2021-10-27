@@ -16,11 +16,11 @@ bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::error("No valid file/format set for trajectory export.\n");
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    auto *cfg = targetConfigurationsKeyword_.data().front();
+    auto *cfg = targetConfigurations_.front();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

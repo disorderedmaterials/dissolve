@@ -27,6 +27,13 @@ class RemoveProcedureNode : public ProcedureNode
     bool mustBeNamed() const override;
 
     /*
+     * Control
+     */
+    private:
+    // Species to remove
+    std::vector<const Species *> speciesToRemove_;
+
+    /*
      * Execute
      */
     public:

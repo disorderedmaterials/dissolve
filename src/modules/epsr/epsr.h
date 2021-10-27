@@ -102,6 +102,8 @@ class EPSRModule : public Module
     bool savePotentialCoefficients_{false};
     // Whether to save simulated F(r) (Fourier transform of calculated F(Q))
     bool saveSimulatedFR_{false};
+    // Target Modules containing data to refine against
+    std::vector<Module *> targets_;
     // Test against supplied reference data
     bool test_{false};
     // Test threshold (%error) above which test fails

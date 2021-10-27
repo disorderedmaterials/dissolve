@@ -6,12 +6,10 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> references)
-    : KeywordData<std::vector<const Species *>>(KeywordBase::SpeciesVectorData, std::move(references))
+SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data)
+    : KeywordBase(KeywordBase::SpeciesVectorData), data_(data)
 {
 }
-
-SpeciesVectorKeyword::~SpeciesVectorKeyword() = default;
 
 /*
  * Data
@@ -19,6 +17,10 @@ SpeciesVectorKeyword::~SpeciesVectorKeyword() = default;
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool SpeciesVectorKeyword::isDataEmpty() const { return data_.empty(); }
+
+// Return reference to data vector
+std::vector<const Species *> &SpeciesVectorKeyword::data() { return data_; }
+const std::vector<const Species *> &SpeciesVectorKeyword::data() const { return data_; }
 
 /*
  * Arguments

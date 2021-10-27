@@ -15,13 +15,13 @@
 #include "procedure/nodes/sequence.h"
 
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
-    : ProcedureNode(ProcedureNode::NodeType::Select), axesRequired_(axesRequired)
+    : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired)
 {
     axesRequired_ = axesRequired;
     inclusiveDistanceRange_.set(0.0, 5.0);
 
-    keywords_.add("Control", new SpeciesSiteVectorKeyword(std::move(sites), axesRequired_), "Site",
-                  "Add target site(s) to the selection");
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "Site", "Add target site(s) to the selection", speciesSites_,
+                                            axesRequired_);
     keywords_.add("Control", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite",
                   "Add a new dynamic site to the selection");
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Select, true), "SameMoleculeAsSite",
@@ -140,11 +140,8 @@ SequenceProcedureNode *SelectProcedureNode::addForEachBranch(ProcedureNode::Node
 // Prepare any necessary data, ready for execution
 bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve target sites from keyword
-    speciesSites_ = keywords_.retrieve<std::vector<const SpeciesSite *>>("Site");
-
     // Check for at least one site being defined
-    if ((speciesSites_.size() == 0) && (dynamicSites_.nItems() == 0))
+    if (speciesSites_.empty() && (dynamicSites_.nItems() == 0))
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     // Prep some variables

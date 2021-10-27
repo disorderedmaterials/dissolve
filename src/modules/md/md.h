@@ -61,6 +61,8 @@ class MDModule : public Module
     int outputFrequency_{5};
     // Whether random velocities should always be assigned before beginning MD simulation
     bool randomVelocities_{false};
+    // Species to restrict calculation to
+    std::vector<const Species *> restrictToSpecies_;
     // Write frequency for trajectory file (or 0 to inhibit)
     int trajectoryFrequency_{0};
     // Whether a variable timestep should be used, determined from the maximal force vector

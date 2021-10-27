@@ -9,9 +9,9 @@
 #include "keywords/types.h"
 
 PickProcedureNode::PickProcedureNode(std::vector<const Species *> species)
-    : PickProcedureNodeBase(ProcedureNode::NodeType::Pick)
+    : PickProcedureNodeBase(ProcedureNode::NodeType::Pick), speciesToPick_(std::move(species))
 {
-    keywords_.add("Control", new SpeciesVectorKeyword(std::move(species)), "Species", "Add target species to pick");
+    keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Add target species to pick", speciesToPick_);
 }
 
 /*
@@ -21,11 +21,8 @@ PickProcedureNode::PickProcedureNode(std::vector<const Species *> species)
 // Prepare any necessary data, ready for execution
 bool PickProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve target Species from keyword
-    targetSpecies_ = keywords_.retrieve<std::vector<const Species *>>("Species");
-
     // Check for at least one site being defined
-    if (targetSpecies_.empty())
+    if (speciesToPick_.empty())
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     return true;
@@ -43,7 +40,7 @@ bool PickProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::
     for (const auto &mol : moleculePool(cfg))
     {
         // Check Species type
-        if (std::find(targetSpecies_.begin(), targetSpecies_.end(), mol->species()) == targetSpecies_.end())
+        if (std::find(speciesToPick_.begin(), speciesToPick_.end(), mol->species()) == speciesToPick_.end())
             continue;
 
         // Pick it!

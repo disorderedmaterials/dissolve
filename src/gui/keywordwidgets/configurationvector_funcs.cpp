@@ -145,7 +145,8 @@ void ConfigurationVectorKeywordWidget::updateKeywordData()
         if (item->checkState() == Qt::Checked)
             newSelection.push_back(VariantPointer<Configuration>(item->data(Qt::UserRole)));
     }
-    keyword_->setData(newSelection);
+    keyword_->data() = newSelection;
+    keyword_->setAsModified();
 }
 
 // Update summary text

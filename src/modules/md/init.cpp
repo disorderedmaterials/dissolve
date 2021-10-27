@@ -21,8 +21,8 @@ void MDModule::initialise()
     keywords_.add<BoolKeyword>("Control", "RandomVelocities",
                                "Whether random velocities should always be assigned before beginning MD simulation",
                                randomVelocities_);
-    keywords_.add("Control", new SpeciesVectorKeyword(), "RestrictToSpecies",
-                  "Restrict the calculation to the specified Species");
+    keywords_.add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
+                                        restrictToSpecies_);
 
     // Output
     keywords_.add<IntegerKeyword>("Output", "EnergyFrequency",

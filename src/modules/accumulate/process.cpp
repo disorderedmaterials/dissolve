@@ -24,13 +24,12 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 bool AccumulateModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Get keyword data
-    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Target");
-    if (targets.empty())
-        return Messenger::error("No target module set.");
     const auto targetData = keywords_.enumeration<AccumulateModule::TargetPartialSet>("Data");
 
     // Get the module and decide on the PartialSet data name we're looking for
-    const auto *targetModule = targets.front();
+    if (targetModule_.empty())
+        return Messenger::error("No target module set.");
+    const auto *targetModule = targetModule_.front();
     if (!targetModule)
         return Messenger::error("No target module set.\n");
 
@@ -41,11 +40,11 @@ bool AccumulateModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     // Is the target module / data type a valid combination?
-    auto targetsIt = std::find_if(validTargets.begin(), validTargets.end(),
-                                  [targetModule](const auto &target) { return target.first == targetModule->type(); });
-    if (targetsIt == validTargets.end())
+    auto targetModule_It = std::find_if(validTargets.begin(), validTargets.end(),
+                                        [targetModule](const auto &target) { return target.first == targetModule->type(); });
+    if (targetModule_It == validTargets.end())
         return Messenger::error("Module of type '{}' is not a valid target.\n", targetModule->type());
-    auto dataName = targetsIt->second[targetData];
+    auto dataName = targetModule_It->second[targetData];
     if (dataName.empty())
         return Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
                                 targetPartialSet().keyword(targetData), targetModule->type());

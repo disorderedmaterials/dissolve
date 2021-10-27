@@ -6,14 +6,18 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 
-AtomTypeVectorKeyword::AtomTypeVectorKeyword()
-    : KeywordData<std::vector<std::shared_ptr<AtomType>>>(KeywordBase::AtomTypeVectorData, {})
+AtomTypeVectorKeyword::AtomTypeVectorKeyword(std::vector<std::shared_ptr<AtomType>> &data)
+    : KeywordBase(KeywordBase::AtomTypeVectorData), data_(data)
 {
 }
 
 /*
  * Data
  */
+
+// Return reference to data vector
+std::vector<std::shared_ptr<AtomType>> &AtomTypeVectorKeyword::data() { return data_; }
+const std::vector<std::shared_ptr<AtomType>> &AtomTypeVectorKeyword::data() const { return data_; }
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool AtomTypeVectorKeyword::isDataEmpty() const { return data_.empty(); }

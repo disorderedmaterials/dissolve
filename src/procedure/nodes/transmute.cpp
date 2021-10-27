@@ -16,7 +16,8 @@ TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(ProcedureNode::
 {
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(), "Target", "Target species to transmute selected molecules in to");
-    keywords_.add("Control", new SpeciesVectorKeyword(), "Species", "Species to transmute targets in to");
+    keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Species types to transmute into the target species",
+                                        speciesToTransmute_);
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "Selection",
                   "Picked selection of molecules to transmute");
 }
@@ -43,7 +44,6 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
                                      GenericList &targetList)
 {
     auto *sp = keywords_.retrieve<const Species *>("Target");
-    auto &species = keywords_.retrieve<std::vector<const Species *>>("Species");
     auto *node = keywords_.retrieve<const ProcedureNode *>("Selection");
 
     // Check target species
@@ -54,9 +54,9 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
     std::vector<std::shared_ptr<Molecule>> targets;
 
     // Transmute molecules by Species type
-    if (!species.empty())
+    if (!speciesToTransmute_.empty())
         for (const auto &mol : cfg->molecules())
-            if (std::find(species.begin(), species.end(), mol->species()) != species.end())
+            if (std::find(speciesToTransmute_.begin(), speciesToTransmute_.end(), mol->species()) != speciesToTransmute_.end())
                 targets.push_back(mol);
 
     // Transmute molecules by selection

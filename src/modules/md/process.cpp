@@ -24,13 +24,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
     auto rCut = cutoffDistance_ < 0.0 ? dissolve.pairPotentialRange() : cutoffDistance_;
-    const auto restrictToSpecies = keywords_.retrieve<std::vector<const Species *>>("RestrictToSpecies");
     auto writeTraj = trajectoryFrequency_ > 0;
 
     // Print argument/parameter summary
@@ -56,16 +55,16 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("MD: Variable timestep will be employed.");
     else
         Messenger::print("MD: Constant timestep of {:e} ps will be used.\n", deltaT_);
-    if (!restrictToSpecies.empty())
+    if (!restrictToSpecies_.empty())
     {
         std::string speciesNames;
-        for (auto *sp : restrictToSpecies)
+        for (auto *sp : restrictToSpecies_)
             speciesNames += fmt::format("  {}", sp->name());
         Messenger::print("MD: Calculation will be restricted to species:{}\n", speciesNames);
     }
     Messenger::print("\n");
 
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
@@ -98,11 +97,11 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Determine target molecules from the restrictedSpecies vector (if any), and zero velocities for those atoms
         std::vector<const Molecule *> targetMolecules;
         std::vector<int> free(cfg->nAtoms(), 0);
-        if (restrictToSpecies.empty())
+        if (restrictToSpecies_.empty())
             std::fill(free.begin(), free.end(), 1);
         else
             for (const auto &mol : cfg->molecules())
-                if (std::find(restrictToSpecies.begin(), restrictToSpecies.end(), mol->species()) != restrictToSpecies.end())
+                if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
                 {
                     targetMolecules.push_back(mol.get());
                     for (const auto &i : mol->atoms())

@@ -39,6 +39,8 @@ class DynamicSiteProcedureNode : public ProcedureNode
     private:
     // Parent Select node for context
     SelectProcedureNode *parent_;
+    // Target atom types for selection as sites
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
     // Target Elements for selection as sites
     std::vector<Elements::Element> elements_;
 
@@ -55,8 +57,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
 
     private:
     // Generate dynamic sites from the specified Molecule
-    void generateSites(const std::shared_ptr<const Molecule> &molecule,
-                       const std::vector<std::shared_ptr<AtomType>> &atomTypes);
+    void generateSites(const std::shared_ptr<const Molecule> &molecule);
 
     public:
     // Return Array of generated sites

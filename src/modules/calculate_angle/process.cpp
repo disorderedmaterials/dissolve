@@ -15,7 +15,7 @@ bool CalculateAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool) { re
 bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
@@ -44,7 +44,7 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
         selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {});
 
     // Grab Configuration pointer
-    auto *cfg = targetConfigurationsKeyword_.data().front();
+    auto *cfg = targetConfigurations_.front();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

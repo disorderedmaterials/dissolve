@@ -36,6 +36,8 @@ class AccumulateModule : public Module
      * Control
      */
     private:
+    // Module containing the target partial set data to accumulate
+    std::vector<Module *> targetModule_;
     // Whether to save the accumulated partials to disk
     bool save_{false};
 

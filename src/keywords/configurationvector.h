@@ -3,23 +3,24 @@
 
 #pragma once
 
-#include "keywords/data.h"
-#include <optional>
+#include "keywords/base.h"
 
 // Forward Declarations
 class Configuration;
 
 // Keyword with Configuration Vector Data
-class ConfigurationVectorKeyword : public KeywordData<std::vector<Configuration *>>
+class ConfigurationVectorKeyword : public KeywordBase
 {
     public:
-    ConfigurationVectorKeyword(const std::vector<Configuration *> &cfgs, int maxListSize);
-    ~ConfigurationVectorKeyword() override;
+    ConfigurationVectorKeyword(std::vector<Configuration *> &cfgs, int maxListSize);
+    ~ConfigurationVectorKeyword() override = default;
 
     /*
      * Data
      */
     private:
+    // Reference to data vector
+    std::vector<Configuration *> &data_;
     // Maximum number of Configurations to allow in the list (or -1 for any number)
     int maxListSize_;
 
@@ -28,6 +29,9 @@ class ConfigurationVectorKeyword : public KeywordData<std::vector<Configuration 
     bool isDataEmpty() const override;
 
     public:
+    // Return reference to data vector
+    std::vector<Configuration *> &data();
+    const std::vector<Configuration *> &data() const;
     // Return maximum number of Configurations to allow in the list
     int maxListSize() const;
 

@@ -23,18 +23,17 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters from Configuration
         auto rCut = cutoffDistance_ < 0.0 ? dissolve.pairPotentialRange() : cutoffDistance_;
-        const auto restrictToSpecies = keywords_.retrieve<std::vector<const Species *>>("RestrictToSpecies");
         const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
@@ -46,10 +45,10 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print(
             "MolShake: Step size for rotation adjustments is {:.5f} degrees (allowed range is {} <= delta <= {}).\n",
             rotationStepSize_, rotationStepSizeMin_, rotationStepSizeMax_);
-        if (!restrictToSpecies.empty())
+        if (!restrictToSpecies_.empty())
         {
             std::string speciesNames;
-            for (auto *sp : restrictToSpecies)
+            for (auto *sp : restrictToSpecies_)
                 speciesNames += fmt::format("  {}", sp->name());
             Messenger::print("MolShake: Calculation will be restricted to species:{}\n", speciesNames);
         }
@@ -61,13 +60,13 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         RegionalDistributor distributor(cfg->nMolecules(), cfg->cells(), procPool, strategy);
 
         // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
-        if (!restrictToSpecies.empty())
+        if (!restrictToSpecies_.empty())
         {
             std::vector<int> targetIndices;
             auto id = 0;
             for (const auto &mol : cfg->molecules())
             {
-                if (std::find(restrictToSpecies.begin(), restrictToSpecies.end(), mol->species()) != restrictToSpecies.end())
+                if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
                     targetIndices.push_back(id);
                 ++id;
             }

@@ -23,7 +23,7 @@ class Module
 {
     public:
     Module(int nTargetConfigurations);
-    virtual ~Module();
+    virtual ~Module() = default;
 
     /*
      * Instances
@@ -67,7 +67,7 @@ class Module
     // Keywords recognised by Module
     KeywordList keywords_;
     // Target configurations keyword
-    ConfigurationVectorKeyword targetConfigurationsKeyword_;
+    std::vector<Configuration *> targetConfigurations_;
 
     public:
     // Return list of recognised keywords

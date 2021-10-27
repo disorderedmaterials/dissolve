@@ -26,8 +26,9 @@ void EPSRModule::initialise()
     keywords_.add<DoubleKeyword>("Control", "Feedback", "Confidence factor", feedback_, 0.0, 1.0);
     keywords_.add<BoolKeyword>("Control", "ModifyPotential",
                                "Whether to apply generated perturbations to interatomic potentials", modifyPotential_);
-    keywords_.add("Control", new ModuleVectorKeyword({"NeutronSQ", "XRaySQ"}), "Target",
-                  "Add specified Module (and it's Reference data) as a refinement target");
+    keywords_.add<ModuleVectorKeyword>("Control", "Target",
+                                       "Add specified Module (and it's Reference data) as a refinement target", targets_,
+                                       std::vector<std::string>{"NeutronSQ", "XRaySQ"});
     keywords_.add<DoubleKeyword>("Control", "QMax",
                                  "Maximum Q value over which to generate potentials from total scattering data", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "QMin",

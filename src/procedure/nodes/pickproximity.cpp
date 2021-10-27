@@ -10,7 +10,7 @@
 
 PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase(ProcedureNode::NodeType::PickProximity)
 {
-    keywords_.add("Control", new SpeciesVectorKeyword, "Species", "Species to count");
+    keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Species to count", speciesToPick_);
     keywords_.add<IntegerKeyword>("Control", "MinCount", "Minimum number", minCount_, 0);
     keywords_.add<IntegerKeyword>("Control", "MaxCount", "Maximum number", maxCount_, 0);
     keywords_.add<DoubleKeyword>("Control", "MinDistance", "Minimum distance for picking (Angstroms)", minDistance_, 0.0);
@@ -39,12 +39,11 @@ bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *c
     std::optional<int> nMax;
     if (keywords_.hasBeenSet("MaxCount"))
         nMax = maxCount_;
-    auto &species = keywords_.retrieve<std::vector<const Species *>>("Species");
 
     // Print info
-    if (!species.empty())
+    if (!speciesToPick_.empty())
         Messenger::print("[PickProximity] Proximal species are: {}.\n",
-                         joinStrings(species, " ", [](const auto &sp) { return sp->name(); }));
+                         joinStrings(speciesToPick_, " ", [](const auto &sp) { return sp->name(); }));
     if (rMax.has_value())
         Messenger::print("[PickProximity] Allowed distance range is {} <= r <= {} Angstroms.\n", rMin, rMax.value());
     else
@@ -69,7 +68,7 @@ bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *c
         for (const auto &molJ : cfg->molecules())
         {
             // Count surrounding species (if defined)
-            if (std::find(species.begin(), species.end(), molJ->species()) != species.end())
+            if (std::find(speciesToPick_.begin(), speciesToPick_.end(), molJ->species()) != speciesToPick_.end())
             {
                 // Get centre of geometry of species
                 auto jCog = molJ->centreOfGeometry(box);
