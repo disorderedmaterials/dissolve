@@ -4,11 +4,8 @@
 #pragma once
 
 #include "classes/braggreflection.h"
-#include "classes/partialset.h"
+#include "math/averaging.h"
 #include "module/module.h"
-
-// Forward Declarations
-class PartialSet;
 
 // Bragg Module
 class BraggModule : public Module
@@ -43,6 +40,8 @@ class BraggModule : public Module
     private:
     // Number of historical data sets to combine into final reflection data
     int averagingLength_{5};
+    // Weighting scheme to use when averaging reflection data
+    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Bragg intensity scaling factor accounting for number of repeat units in Configuration
     Vec3<int> multiplicity_{1, 1, 1};
     // Resolution (bin width) in Q space to use when calculating Bragg reflections

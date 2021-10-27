@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
-#include "math/averaging.h"
 #include "modules/rdf/rdf.h"
 
 // Return enum option info for NormalisationType
@@ -25,15 +24,14 @@ void RDFModule::initialise()
                                "Whether to use the maximal RDF range possible that avoids periodic images", useHalfCellRange_);
     keywords_.add<IntegerKeyword>("Control", "Averaging", "Number of historical partial sets to combine into final partials",
                                   averagingLength_, 0);
-    keywords_.add(
-        "Control",
-        new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
-        "AveragingScheme", "Weighting scheme to use when averaging partials");
+    keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
+                                                                  "Weighting scheme to use when averaging partials",
+                                                                  averagingScheme_, Averaging::averagingSchemes());
     keywords_.add<Function1DKeyword>("Control", "IntraBroadening", "Type of broadening to apply to intramolecular g(r)",
                                      intraBroadening_, FunctionProperties::Normalisation);
-    keywords_.add("Control",
-                  new EnumOptionsKeyword<RDFModule::PartialsMethod>(RDFModule::partialsMethods() = RDFModule::AutoMethod),
-                  "Method", "Calculation method for partial radial distribution functions");
+    keywords_.add<EnumOptionsKeyword<RDFModule::PartialsMethod>>("Control", "Method",
+                                                                 "Calculation method for partial radial distribution functions",
+                                                                 partialsMethod_, RDFModule::partialsMethods());
     keywords_.add<IntegerKeyword>(
         "Control", "Smoothing",
         "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in "

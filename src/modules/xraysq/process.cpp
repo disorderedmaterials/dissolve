@@ -39,22 +39,20 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
         // Remove normalisation factor from data
-        auto normType = keywords_.enumeration<StructureFactors::NormalisationType>("ReferenceNormalisation");
-        if (normType != StructureFactors::NoNormalisation)
+        if (referenceNormalisation_ != StructureFactors::NoNormalisation)
         {
             // We need the x-ray weights in order to do the normalisation
-            auto formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
             XRayWeights weights;
-            calculateWeights(rdfModule, weights, formFactors);
+            calculateWeights(rdfModule, weights, formFactors_);
 
             // Remove normalisation from the data
-            if (normType == StructureFactors::SquareOfAverageNormalisation)
+            if (referenceNormalisation_ == StructureFactors::SquareOfAverageNormalisation)
             {
                 auto bbar = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
                 std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
                                [](auto b, auto ref) { return ref / b; });
             }
-            else if (normType == StructureFactors::AverageOfSquaresNormalisation)
+            else if (referenceNormalisation_ == StructureFactors::AverageOfSquaresNormalisation)
             {
                 auto bbar = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
                 std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
@@ -65,12 +63,11 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
         auto ftQMin = keywords_.hasBeenSet("ReferenceFTQMin") ? referenceFTQMin_ : 0.0;
         auto ftQMax = keywords_.hasBeenSet("ReferenceFTQMax") ? referenceFTQMax_ : referenceData.xAxis().back() + 1.0;
-        const auto wf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
-        if (wf == WindowFunction::Form::None)
+        if (referenceWindowFunction_ == WindowFunction::Form::None)
             Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
         else
             Messenger::print("Window function to be applied in Fourier transform of reference data is {}.",
-                             WindowFunction::forms().keyword(wf));
+                             WindowFunction::forms().keyword(referenceWindowFunction_));
 
         // Store the reference data in processing
         referenceData.setTag(uniqueName());
@@ -87,7 +84,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
-                        WindowFunction(wf));
+                        WindowFunction(referenceWindowFunction_));
 
         // Save data?
         if (saveReference_)
@@ -126,24 +123,21 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
-    auto formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
-    auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
-    const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
 
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
-    Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors));
-    if (normalisation == StructureFactors::NoNormalisation)
+    Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
+    if (normalisation_ == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
-    else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
+    else if (normalisation_ == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
-    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
+    else if (normalisation_ == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
-    if (rwf == WindowFunction::Form::None)
+    if (referenceWindowFunction_ == WindowFunction::Form::None)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
     else
         Messenger::print("XRaySQ: Window function to be applied when calculating representative g(r) from S(Q) is {}.",
-                         WindowFunction::forms().keyword(rwf));
+                         WindowFunction::forms().keyword(referenceWindowFunction_));
     if (saveFormFactors_)
         Messenger::print("XRaySQ: Combined form factor weightings for atomtype pairs will be saved.\n");
     if (saveSQ_)
@@ -166,7 +160,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Construct weights matrix
     auto &weights =
         dissolve.processingModuleData().realise<XRayWeights>("FullWeights", uniqueName_, GenericItem::InRestartFileFlag);
-    calculateWeights(rdfModule, weights, formFactors);
+    calculateWeights(rdfModule, weights, formFactors_);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
 
@@ -177,7 +171,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation_);
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
@@ -238,7 +232,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation_);
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
@@ -247,7 +241,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested
     if (saveRepresentativeGR_)

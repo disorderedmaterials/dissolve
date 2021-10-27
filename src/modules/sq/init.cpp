@@ -17,14 +17,14 @@ void SQModule::initialise()
     keywords_.add<DoubleKeyword>("Control", "QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
     keywords_.add<Function1DKeyword>("Control", "QBroadening", "Instrument broadening function to apply when calculating S(Q)",
                                      qBroadening_);
-    keywords_.add("Control", new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms()), "WindowFunction",
-                  "Window function to apply in Fourier-transform of g(r) to S(Q)");
+    keywords_.add<EnumOptionsKeyword<WindowFunction::Form>>(
+        "Control", "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
+        windowFunction_, WindowFunction::forms());
     keywords_.add<IntegerKeyword>("Control", "Averaging", "Number of historical partial sets to combine into final partials",
                                   averagingLength_, 1);
-    keywords_.add(
-        "Control",
-        new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
-        "AveragingScheme", "Weighting scheme to use when averaging partials");
+    keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
+                                                                  "Weighting scheme to use when averaging partials",
+                                                                  averagingScheme_, Averaging::averagingSchemes());
 
     // Bragg Scattering
     keywords_.add("Bragg Scattering", new ModuleKeyword<const BraggModule>("Bragg"), "IncludeBragg",

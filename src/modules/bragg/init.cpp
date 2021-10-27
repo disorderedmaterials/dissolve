@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
-#include "math/averaging.h"
 #include "modules/bragg/bragg.h"
 
 // Perform any necessary initialisation for the Module
@@ -11,10 +10,9 @@ void BraggModule::initialise()
     // Control
     keywords_.add<IntegerKeyword>("Control", "Averaging",
                                   "Number of historical data sets to combine into final reflection data", averagingLength_, 0);
-    keywords_.add(
-        "Control",
-        new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
-        "AveragingScheme", "Weighting scheme to use when averaging reflection data");
+    keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
+                                                                  "Weighting scheme to use when averaging reflection data",
+                                                                  averagingScheme_, Averaging::averagingSchemes());
     keywords_.add<DoubleKeyword>(
         "Control", "QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections", qDelta_, 1.0e-5);
     keywords_.add<DoubleKeyword>("Control", "QMax", "Maximum Q value for Bragg calculation", qMax_, 0.0);

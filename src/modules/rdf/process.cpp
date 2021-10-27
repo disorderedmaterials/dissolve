@@ -21,9 +21,6 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
-    auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-    auto method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
-
     // Print argument/parameter summary
     if (useHalfCellRange_)
         Messenger::print("RDF: Partials will be calculated up to the half-cell range limit.\n");
@@ -34,13 +31,13 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("RDF: No averagingLength_ of partials will be performed.\n");
     else
         Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
-                         Averaging::averagingSchemes().keyword(averagingScheme));
+                         Averaging::averagingSchemes().keyword(averagingScheme_));
     if (intraBroadening_.type() == Functions::Function1D::None)
         Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
     else
         Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is {} ({}).",
                          Functions::function1D().keyword(intraBroadening_.type()), intraBroadening_.parameterSummary());
-    Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(method));
+    Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("RDF: Degree of nSmooths_ to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
                      DissolveSys::onOff(nSmooths_ > 0));
@@ -78,7 +75,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
-        calculateGR(dissolve.processingModuleData(), procPool, cfg, method, rdfRange, binWidth_, alreadyUpToDate);
+        calculateGR(dissolve.processingModuleData(), procPool, cfg, partialsMethod_, rdfRange, binWidth_, alreadyUpToDate);
         auto &originalgr =
             dissolve.processingModuleData().retrieve<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), uniqueName_);
 
@@ -89,7 +86,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
             std::string currentFingerprint{originalgr.fingerprint()};
 
             Averaging::average<PartialSet>(dissolve.processingModuleData(), fmt::format("{}//OriginalGR", cfg->niceName()),
-                                           uniqueName_, averagingLength_, averagingScheme);
+                                           uniqueName_, averagingLength_, averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);

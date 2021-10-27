@@ -72,15 +72,14 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Failed to read in potential coefficients from EPSR pcof file.\n");
 
         // Set up the additional potentials - reconstruct them from the current coefficients
-        auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
-        if (functionType == EPSRModule::GaussianExpansionFunction)
+        if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
-            if (!generateEmpiricalPotentials(dissolve, functionType, rho, nCoeffP_, rMinPT_, rMaxPT_, gSigma1_, gSigma2_))
+            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_, rMaxPT_, gSigma1_, gSigma2_))
                 return false;
         }
         else
         {
-            if (!generateEmpiricalPotentials(dissolve, functionType, rho, nCoeffP_, rMinPT_, rMaxPT_, pSigma1_, pSigma2_))
+            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_, rMaxPT_, pSigma1_, pSigma2_))
                 return false;
         }
     }
@@ -100,7 +99,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Get Keyword Options
      */
     const auto ereq = keywords_.asDouble("EReq");
-    auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
+    auto expansionFunction_ = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
 
     // EPSR constants
     const auto mcoeff = 200;
@@ -116,7 +115,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print option summary
     Messenger::print("EPSR: Feedback factor is {}.\n", feedback_);
     Messenger::print("EPSR: {} functions will be used to approximate difference data.\n",
-                     expansionFunctionTypes().keyword(functionType));
+                     expansionFunctionTypes().keyword(expansionFunction_));
     Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_, pSigma2_);
     if (modifyPotential_)
         Messenger::print("EPSR: Perturbations to interatomic potentials will be generated and applied.\n");
@@ -257,7 +256,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 
         auto fitError = 0.0;
-        if (functionType == EPSRModule::GaussianExpansionFunction)
+        if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
             // Construct our fitting object
             GaussFit coeffMinimiser(deltaFQ);
@@ -284,7 +283,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             deltaFQFit = coeffMinimiser.approximation();
         }
-        else if (functionType == EPSRModule::PoissonExpansionFunction)
+        else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
         {
             // Construct our fitting object
             PoissonFit coeffMinimiser(deltaFQ);
@@ -636,7 +635,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Apply factor of 1.0/rho to abs energy if using Poisson approximation (since this term is not present in the
         // fit functions)
-        if (functionType == EPSRModule::PoissonExpansionFunction)
+        if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
             energabs /= targetConfiguration_->atomicDensity();
 
         /*
@@ -674,10 +673,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         energabs *= pressfac;
 
         // Generate additional potentials from the coefficients
-        auto sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
-        auto sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
+        auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
+        auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
 
-        if (!generateEmpiricalPotentials(dissolve, functionType, targetConfiguration_->atomicDensity(), nCoeffP_, rMinPT_,
+        if (!generateEmpiricalPotentials(dissolve, expansionFunction_, targetConfiguration_->atomicDensity(), nCoeffP_, rMinPT_,
                                          rMaxPT_, sigma1, sigma2))
             return false;
     }

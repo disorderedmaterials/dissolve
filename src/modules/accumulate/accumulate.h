@@ -35,7 +35,20 @@ class AccumulateModule : public Module
     /*
      * Control
      */
+    public:
+    // Target PartialSet Enum
+    enum TargetPartialSet
+    {
+        GR,
+        SQ,
+        OriginalGR
+    };
+    // Return EnumOptions for TargetPartialSet
+    static EnumOptions<TargetPartialSet> targetPartialSet();
+
     private:
+    // Type of target PartialSet
+    AccumulateModule::TargetPartialSet targetPartialSet_;
     // Module containing the target partial set data to accumulate
     std::vector<Module *> targetModule_;
     // Whether to save the accumulated partials to disk
@@ -49,16 +62,6 @@ class AccumulateModule : public Module
      * Processing
      */
     public:
-    // Target PartialSet Enum
-    enum TargetPartialSet
-    {
-        GR,
-        SQ,
-        OriginalGR
-    };
-    // Return EnumOptions for TargetPartialSet
-    static EnumOptions<TargetPartialSet> targetPartialSet();
-
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 

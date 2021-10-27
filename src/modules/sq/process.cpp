@@ -24,7 +24,6 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module must be provided.\n");
     const auto *braggModule = keywords_.retrieve<const BraggModule *>("IncludeBragg");
-    const auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     const auto wf = keywords_.enumeration<WindowFunction::Form>("WindowFunction");
 
     // Print argument/parameter summary
@@ -39,7 +38,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("SQ: No averaging of partials will be performed.\n");
     else
         Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
-                         Averaging::averagingSchemes().keyword(averagingScheme));
+                         Averaging::averagingSchemes().keyword(averagingScheme_));
     if (qBroadening_.type() == Functions::Function1D::None)
         Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
     else
@@ -190,7 +189,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         std::string currentFingerprint{unweightedsq.fingerprint()};
 
         Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, averagingLength_,
-                                       averagingScheme);
+                                       averagingScheme_);
 
         // Re-set the object names and fingerprints of the partials
         unweightedsq.setFingerprint(currentFingerprint);

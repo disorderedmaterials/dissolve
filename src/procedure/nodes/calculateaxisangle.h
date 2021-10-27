@@ -21,10 +21,8 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
      * Data
      */
     private:
-    // Axis to use from site 'I' (retrieved from keyword)
-    int axisI_;
-    // Axis to use from site 'J' (retrieved from keyword)
-    int axisJ_;
+    // Axes to use for sites
+    OrientedSite::SiteAxis axes_[2];
 
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)

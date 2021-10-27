@@ -8,6 +8,7 @@
 #include "classes/partialset.h"
 #include "data/structurefactors.h"
 #include "io/import/data1d.h"
+#include "math/windowfunction.h"
 #include "module/module.h"
 
 // Forward Declarations
@@ -49,6 +50,8 @@ class NeutronSQModule : public Module
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Isotopologues to use in weighting
     IsotopologueSet isotopologueSet_;
+    // Normalisation to apply to calculated total F(Q)
+    StructureFactors::NormalisationType normalisation_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Set the minimum Q value to use when Fourier-transforming the data
@@ -57,6 +60,10 @@ class NeutronSQModule : public Module
     double referenceFTQMax_{0.0};
     // Set the spacing in r to use when generating the Fourier-transformed data
     double referenceFTDeltaR_{0.05};
+    // Normalisation to remove from reference total F(Q)
+    StructureFactors::NormalisationType referenceNormalisation_{StructureFactors::NoNormalisation};
+    // Window function to use when Fourier transforming reference total F(Q) into g(r)
+    WindowFunction::Form referenceWindowFunction_{WindowFunction::Form::Lorch0};
     // Save weighted g(r) and G(r)
     bool saveGR_{false};
     // Save the reference data and its Fourier transform

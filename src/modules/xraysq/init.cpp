@@ -11,22 +11,21 @@ void XRaySQModule::initialise()
     // Control
     keywords_.add("Control", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
                   "Source unweighted S(Q) to transform into xray-weighted S(Q)");
-    keywords_.add("Control",
-                  new EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>(XRayFormFactors::xRayFormFactorData() =
-                                                                                  XRayFormFactors::WaasmaierKirfel1995),
-                  "FormFactors", "Atomic form factors to use for weighting");
-    keywords_.add("Control",
-                  new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
-                                                                                  StructureFactors::NoNormalisation),
-                  "Normalisation", "Normalisation to apply to total weighted F(Q)");
+    keywords_.add<EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>>("Control", "FormFactors",
+                                                                           "Atomic form factors to use for weighting",
+                                                                           formFactors_, XRayFormFactors::xRayFormFactorData());
+    keywords_.add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
+        "Control", "Normalisation", "Normalisation to apply to total weighted F(Q)", normalisation_,
+        StructureFactors::normalisationTypes());
 
     // Reference Data
     keywords_.add<FileAndFormatKeyword>("Reference Data", "Reference", "F(Q) reference data", referenceFQ_, "EndReference")
         .optionMask = KeywordBase::ModificationRequiresSetUpOption;
-    keywords_.add("Reference Data",
-                  new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
-                                                                                  StructureFactors::NoNormalisation),
-                  "ReferenceNormalisation", "Normalisation to remove from reference data");
+    keywords_
+        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
+            "Reference Data", "ReferenceNormalisation", "Normalisation to remove from reference data before use",
+            referenceNormalisation_, StructureFactors::normalisationTypes())
+        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
     keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTQMin",
                                  "Set the minimum Q value to use when Fourier-transforming the data", referenceFTQMin_);
     keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTQMax",
@@ -34,10 +33,12 @@ void XRaySQModule::initialise()
     keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTDeltaR",
                                  "Set the spacing in r to use when generating the Fourier-transformed data",
                                  referenceFTDeltaR_);
-    keywords_.add("Reference Data",
-                  new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms() = WindowFunction::Form::Lorch0),
-                  "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
-                  KeywordBase::ModificationRequiresSetUpOption);
+    keywords_
+        .add<EnumOptionsKeyword<WindowFunction::Form>>(
+            "Reference Data", "ReferenceWindowFunction",
+            "Window function to apply when Fourier-transforming reference S(Q) to g(r)", referenceWindowFunction_,
+            WindowFunction::forms())
+        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
 
     // Export
     keywords_.add<BoolKeyword>("Export", "SaveFormFactors",

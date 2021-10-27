@@ -8,6 +8,7 @@
 #include "data/formfactors.h"
 #include "data/structurefactors.h"
 #include "io/import/data1d.h"
+#include "math/windowfunction.h"
 #include "module/module.h"
 
 // Forward Declarations
@@ -46,6 +47,10 @@ class XRaySQModule : public Module
      * Control
      */
     private:
+    // Atomic form factors to use for weighting
+    XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::WaasmaierKirfel1995};
+    // Normalisation to apply to calculated total F(Q)
+    StructureFactors::NormalisationType normalisation_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Set the minimum Q value to use when Fourier-transforming the data
@@ -54,6 +59,10 @@ class XRaySQModule : public Module
     double referenceFTQMax_{0.0};
     // Set the spacing in r to use when generating the Fourier-transformed data
     double referenceFTDeltaR_{0.05};
+    // Normalisation to remove from reference total F(Q)
+    StructureFactors::NormalisationType referenceNormalisation_{StructureFactors::NoNormalisation};
+    // Window function to use when Fourier transforming reference total F(Q) into g(r)
+    WindowFunction::Form referenceWindowFunction_{WindowFunction::Form::Lorch0};
     // Whether to save combined form factor weightings for atomtype pairs
     bool saveFormFactors_{false};
     // Whether to save weighted g(r) and G(r) to disk after calculation

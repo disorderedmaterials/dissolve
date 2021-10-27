@@ -37,10 +37,9 @@ void EPSRModule::initialise()
                                  weighting_, 0.0, 100.0);
 
     // Expansion Function
-    keywords_.add("Expansion Function",
-                  new EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>(EPSRModule::expansionFunctionTypes() =
-                                                                                EPSRModule::PoissonExpansionFunction),
-                  "ExpansionFunction", "Form of expansion function to use when fitting difference data");
+    keywords_.add<EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>>(
+        "Expansion Function", "ExpansionFunction", "Form of expansion function to use when fitting difference data",
+        expansionFunction_, EPSRModule::expansionFunctionTypes());
     keywords_.add<DoubleKeyword>("Expansion Function", "GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_,
                                  0.001, 1.0);
     keywords_.add<DoubleKeyword>("Expansion Function", "GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001,

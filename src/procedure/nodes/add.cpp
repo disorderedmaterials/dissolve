@@ -19,10 +19,9 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
     keywords_.add("Control", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
-    keywords_.add("Control",
-                  new EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>(boxActionStyles() =
-                                                                               AddProcedureNode::BoxActionStyle::AddVolume),
-                  "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
+    keywords_.add<EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>>(
+        "Control", "BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_,
+        boxActionStyles());
     keywords_.add<BoolKeyword>("Control", "ScaleA", "Scale box length A when modifying volume", scaleA_);
     keywords_.add<BoolKeyword>("Control", "ScaleB", "Scale box length B when modifying volume", scaleB_);
     keywords_.add<BoolKeyword>("Control", "ScaleC", "Scale box length C when modifying volume", scaleC_);
@@ -30,10 +29,8 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
                   new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
                   "Density", "Density at which to add the target species");
     keywords_.add<BoolKeyword>("Control", "Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
-    keywords_.add("Control",
-                  new EnumOptionsKeyword<AddProcedureNode::PositioningType>(positioningTypes() =
-                                                                                AddProcedureNode::PositioningType::Random),
-                  "Positioning", "Positioning type for individual molecules");
+    keywords_.add<EnumOptionsKeyword<AddProcedureNode::PositioningType>>(
+        "Control", "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Region, true), "Region",
                   "Region into which to add the species");
 }
@@ -82,14 +79,13 @@ EnumOptions<AddProcedureNode::PositioningType> AddProcedureNode::positioningType
 // Prepare any necessary data, ready for execution
 bool AddProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // If positioning type is 'Region', must have a suitable node defined
-    auto positioning = keywords_.enumeration<AddProcedureNode::PositioningType>("Positioning");
+    // If positioningType_ type is 'Region', must have a suitable node defined
     auto *regionNode = keywords_.retrieve<const ProcedureNode *>("Region");
-    if (positioning == AddProcedureNode::PositioningType::Region && !regionNode)
+    if (positioningType_ == AddProcedureNode::PositioningType::Region && !regionNode)
         return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
-    else if (positioning != AddProcedureNode::PositioningType::Region && regionNode)
-        Messenger::warn("A region has been specified ({}) but the positioning type is set to '{}'\n", regionNode->name(),
-                        AddProcedureNode::positioningTypes().keyword(positioning));
+    else if (positioningType_ != AddProcedureNode::PositioningType::Region && regionNode)
+        Messenger::warn("A region has been specified ({}) but the positioningType_ type is set to '{}'\n", regionNode->name(),
+                        AddProcedureNode::positioningTypes().keyword(positioningType_));
 
     // Check scalable axes definitions
     if (!keywords_.asBool("ScaleA") && !keywords_.asBool("ScaleB") && !keywords_.asBool("ScaleC"))
@@ -116,11 +112,10 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     // If a density was not given, just add new molecules to the current box without adjusting its size
     auto &densityAndUnits = keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
     double density = densityAndUnits.value().asDouble();
-    auto boxAction = keywords_.enumeration<AddProcedureNode::BoxActionStyle>("BoxAction");
     Vec3<bool> scalableAxes(scaleA_, scaleB_, scaleC_);
-    if (boxAction == AddProcedureNode::BoxActionStyle::None)
+    if (boxAction_ == AddProcedureNode::BoxActionStyle::None)
         Messenger::print("[Add] Current box geometry / volume will remain as-is.\n");
-    else if (boxAction == AddProcedureNode::BoxActionStyle::AddVolume)
+    else if (boxAction_ == AddProcedureNode::BoxActionStyle::AddVolume)
     {
         Messenger::print("[Add] Current box volume will be increased to accommodate volume of new species.\n");
 
@@ -156,7 +151,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         Messenger::print("[Add] New box volume is {:e} cubic Angstroms - scale factors were ({},{},{}).\n",
                          cfg->box()->volume(), scaleFactors.x, scaleFactors.y, scaleFactors.z);
     }
-    else if (boxAction == AddProcedureNode::BoxActionStyle::ScaleVolume)
+    else if (boxAction_ == AddProcedureNode::BoxActionStyle::ScaleVolume)
     {
         Messenger::print("[Add] Box volume will be set to give supplied density.\n");
 
@@ -193,7 +188,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         Messenger::print("[Add] Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n", scaleFactors.x,
                          scaleFactors.y, scaleFactors.z, cfg->box()->volume());
     }
-    else if (boxAction == AddProcedureNode::BoxActionStyle::Set)
+    else if (boxAction_ == AddProcedureNode::BoxActionStyle::Set)
     {
         Messenger::print("[Add] Box geometry will be set from the species box definition.\n");
         if (sp->box()->type() == Box::BoxType::NonPeriodic)
@@ -215,18 +210,17 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         }
     }
 
-    // Get the positioning type and rotation flag
-    auto positioning = keywords_.enumeration<AddProcedureNode::PositioningType>("Positioning");
+    // Get the positioningType_ type and rotation flag
     auto *regionNode = dynamic_cast<const RegionProcedureNodeBase *>(keywords_.retrieve<const ProcedureNode *>("Region"));
     Region region;
 
     Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
-                     AddProcedureNode::positioningTypes().keyword(positioning), rotate_ ? "on" : "off");
-    if (positioning == AddProcedureNode::PositioningType::Region)
+                     AddProcedureNode::positioningTypes().keyword(positioningType_), rotate_ ? "on" : "off");
+    if (positioningType_ == AddProcedureNode::PositioningType::Region)
     {
         if (!regionNode)
             return Messenger::error("Positioning type set to '{}' but no region was given.\n",
-                                    AddProcedureNode::positioningTypes().keyword(positioning));
+                                    AddProcedureNode::positioningTypes().keyword(positioningType_));
 
         region = regionNode->generateRegion(cfg);
         if (!region.isValid())
@@ -269,7 +263,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         }
 
         // Set / generate position of Molecule
-        switch (positioning)
+        switch (positioningType_)
         {
             case (AddProcedureNode::PositioningType::Random):
                 fr.set(procPool.random(), procPool.random(), procPool.random());
@@ -287,7 +281,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
             case (AddProcedureNode::PositioningType::Current):
                 break;
             default:
-                Messenger::error("Unrecognised positioning type.\n");
+                Messenger::error("Unrecognised positioningType_ type.\n");
                 break;
         }
 

@@ -16,11 +16,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * This is a serial routine.
      */
 
-    // Get options
-    auto errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
-
     // Print summary
-    Messenger::print("DataTest: Error calculation is '{}', threshold is {:e}.", Error::errorTypes().keyword(errorType),
+    Messenger::print("DataTest: Error calculation is '{}', threshold is {:e}.", Error::errorTypes().keyword(errorType_),
                      threshold_);
     Messenger::print("\n");
 
@@ -35,7 +32,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
         // Generate the error estimate and compare against the threshold value
-        double error = Error::error(errorType, data, referenceData, true);
+        double error = Error::error(errorType_, data, referenceData, true);
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n",
                          referenceData.tag(), error, std::isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
         if (std::isnan(error) || error > threshold_)
@@ -58,7 +55,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Located reference data '{}'.\n", tag2);
 
         // Generate the error estimate and compare against the threshold value
-        double error = Error::error(errorType, data1, data2, true);
+        double error = Error::error(errorType_, data1, data2, true);
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e})\n\n", tag1,
                          error, tag2, std::isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
         if (std::isnan(error) || error > threshold_)
@@ -76,7 +73,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
         // Generate the error estimate and compare against the threshold value
-        // 		double error = Error::error(errorType, data, *testData2D, true);
+        // 		double error = Error::error(errorType_, data, *testData2D, true);
         // 		Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold
         // is {:6.3e})\n\n", testData2D->name(), error, isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
         // if (isnan(error) || error > threshold_) return false;
@@ -113,7 +110,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Located reference data '{}'.\n", tag);
 
         // Generate the error estimate and compare against the threshold value
-        double error = Error::error(errorType, data.values(), referenceData, true);
+        double error = Error::error(errorType_, data.values(), referenceData, true);
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
                          error, std::isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
         if (std::isnan(error) || error > threshold_)

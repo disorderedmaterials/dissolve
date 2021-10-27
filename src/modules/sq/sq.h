@@ -5,6 +5,7 @@
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
+#include "math/averaging.h"
 #include "math/function1d.h"
 #include "math/windowfunction.h"
 #include "module/module.h"
@@ -45,6 +46,8 @@ class SQModule : public Module
     private:
     // Number of historical partial sets to combine into final partials
     int averagingLength_{1};
+    // Weighting scheme to use when averaging partials
+    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Broadening function to apply to Bragg S(Q)
     Functions::Function1DWrapper braggQBroadening_{Functions::Function1D::GaussianC2, {0.0, 0.02}};
     // Broadening function to apply to S(Q)
@@ -57,6 +60,8 @@ class SQModule : public Module
     double qMin_{0.01};
     // Whether to save partials to disk after calculation
     bool save_{false};
+    // Window function to use when Fourier-transforming reference S(Q) to g(r))
+    WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 
     protected:
     // Perform any necessary initialisation for the Module

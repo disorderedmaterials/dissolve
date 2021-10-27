@@ -53,10 +53,14 @@ class AddProcedureNode : public ProcedureNode
     static EnumOptions<PositioningType> positioningTypes();
 
     private:
-    // Flags controlling box axis scaling
-    bool scaleA_{true}, scaleB_{true}, scaleC_{true};
+    // Action to take on the Box geometry / volume on addition of the species
+    AddProcedureNode::BoxActionStyle boxAction_{AddProcedureNode::BoxActionStyle::AddVolume};
+    // Positioning type for individual molecules
+    AddProcedureNode::PositioningType positioningType_{AddProcedureNode::PositioningType::Random};
     // Whether to rotate molecules on insertion
     bool rotate_{true};
+    // Flags controlling box axis scaling
+    bool scaleA_{true}, scaleB_{true}, scaleC_{true};
 
     /*
      * Execute

@@ -9,6 +9,7 @@
 #include "classes/data3dstore.h"
 #include "classes/valuestore.h"
 #include "io/import/values.h"
+#include "math/error.h"
 #include "module/module.h"
 
 // DataTest Module
@@ -42,6 +43,8 @@ class DataTestModule : public Module
      * Control
      */
     private:
+    // Method of error calculation to use
+    Error::ErrorType errorType_{Error::EuclideanError};
     // Internal 1D data testing
     std::vector<std::pair<std::string, std::string>> internal1DData_;
     // Test 1D datasets

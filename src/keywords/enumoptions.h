@@ -5,13 +5,15 @@
 
 #include "base/enumoptions.h"
 #include "base/lineparser.h"
-#include "keywords/data.h"
+#include "keywords/base.h"
 
 // EnumOptionsKeyword base class
-class EnumOptionsBaseKeyword
+class EnumOptionsBaseKeyword : public KeywordBase
 {
     public:
-    EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : baseOptions_(baseOptions) {}
+    EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : KeywordBase(KeywordBase::EnumOptionsData), baseOptions_(baseOptions)
+    {
+    }
 
     /*
      * Source Options
@@ -40,23 +42,26 @@ class EnumOptionsBaseKeyword
 };
 
 // Keyword based on EnumOptions
-template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, public KeywordData<EnumOptions<E>>
+template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
 {
     public:
-    EnumOptionsKeyword(EnumOptions<E> options)
-        : EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_), KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData,
-                                                                                                  options)
+    explicit EnumOptionsKeyword(E &data, EnumOptions<E> optionData)
+        : EnumOptionsBaseKeyword(optionData_), data_(data), optionData_(optionData)
     {
         // Set our array of valid values
-        for (auto n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
-            validKeywords_.emplace_back(std::string(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n)));
+        for (auto n = 0; n < optionData_.nOptions(); ++n)
+            validKeywords_.emplace_back(std::string(optionData_.keywordByIndex(n)));
     }
     ~EnumOptionsKeyword() override = default;
 
     /*
-     * Data Validation
+     * Data
      */
     private:
+    // Reference to data
+    E &data_;
+    // Related EnumOptions data
+    EnumOptions<E> optionData_;
     // List of valid keyword values
     std::vector<std::string> validKeywords_;
 
@@ -64,7 +69,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Return validation list
     const std::vector<std::string> &validationList() { return validKeywords_; }
     // Validate supplied value
-    bool isValid(std::string_view value) { return KeywordData<EnumOptions<E>>::data_.isValid(value); }
+    bool isValid(std::string_view value) { return optionData_.isValid(value); }
 
     /*
      * Arguments
@@ -80,11 +85,11 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
         if (parser.hasArg(startArg))
         {
             // Check validity of the supplied keyword...
-            if (!KeywordData<EnumOptions<E>>::data_.isValid(parser.argsv(startArg)))
-                return KeywordData<EnumOptions<E>>::data_.errorAndPrintValid(parser.argsv(startArg));
+            if (!optionData_.isValid(parser.argsv(startArg)))
+                return optionData_.errorAndPrintValid(parser.argsv(startArg));
 
-            KeywordData<EnumOptions<E>>::data_.set(parser.argsv(startArg));
-            KeywordData<EnumOptions<E>>::setAsModified();
+            data_ = optionData_.enumeration(parser.argsv(startArg));
+            setAsModified();
 
             return true;
         }
@@ -94,7 +99,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
-        return parser.writeLineF("{}{}  {}\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.keyword());
+        return parser.writeLineF("{}{}  {}\n", prefix, keywordName, optionData_.keyword(data_));
     }
 
     /*
@@ -104,8 +109,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Set new option index, informing KeywordBase
     void setEnumerationByIndex(int optionIndex) override
     {
-        KeywordData<EnumOptions<E>>::data_.setIndex(optionIndex);
-        KeywordData<EnumOptions<E>>::setAsModified();
+        data_ = optionData_.enumerationByIndex(optionIndex);
+        setAsModified();
     }
 
     /*
@@ -120,5 +125,5 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     public:
     // Return value (as string)
-    std::string asString() override { return std::string(KeywordData<EnumOptions<E>>::data_.keyword()); }
+    std::string asString() override { return optionData_.keyword(data_); }
 };

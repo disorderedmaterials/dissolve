@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
-#include "math/error.h"
 #include "modules/datatest/datatest.h"
 
 // Perform any necessary initialisation for the Module
@@ -11,8 +10,8 @@ void DataTestModule::initialise()
     // Test
     keywords_.add<Data1DStoreKeyword>("Test", "Data1D", "Specify one-dimensional test reference data", test1DData_);
     keywords_.add<Data2DStoreKeyword>("Test", "Data2D", "Specify two-dimensional test reference data", test2DData_);
-    keywords_.add("Test", new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::EuclideanError), "ErrorType",
-                  "Type of error calculation to use");
+    keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("Test", "ErrorType", "Type of error calculation to use", errorType_,
+                                                        Error::errorTypes());
     keywords_.add<StringPairVectorKeyword>("Test", "InternalData1D", "Specify one-dimensional internal reference and test data",
                                            internal1DData_);
     keywords_.add<StringDoubleVectorKeyword>(

@@ -62,6 +62,8 @@ class EPSRModule : public Module
     private:
     // Limit of magnitude of additional potential for any one pair potential
     double eReq_{3.0};
+    // Expansion function type to use for potential fits
+    EPSRModule::ExpansionFunctionType expansionFunction_{EPSRModule::PoissonExpansionFunction};
     // Confidence factor
     double feedback_{0.8};
     // Maximum Q value over which to generate potentials from total scattering data

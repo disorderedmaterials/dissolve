@@ -5,6 +5,7 @@
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
+#include "math/averaging.h"
 #include "math/function1d.h"
 #include "module/module.h"
 
@@ -43,28 +44,6 @@ class RDFModule : public Module
     /*
      * Control
      */
-    private:
-    // Number of historical partial sets to combine into final partials
-    int averagingLength_{5};
-    // Bin width (spacing in r) to use
-    double binWidth_{0.025};
-    // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
-    bool internalTest_{false};
-    // Type of broadening to apply to intramolecular g(r)
-    Functions::Function1DWrapper intraBroadening_{Functions::Function1D::Gaussian, {0.18}};
-    // Degree of smoothing to apply
-    int nSmooths_{0};
-    // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
-    double requestedRange_{15.0};
-    // Whether to save partials and total functions to disk
-    bool save_{false};
-    // Whether to use the maximal RDF range possible that avoids periodic images
-    bool useHalfCellRange_{true};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     public:
     // Partial Calculation Method enum
     enum PartialsMethod
@@ -77,6 +56,32 @@ class RDFModule : public Module
     };
     // Return enum option info for PartialsMethod
     EnumOptions<RDFModule::PartialsMethod> partialsMethods();
+
+    private:
+    // Number of historical partial sets to combine into final partials
+    int averagingLength_{5};
+    // Weighting scheme to use when averaging partials
+    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
+    // Bin width (spacing in r) to use
+    double binWidth_{0.025};
+    // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
+    bool internalTest_{false};
+    // Type of broadening to apply to intramolecular g(r)
+    Functions::Function1DWrapper intraBroadening_{Functions::Function1D::Gaussian, {0.18}};
+    // Degree of smoothing to apply
+    int nSmooths_{0};
+    // Calculation method for partials
+    RDFModule::PartialsMethod partialsMethod_{RDFModule::AutoMethod};
+    // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
+    double requestedRange_{15.0};
+    // Whether to save partials and total functions to disk
+    bool save_{false};
+    // Whether to use the maximal RDF range possible that avoids periodic images
+    bool useHalfCellRange_{true};
+
+    protected:
+    // Perform any necessary initialisation for the Module
+    void initialise() override;
 
     /*
      * Processing
