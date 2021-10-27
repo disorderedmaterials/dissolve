@@ -10,12 +10,14 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(std::vector<const ProcedureNode *> nodes)
-    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise)
+OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(
+    std::vector<const SelectProcedureNode *> nodes)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise), normalisationSites_(std::move(nodes))
 {
     // Create keywords
-    keywords_.add("Control", new NodeVectorKeyword(this, ProcedureNode::NodeType::Select, false, nodes), "Site",
-                  "Site(s) by which to normalise data based on their population");
+    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>("Control", "Site",
+                                                          "Site(s) by which to normalise data based on their population",
+                                                          normalisationSites_, this, ProcedureNode::NodeType::Select, false);
 }
 
 /*
@@ -25,13 +27,8 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
 // Operate on Data1D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    auto &nodes = keywords_.retrieve<std::vector<const ProcedureNode *>>("Site");
-    for (const auto *node : nodes)
-    {
-        auto *selectNode = dynamic_cast<const SelectProcedureNode *>(node);
-        assert(selectNode);
-        (*targetData1D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
-    }
+    for (const auto *node : normalisationSites_)
+        (*targetData1D_) /= (node->nAverageSites() / cfg->box()->volume());
 
     return true;
 }
@@ -39,13 +36,8 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool &proc
 // Operate on Data2D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    auto &nodes = keywords_.retrieve<std::vector<const ProcedureNode *>>("Site");
-    for (const auto *node : nodes)
-    {
-        auto *selectNode = dynamic_cast<const SelectProcedureNode *>(node);
-        assert(selectNode);
-        (*targetData2D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
-    }
+    for (const auto *node : normalisationSites_)
+        (*targetData2D_) /= (node->nAverageSites() / cfg->box()->volume());
 
     return true;
 }
@@ -53,13 +45,8 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool &proc
 // Operate on Data3D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    auto &nodes = keywords_.retrieve<std::vector<const ProcedureNode *>>("Site");
-    for (const auto *node : nodes)
-    {
-        auto *selectNode = dynamic_cast<const SelectProcedureNode *>(node);
-        assert(selectNode);
-        (*targetData3D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
-    }
+    for (const auto *node : normalisationSites_)
+        (*targetData3D_) /= (node->nAverageSites() / cfg->box()->volume());
 
     return true;
 }

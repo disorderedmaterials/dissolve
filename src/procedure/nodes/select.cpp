@@ -27,11 +27,15 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Select, true), "SameMoleculeAsSite",
                   "Request that the selected site comes from the molecule containing the current site in the specified "
                   "SelectNode");
-    keywords_.add("Control", new NodeVectorKeyword(this, ProcedureNode::NodeType::Select, true), "ExcludeSameMolecule",
-                  "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
-                  "SelectNode(s)");
-    keywords_.add("Control", new NodeVectorKeyword(this, ProcedureNode::NodeType::Select, true), "ExcludeSameSite",
-                  "Exclude sites from selection if they are the current site in the specified SelectNode(s)");
+    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
+        "Control", "ExcludeSameMolecule",
+        "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
+        "SelectNode(s)",
+        sameMoleculeExclusions_, this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
+        "Control", "ExcludeSameSite",
+        "Exclude sites from selection if they are the current site in the specified SelectNode(s)", sameSiteExclusions_, this,
+        ProcedureNode::NodeType::Select, true);
     keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Select, true), "ReferenceSite",
                   "Site to use as reference point when determining inclusions / exclusions");
     keywords_.add("Control", new RangeKeyword(inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels), "InclusiveRange",

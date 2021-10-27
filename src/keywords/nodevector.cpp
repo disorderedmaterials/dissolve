@@ -2,82 +2,62 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/nodevector.h"
-#include "keywords/node.h"
 #include "procedure/nodes/node.h"
+#include "procedure/procedure.h"
 
-NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                                     std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(
-                                                              KeywordBase::NodeVectorData, nodes)
+NodeVectorKeywordBase::NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
+    : KeywordBase(KeywordBase::NodeVectorData), parentNode_(parentNode), nodeType_(nodeType), onlyInScope_(onlyInScope)
 {
 }
 
-NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                                     std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(
-                                                               KeywordBase::NodeVectorData, nodes)
+NodeVectorKeywordBase::NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
+    : KeywordBase(KeywordBase::NodeVectorData), parentNode_(parentNode), nodeClass_(nodeClass), onlyInScope_(onlyInScope)
 {
 }
 
 /*
- * Arguments
+ * Data
  */
 
-// Return minimum number of arguments accepted
-int NodeVectorKeyword::minArguments() const { return 1; }
+// Parent ProcedureNode
+ProcedureNode *NodeVectorKeywordBase::parentNode() const { return parentNode_; }
 
-// Return maximum number of arguments accepted
-int NodeVectorKeyword::maxArguments() const { return 99; }
+// Return optional target node type to allow
+std::optional<ProcedureNode::NodeType> NodeVectorKeywordBase::nodeType() const { return nodeType_; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Return optional target node class to allow
+std::optional<ProcedureNode::NodeClass> NodeVectorKeywordBase::nodeClass() const { return nodeClass_; }
+
+// Return whether to accept nodes within scope only
+bool NodeVectorKeywordBase::onlyInScope() const { return onlyInScope_; }
+
+// Return vector of possible nodes allowed in the vector
+std::vector<const ProcedureNode *> NodeVectorKeywordBase::allowedNodes() const
 {
-    if (!parentNode())
-        return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n", name());
+    // Get list of available nodes of the correct type and in the relevant scope
+    std::vector<const ProcedureNode *> nodes;
+    if (onlyInScope_)
+        nodes = parentNode_->nodesInScope(nodeType_, nodeClass_);
+    else if (parentNode_->procedure())
+        nodes = parentNode_->procedure()->nodes(nodeType_, nodeClass_);
 
-    // Loop over arguments
-    for (auto n = startArg; n < parser.nArgs(); ++n)
-    {
-        // Locate the named node - don't prune by type yet (we'll check that in setNode())
-        auto *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
-        if (!node)
-            return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(n), name());
-
-        if (!validNode(node, nodeType_, nodeClass_, name()))
-            return false;
-
-        data_.push_back(node);
-    }
-
-    return true;
+    return nodes;
 }
 
-// Write keyword data to specified LineParser
-bool NodeVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Return whether the node has valid class or type
+bool NodeVectorKeywordBase::validNode(const ProcedureNode *node, std::optional<ProcedureNode::NodeType> nodeType,
+                                      std::optional<ProcedureNode::NodeClass> nodeClass, std::string_view keywordName) const
 {
-    if (data_.empty())
-        return true;
+    // Check class (if specified) then type (if specified)
+    if (nodeClass && node->nodeClass() != nodeClass.value())
+        return Messenger::error("Node '{}' is of class {}, but the {} keyword requires a node of class {}.\n", node->name(),
+                                ProcedureNode::nodeClasses().keyword(node->nodeClass()), keywordName,
+                                ProcedureNode::nodeClasses().keyword(nodeClass.value()));
 
-    std::string nodes;
-    for (auto *node : data_)
-        nodes += fmt::format("  '{}'", node->name());
-
-    if (!parser.writeLineF("{}{}  {}\n", prefix, name(), nodes))
-        return false;
+    if (nodeType && node->type() != nodeType.value())
+        return Messenger::error("Node '{}' is of type {}, but the {} keyword requires a node of type {}.\n", node->name(),
+                                ProcedureNode::nodeTypes().keyword(node->type()), keywordName,
+                                ProcedureNode::nodeTypes().keyword(nodeType.value()));
 
     return true;
-}
-
-/*
- * Object Management
- */
-
-// Prune any references to the supplied ProcedureNode in the contained data
-void NodeVectorKeyword::removeReferencesTo(ProcedureNode *node)
-{
-    // Check the node type
-    if (node->type() != nodeType())
-        return;
-
-    data_.erase(std::remove(data_.begin(), data_.end(), node), data_.end());
 }

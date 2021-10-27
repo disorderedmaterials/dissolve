@@ -4,37 +4,169 @@
 #pragma once
 
 #include "base/lineparser.h"
-#include "keywords/data.h"
-#include "keywords/nodebase.h"
+#include "keywords/base.h"
 #include "procedure/nodes/node.h"
+#include "templates/algorithms.h"
 
-// Keyword with ProcedureNode RefList
-class NodeVectorKeyword : public NodeKeywordBase, public KeywordData<std::vector<const ProcedureNode *>>
+class NodeVectorKeywordBase : public KeywordBase
 {
     public:
-    NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                      std::vector<const ProcedureNode *> initNodes = {});
-    NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                      std::vector<const ProcedureNode *> initNodes = {});
+    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
+    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
+    virtual ~NodeVectorKeywordBase() override = default;
+
+    /*
+     * Data
+     */
+    protected:
+    // Parent ProcedureNode
+    ProcedureNode *parentNode_;
+    // Optional target node type to allow
+    std::optional<ProcedureNode::NodeType> nodeType_;
+    // Optional target node class to allow
+    std::optional<ProcedureNode::NodeClass> nodeClass_;
+    // Whether to accept nodes within scope only
+    bool onlyInScope_;
+
+    public:
+    // Return parent ProcedureNode
+    ProcedureNode *parentNode() const;
+    // Return optional target node type to allow
+    std::optional<ProcedureNode::NodeType> nodeType() const;
+    // Return optional target node class to allow
+    std::optional<ProcedureNode::NodeClass> nodeClass() const;
+    // Return whether to accept nodes within scope only
+    bool onlyInScope() const;
+    // Return vector of possible nodes allowed in the vector
+    std::vector<const ProcedureNode *> allowedNodes() const;
+    // Return whether the supplied node has valid class or type
+    bool validNode(const ProcedureNode *node, std::optional<ProcedureNode::NodeType> nodeType,
+                   std::optional<ProcedureNode::NodeClass> nodeClass, std::string_view keywordName) const;
+    // Add node to vector
+    virtual bool addNode(const ProcedureNode *node) = 0;
+    // Remove node from vector
+    virtual bool removeNode(const ProcedureNode *node) = 0;
+    // Return whether specified node is currently in the vector
+    virtual bool isPresent(const ProcedureNode *node) const = 0;
+    // Return plain ProcedureNode vector
+    virtual std::vector<const ProcedureNode *> nodes() const = 0;
+};
+
+// Keyword with vector of ProcedureNode
+template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
+{
+    public:
+    NodeVectorKeyword(std::vector<const N *> &data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType,
+                      bool onlyInScope)
+        : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
+    {
+    }
+    NodeVectorKeyword(std::vector<const N *> &data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass,
+                      bool onlyInScope)
+        : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), KeywordBase(KeywordBase::NodeVectorData), data_(data)
+    {
+    }
     ~NodeVectorKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to vector of data
+    std::vector<const N *> &data_;
+
+    public:
+    // Return reference to vector of data
+    std::vector<const N *> &data() { return data_; }
+    const std::vector<const N *> &data() const { return data_; }
+    // Add node to vector
+    bool addNode(const ProcedureNode *node) override
+    {
+        const auto *castNode = dynamic_cast<const N *>(node);
+        assert(castNode);
+        if (std::find(data_.begin(), data_.end(), castNode) != data_.end())
+            return false;
+        data_.emplace_back(castNode);
+        return true;
+    }
+    // Remove node from vector
+    bool removeNode(const ProcedureNode *node) override
+    {
+        const auto *castNode = dynamic_cast<const N *>(node);
+        assert(castNode);
+        auto it = std::find(data_.begin(), data_.end(), castNode);
+        if (it == data_.end())
+            return false;
+        data_.erase(it);
+        return true;
+    }
+    // Return whether specified node is currently in the vector
+    bool isPresent(const ProcedureNode *node) const override
+    {
+        return std::find(data_.begin(), data_.end(), node) != data_.end();
+    }
+    // Return plain ProcedureNode vector
+    std::vector<const ProcedureNode *> nodes() const
+    {
+        std::vector<const ProcedureNode *> result;
+        std::copy(data_.begin(), data_.end(), std::back_inserter(result));
+        return result;
+    }
 
     /*
      * Arguments
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const override;
+    int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
-    int maxArguments() const override;
+    int maxArguments() const override { return 99; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
+    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
+    {
+        if (!parentNode())
+            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n", name());
+
+        // Loop over arguments
+        for (auto n = startArg; n < parser.nArgs(); ++n)
+        {
+            // Locate the named node - don't prune by type yet (we'll check that in setNode())
+            auto *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
+            if (!node)
+                return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(n), name());
+
+            if (!validNode(node, nodeType_, nodeClass_, name()))
+                return false;
+
+            data_.push_back(dynamic_cast<const N *>(node));
+        }
+
+        return true;
+    }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
+    {
+        if (data_.empty())
+            return true;
+
+        if (!parser.writeLineF("{}{}  {}\n", prefix, name(),
+                               joinStrings(data_, " ", [](const auto *node) { return fmt::format("'{}'", node->name()); })))
+            return false;
+
+        return true;
+    }
 
     /*
      * Object Management
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(ProcedureNode *node) override;
+    void removeReferencesTo(ProcedureNode *node) override
+    {
+        // Check the node type
+        if (node->type() != nodeType())
+            return;
+
+        data_.erase(std::remove(data_.begin(), data_.end(), node), data_.end());
+    }
 };

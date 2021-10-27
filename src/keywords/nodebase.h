@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "base/lineparser.h"
-#include "keywords/data.h"
 #include "procedure/nodes/node.h"
 
 // Base Class for ProcedureNode-based Keywords
