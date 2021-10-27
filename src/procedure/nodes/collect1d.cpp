@@ -12,14 +12,12 @@
 
 Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax,
                                                double binWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect1D)
+    : ProcedureNode(ProcedureNode::NodeType::Collect1D), rangeX_{rMin, rMax, binWidth}
 {
     keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, observable, 0),
                   "QuantityX", "Calculated observable to collect");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
-                                        Vec3Labels::MinMaxBinwidthlabels),
-                  "RangeX", "Range and binwidth of the histogram for QuantityX");
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantity was binned successfully");
 
@@ -57,15 +55,6 @@ const Data1D &Collect1DProcedureNode::accumulatedData() const
     return histogram_->get().accumulatedData();
 }
 
-// Return range minimum
-double Collect1DProcedureNode::minimum() const { return keywords_.asVec3Double("RangeX").x; }
-
-// Return range maximum
-double Collect1DProcedureNode::maximum() const { return keywords_.asVec3Double("RangeX").y; }
-
-// Return bin width
-double Collect1DProcedureNode::binWidth() const { return keywords_.asVec3Double("RangeX").z; }
-
 /*
  * Branches
  */
@@ -100,7 +89,7 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
         Messenger::printVerbose("One-dimensional histogram data for '{}' was not in the target list, so it will now be "
                                 "initialised...\n",
                                 name());
-        target.initialise(minimum(), maximum(), binWidth());
+        target.initialise(rangeX_.x, rangeX_.y, rangeX_.z);
     }
 
     // Zero the current bins, ready for the new pass

@@ -14,7 +14,8 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
                                                CalculateProcedureNodeBase *zObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect3D)
+    : ProcedureNode(ProcedureNode::NodeType::Collect3D), rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth},
+      rangeZ_{zMin, zMax, zBinWidth}
 {
     keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xObservable, 0),
                   "QuantityX", "Calculated observable to collect for x axis");
@@ -22,18 +23,12 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
                   "QuantityY", "Calculated observable to collect for y axis");
     keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, zObservable, 0),
                   "QuantityZ", "Calculated observable to collect for z axis");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
-                                        Vec3Labels::MinMaxDeltaLabels),
-                  "RangeX", "Range and binwidth of the x-axis of the histogram");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
-                                        Vec3Labels::MinMaxDeltaLabels),
-                  "RangeY", "Range and binwidth of the y-axis of the histogram");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.0015),
-                                        Vec3Labels::MinMaxDeltaLabels),
-                  "RangeZ", "Range and binwidth of the z-axis of the histogram");
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+                                     Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
+                                     Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
+                                     Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 
@@ -43,7 +38,8 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
 Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect3D)
+    : ProcedureNode(ProcedureNode::NodeType::Collect3D), rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth},
+      rangeZ_{zMin, zMax, zBinWidth}
 {
     keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 0),
                   "QuantityX", "Calculated observable to collect for x axis");
@@ -51,18 +47,12 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzOb
                   "QuantityY", "Calculated observable to collect for y axis");
     keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 2),
                   "QuantityZ", "Calculated observable to collect for z axis");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
-                                        Vec3Labels::MinMaxDeltaLabels),
-                  "RangeX", "Range of calculation for the specified x observable");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
-                                        Vec3Labels::MinMaxDeltaLabels),
-                  "RangeY", "Range of calculation for the specified y observable");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
-                                        Vec3Labels::MinMaxDeltaLabels),
-                  "RangeZ", "Range of calculation for the specified z observable");
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+                                     Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
+                                     Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
+                                     Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 
@@ -91,33 +81,6 @@ const Data3D &Collect3DProcedureNode::accumulatedData() const
 
     return histogram_->get().accumulatedData();
 }
-
-// Return x range minimum
-double Collect3DProcedureNode::xMinimum() const { return keywords_.asVec3Double("RangeX").x; }
-
-// Return x range maximum
-double Collect3DProcedureNode::xMaximum() const { return keywords_.asVec3Double("RangeX").y; }
-
-// Return x bin width
-double Collect3DProcedureNode::xBinWidth() const { return keywords_.asVec3Double("RangeX").z; }
-
-// Return y range minimum
-double Collect3DProcedureNode::yMinimum() const { return keywords_.asVec3Double("RangeY").x; }
-
-// Return y range maximum
-double Collect3DProcedureNode::yMaximum() const { return keywords_.asVec3Double("RangeY").y; }
-
-// Return y bin width
-double Collect3DProcedureNode::yBinWidth() const { return keywords_.asVec3Double("RangeY").z; }
-
-// Return z range minimum
-double Collect3DProcedureNode::zMinimum() const { return keywords_.asVec3Double("RangeZ").x; }
-
-// Return z range maximum
-double Collect3DProcedureNode::zMaximum() const { return keywords_.asVec3Double("RangeZ").y; }
-
-// Return z bin width
-double Collect3DProcedureNode::zBinWidth() const { return keywords_.asVec3Double("RangeZ").z; }
 
 /*
  * Branches
@@ -152,8 +115,7 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
         Messenger::printVerbose("Three-dimensional histogram data for '{}' was not in the target list, so it will now "
                                 "be initialised...\n",
                                 name());
-        target.initialise(xMinimum(), xMaximum(), xBinWidth(), yMinimum(), yMaximum(), yBinWidth(), zMinimum(), zMaximum(),
-                          zBinWidth());
+        target.initialise(rangeX_.x, rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
     }
 
     // Zero the current bins, ready for the new pass

@@ -37,18 +37,14 @@ class Collect1DProcedureNode : public ProcedureNode
     int xObservableIndex_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram1D> histogram_;
+    // Range and binwidth of the histogram for QuantityX
+    Vec3<double> rangeX_;
 
     public:
     // Return current data
     Data1D data() const;
     // Return accumulated data
     const Data1D &accumulatedData() const;
-    // Return range minimum
-    double minimum() const;
-    // Return range maximum
-    double maximum() const;
-    // Return bin width
-    double binWidth() const;
 
     /*
      * Branches

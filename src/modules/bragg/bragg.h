@@ -43,6 +43,8 @@ class BraggModule : public Module
     private:
     // Number of historical data sets to combine into final reflection data
     int averagingLength_{5};
+    // Bragg intensity scaling factor accounting for number of repeat units in Configuration
+    Vec3<int> multiplicity_{1, 1, 1};
     // Resolution (bin width) in Q space to use when calculating Bragg reflections
     double qDelta_{0.001};
     // Maximum Q value for Bragg calculation

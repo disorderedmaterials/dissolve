@@ -42,22 +42,14 @@ class Collect2DProcedureNode : public ProcedureNode
     int yObservableIndex_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram2D> histogram_;
+    // Range and binwidth of the histogram for QuantityX
+    Vec3<double> rangeX_;
+    // Range and binwidth of the histogram for QuantityY
+    Vec3<double> rangeY_;
 
     public:
     // Return accumulated data
     const Data2D &accumulatedData() const;
-    // Return x range minimum
-    double xMinimum() const;
-    // Return x range maximum
-    double xMaximum() const;
-    // Return x bin width
-    double xBinWidth() const;
-    // Return y range minimum
-    double yMinimum() const;
-    // Return y range maximum
-    double yMaximum() const;
-    // Return y bin width
-    double yBinWidth() const;
 
     /*
      * Branches

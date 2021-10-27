@@ -50,28 +50,16 @@ class Collect3DProcedureNode : public ProcedureNode
     int zObservableIndex_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram3D> histogram_;
+    // Range and binwidth of the histogram for QuantityX
+    Vec3<double> rangeX_;
+    // Range and binwidth of the histogram for QuantityY
+    Vec3<double> rangeY_;
+    // Range and binwidth of the histogram for QuantityZ
+    Vec3<double> rangeZ_;
 
     public:
     // Return accumulated data
     const Data3D &accumulatedData() const;
-    // Return x range minimum
-    double xMinimum() const;
-    // Return x range maximum
-    double xMaximum() const;
-    // Return x bin width
-    double xBinWidth() const;
-    // Return y range minimum
-    double yMinimum() const;
-    // Return y range maximum
-    double yMaximum() const;
-    // Return y bin width
-    double yBinWidth() const;
-    // Return z range minimum
-    double zMinimum() const;
-    // Return z range maximum
-    double zMaximum() const;
-    // Return z bin width
-    double zBinWidth() const;
 
     /*
      * Branches

@@ -3,41 +3,37 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include "vec3labels.h"
 
-// Keyword with Double Triplet Data
-class Vec3DoubleKeyword : public KeywordData<Vec3<double>>
+// Keyword with Vec3<double>
+class Vec3DoubleKeyword : public KeywordBase
 {
     public:
-    Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue,
-                      Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    ~Vec3DoubleKeyword() override;
+    explicit Vec3DoubleKeyword(Vec3<double> &data, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+    explicit Vec3DoubleKeyword(Vec3<double> &data, std::optional<Vec3<double>> minValue = std::nullopt,
+                               std::optional<Vec3<double>> maxValue = std::nullopt,
+                               Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+    ~Vec3DoubleKeyword() override = default;
 
     /*
-     * Data Validation
+     * Data
      */
     private:
+    // Reference to target data
+    Vec3<double> &data_;
     // Validation limits to apply (if any)
-    Vec3<bool> minimumLimit_, maximumLimit_;
-    // Validation range (if appropriate)
-    Vec3<double> min_, max_;
+    std::optional<Vec3<double>> minimumLimit_, maximumLimit_;
 
     public:
-    // Return whether a minimum validation limit has been set for supplied index
-    bool hasValidationMin(int index);
-    // Return validation minimum limit for supplied index
-    double validationMin(int index);
-    // Return whether a maximum validation limit has been set for supplied index
-    bool hasValidationMax(int index);
-    // Return validation maximum limit for supplied index
-    double validationMax(int index);
-    // Validate supplied value
-    bool isValid(Vec3<double> value) override;
-    // Validate supplied single
-    bool isValid(int index, double value);
+    // Set data
+    bool setData(Vec3<double> value);
+    // Return data
+    Vec3<double> data() const;
+    // Return validation minimum limit
+    std::optional<Vec3<double>> validationMin();
+    // Return validation maximum limit
+    std::optional<Vec3<double>> validationMax();
 
     /*
      * Label Type
@@ -62,13 +58,4 @@ class Vec3DoubleKeyword : public KeywordData<Vec3<double>>
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as Vec3<int>)
-    Vec3<int> asVec3Int() override;
-    // Return value (as Vec3<double>)
-    Vec3<double> asVec3Double() override;
 };

@@ -47,6 +47,10 @@ class CalculateAxisAngleModule : public Module
     private:
     // Whether to exclude correlations between B and C sites on the same molecule
     bool excludeSameMolecule_{false};
+    // Range (min, max, binwidth) of distance axis
+    Vec3<double> distanceRange_{0.0, 10.0, 0.05};
+    // Range (min, max, binwidth) of angle axis
+    Vec3<double> angleRange_{0.0, 180.0, 1.0};
 
     protected:
     // Perform any necessary initialisation for the Module

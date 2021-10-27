@@ -95,18 +95,12 @@ void CalculateSDFModule::initialise()
      */
 
     // Control
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                        Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
-                  "RangeX", "Range along X axis");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                        Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
-                  "RangeY", "Range along Y axis");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                        Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
-                  "RangeZ", "Range along Z axis");
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range along Y axis", rangeY_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range along Z axis", rangeZ_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
     keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
                    "Set the site(s) 'A' which are to represent the origin of the SDF");
     keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",

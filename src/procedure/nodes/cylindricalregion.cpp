@@ -9,10 +9,10 @@
 CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
     : RegionProcedureNodeBase(ProcedureNode::NodeType::CylindricalRegion)
 {
-    keywords_.add("Control", new Vec3DoubleKeyword({0.0, 0.0, 0.0}, Vec3Labels::XYZLabels), "OriginFrac",
-                  "Origin of vector in fractional coordinates");
+    keywords_.add<Vec3DoubleKeyword>("Control", "OriginFrac", "Origin of vector in fractional coordinates", originFrac_,
+                                     Vec3Labels::XYZLabels);
     keywords_.add<DoubleKeyword>("Control", "Radius", "Cylinder radius", radius_, 1.0e-3);
-    keywords_.add("Control", new Vec3DoubleKeyword({0.0, 0.0, 1.0}, Vec3Labels::XYZLabels), "Vector", "Cylinder vector");
+    keywords_.add<Vec3DoubleKeyword>("Control", "Vector", "Cylinder vector", vector_, Vec3Labels::XYZLabels);
 }
 
 /*

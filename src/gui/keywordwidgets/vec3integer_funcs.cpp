@@ -20,12 +20,12 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase 
     else
     {
         // Set minimum and maximum values for each component
-        ui_.Spin1->setRange(keyword_->hasValidationMin(0) ? keyword_->validationMin(0) : -1e6,
-                            keyword_->hasValidationMax(0) ? keyword_->validationMax(0) : 1e6);
-        ui_.Spin2->setRange(keyword_->hasValidationMin(1) ? keyword_->validationMin(1) : -1e6,
-                            keyword_->hasValidationMax(1) ? keyword_->validationMax(1) : 1e6);
-        ui_.Spin3->setRange(keyword_->hasValidationMin(2) ? keyword_->validationMin(2) : -1e6,
-                            keyword_->hasValidationMax(2) ? keyword_->validationMax(2) : 1e6);
+        ui_.Spin1->setRange(keyword_->validationMin() ? keyword_->validationMin().value().x : -1e6,
+                            keyword_->validationMax() ? keyword_->validationMax().value().x : 1e6);
+        ui_.Spin2->setRange(keyword_->validationMin() ? keyword_->validationMin().value().y : -1e6,
+                            keyword_->validationMax() ? keyword_->validationMax().value().y : 1e6);
+        ui_.Spin3->setRange(keyword_->validationMin() ? keyword_->validationMin().value().z : -1e6,
+                            keyword_->validationMax() ? keyword_->validationMax().value().z : 1e6);
 
         // Set current values
         ui_.Spin1->setValue(keyword_->asVec3Int().x);

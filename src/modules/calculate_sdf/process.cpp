@@ -17,12 +17,9 @@ bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    const auto rangeX = keywords_.asVec3Double("RangeX");
-    const auto rangeY = keywords_.asVec3Double("RangeY");
-    const auto rangeZ = keywords_.asVec3Double("RangeZ");
-    collectVector_->setKeyword<Vec3<double>>("RangeX", rangeX);
-    collectVector_->setKeyword<Vec3<double>>("RangeY", rangeY);
-    collectVector_->setKeyword<Vec3<double>>("RangeZ", rangeZ);
+    collectVector_->setKeyword<Vec3<double>>("RangeX", rangeX_);
+    collectVector_->setKeyword<Vec3<double>>("RangeY", rangeY_);
+    collectVector_->setKeyword<Vec3<double>>("RangeZ", rangeZ_);
     if (excludeSameMolecule_)
         selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
     else

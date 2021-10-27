@@ -26,20 +26,19 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto *cfg = targetConfigurationsKeyword_.data().front();
 
     auto averagingScheme = Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
-    const auto multiplicity = keywords_.asVec3Int("Multiplicity");
     const auto testReflections = keywords_.asString("TestReflections");
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
                      qMin_, qMax_, qDelta_);
-    Messenger::print("Bragg: Multiplicity is ({} {} {}).\n", multiplicity.x, multiplicity.y, multiplicity.z);
+    Messenger::print("Bragg: Multiplicity is ({} {} {}).\n", multiplicity_.x, multiplicity_.y, multiplicity_.z);
     if (averagingLength_ <= 1)
         Messenger::print("Bragg: No averaging of reflections will be performed.\n");
     else
         Messenger::print("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averagingLength_,
                          Averaging::averagingSchemes().keyword(averagingScheme));
-    Messenger::print("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity.x, multiplicity.y,
-                     multiplicity.z);
+    Messenger::print("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity_.x, multiplicity_.y,
+                     multiplicity_.z);
     Messenger::print("\n");
 
     // Set up process pool - must do this to ensure we are using all available processes
@@ -55,14 +54,14 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Store unit cell information
     auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", uniqueName_, GenericItem::InRestartFileFlag);
-    unitCellVolume = cfg->box()->volume() / (multiplicity.x * multiplicity.y * multiplicity.z);
+    unitCellVolume = cfg->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Finalise combined AtomTypes matrix
     combinedAtomTypes.finalise();
 
     // Calculate Bragg vectors and intensities for the current Configuration
     bool alreadyUpToDate;
-    if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, cfg, qMin_, qDelta_, qMax_, multiplicity,
+    if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, cfg, qMin_, qDelta_, qMax_, multiplicity_,
                              alreadyUpToDate))
         return false;
 
