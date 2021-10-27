@@ -41,6 +41,16 @@ class CheckSpeciesModule : public Module
      * Control
      */
     private:
+    // Atom types to check against indices
+    std::vector<std::tuple<std::vector<int>, std::vector<std::string>>> atomTypes_;
+    // Bond parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> bondParameters_;
+    // Angle parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> angleParameters_;
+    // Torsion parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> torsionParameters_;
+    // Improper parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> improperParameters_;
     // Tolerance beyond which charges are said to differ
     double chargeTolerance_{1.0e-3};
     // Target species to check

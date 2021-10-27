@@ -6,6 +6,8 @@
 #include "base/sysfunc.h"
 #include "keywords/types.h"
 #include "math/data1d.h"
+#include "math/data2d.h"
+#include "math/data3d.h"
 
 OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateDivide)
 {

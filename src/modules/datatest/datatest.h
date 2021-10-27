@@ -42,6 +42,18 @@ class DataTestModule : public Module
      * Control
      */
     private:
+    // Internal 1D data testing
+    std::vector<std::pair<std::string, std::string>> internal1DData_;
+    // Test 1D datasets
+    Data1DStore test1DData_;
+    // Test 2D datasets
+    Data2DStore test2DData_;
+    // Test 3D datasets
+    Data3DStore test3DData_;
+    // Test SampledDouble values
+    std::vector<std::pair<std::string, double>> testSampledDoubleData_;
+    // Test SampledValue datasets
+    ValueStore testSampledVectorData_;
     // Threshold for error metric above which test fails
     double threshold_;
 

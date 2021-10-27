@@ -3,10 +3,17 @@
 
 #include "keywords/data2dstore.h"
 #include "base/lineparser.h"
+#include "classes/data2dstore.h"
 
-Data2DStoreKeyword::Data2DStoreKeyword() : KeywordData<Data2DStore>(KeywordBase::Data2DStoreData, {}) {}
+Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data) : KeywordBase(KeywordBase::Data2DStoreData), data_(data) {}
 
-Data2DStoreKeyword::~Data2DStoreKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+Data2DStore &Data2DStoreKeyword::data() { return data_; }
+const Data2DStore &Data2DStoreKeyword::data() const { return data_; }
 
 /*
  * Arguments

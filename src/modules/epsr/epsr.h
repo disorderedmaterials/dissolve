@@ -108,6 +108,8 @@ class EPSRModule : public Module
     std::vector<Module *> targets_;
     // Test against supplied reference data
     bool test_{false};
+    // Test reference data
+    Data1DStore testReferenceData_;
     // Test threshold (%error) above which test fails
     double testThreshold_{0.1};
 

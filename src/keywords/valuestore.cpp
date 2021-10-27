@@ -5,9 +5,15 @@
 #include "base/lineparser.h"
 #include "classes/valuestore.h"
 
-ValueStoreKeyword::ValueStoreKeyword() : KeywordData<ValueStore>(KeywordBase::ValueStoreData, {}) {}
+ValueStoreKeyword::ValueStoreKeyword(ValueStore &data) : KeywordBase(KeywordBase::ValueStoreData), data_(data) {}
 
-ValueStoreKeyword::~ValueStoreKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+ValueStore &ValueStoreKeyword::data() { return data_; }
+const ValueStore &ValueStoreKeyword::data() const { return data_; }
 
 /*
  * Arguments

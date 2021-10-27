@@ -6,9 +6,15 @@
 #include "classes/data1dstore.h"
 #include "io/import/data1d.h"
 
-Data1DStoreKeyword::Data1DStoreKeyword() : KeywordData<Data1DStore>(KeywordBase::Data1DStoreData, {}) {}
+Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data) : KeywordBase(KeywordBase::Data1DStoreData), data_(data) {}
 
-Data1DStoreKeyword::~Data1DStoreKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+Data1DStore &Data1DStoreKeyword::data() { return data_; }
+const Data1DStore &Data1DStoreKeyword::data() const { return data_; }
 
 /*
  * Arguments

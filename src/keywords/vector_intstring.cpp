@@ -5,13 +5,24 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-IntegerStringVectorKeyword::IntegerStringVectorKeyword(int nRequiredIntegers, std::optional<int> nRequiredValues)
-    : KeywordData<IntegerStringVectorKeywordData>(KeywordBase::VectorIntegerStringData, {}),
-      nRequiredIntegers_(nRequiredIntegers), nRequiredValues_(nRequiredValues)
+IntegerStringVectorKeyword::IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers,
+                                                       std::optional<int> nRequiredValues)
+    : KeywordBase(KeywordBase::VectorIntegerStringData), data_(data), nRequiredIntegers_(nRequiredIntegers),
+      nRequiredValues_(nRequiredValues)
 {
 }
 
-IntegerStringVectorKeyword::~IntegerStringVectorKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+IntegerStringVectorKeywordData &IntegerStringVectorKeyword::data() { return data_; }
+const IntegerStringVectorKeywordData &IntegerStringVectorKeyword::data() const { return data_; }
+
+/*
+ * Arguments
+ */
 
 // Return minimum number of arguments accepted
 int IntegerStringVectorKeyword::minArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(1)); }

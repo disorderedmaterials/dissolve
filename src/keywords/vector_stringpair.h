@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include <optional>
 #include <tuple>
 #include <vector>
@@ -11,11 +11,23 @@
 using StringPairVectorKeywordData = std::vector<std::pair<std::string, std::string>>;
 
 // Keyword with list of pairs of std::string
-class StringPairVectorKeyword : public KeywordData<StringPairVectorKeywordData>
+class StringPairVectorKeyword : public KeywordBase
 {
     public:
-    StringPairVectorKeyword();
-    ~StringPairVectorKeyword() override;
+    explicit StringPairVectorKeyword(StringPairVectorKeywordData &data);
+    ~StringPairVectorKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    StringPairVectorKeywordData &data_;
+
+    public:
+    // Return reference to data
+    StringPairVectorKeywordData &data();
+    const StringPairVectorKeywordData &data() const;
 
     /*
      * Arguments

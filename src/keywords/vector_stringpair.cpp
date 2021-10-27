@@ -4,12 +4,22 @@
 #include "keywords/vector_stringpair.h"
 #include "base/lineparser.h"
 
-StringPairVectorKeyword::StringPairVectorKeyword()
-    : KeywordData<StringPairVectorKeywordData>(KeywordBase::VectorStringPairData, {})
+StringPairVectorKeyword::StringPairVectorKeyword(StringPairVectorKeywordData &data)
+    : KeywordBase(KeywordBase::VectorStringPairData), data_(data)
 {
 }
 
-StringPairVectorKeyword::~StringPairVectorKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+StringPairVectorKeywordData &StringPairVectorKeyword::data() { return data_; }
+const StringPairVectorKeywordData &StringPairVectorKeyword::data() const { return data_; }
+
+/*
+ * Arguments
+ */
 
 // Return minimum number of arguments accepted
 int StringPairVectorKeyword::minArguments() const { return 2; }

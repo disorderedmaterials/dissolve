@@ -65,7 +65,7 @@ void EPSRModule::initialise()
 
     // Test
     keywords_.add<BoolKeyword>("Test", "Test", "Test against supplied reference data", test_);
-    keywords_.add("Test", new Data1DStoreKeyword(), "TestReference", "Specify test reference data");
+    keywords_.add<Data1DStoreKeyword>("Test", "TestReference", "Specify test reference data", testReferenceData_);
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Test threshold (%error) above which test fails", testThreshold_,
                                  1.0e-5);
     keywords_.add<BoolKeyword>("Test", "OverwritePotentials", "Overwrite potentials each time rather than summing them",

@@ -3,10 +3,17 @@
 
 #include "keywords/data3dstore.h"
 #include "base/lineparser.h"
+#include "classes/data3dstore.h"
 
-Data3DStoreKeyword::Data3DStoreKeyword() : KeywordData<Data3DStore>(KeywordBase::Data3DStoreData, {}) {}
+Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data) : KeywordBase(KeywordBase::Data3DStoreData), data_(data) {}
 
-Data3DStoreKeyword::~Data3DStoreKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+Data3DStore &Data3DStoreKeyword::data() { return data_; }
+const Data3DStore &Data3DStoreKeyword::data() const { return data_; }
 
 /*
  * Arguments

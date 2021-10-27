@@ -101,7 +101,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
     const auto ereq = keywords_.asDouble("EReq");
     auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
-    const auto &testData = keywords_.retrieve<Data1DStore>("TestReference");
 
     // EPSR constants
     const auto mcoeff = 200;
@@ -457,9 +456,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (test_)
         {
             testDataName = fmt::format("WeightedFR-{}-total", module->uniqueName());
-            if (testData.containsData(testDataName))
+            if (testReferenceData_.containsData(testDataName))
             {
-                auto optRefData = testData.data(testDataName);
+                auto optRefData = testReferenceData_.data(testDataName);
                 if (!optRefData)
                     return Messenger::error("Reference data '{}' not found.\n", testDataName);
                 auto error = Error::percent(simulatedFR, *optRefData);
@@ -538,7 +537,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
-                                auto optRefData = testData.data(testDataName);
+                                auto optRefData = testReferenceData_.data(testDataName);
                                 if (optRefData)
                                 {
                                     auto error = Error::percent(estimatedSQ[{i, j}], *optRefData);
