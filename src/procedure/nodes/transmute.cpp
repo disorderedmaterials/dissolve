@@ -18,8 +18,8 @@ TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(ProcedureNode::
     keywords_.add<SpeciesKeyword>("Control", "Target", "Target species to transmute selected molecules in to", targetSpecies_);
     keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Species types to transmute into the target species",
                                         speciesToTransmute_);
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "Selection",
-                  "Picked selection of molecules to transmute");
+    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("Control", "Selection", "Picked selection of molecules to transmute",
+                                                      selection_, this, ProcedureNode::NodeClass::Pick, true);
 }
 
 /*
@@ -43,8 +43,6 @@ bool TransmuteProcedureNode::mustBeNamed() const { return false; }
 bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                      GenericList &targetList)
 {
-    auto *node = keywords_.retrieve<const ProcedureNode *>("Selection");
-
     // Check target species
     if (!targetSpecies_)
         return Messenger::error("Species to transmute into must be provided.\n");
@@ -59,9 +57,9 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
                 targets.push_back(mol);
 
     // Transmute molecules by selection
-    if (node)
+    if (selection_)
     {
-        auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);
+        auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(selection_);
         assert(pickNode);
         std::copy(pickNode->pickedMolecules().begin(), pickNode->pickedMolecules().end(), std::back_inserter(targets));
     }

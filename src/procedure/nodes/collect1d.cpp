@@ -12,10 +12,11 @@
 
 Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax,
                                                double binWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect1D), rangeX_{rMin, rMax, binWidth}
+    : ProcedureNode(ProcedureNode::NodeType::Collect1D), xObservable_{observable, 0}, rangeX_{rMin, rMax, binWidth}
 {
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, observable, 0),
-                  "QuantityX", "Calculated observable to collect");
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("Control", "QuantityX", "Calculated observable to collect",
+                                                                     xObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
     keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
@@ -98,11 +99,8 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Store a reference to the data
     histogram_ = target;
 
-    // Retrieve the observable
-    const ProcedureNode *node;
-    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityX");
-    xObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
-    if (!xObservable_)
+    // Check target observable
+    if (!xObservable_.first)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
 
     // Prepare any branches
@@ -116,10 +114,12 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 bool Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                      GenericList &targetList)
 {
-    assert(xObservable_ && histogram_);
+    auto [observable, index] = xObservable_;
+
+    assert(observable && histogram_);
 
     // Bin the current value of the observable, and execute sub-collection branch on success
-    if (histogram_->get().bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
+    if (histogram_->get().bin(observable->value(index)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
     return true;

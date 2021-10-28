@@ -10,7 +10,6 @@
 // Forward Declarations
 class Process1DProcedureNode;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Integrate1D
 class Integrate1DProcedureNode : public ProcedureNode
@@ -30,8 +29,8 @@ class Integrate1DProcedureNode : public ProcedureNode
      * Data
      */
     private:
-    // Process1D node that we are targetting (retrieved from keyword 'SourceData')
-    const Process1DProcedureNode *processNode_;
+    // Process1D node that we are targetting
+    const Process1DProcedureNode *sourceData_;
     // Ranges for integration regions
     Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Calculated integral (stored in processing data list)

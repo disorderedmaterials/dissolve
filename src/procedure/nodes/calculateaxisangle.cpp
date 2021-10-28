@@ -15,13 +15,12 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedure
                                                                  SelectProcedureNode *site1, OrientedSite::SiteAxis axis1)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAxisAngle, site0, site1), axes_{axis0, axis1}
 {
-    // Create keywords - store the pointers to the superclasses for later use
-    siteKeywords_[0] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site0);
-    keywords_.add("Control", siteKeywords_[0], "I", "Site that contains the first set of axes");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that contains the first set of axes", sites_[0], this,
+                                                    ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that contains the second set of axes", sites_[1],
+                                                    this, ProcedureNode::NodeType::Select, true);
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisI", "Axis to use from site I", axes_[0],
                                                               OrientedSite::siteAxis());
-    siteKeywords_[1] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site1);
-    keywords_.add("Control", siteKeywords_[1], "J", "Site that contains the second set of axes");
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisJ", "Axis to use from site J", axes_[1],
                                                               OrientedSite::siteAxis());
 }

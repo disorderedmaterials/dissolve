@@ -22,12 +22,9 @@ add_library(
   list.cpp
   module.cpp
   modulevector.cpp
-  node.cpp
-  nodeandinteger.cpp
-  nodebase.cpp
   nodebranch.cpp
+  nodeunderlay.cpp
   nodevalue.cpp
-  nodevector.cpp
   procedure.cpp
   range.cpp
   species.cpp
@@ -69,8 +66,8 @@ add_library(
   modulevector.h
   node.h
   nodeandinteger.h
-  nodebase.h
   nodebranch.h
+  nodeunderlay.h
   nodevalue.h
   nodevalueenumoptions.h
   nodevector.h

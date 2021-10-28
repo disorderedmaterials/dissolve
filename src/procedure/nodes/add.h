@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class Species;
+class RegionProcedureNodeBase;
 
 // Add Node
 class AddProcedureNode : public ProcedureNode
@@ -57,6 +58,8 @@ class AddProcedureNode : public ProcedureNode
     AddProcedureNode::BoxActionStyle boxAction_{AddProcedureNode::BoxActionStyle::AddVolume};
     // Positioning type for individual molecules
     AddProcedureNode::PositioningType positioningType_{AddProcedureNode::PositioningType::Random};
+    // Region into which we will add molecules (if any)
+    const RegionProcedureNodeBase *region_{nullptr};
     // Whether to rotate molecules on insertion
     bool rotate_{true};
     // Flags controlling box axis scaling

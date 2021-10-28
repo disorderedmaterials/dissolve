@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class Species;
+class PickProcedureNodeBase;
 
 // Remove Node
 class RemoveProcedureNode : public ProcedureNode
@@ -27,9 +28,11 @@ class RemoveProcedureNode : public ProcedureNode
     bool mustBeNamed() const override;
 
     /*
-     * Control
+     * Data
      */
     private:
+    // Selection of molecules to remove
+    const PickProcedureNodeBase *selection_;
     // Species to remove
     std::vector<const Species *> speciesToRemove_;
 

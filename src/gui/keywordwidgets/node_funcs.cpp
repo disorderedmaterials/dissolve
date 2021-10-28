@@ -5,22 +5,28 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/node.h"
 
-Q_DECLARE_METATYPE(const ProcedureNode *)
-
 NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData)
 {
     // Setup our UI
     ui_.setupUi(this);
+    ui_.NodeCombo->setModel(&nodeModel_);
 
     refreshing_ = true;
 
+    // Connect signals / slots
+    connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
+
     // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<NodeKeyword *>(keyword);
+    keyword_ = dynamic_cast<NodeKeywordBase *>(keyword);
     if (!keyword_)
         throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into NodeKeywordBase.\n", keyword->name())));
 
-    updateValue();
+    // Get allowed nodes, set model for combo box, and set current index
+    allowedNodes_ = keyword_->allowedNodes();
+    nodeModel_.setData(allowedNodes_);
+    auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -33,15 +39,13 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, KeywordBase *keyword, cons
  * Widgets
  */
 
-// Value changed
-void NodeKeywordWidget::on_NodeCombo_currentIndexChanged(int index)
+void NodeKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
     if (refreshing_)
         return;
 
-    // Get data from the selected item
-    auto *node = ui_.NodeCombo->itemData(index, Qt::UserRole).value<const ProcedureNode *>();
-    keyword_->setData(node);
+    keyword_->setData(allowedNodes_[ui_.NodeCombo->currentIndex()]);
+    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -51,19 +55,4 @@ void NodeKeywordWidget::on_NodeCombo_currentIndexChanged(int index)
  */
 
 // Update value displayed in widget
-void NodeKeywordWidget::updateValue()
-{
-    refreshing_ = true;
-
-    // Get the list of available nodes of the specified type
-    auto availableNodes = keyword_->onlyInScope()
-                              ? keyword_->parentNode()->nodesInScope(keyword_->nodeType(), keyword_->nodeClass())
-                              : keyword_->parentNode()->nodes(keyword_->nodeType(), keyword_->nodeClass());
-    combo_box_updater(ui_.NodeCombo, availableNodes.begin(), availableNodes.end(), [](auto *item) { return item->name(); },
-                      true);
-
-    // Set the current item
-    combo_box_set_current(ui_.NodeCombo, keyword_->data());
-
-    refreshing_ = false;
-}
+void NodeKeywordWidget::updateValue() {}

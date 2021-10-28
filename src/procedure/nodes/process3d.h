@@ -32,7 +32,7 @@ class Process3DProcedureNode : public ProcedureNode
      */
     private:
     // Collect3D node that we are processing
-    const Collect3DProcedureNode *collectNode_;
+    const Collect3DProcedureNode *sourceData_;
     // Export file and format
     Data3DExportFileFormat exportFileAndFormat_;
     // Label for the value axis

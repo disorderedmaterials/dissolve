@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class Species;
+class PickProcedureNodeBase;
 
 // Transmute Node
 class TransmuteProcedureNode : public ProcedureNode
@@ -30,6 +31,8 @@ class TransmuteProcedureNode : public ProcedureNode
      * Control
      */
     private:
+    // Existing selection from which to pick
+    const PickProcedureNodeBase *selection_;
     // Target species to transmute in to
     const Species *targetSpecies_;
     // Species to transmute

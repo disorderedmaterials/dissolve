@@ -16,8 +16,8 @@
 
 Sum1DProcedureNode::Sum1DProcedureNode(Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::NodeType::Sum1D)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
-                  "Process1D node containing the data to sum");
+    keywords_.add<NodeKeyword<Process1DProcedureNode>>("Control", "SourceData", "Process1D node containing the data to sum",
+                                                       sourceData_, this, ProcedureNode::NodeType::Process1D, false);
     keywords_.add<RangeKeyword>("Control", "RangeA", "X range for first summation region", range_[0],
                                 Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<BoolKeyword>("Control", "RangeBEnabled", "Whether the second summation region is enabled", rangeEnabled_[1]);
@@ -63,9 +63,7 @@ bool Sum1DProcedureNode::isRangeCEnabled() const { return keywords_.asBool("Rang
 // Prepare any necessary data, ready for execution
 bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Process1D node target
-    processNode_ = dynamic_cast<const Process1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
-    if (!processNode_)
+    if (!sourceData_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
 
     return true;
@@ -82,7 +80,7 @@ bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
             if (!sum_[i].has_value())
                 sum_[i] = targetList.realise<SampledDouble>(fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), prefix,
                                                             GenericItem::InRestartFileFlag);
-            sum_[i]->get() += Integrator::sum(processNode_->processedData(), range_[i]);
+            sum_[i]->get() += Integrator::sum(sourceData_->processedData(), range_[i]);
         }
 
     // Print info

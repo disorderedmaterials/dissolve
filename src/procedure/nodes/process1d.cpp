@@ -15,10 +15,11 @@
 #include "procedure/nodes/select.h"
 
 Process1DProcedureNode::Process1DProcedureNode(Collect1DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::NodeType::Process1D)
+    : ProcedureNode(ProcedureNode::NodeType::Process1D), sourceData_(target)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect1D, false, target), "SourceData",
-                  "Collect1D node containing the histogram data to process");
+    keywords_.add<NodeKeyword<Collect1DProcedureNode>>("Control", "SourceData",
+                                                       "Collect1D node containing the histogram data to process", sourceData_,
+                                                       this, ProcedureNode::NodeType::Collect1D, false);
     keywords_.add<BoolKeyword>(
         "Control", "CurrentDataOnly",
         "Whether to use only the current binned data of the histogram, rather than the accumulated average", currentDataOnly_);
@@ -98,9 +99,7 @@ SequenceProcedureNode *Process1DProcedureNode::branch() { return normalisationBr
 // Prepare any necessary data, ready for execution
 bool Process1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Collect1D node target
-    collectNode_ = dynamic_cast<const Collect1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
-    if (!collectNode_)
+    if (!sourceData_)
         return Messenger::error("No source Collect1D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
@@ -120,9 +119,9 @@ bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
 
     // Copy the averaged data from the associated Process1D node
     if (currentDataOnly_)
-        data = collectNode_->data();
+        data = sourceData_->data();
     else
-        data = collectNode_->accumulatedData();
+        data = sourceData_->accumulatedData();
 
     // Run normalisation on the data
     if (normalisationBranch_)

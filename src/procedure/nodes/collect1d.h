@@ -10,7 +10,6 @@
 class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Collect1D
 class Collect1DProcedureNode : public ProcedureNode
@@ -31,10 +30,8 @@ class Collect1DProcedureNode : public ProcedureNode
      * Data
      */
     private:
-    // Observable to bin along x (retrieved from keyword)
-    const CalculateProcedureNodeBase *xObservable_;
-    // Index of x observable data to use (retrieved from keyword)
-    int xObservableIndex_;
+    // Observable (and associated index thereof) to bin along x
+    std::pair<const CalculateProcedureNodeBase *, int> xObservable_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram1D> histogram_;
     // Range and binwidth of the histogram for QuantityX

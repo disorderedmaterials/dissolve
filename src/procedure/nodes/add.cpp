@@ -31,8 +31,8 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
     keywords_.add<BoolKeyword>("Control", "Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
     keywords_.add<EnumOptionsKeyword<AddProcedureNode::PositioningType>>(
         "Control", "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Region, true), "Region",
-                  "Region into which to add the species");
+    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Control", "Region", "Region into which to add the species", region_,
+                                                        this, ProcedureNode::NodeClass::Region, true);
 }
 
 /*
@@ -80,11 +80,10 @@ EnumOptions<AddProcedureNode::PositioningType> AddProcedureNode::positioningType
 bool AddProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // If positioningType_ type is 'Region', must have a suitable node defined
-    auto *regionNode = keywords_.retrieve<const ProcedureNode *>("Region");
-    if (positioningType_ == AddProcedureNode::PositioningType::Region && !regionNode)
+    if (positioningType_ == AddProcedureNode::PositioningType::Region && !region_)
         return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
-    else if (positioningType_ != AddProcedureNode::PositioningType::Region && regionNode)
-        Messenger::warn("A region has been specified ({}) but the positioningType_ type is set to '{}'\n", regionNode->name(),
+    else if (positioningType_ != AddProcedureNode::PositioningType::Region && region_)
+        Messenger::warn("A region has been specified ({}) but the positioningType_ type is set to '{}'\n", region_->name(),
                         AddProcedureNode::positioningTypes().keyword(positioningType_));
 
     // Check scalable axes definitions
@@ -211,23 +210,21 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     }
 
     // Get the positioningType_ type and rotation flag
-    auto *regionNode = dynamic_cast<const RegionProcedureNodeBase *>(keywords_.retrieve<const ProcedureNode *>("Region"));
     Region region;
 
     Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
                      AddProcedureNode::positioningTypes().keyword(positioningType_), rotate_ ? "on" : "off");
     if (positioningType_ == AddProcedureNode::PositioningType::Region)
     {
-        if (!regionNode)
+        if (!region_)
             return Messenger::error("Positioning type set to '{}' but no region was given.\n",
                                     AddProcedureNode::positioningTypes().keyword(positioningType_));
 
-        region = regionNode->generateRegion(cfg);
+        region = region_->generateRegion(cfg);
         if (!region.isValid())
-            return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n",
-                                    regionNode->name());
+            return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n", region_->name());
 
-        Messenger::print("[Add] Target region ('{}') covers {:.2f}% of the box volume.\n", regionNode->name(),
+        Messenger::print("[Add] Target region ('{}') covers {:.2f}% of the box volume.\n", region_->name(),
                          region.freeVoxelFraction() * 100.0);
     }
 

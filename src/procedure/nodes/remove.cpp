@@ -15,8 +15,8 @@ RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeTy
 {
     // Set up keywords
     keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Target species to remove", speciesToRemove_);
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "Selection",
-                  "Picked selection of molecules to remove");
+    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("Control", "Selection", "Picked selection of molecules to remove",
+                                                      selection_, this, ProcedureNode::NodeClass::Pick, true);
 }
 
 /*
@@ -39,8 +39,6 @@ bool RemoveProcedureNode::mustBeNamed() const { return false; }
 // Execute node, targetting the supplied Configuration
 bool RemoveProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    auto *node = keywords_.retrieve<const ProcedureNode *>("Selection");
-
     // Store current molecule population
     auto nStartMolecules = cfg->nMolecules();
 
@@ -50,12 +48,8 @@ bool RemoveProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
             cfg->removeMolecules(sp);
 
     // Remove molecules by selection
-    if (node)
-    {
-        auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);
-        assert(pickNode);
-        cfg->removeMolecules(pickNode->pickedMolecules());
-    }
+    if (selection_)
+        cfg->removeMolecules(selection_->pickedMolecules());
 
     Messenger::print("[Remove] Removed {} molecules from configuration '{}'.\n", nStartMolecules - cfg->nMolecules(),
                      cfg->name());

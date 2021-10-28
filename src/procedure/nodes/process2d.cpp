@@ -14,10 +14,11 @@
 #include "procedure/nodes/select.h"
 
 Process2DProcedureNode::Process2DProcedureNode(Collect2DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::NodeType::Process2D)
+    : ProcedureNode(ProcedureNode::NodeType::Process2D), sourceData_(target)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect2D, false, target), "SourceData",
-                  "Collect2D node containing the histogram data to process");
+    keywords_.add<NodeKeyword<Collect2DProcedureNode>>("Control", "SourceData",
+                                                       "Collect2D node containing the histogram data to process", sourceData_,
+                                                       this, ProcedureNode::NodeType::Collect2D, false);
     keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
     keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
     keywords_.add<StringKeyword>("Control", "LabelY", "Label for the y axis", labelY_);
@@ -95,9 +96,7 @@ SequenceProcedureNode *Process2DProcedureNode::branch() { return normalisationBr
 // Prepare any necessary data, ready for execution
 bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Collect2D node target
-    collectNode_ = dynamic_cast<const Collect2DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
-    if (!collectNode_)
+    if (!sourceData_)
         return Messenger::error("No source Collect2D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
@@ -116,7 +115,7 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     data.setTag(name());
 
     // Copy the averaged data from the associated Process1D node
-    data = collectNode_->accumulatedData();
+    data = sourceData_->accumulatedData();
 
     // Run normalisation on the data
     if (normalisationBranch_)

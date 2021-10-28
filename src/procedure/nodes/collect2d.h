@@ -32,14 +32,10 @@ class Collect2DProcedureNode : public ProcedureNode
      * Data
      */
     private:
-    // Observable to bin along x (retrieved from keyword)
-    const CalculateProcedureNodeBase *xObservable_;
-    // Index of x observable data to use (retrieved from keyword)
-    int xObservableIndex_;
-    // Observable to bin along y (retrieved from keyword)
-    const CalculateProcedureNodeBase *yObservable_;
-    // Index of y observable data to use (retrieved from keyword)
-    int yObservableIndex_;
+    // Observable (and associated index thereof) to bin along x
+    std::pair<const CalculateProcedureNodeBase *, int> xObservable_;
+    // Observable (and associated index thereof) to bin along y
+    std::pair<const CalculateProcedureNodeBase *, int> yObservable_;
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram2D> histogram_;
     // Range and binwidth of the histogram for QuantityX

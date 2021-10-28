@@ -15,10 +15,11 @@
 #include "procedure/nodes/select.h"
 
 Integrate1DProcedureNode::Integrate1DProcedureNode(Process1DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::NodeType::Integrate1D)
+    : ProcedureNode(ProcedureNode::NodeType::Integrate1D), sourceData_(target)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
-                  "Process1D node containing the data to integrate");
+    keywords_.add<NodeKeyword<Process1DProcedureNode>>("Control", "SourceData",
+                                                       "Process1D node containing the data to integrate", sourceData_, this,
+                                                       ProcedureNode::NodeType::Process1D, false);
     keywords_.add<RangeKeyword>("Control", "RangeA", "X range for first integration region", range_[0],
                                 Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<RangeKeyword>("Control", "RangeB", "X range for second integration region", range_[1],
@@ -51,9 +52,7 @@ const SampledDouble &Integrate1DProcedureNode::integral(int index) const { retur
 // Prepare any necessary data, ready for execution
 bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Process1D node target
-    processNode_ = dynamic_cast<const Process1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
-    if (!processNode_)
+    if (!sourceData_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
 
     return true;
@@ -64,9 +63,9 @@ bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cf
                                         GenericList &targetList)
 {
     // Calculate integrals
-    integral_[0] += Integrator::trapezoid(processNode_->processedData(), range_[0]);
-    integral_[1] += Integrator::trapezoid(processNode_->processedData(), range_[1]);
-    integral_[2] += Integrator::trapezoid(processNode_->processedData(), range_[2]);
+    integral_[0] += Integrator::trapezoid(sourceData_->processedData(), range_[0]);
+    integral_[1] += Integrator::trapezoid(sourceData_->processedData(), range_[1]);
+    integral_[2] += Integrator::trapezoid(sourceData_->processedData(), range_[2]);
 
     // Print info
     Messenger::print("Integrate1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[0].value(), integral_[0].stDev(),

@@ -5,43 +5,28 @@
 
 #include "base/lineparser.h"
 #include "keywords/base.h"
+#include "keywords/nodeunderlay.h"
 #include "procedure/nodes/node.h"
 #include "templates/algorithms.h"
 
-class NodeVectorKeywordBase : public KeywordBase
+// Base class for NodeVectorKeyword
+class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
-    virtual ~NodeVectorKeywordBase() override = default;
+    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
+        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(KeywordBase::NodeVectorData)
+    {
+    }
+    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
+        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(KeywordBase::NodeVectorData)
+    {
+    }
+    ~NodeVectorKeywordBase() override = default;
 
     /*
      * Data
      */
-    protected:
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
-    // Optional target node type to allow
-    std::optional<ProcedureNode::NodeType> nodeType_;
-    // Optional target node class to allow
-    std::optional<ProcedureNode::NodeClass> nodeClass_;
-    // Whether to accept nodes within scope only
-    bool onlyInScope_;
-
     public:
-    // Return parent ProcedureNode
-    ProcedureNode *parentNode() const;
-    // Return optional target node type to allow
-    std::optional<ProcedureNode::NodeType> nodeType() const;
-    // Return optional target node class to allow
-    std::optional<ProcedureNode::NodeClass> nodeClass() const;
-    // Return whether to accept nodes within scope only
-    bool onlyInScope() const;
-    // Return vector of possible nodes allowed in the vector
-    std::vector<const ProcedureNode *> allowedNodes() const;
-    // Return whether the supplied node has valid class or type
-    bool validNode(const ProcedureNode *node, std::optional<ProcedureNode::NodeType> nodeType,
-                   std::optional<ProcedureNode::NodeClass> nodeClass, std::string_view keywordName) const;
     // Add node to vector
     virtual bool addNode(const ProcedureNode *node) = 0;
     // Remove node from vector
@@ -87,6 +72,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         if (std::find(data_.begin(), data_.end(), castNode) != data_.end())
             return false;
         data_.emplace_back(castNode);
+        setAsModified();
         return true;
     }
     // Remove node from vector
@@ -98,6 +84,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         if (it == data_.end())
             return false;
         data_.erase(it);
+        setAsModified();
         return true;
     }
     // Return whether specified node is currently in the vector
@@ -124,18 +111,15 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
-        if (!parentNode())
-            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n", name());
-
         // Loop over arguments
         for (auto n = startArg; n < parser.nArgs(); ++n)
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
-            auto *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
+            auto *node = findNode(parser.argsv(n));
             if (!node)
                 return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(n), name());
 
-            if (!validNode(node, nodeType_, nodeClass_, name()))
+            if (!validNode(node, name()))
                 return false;
 
             data_.push_back(dynamic_cast<const N *>(node));
