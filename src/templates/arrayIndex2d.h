@@ -8,33 +8,33 @@ class ArrayIndex2D
     {
         nX_ = inArray.nRows();
         nY_ = inArray.nColumns();
-        ptr_ = 0;
+        index_ = 0;
     }
 
     ArrayIndex2D(Array2D<double> inArray, std::tuple<int, int> position)
     {
         nX_ = inArray.nRows();
         nY_ = inArray.nColumns();
-        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position);
+        index_ = std::get<0>(position) * nY_ + std::get<1>(position);
     }
 
     ArrayIndex2D(int nX, int nY)
     {
         nX_ = nX;
         nY_ = nY;
-        ptr_ = 0;
+        index_ = 0;
     }
 
     ArrayIndex2D(int nX, int nY, std::tuple<int, int> position)
     {
         nX_ = nX;
         nY_ = nY;
-        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position);
+        index_ = std::get<0>(position) * nY_ + std::get<1>(position);
     }
 
     ArrayIndex2D &operator++()
     {
-        ++ptr_;
+        ++index_;
         return *this;
     }
     ArrayIndex2D operator++(int)
@@ -45,7 +45,7 @@ class ArrayIndex2D
     }
     ArrayIndex2D &operator--()
     {
-        --ptr_;
+        --index_;
         return *this;
     }
     ArrayIndex2D operator--(int)
@@ -56,12 +56,12 @@ class ArrayIndex2D
     }
     ArrayIndex2D &operator+=(int value)
     {
-        ptr_ += value;
+        index_ += value;
         return *this;
     }
     ArrayIndex2D &operator-=(int value)
     {
-        ptr_ -= value;
+        index_ -= value;
         return *this;
     }
 
@@ -75,7 +75,7 @@ class ArrayIndex2D
 
     bool operator!=(const ArrayIndex2D &rhs) { return !(*this == rhs); }
 
-    std::tuple<int, int> operator*() { return {ptr_ / nY_, ptr_ % nY_}; }
+    std::tuple<int, int> operator*() { return {index_ / nY_, index_ % nY_}; }
 
     ArrayIndex2D begin() { return ArrayIndex2D(nX_, nY_); }
 
@@ -84,5 +84,5 @@ class ArrayIndex2D
     private:
     int nX_;
     int nY_;
-    int ptr_;
+    int index_;
 };

@@ -10,7 +10,7 @@ class ArrayIndex3D
         nX_ = inArray.nX();
         nY_ = inArray.nY();
         nZ_ = inArray.nZ();
-        ptr_ = 0;
+        index_ = 0;
     }
 
     ArrayIndex3D(Array3D<double> inArray, std::tuple<int, int, int> position)
@@ -18,7 +18,7 @@ class ArrayIndex3D
         nX_ = inArray.nX();
         nY_ = inArray.nY();
         nZ_ = inArray.nZ();
-        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
+        index_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
     }
 
     ArrayIndex3D(int nX, int nY, int nZ)
@@ -26,7 +26,7 @@ class ArrayIndex3D
         nX_ = nX;
         nY_ = nY;
         nZ_ = nZ;
-        ptr_ = 0;
+        index_ = 0;
     }
 
     ArrayIndex3D(int nX, int nY, int nZ, std::tuple<int, int, int> position)
@@ -34,12 +34,12 @@ class ArrayIndex3D
         nX_ = nX;
         nY_ = nY;
         nZ_ = nZ;
-        ptr_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
+        index_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
     }
 
     ArrayIndex3D &operator++()
     {
-        ++ptr_;
+        ++index_;
         return *this;
     }
     ArrayIndex3D operator++(int)
@@ -50,7 +50,7 @@ class ArrayIndex3D
     }
     ArrayIndex3D &operator--()
     {
-        --ptr_;
+        --index_;
         return *this;
     }
     ArrayIndex3D operator--(int)
@@ -61,12 +61,12 @@ class ArrayIndex3D
     }
     ArrayIndex3D &operator+=(int value)
     {
-        ptr_ += value;
+        index_ += value;
         return *this;
     }
     ArrayIndex3D &operator-=(int value)
     {
-        ptr_ -= value;
+        index_ -= value;
         return *this;
     }
 
@@ -80,7 +80,7 @@ class ArrayIndex3D
 
     bool operator!=(const ArrayIndex3D &rhs) { return !(*this == rhs); }
 
-    std::tuple<int, int, int> operator*() { return {ptr_ / (nY_ * nZ_), ptr_ % nY_ / nZ_, ptr_ % nY_ % nZ_}; }
+    std::tuple<int, int, int> operator*() { return {index_ / (nY_ * nZ_), index_ % nY_ / nZ_, index_ % nY_ % nZ_}; }
 
     ArrayIndex3D begin() { return ArrayIndex3D(nX_, nY_, nZ_); }
 
@@ -90,5 +90,5 @@ class ArrayIndex3D
     int nX_;
     int nY_;
     int nZ_;
-    int ptr_;
+    int index_;
 };
