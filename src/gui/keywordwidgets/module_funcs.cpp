@@ -41,7 +41,7 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
 
     // Get data from the selected item
     Module *module = VariantPointer<Module>(ui_.ModuleCombo->itemData(index, Qt::UserRole));
-    keyword_->setModule(module);
+    keyword_->setData(module);
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -66,8 +66,8 @@ void ModuleKeywordWidget::updateValue()
 
     // Get the list of available modules of the specified type
     RefList<Module> availableModules = coreData_.findModules(keyword_->moduleType());
-    ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->baseModule(),
-                                                                  this, &ModuleKeywordWidget::uniqueNameOfModule);
+    ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->module(), this,
+                                                                  &ModuleKeywordWidget::uniqueNameOfModule);
 
     refreshing_ = false;
 }

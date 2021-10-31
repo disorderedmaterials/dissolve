@@ -202,7 +202,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::parameterExists(std::string_v
 }
 
 // Create and return reference list of parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScope()
+std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScope() const
 {
     if (!scope_)
         return {};

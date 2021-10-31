@@ -10,9 +10,9 @@
 #include "math/integrator.h"
 
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
-    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNormalise)
+    : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNormalise), value_{value}
 {
-    keywords_.add("Control", new NodeValueKeyword(this, value), "Value", "Constant value to normalise to");
+    keywords_.add<NodeValueKeyword>("Control", "Value", "Constant value to normalise to", value_, this);
     keywords_.add<BoolKeyword>("Control", "Absolute", "Normalise absolute sum of values rather than direct sum", absolute_);
 }
 

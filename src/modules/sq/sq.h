@@ -11,7 +11,9 @@
 #include "module/module.h"
 
 // Forward Declarations
+class BraggModule;
 class PartialSet;
+class RDFModule;
 
 // SQ Module
 class SQModule : public Module
@@ -60,6 +62,10 @@ class SQModule : public Module
     double qMin_{0.01};
     // Whether to save partials to disk after calculation
     bool save_{false};
+    // Source module for Bragg calculation
+    const BraggModule *sourceBragg_{nullptr};
+    // Source module for main calculation
+    const RDFModule *sourceRDF_{nullptr};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 

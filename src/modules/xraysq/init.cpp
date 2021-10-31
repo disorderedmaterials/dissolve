@@ -9,8 +9,8 @@
 void XRaySQModule::initialise()
 {
     // Control
-    keywords_.add("Control", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
-                  "Source unweighted S(Q) to transform into xray-weighted S(Q)");
+    keywords_.add<ModuleKeyword<const SQModule>>(
+        "Control", "SourceSQs", "Source unweighted S(Q) to transform into xray-weighted S(Q)", sourceSQ_, "SQ");
     keywords_.add<EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>>("Control", "FormFactors",
                                                                            "Atomic form factors to use for weighting",
                                                                            formFactors_, XRayFormFactors::xRayFormFactorData());

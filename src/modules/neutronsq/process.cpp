@@ -30,10 +30,10 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get dependent modules
-        const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs");
-        if (!sqModule)
+        const SQModule *sourceSQ_ = keywords_.retrieve<const SQModule *>("SourceSQs");
+        if (!sourceSQ_)
             return Messenger::error("A source SQ module must be provided.\n");
-        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
+        const RDFModule *rdfModule = sourceSQ_->keywords().retrieve<const RDFModule *>("SourceRDFs");
         if (!rdfModule)
             return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
@@ -117,15 +117,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    const auto *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs");
-    if (!sqModule)
+    if (!sourceSQ_)
         return Messenger::error("A source SQ module must be provided.\n");
-    const auto *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
+    const auto *rdfModule = sourceSQ_->keywords().retrieve<const RDFModule *>("SourceRDFs");
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
     // Print argument/parameter summary
-    Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
+    Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->uniqueName());
     const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
     if (rwf == WindowFunction::Form::None)
         Messenger::print("No window function will be applied when calculating representative g(r) from S(Q).");
@@ -151,9 +150,9 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Get unweighted S(Q) from the specified SQMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
-        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
-    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName());
+    if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->uniqueName()))
+        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->uniqueName());
+    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->uniqueName());
 
     // Calculate and store weights
     auto &weights =

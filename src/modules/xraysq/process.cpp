@@ -31,10 +31,9 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get dependent modules
-        const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs");
-        if (!sqModule)
+        if (!sourceSQ_)
             return Messenger::error("A source SQ module must be provided.\n");
-        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
+        const RDFModule *rdfModule = sourceSQ_->keywords().retrieve<const RDFModule *>("SourceRDFs");
         if (!rdfModule)
             return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
@@ -117,15 +116,15 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs");
-    if (!sqModule)
+    const SQModule *sourceSQ_ = keywords_.retrieve<const SQModule *>("SourceSQs");
+    if (!sourceSQ_)
         return Messenger::error("A source SQ module must be provided.\n");
-    const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
+    const RDFModule *rdfModule = sourceSQ_->keywords().retrieve<const RDFModule *>("SourceRDFs");
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
     // Print argument/parameter summary
-    Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
+    Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->uniqueName());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
     if (normalisation_ == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
@@ -153,9 +152,9 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Get unweighted S(Q) from the specified SQMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
-        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
-    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName());
+    if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->uniqueName()))
+        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->uniqueName());
+    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->uniqueName());
 
     // Construct weights matrix
     auto &weights =

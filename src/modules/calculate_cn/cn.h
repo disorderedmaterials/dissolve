@@ -7,6 +7,7 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
+class CalculateRDFModule;
 class Process1DProcedureNode;
 class Sum1DProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode;
@@ -42,6 +43,8 @@ class CalculateCNModule : public Module
      * Control
      */
     private:
+    // Source module for calculation
+    const CalculateRDFModule *sourceRDF_{nullptr};
     // Reference coordination number for range A against which calculated value should be tested
     double testRangeA_{0.0};
     // Reference coordination number for range B against which calculated value should be tested

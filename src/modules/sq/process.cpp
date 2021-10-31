@@ -20,16 +20,14 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * This is a serial routine, with each process constructing its own copy of the data.
      */
 
-    const RDFModule *rdfModule = keywords_.retrieve<const RDFModule *>("SourceRDFs");
-    if (!rdfModule)
+    if (!sourceRDF_)
         return Messenger::error("A source RDF module must be provided.\n");
-    const auto *braggModule = keywords_.retrieve<const BraggModule *>("IncludeBragg");
     const auto wf = keywords_.enumeration<WindowFunction::Form>("WindowFunction");
 
     // Print argument/parameter summary
     Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin_,
                      qMax_, qDelta_);
-    Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", rdfModule->uniqueName());
+    Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", sourceRDF_->uniqueName());
     if (wf == WindowFunction::Form::None)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
@@ -44,9 +42,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         Messenger::print("SQ: Broadening to be applied in calculated S(Q) is {} ({}).",
                          Functions::function1D().keyword(qBroadening_.type()), qBroadening_.parameterSummary());
-    if (braggModule)
+    if (sourceBragg_)
     {
-        Messenger::print("SQ: Bragg scattering from module '{}' will be included.\n", braggModule->uniqueName());
+        Messenger::print("SQ: Bragg scattering from module '{}' will be included.\n", sourceBragg_->uniqueName());
         if (braggQBroadening_.type() == Functions::Function1D::None)
             Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
         else
@@ -61,12 +59,12 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Get unweighted g(r) from the source RDF module
-    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
-        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", rdfModule->uniqueName());
-    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
+    if (!dissolve.processingModuleData().contains("UnweightedGR", sourceRDF_->uniqueName()))
+        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceRDF_->uniqueName());
+    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceRDF_->uniqueName());
 
     // Get effective atomic density of underlying g(r)
-    const auto rho = rdfModule->effectiveDensity();
+    const auto rho = sourceRDF_->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
     auto uSQObject =
@@ -78,8 +76,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
             unweightedsq.fingerprint(),
-            fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
-                        braggModule ? dissolve.processingModuleData().version("Reflections", braggModule->uniqueName()) : -1)))
+            fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->uniqueName()),
+                        sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->uniqueName())
+                                     : -1)))
     {
         Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
         return true;
@@ -91,23 +90,23 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return false;
 
     // Include Bragg scattering?
-    if (braggModule)
+    if (sourceBragg_)
     {
         // Check if reflection data is present
-        if (!dissolve.processingModuleData().contains("Reflections", braggModule->uniqueName()))
+        if (!dissolve.processingModuleData().contains("Reflections", sourceBragg_->uniqueName()))
             return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                                     "could not be located.\n",
-                                    braggModule->uniqueName());
+                                    sourceBragg_->uniqueName());
         const auto &braggReflections =
-            dissolve.processingModuleData().value<std::vector<BraggReflection>>("Reflections", braggModule->uniqueName());
+            dissolve.processingModuleData().value<std::vector<BraggReflection>>("Reflections", sourceBragg_->uniqueName());
         const auto nReflections = braggReflections.size();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found reflections data for module '{}' (nReflections = {}, Q(last) = {} "
                          "Angstroms**-1).\n",
-                         braggModule->uniqueName(), nReflections, braggQMax);
+                         sourceBragg_->uniqueName(), nReflections, braggQMax);
         const auto &braggAtomTypes =
-            dissolve.processingModuleData().value<AtomTypeMix>("SummedAtomTypes", braggModule->uniqueName());
-        const auto &v0 = dissolve.processingModuleData().value<double>("V0", braggModule->uniqueName());
+            dissolve.processingModuleData().value<AtomTypeMix>("SummedAtomTypes", sourceBragg_->uniqueName());
+        const auto &v0 = dissolve.processingModuleData().value<double>("V0", sourceBragg_->uniqueName());
 
         // Prepare a temporary object for the Bragg partials
         Array2D<Data1D> braggPartials;
@@ -197,8 +196,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Set fingerprint
     unweightedsq.setFingerprint(
-        fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
-                    braggModule ? dissolve.processingModuleData().version("Reflections", braggModule->uniqueName()) : -1));
+        fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->uniqueName()),
+                    sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->uniqueName()) : -1));
 
     // Save data if requested
     if (save_ && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))

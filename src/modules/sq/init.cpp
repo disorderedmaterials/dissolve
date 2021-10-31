@@ -11,7 +11,8 @@
 void SQModule::initialise()
 {
     // Control
-    keywords_.add("Control", new ModuleKeyword<const RDFModule>("RDF"), "SourceRDFs", "Source RDFs to transform into S(Q)");
+    keywords_.add<ModuleKeyword<const RDFModule>>("Control", "SourceRDFs", "Source RDFs to transform into S(Q)", sourceRDF_,
+                                                  "RDF");
     keywords_.add<DoubleKeyword>("Control", "QDelta", "Step size in Q for S(Q) calculation", qDelta_, 1.0e-5);
     keywords_.add<DoubleKeyword>("Control", "QMax", "Maximum Q for calculated S(Q)", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
@@ -27,8 +28,8 @@ void SQModule::initialise()
                                                                   averagingScheme_, Averaging::averagingSchemes());
 
     // Bragg Scattering
-    keywords_.add("Bragg Scattering", new ModuleKeyword<const BraggModule>("Bragg"), "IncludeBragg",
-                  "Include Bragg scattering from specified module");
+    keywords_.add<ModuleKeyword<const BraggModule>>("Bragg Scattering", "IncludeBragg",
+                                                    "Include Bragg scattering from specified module", sourceBragg_, "Bragg");
     keywords_.add<Function1DKeyword>("Bragg Scattering", "BraggQBroadening",
                                      "Broadening function to apply to Bragg reflections when generating S(Q)",
                                      braggQBroadening_);

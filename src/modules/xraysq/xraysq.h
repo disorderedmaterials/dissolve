@@ -14,6 +14,7 @@
 // Forward Declarations
 class PartialSet;
 class RDFModule;
+class SQModule;
 class XRayWeights;
 
 // SQ Module
@@ -73,6 +74,8 @@ class XRaySQModule : public Module
     bool saveRepresentativeGR_{false};
     // Whether to save weighted S(Q) and F(Q) to disk after calculation
     bool saveSQ_{false};
+    // Source module for calculation
+    const SQModule *sourceSQ_{nullptr};
 
     protected:
     // Perform any necessary initialisation for the Module

@@ -5,13 +5,32 @@
 #include "base/lineparser.h"
 #include "procedure/nodes/node.h"
 
-NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, const NodeValue &value)
-    : KeywordData<NodeValue>(KeywordData::NodeValueData, value)
+NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
+    : KeywordBase(KeywordBase::NodeValueData), data_(data), parentNode_(parentNode)
 {
-    parentNode_ = parentNode;
 }
 
-NodeValueKeyword::~NodeValueKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+NodeValue &NodeValueKeyword::data() { return data_; }
+const NodeValue &NodeValueKeyword::data() const { return data_; }
+
+// Set the value from supplied expression text
+bool NodeValueKeyword::setData(std::string_view expressionText)
+{
+    // Get any variables currently in scope
+    auto vars = parentNode_->parametersInScope();
+
+    if (!data_.set(expressionText, vars))
+        return false;
+
+    set_ = true;
+
+    return true;
+}
 
 /*
  * Arguments
@@ -26,7 +45,7 @@ int NodeValueKeyword::maxArguments() const { return 1; }
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool NodeValueKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    return setValue(parser.argsv(startArg));
+    return setData(parser.argsv(startArg));
 }
 
 // Write keyword data to specified LineParser
@@ -37,35 +56,3 @@ bool NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, s
 
     return true;
 }
-
-/*
- * Set
- */
-
-// Set the value from supplied expression text
-bool NodeValueKeyword::setValue(std::string_view expressionText)
-{
-    // Get any variables currently in scope
-    auto vars = parentNode_->parametersInScope();
-
-    if (!data_.set(expressionText, vars))
-        return false;
-
-    set_ = true;
-
-    return true;
-}
-
-/*
- * Conversion
- */
-
-// Return value (as int)
-int NodeValueKeyword::asInt() { return data_.asInteger(); }
-
-// Return value (as double)
-double NodeValueKeyword::asDouble() { return data_.asDouble(); }
-
-/*
- * Object Management
- */

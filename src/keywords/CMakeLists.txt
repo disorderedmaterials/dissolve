@@ -20,7 +20,6 @@ add_library(
   isotopologueset.cpp
   linkto.cpp
   list.cpp
-  module.cpp
   modulevector.cpp
   nodebranch.cpp
   nodeunderlay.cpp

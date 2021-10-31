@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/lineparser.h"
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
 #include "templates/venum.h"
@@ -13,66 +13,92 @@
 class ProcedureNode;
 
 // Keyword with NodeValue and EnumOptions base class
-class NodeValueEnumOptionsBaseKeyword
+class NodeValueEnumOptionsBaseKeyword : public KeywordBase
 {
     public:
-    NodeValueEnumOptionsBaseKeyword(NodeValue &nodeValue, EnumOptionsBase &baseOptions)
-        : nodeValue_(nodeValue), baseOptions_(baseOptions)
+    NodeValueEnumOptionsBaseKeyword(EnumOptionsBase &baseOptions)
+        : KeywordBase(KeywordBase::NodeValueEnumOptionsData), baseOptions_(baseOptions)
     {
     }
 
     /*
-     * Source Data
+     * Data
      */
-    private:
-    // Source NodeValue
-    NodeValue &nodeValue_;
-    // Source EnumBaseOptions
+    protected:
+    // Reference to  EnumBaseOptions
     EnumOptionsBase &baseOptions_;
 
     public:
-    // Return NodeValue
-    const NodeValue &value() const { return nodeValue_; }
+    // Return data
+    virtual const NodeValue &value() const = 0;
+    virtual int enumerationIndex() const = 0;
+    // Set the value from supplied expression text
+    bool setData(std::string_view expressionText);
     // Return EnumBaseOptions
     const EnumOptionsBase &baseOptions() const { return baseOptions_; }
-
-    /*
-     * Set
-     */
-    public:
     // Set node value from expression text, informing KeywordBase
     virtual bool setValue(std::string_view expressionText) = 0;
-    // Set new option index, informing KeywordBase
-    virtual void setEnumerationByIndex(int optionIndex) = 0;
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    virtual int optionMask() const = 0;
+    // Set new option by index
+    virtual void setEnumeration(int optionIndex) = 0;
+    // Set new option by name
+    virtual bool setEnumeration(std::string_view keyword) = 0;
 };
 
 // Keyword with NodeValue and EnumOptions
-template <class E>
-class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, public KeywordData<Venum<NodeValue, E>>
+template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword
 {
     public:
-    NodeValueEnumOptionsKeyword(ProcedureNode *parentNode, NodeValue value, EnumOptions<E> enumOptions)
-        : NodeValueEnumOptionsBaseKeyword(KeywordData<Venum<NodeValue, E>>::data_.value(),
-                                          KeywordData<Venum<NodeValue, E>>::data_.baseOptions()),
-          KeywordData<Venum<NodeValue, E>>(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue, E>(value, enumOptions))
+    NodeValueEnumOptionsKeyword(std::pair<NodeValue, E> &data, ProcedureNode *parentNode, EnumOptions<E> optionData)
+        : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), parentNode_(parentNode), optionData_(optionData)
     {
-        parentNode_ = parentNode;
     }
     ~NodeValueEnumOptionsKeyword() override = default;
 
     /*
-     * Parent Node
+     * Data
      */
     private:
+    // Reference to data
+    std::pair<NodeValue, E> &data_;
     // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    const ProcedureNode *parentNode_;
+    // Related EnumOptions data
+    EnumOptions<E> optionData_;
+
+    public:
+    const NodeValue &value() const override { return data_.first; }
+    int enumerationIndex() const override { return data_.second; }
+    // Set node value from expression text
+    bool setValue(std::string_view expressionText) override
+    {
+        assert(parentNode_);
+
+        if (!data_.first.set(expressionText, parentNode_->parametersInScope()))
+            return false;
+
+        setAsModified();
+
+        return true;
+    }
+    // Set new option by index
+    void setEnumeration(int optionIndex) override
+    {
+        data_.second = optionData_.enumerationByIndex(optionIndex);
+
+        setAsModified();
+    }
+    // Set new option by name
+    bool setEnumeration(std::string_view keyword) override
+    {
+        if (!optionData_.isValid(keyword))
+            return optionData_.errorAndPrintValid(keyword);
+
+        data_.second = optionData_.enumeration(keyword);
+
+        setAsModified();
+
+        return true;
+    }
 
     /*
      * Arguments
@@ -85,81 +111,26 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
-        // Check that the parent node has been set
-        if (!parentNode_)
-            return Messenger::error("Parent node in NodeValueEnumOptions keyword '{}' not set. Can't read data.\n",
-                                    KeywordData<Venum<NodeValue, E>>::name());
-
         // Need two args...
-        if (parser.hasArg(startArg + 1))
-        {
-            // Get any variables currently in scope
-            auto vars = parentNode_->parametersInScope();
+        if (!parser.hasArg(startArg + 1))
+            return false;
 
-            // Parse the value to start with...
-            if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argsv(startArg), vars))
-                return false;
+        // Parse the value to start with...
+        if (!setValue(parser.argsv(startArg)))
+            return false;
 
-            // Now the enum option
-            if (!KeywordData<Venum<NodeValue, E>>::data_.setEnumeration(parser.argsv(startArg + 1)))
-                return false;
+        // Now the enum option
+        if (!setEnumeration(parser.argsv(startArg + 1)))
+            return false;
 
-            KeywordData<Venum<NodeValue, E>>::setAsModified();
+        setAsModified();
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
-        return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(),
-                                 KeywordData<Venum<NodeValue, E>>::data_.value().asString(),
-                                 KeywordData<Venum<NodeValue, E>>::data_.enumerationAsString());
+        return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(), data_.first.asString(),
+                                 optionData_.keyword(data_.second));
     }
-
-    /*
-     * Set (implementing pure virtuals from NodeValueEnumOptionsBaseKeyword)
-     */
-    public:
-    // Set node value from expression text, informing KeywordBase
-    bool setValue(std::string_view expressionText) override
-    {
-        if (!parentNode_)
-            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
-                                    KeywordBase::name());
-
-        // Get any variables currently in scope
-        auto vars = parentNode_->parametersInScope();
-
-        bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, vars);
-
-        KeywordData<Venum<NodeValue, E>>::setAsModified();
-
-        return result;
-    }
-    // Set new option index, informing KeywordBase
-    void setEnumerationByIndex(int optionIndex) override
-    {
-        KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
-
-        KeywordData<Venum<NodeValue, E>>::setAsModified();
-    }
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    int optionMask() const override { return KeywordBase::optionMask(); }
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as int)
-    int asInt() override { return KeywordData<Venum<NodeValue, E>>::data_.value().asInteger(); }
-    // Return value (as double)
-    double asDouble() override { return KeywordData<Venum<NodeValue, E>>::data_.value().asDouble(); }
 };

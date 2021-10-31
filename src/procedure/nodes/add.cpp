@@ -14,20 +14,19 @@
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add)
+    : ProcedureNode(ProcedureNode::NodeType::Add), density_{density, densityUnits}, population_(population)
 {
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
-    keywords_.add("Control", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
+    keywords_.add<NodeValueKeyword>("Control", "Population", "Population of the target species to add", population_, this);
     keywords_.add<EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>>(
         "Control", "BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_,
         boxActionStyles());
     keywords_.add<BoolKeyword>("Control", "ScaleA", "Scale box length A when modifying volume", scaleA_);
     keywords_.add<BoolKeyword>("Control", "ScaleB", "Scale box length B when modifying volume", scaleB_);
     keywords_.add<BoolKeyword>("Control", "ScaleC", "Scale box length C when modifying volume", scaleC_);
-    keywords_.add("Control",
-                  new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
-                  "Density", "Density at which to add the target species");
+    keywords_.add<NodeValueEnumOptionsKeyword<Units::DensityUnits>>(
+        "Control", "Density", "Density at which to add the target species", density_, this, Units::densityUnits());
     keywords_.add<BoolKeyword>("Control", "Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
     keywords_.add<EnumOptionsKeyword<AddProcedureNode::PositioningType>>(
         "Control", "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());

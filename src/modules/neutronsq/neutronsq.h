@@ -14,8 +14,9 @@
 // Forward Declarations
 class PartialSet;
 class RDFModule;
+class SQModule;
 
-// SQ Module
+// Neutron SQ Module
 class NeutronSQModule : public Module
 {
     public:
@@ -72,6 +73,8 @@ class NeutronSQModule : public Module
     bool saveRepresentativeGR_{false};
     // Save weighted partial and total structure factors
     bool saveSQ_{false};
+    // Source module for calculation
+    const SQModule *sourceSQ_{nullptr};
 
     protected:
     // Perform any necessary initialisation for the Module

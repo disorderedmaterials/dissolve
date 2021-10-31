@@ -56,6 +56,10 @@ class AddProcedureNode : public ProcedureNode
     private:
     // Action to take on the Box geometry / volume on addition of the species
     AddProcedureNode::BoxActionStyle boxAction_{AddProcedureNode::BoxActionStyle::AddVolume};
+    // Target density when adding molecules
+    std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
+    // Population of molecules to add
+    NodeValue population_;
     // Positioning type for individual molecules
     AddProcedureNode::PositioningType positioningType_{AddProcedureNode::PositioningType::Random};
     // Region into which we will add molecules (if any)

@@ -9,8 +9,8 @@
 void NeutronSQModule::initialise()
 {
     // Control
-    keywords_.add("Control", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
-                  "Source unweighted S(Q) to transform into neutron-weighted S(Q)");
+    keywords_.add<ModuleKeyword<const SQModule>>(
+        "Control", "SourceSQs", "Source unweighted S(Q) to transform into neutron-weighted S(Q)", sourceSQ_, "SQ");
     keywords_.add<AtomTypeVectorKeyword>(
         "Control", "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
     keywords_.add<IsotopologueSetKeyword>(

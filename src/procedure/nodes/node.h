@@ -172,7 +172,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
     std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
-    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope();
+    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope() const;
 
     /*
      * Branch
