@@ -5,10 +5,12 @@
     flake-utils.inputs.nixpkgs.follows = "nixpkgs";
     bundler.url = "github:matthewbauer/nix-bundle";
     bundler.inputs.nixpkgs.follows = "nixpkgs";
+    nixGL-src.url = "github:guibou/nixGL";
+    nixGL-src.flake = false;
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
-  outputs = { self, nixpkgs, flake-utils, bundler, weggli }:
+  outputs = { self, nixpkgs, flake-utils, bundler, nixGL-src, weggli }:
     let
       exe-name = mpi: gui:
         if mpi then
@@ -31,12 +33,14 @@
           pkgconfig
           pugixml
         ];
-      gui_libs = pkgs: with pkgs; [ freetype ftgl libGL libglvnd libglvnd.dev ];
+      gui_libs = pkgs: with pkgs; [ freetype ftgl libGL.dev libglvnd libglvnd.dev ];
       check_libs = pkgs: with pkgs; [ gtest ];
+
     in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        nixGL = import nixGL-src {inherit pkgs;};
         qt6 = import ./nix/qt6.nix { inherit pkgs; };
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
@@ -210,7 +214,7 @@
             name = "dissolve-gui";
             tag = "latest";
             config.ENTRYPOINT =
-              [ "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui" ];
+              [ "${nixGL.nixGLIntel}/bin/nixGLIntel" "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui" ];
           };
 
           docker-mpi = pkgs.dockerTools.buildImage {
