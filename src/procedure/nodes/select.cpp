@@ -41,8 +41,8 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "ReferenceSite",
                                                     "Site to use as reference point when determining inclusions / exclusions",
                                                     distanceReferenceSite_, this, ProcedureNode::NodeType::Select, true);
-    keywords_.add("Control", new RangeKeyword(inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels), "InclusiveRange",
-                  "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)");
+    keywords_.add<RangeKeyword>("Control", "InclusiveRange",
+                                "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)",inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.addKeyword<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_, this,
                                             ProcedureNode::AnalysisContext);
 
