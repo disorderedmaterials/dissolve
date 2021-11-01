@@ -11,28 +11,30 @@
 class ProcedureNode;
 
 // Keyword with NodeValue Triplet Data
-class Vec3NodeValueKeyword : public KeywordData<Vec3<NodeValue>>
+class Vec3NodeValueKeyword : public KeywordBase
 {
     public:
-    Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    ~Vec3NodeValueKeyword() override;
+    Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode,
+                         Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+    ~Vec3NodeValueKeyword() override = default;
 
     /*
-     * Parent Node
+     * Data
      */
     private:
+    // Reference to data
+    Vec3<NodeValue> &data_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
-
-    /*
-     * Label Type
-     */
-    private:
     // Label type to display in GUI
     Vec3Labels::LabelType labelType_;
 
     public:
-    // Label type to display in GUI
+    // Return reference to data
+    const Vec3<NodeValue> &data() const;
+    // Set the specified value from supplied expression text
+    bool setData(int index, std::string_view expressionText);
+    // Return label type to display in GUI
     Vec3Labels::LabelType labelType() const;
 
     /*
@@ -47,20 +49,4 @@ class Vec3NodeValueKeyword : public KeywordData<Vec3<NodeValue>>
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Set
-     */
-    public:
-    // Set the specified value from supplied expression text
-    bool setValue(int index, std::string_view expressionText);
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as Vec3<int>)
-    Vec3<int> asVec3Int() override;
-    // Return value (as Vec3<double>)
-    Vec3<double> asVec3Double() override;
 };

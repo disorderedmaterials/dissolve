@@ -5,21 +5,34 @@
 #include "base/lineparser.h"
 #include "procedure/nodes/node.h"
 
-Vec3NodeValueKeyword::Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<double> value, Vec3Labels::LabelType labelType)
-    : KeywordData<Vec3<NodeValue>>(KeywordBase::Vec3NodeValueData, Vec3<NodeValue>(value.x, value.y, value.z))
+Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode, Vec3Labels::LabelType labelType)
+    : KeywordBase(KeywordBase::Vec3NodeValueData), data_(data), parentNode_(parentNode), labelType_(labelType)
 {
-    parentNode_ = parentNode;
-    labelType_ = labelType;
 }
 
-Vec3NodeValueKeyword::~Vec3NodeValueKeyword() = default;
-
 /*
- * Label Type
+ * Data
  */
 
-// Label type to display in GUI
+// Return reference to data
+const Vec3<NodeValue> &Vec3NodeValueKeyword::data() const { return data_; }
+
+// Return label type to display in GUI
 Vec3Labels::LabelType Vec3NodeValueKeyword::labelType() const { return labelType_; }
+
+// Set the value from supplied expression text
+bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
+{
+    assert(index >= 0 && index < 3);
+    assert(parentNode_);
+
+    if (!data_[index].set(expressionText, parentNode_->parametersInScope()))
+        return false;
+
+    set_ = true;
+
+    return true;
+}
 
 /*
  * Arguments
@@ -62,37 +75,4 @@ bool Vec3NodeValueKeyword::write(LineParser &parser, std::string_view keywordNam
 {
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x.asString(true), data_.y.asString(true),
                              data_.z.asString(true));
-}
-
-/*
- * Set
- */
-
-// Set the value from supplied expression text
-bool Vec3NodeValueKeyword::setValue(int index, std::string_view expressionText)
-{
-    assert(index >= 0 && index < 3);
-
-    // Get any variables currently in scope
-    auto vars = parentNode_->parametersInScope();
-
-    if (!data_[index].set(expressionText, vars))
-        return false;
-
-    set_ = true;
-
-    return true;
-}
-
-/*
- * Conversion
- */
-
-// Return value (as Vec3<int>)
-Vec3<int> Vec3NodeValueKeyword::asVec3Int() { return Vec3<int>(data_.x.asInteger(), data_.y.asInteger(), data_.z.asInteger()); }
-
-// Return value (as Vec3<NodeValue>)
-Vec3<double> Vec3NodeValueKeyword::asVec3Double()
-{
-    return Vec3<double>(data_.x.asDouble(), data_.y.asDouble(), data_.z.asDouble());
 }

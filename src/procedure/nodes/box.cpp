@@ -8,11 +8,12 @@
 #include "classes/configuration.h"
 #include "keywords/types.h"
 
-BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic)
-    : ProcedureNode(ProcedureNode::NodeType::Box)
+BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
+    : ProcedureNode(ProcedureNode::NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)),
+      nonPeriodic_(nonPeriodic)
 {
-    keywords_.add("Control", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
-    keywords_.add("Control", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");
+    keywords_.add<Vec3NodeValueKeyword>("Control", "Lengths", "Box lengths", lengths_, this, Vec3Labels::ABCLabels);
+    keywords_.add<Vec3NodeValueKeyword>("Control", "Angles", "Box angles", angles_, this, Vec3Labels::AlphaBetaGammaLabels);
     keywords_.add<BoolKeyword>("Control", "NonPeriodic", "Whether the box is non-periodic", nonPeriodic_);
 }
 

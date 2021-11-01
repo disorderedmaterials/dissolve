@@ -10,7 +10,7 @@
 class BoxProcedureNode : public ProcedureNode
 {
     public:
-    BoxProcedureNode(Vec3<double> lengths = Vec3<double>(1.0, 1.0, 1.0), Vec3<double> angles = Vec3<double>(90, 90, 90),
+    BoxProcedureNode(Vec3<NodeValue> lengths = {1.0, 1.0, 1.0}, Vec3<NodeValue> angles = {90, 90, 90},
                      bool nonPeriodic = false);
     ~BoxProcedureNode() override = default;
 
@@ -27,6 +27,10 @@ class BoxProcedureNode : public ProcedureNode
      * Node Data
      */
     private:
+    // Box angles
+    Vec3<NodeValue> angles_;
+    // Box lengths
+    Vec3<NodeValue> lengths_;
     // Whether the box is non-periodic
     bool nonPeriodic_{false};
 
