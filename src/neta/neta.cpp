@@ -21,6 +21,8 @@ NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr)
         create(definition);
 }
 
+NETADefinition::NETADefinition(const SpeciesAtom *i, int maxDepth) : rootNode_(nullptr), valid_(false) { create(i, maxDepth); }
+
 /*
  * Data
  */
@@ -89,6 +91,50 @@ bool NETADefinition::create(std::string_view definition, const Forcefield *assoc
 {
     definitionString_ = definition;
     return create(associatedFF);
+}
+
+// Recursively create a NETA string for the specified atom
+std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDepth, std::vector<const SpeciesAtom *> &path)
+{
+    // Add this atom to the path
+    path.push_back(i);
+
+    auto neta = fmt::format("nbonds={}", i->nBonds());
+
+    // Add on each connected atom, provided it is not already in the path
+    auto nH = 0;
+    for (auto &b : i->bonds())
+    {
+        auto j = b.get().partner(i);
+
+        // Check for H
+        if (j->Z() == Elements::H)
+        {
+            ++nH;
+            continue;
+        }
+
+        // Don't add a connectivity term if 'j' is already in the path
+        if (std::find(path.begin(), path.end(), j) != path.end())
+            continue;
+
+        if (currentDepth < maxDepth)
+            neta += fmt::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path));
+        else
+            neta += fmt::format(",-{}", Elements::symbol(j->Z()));
+    }
+
+    if (i->Z() != Elements::H)
+        neta += fmt::format(",nh={}", nH);
+    return neta;
+}
+
+// Create from specified atom and its connectivity
+bool NETADefinition::create(const SpeciesAtom *i, int maxDepth)
+{
+    std::vector<const SpeciesAtom *> path;
+    definitionString_ = netaString(i, 0, maxDepth, path);
+    return create();
 }
 
 // Set generating string
