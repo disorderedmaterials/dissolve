@@ -14,10 +14,10 @@
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add), density_{density, densityUnits}, population_(population)
+    : ProcedureNode(ProcedureNode::NodeType::Add), density_{density, densityUnits}, population_(population), species_(sp)
 {
     // Set up keywords
-    keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
+    keywords_.add<SpeciesKeyword>("Control", "Species", "Target species to add", species_);
     keywords_.add<NodeValueKeyword>("Control", "Population", "Population of the target species to add", population_, this);
     keywords_.add<EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>>(
         "Control", "BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_,

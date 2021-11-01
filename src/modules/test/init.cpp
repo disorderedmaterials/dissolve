@@ -7,6 +7,5 @@
 // Perform any necessary initialisation for the Module
 void TestModule::initialise()
 {
-    // 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+    // 	keywords_.add<BoolKeyword>("ExampleKeyword", "Example keyword description", localVariable_);
 }
-// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");

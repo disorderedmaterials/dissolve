@@ -59,7 +59,7 @@ class AddProcedureNode : public ProcedureNode
     // Target density when adding molecules
     std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
-    NodeValue population_;
+    NodeValue population_{1.0};
     // Positioning type for individual molecules
     AddProcedureNode::PositioningType positioningType_{AddProcedureNode::PositioningType::Random};
     // Region into which we will add molecules (if any)
@@ -68,6 +68,8 @@ class AddProcedureNode : public ProcedureNode
     bool rotate_{true};
     // Flags controlling box axis scaling
     bool scaleA_{true}, scaleB_{true}, scaleC_{true};
+    // Species to be added
+    const Species *species_{nullptr};
 
     /*
      * Execute
