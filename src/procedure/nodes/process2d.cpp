@@ -24,8 +24,8 @@ Process2DProcedureNode::Process2DProcedureNode(Collect2DProcedureNode *target)
     keywords_.add<StringKeyword>("Control", "LabelY", "Label for the y axis", labelY_);
     keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
                                         exportFileAndFormat_, "EndExport");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
-                  "Branch providing normalisation operations for the data");
+    keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
+                                            normalisationBranch_, this, ProcedureNode::OperateContext);
 
     // Initialise branch
     normalisationBranch_ = nullptr;

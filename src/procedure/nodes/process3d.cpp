@@ -23,8 +23,8 @@ Process3DProcedureNode::Process3DProcedureNode(Collect3DProcedureNode *target)
     keywords_.add<StringKeyword>("Control", "LabelZ", "Label for the z axis", labelZ_);
     keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
                                         exportFileAndFormat_, "EndExport");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
-                  "Branch providing normalisation operations for the data");
+    keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
+                                            normalisationBranch_, this, ProcedureNode::OperateContext);
 
     // Initialise branch
     normalisationBranch_ = nullptr;

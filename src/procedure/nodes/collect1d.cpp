@@ -19,8 +19,8 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
                                                                      true);
     keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
-                  "Branch which runs if the target quantity was binned successfully");
+    keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantity was binned successfully",
+                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
 
     // Initialise branch
     subCollectBranch_ = nullptr;
