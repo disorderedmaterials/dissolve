@@ -9,7 +9,7 @@ add_library(
   data3dstore.cpp
   double.cpp
   dynamicsitenodes.cpp
-  elementreflist.cpp
+  elementvector.cpp
   expression.cpp
   expressionvariablevector.cpp
   fileandformat.cpp
@@ -49,7 +49,7 @@ add_library(
   data3dstore.h
   double.h
   dynamicsitenodes.h
-  elementreflist.h
+  elementvector.h
   enumoptions.h
   expression.h
   expressionvariablevector.h

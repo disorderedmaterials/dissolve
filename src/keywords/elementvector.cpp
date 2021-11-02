@@ -1,16 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "keywords/elementreflist.h"
+#include "keywords/elementvector.h"
 #include "base/lineparser.h"
 #include "data/elements.h"
 
-ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &targetData)
-    : KeywordData<std::vector<Elements::Element> &>(KeywordBase::ElementVectorData, targetData)
+ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data)
+    : KeywordBase(KeywordBase::ElementVectorData), data_(data)
 {
 }
 
-ElementVectorKeyword::~ElementVectorKeyword() = default;
+/*
+ * Data
+ */
+
+// Return if the current data object is empty
+bool ElementVectorKeyword::isDataEmpty() const { return data_.empty(); }
+
+// Return reference to data
+std::vector<Elements::Element> &ElementVectorKeyword::data() { return data_; }
+const std::vector<Elements::Element> &ElementVectorKeyword::data() const { return data_; }
 
 /*
  * Arguments

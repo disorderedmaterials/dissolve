@@ -22,8 +22,8 @@ DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent)
 
     keywords_.add<AtomTypeVectorKeyword>("Definition", "AtomType", "Define one or more AtomTypes to include in this site",
                                          atomTypes_);
-    keywords_.add("Definition", new ElementVectorKeyword(elements_), "Element",
-                  "Define one or more Elements to include in this site");
+    keywords_.add<ElementVectorKeyword>("Definition", "Element", "Define one or more Elements to include in this site",
+                                        elements_);
 }
 
 /*

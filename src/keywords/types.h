@@ -19,7 +19,7 @@
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"
 #include "keywords/dynamicsitenodes.h"
-#include "keywords/elementreflist.h"
+#include "keywords/elementvector.h"
 #include "keywords/enumoptions.h"
 #include "keywords/expression.h"
 #include "keywords/expressionvariablevector.h"
