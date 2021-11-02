@@ -67,7 +67,7 @@ class ArrayIndex2D
 
     bool operator==(const ArrayIndex2D &rhs)
     {
-        if (*this == rhs)
+        if (this->index_ == rhs.index_ && this->nX_ == rhs.nX_ && this->nY_ == rhs.nY_)
             return true;
         else
             return false;
@@ -79,7 +79,7 @@ class ArrayIndex2D
 
     ArrayIndex2D begin() { return ArrayIndex2D(nX_, nY_); }
 
-    ArrayIndex2D end() { return ArrayIndex2D(nX_, nY_, {nX_ - 1, nY_ - 1}); }
+    ArrayIndex2D end() { return ArrayIndex2D(nX_, nY_, {nX_, 0}); }
 
     private:
     int nX_;

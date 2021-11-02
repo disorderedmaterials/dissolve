@@ -44,6 +44,11 @@ TEST(ArrayIterationTest, IndexIterator)
         }
     }
 
+    auto index = ArrayIndex2D(array);
+    for (auto i = 0; i < array.nRows(); ++i)
+        for (auto j = 0; j < array.nColumns(); ++j)
+            EXPECT_EQ(*index++, {i, j});
+
     int i = 0;
     int j = 0;
     int k = 0;
@@ -63,6 +68,12 @@ TEST(ArrayIterationTest, IndexIterator)
             i++;
         }
     }
+
+    auto index = ArrayIndex3D(array);
+    for (auto i = 0; i < array.nX(); ++i)
+        for (auto j = 0; j < array.nY(); ++j)
+            for (auto k = 0; k < array.nZ(); ++k)
+                EXPECT_EQ(*index++, {i, j, k});
 }
 
 } // namespace UnitTest

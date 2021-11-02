@@ -18,7 +18,7 @@ class ArrayIndex3D
         nX_ = inArray.nX();
         nY_ = inArray.nY();
         nZ_ = inArray.nZ();
-        index_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
+        index_ = std::get<0>(position) * nY_ * nZ_ + std::get<1>(position) * nZ_ + std::get<2>(position);
     }
 
     ArrayIndex3D(int nX, int nY, int nZ)
@@ -34,7 +34,7 @@ class ArrayIndex3D
         nX_ = nX;
         nY_ = nY;
         nZ_ = nZ;
-        index_ = std::get<0>(position) * nY_ + std::get<1>(position) * nZ_ + std::get<2>(position);
+        index_ = std::get<0>(position) * nY_ * nZ_ + std::get<1>(position) * nZ_ + std::get<2>(position);
     }
 
     ArrayIndex3D &operator++()
@@ -72,7 +72,7 @@ class ArrayIndex3D
 
     bool operator==(const ArrayIndex3D &rhs)
     {
-        if (*this == rhs)
+        if (this->nX_ == rhs.nX_ && this->nY_ == rhs.nY_ && this->nZ_ == rhs.nZ_ && this->index_ == rhs.index_)
             return true;
         else
             return false;
@@ -84,7 +84,7 @@ class ArrayIndex3D
 
     ArrayIndex3D begin() { return ArrayIndex3D(nX_, nY_, nZ_); }
 
-    ArrayIndex3D end() { return ArrayIndex3D(nX_, nY_, nZ_, {nX_ - 1, nY_ - 1, nZ_ - 1}); }
+    ArrayIndex3D end() { return ArrayIndex3D(nX_, nY_, nZ_, {nX_ - 1, nY_, 0}); }
 
     private:
     int nX_;
