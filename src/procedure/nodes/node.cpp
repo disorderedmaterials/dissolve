@@ -86,6 +86,9 @@ ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
 // Return whether the node is of the specified class
 ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 
+// Return whether specified context is relevant for this node type
+bool ProcedureNode::isContextRelevant(NodeContext context) { return false; }
+
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
 
