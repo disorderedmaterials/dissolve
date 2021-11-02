@@ -3,34 +3,26 @@
 
 #pragma once
 
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "keywords/data.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Configuration;
 
-// Keyword with AtomTypeList Data
-class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
+// Keyword with vector of AtomType pointers
+class AtomTypeVectorKeyword : public KeywordData<std::vector<std::shared_ptr<AtomType>>>
 {
     public:
-    AtomTypeSelectionKeyword(AtomTypeList &selection_, const std::vector<Configuration *> &sourceConfigurations);
-    ~AtomTypeSelectionKeyword() override;
+    AtomTypeVectorKeyword();
+    ~AtomTypeVectorKeyword() override = default;
 
     /*
      * Data
      */
-    private:
-    // Source Configurations from which we take our valid AtomTypes
-    const std::vector<Configuration *> &sourceConfigurations_;
-
     public:
     // Determine whether current data is 'empty', and should be considered as 'not set'
     bool isDataEmpty() const override;
-    // Check selection and make sure it is consistent based on the source Configurations
-    void checkSelection();
-    // Return selection after checking it for validity
-    AtomTypeList &selection();
 
     /*
      * Arguments

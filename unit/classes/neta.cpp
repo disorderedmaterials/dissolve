@@ -211,6 +211,28 @@ TEST_F(NETATest, Matching)
     testNETA("Hydrogen atoms present in CH3 group", rings_, neta, {13, 14, 15});
 }
 
+TEST_F(NETATest, Creation)
+{
+    // Carbon atom - full description
+    NETADefinition neta(&methane_.atom(0));
+    EXPECT_EQ(neta.definitionString(), "nbonds=4,nh=4");
+    testNETA("Carbon atom in methane", methane_, neta, {0});
+
+    // Methane hydrogen atom
+    // -- Basic connectivity
+    neta.create(&methane_.atom(1), 0);
+    EXPECT_EQ(neta.definitionString(), "nbonds=1,-C");
+    testNETA("Hydrogen atom in methane", methane_, neta, {1, 2, 3, 4});
+    // -- Primary neighbour connectivity
+    neta.create(&methane_.atom(1), 1);
+    EXPECT_EQ(neta.definitionString(), "nbonds=1,-C(nbonds=4,nh=4)");
+    testNETA("Hydrogen atom in methane", methane_, neta, {1, 2, 3, 4});
+    // -- Secondary neighbour connectivity (equivalent to primary)
+    neta.create(&methane_.atom(1), 2);
+    EXPECT_EQ(neta.definitionString(), "nbonds=1,-C(nbonds=4,nh=4)");
+    testNETA("Hydrogen atom in methane", methane_, neta, {1, 2, 3, 4});
+}
+
 TEST_F(NETATest, Forcefield)
 {
     class Forcefield_TEST : public Forcefield

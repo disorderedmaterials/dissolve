@@ -34,12 +34,12 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     KeywordBase::KeywordDataType type = keywordBase->type();
 
     // Try to create a suitable widget
-    if (type == KeywordBase::AtomTypeSelectionData)
+    if (type == KeywordBase::AtomTypeVectorData)
     {
-        auto *atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = atomTypeSelectionWidget;
-        base = atomTypeSelectionWidget;
+        auto *atomTypeVectorWidget = new AtomTypeVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(atomTypeVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = atomTypeVectorWidget;
+        base = atomTypeVectorWidget;
     }
     else if (type == KeywordBase::BoolData)
     {

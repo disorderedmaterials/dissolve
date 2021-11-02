@@ -2,7 +2,7 @@
 
 # Meta-Objects
 set(keywordwidgets_MOC_HDRS
-    atomtypeselection.h
+    atomtypevector.h
     configurationvector.h
     dialog.h
     dropdown.h
@@ -39,7 +39,7 @@ qt6_wrap_cpp(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 
 # User Interface Files
 set(keywordwidgets_UIS
-    atomtypeselection.ui
+    atomtypevector.ui
     configurationvector.ui
     dialog.ui
     dropdown.ui
@@ -68,7 +68,7 @@ qt6_wrap_ui(keywordwidgets_UIS_H ${keywordwidgets_UIS})
 # Source files (not Qt UI files or custom .h [uih])
 set(keywordwidgets_SRCS
     base.cpp
-    atomtypeselection_funcs.cpp
+    atomtypevector_funcs.cpp
     bool_funcs.cpp
     configurationvector_funcs.cpp
     dialog_funcs.cpp

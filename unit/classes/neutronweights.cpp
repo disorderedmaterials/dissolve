@@ -62,14 +62,14 @@ TEST_F(NeutronWeightsTest, Simple)
     NeutronWeights nwts;
     // Basic population of ten molecules with two atoms of the same type (N2)
     nwts.addIsotopologue(&n2_, 10, n2_.naturalIsotopologue(), 1.0);
-    nwts.createFromIsotopologues(AtomTypeList());
+    nwts.createFromIsotopologues({});
     EXPECT_EQ(20, nwts.atomTypes().atomTypeData(atN_)->get().population());
     EXPECT_NEAR(1.0, nwts.atomTypes().atomTypeData(atN_)->get().fraction(), 1.0e-6);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::N_Natural), 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
     // -- Adding more N2 natural isotopologue shouldn't make any difference - the species already exists, so just the
     // relative weight of the isotopologue will be updated, and this will be normalised back to 1.0.
     nwts.addIsotopologue(&n2_, 10, n2_.naturalIsotopologue(), 50.0);
-    nwts.createFromIsotopologues(AtomTypeList());
+    nwts.createFromIsotopologues({});
     EXPECT_EQ(20, nwts.atomTypes().atomTypeData(atN_)->get().population());
     EXPECT_NEAR(1.0, nwts.atomTypes().atomTypeData(atN_)->get().fraction(), 1.0e-6);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::N_Natural), 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
@@ -79,7 +79,7 @@ TEST_F(NeutronWeightsTest, Water)
 {
     NeutronWeights nwts;
     nwts.addIsotopologue(&h2o_, 1, h2o_.naturalIsotopologue(), 1.0);
-    nwts.createFromIsotopologues(AtomTypeList());
+    nwts.createFromIsotopologues({});
     EXPECT_EQ(1, nwts.atomTypes().atomTypeData(atO_)->get().population());
     EXPECT_EQ(2, nwts.atomTypes().atomTypeData(atH2_)->get().population());
     EXPECT_NEAR(1.0 / 3.0, nwts.atomTypes().atomTypeData(atO_)->get().fraction(), 1.0e-6);
@@ -94,7 +94,7 @@ TEST_F(NeutronWeightsTest, D2O)
 {
     NeutronWeights nwts;
     nwts.addIsotopologue(&h2o_, 1, d2o_, 1.0);
-    nwts.createFromIsotopologues(AtomTypeList());
+    nwts.createFromIsotopologues({});
     EXPECT_EQ(1, nwts.atomTypes().atomTypeData(atO_)->get().population());
     EXPECT_EQ(2, nwts.atomTypes().atomTypeData(atH2_)->get().population());
     EXPECT_NEAR(1.0 / 3.0, nwts.atomTypes().atomTypeData(atO_)->get().fraction(), 1.0e-6);
@@ -110,16 +110,14 @@ TEST_F(NeutronWeightsTest, NullWater)
     auto ratio = fabs(Sears91::boundCoherent(Sears91::H_2) / Sears91::boundCoherent(Sears91::H_Natural));
     nwts.addIsotopologue(&h2o_, 1000, h2o_.naturalIsotopologue(), ratio);
     nwts.addIsotopologue(&h2o_, 0, d2o_, 1.0);
-    nwts.createFromIsotopologues(AtomTypeList());
+    nwts.createFromIsotopologues({});
     EXPECT_EQ(1000, nwts.atomTypes().atomTypeData(atO_)->get().population());
     EXPECT_EQ(2000, nwts.atomTypes().atomTypeData(atH2_)->get().population());
     EXPECT_NEAR(1.0 / 3.0, nwts.atomTypes().atomTypeData(atO_)->get().fraction(), 1.0e-6);
     EXPECT_NEAR(2.0 / 3.0, nwts.atomTypes().atomTypeData(atH2_)->get().fraction(), 1.0e-6);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
     // Making the H atomtype exchangeable should make no difference
-    AtomTypeList exchangeable;
-    exchangeable.add(atH2_);
-    nwts.createFromIsotopologues(exchangeable);
+    nwts.createFromIsotopologues({atH2_});
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
 }
 
@@ -129,7 +127,7 @@ TEST_F(NeutronWeightsTest, Mix)
     nwts.addIsotopologue(&h2o_, 1, h2o_.naturalIsotopologue(), 1.0);
     nwts.addIsotopologue(&n2_, 1, n2_.naturalIsotopologue(), 1.0);
     nwts.addIsotopologue(&n2_, 1, n2A15_, 1.0);
-    nwts.createFromIsotopologues(AtomTypeList());
+    nwts.createFromIsotopologues({});
     EXPECT_EQ(1, nwts.atomTypes().atomTypeData(atO_)->get().population());
     EXPECT_EQ(2, nwts.atomTypes().atomTypeData(atH2_)->get().population());
     EXPECT_EQ(2, nwts.atomTypes().atomTypeData(atN_)->get().population());

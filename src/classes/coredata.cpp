@@ -103,7 +103,7 @@ int CoreData::removeUnusedAtomTypes()
     atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
                                     [&](const auto &atomType) {
                                         return std::none_of(species_.begin(), species_.end(), [&atomType](const auto &sp) {
-                                            return sp->usedAtomTypes().contains(atomType);
+                                            return sp->atomTypes().contains(atomType);
                                         });
                                     }),
                      atomTypes_.end());

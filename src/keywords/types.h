@@ -14,8 +14,7 @@
 #include "keywords/integer.h"
 
 // Classes
-#include "keywords/atomtypereflist.h"
-#include "keywords/atomtypeselection.h"
+#include "keywords/atomtypevector.h"
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"

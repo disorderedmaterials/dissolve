@@ -82,7 +82,7 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
     updateCellContents();
 
     // Finalise used AtomType list
-    usedAtomTypes_.finalise();
+    atomTypes_.finalise();
 
     ++contentsVersion_;
 

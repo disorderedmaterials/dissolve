@@ -429,7 +429,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Add the unweighted from this target to our combined, unweighted S(Q) data
-        auto &types = unweightedSQ.atomTypes();
+        auto &types = unweightedSQ.atomTypeMix();
         dissolve::for_each_pair(
             ParallelPolicies::seq, types.begin(), types.end(),
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {

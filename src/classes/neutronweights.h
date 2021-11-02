@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "classes/isotopologues.h"
 #include "templates/array2d.h"
 #include "templates/list.h"
@@ -39,8 +39,8 @@ class NeutronWeights
      * Data
      */
     private:
-    // Type list derived from Species referenced in isotopologueMixtures_
-    AtomTypeList atomTypes_;
+    // Type mix derived from Species referenced in isotopologueMixtures_
+    AtomTypeMix atomTypes_;
     // Concentration product matrix (ci * cj)
     Array2D<double> concentrationProducts_;
     // Bound coherent product matrix (bi * bj)
@@ -62,11 +62,11 @@ class NeutronWeights
 
     public:
     // Create AtomType list and matrices based on stored Isotopologues information
-    void createFromIsotopologues(const AtomTypeList &exchangeableTypes);
+    void createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Reduce data to be naturally-weighted
     void naturalise();
-    // Return AtomTypeList
-    const AtomTypeList &atomTypes() const;
+    // Return AtomTypeMix
+    const AtomTypeMix &atomTypes() const;
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Return concentration product for types i and j

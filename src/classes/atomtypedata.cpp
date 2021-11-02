@@ -7,7 +7,7 @@
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "classes/isotopedata.h"
 #include "data/isotopes.h"
 

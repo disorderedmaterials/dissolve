@@ -22,8 +22,7 @@ KeywordBase::~KeywordBase()
 }
 
 // Value Keyword Data Type Keywords
-std::string_view KeywordDataTypeKeywords[] = {"AtomTypeRefList",
-                                              "AtomTypeSelection",
+std::string_view KeywordDataTypeKeywords[] = {"AtomTypeVector",
                                               "Bool",
                                               "ConfigurationRefList",
                                               "Data1DStore",

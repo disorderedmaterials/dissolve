@@ -42,7 +42,7 @@ bool Dissolve::prepare()
     atomTypes().erase(std::remove_if(atomTypes().begin(), atomTypes().end(),
                                      [&](const auto &at) {
                                          if (std::find_if(species().begin(), species().end(), [&at](const auto &sp) {
-                                                 return sp->usedAtomTypes().contains(at);
+                                                 return sp->atomTypes().contains(at);
                                              }) == species().end())
                                          {
                                              Messenger::warn("Pruning unused atom type '{}'...\n", at->name());

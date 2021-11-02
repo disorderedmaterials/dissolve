@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "data/formfactors.h"
 #include "templates/array2d.h"
 #include "templates/list.h"
@@ -29,7 +29,7 @@ class XRayWeights
     // X-Ray form factors to use
     XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::NoFormFactorData};
     // Type list derived from supplied Species
-    AtomTypeList atomTypes_;
+    AtomTypeMix atomTypeMix_;
     // Form factor data for atom types
     std::vector<std::reference_wrapper<const FormFactorData>> formFactorData_;
     // Whether the structure is valid (i.e. has been finalised)
@@ -51,8 +51,8 @@ class XRayWeights
     bool finalise(XRayFormFactors::XRayFormFactorData formFactors);
     // Return X-Ray form factors being used
     XRayFormFactors::XRayFormFactorData formFactors() const;
-    // Return AtomTypeList
-    const AtomTypeList &atomTypes() const;
+    // Return AtomTypeMix
+    const AtomTypeMix &atomTypeMix() const;
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Print atomtype information

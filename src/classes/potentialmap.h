@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomtypelist.h"
+#include "classes/atomtypemix.h"
 #include "templates/array2d.h"
 
 // Forward Declarations

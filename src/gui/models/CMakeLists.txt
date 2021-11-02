@@ -32,6 +32,7 @@ set(models_MOC_HDRS
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
 set(models_SRCS
+    atomTypeFilterProxy.cpp
     atomTypeModel.cpp
     braggReflectionFilterProxy.cpp
     braggReflectionModel.cpp
@@ -65,6 +66,7 @@ set(models_SRCS
 
 qt_wrap_cpp(
   models_SRCS
+  atomTypeFilterProxy.h
   atomTypeModel.h
   braggReflectionModel.h
   dataManagerReferencePointModel.h
