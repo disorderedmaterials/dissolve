@@ -25,7 +25,7 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
 
     expression_.create(expressionText, variables_);
 
-    keywords_.add("Control", new ExpressionKeyword(expression_, variables_), "Expression", "Expression to apply to values");
+    keywords_.add<ExpressionKeyword>("Control", "Expression", "Expression to apply to values", expression_, variables_);
 }
 
 /*
