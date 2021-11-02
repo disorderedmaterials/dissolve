@@ -24,6 +24,10 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
     // Axes to use for sites
     OrientedSite::SiteAxis axes_[2];
 
+    public:
+    // Return axis specified
+    OrientedSite::SiteAxis &axis(int n);
+
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
      */

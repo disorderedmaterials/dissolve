@@ -61,6 +61,9 @@ const Data2D &Process2DProcedureNode::processedData() const
     return (*processedData_);
 }
 
+// Return export file and format for processed data
+Data2DExportFileFormat &Process2DProcedureNode::exportFileAndFormat() { return exportFileAndFormat_; }
+
 // Return value label
 std::string Process2DProcedureNode::valueLabel() const { return labelValue_; }
 

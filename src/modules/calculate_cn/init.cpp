@@ -41,16 +41,13 @@ void CalculateCNModule::initialise()
     // Target / Ranges
     keywords_.add<ModuleKeyword<CalculateRDFModule>>(
         "Target / Ranges", "SourceRDF", "Source CalculateRDFModule containing the data to process", sourceRDF_, "CalculateRDF");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeA"), "RangeA",
-                   "Distance range for first coordination number");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeBEnabled"), "RangeBEnabled",
-                   "Whether calculation of the second coordination number is enabled");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeB"), "RangeB",
-                   "Distance range for second coordination number");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeCEnabled"), "RangeCEnabled",
-                   "Whether calculation of the third coordination number is enabled");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeC"), "RangeC",
-                   "Distance range for third coordination number");
+    keywords_.add<RangeKeyword>("Target / Ranges", "RangeA", "Distance range for first coordination number", sum1D_->range(0));
+    keywords_.add<BoolKeyword>("Target / Ranges", "RangeBEnabled",
+                               "Whether calculation of the second coordination number is enabled", sum1D_->rangeEnabled(1));
+    keywords_.add<RangeKeyword>("Target / Ranges", "RangeB", "Distance range for second coordination number", sum1D_->range(1));
+    keywords_.add<BoolKeyword>("Target / Ranges", "RangeCEnabled",
+                               "Whether calculation of the third coordination number is enabled", sum1D_->rangeEnabled(2));
+    keywords_.add<RangeKeyword>("Target / Ranges", "RangeC", "Distance range for third coordination number", sum1D_->range(2));
 
     // Test
     keywords_.add<DoubleKeyword>("Test", "TestRangeA",

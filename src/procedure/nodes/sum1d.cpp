@@ -50,6 +50,20 @@ SampledDouble Sum1DProcedureNode::sum(int index) const
     return {};
 }
 
+// Return reference to specified range for calculation
+Range &Sum1DProcedureNode::range(int n)
+{
+    assert(n >= 0 && n < 3);
+    return range_[n];
+}
+
+// Return reference to range enabled flag
+bool &Sum1DProcedureNode::rangeEnabled(int n)
+{
+    assert(n >= 1 && n < 3);
+    return rangeEnabled_[n];
+}
+
 // Return whether range B is enabled (from keyword data)
 bool Sum1DProcedureNode::isRangeBEnabled() const { return keywords_.asBool("RangeBEnabled"); }
 

@@ -34,7 +34,6 @@ class Process2DProcedureNode : public ProcedureNode
     const Collect2DProcedureNode *sourceData_;
     // Export file and format for processed data
     Data2DExportFileFormat exportFileAndFormat_;
-
     // Label for the value axis
     std::string labelValue_{"Counts"};
     // Label for the x axis
@@ -47,6 +46,8 @@ class Process2DProcedureNode : public ProcedureNode
     public:
     // Return processed data
     const Data2D &processedData() const;
+    // Return export file and format for processed data
+    Data2DExportFileFormat &exportFileAndFormat();
     // Return value label
     std::string valueLabel() const;
     // Return x axis label

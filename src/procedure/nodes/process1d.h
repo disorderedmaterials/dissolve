@@ -10,7 +10,6 @@
 class Collect1DProcedureNode;
 class Data1D;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Process1D
 class Process1DProcedureNode : public ProcedureNode
@@ -32,7 +31,7 @@ class Process1DProcedureNode : public ProcedureNode
     private:
     // Whether to use only the current binned data of the histogram, rather than the accumulated average
     bool currentDataOnly_{false};
-    // Collect1D node that we are processingg
+    // Collect1D node that we are processing
     const Collect1DProcedureNode *sourceData_;
     // Export file and format for processed data
     Data1DExportFileFormat exportFileAndFormat_;
@@ -48,6 +47,8 @@ class Process1DProcedureNode : public ProcedureNode
     bool hasProcessedData() const;
     // Return processed data
     const Data1D &processedData() const;
+    // Return export file and format for processed data
+    Data1DExportFileFormat &exportFileAndFormat();
     // Return value label
     std::string valueLabel() const;
     // Return x axis label

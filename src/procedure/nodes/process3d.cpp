@@ -60,6 +60,9 @@ const Data3D &Process3DProcedureNode::processedData() const
     return (*processedData_);
 }
 
+// Return export file and format for processed data
+Data3DExportFileFormat &Process3DProcedureNode::exportFileAndFormat() { return exportFileAndFormat_; }
+
 // Return value label
 std::string Process3DProcedureNode::valueLabel() const { return labelValue_; }
 

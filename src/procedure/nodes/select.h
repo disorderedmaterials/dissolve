@@ -43,6 +43,12 @@ class SelectProcedureNode : public ProcedureNode
     // Whether sites must have a defined orientation
     bool axesRequired_;
 
+    public:
+    // Return vector of sites to select
+    std::vector<const SpeciesSite *> &speciesSites();
+    // Return whether sites must have a defined orientation
+    bool axesRequired();
+
     /*
      * Selection Control
      */

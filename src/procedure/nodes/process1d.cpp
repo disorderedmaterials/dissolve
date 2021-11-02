@@ -67,6 +67,9 @@ const Data1D &Process1DProcedureNode::processedData() const
     return (*processedData_);
 }
 
+// Return export file and format for processed data
+Data1DExportFileFormat &Process1DProcedureNode::exportFileAndFormat() { return exportFileAndFormat_; }
+
 // Return value label
 std::string Process1DProcedureNode::valueLabel() const { return labelValue_; }
 

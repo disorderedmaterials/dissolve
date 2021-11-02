@@ -11,7 +11,6 @@
 // Forward Declarations
 class Process1DProcedureNode;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Sum1D
 class Sum1DProcedureNode : public ProcedureNode
@@ -43,6 +42,10 @@ class Sum1DProcedureNode : public ProcedureNode
     public:
     // Return calculated sum specified
     SampledDouble sum(int index) const;
+    // Return reference to specified range for calculation
+    Range &range(int n);
+    // Return reference to range enabled flag
+    bool &rangeEnabled(int n);
     // Return whether range B is enabled (from keyword data)
     bool isRangeBEnabled() const;
     // Return whether range C is enabled (from keyword data)

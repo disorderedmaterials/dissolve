@@ -26,6 +26,17 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedure
 }
 
 /*
+ * Data
+ */
+
+// Return axis specified
+OrientedSite::SiteAxis &CalculateAxisAngleProcedureNode::axis(int n)
+{
+    assert(n >= 0 && n < 2);
+    return axes_[n];
+}
+
+/*
  * Observable Target
  */
 

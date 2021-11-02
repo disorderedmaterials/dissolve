@@ -259,12 +259,12 @@ void CalculateAngleModule::initialise()
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle axis", angleRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
-                   "Add site(s) which represent 'A' in the interaction A-B-C");
-    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
-                   "Add site(s) which represent 'B' in the interaction A-B-C");
-    keywords_.link("Control", selectC_->keywords().find("Site"), "SiteC",
-                   "Add site(s) which represent 'C' in the interaction A-B-C");
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Add site(s) which represent 'A' in the interaction A-B-C",
+                                            selectA_->speciesSites(), selectA_->axesRequired());
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Add site(s) which represent 'B' in the interaction A-B-C",
+                                            selectB_->speciesSites(), selectB_->axesRequired());
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteC", "Add site(s) which represent 'C' in the interaction A-B-C",
+                                            selectC_->speciesSites(), selectC_->axesRequired());
     keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeAB",
                                "Whether to exclude correlations between A and B sites on the same molecule",
                                excludeSameMoleculeAB_);
@@ -276,14 +276,19 @@ void CalculateAngleModule::initialise()
                                excludeSameSiteAC_);
 
     // Export
-    keywords_.link("Export", processAB_->keywords().find("Export"), "ExportAB",
-                   "File format and file name under which to save calculated A-B RDF data");
-    keywords_.link("Export", processBC_->keywords().find("Export"), "ExportBC",
-                   "File format and file name under which to save calculated B-C RDF data");
-    keywords_.link("Export", processAngle_->keywords().find("Export"), "ExportAngle",
-                   "File format and file name under which to save calculated A-B-C angle histogram");
-    keywords_.link("Export", processDAngleAB_->keywords().find("Export"), "ExportDAngleAB",
-                   "File format and file name under which to save calculated (A-B)-C distance-angle map");
-    keywords_.link("Export", processDAngleBC_->keywords().find("Export"), "ExportDAngleBC",
-                   "File format and file name under which to save calculated A-(B-C) distance-angle map");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportAB",
+                                        "File format and file name under which to save calculated A-B RDF data",
+                                        processAB_->exportFileAndFormat(), "EndExportAB");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportBC",
+                                        "File format and file name under which to save calculated B-C RDF data",
+                                        processBC_->exportFileAndFormat(), "EndExportBC");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportAngle",
+                                        "File format and file name under which to save calculated A-B-C angle histogram",
+                                        processAngle_->exportFileAndFormat(), "EndExportAngle");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngleAB",
+                                        "File format and file name under which to save calculated (A-B)-C distance-angle map",
+                                        processDAngleAB_->exportFileAndFormat(), "EndExportDAngleAB");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngleBC",
+                                        "File format and file name under which to save calculated A-(B-C) distance-angle map",
+                                        processDAngleBC_->exportFileAndFormat(), "EndExportDAngleBC");
 }

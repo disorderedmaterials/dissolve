@@ -79,6 +79,16 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 }
 
 /*
+ * Selection Targets
+ */
+
+// Return vector of sites to select
+std::vector<const SpeciesSite *> &SelectProcedureNode::speciesSites() { return speciesSites_; }
+
+// Return whether sites must have a defined orientation
+bool SelectProcedureNode::axesRequired() { return axesRequired_; }
+
+/*
  * Selection Control
  */
 

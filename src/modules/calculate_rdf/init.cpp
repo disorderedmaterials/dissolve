@@ -93,14 +93,16 @@ void CalculateRDFModule::initialise()
     // Control
     keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
-    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
-                   "Set the site(s) 'A' which are to represent the origin of the RDF");
-    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
-                   "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated");
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA",
+                                            "Set the site(s) 'A' which are to represent the origin of the RDF",
+                                            selectA_->speciesSites(), selectA_->axesRequired());
+    keywords_.add<SpeciesSiteVectorKeyword>(
+        "Control", "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+        selectB_->speciesSites(), selectB_->axesRequired());
     keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
                                "Whether to exclude correlations between sites on the same molecule", excludeSameMolecule_);
 
     // Export
-    keywords_.link("Export", processDistance_->keywords().find("Export"), "Export",
-                   "File format and file name under which to save calculated RDF data");
+    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save calculated RDF data",
+                                        processDistance_->exportFileAndFormat(), "EndExport");
 }

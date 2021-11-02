@@ -49,6 +49,8 @@ class Process3DProcedureNode : public ProcedureNode
     public:
     // Return processed data
     const Data3D &processedData() const;
+    // Return export file and format for processed data
+    Data3DExportFileFormat &exportFileAndFormat();
     // Return value label
     std::string valueLabel() const;
     // Return x axis label
