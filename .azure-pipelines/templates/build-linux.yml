@@ -6,7 +6,7 @@ parameters:
   - name: docker
     default: "docker-gui"
   - name: nix_version
-    default: 2.3.16
+    default: 2.4
 
 steps:
   - bash: |
@@ -14,20 +14,14 @@ steps:
       # -- General
       sudo apt-get update -q
       sudo apt-get install curl gpg jq
-      curl -o install-nix${{ parameters.nix_version }} https://releases.nixos.org/nix/nix-2.3.16/install
-      curl -o install-nix${{ parameters.nix_version }}.asc https://releases.nixos.org/nix/nix-2.3.16/install.asc
+      curl -o install-nix${{ parameters.nix_version }} https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install
+      curl -o install-nix${{ parameters.nix_version }}.asc https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install.asc
       gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
       gpg2 --verify ./install-nix${{ parameters.nix_version }}.asc
       sh ./install-nix${{ parameters.nix_version }}
-    displayName: 'Install nix'
-  - bash: |
-      set -ex
-      # -- General
-      source ~/.nix-profile/etc/profile.d/nix.sh
       mkdir -p ~/.config/nix/
-      nix-env -iA nixpkgs.nixUnstable
       echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-    displayName: 'Install Flake Support'
+    displayName: 'Install nix'
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
