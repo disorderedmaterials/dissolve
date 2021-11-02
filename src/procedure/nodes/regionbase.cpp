@@ -38,7 +38,7 @@ const Region RegionProcedureNodeBase::generateRegion(const Configuration *cfg) c
 {
     Region newRegion;
     newRegion.generate(cfg, voxelSize_,
-                       [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) == !invert_; });
+                       [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) != invert_; });
     return newRegion;
 }
 
@@ -50,7 +50,6 @@ const Region RegionProcedureNodeBase::generateRegion(const Configuration *cfg) c
 bool RegionProcedureNodeBase::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-    auto validState = !keywords_.asBool("Invert");
     return region_.generate(cfg, voxelSize_,
-                            [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) == validState; });
+                            [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) != invert_; });
 }

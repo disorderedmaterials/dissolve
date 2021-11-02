@@ -9,6 +9,7 @@
 #include "classes/xrayweights.h"
 #include "data/isotopes.h"
 #include "io/export/data1d.h"
+#include "keywords/module.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -35,12 +36,16 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     for (auto *module : targets_)
     {
         // Retrieve source SQ module, and then the related RDF module
-        const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs");
+        auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<SQModule>>("SourceSQs");
+        const SQModule *sqModule = nullptr;
+        if (optSQModule)
+            sqModule = optSQModule.value();
         if (!sqModule)
             return Messenger::error(
                 "Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
                 module->uniqueName());
-        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs");
+
+        auto *rdfModule = sqModule->sourceRDF();
         if (!rdfModule)
             return Messenger::error("Target '{}'s S(Q) module doesn't reference an RDFModule, it can't be used as a target "
                                     "for the EPSR module.",
@@ -94,12 +99,6 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     std::string testDataName;
-
-    /*
-     * Get Keyword Options
-     */
-    const auto ereq = keywords_.asDouble("EReq");
-    auto expansionFunction_ = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
 
     // EPSR constants
     const auto mcoeff = 200;
@@ -200,7 +199,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
-        const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs");
+        auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<SQModule>>("SourceSQs");
+        const SQModule *sqModule = nullptr;
+        if (optSQModule)
+            sqModule = optSQModule.value();
         if (!sqModule)
             return Messenger::error(
                 "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
@@ -341,7 +343,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
-            auto normType = module->keywords().enumeration<StructureFactors::NormalisationType>("Normalisation");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("Normalisation");
             if (normType == StructureFactors::AverageOfSquaresNormalisation)
                 refMinusIntra *= weights.boundCoherentAverageOfSquares();
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
@@ -358,7 +360,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to
             // something else, we correct it before adding.
             auto normalisedRef = originalReferenceData;
-            auto normType = module->keywords().enumeration<StructureFactors::NormalisationType>("Normalisation");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("Normalisation");
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 // Remove square of average normalisation, and apply average of squares
@@ -649,7 +651,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto pressfac = 1.0;
         auto erequnit = 0.0, ereqstep = 0.0;
 
-        if (fabs(ereq) == 0.0)
+        if (fabs(eReq_) == 0.0)
         {
             pressfac = 0.0;
             energabs = 0.0;
@@ -660,12 +662,12 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 pressfac = fabs(erequnit) / fabs(energabs);
             else
             {
-                pressfac = fabs(ereq) / fabs(energabs);
+                pressfac = fabs(eReq_) / fabs(energabs);
                 if ((pressfac > 1.0) && (ereqstep == 0.0))
                     pressfac = 1.0;
             }
         }
-        Messenger::print("  generate_ep>  {}  {}  {}\n", ereq, energabs, pressfac);
+        Messenger::print("  generate_ep>  {}  {}  {}\n", eReq_, energabs, pressfac);
 
         // Scale coefficients
         for (auto &n : coefficients)

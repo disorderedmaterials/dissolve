@@ -34,9 +34,9 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget *parent, KeywordBase *k
         }
 
         // Set current values
-        ui_.Spin1->setValue(keyword_->asVec3Double().x);
-        ui_.Spin2->setValue(keyword_->asVec3Double().y);
-        ui_.Spin3->setValue(keyword_->asVec3Double().z);
+        ui_.Spin1->setValue(keyword_->data().x);
+        ui_.Spin2->setValue(keyword_->data().y);
+        ui_.Spin3->setValue(keyword_->data().z);
     }
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
@@ -105,7 +105,7 @@ void Vec3DoubleKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    const auto v = keyword_->asVec3Double();
+    const auto v = keyword_->data();
 
     ui_.Spin1->setValue(v.x);
     ui_.Spin2->setValue(v.y);

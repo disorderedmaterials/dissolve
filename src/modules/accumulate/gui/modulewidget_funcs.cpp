@@ -18,8 +18,8 @@ AccumulateModuleWidget::AccumulateModuleWidget(QWidget *parent, const GenericLis
 
     // Set up S(Q) graph
     graph_ = ui_.PlotWidget->dataViewer();
-    auto hasSQ =
-        module_->keywords().enumeration<AccumulateModule::TargetPartialSet>("Data") == AccumulateModule::TargetPartialSet::SQ;
+    auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
+                 AccumulateModule::TargetPartialSet::SQ;
 
     graph_->view().setViewType(View::FlatXYView);
     graph_->view().axes().setTitle(0, hasSQ ? "\\it{Q}, \\sym{angstrom}\\sup{-1}" : "\\it{r}, \\sym{angstrom}");
@@ -82,8 +82,8 @@ void AccumulateModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
     refreshing_ = true;
 
     // Set button texts
-    auto hasSQ =
-        module_->keywords().enumeration<AccumulateModule::TargetPartialSet>("Data") == AccumulateModule::TargetPartialSet::SQ;
+    auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
+                 AccumulateModule::TargetPartialSet::SQ;
     ui_.TotalButton->setText(hasSQ ? "Total F(Q)" : "Total G(r)");
     ui_.PartialsButton->setText(hasSQ ? "Partial S(Q)" : "Partial g(r)");
 
@@ -121,8 +121,8 @@ void AccumulateModuleWidget::on_TotalButton_clicked(bool checked)
     if (!checked)
         return;
 
-    auto hasSQ =
-        module_->keywords().enumeration<AccumulateModule::TargetPartialSet>("Data") == AccumulateModule::TargetPartialSet::SQ;
+    auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
+                 AccumulateModule::TargetPartialSet::SQ;
 
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
     graph_->view().axes().setTitle(0, hasSQ ? "\\it{Q}, \\sym{angstrom}\\sup{-1}" : "\\it{r}, \\sym{angstrom}");
@@ -136,8 +136,8 @@ void AccumulateModuleWidget::on_PartialsButton_clicked(bool checked)
     if (!checked)
         return;
 
-    auto hasSQ =
-        module_->keywords().enumeration<AccumulateModule::TargetPartialSet>("Data") == AccumulateModule::TargetPartialSet::SQ;
+    auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
+                 AccumulateModule::TargetPartialSet::SQ;
 
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     graph_->view().axes().setTitle(0, hasSQ ? "\\it{Q}, \\sym{angstrom}\\sup{-1}" : "\\it{r}, \\sym{angstrom}");

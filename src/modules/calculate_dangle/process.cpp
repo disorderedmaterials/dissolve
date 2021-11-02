@@ -19,14 +19,14 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    collectDistance_->setKeyword<Vec3<double>>("RangeX", distanceRange_);
-    collectAngle_->setKeyword<Vec3<double>>("RangeX", angleRange_);
-    collectDAngle_->setKeyword<Vec3<double>>("RangeX", distanceRange_);
-    collectDAngle_->setKeyword<Vec3<double>>("RangeY", angleRange_);
+    collectDistance_->keywords().set("RangeX", distanceRange_);
+    collectAngle_->keywords().set("RangeX", angleRange_);
+    collectDAngle_->keywords().set("RangeX", distanceRange_);
+    collectDAngle_->keywords().set("RangeY", angleRange_);
     if (excludeSameMolecule_)
-        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+        selectC_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectA_});
     else
-        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
+        selectC_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurations_.front();

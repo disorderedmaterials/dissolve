@@ -21,7 +21,8 @@ bool BoolKeyword::setData(bool value)
 }
 
 // Return data
-double BoolKeyword::data() const { return data_; }
+bool &BoolKeyword::data() { return data_; }
+const bool &BoolKeyword::data() const { return data_; }
 
 /*
  * Arguments

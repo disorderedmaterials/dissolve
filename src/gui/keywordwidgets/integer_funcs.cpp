@@ -18,7 +18,7 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword
                  keyword_->validationMax() ? keyword_->validationMax().value() : 1e6);
 
         // Set current value
-        setValue(keyword_->asInt());
+        setValue(keyword_->data());
     }
 
     // Connect the
@@ -53,7 +53,7 @@ void IntegerKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setValue(keyword_->asInt());
+    setValue(keyword_->data());
 
     refreshing_ = false;
 }

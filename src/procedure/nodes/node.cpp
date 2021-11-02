@@ -112,6 +112,7 @@ std::string_view ProcedureNode::niceName() const { return niceName_; }
  */
 
 // Return keywords for this node
+KeywordList &ProcedureNode::keywords() { return keywords_; }
 const KeywordList &ProcedureNode::keywords() const { return keywords_; }
 
 /*

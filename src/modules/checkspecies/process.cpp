@@ -16,10 +16,9 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Retrieve necessary keyword values
     if (!targetSpecies_)
         return Messenger::error("No target species provided.\n");
-    const auto tolerance = keywords_.asDouble("Tolerance");
 
     Messenger::print("CheckSpecies: Target species is '{}'.\n", targetSpecies_->name());
-    Messenger::print("CheckSpecies: Tolerance for parameter checks is {:.5e}.", tolerance);
+    Messenger::print("CheckSpecies: Tolerance for parameter checks is {:.5e}.", tolerance_);
 
     // Check atom types
     auto nAtomTypesFailed = 0;
@@ -63,16 +62,15 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("\nChecking total charge...\n");
 
         auto q = targetSpecies_->totalCharge(dissolve.pairPotentialsIncludeCoulomb());
-        auto qDiff = fabs(q - keywords_.asDouble("TotalCharge"));
-        if (qDiff > keywords_.asDouble("ChargeTolerance"))
+        auto qDiff = fabs(q - totalCharge_);
+        if (qDiff > chargeTolerance_)
         {
             ++nChargesFailed;
-            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q,
-                             keywords_.asDouble("TotalCharge"));
+            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q, totalCharge_);
         }
         else
             Messenger::print("Total charge on species is {} e, which is within the tolerance ({:12.6e} e).\n", q,
-                             keywords_.asDouble("ChargeTolerance"));
+                             chargeTolerance_);
     }
 
     // Check bond parameters
@@ -85,7 +83,7 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 auto &indices = std::get<0>(bond);
                 return acc + parametersDiffer<const SpeciesBond>("bond",
                                                                  targetSpecies_->getBond(indices.at(0) - 1, indices.at(1) - 1),
-                                                                 indices, std::get<1>(bond), tolerance);
+                                                                 indices, std::get<1>(bond), tolerance_);
             });
     }
 
@@ -99,7 +97,7 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 auto &indices = std::get<0>(angle);
                 return acc + parametersDiffer<SpeciesAngle>(
                                  "angle", targetSpecies_->getAngle(indices.at(0) - 1, indices.at(1) - 1, indices.at(2) - 1),
-                                 indices, std::get<1>(angle), tolerance);
+                                 indices, std::get<1>(angle), tolerance_);
             });
     }
 
@@ -114,7 +112,7 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 return acc + parametersDiffer<SpeciesTorsion>("torsion",
                                                               targetSpecies_->getTorsion(indices.at(0) - 1, indices.at(1) - 1,
                                                                                          indices.at(2) - 1, indices.at(3) - 1),
-                                                              indices, std::get<1>(torsion), tolerance);
+                                                              indices, std::get<1>(torsion), tolerance_);
             });
     }
 
@@ -130,7 +128,7 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                        parametersDiffer<SpeciesImproper>("improper",
                                                          targetSpecies_->getImproper(indices.at(0) - 1, indices.at(1) - 1,
                                                                                      indices.at(2) - 1, indices.at(3) - 1),
-                                                         indices, std::get<1>(improper), tolerance);
+                                                         indices, std::get<1>(improper), tolerance_);
             });
     }
 

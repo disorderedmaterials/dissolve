@@ -76,13 +76,6 @@ class KeywordBase : public ListItem<KeywordBase>
     static std::string_view keywordDataType(KeywordDataType kdt);
 
     /*
-     * Base Pointer Return
-     */
-    public:
-    // Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-    virtual KeywordBase *base();
-
-    /*
      * Keyword Description
      */
     public:
@@ -157,23 +150,6 @@ class KeywordBase : public ListItem<KeywordBase>
         Failed = 0,
         Success = 1
     };
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as bool)
-    virtual bool asBool();
-    // Return value (as int)
-    virtual int asInt();
-    // Return value (as double)
-    virtual double asDouble();
-    // Return value (as string)
-    virtual std::string asString();
-    // Return value as Vec3<int>
-    virtual Vec3<int> asVec3Int();
-    // Return value as Vec3<double>
-    virtual Vec3<double> asVec3Double();
 
     /*
      * Object Management

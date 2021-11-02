@@ -56,6 +56,9 @@ const Data1D &Collect1DProcedureNode::accumulatedData() const
     return histogram_->get().accumulatedData();
 }
 
+// Set range and binwidth of the histogram for QuantityX
+void Collect1DProcedureNode::setRangeX(Vec3<double> range) { rangeX_ = range; }
+
 /*
  * Branches
  */

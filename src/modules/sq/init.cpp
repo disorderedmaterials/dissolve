@@ -37,3 +37,6 @@ void SQModule::initialise()
     // Export
     keywords_.add<BoolKeyword>("Export", "Save", "Whether to save partials to disk after calculation", save_);
 }
+
+// Return source module for main calculation
+const RDFModule *SQModule::sourceRDF() const { return sourceRDF_; }

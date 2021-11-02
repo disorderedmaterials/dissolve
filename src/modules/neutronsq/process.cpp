@@ -30,10 +30,9 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get dependent modules
-        const SQModule *sourceSQ_ = keywords_.retrieve<const SQModule *>("SourceSQs");
         if (!sourceSQ_)
             return Messenger::error("A source SQ module must be provided.\n");
-        const RDFModule *rdfModule = sourceSQ_->keywords().retrieve<const RDFModule *>("SourceRDFs");
+        auto *rdfModule = sourceSQ_->sourceRDF();
         if (!rdfModule)
             return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
@@ -62,12 +61,11 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
         auto ftQMin = keywords_.hasBeenSet("ReferenceFTQMin") ? referenceFTQMin_ : 0.0;
         auto ftQMax = keywords_.hasBeenSet("ReferenceFTQMax") ? referenceFTQMax_ : referenceData.xAxis().back() + 1.0;
-        const auto wf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
-        if (wf == WindowFunction::Form::None)
+        if (referenceWindowFunction_ == WindowFunction::Form::None)
             Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
         else
             Messenger::print("Window function to be applied in Fourier transform of reference data is {}.",
-                             WindowFunction::forms().keyword(wf));
+                             WindowFunction::forms().keyword(referenceWindowFunction_));
 
         // Store the reference data in processing
         referenceData.setTag(uniqueName());
@@ -84,7 +82,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
-                        WindowFunction(wf));
+                        WindowFunction(referenceWindowFunction_));
 
         // Save data?
         if (saveReference_)
@@ -119,18 +117,17 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     if (!sourceSQ_)
         return Messenger::error("A source SQ module must be provided.\n");
-    const auto *rdfModule = sourceSQ_->keywords().retrieve<const RDFModule *>("SourceRDFs");
+    const auto *rdfModule = sourceSQ_->sourceRDF();
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->uniqueName());
-    const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
-    if (rwf == WindowFunction::Form::None)
+    if (referenceWindowFunction_ == WindowFunction::Form::None)
         Messenger::print("No window function will be applied when calculating representative g(r) from S(Q).");
     else
         Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is {}.",
-                         WindowFunction::forms().keyword(rwf));
+                         WindowFunction::forms().keyword(referenceWindowFunction_));
     if (normalisation_ == StructureFactors::NoNormalisation)
         Messenger::print("NeutronSQ: No normalisation will be applied to total F(Q).\n");
     else if (normalisation_ == StructureFactors::AverageOfSquaresNormalisation)
@@ -206,7 +203,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested
     if (saveRepresentativeGR_)

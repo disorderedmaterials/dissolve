@@ -80,3 +80,6 @@ void EPSRModule::initialise()
     keywords_.add<BoolKeyword>("Export", "SaveSimulatedFR",
                                "Whether to save simulated F(r) (Fourier transform of calculated F(Q))", saveSimulatedFR_);
 }
+
+// Return list of target Modules / data for refinement
+const std::vector<Module *> &EPSRModule::targets() const { return targets_; }

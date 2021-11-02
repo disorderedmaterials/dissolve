@@ -86,7 +86,7 @@ void CalculateAxisAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = new SelectProcedureNode({}, true);
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+    selectB_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectA_});
     SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -114,8 +114,8 @@ void CalculateAxisAngleModule::initialise()
     // Process1D: 'RDF(AB)'
     processDistance_ = new Process1DProcedureNode(collectDistance_);
     processDistance_->setName("RDF(AB)");
-    processDistance_->setKeyword<std::string>("LabelValue", "g(r)");
-    processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processDistance_->keywords().set("LabelValue", std::string("g(r)"));
+    processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
     rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_}));
@@ -126,8 +126,8 @@ void CalculateAxisAngleModule::initialise()
     // Process1D: 'ANGLE(axis)'
     processAngle_ = new Process1DProcedureNode(collectAngle_);
     processAngle_->setName("AxisAngle(AB)");
-    processAngle_->setKeyword<std::string>("LabelValue", "Normalised Frequency");
-    processAngle_->setKeyword<std::string>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
+    processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
+    processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     SequenceProcedureNode *angleNormalisation = processAngle_->addNormalisationBranch();
     angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
     angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
@@ -136,9 +136,9 @@ void CalculateAxisAngleModule::initialise()
     // Process2D: 'DAngle'
     processDAngle_ = new Process2DProcedureNode(collectDAngle_);
     processDAngle_->setName("DAxisAngle");
-    processDAngle_->setKeyword<std::string>("LabelValue", "g(r)");
-    processDAngle_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
-    processDAngle_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+    processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
+    processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
+    processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     SequenceProcedureNode *dAngleNormalisation = processDAngle_->addNormalisationBranch();
     dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
     dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));

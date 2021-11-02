@@ -42,6 +42,8 @@ class Collect1DProcedureNode : public ProcedureNode
     Data1D data() const;
     // Return accumulated data
     const Data1D &accumulatedData() const;
+    // Set range and binwidth of the histogram for QuantityX
+    void setRangeX(Vec3<double> range);
 
     /*
      * Branches

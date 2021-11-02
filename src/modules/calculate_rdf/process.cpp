@@ -19,11 +19,11 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    collectDistance_->setKeyword<Vec3<double>>("RangeX", distanceRange_);
+    collectDistance_->setRangeX(distanceRange_);
     if (excludeSameMolecule_)
-        selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+        selectB_->setSameMoleculeExclusions({selectA_});
     else
-        selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
+        selectB_->setSameMoleculeExclusions({});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurations_.front();

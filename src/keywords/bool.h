@@ -23,7 +23,8 @@ class BoolKeyword : public KeywordBase
     // Set data
     bool setData(bool value);
     // Return data
-    double data() const;
+    bool &data();
+    const bool &data() const;
 
     /*
      * Arguments

@@ -73,6 +73,10 @@ class SQModule : public Module
     // Perform any necessary initialisation for the Module
     void initialise() override;
 
+    public:
+    // Return source module for main calculation
+    const RDFModule *sourceRDF() const;
+
     /*
      * Processing
      */

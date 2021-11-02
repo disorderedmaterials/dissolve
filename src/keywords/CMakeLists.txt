@@ -15,10 +15,8 @@ add_library(
   fileandformat.cpp
   function1d.cpp
   geometrylist.cpp
-  group.cpp
   integer.cpp
   isotopologueset.cpp
-  linkto.cpp
   list.cpp
   modulevector.cpp
   nodebranch.cpp
@@ -56,10 +54,8 @@ add_library(
   fileandformat.h
   function1d.h
   geometrylist.h
-  group.h
   integer.h
   isotopologueset.h
-  linkto.h
   list.h
   module.h
   modulevector.h

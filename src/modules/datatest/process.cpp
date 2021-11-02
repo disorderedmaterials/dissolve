@@ -40,7 +40,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Loop over internal one-dimensional data tests
-    for (auto &[tag1, tag2] : keywords_.retrieve<StringPairVectorKeywordData>("InternalData1D"))
+    for (auto &[tag1, tag2] : internal1DData_)
     {
         // Locate the target reference datasets
         auto optData1 = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag1);

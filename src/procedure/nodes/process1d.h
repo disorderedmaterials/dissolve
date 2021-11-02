@@ -36,7 +36,7 @@ class Process1DProcedureNode : public ProcedureNode
     // Export file and format for processed data
     Data1DExportFileFormat exportFileAndFormat_;
     // Label for the value axis
-    std::string labelValue_{"Y"};
+    std::string labelValue_;
     // Label for the x axis
     std::string labelX_{"X"};
     // Pointer to processed data (stored in processing data list)

@@ -119,6 +119,10 @@ class EPSRModule : public Module
     // Perform any necessary initialisation for the Module
     void initialise() override;
 
+    public:
+    // Return list of target Modules / data for refinement
+    const std::vector<Module *> &targets() const;
+
     /*
      * Processing
      */
@@ -144,8 +148,6 @@ class EPSRModule : public Module
                        OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ = std::nullopt);
 
     public:
-    // Return list of target Modules / data for refinement
-    const std::vector<Module *> &targets() const;
     // Create / retrieve arrays for storage of empirical potential coefficients
     Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
     // Generate empirical potentials from current coefficients

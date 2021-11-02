@@ -64,6 +64,8 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Return reference to vector of data
     std::vector<const N *> &data() { return data_; }
     const std::vector<const N *> &data() const { return data_; }
+    // Set data
+    void setData(std::vector<const N *> data) { data_ = std::move(data); }
     // Add node to vector
     bool addNode(const ProcedureNode *node) override
     {

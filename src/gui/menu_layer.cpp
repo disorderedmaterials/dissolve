@@ -137,7 +137,7 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
     EPSRModule *epsr = dynamic_cast<EPSRModule *>(dissolve_.createModuleInstance("EPSR", newLayer));
 
     // Set any suitable module targets
-    epsr->keywords().set<std::vector<Module *>>("Target", dissolve_.findModuleInstances("NeutronSQ"));
+    epsr->keywords().set("Target", dissolve_.findModuleInstances("NeutronSQ"));
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -167,17 +167,17 @@ void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
 
 void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked)
 {
-    ModuleLayer *newLayer = dissolve_.addProcessingLayer();
+    auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Unweighted S(Q)"));
     newLayer->setFrequency(5);
 
     // Add the RDF module
-    RDFModule *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
+    auto *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
     rdfModule->addTargetConfigurations(dissolve_.configurations());
 
     // Add a plain structure factor module
-    Module *module = dissolve_.createModuleInstance("SQ", newLayer);
-    module->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
+    auto *module = dissolve_.createModuleInstance("SQ", newLayer);
+    module->keywords().set<const Module *>("SourceRDFs", rdfModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());

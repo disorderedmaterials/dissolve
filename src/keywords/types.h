@@ -27,7 +27,6 @@
 #include "keywords/function1d.h"
 #include "keywords/geometrylist.h"
 #include "keywords/isotopologueset.h"
-#include "keywords/linkto.h"
 #include "keywords/module.h"
 #include "keywords/modulevector.h"
 #include "keywords/node.h"

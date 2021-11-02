@@ -65,10 +65,10 @@ bool &Sum1DProcedureNode::rangeEnabled(int n)
 }
 
 // Return whether range B is enabled (from keyword data)
-bool Sum1DProcedureNode::isRangeBEnabled() const { return keywords_.asBool("RangeBEnabled"); }
+bool Sum1DProcedureNode::isRangeBEnabled() const { return rangeEnabled_[1]; }
 
 // Return whether range C is enabled (from keyword data)
-bool Sum1DProcedureNode::isRangeCEnabled() const { return keywords_.asBool("RangeCEnabled"); }
+bool Sum1DProcedureNode::isRangeCEnabled() const { return rangeEnabled_[2]; }
 
 /*
  * Execute

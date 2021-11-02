@@ -22,16 +22,16 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     if (!sourceRDF_)
         return Messenger::error("A source RDF module must be provided.\n");
-    const auto wf = keywords_.enumeration<WindowFunction::Form>("WindowFunction");
 
     // Print argument/parameter summary
     Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin_,
                      qMax_, qDelta_);
     Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", sourceRDF_->uniqueName());
-    if (wf == WindowFunction::Form::None)
+    if (windowFunction_ == WindowFunction::Form::None)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
-        Messenger::print("SQ: Window function to be applied in Fourier transforms is {}.", WindowFunction::forms().keyword(wf));
+        Messenger::print("SQ: Window function to be applied in Fourier transforms is {}.",
+                         WindowFunction::forms().keyword(windowFunction_));
     if (averagingLength_ <= 1)
         Messenger::print("SQ: No averaging of partials will be performed.\n");
     else
@@ -85,8 +85,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, rho, WindowFunction(wf),
-                               qBroadening_))
+    if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, rho,
+                               WindowFunction(windowFunction_), qBroadening_))
         return false;
 
     // Include Bragg scattering?

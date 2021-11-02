@@ -20,7 +20,7 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, 
             setMaximumLimit(keyword_->validationMax().value());
 
         // Set current value
-        setValue(keyword_->asDouble());
+        setValue(keyword_->data());
     }
 
     // Connect the valueChanged signal to our own slot

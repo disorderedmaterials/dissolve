@@ -4,224 +4,130 @@
 #include "keywords/list.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "keywords/linkto.h"
+#include "keywords/types.h"
+
+/*
+ * Keyword Setter
+ */
+
+KeywordTypeMap::KeywordTypeMap()
+{
+    // PODs
+    registerDirectMapping<bool, BoolKeyword>();
+    // -- Double and int keywords must use the setData() function as they have validation
+    registerDirectMapping<int, DoubleKeyword>(
+        [](DoubleKeyword *keyword, const double value) { return keyword->setData(value); });
+    registerDirectMapping<int, IntegerKeyword>(
+        [](IntegerKeyword *keyword, const int value) { return keyword->setData(value); });
+
+    // Custom classes
+    registerDirectMapping<std::vector<const SelectProcedureNode *>, NodeVectorKeyword<SelectProcedureNode>>();
+    registerDirectMapping<SelectProcedureNode *, NodeKeyword<SelectProcedureNode>>();
+    registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
+    registerBaseMapping<const Module *, ModuleKeywordBase>();
+    registerDirectMapping<std::string, StringKeyword>();
+    registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>();
+}
+
+// Set keyword data
+void KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
+{
+    // Find a suitable setter and call it
+    auto it = directMapSetter_.find(data.type());
+    if (it == directMapSetter_.end())
+        throw(std::runtime_error(fmt::format(
+            "Item of type '{}' cannot be set as no suitable type mapping has been registered.\n", data.type().name())));
+
+    (it->second)(keyword, data);
+}
 
 /*
  * Keyword List
  */
 
-bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_view description, int optionMask)
-{
-    // Take ownership of the passed object, and set its basic information
-    keywords_.push_back(object);
-    object->set(name, description, optionMask);
-
-    return true;
-}
-
-// Add keyword to named group
-bool KeywordList::add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-                      int optionMask)
-{
-    auto &group = addGroup(groupName);
-    return group.add(object, name, description, optionMask);
-}
-
-// Add link to specified keyword that exists elsewhere
-bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-                       int optionMask)
-{
-    if (!object)
-        throw(std::runtime_error(
-            fmt::format("Invalid KeywordBase* passed to KeywordList::link() (linked keyword name = '{}').\n", name)));
-
-    return add(groupName, new LinkToKeyword(object), name, description, optionMask);
-}
-
 // Find named keyword
-KeywordBase *KeywordList::find(std::string_view name) const
+OptionalReferenceWrapper<const KeywordInfo> KeywordList::find(std::string_view name) const
 {
-    auto it = std::find_if(keywords_.begin(), keywords_.end(),
-                           [name](const auto *kwd) { return DissolveSys::sameString(name, kwd->name()); });
-    if (it != keywords_.end())
-        return (*it)->base();
-
-    return nullptr;
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        return {};
+    return it->second;
 }
-
-// Cut keyword from list
-void KeywordList::cut(KeywordBase *kwd)
-{
-    auto it = std::find(keywords_.begin(), keywords_.end(), kwd);
-    if (it != keywords_.end())
-        keywords_.erase(it);
-}
-
-// Return first keyword in list
-const std::vector<KeywordBase *> &KeywordList::keywords() const { return keywords_; }
 
 // Return keywords
-const std::map<std::string_view, KeywordInfo> KeywordList::keywordsNEW() const { return keywordsNEW_; }
+const std::map<std::string_view, KeywordInfo> KeywordList::keywords() const { return keywords_; }
 
 // Return keyword group mappings
 const std::map<std::string_view, std::vector<std::string_view>> KeywordList::displayGroups() const { return displayGroups_; };
-
-/*
- * Groups
- */
-
-// Create and/or return named keyword group
-KeywordGroup &KeywordList::addGroup(std::string_view name)
-{
-    auto it = std::find_if(groups_.begin(), groups_.end(),
-                           [name](const auto &group) { return DissolveSys::sameString(name, group.name()); });
-    if (it != groups_.end())
-        return *it;
-
-    auto &group = groups_.emplace_back(*this);
-    group.setName(name);
-
-    return group;
-}
-
-// Return defined groups
-const std::vector<KeywordGroup> &KeywordList::groups() const { return groups_; }
-
-/*
- * Conversion
- */
-
-// Return simple keyword value (as bool)
-bool KeywordList::asBool(std::string_view name) const
-{
-    // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to return as a bool. Returning 'false'...\n", name);
-        return false;
-    }
-
-    return keyword->asBool();
-}
-
-// Return simple keyword value (as int)
-int KeywordList::asInt(std::string_view name) const
-{
-    // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to return as an int. Returning '0'...\n", name);
-        return 0;
-    }
-
-    return keyword->asInt();
-}
-
-// Return simple keyword value (as double)
-double KeywordList::asDouble(std::string_view name) const
-{
-    // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to return as a double. Returning '0.0'...\n", name);
-        return 0.0;
-    }
-
-    return keyword->asDouble();
-}
-
-// Return simple keyword value (as string)
-std::string KeywordList::asString(std::string_view name) const
-{
-    // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to return as a string. Returning 'NULL'...\n", name);
-        return "NULL";
-    }
-
-    return keyword->asString();
-}
-
-// Return simple keyword value (as Vec3<int>)
-Vec3<int> KeywordList::asVec3Int(std::string_view name) const
-{
-    // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to return as a Vec3<int>. Returning '(0,0,0)'...\n", name);
-        return Vec3<int>(0, 0, 0);
-    }
-
-    return keyword->asVec3Int();
-}
-
-// Return simple keyword value (as Vec3<double>)
-Vec3<double> KeywordList::asVec3Double(std::string_view name) const
-{
-    // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to return as a Vec3<double>. Returning '(0.0,0.0,0.0)'...\n",
-                        name);
-        return Vec3<double>(0.0, 0.0, 0.0);
-    }
-
-    return keyword->asVec3Double();
-}
 
 // Return whether the keyword has been set, and is not currently empty (if relevant)
 bool KeywordList::hasBeenSet(std::string_view name) const
 {
     // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to check whether it is set. Returning 'false'...\n", name);
-        return false;
-    }
+    auto optKeyword = find(name);
+    if (!optKeyword)
+        throw(std::runtime_error(fmt::format("No Module keyword named '{}' exists to check whether it is set.\n", name)));
 
-    return keyword->hasBeenSet();
+    return optKeyword->get().keyword->hasBeenSet();
 }
 
 // Flag that the specified keyword has been set by some external means
-void KeywordList::setAsModified(std::string_view name)
+void KeywordList::setAsModified(std::string_view name) const
 {
     // Find the named keyword
-    KeywordBase *keyword = find(name);
-    if (!keyword)
-    {
-        Messenger::warn("No Module keyword named '{}' exists to check whether it is set. Returning 'false'...\n", name);
-        return;
-    }
+    auto optKeyword = find(name);
+    if (!optKeyword)
+        throw(std::runtime_error(fmt::format("No Module keyword named '{}' exists to set its modification status.\n", name)));
 
-    keyword->setAsModified();
+    optKeyword->get().keyword->setAsModified();
+}
+
+/*
+ * Set
+ */
+
+// Return the setter instance
+const KeywordTypeMap &KeywordList::setters()
+{
+    static const KeywordTypeMap setters;
+
+    return setters;
+}
+
+// Set specified keyword with supplied data
+void KeywordList::set(std::string_view name, const std::any value)
+{
+    auto keyIt = keywords_.find(name);
+    if (keyIt == keywords_.end())
+        throw(std::runtime_error(fmt::format("No keyword named '{}' exists to set.\n", name)));
+
+    // Attempt to set the keyword
+    fmt::print("SETTING name={}\n", name);
+    setters().set(keyIt->second.keyword, value);
+    printf("*HHHH\n");
+
+    keyIt->second.keyword->setAsModified();
 }
 
 /*
  * Read / Write
  */
 
-// Try to parse node keyword in specified LineParser
-KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &coreData)
+// Try to parse a single keyword through the specified LineParser
+KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &coreData, int startArg)
 {
     // Do we recognise the first item (the 'keyword')?
-    KeywordBase *keyword = find(parser.argsv(0));
-    if (!keyword)
+    auto it = keywords_.find(parser.argsv(startArg));
+    if (it == keywords_.end())
         return KeywordBase::Unrecognised;
+    auto *keyword = it->second.keyword;
 
     // We recognised the keyword - check the number of arguments we have against the min / max for the keyword
-    if (!keyword->validNArgs(parser.nArgs() - 1))
+    if (!keyword->validNArgs(parser.nArgs() - startArg - 1))
         return KeywordBase::Failed;
 
     // All OK, so parse the keyword
-    if (!keyword->read(parser, 1, coreData))
+    if (!keyword->read(parser, startArg + 1, coreData))
     {
         Messenger::error("Failed to parse arguments for keyword '{}'.\n", keyword->name());
         return KeywordBase::Failed;
@@ -233,55 +139,14 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &
 // Write all keywords to specified LineParser
 bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
-    for (auto *keyword : keywords_)
+    for (const auto &[name, info] : keywords_)
     {
         // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-        if (onlyIfSet && (!keyword->base()->hasBeenSet()))
+        if (onlyIfSet && (!info.keyword->hasBeenSet()))
             continue;
 
-        // Make sure we are calling the write() function of the base() keyword class, but with the parent object's
-        // name()...
-        if (!keyword->base()->write(parser, keyword->name(), prefix))
+        if (!info.keyword->write(parser, name, prefix))
             return false;
-    }
-
-    return true;
-}
-
-// Write all keywords in groups to specified LineParser
-bool KeywordList::writeGroups(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
-{
-    // Loop over keyword groups
-    auto firstGroup = true;
-    for (auto &group : groups_)
-    {
-        // Loop over keywords in group
-        auto firstWritten = true;
-        for (auto *keyword : group.keywords())
-        {
-            // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-            if (onlyIfSet && (!keyword->base()->hasBeenSet()))
-                continue;
-
-            // If this is the first keyword to be written in the group, write the group name first as a comment
-            if (firstWritten)
-            {
-                // If this is *not* the first group to be written, write a newline for formatting
-                if ((!firstGroup) && (!parser.writeLineF("\n")))
-                    return false;
-
-                if (!parser.writeLineF("{}# {}\n", prefix, group.name()))
-                    return false;
-            }
-
-            // Make sure we are calling the write() function of the base() keyword class...
-            if (!keyword->base()->write(parser, keyword->name(), prefix))
-                return false;
-
-            // Falsify flags
-            firstWritten = false;
-            firstGroup = false;
-        }
     }
 
     return true;

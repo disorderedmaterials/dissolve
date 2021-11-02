@@ -27,7 +27,7 @@ void CalculateCNModule::initialise()
     // Process1D - targets Collect1D in source RDF module
     process1D_ = new Process1DProcedureNode;
     process1D_->setName("HistogramNorm");
-    process1D_->setKeyword("CurrentDataOnly", true);
+    process1D_->keywords().set("CurrentDataOnly", true);
     SequenceProcedureNode *rdfNormalisation = process1D_->addNormalisationBranch();
     siteNormaliser_ = new OperateSitePopulationNormaliseProcedureNode;
     rdfNormalisation->addNode(siteNormaliser_);

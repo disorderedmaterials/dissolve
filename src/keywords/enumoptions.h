@@ -66,6 +66,9 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     std::vector<std::string> validKeywords_;
 
     public:
+    // Return reference to data
+    E &data() { return data_; }
+    const E &data() const { return data_; }
     // Return validation list
     const std::vector<std::string> &validationList() { return validKeywords_; }
     // Validate supplied value
@@ -119,11 +122,4 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     public:
     // Return option mask for keyword
     int optionMask() const override { return KeywordBase::optionMask(); }
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as string)
-    std::string asString() override { return optionData_.keyword(data_); }
 };

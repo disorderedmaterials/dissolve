@@ -6,7 +6,6 @@
 #include "base/messenger.h"
 #include "genericitems/list.h"
 #include "keywords/configurationvector.h"
-#include "keywords/group.h"
 #include "keywords/list.h"
 #include "math/sampleddouble.h"
 #include "templates/reflist.h"
@@ -73,9 +72,6 @@ class Module
     // Return list of recognised keywords
     KeywordList &keywords();
     const KeywordList &keywords() const;
-    // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-    KeywordBase::ParseResult parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList,
-                                          std::string_view prefix);
     // Print valid keywords
     void printValidKeywords();
 

@@ -92,6 +92,18 @@ bool SelectProcedureNode::axesRequired() { return axesRequired_; }
  * Selection Control
  */
 
+// Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
+void SelectProcedureNode::setSameMoleculeExclusions(std::vector<const SelectProcedureNode *> exclusions)
+{
+    sameMoleculeExclusions_ = std::move(exclusions);
+}
+
+// Set other sites (nodes) which will exclude one of our sites if it is the same site
+void SelectProcedureNode::setSameSiteExclusions(std::vector<const SelectProcedureNode *> exclusions)
+{
+    sameSiteExclusions_ = std::move(exclusions);
+}
+
 // Return list of Molecules currently excluded from selection
 const std::vector<std::shared_ptr<const Molecule>> &SelectProcedureNode::excludedMolecules() const
 {
@@ -113,6 +125,12 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 
     return site->molecule();
 }
+
+// Set site to use for distance check
+void SelectProcedureNode::setDistanceReferenceSite(const SelectProcedureNode *site) { distanceReferenceSite_ = site; }
+
+// Set range of distance to allow from distance reference site
+void SelectProcedureNode::setInclusiveDistanceRange(Range range) { inclusiveDistanceRange_ = range; }
 
 /*
  * Selected Sites
@@ -176,12 +194,11 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
         if (!dynamicNode->prepare(cfg, prefix, targetList))
             return false;
 
-    inclusiveDistanceRange_ = keywords_.retrieve<Range>("InclusiveRange");
     sameMoleculeExclusions_.clear();
-    for (auto *node : keywords_.retrieve<std::vector<const ProcedureNode *>>("ExcludeSameMolecule"))
+    for (auto *node : sameMoleculeExclusions_)
         sameMoleculeExclusions_.push_back(dynamic_cast<const SelectProcedureNode *>(node));
     sameSiteExclusions_.clear();
-    for (auto *node : keywords_.retrieve<std::vector<const ProcedureNode *>>("ExcludeSameSite"))
+    for (auto *node : sameSiteExclusions_)
         sameSiteExclusions_.push_back(dynamic_cast<const SelectProcedureNode *>(node));
 
     return true;

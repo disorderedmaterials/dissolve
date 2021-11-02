@@ -37,41 +37,13 @@ std::string_view Module::uniqueName() const { return uniqueName_; }
 KeywordList &Module::keywords() { return keywords_; }
 const KeywordList &Module::keywords() const { return keywords_; };
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult Module::parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList,
-                                              std::string_view prefix)
-{
-    // The LineParser currently contains a parsed line from the input file...
-
-    // Do we recognise the first item (the 'keyword')?
-    KeywordBase *keyword = keywords_.find(parser.argsv(0));
-    if (!keyword)
-        return KeywordBase::Unrecognised;
-
-    else
-    {
-        // Check the number of arguments we have against the min / max for the keyword
-        if (!keyword->validNArgs(parser.nArgs() - 1))
-            return KeywordBase::Failed;
-
-        // All OK, so parse the keyword
-        if (!keyword->read(parser, 1, dissolve->coreData()))
-        {
-            Messenger::error("Failed to parse arguments for Module keyword '{}'.\n", keyword->name());
-            return KeywordBase::Failed;
-        }
-    }
-
-    return KeywordBase::Success;
-}
-
 // Print valid keywords
 void Module::printValidKeywords()
 {
     Messenger::print("Valid keywords for '{}' Module are:\n", type());
 
-    for (auto *keyword : keywords_.keywords())
-        Messenger::print("  {:30}  {}\n", keyword->name(), keyword->description());
+    for (auto &[name, info] : keywords_.keywords())
+        Messenger::print("  {:30}  {}\n", name, info.description);
 }
 
 /*

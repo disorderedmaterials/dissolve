@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/models/isotopologueSetModel.h"
+#include "keywords/isotopologueset.h"
 #include "main/dissolve.h"
 #include "modules/neutronsq/neutronsq.h"
 #include <gtest/gtest.h>
@@ -18,7 +19,9 @@ TEST(IsotopologueSetModelTest, Basic)
     // Find the 'H5H' NeutronSQ module and grab the relevant IsotopologueSet
     auto *h5h = dynamic_cast<NeutronSQModule *>(dissolve.findModuleInstance("H5H"));
     assert(h5h);
-    auto &h5hSet = h5h->keywords().retrieve<IsotopologueSet>("Isotopologue");
+    auto optH5hSet = h5h->keywords().get<IsotopologueSet, IsotopologueSetKeyword>("Isotopologue");
+    ASSERT_TRUE(optH5hSet.has_value());
+    auto &h5hSet = optH5hSet.value();
 
     // Set up the model
     IsotopologueSetModel model;

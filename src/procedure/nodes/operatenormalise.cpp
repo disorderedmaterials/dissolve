@@ -23,13 +23,11 @@ OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
 // Operate on Data1D target
 bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the value
-    const auto value = keywords_.asDouble("Value");
-
     // Get sum of absolute values
     auto sum = absolute_ ? Integrator::absSum(*targetData1D_) : Integrator::sum(*targetData1D_);
+
     (*targetData1D_) /= sum;
-    (*targetData1D_) *= value;
+    (*targetData1D_) *= value_.asDouble();
 
     return true;
 }
@@ -37,14 +35,10 @@ bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configu
 // Operate on Data2D target
 bool OperateNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the value
-    const auto value = keywords_.asDouble("Value");
-    const bool absolute = keywords_.asBool("Absolute");
-
     // Get sum of absolute values
-    double sum = absolute ? Integrator::absSum(*targetData2D_) : Integrator::sum(*targetData2D_);
+    auto sum = absolute_ ? Integrator::absSum(*targetData2D_) : Integrator::sum(*targetData2D_);
     (*targetData2D_) /= sum;
-    (*targetData2D_) *= value;
+    (*targetData2D_) *= value_.asDouble();
 
     return true;
 }
@@ -52,14 +46,11 @@ bool OperateNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configu
 // Operate on Data3D target
 bool OperateNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the value
-    const auto value = keywords_.asDouble("Value");
-    const bool absolute = keywords_.asBool("Absolute");
-
     // Get sum of absolute values
-    double sum = absolute ? Integrator::absSum(*targetData3D_) : Integrator::sum(*targetData3D_);
+    auto sum = absolute_ ? Integrator::absSum(*targetData3D_) : Integrator::sum(*targetData3D_);
+
     (*targetData3D_) /= sum;
-    (*targetData3D_) *= value;
+    (*targetData3D_) *= value_.asDouble();
 
     return true;
 }

@@ -22,9 +22,9 @@ CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
 // Return whether voxel centred at supplied real coordinates is valid
 bool CylindricalRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
 {
-    auto l0 = keywords_.asVec3Double("OriginFrac");
+    auto l0 = originFrac_;
     cfg->box()->toReal(l0);
-    const auto l1 = l0 + keywords_.asVec3Double("Vector");
+    const auto l1 = l0 + vector_;
     const auto denominator = (l1 - l0).magnitude();
 
     auto p0 = cfg->box()->minimumImage(r, l0);

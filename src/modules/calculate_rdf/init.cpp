@@ -61,8 +61,8 @@ void CalculateRDFModule::initialise()
     // -- Select: Site 'B'
     selectB_ = new SelectProcedureNode();
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {selectA_});
-    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+    selectB_->keywords().set("ExcludeSameSite", std::vector<const SelectProcedureNode *>{selectA_});
+    selectB_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectA_});
     SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -77,8 +77,8 @@ void CalculateRDFModule::initialise()
     // Process1D: @dataName
     processDistance_ = new Process1DProcedureNode(collectDistance_);
     processDistance_->setName("RDF");
-    processDistance_->setKeyword<std::string>("LabelValue", "g(r)");
-    processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processDistance_->keywords().set("LabelValue", std::string("g(r)"));
+    processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
     rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_}));

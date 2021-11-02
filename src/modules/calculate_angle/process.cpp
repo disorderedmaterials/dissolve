@@ -19,29 +19,29 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    selectA_->setKeyword<const ProcedureNode *>("ReferenceSite", selectB_);
-    selectA_->setKeyword<Range>("InclusiveRange", Range(rangeAB_.x, rangeAB_.y));
-    selectC_->setKeyword<const ProcedureNode *>("ReferenceSite", selectB_);
-    selectC_->setKeyword<Range>("InclusiveRange", Range(rangeBC_.x, rangeBC_.y));
-    collectAB_->setKeyword<Vec3<double>>("RangeX", rangeAB_);
-    collectBC_->setKeyword<Vec3<double>>("RangeX", rangeBC_);
-    collectABC_->setKeyword<Vec3<double>>("RangeX", angleRange_);
-    collectDAngleAB_->setKeyword<Vec3<double>>("RangeX", rangeAB_);
-    collectDAngleAB_->setKeyword<Vec3<double>>("RangeY", angleRange_);
-    collectDAngleBC_->setKeyword<Vec3<double>>("RangeX", rangeBC_);
-    collectDAngleBC_->setKeyword<Vec3<double>>("RangeY", angleRange_);
+    selectA_->setDistanceReferenceSite(selectB_);
+    selectA_->setInclusiveDistanceRange({rangeAB_.x, rangeAB_.y});
+    selectC_->setDistanceReferenceSite(selectB_);
+    selectC_->setInclusiveDistanceRange({rangeBC_.x, rangeBC_.y});
+    collectAB_->keywords().set("RangeX", rangeAB_);
+    collectBC_->keywords().set("RangeX", rangeBC_);
+    collectABC_->keywords().set("RangeX", angleRange_);
+    collectDAngleAB_->keywords().set("RangeX", rangeAB_);
+    collectDAngleAB_->keywords().set("RangeY", angleRange_);
+    collectDAngleBC_->keywords().set("RangeX", rangeBC_);
+    collectDAngleBC_->keywords().set("RangeY", angleRange_);
     if (excludeSameMoleculeAB_)
-        selectA_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectB_});
+        selectA_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectB_});
     else
-        selectA_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
+        selectA_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{});
     if (excludeSameMoleculeBC_)
-        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectB_});
+        selectC_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectB_});
     else
-        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {});
+        selectC_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{});
     if (excludeSameSiteAC_)
-        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {selectA_});
+        selectC_->keywords().set("ExcludeSameSite", std::vector<const SelectProcedureNode *>{selectA_});
     else
-        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {});
+        selectC_->keywords().set("ExcludeSameSite", std::vector<const SelectProcedureNode *>{});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurations_.front();

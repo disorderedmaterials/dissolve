@@ -40,9 +40,6 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWra
     }
 }
 
-// Return list of target Modules / data for refinement
-const std::vector<Module *> &EPSRModule::targets() const { return keywords_.retrieve<std::vector<Module *>>("Target"); }
-
 // Create / retrieve arrays for storage of empirical potential coefficients
 Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
 {
@@ -129,7 +126,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
     // Calculate some values if they were not provided
     auto rmaxpt = rMaxPT_ < 0.0 ? dissolve.pairPotentialRange() : rMaxPT_;
     auto rminpt = rMinPT_ < 0.0 ? rmaxpt - 2.0 : rMinPT_;
-    auto ncoeffp = nCoeffP_ <= 0 ? std::min(int(10.0 * rmaxpt + 0.0001), mcoeff) : nCoeffP_;
+    nCoeffP_ = nCoeffP_ <= 0 ? std::min(int(10.0 * rmaxpt + 0.0001), mcoeff) : nCoeffP_;
 
     // Get coefficients array
     auto &coefficients = potentialCoefficients(dissolve, nAtomTypes);

@@ -21,9 +21,7 @@ OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeB
 // Operate on Data1D target
 bool OperateDivideProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the divisor
-    const auto divisor = keywords_.asDouble("Value");
-    (*targetData1D_) /= divisor;
+    (*targetData1D_) /= value_.asDouble();
 
     return true;
 }
@@ -31,9 +29,7 @@ bool OperateDivideProcedureNode::operateData1D(ProcessPool &procPool, Configurat
 // Operate on Data2D target
 bool OperateDivideProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the divisor
-    const auto divisor = keywords_.asDouble("Value");
-    (*targetData2D_) /= divisor;
+    (*targetData2D_) /= value_.asDouble();
 
     return true;
 }
@@ -41,9 +37,7 @@ bool OperateDivideProcedureNode::operateData2D(ProcessPool &procPool, Configurat
 // Operate on Data3D target
 bool OperateDivideProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the divisor
-    const auto divisor = keywords_.asDouble("Value");
-    (*targetData3D_) /= divisor;
+    (*targetData3D_) /= value_.asDouble();
 
     return true;
 }
