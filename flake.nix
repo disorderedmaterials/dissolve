@@ -33,14 +33,21 @@
           pkgconfig
           pugixml
         ];
-      gui_libs = pkgs: with pkgs; [ freetype ftgl libGL.dev libglvnd libglvnd.dev ];
+      gui_libs = pkgs:
+        with pkgs; [
+          freetype
+          ftgl
+          libGL.dev
+          libglvnd
+          libglvnd.dev
+        ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
     in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        nixGL = import nixGL-src {inherit pkgs;};
+        nixGL = import nixGL-src { inherit pkgs; };
         qt6 = import ./nix/qt6.nix { inherit pkgs; };
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
@@ -213,8 +220,10 @@
           docker-gui = pkgs.dockerTools.buildImage {
             name = "dissolve-gui";
             tag = "latest";
-            config.ENTRYPOINT =
-              [ "${nixGL.nixGLIntel}/bin/nixGLIntel" "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui" ];
+            config.ENTRYPOINT = [
+              "${nixGL.nixGLIntel}/bin/nixGLIntel"
+              "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui"
+            ];
           };
 
           docker-mpi = pkgs.dockerTools.buildImage {
