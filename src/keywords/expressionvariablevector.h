@@ -4,37 +4,37 @@
 #pragma once
 
 #include "expression/node.h"
-#include "keywords/data.h"
-#include "templates/list.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class ExpressionVariable;
 class ProcedureNode;
 
 // Keyword with ExpressionVariable List
-class ExpressionVariableVectorKeyword : public KeywordData<std::vector<std::shared_ptr<ExpressionVariable>> &>
+class ExpressionVariableVectorKeyword : public KeywordBase
 {
     public:
-    ExpressionVariableVectorKeyword(ProcedureNode *parentNode, std::vector<std::shared_ptr<ExpressionVariable>> &variables);
-    ~ExpressionVariableVectorKeyword() override;
-
-    /*
-     * Parent Node
-     */
-    private:
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
-
-    public:
-    // Return parent ProcedureNode
-    const ProcedureNode *parentNode() const;
+    ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode);
+    ~ExpressionVariableVectorKeyword() override = default;
 
     /*
      * Data
      */
+    private:
+    // Reference to vector of data
+    std::vector<std::shared_ptr<ExpressionVariable>> &data_;
+    // Parent ProcedureNode
+    ProcedureNode *parentNode_;
+
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
     bool isDataEmpty() const override;
+
+    public:
+    // Return reference to vector of data
+    const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
+    // Return parent ProcedureNode
+    const ProcedureNode *parentNode() const;
 
     /*
      * Arguments
@@ -48,9 +48,4 @@ class ExpressionVariableVectorKeyword : public KeywordData<std::vector<std::shar
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Object Management
-     */
-    protected:
 };
