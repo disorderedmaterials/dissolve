@@ -51,11 +51,8 @@ void ProcedureChart::paintEvent(QPaintEvent *event)
 
     // TEST - Highlight all hotspots
     if (false)
-    {
-        ListIterator<ChartHotSpot> hotSpotIterator(hotSpots_);
-        while (ChartHotSpot *hotSpot = hotSpotIterator.iterate())
-            painter.fillRect(hotSpot->geometry(), QBrush(QColor(200, 200, 0, 50)));
-    }
+        for(auto &hotSpot : hotSpots_)
+            painter.fillRect(hotSpot.geometry(), QBrush(QColor(200, 200, 0, 50)));
 }
 
 /*

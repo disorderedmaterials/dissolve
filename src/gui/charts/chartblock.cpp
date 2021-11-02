@@ -5,7 +5,7 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 
-ChartBlock::ChartBlock() : ListItem<ChartBlock>() {}
+ChartBlock::ChartBlock() {}
 
 ChartBlock::~ChartBlock() {}
 

@@ -4,7 +4,7 @@
 #include "gui/charts/charthotspot.h"
 #include <stdio.h>
 
-ChartHotSpot::ChartHotSpot() : ListItem<ChartHotSpot>()
+ChartHotSpot::ChartHotSpot()
 {
     row_ = -1;
     column_ = -1;
