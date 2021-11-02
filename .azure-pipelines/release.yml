@@ -21,8 +21,7 @@ stages:
             fetchDepth: 1
           - template: templates/build-linux.yml
             parameters:
-              extraflags: '-DBUILD_SYSTEM_TESTS:bool=true -DBUILD_UNIT_TESTS:bool=true'
-          - template: templates/package-linux.yml
+              export: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
@@ -30,9 +29,9 @@ stages:
             displayName: 'Publish Linux Artifacts'
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "build/"
-              ArtifactName: 'linux-tests'
-            displayName: 'Publish Threaded Test Artifacts'
+              PathtoPublish: "docker/"
+              ArtifactName: "linux-gui-docker"
+            displayName: "Publish Linux CLI Docker"
       - job: 'linux_mpi'
         displayName: 'Ubuntu, MPI, CLI'
         pool:
@@ -42,13 +41,19 @@ stages:
             fetchDepth: 1
           - template: templates/build-linux-mpi.yml
             parameters:
-              extraflags: '-DBUILD_SYSTEM_TESTS:bool=true'
-              mpi: true
+              export: true
+              package: "dissolve-mpi"
+              docker: "docker-mpi"
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "build/"
-              ArtifactName: 'linux-tests-mpi'
-            displayName: 'Publish MPI Test Artifacts'
+              PathtoPublish: "packages/"
+              ArtifactName: "mpi-artifacts"
+            displayName: "Publish MPI Artifacts"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "docker/"
+              ArtifactName: "mpi-docker"
+            displayName: "Publish MPI Docker"
       - job: 'osx'
         displayName: 'OSX, Threads, CLI/GUI'
         timeoutInMinutes: 120
@@ -79,14 +84,39 @@ stages:
               PathtoPublish: "packages/"
               ArtifactName: 'windows-artifacts'
             displayName: 'Publish Windows Artifacts'
-
-  # Run Tests
-  - stage: 'tests'
-    displayName: 'Testing'
-    jobs:
-      - template: templates/tests.yml
-        parameters:
-          serial: false
+      - job: "test_linux_mpi"
+        displayName: "Testing MPI, CLI"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
+          - template: templates/build-linux.yml
+            parameters:
+              package: "checks.x86_64-linux.dissolve-mpi"
+      - job: "test_linux_gui"
+        displayName: "Testing GUI"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
+          - template: templates/build-linux.yml
+            parameters:
+              package: "checks.x86_64-linux.dissolve"
+      - job: "test_linux_threadless"
+        displayName: "Testing Threadless"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
+          - template: templates/build-linux.yml
+            parameters:
+              package: "checks.x86_64-linux.dissolve-threadless"
 
   # Create Release
   - template: templates/create-release.yml
