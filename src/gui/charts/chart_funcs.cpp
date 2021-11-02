@@ -258,7 +258,7 @@ MimeStrings ChartBase::mimeInfo(ChartBlock *block) { return MimeStrings(); }
 // Return hotspot, if any, under specified point
 ChartHotSpot *ChartBase::hotSpotAt(QPoint point)
 {
-    auto it = std::find_if(hotSpots_.begin(), hotSpots_.end(), [&point](auto &hotSpot){return hotSpot.contains(point);});
+    auto it = std::find_if(hotSpots_.begin(), hotSpots_.end(), [&point](auto &hotSpot) { return hotSpot.contains(point); });
 
     return it == hotSpots_.end() ? nullptr : &*it;
 }
