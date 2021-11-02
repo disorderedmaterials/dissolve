@@ -46,7 +46,7 @@ class AtomTypeMix
     // Finalise, calculating fractional populations etc.
     void finalise();
     // Finalise, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-    void finalise(const std::vector<const AtomType *> &exchangeableTypes);
+    void finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Make all AtomTypeData reference only their natural isotope
     void naturalise();
     // Check for presence of AtomType

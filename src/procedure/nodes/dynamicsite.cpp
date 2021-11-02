@@ -45,7 +45,7 @@ bool DynamicSiteProcedureNode::mustBeNamed() const { return false; }
 
 // Generate sites from the specified Molecule
 void DynamicSiteProcedureNode::generateSites(const std::shared_ptr<const Molecule> &molecule,
-                                             const std::vector<const AtomType *> &atomTypes)
+                                             const std::vector<std::shared_ptr<AtomType>> &atomTypes)
 {
     // Loop over Atoms in the Molecule
     for (auto &i : molecule->atoms())
@@ -58,7 +58,7 @@ void DynamicSiteProcedureNode::generateSites(const std::shared_ptr<const Molecul
         }
 
         // If the Atom's AtomType is listed in our target AtomType list, add this atom as a site
-        if (std::find(atomTypes.begin(), atomTypes.end(), i->speciesAtom()->atomType().get()) != atomTypes.end())
+        if (std::find(atomTypes.begin(), atomTypes.end(), i->speciesAtom()->atomType()) != atomTypes.end())
         {
             generatedSites_.emplace_back(Site(molecule, i->r()));
             continue;
@@ -82,7 +82,7 @@ bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg
 
     // Grab exclusion lists, the atom types vector, and any specific Molecule parent
     const auto &excludedMolecules = parent_->excludedMolecules();
-    const auto atomTypes = keywords_.retrieve<std::vector<const AtomType *>>("AtomType");
+    const auto atomTypes = keywords_.retrieve<std::vector<std::shared_ptr<AtomType>>>("AtomType");
     std::shared_ptr<const Molecule> moleculeParent = parent_->sameMoleculeMolecule();
 
     /*

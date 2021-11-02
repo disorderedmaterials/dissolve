@@ -55,7 +55,8 @@ class DynamicSiteProcedureNode : public ProcedureNode
 
     private:
     // Generate dynamic sites from the specified Molecule
-    void generateSites(const std::shared_ptr<const Molecule> &molecule, const std::vector<const AtomType *> &atomTypes);
+    void generateSites(const std::shared_ptr<const Molecule> &molecule,
+                       const std::vector<std::shared_ptr<AtomType>> &atomTypes);
 
     public:
     // Return Array of generated sites

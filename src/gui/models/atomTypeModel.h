@@ -19,21 +19,19 @@ class AtomTypeModel : public QAbstractListModel
     // Source AtomType data
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes_;
     // Vector containing checked items (if relevant)
-    OptionalReferenceWrapper<std::vector<const AtomType *>> checkedItems_;
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<AtomType>>> checkedItems_;
     // Icon return function
-    std::function<QIcon(const AtomType *atomType)> iconFunction_;
-
-    private:
-    // Return object represented by specified model index
-    AtomType *rawData(const QModelIndex &index) const;
+    std::function<QIcon(const std::shared_ptr<AtomType> &atomType)> iconFunction_;
 
     public:
     // Set source AtomType data
     void setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
     // Set function to return QIcon for item
-    void setIconFunction(std::function<QIcon(const AtomType *atomType)> func);
+    void setIconFunction(std::function<QIcon(const std::shared_ptr<AtomType> &atomType)> func);
     // Set vector containing checked items
-    void setCheckStateData(std::vector<const AtomType *> &checkedItemsVector);
+    void setCheckStateData(std::vector<std::shared_ptr<AtomType>> &checkedItemsVector);
+    // Return object represented by specified model index
+    const std::shared_ptr<AtomType> &rawData(const QModelIndex &index) const;
 
     /*
      * QAbstractItemModel overrides

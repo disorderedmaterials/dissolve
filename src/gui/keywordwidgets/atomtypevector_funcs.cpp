@@ -80,5 +80,6 @@ void AtomTypeVectorKeywordWidget::updateSummaryText()
     if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-        setSummaryText(QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto *at) { return at->name(); })));
+        setSummaryText(
+            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &at) { return at.get()->name(); })));
 }

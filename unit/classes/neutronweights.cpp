@@ -117,7 +117,7 @@ TEST_F(NeutronWeightsTest, NullWater)
     EXPECT_NEAR(2.0 / 3.0, nwts.atomTypes().atomTypeData(atH2_)->get().fraction(), 1.0e-6);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
     // Making the H atomtype exchangeable should make no difference
-    nwts.createFromIsotopologues({atH2_.get()});
+    nwts.createFromIsotopologues({atH2_});
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
 }
 
