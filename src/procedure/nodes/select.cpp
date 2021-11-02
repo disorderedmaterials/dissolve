@@ -22,8 +22,8 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.add<SpeciesSiteVectorKeyword>("Control", "Site", "Add target site(s) to the selection", speciesSites_,
                                             axesRequired_);
-    keywords_.add("Control", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite",
-                  "Add a new dynamic site to the selection");
+    keywords_.add<DynamicSiteNodesKeyword>("Control", "DynamicSite", "Add a new dynamic site to the selection", dynamicSites_,
+                                           this, axesRequired_);
     keywords_.add<NodeKeyword<SelectProcedureNode>>(
         "Control", "SameMoleculeAsSite",
         "Request that the selected site comes from the molecule containing the current site in the specified "
@@ -150,7 +150,7 @@ SequenceProcedureNode *SelectProcedureNode::addForEachBranch(ProcedureNode::Node
 bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Check for at least one site being defined
-    if (speciesSites_.empty() && (dynamicSites_.nItems() == 0))
+    if (speciesSites_.empty() && (dynamicSites_.empty() == 0))
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     // Prep some variables
@@ -162,7 +162,7 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
         return false;
 
     // Prepare any dynamic site nodes
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
+    for (auto *dynamicNode : dynamicSites_)
         if (!dynamicNode->prepare(cfg, prefix, targetList))
             return false;
 

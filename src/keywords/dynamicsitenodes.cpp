@@ -7,29 +7,25 @@
 #include "expression/variable.h"
 #include "procedure/nodes/dynamicsite.h"
 
-DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes,
+DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedureNode *> &data, SelectProcedureNode *parentNode,
                                                  bool axesRequired)
-    : KeywordData<RefList<DynamicSiteProcedureNode> &>(KeywordBase::DynamicSiteNodesData, nodes)
+    : KeywordBase(KeywordBase::DynamicSiteNodesData), data_(data), parentNode_(parentNode), axesRequired_(axesRequired)
 {
-    parentNode_ = parentNode;
-    axesRequired_ = axesRequired;
 }
-
-DynamicSiteNodesKeyword::~DynamicSiteNodesKeyword() = default;
-
-/*
- * Parent Node
- */
-
-// Return parent SelectProcedureNode
-const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.nItems() == 0; }
+bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.empty(); }
+
+// Return reference to data
+std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() { return data_; }
+const std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() const { return data_; }
+
+// Return parent SelectProcedureNode
+const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Arguments
@@ -49,7 +45,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreD
 
     // Create a new DynamicSite and add it to our data RefList
     auto *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
-    data_.append(dynamicSite);
+    data_.push_back(dynamicSite);
 
     // Attempt to read the DynamicSite data
     if (!dynamicSite->deserialise(parser, coreData))
@@ -74,7 +70,3 @@ bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keyword
 
     return true;
 }
-
-/*
- * Object Management
- */
