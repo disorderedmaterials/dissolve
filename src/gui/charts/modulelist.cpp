@@ -96,7 +96,7 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
 
     // Highlight all hotspots
     if (false)
-        for(auto &hotSpot : hotSpots_)
+        for (auto &hotSpot : hotSpots_)
             painter.fillRect(hotSpot.geometry(), QBrush(QColor(200, 200, 0, 50)));
 }
 
