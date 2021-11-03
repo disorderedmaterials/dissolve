@@ -5,7 +5,6 @@
 
 #include "base/enumoptions.h"
 #include "keywords/list.h"
-#include "templates/listitem.h"
 #include "templates/optionalref.h"
 
 // Forward Declarations
@@ -20,8 +19,11 @@ class ProcessPool;
 class SequenceProcedureNode;
 class Site;
 
+class ProcedureNode;
+using NodeRef = ProcedureNode*;
+
 // Procedure Node
-class ProcedureNode : public ListItem<ProcedureNode>
+class ProcedureNode
 {
     public:
     // Node Classes

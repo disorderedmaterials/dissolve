@@ -8,7 +8,7 @@
 #include "module/list.h"
 #include "modules/analyse/analyse.h"
 
-ProcedureNodeReference::ProcedureNodeReference(const ProcedureNode *node) : ListItem<ProcedureNodeReference>()
+ProcedureNodeReference::ProcedureNodeReference(const ProcedureNode *node)
 {
     node_ = node;
 

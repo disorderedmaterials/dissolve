@@ -11,7 +11,7 @@ class CoreData;
 class AnalyseModule;
 
 // Procedure Node Reference
-class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
+class ProcedureNodeReference
 {
     public:
     ProcedureNodeReference(const ProcedureNode *node = nullptr);
