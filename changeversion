@@ -109,6 +109,15 @@ then
   fi
   echo -n "         version.cpp (Program Version) : "
   grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g'
+  
+  
+  # Flake (flake.nix)
+  if [ "$CHECK" = "false" ]
+  then
+    sed -i -e "s/version = \".*\"/version = \"$MAJOR.$MINOR.$PATCH\"/" flake.nix
+  fi
+  echo -n "           flake.nix (Program Version) : "
+  grep " version =" flake.nix | sed -e "s/\W*version = \"\(.*\)\";/\1/"
 
 
   # ./CMakeLists.txt

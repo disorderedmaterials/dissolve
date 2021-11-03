@@ -1,0 +1,98 @@
+{
+  "nodes": {
+    "bundler": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1626704917,
+        "narHash": "sha256-cJ73kxY5ZCPWQeQZyCSdvkBqjqJkU5wgETBNaXfqF18=",
+        "owner": "matthewbauer",
+        "repo": "nix-bundle",
+        "rev": "223f4ffc4179aa318c34dc873a08cb00090db829",
+        "type": "github"
+      },
+      "original": {
+        "owner": "matthewbauer",
+        "repo": "nix-bundle",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1631561581,
+        "narHash": "sha256-3VQMV5zvxaVLvqqUrNz3iJelLw30mIVSfZmAaauM3dA=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "7e5bf3925f6fbdfaf50a2a7ca0be2879c4261d19",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nixGL-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1633350348,
+        "narHash": "sha256-rfA7lqV+cR3bQt4lT2F+6qrIzJSPloJaGVATR9u+5yY=",
+        "owner": "guibou",
+        "repo": "nixGL",
+        "rev": "c4aa5aa15af5d75e2f614a70063a2d341e8e3461",
+        "type": "github"
+      },
+      "original": {
+        "owner": "guibou",
+        "repo": "nixGL",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1633422542,
+        "narHash": "sha256-JYz2PmVogNRO8DhcvXzL/QhZzboTspJz2YSRlnAj8aM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "aff647e2704fa1223994604887bb78276dc57083",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-21.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "bundler": "bundler",
+        "flake-utils": "flake-utils",
+        "nixGL-src": "nixGL-src",
+        "nixpkgs": "nixpkgs",
+        "weggli": "weggli"
+      }
+    },
+    "weggli": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1634019457,
+        "narHash": "sha256-5G+dXsb1Pl2c449QDx5LbzWnqVphcysI5iiwWEIdn3A=",
+        "owner": "googleprojectzero",
+        "repo": "weggli",
+        "rev": "bb8e5fa95037fe99f14811bf6e1253ef5307adf1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "googleprojectzero",
+        "repo": "weggli",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

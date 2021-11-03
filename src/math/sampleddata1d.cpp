@@ -6,6 +6,7 @@
 #include "base/messenger.h"
 #include "math/histogram1d.h"
 #include "templates/algorithms.h"
+#include <cassert>
 
 SampledData1D::SampledData1D() = default;
 

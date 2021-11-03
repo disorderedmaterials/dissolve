@@ -1,38 +1,51 @@
 parameters:
-  - name: extraflags
-    default: ''
-  - name: qtver
-    default: 6.1.1
-  - name: gui
-    default: true
-  - name: threading
-    default: true
+  - name: package
+    default : "dissolve-gui"
+  - name: export
+    default : false
+  - name: docker
+    default: "docker-gui"
+  - name: nix_version
+    default: 2.4
 
 steps:
   - bash: |
       set -ex
       # -- General
       sudo apt-get update -q
-      sudo apt-get install antlr4 libfreetype6-dev libftgl-dev ninja-build python3-setuptools uuid uuid-dev
-    displayName: 'Install Prerequisites'
+      sudo apt-get install curl gpg jq
+      curl -o install-nix${{ parameters.nix_version }} https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install
+      curl -o install-nix${{ parameters.nix_version }}.asc https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install.asc
+      gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
+      gpg2 --verify ./install-nix${{ parameters.nix_version }}.asc
+      sh ./install-nix${{ parameters.nix_version }}
+      mkdir -p ~/.config/nix/
+      echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+    displayName: 'Install nix'
   - bash: |
       set -ex
-      sudo pip3 install wheel
-      sudo pip3 install conan
-      # -- Qt
-      sudo pip3 install aqtinstall
-      aqt install-qt --outputdir /tmp/qt linux desktop ${{ parameters.qtver }} -m qtcharts
-    displayName: 'Install Conan'
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      nix-env -iA cachix -f https://cachix.org/api/v1/install
+      cachix use dissolve-nix
+    displayName: 'Install Cachix'
   - bash: |
       set -ex
-      Qt6_DIR=/tmp/qt/${{ parameters.qtver }}/gcc_64/lib/cmake/Qt6
-      QT_BASE_DIR=/tmp/qt/${{ parameters.qtver }}/gcc_64
-      export QTDIR=$QT_BASE_DIR
-      export PATH=$QT_BASE_DIR/bin:$PATH
-      export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
-      mkdir build
-      cd build
-      conan install .. -s compiler.libcxx=libstdc++11 --build missing
-      cmake -G "Ninja" -DMULTI_THREADING:bool=${{ parameters.threading }} -DGUI:bool=${{ parameters.gui }} -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
-      ninja
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      nix build -L .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+    env:
+      CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
     displayName: 'Build'
+  - bash: |
+      set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      cachix use dissolve-nix
+      nix bundle -L .#${{ parameters.package }}
+      mkdir -p packages
+      cp ${{ parameters.package }} packages
+      nix build .#${{ parameters.docker }}
+      mkdir -p docker
+      cp result docker
+    env:
+      CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
+    displayName: 'Package'
+    condition: eq( '${{ parameters.export }}', 'true' )

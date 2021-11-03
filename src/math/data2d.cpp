@@ -8,6 +8,7 @@
 #include "math/data1d.h"
 #include "math/histogram2d.h"
 #include <algorithm>
+#include <cassert>
 
 Data2D::Data2D() {}
 

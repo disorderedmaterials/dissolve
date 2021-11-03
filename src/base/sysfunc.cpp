@@ -5,6 +5,7 @@
 #include "base/messenger.h"
 #include "templates/algorithms.h"
 #include <cctype>
+#include <climits>
 #include <ctime>
 #include <fstream>
 #include <iomanip>

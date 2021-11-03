@@ -4,6 +4,7 @@
 #include "classes/species.h"
 #include "gui/models/pairPotentialModel.h"
 #include "main/dissolve.h"
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -65,6 +66,7 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     EXPECT_TRUE(pairs.setData(pairs.index(0, 4), -3));
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 4)).toDouble(), -3);
     EXPECT_TRUE(pairs.setData(pairs.index(0, 5), "4.0, -5.0"));
-    EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "4.0, -5.0");
+    EXPECT_THAT(pairs.data(pairs.index(0, 5)).toString().toStdString(),
+                testing::AnyOf(testing::Eq("4.0, -5.0"), testing::Eq("4, -5")));
 }
 } // namespace UnitTest

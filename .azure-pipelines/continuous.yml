@@ -38,7 +38,8 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux.yml
-          - template: templates/package-linux.yml
+            parameters:
+              export: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"

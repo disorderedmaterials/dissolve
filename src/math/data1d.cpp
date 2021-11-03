@@ -6,6 +6,7 @@
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "templates/algorithms.h"
+#include <cassert>
 
 Data1D::Data1D() {}
 

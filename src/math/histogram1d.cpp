@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "templates/algorithms.h"
+#include <cassert>
 
 Histogram1D::Histogram1D()
 {

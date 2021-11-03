@@ -28,4 +28,8 @@ add_library(
 )
 
 include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(main PRIVATE CONAN_PKG::fmt CONAN_PKG::cli11)
+if(CONAN)
+  target_link_libraries(main PRIVATE CONAN_PKG::fmt CONAN_PKG::cli11)
+else(CONAN)
+  target_link_libraries(main PRIVATE fmt::fmt CLI11::CLI11)
+endif(CONAN)

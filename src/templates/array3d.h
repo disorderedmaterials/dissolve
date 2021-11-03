@@ -6,6 +6,7 @@
 #include "base/messenger.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
+#include <cassert>
 #include <numeric>
 #include <vector>
 
