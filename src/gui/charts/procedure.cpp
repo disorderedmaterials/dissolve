@@ -67,8 +67,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence,
     RefList<ProcedureChartNodeBlock> newSequenceWidgets;
 
     // Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
-    ListIterator<ProcedureNode> nodeIterator(sequence->sequence());
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence->sequence())
     {
         // Does this node have an existing widget?
         ProcedureChartNodeBlock *block = nodeBlock(node);

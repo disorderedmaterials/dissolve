@@ -21,6 +21,7 @@ class Site;
 
 class ProcedureNode;
 using NodeRef = ProcedureNode*;
+using ConstNodeRef = const ProcedureNode*;
 
 // Procedure Node
 class ProcedureNode

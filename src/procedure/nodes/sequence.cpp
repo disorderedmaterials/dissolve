@@ -188,9 +188,10 @@ const ProcedureNode *SequenceProcedureNode::nodeInScope(const ProcedureNode *que
     // If one was give, start from the querying node and work backwards...
     if (queryingNode)
     {
-        assert(sequence_.contains(queryingNode));
+        auto range = QueryRange(queryingNode, sequence_);
+        assert(!range.empty());
 
-        for (auto *node = queryingNode; node != nullptr; node = node->prev())
+        for (auto node : range)
         {
             if (node == excludeNode)
                 continue;
@@ -223,9 +224,11 @@ SequenceProcedureNode::nodesInScope(const ProcedureNode *queryingNode, std::opti
     // If one was give, start from the querying node and work backwards...
     if (queryingNode)
     {
-        assert(sequence_.contains(queryingNode));
 
-        for (auto *node = queryingNode->prev(); node != nullptr; node = node->prev())
+        auto range = QueryRange(queryingNode, sequence_);
+        assert(!range.empty());
+
+        for (auto node : range)
         {
             // Check type / class
             if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
@@ -262,11 +265,11 @@ std::shared_ptr<ExpressionVariable>
 SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter)
 {
+    auto range = QueryRange(queryingNode, sequence_);
     if (queryingNode)
-        assert(sequence_.contains(queryingNode));
+        assert(!range.empty());
 
-    // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != nullptr; node = node->prev())
+    for (auto node : range)
     {
         auto param = node->hasParameter(name, excludeParameter);
         if (param)
@@ -296,13 +299,14 @@ SequenceProcedureNode::parameterExists(std::string_view name, const std::shared_
 // Create and return reference list of parameters in scope
 std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(ProcedureNode *queryingNode)
 {
+    auto range = QueryRange(queryingNode, sequence_);
     if (queryingNode)
-        assert(sequence_.contains(queryingNode));
+        assert(!range.empty());
 
     std::vector<std::shared_ptr<ExpressionVariable>> parameters;
 
     // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != nullptr; node = node->prev())
+    for (auto node : range)
     {
         auto optOtherParams = node->parameters();
         if (optOtherParams)
@@ -555,3 +559,13 @@ bool SequenceProcedureNode::write(LineParser &parser, std::string_view prefix)
 
     return true;
 }
+
+SequenceProcedureNode::QueryRange::QueryRange(ConstNodeRef queryingNode, const std::vector<NodeRef> &seq)
+{
+    start_ = std::find(seq.rbegin(), seq.rend(), queryingNode);
+    stop_ = seq.rend();
+}
+std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::begin() { return start_; }
+std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::end() { return stop_; }
+bool SequenceProcedureNode::QueryRange::empty() { return start_ == stop_; }
+void SequenceProcedureNode::QueryRange::next() { start_++; }

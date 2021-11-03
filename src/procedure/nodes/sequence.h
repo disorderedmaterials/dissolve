@@ -43,6 +43,17 @@ class SequenceProcedureNode : public ProcedureNode
     protected:
     // Sequential node list
     std::vector<NodeRef> sequence_;
+  // Range for query search
+  class QueryRange {
+  private:
+    std::vector<NodeRef>::const_reverse_iterator start_, stop_;
+  public:
+    QueryRange(ConstNodeRef queryingNode, const std::vector<NodeRef> &seq);
+    std::vector<NodeRef>::const_reverse_iterator begin();
+    std::vector<NodeRef>::const_reverse_iterator end();
+    bool empty();
+    void next();
+  };
 
     public:
     // Clear all data
