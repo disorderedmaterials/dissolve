@@ -124,8 +124,7 @@ bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     if (normalisationBranch_)
     {
         // Set data targets in the normalisation nodes  TODO Will not work for sub-branches, if they are ever required
-        ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
-        while (ProcedureNode *node = nodeIterator.iterate())
+	for (auto node : normalisationBranch_->sequence())
         {
             if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
                 continue;

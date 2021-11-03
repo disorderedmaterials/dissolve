@@ -42,15 +42,15 @@ class SequenceProcedureNode : public ProcedureNode
      */
     protected:
     // Sequential node list
-    List<ProcedureNode> sequence_;
+    std::vector<NodeRef> sequence_;
 
     public:
     // Clear all data
     void clear();
     // Add (own) node into sequence
-    void addNode(ProcedureNode *node);
+    void addNode(NodeRef node);
     // Return sequential node list
-    const List<ProcedureNode> &sequence() const;
+    const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence
     int nNodes() const;
 

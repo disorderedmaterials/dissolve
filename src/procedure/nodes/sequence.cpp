@@ -46,7 +46,7 @@ EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::s
 void SequenceProcedureNode::clear() { sequence_.clear(); }
 
 // Add (own) node into sequence, checking the context
-void SequenceProcedureNode::addNode(ProcedureNode *node)
+void SequenceProcedureNode::addNode(NodeRef node)
 {
     if (!node)
         return;
@@ -55,14 +55,14 @@ void SequenceProcedureNode::addNode(ProcedureNode *node)
         Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
                          ProcedureNode::nodeTypes().keyword(node->type()), ProcedureNode::nodeContexts().keyword(context_));
 
-    sequence_.own(node);
+    sequence_.push_back(node);
 }
 
 // Return sSequential node list
-const List<ProcedureNode> &SequenceProcedureNode::sequence() const { return sequence_; }
+const std::vector<NodeRef> &SequenceProcedureNode::sequence() const { return sequence_; }
 
 // Return number of nodes in sequence
-int SequenceProcedureNode::nNodes() const { return sequence_.nItems(); }
+int SequenceProcedureNode::nNodes() const { return sequence_.size(); }
 
 /*
  * Scope
@@ -73,8 +73,7 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
                                                   std::optional<ProcedureNode::NodeType> optNodeType,
                                                   std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         // Does this node match the supplied name?
         if (node != excludeNode)
@@ -105,8 +104,7 @@ std::shared_ptr<ExpressionVariable>
 SequenceProcedureNode::searchParameters(std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         // Does this node have a parameter by this name?
         auto result = node->hasParameter(name, excludeParameter);
@@ -135,8 +133,7 @@ ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const { retu
 const ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
                                                  std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         if (DissolveSys::sameString(node->name(), name))
         {
@@ -164,8 +161,7 @@ std::vector<const ProcedureNode *> SequenceProcedureNode::nodes(std::optional<Pr
 {
     std::vector<const ProcedureNode *> matches;
 
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         // Check type / class
         if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
@@ -338,8 +334,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::paramete
 bool SequenceProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Loop over nodes in the list, preparing each in turn
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->prepare(cfg, prefix, targetList))
             return false;
 
@@ -350,12 +345,11 @@ bool SequenceProcedureNode::prepare(Configuration *cfg, std::string_view prefix,
 bool SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // If there are no nodes, just exit now
-    if (sequence_.nItems() == 0)
+    if (sequence_.empty())
         return true;
 
     // Loop over nodes in the list, executing each in turn
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->execute(procPool, cfg, prefix, targetList))
             return false;
 
@@ -367,8 +361,7 @@ bool SequenceProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, 
                                      GenericList &targetList)
 {
     // Loop over nodes in the list, finalising each in turn
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->finalise(procPool, cfg, prefix, targetList))
             return false;
 
@@ -511,7 +504,7 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Check for clash of names with existing node in scope
-        if (nodeInScope(sequence_.last(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
+        if (nodeInScope(sequence_.back(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
         {
             return Messenger::error("A node named '{}' is already in scope.\n",
                                     parser.hasArg(1) ? parser.argsv(1) : newNode->name());
@@ -536,7 +529,7 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Add the new node to our list, and set ourself as its scope
-        sequence_.own(newNode);
+        sequence_.push_back(newNode);
         newNode->setScope(this);
 
         // Read the new node
@@ -554,8 +547,7 @@ bool SequenceProcedureNode::write(LineParser &parser, std::string_view prefix)
     // to
 
     // Loop over nodes in this sequence
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->write(parser, prefix))
             return false;
 
