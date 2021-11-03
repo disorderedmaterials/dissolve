@@ -92,7 +92,7 @@ class ChartBase : public QWidget
     // Selected ChartBlock
     ChartBlock *selectedBlock_;
     // Drop hotspots available on the chart
-    List<ChartHotSpot> hotSpots_;
+    std::vector<ChartHotSpot> hotSpots_;
     // Current hotspot the dragged object is over (if any)
     ChartHotSpot *currentHotSpot_;
 

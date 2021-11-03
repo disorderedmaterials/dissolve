@@ -96,11 +96,8 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
 
     // Highlight all hotspots
     if (false)
-    {
-        ListIterator<ChartHotSpot> hotSpotIterator(hotSpots_);
-        while (ChartHotSpot *hotSpot = hotSpotIterator.iterate())
-            painter.fillRect(hotSpot->geometry(), QBrush(QColor(200, 200, 0, 50)));
-    }
+        for (auto &hotSpot : hotSpots_)
+            painter.fillRect(hotSpot.geometry(), QBrush(QColor(200, 200, 0, 50)));
 }
 
 /*
@@ -160,10 +157,7 @@ void ModuleListChart::updateContentBlocks()
 
     // Set the correct number of hotspots (number of block widgets + 1)
     auto nHotSpots = moduleBlockWidgets_.nItems() + 1;
-    while (nHotSpots < hotSpots_.nItems())
-        hotSpots_.removeLast();
-    while (nHotSpots > hotSpots_.nItems())
-        hotSpots_.add();
+    hotSpots_.resize(nHotSpots);
 }
 
 // Set the currently-selected Module
@@ -430,7 +424,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     auto maxWidth = 0;
 
     // Get the first hot spot in the list (the list should have been made the correct size in updateContentBlocks()).
-    ChartHotSpot *hotSpot = hotSpots_.first();
+    auto hotSpot = hotSpots_.begin();
 
     // Loop over widgets
     ModuleBlock *lastVisibleBlock = nullptr;
@@ -450,7 +444,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
         top += metrics.verticalModuleSpacing();
 
         // If our hotspot is the current one, increase the size.
-        if (hotSpot == currentHotSpot_)
+        if (&*hotSpot == currentHotSpot_)
             top += metrics.verticalInsertionSpacing();
 
         // Set top edge of this widget
@@ -480,7 +474,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
         lastVisibleBlock = block;
 
         // Move to the next hotspot
-        hotSpot = hotSpot->next();
+        ++hotSpot;
     }
     // Handle final block
     top -= metrics.verticalModuleSpacing();
@@ -491,11 +485,11 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     // Set final hotspot geometry
     hotSpot->setGeometry(QRect(0, hotSpotTop, width(), height() - hotSpotTop));
     hotSpot->setSurroundingBlocks(lastVisibleBlock, nullptr);
-    hotSpot = hotSpot->next();
+    ++hotSpot;
 
     // Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero
     // height
-    for (auto *spot = hotSpot; spot != nullptr; spot = spot->next())
+    for (auto spot = hotSpot; spot != hotSpots_.end(); ++spot)
         spot->setHeight(0);
 
     // If there is a current hotspot, set the insertion widget to be visible and set its geometry

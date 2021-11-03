@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/listitem.h"
 #include <QPoint>
 #include <QRect>
 
@@ -11,7 +10,7 @@
 class QWidget;
 
 // Chart Block - Base class for any widget displayed in a chart
-class ChartBlock : public ListItem<ChartBlock>
+class ChartBlock
 {
     public:
     ChartBlock();

@@ -10,7 +10,7 @@
 class ChartBlock;
 
 // Chart HotSpot - Definition of an area onto which a dragged object can be dropped
-class ChartHotSpot : public ListItem<ChartHotSpot>
+class ChartHotSpot
 {
     public:
     ChartHotSpot();
