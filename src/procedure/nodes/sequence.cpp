@@ -508,7 +508,7 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Check for clash of names with existing node in scope
-        if (nodeInScope(sequence_.back(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
+        if (!sequence_.empty() && nodeInScope(sequence_.back(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
         {
             return Messenger::error("A node named '{}' is already in scope.\n",
                                     parser.hasArg(1) ? parser.argsv(1) : newNode->name());
