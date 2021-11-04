@@ -5,13 +5,13 @@
 #include "procedure/nodes/process1d.h"
 
 // Return Collect1DNode for A-B RDF
-Collect1DProcedureNode *CalculateRDFModule::collectDistanceNode() const { return collectDistance_; }
+std::shared_ptr<Collect1DProcedureNode> CalculateRDFModule::collectDistanceNode() const { return collectDistance_; }
 
 // Return SelectNode for site A
-SelectProcedureNode *CalculateRDFModule::selectANode() const { return selectA_; }
+std::shared_ptr<SelectProcedureNode> CalculateRDFModule::selectANode() const { return selectA_; }
 
 // Return Process1DNode result (i.e. RDF)
-Process1DProcedureNode *CalculateRDFModule::rdfResult() const
+std::shared_ptr<Process1DProcedureNode> CalculateRDFModule::rdfResult() const
 {
     if ((!processDistance_) || (!processDistance_->hasProcessedData()))
         return nullptr;

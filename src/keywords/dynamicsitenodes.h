@@ -12,10 +12,10 @@ class DynamicSiteProcedureNode;
 class SelectProcedureNode;
 
 // Keyword with DynamicSiteProcedureNode (Ref)List
-class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureNode> &>
+class DynamicSiteNodesKeyword : public KeywordData<std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &>
 {
     public:
-    DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes,
+    DynamicSiteNodesKeyword(std::shared_ptr<SelectProcedureNode> parentNode, std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &nodes,
                             bool axesRequired = false);
     ~DynamicSiteNodesKeyword() override;
 
@@ -24,11 +24,11 @@ class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureN
      */
     private:
     // Parent SelectProcedureNode
-    SelectProcedureNode *parentNode_;
+    std::shared_ptr<SelectProcedureNode> parentNode_;
 
     public:
     // Return parent SelectProcedureNode
-    const SelectProcedureNode *parentNode() const;
+    std::shared_ptr<const SelectProcedureNode> parentNode() const;
 
     /*
      * Specification

@@ -7,9 +7,9 @@
 #include "expression/variable.h"
 #include "procedure/nodes/dynamicsite.h"
 
-DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes,
+DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::shared_ptr<SelectProcedureNode> parentNode, std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &nodes,
                                                  bool axesRequired)
-    : KeywordData<RefList<DynamicSiteProcedureNode> &>(KeywordBase::DynamicSiteNodesData, nodes)
+    : KeywordData<std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &>(KeywordBase::DynamicSiteNodesData, nodes)
 {
     parentNode_ = parentNode;
     axesRequired_ = axesRequired;
@@ -22,14 +22,14 @@ DynamicSiteNodesKeyword::~DynamicSiteNodesKeyword() = default;
  */
 
 // Return parent SelectProcedureNode
-const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
+std::shared_ptr<const SelectProcedureNode> DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.nItems() == 0; }
+bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.empty(); }
 
 /*
  * Arguments
@@ -48,8 +48,8 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreD
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
 
     // Create a new DynamicSite and add it to our data RefList
-    auto *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
-    data_.append(dynamicSite);
+    auto dynamicSite = std::make_shared<DynamicSiteProcedureNode>(parentNode_);
+    data_.push_back(dynamicSite);
 
     // Attempt to read the DynamicSite data
     if (!dynamicSite->deserialise(parser, coreData))

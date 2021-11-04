@@ -57,37 +57,37 @@ void CalculateSDFModule::initialise()
      */
 
     // Select: Site 'A'
-    selectA_ = new SelectProcedureNode({}, true);
+  selectA_ = std::make_shared<SelectProcedureNode, std::vector<const SpeciesSite*>, bool>({}, true);
     selectA_->setName("A");
-    SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+    std::shared_ptr<SequenceProcedureNode> forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
 
     // -- Select: Site 'B'
-    selectB_ = new SelectProcedureNode();
+    selectB_ = std::make_shared<SelectProcedureNode>();
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameSite", {selectA_});
-    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
-    SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+    selectB_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameSite", {selectA_});
+    selectB_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameMolecule", {selectA_});
+    std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'v(B->A)'
-    auto *calcVector = new CalculateVectorProcedureNode(selectA_, selectB_, true);
+    auto calcVector = std::make_shared<CalculateVectorProcedureNode>(selectA_, selectB_, true);
     forEachB->addNode(calcVector);
 
     // -- -- Collect3D: 'SDF'
-    collectVector_ = new Collect3DProcedureNode(calcVector, -10.0, 10.0, 0.5, -10.0, 10.0, 0.5, -10.0, 10.0, 0.5);
+    collectVector_ = std::make_shared<Collect3DProcedureNode>(calcVector, -10.0, 10.0, 0.5, -10.0, 10.0, 0.5, -10.0, 10.0, 0.5);
     forEachB->addNode(collectVector_);
 
     // Process3D: @dataName
-    processPosition_ = new Process3DProcedureNode(collectVector_);
+    processPosition_ = std::make_shared<Process3DProcedureNode>(collectVector_);
     processPosition_->setName("SDF");
     processPosition_->setKeyword<std::string>("LabelValue", "\\symbol{rho}(x,y,z)");
     processPosition_->setKeyword<std::string>("LabelX", "x, \\symbol{Angstrom}");
     processPosition_->setKeyword<std::string>("LabelY", "y, \\symbol{Angstrom}");
     processPosition_->setKeyword<std::string>("LabelZ", "z, \\symbol{Angstrom}");
-    SequenceProcedureNode *sdfNormalisation = processPosition_->addNormalisationBranch();
-    sdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_}));
-    sdfNormalisation->addNode(new OperateGridNormaliseProcedureNode());
+    std::shared_ptr<SequenceProcedureNode> sdfNormalisation = processPosition_->addNormalisationBranch();
+    sdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectA_}));
+    sdfNormalisation->addNode(std::make_shared<OperateGridNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processPosition_);
 
     /*

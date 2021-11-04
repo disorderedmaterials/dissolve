@@ -27,7 +27,7 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
     collectDAngle_->setKeyword<Vec3<double>>("RangeY", angleRange);
     const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
     if (excludeSameMolecule)
-        selectC_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+        selectC_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameMolecule", {selectA_});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurationsKeyword_.data().front();

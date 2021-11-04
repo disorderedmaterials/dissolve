@@ -22,7 +22,7 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.add("Control", new SpeciesSiteVectorKeyword(std::move(sites), axesRequired_), "Site",
                   "Add target site(s) to the selection");
-    keywords_.add("Control", new DynamicSiteNodesKeyword(shared_from_this(), dynamicSites_, axesRequired_), "DynamicSite",
+    keywords_.add("Control", new DynamicSiteNodesKeyword(std::static_pointer_cast<SelectProcedureNode>(shared_from_this()), dynamicSites_, axesRequired_), "DynamicSite",
                   "Add a new dynamic site to the selection");
     keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Select, true), "SameMoleculeAsSite",
                   "Request that the selected site comes from the molecule containing the current site in the specified "
@@ -117,7 +117,7 @@ std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::branch() { return fo
 std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
 {
     if (!forEachBranch_)
-      forEachBranch_ = new SequenceProcedureNode(context, procedure(), shared_from_this());
+      forEachBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this());
 
     return forEachBranch_;
 }

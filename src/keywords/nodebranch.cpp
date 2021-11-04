@@ -43,7 +43,7 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &c
 
     // Create and parse a new branch
     (*data_) =
-        new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, fmt::format("End{}", name()));
+      std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_, fmt::format("End{}", name()));
     if (!(*data_)->deserialise(parser, coreData))
         return false;
 

@@ -62,21 +62,21 @@ class CalculateRDFModule : public Module
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
-    SelectProcedureNode *selectA_;
+    std::shared_ptr<SelectProcedureNode> selectA_;
     // SelectNode for site B
-    SelectProcedureNode *selectB_;
+    std::shared_ptr<SelectProcedureNode> selectB_;
     // Collect1DNode for A-B RDF
-    Collect1DProcedureNode *collectDistance_;
+    std::shared_ptr<Collect1DProcedureNode> collectDistance_;
     // Process1DNode for A-B RDF
-    Process1DProcedureNode *processDistance_;
+    std::shared_ptr<Process1DProcedureNode> processDistance_;
 
     public:
     // Return Collect1DNode for A-B RDF
-    Collect1DProcedureNode *collectDistanceNode() const;
+    std::shared_ptr<Collect1DProcedureNode> collectDistanceNode() const;
     // Return SelectNode for site A
-    SelectProcedureNode *selectANode() const;
+    std::shared_ptr<SelectProcedureNode> selectANode() const;
     // Return Process1DNode result (i.e. RDF)
-    Process1DProcedureNode *rdfResult() const;
+    std::shared_ptr<Process1DProcedureNode> rdfResult() const;
 
     /*
      * GUI Widget

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/site.h"
 #include "data/elements.h"
 #include "procedure/nodes/node.h"
 #include "templates/refdatalist.h"
@@ -22,7 +23,6 @@ class DynamicSiteProcedureNode : public ProcedureNode
 {
     public:
   DynamicSiteProcedureNode(std::shared_ptr<SelectProcedureNode> parent);
-    ~DynamicSiteProcedureNode() override = default;
 
     /*
      * Identity
@@ -38,7 +38,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
      */
     private:
     // Parent Select node for context
-  std::shared_ptr<SelectProcedureNode> parent_;
+    std::shared_ptr<SelectProcedureNode> parent_;
     // Target Elements for selection as sites
     std::vector<Elements::Element> elements_;
 

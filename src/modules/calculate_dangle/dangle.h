@@ -64,23 +64,23 @@ class CalculateDAngleModule : public Module
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
-    SelectProcedureNode *selectA_;
+    std::shared_ptr<SelectProcedureNode> selectA_;
     // SelectNode for site B
-    SelectProcedureNode *selectB_;
+    std::shared_ptr<SelectProcedureNode> selectB_;
     // SelectNode for site C
-    SelectProcedureNode *selectC_;
+    std::shared_ptr<SelectProcedureNode> selectC_;
     // Collect1DNode for B-C RDF
-    Collect1DProcedureNode *collectDistance_;
+    std::shared_ptr<Collect1DProcedureNode> collectDistance_;
     // Collect1DNode for A-B-C angle histogram
-    Collect1DProcedureNode *collectAngle_;
+    std::shared_ptr<Collect1DProcedureNode> collectAngle_;
     // Collect2DNode for distance-angle data
-    Collect2DProcedureNode *collectDAngle_;
+    std::shared_ptr<Collect2DProcedureNode> collectDAngle_;
     // Process1DNode for B-C RDF
-    Process1DProcedureNode *processDistance_;
+    std::shared_ptr<Process1DProcedureNode> processDistance_;
     // Process1DNode for A-B-C angle histogram
-    Process1DProcedureNode *processAngle_;
+    std::shared_ptr<Process1DProcedureNode> processAngle_;
     // Process2DNode for distance-angle data
-    Process2DProcedureNode *processDAngle_;
+    std::shared_ptr<Process2DProcedureNode> processDAngle_;
 
     /*
      * GUI Widget

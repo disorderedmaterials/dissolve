@@ -21,8 +21,8 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 
     // Set the target Collect1D and normalisation nodes in the Process1D
-    process1D_->setKeyword<const ProcedureNode *>("SourceData", rdfModule->collectDistanceNode());
-    siteNormaliser_->setKeyword<std::vector<const ProcedureNode *>>("Site", {rdfModule->selectANode()});
+    process1D_->setKeyword<ConstNodeRef>("SourceData", rdfModule->collectDistanceNode());
+    siteNormaliser_->setKeyword<std::vector<ConstNodeRef>>("Site", {rdfModule->selectANode()});
 
     // Execute the analysis on the Configurations targeted by the RDF module
     for (Configuration *cfg : rdfModule->targetConfigurations())
