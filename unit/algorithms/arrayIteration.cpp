@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "templates/algorithms.h"
 #include "math/data1d.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
+#include "templates/algorithms.h"
 #include "templates/arrayIndex2d.h"
 #include "templates/arrayIndex3d.h"
 #include <gtest/gtest.h>
