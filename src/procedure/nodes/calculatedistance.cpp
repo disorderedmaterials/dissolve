@@ -13,9 +13,9 @@ CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNo
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateDistance, site0, site1)
 {
     // Create keywords - store the pointers to the superclasses for later use
-    siteKeywords_[0] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site0);
+  siteKeywords_[0] = new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Select, true, site0);
     keywords_.add("Control", siteKeywords_[0], "I", "Site that represents 'i' in the distance i-j");
-    siteKeywords_[1] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site1);
+    siteKeywords_[1] = new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Select, true, site1);
     keywords_.add("Control", siteKeywords_[1], "J", "Site that represents 'j' in the distance i-j");
 }
 

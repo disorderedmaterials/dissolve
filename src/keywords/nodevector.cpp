@@ -5,16 +5,16 @@
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
 
-NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                                     std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(
+NodeVectorKeyword::NodeVectorKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                                     std::vector<ConstNodeRef > nodes)
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<ConstNodeRef>>(
                                                               KeywordBase::NodeVectorData, nodes)
 {
 }
 
-NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                                     std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(
+NodeVectorKeyword::NodeVectorKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                                     std::vector<ConstNodeRef> nodes)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<ConstNodeRef >>(
                                                                KeywordBase::NodeVectorData, nodes)
 {
 }
@@ -39,7 +39,7 @@ bool NodeVectorKeyword::read(LineParser &parser, int startArg, const CoreData &c
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Locate the named node - don't prune by type yet (we'll check that in setNode())
-        auto *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
+        auto node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
         if (!node)
             return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(n), name());
 
@@ -59,7 +59,7 @@ bool NodeVectorKeyword::write(LineParser &parser, std::string_view keywordName, 
         return true;
 
     std::string nodes;
-    for (auto *node : data_)
+    for (auto node : data_)
         nodes += fmt::format("  '{}'", node->name());
 
     if (!parser.writeLineF("{}{}  {}\n", prefix, name(), nodes))
@@ -73,7 +73,7 @@ bool NodeVectorKeyword::write(LineParser &parser, std::string_view keywordName, 
  */
 
 // Prune any references to the supplied ProcedureNode in the contained data
-void NodeVectorKeyword::removeReferencesTo(ProcedureNode *node)
+void NodeVectorKeyword::removeReferencesTo(NodeRef node)
 {
     // Check the node type
     if (node->type() != nodeType())

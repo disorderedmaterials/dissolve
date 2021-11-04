@@ -3,12 +3,12 @@
 
 #include "keywords/nodebase.h"
 
-NodeKeywordBase::NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
+NodeKeywordBase::NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
     : parentNode_(parentNode), nodeType_(nodeType), onlyInScope_(onlyInScope)
 {
 }
 
-NodeKeywordBase::NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
+NodeKeywordBase::NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
     : parentNode_(parentNode), nodeClass_(nodeClass), onlyInScope_(onlyInScope)
 {
 }
@@ -18,7 +18,7 @@ NodeKeywordBase::NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeC
  */
 
 // Parent ProcedureNode
-ProcedureNode *NodeKeywordBase::parentNode() const { return parentNode_; }
+NodeRef NodeKeywordBase::parentNode() const { return parentNode_; }
 
 // Return optional target node type to allow
 std::optional<ProcedureNode::NodeType> NodeKeywordBase::nodeType() const { return nodeType_; }
@@ -30,7 +30,7 @@ std::optional<ProcedureNode::NodeClass> NodeKeywordBase::nodeClass() const { ret
 bool NodeKeywordBase::onlyInScope() const { return onlyInScope_; }
 
 // Return whether the node has valid class or type
-bool NodeKeywordBase::validNode(const ProcedureNode *node, std::optional<ProcedureNode::NodeType> nodeType,
+bool NodeKeywordBase::validNode(ConstNodeRef node, std::optional<ProcedureNode::NodeType> nodeType,
                                 std::optional<ProcedureNode::NodeClass> nodeClass, std::string_view keywordName) const
 {
     // Check class (if specified) then type (if specified)

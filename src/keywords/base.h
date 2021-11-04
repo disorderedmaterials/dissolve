@@ -6,6 +6,7 @@
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
+#include "procedure/nodes/aliases.h"
 #include <memory>
 
 // Forward Declarations
@@ -200,7 +201,7 @@ class KeywordBase : public ListItem<KeywordBase>
     // Prune any references to the supplied SpeciesSite in the contained data
     virtual void removeReferencesTo(SpeciesSite *spSite);
     // Prune any references to the supplied ProcedureNode in the contained data
-    virtual void removeReferencesTo(ProcedureNode *node);
+    virtual void removeReferencesTo(NodeRef node);
 
     public:
     // Gracefully deal with the specified object no longer being valid

@@ -22,7 +22,7 @@ Procedure::~Procedure() = default;
 void Procedure::clear() { rootSequence_.clear(); }
 
 // Add (own) specified node to root sequence
-void Procedure::addRootSequenceNode(ProcedureNode *node)
+void Procedure::addRootSequenceNode(NodeRef node)
 {
     rootSequence_.addNode(node);
     node->setScope(&rootSequence_);
@@ -35,14 +35,14 @@ const SequenceProcedureNode &Procedure::rootSequence() const { return rootSequen
 std::string_view Procedure::blockTerminationKeyword() const { return rootSequence_.blockTerminationKeyword(); }
 
 // Return named node if present (and matches the type / class given)
-const ProcedureNode *Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+ConstNodeRef Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
                                      std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     return rootSequence_.node(name, optNodeType, optNodeClass);
 }
 
 // Return all nodes (matching the type / class given)
-std::vector<const ProcedureNode *> Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
+std::vector<ConstNodeRef > Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
                                                     std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     return rootSequence_.nodes(optNodeType, optNodeClass);

@@ -16,7 +16,7 @@ class NodeScopeStack;
 class Integrate1DProcedureNode : public ProcedureNode
 {
     public:
-    Integrate1DProcedureNode(Process1DProcedureNode *target = nullptr);
+    Integrate1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target = nullptr);
     ~Integrate1DProcedureNode() override = default;
 
     /*

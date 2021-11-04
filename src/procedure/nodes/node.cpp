@@ -140,28 +140,28 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 }
 
 // Return named node if it is currently in scope (and matches the type / class given)
-const ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, const ProcedureNode *excludeNode,
+ConstNodeRef ProcedureNode::nodeInScope(std::string_view name, ConstNodeRef excludeNode,
                                                 std::optional<ProcedureNode::NodeType> optNodeType,
                                                 std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
         return nullptr;
 
-    return scope_->nodeInScope(this, name, excludeNode, optNodeType, optNodeClass);
+    return scope_->nodeInScope(shared_from_this(), name, excludeNode, optNodeType, optNodeClass);
 }
 
 // Return list of nodes in this node's scope (and matches the type / class given)
-std::vector<const ProcedureNode *> ProcedureNode::nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType,
+std::vector<ConstNodeRef > ProcedureNode::nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType,
                                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
         return {};
 
-    return scope_->nodesInScope(this, optNodeType, optNodeClass);
+    return scope_->nodesInScope(shared_from_this(), optNodeType, optNodeClass);
 }
 
 // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-const ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
+ConstNodeRef ProcedureNode::nodeExists(std::string_view name, NodeRef excludeNode,
                                                std::optional<ProcedureNode::NodeType> optNodeType,
                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
@@ -172,7 +172,7 @@ const ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureN
 }
 
 // Return list of nodes (of specified type / class) present in the Procedure
-std::vector<const ProcedureNode *> ProcedureNode::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
+std::vector<ConstNodeRef > ProcedureNode::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
                                                         std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     if (!scope_)
@@ -188,7 +188,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::parameterInScope(std::string_
     if (!scope_)
         return nullptr;
 
-    return scope_->parameterInScope(this, name, std::move(excludeParameter));
+    return scope_->parameterInScope(shared_from_this(), name, std::move(excludeParameter));
 }
 
 // Return the named parameter if it exists anywhere in the same Procedure
@@ -207,7 +207,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScop
     if (!scope_)
         return {};
 
-    return scope_->parametersInScope(this);
+    return scope_->parametersInScope(shared_from_this());
 }
 
 /*

@@ -15,9 +15,9 @@ CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateVector, site0, site1)
 {
     // Create keywords - store the pointers to the superclasses for later use
-    siteKeywords_[0] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site0);
+  siteKeywords_[0] = new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Select, true, site0);
     keywords_.add("Control", siteKeywords_[0], "I", "Site that represents 'i' in the vector i->j");
-    siteKeywords_[1] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site1);
+    siteKeywords_[1] = new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Select, true, site1);
     keywords_.add("Control", siteKeywords_[1], "J", "Site that represents 'j' in the vector i->j");
     keywords_.add("Control", new BoolKeyword(rotateIntoFrame), "RotateIntoFrame",
                   "Whether to rotate the calculated vector into the local frame defined on 'I'");

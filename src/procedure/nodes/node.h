@@ -6,6 +6,7 @@
 #include "base/enumoptions.h"
 #include "keywords/list.h"
 #include "templates/optionalref.h"
+#include "procedure/nodes/aliases.h"
 
 // Forward Declarations
 class Configuration;
@@ -19,12 +20,9 @@ class ProcessPool;
 class SequenceProcedureNode;
 class Site;
 
-class ProcedureNode;
-using NodeRef = ProcedureNode*;
-using ConstNodeRef = const ProcedureNode*;
 
 // Procedure Node
-class ProcedureNode
+class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
 {
     public:
     // Node Classes
@@ -155,18 +153,18 @@ class ProcedureNode
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node if it is currently in scope (and matches the type / class given)
-    const ProcedureNode *nodeInScope(std::string_view name, const ProcedureNode *excludeNode = nullptr,
+    ConstNodeRef nodeInScope(std::string_view name, ConstNodeRef excludeNode = nullptr,
                                      std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                      std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes in this node's scope (and matches the type / class given)
-    std::vector<const ProcedureNode *> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+    std::vector<ConstNodeRef > nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                                     std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-    const ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
+    ConstNodeRef nodeExists(std::string_view name, NodeRef excludeNode = nullptr,
                                     std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                     std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes (of specified type / class) present in the Procedure
-    std::vector<const ProcedureNode *> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+    std::vector<ConstNodeRef > nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                              std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(std::string_view name,

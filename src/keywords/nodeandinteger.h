@@ -10,13 +10,13 @@
 #include <tuple>
 
 // Keyword with ProcedureNode and integer index
-class NodeAndIntegerKeyword : public NodeKeywordBase, public KeywordData<std::pair<const ProcedureNode *, int>>
+class NodeAndIntegerKeyword : public NodeKeywordBase, public KeywordData<std::pair<ConstNodeRef, int>>
 {
     public:
-    NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                          const ProcedureNode *node = nullptr, int index = 0);
-    NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                          const ProcedureNode *node = nullptr, int index = 0);
+    NodeAndIntegerKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                          ConstNodeRef node = nullptr, int index = 0);
+    NodeAndIntegerKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                          ConstNodeRef node = nullptr, int index = 0);
     ~NodeAndIntegerKeyword() override = default;
 
     /*
@@ -37,5 +37,5 @@ class NodeAndIntegerKeyword : public NodeKeywordBase, public KeywordData<std::pa
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(ProcedureNode *node) override;
+    void removeReferencesTo(NodeRef node) override;
 };

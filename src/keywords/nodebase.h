@@ -11,8 +11,8 @@
 class NodeKeywordBase
 {
     public:
-    NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-    NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
+    NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
+    NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
     virtual ~NodeKeywordBase() = default;
 
     /*
@@ -20,7 +20,7 @@ class NodeKeywordBase
      */
     protected:
     // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    NodeRef parentNode_;
     // Optional target node type to allow
     std::optional<ProcedureNode::NodeType> nodeType_;
     // Optional target node class to allow
@@ -30,7 +30,7 @@ class NodeKeywordBase
 
     public:
     // Return parent ProcedureNode
-    ProcedureNode *parentNode() const;
+    NodeRef parentNode() const;
     // Return optional target node type to allow
     std::optional<ProcedureNode::NodeType> nodeType() const;
     // Return optional target node class to allow
@@ -38,6 +38,6 @@ class NodeKeywordBase
     // Return whether to accept nodes within scope only
     bool onlyInScope() const;
     // Return whether the supplied node has valid class or type
-    bool validNode(const ProcedureNode *node, std::optional<ProcedureNode::NodeType> nodeType,
+    bool validNode(ConstNodeRef node, std::optional<ProcedureNode::NodeType> nodeType,
                    std::optional<ProcedureNode::NodeClass> nodeClass, std::string_view keywordName) const;
 };

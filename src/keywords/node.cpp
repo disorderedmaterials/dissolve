@@ -4,15 +4,15 @@
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
 
-NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                         const ProcedureNode *node)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<const ProcedureNode *>(KeywordBase::NodeData, node)
+NodeKeyword::NodeKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                         ConstNodeRef node)
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<ConstNodeRef>(KeywordBase::NodeData, node)
 {
 }
 
-NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                         const ProcedureNode *node)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<const ProcedureNode *>(KeywordBase::NodeData, node)
+NodeKeyword::NodeKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                         ConstNodeRef node)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<ConstNodeRef >(KeywordBase::NodeData, node)
 {
 }
 
@@ -34,7 +34,7 @@ bool NodeKeyword::read(LineParser &parser, int startArg, const CoreData &coreDat
                                 KeywordBase::name());
 
     // Locate the named node
-    auto *node =
+    auto node =
         onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg)) : parentNode()->nodeExists(parser.argsv(startArg));
     if (!node)
         return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg), KeywordBase::name());
@@ -66,7 +66,7 @@ bool NodeKeyword::write(LineParser &parser, std::string_view keywordName, std::s
  */
 
 // Prune any references to the supplied ProcedureNode in the contained data
-void NodeKeyword::removeReferencesTo(ProcedureNode *node)
+void NodeKeyword::removeReferencesTo(NodeRef node)
 {
     if (data_ == node)
         data_ = nullptr;

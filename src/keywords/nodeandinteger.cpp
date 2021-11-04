@@ -4,16 +4,16 @@
 #include "keywords/nodeandinteger.h"
 #include "procedure/nodes/node.h"
 
-NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                                             const ProcedureNode *node, int index)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>(
+NodeAndIntegerKeyword::NodeAndIntegerKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                                             ConstNodeRef node, int index)
+  : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::pair<ConstNodeRef, int>>(
                                                               KeywordBase::NodeAndIntegerData, {node, index})
 {
 }
 
-NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                                             const ProcedureNode *node, int index)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>(
+NodeAndIntegerKeyword::NodeAndIntegerKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                                             ConstNodeRef node, int index)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::pair<ConstNodeRef , int>>(
                                                                KeywordBase::NodeAndIntegerData, {node, index})
 {
 }
@@ -36,7 +36,7 @@ bool NodeAndIntegerKeyword::read(LineParser &parser, int startArg, const CoreDat
                                 KeywordBase::name());
 
     // Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-    auto *node =
+    auto node =
         onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg)) : parentNode()->nodeExists(parser.argsv(startArg));
     if (!node)
         return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg), KeywordBase::name());
@@ -65,7 +65,7 @@ bool NodeAndIntegerKeyword::write(LineParser &parser, std::string_view keywordNa
  */
 
 // Prune any references to the supplied ProcedureNode in the contained data
-void NodeAndIntegerKeyword::removeReferencesTo(ProcedureNode *node)
+void NodeAndIntegerKeyword::removeReferencesTo(NodeRef node)
 {
     if (data_.first == node)
         data_.first = nullptr;

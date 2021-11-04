@@ -14,7 +14,7 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
                                                double binWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect1D)
 {
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, observable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, observable, 0),
                   "QuantityX", "Calculated observable to collect");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),

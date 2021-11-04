@@ -14,7 +14,7 @@ class AnalyseModule;
 class ProcedureNodeReference
 {
     public:
-    ProcedureNodeReference(const ProcedureNode *node = nullptr);
+    ProcedureNodeReference(ConstNodeRef node = nullptr);
     ~ProcedureNodeReference() = default;
 
     /*
@@ -22,7 +22,7 @@ class ProcedureNodeReference
      */
     private:
     // Target node
-    const ProcedureNode *node_;
+    ConstNodeRef node_;
     // Parent AnalyseModule owning the node (if relevant)
     AnalyseModule *analyseModuleParent_;
     // Allowable node types (when reading / setting)
@@ -30,7 +30,7 @@ class ProcedureNodeReference
 
     public:
     // Return target node
-    const ProcedureNode *node();
+    ConstNodeRef node();
     // Return node type
     ProcedureNode::NodeType type() const;
     // Add allowable node type
@@ -42,7 +42,7 @@ class ProcedureNodeReference
      * Operators
      */
     public:
-    void operator=(const ProcedureNode *node);
+    void operator=(ConstNodeRef node);
     void operator=(const ProcedureNodeReference &nodeRef);
 
     /*

@@ -13,13 +13,13 @@ class NodeValue;
 class ProcedureNode;
 
 // Keyword with ProcedureNode
-class NodeKeyword : public NodeKeywordBase, public KeywordData<const ProcedureNode *>
+class NodeKeyword : public NodeKeywordBase, public KeywordData<ConstNodeRef>
 {
     public:
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                const ProcedureNode *node = nullptr);
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                const ProcedureNode *node = nullptr);
+    NodeKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                ConstNodeRef node = nullptr);
+    NodeKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                ConstNodeRef node = nullptr);
     ~NodeKeyword() override = default;
 
     /*
@@ -40,5 +40,5 @@ class NodeKeyword : public NodeKeywordBase, public KeywordData<const ProcedureNo
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(ProcedureNode *node) override;
+    void removeReferencesTo(NodeRef node) override;
 };
