@@ -98,36 +98,19 @@
               maintainers = [ maintainers.rprospero ];
             };
           };
-        mkContainer = { mpi, gui, threading }:
-          pkgs.ociTools.buildContainer {
-            args = [
-              (with pkgs;
-                writeScript "run.sh" ''
-                  #!${bash}/bin/bash
-                  exec ${dissolve { inherit mpi gui threading; }}/bin/${
-                    exe-name mpi gui
-                  }
-                '').outPath
-            ];
-          };
         mkSingularity = { mpi ? false, gui ? false, threading ? true }:
-          pkgs.stdenvNoCC.mkDerivation {
-            inherit version;
-            name = "${exe-name mpi gui}.sif";
-            src =
-              builtins.filterSource (path: type: baseNameOf path != "flake.nix")
-              ./.;
-            buildPhase = ''
-              ${pkgs.gnutar}/bin/tar czf ${
+          pkgs.singularity-tools.buildImage {
+            name = "${exe-name mpi gui}-${version}";
+            diskSize = 1024 * 25;
+            contents = [ (dissolve { inherit mpi gui threading; }) ];
+            runScript = if gui then
+              "${nixGL.nixGLIntel}/bin/nixGLIntel ${
+                dissolve { inherit mpi gui threading; }
+              }/bin/${exe-name mpi gui}"
+            else
+              "${dissolve { inherit mpi gui threading; }}/bin/${
                 exe-name mpi gui
-              }.oci.tar.gz --directory=${
-                mkContainer { inherit mpi gui threading; }
-              } .
-            '';
-            installPhase = ''
-              mkdir -p $out
-              cp ${exe-name mpi gui}.oci.tar.gz $out/
-            '';
+              }";
           };
       in {
         checks.dissolve = dissolve { checks = true; };

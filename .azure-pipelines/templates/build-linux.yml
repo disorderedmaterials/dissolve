@@ -5,6 +5,8 @@ parameters:
     default : false
   - name: docker
     default: "docker-gui"
+  - name: singularity
+    default: "singularity-gui"
   - name: nix_version
     default: 2.4
 
@@ -45,6 +47,9 @@ steps:
       nix build .#${{ parameters.docker }}
       mkdir -p docker
       cp result docker
+      nix build .#${{ parameters.singularity }}
+      mkdir -p singularity
+      cp result singularity
     env:
       CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
     displayName: 'Package'
