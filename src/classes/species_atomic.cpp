@@ -26,15 +26,15 @@ void Species::selectFromAtomRecursive(std::vector<SpeciesAtom *> selection, Spec
     }
 }
 
-// Add a new atom to the Species
-SpeciesAtom &Species::addAtom(Elements::Element Z, Vec3<double> r, double q)
+// Add a new atom to the Species, returning its index
+int Species::addAtom(Elements::Element Z, Vec3<double> r, double q)
 {
     auto &i = atoms_.emplace_back();
     i.setSpecies(this);
     i.set(Z, r.x, r.y, r.z, q);
     i.setIndex(atoms_.size() - 1);
     ++version_;
-    return i;
+    return i.index();
 }
 
 // Remove the specified atom from the species
@@ -152,6 +152,8 @@ void Species::selectAtom(SpeciesAtom *i)
         ++atomSelectionVersion_;
     }
 }
+
+void Species::selectAtom(int index) { selectAtom(&atoms_[index]); }
 
 // Remove atom from selection
 void Species::deselectAtom(SpeciesAtom *i)

@@ -190,12 +190,12 @@ void SpeciesViewer::endInteraction()
                     }
 
                     // If an atom was not clicked at the start of the interaction, create a new one now
-                    i = clickedAtom_ ? clickedAtom_ : &species_->addAtom(drawElement_, drawCoordinateStart_);
+                    i = clickedAtom_ ? clickedAtom_ : &species_->atom(species_->addAtom(drawElement_, drawCoordinateStart_));
 
                     // Get atom at current coordinates - if there isn't one, create one now
                     j = atomAt(rMouseLast_.x, rMouseLast_.y);
                     if (!j)
-                        j = &species_->addAtom(drawElement_, drawCoordinateCurrent_);
+                        j = &species_->atom(species_->addAtom(drawElement_, drawCoordinateCurrent_));
 
                     // Create a bond between the two atoms, if one doesn't currently exist
                     if ((i != j) && (!species_->hasBond(i, j)))

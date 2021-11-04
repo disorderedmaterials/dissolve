@@ -70,8 +70,8 @@ class Species
                                  OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
 
     public:
-    // Add a new atom to the Species
-    SpeciesAtom &addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
+    // Add a new atom to the Species, returning its index
+    int addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
     // Remove the specified atom from the species
     void removeAtom(SpeciesAtom *i);
     // Return the number of atoms in the species
@@ -96,6 +96,7 @@ class Species
     void clearAtomSelection();
     // Add atom to selection
     void selectAtom(SpeciesAtom *i);
+    void selectAtom(int index);
     // Remove atom from selection
     void deselectAtom(SpeciesAtom *i);
     // Toggle selection state of specified atom

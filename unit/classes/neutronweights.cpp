@@ -27,23 +27,30 @@ class NeutronWeightsTest : public ::testing::Test
         atH2_->setName("H2");
 
         // Set up N2 species
-        n2_.addAtom(Elements::N, {}).setAtomType(atN_);
-        n2_.addAtom(Elements::N, {1.2, 0.0, 0.0}).setAtomType(atN_);
+        n2_.addAtom(Elements::N, {});
+        n2_.addAtom(Elements::N, {1.2, 0.0, 0.0});
+        n2_.atom(0).setAtomType(atN_);
+        n2_.atom(1).setAtomType(atN_);
         n2_.addBond(0, 1);
         n2A15_ = n2_.addIsotopologue("N15");
         n2A15_->setAtomTypeIsotope(atN_, Sears91::N_15);
 
         // Set up H2 species
-        h2_.addAtom(Elements::H, {}).setAtomType(atH1_);
-        h2_.addAtom(Elements::H, {0.7, 0.0, 0.0}).setAtomType(atH2_);
+        h2_.addAtom(Elements::H, {});
+        h2_.addAtom(Elements::H, {0.7, 0.0, 0.0});
+        h2_.atom(0).setAtomType(atH1_);
+        h2_.atom(1).setAtomType(atH1_);
         h2_.addBond(0, 1);
         h2A2_ = h2_.addIsotopologue("H2");
         h2A2_->setAtomTypeIsotope(atH1_, Sears91::H_2);
 
         // Set up H2O species
-        h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0}).setAtomType(atH2_);
-        h2o_.addAtom(Elements::O, {}).setAtomType(atO_);
-        h2o_.addAtom(Elements::H, {cos(107.4 / DEGRAD), sin(107.4 / DEGRAD), 0.0}).setAtomType(atH2_);
+        h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
+        h2o_.addAtom(Elements::O, {});
+        h2o_.addAtom(Elements::H, {cos(107.4 / DEGRAD), sin(107.4 / DEGRAD), 0.0});
+        h2o_.atom(0).setAtomType(atH2_);
+        h2o_.atom(1).setAtomType(atO_);
+        h2o_.atom(2).setAtomType(atH2_);
         h2o_.addBond(0, 1);
         h2o_.addBond(1, 2);
         h2o_.addAngle(0, 1, 2);
