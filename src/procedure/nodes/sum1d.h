@@ -17,7 +17,7 @@ class NodeScopeStack;
 class Sum1DProcedureNode : public ProcedureNode
 {
     public:
-    Sum1DProcedureNode(Process1DProcedureNode *target = nullptr);
+  Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target = nullptr);
     ~Sum1DProcedureNode() override = default;
 
     /*
@@ -32,7 +32,7 @@ class Sum1DProcedureNode : public ProcedureNode
      */
     private:
     // Process1D node that we are targetting (retrieved from keyword 'SourceData')
-    const Process1DProcedureNode *processNode_;
+  std::shared_ptr<const Process1DProcedureNode> processNode_;
     // Ranges for sums (retrieved from keywords)
     Range range_[3];
     // Flags for ranges

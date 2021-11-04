@@ -12,7 +12,7 @@ class RegionProcedureNodeBase;
 class PickRegionProcedureNode : public PickProcedureNodeBase
 {
     public:
-    explicit PickRegionProcedureNode(const RegionProcedureNodeBase *region = nullptr);
+    explicit PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region = nullptr);
     ~PickRegionProcedureNode() override = default;
 
     /*

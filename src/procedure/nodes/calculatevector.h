@@ -12,7 +12,7 @@ class SelectProcedureNode;
 class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
 {
     public:
-    CalculateVectorProcedureNode(SelectProcedureNode *site0 = nullptr, SelectProcedureNode *site1 = nullptr,
+    CalculateVectorProcedureNode(std::shared_ptr<SelectProcedureNode> site0 = nullptr, std::shared_ptr<SelectProcedureNode> site1 = nullptr,
                                  bool rotateIntoFrame = false);
     ~CalculateVectorProcedureNode() override = default;
 

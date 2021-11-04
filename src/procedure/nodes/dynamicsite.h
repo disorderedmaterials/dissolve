@@ -21,7 +21,7 @@ class NodeScopeStack;
 class DynamicSiteProcedureNode : public ProcedureNode
 {
     public:
-    DynamicSiteProcedureNode(SelectProcedureNode *parent);
+  DynamicSiteProcedureNode(std::shared_ptr<SelectProcedureNode> parent);
     ~DynamicSiteProcedureNode() override = default;
 
     /*
@@ -38,7 +38,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
      */
     private:
     // Parent Select node for context
-    SelectProcedureNode *parent_;
+  std::shared_ptr<SelectProcedureNode> parent_;
     // Target Elements for selection as sites
     std::vector<Elements::Element> elements_;
 

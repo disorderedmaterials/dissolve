@@ -25,7 +25,7 @@ void Procedure::clear() { rootSequence_.clear(); }
 void Procedure::addRootSequenceNode(NodeRef node)
 {
     rootSequence_.addNode(node);
-    node->setScope(&rootSequence_);
+    node->setScope(std::dynamic_pointer_cast<SequenceProcedureNode>(rootSequence_.shared_from_this()));
 }
 
 // Return root sequence

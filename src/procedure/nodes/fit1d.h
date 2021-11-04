@@ -20,7 +20,7 @@ class NodeScopeStack;
 class Fit1DProcedureNode : public ProcedureNode
 {
     public:
-    Fit1DProcedureNode(Collect1DProcedureNode *target = nullptr);
+    Fit1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target = nullptr);
     ~Fit1DProcedureNode() override = default;
 
     /*

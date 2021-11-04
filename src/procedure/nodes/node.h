@@ -141,13 +141,13 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
      */
     private:
     // Scope (SequenceNode) in which this node exists
-    SequenceProcedureNode *scope_;
+    std::shared_ptr<SequenceProcedureNode> scope_;
 
     public:
     // Set scope
-    void setScope(SequenceProcedureNode *scopeNode);
+    void setScope(std::shared_ptr<SequenceProcedureNode> scopeNode);
     // Return scope (SequenceNode) in which this node exists
-    SequenceProcedureNode *scope() const;
+    std::shared_ptr<SequenceProcedureNode> scope() const;
     // Return Procedure in which this node exists
     virtual const Procedure *procedure() const;
     // Return context of scope in which this node exists
@@ -182,7 +182,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     // Return whether this node has a branch
     virtual bool hasBranch() const;
     // Return SequenceNode for the branch (if it exists)
-    virtual SequenceProcedureNode *branch();
+    virtual std::shared_ptr<SequenceProcedureNode> branch();
 
     /*
      * Parameters

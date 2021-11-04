@@ -52,7 +52,7 @@ const SampledDouble &Integrate1DProcedureNode::integral(int index) const { retur
 bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Process1D node target
-    processNode_ = dynamic_cast<const Process1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
+  processNode_ = std::dynamic_pointer_cast<const Process1DProcedureNode>(keywords_.retrieve<ConstNodeRef >("SourceData"));
     if (!processNode_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
 

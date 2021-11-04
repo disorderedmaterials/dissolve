@@ -31,7 +31,7 @@ class Integrate1DProcedureNode : public ProcedureNode
      */
     private:
     // Process1D node that we are targetting (retrieved from keyword 'SourceData')
-    const Process1DProcedureNode *processNode_;
+    std::shared_ptr<const Process1DProcedureNode> processNode_;
     // Calculated integral (stored in processing data list)
     SampledDouble integral_[3];
 

@@ -9,7 +9,7 @@
 #include "classes/species.h"
 #include "procedure/nodes/select.h"
 
-CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1)
+CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(std::shared_ptr<SelectProcedureNode> site0, std::shared_ptr<SelectProcedureNode> site1)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateDistance, site0, site1)
 {
     // Create keywords - store the pointers to the superclasses for later use

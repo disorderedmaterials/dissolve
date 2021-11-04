@@ -80,22 +80,22 @@ void CalculateAxisAngleModule::initialise()
     // Select: Site 'A'
     selectA_ = new SelectProcedureNode({}, true);
     selectA_->setName("A");
-    SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
 
     // -- Select: Site 'B'
     selectB_ = new SelectProcedureNode({}, true);
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
-    SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+    selectB_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameMolecule", {selectA_});
+    auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'rAB'
-    auto *calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
+    auto calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
     forEachB->addNode(calcDistance);
 
     // -- -- Calculate: 'axisAngle'
-    auto *calcAngle = new CalculateAxisAngleProcedureNode(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
+    auto calcAngle = new CalculateAxisAngleProcedureNode(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
     forEachB->addNode(calcAngle);
 
     // -- -- Collect2D:  'rAB vs axisAngle)'

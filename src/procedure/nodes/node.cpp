@@ -116,10 +116,10 @@ const KeywordList &ProcedureNode::keywords() const { return keywords_; }
  */
 
 // Set scope
-void ProcedureNode::setScope(SequenceProcedureNode *scopeNode) { scope_ = scopeNode; }
+void ProcedureNode::setScope(std::shared_ptr<SequenceProcedureNode> scopeNode) { scope_ = scopeNode; }
 
 // Return scope (SequenceNode) in which this node exists
-SequenceProcedureNode *ProcedureNode::scope() const { return scope_; }
+std::shared_ptr<SequenceProcedureNode> ProcedureNode::scope() const { return scope_; }
 
 // Return Procedure in which this node exists
 const Procedure *ProcedureNode::procedure() const
@@ -218,7 +218,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScop
 bool ProcedureNode::hasBranch() const { return false; }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *ProcedureNode::branch() { return nullptr; }
+std::shared_ptr<SequenceProcedureNode> ProcedureNode::branch() { return nullptr; }
 
 /*
  * Parameters

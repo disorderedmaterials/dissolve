@@ -17,7 +17,7 @@ class NodeScopeStack;
 class Process3DProcedureNode : public ProcedureNode
 {
     public:
-    Process3DProcedureNode(Collect3DProcedureNode *target = nullptr);
+    Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target = nullptr);
     ~Process3DProcedureNode() override = default;
 
     /*
@@ -32,7 +32,7 @@ class Process3DProcedureNode : public ProcedureNode
      */
     private:
     // Collect3D node that we are processing
-    const Collect3DProcedureNode *collectNode_;
+    std::shared_ptr<const Collect3DProcedureNode> collectNode_;
     // Pointer to processed data (stored in processing data list)
     Data3D *processedData_;
     // Export file and format
@@ -55,15 +55,15 @@ class Process3DProcedureNode : public ProcedureNode
      */
     private:
     // Branch for normalisation of data (if defined)
-    SequenceProcedureNode *normalisationBranch_;
+    std::shared_ptr<SequenceProcedureNode> normalisationBranch_;
 
     public:
     // Add and return normalisation sequence branch
-    SequenceProcedureNode *addNormalisationBranch();
+    std::shared_ptr<SequenceProcedureNode> addNormalisationBranch();
     // Return whether this node has a branch
     bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
+    std::shared_ptr<SequenceProcedureNode> branch() override;
 
     /*
      * Execute

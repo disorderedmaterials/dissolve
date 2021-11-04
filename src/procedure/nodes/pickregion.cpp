@@ -8,10 +8,10 @@
 #include "keywords/types.h"
 #include "procedure/nodes/regionbase.h"
 
-PickRegionProcedureNode::PickRegionProcedureNode(const RegionProcedureNodeBase *region)
+PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region)
     : PickProcedureNodeBase(ProcedureNode::NodeType::PickRegion)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Region, true, region), "Region",
+  keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeClass::Region, true, region), "Region",
                   "Region containing molecules that should be picked");
 }
 
@@ -23,7 +23,7 @@ PickRegionProcedureNode::PickRegionProcedureNode(const RegionProcedureNodeBase *
 bool PickRegionProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-    auto *regionNode = dynamic_cast<const RegionProcedureNodeBase *>(keywords_.retrieve<const ProcedureNode *>("Region"));
+    auto regionNode = std::dynamic_pointer_cast<const RegionProcedureNodeBase>(keywords_.retrieve<ConstNodeRef >("Region"));
     if (!regionNode)
         return Messenger::error("A region must be supplied to PickRegion.\n");
     Messenger::print("[PickRegion] Molecules will be selected from {}.\n", moleculePoolName());

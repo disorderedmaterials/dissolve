@@ -14,9 +14,9 @@ class SelectProcedureNode;
 class CalculateProcedureNodeBase : public ProcedureNode
 {
     public:
-    CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0 = nullptr,
-                               SelectProcedureNode *site1 = nullptr, SelectProcedureNode *site2 = nullptr,
-                               SelectProcedureNode *site3 = nullptr);
+    CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, std::shared_ptr<SelectProcedureNode> site0 = nullptr,
+                               std::shared_ptr<SelectProcedureNode> site1 = nullptr, std::shared_ptr<SelectProcedureNode> site2 = nullptr,
+                               std::shared_ptr<SelectProcedureNode> site3 = nullptr);
     ~CalculateProcedureNodeBase() override = default;
 
     /*
@@ -38,7 +38,7 @@ class CalculateProcedureNodeBase : public ProcedureNode
      */
     protected:
     // Sites (SelectProcedureNodes) to use for calculation of observable (retrieved from keywords)
-    std::array<const SelectProcedureNode *, 4> sites_;
+    std::array<std::shared_ptr<const SelectProcedureNode>, 4> sites_;
     // Last calculate value(s) of observable (as Vec3)
     Vec3<double> value_;
 

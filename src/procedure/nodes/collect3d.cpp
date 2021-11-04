@@ -10,17 +10,17 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable,
-                                               CalculateProcedureNodeBase *zObservable, double xMin, double xMax,
+Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable, std::shared_ptr<CalculateProcedureNodeBase> yObservable,
+                                               std::shared_ptr<CalculateProcedureNodeBase> zObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D)
 {
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xObservable, 0),
                   "QuantityX", "Calculated observable to collect for x axis");
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, yObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, yObservable, 0),
                   "QuantityY", "Calculated observable to collect for y axis");
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, zObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, zObservable, 0),
                   "QuantityZ", "Calculated observable to collect for z axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
@@ -34,22 +34,22 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.0015),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range and binwidth of the z-axis of the histogram");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 
     // Initialise branch
     subCollectBranch_ = nullptr;
 }
-Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin, double xMax,
+Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D)
 {
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xyzObservable, 0),
                   "QuantityX", "Calculated observable to collect for x axis");
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 1),
+  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xyzObservable, 1),
                   "QuantityY", "Calculated observable to collect for y axis");
-    keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 2),
+  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xyzObservable, 2),
                   "QuantityZ", "Calculated observable to collect for z axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
@@ -63,7 +63,7 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzOb
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range of calculation for the specified z observable");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 
     // Initialise branch
@@ -124,10 +124,10 @@ double Collect3DProcedureNode::zBinWidth() const { return keywords_.asVec3Double
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
     if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
+      subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
 
     return subCollectBranch_;
 }
@@ -135,7 +135,7 @@ SequenceProcedureNode *Collect3DProcedureNode::addSubCollectBranch(ProcedureNode
 // Return whether this node has a branch
 bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect3DProcedureNode::branch() { return subCollectBranch_; }
+std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute
@@ -163,17 +163,17 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     histogram_ = target;
 
     // Retrieve the observables
-    const ProcedureNode *node;
-    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityX");
-    xObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
+    ConstNodeRef node;
+    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef, int>>("QuantityX");
+    xObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
-    std::tie(node, yObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityY");
-    yObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
+    std::tie(node, yObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef, int>>("QuantityY");
+    yObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
     if (!yObservable_)
         return Messenger::error("No valid y quantity set in '{}'.\n", name());
-    std::tie(node, zObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityZ");
-    zObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
+    std::tie(node, zObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef, int>>("QuantityZ");
+    zObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
     if (!zObservable_)
         return Messenger::error("No valid z quantity set in '{}'.\n", name());
 

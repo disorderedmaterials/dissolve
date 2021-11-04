@@ -10,7 +10,7 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable,
+Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable, std::shared_ptr<CalculateProcedureNodeBase> yObservable,
                                                double xMin, double xMax, double xBinWidth, double yMin, double yMax,
                                                double yBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect2D)
@@ -79,10 +79,10 @@ double Collect2DProcedureNode::yBinWidth() const { return keywords_.asVec3Double
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Collect2DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> Collect2DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
     if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
+      subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
 
     return subCollectBranch_;
 }
@@ -91,7 +91,7 @@ SequenceProcedureNode *Collect2DProcedureNode::addSubCollectBranch(ProcedureNode
 bool Collect2DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect2DProcedureNode::branch() { return subCollectBranch_; }
+std::shared_ptr<SequenceProcedureNode> Collect2DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute
@@ -118,13 +118,13 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     histogram_ = target;
 
     // Retrieve the observables
-    const ProcedureNode *node;
-    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityX");
-    xObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
+    ConstNodeRef node;
+    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef , int>>("QuantityX");
+    xObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
-    std::tie(node, yObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityY");
-    yObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
+    std::tie(node, yObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef , int>>("QuantityY");
+    yObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
     if (!yObservable_)
         return Messenger::error("No valid y quantity set in '{}'.\n", name());
 

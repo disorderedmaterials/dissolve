@@ -41,24 +41,24 @@ class SelectProcedureNode : public ProcedureNode
     // Vector of sites to select (retrieved from keyword)
     std::vector<const SpeciesSite *> speciesSites_;
     // List of DynamicSites to select, if any
-    RefList<DynamicSiteProcedureNode> dynamicSites_;
+    std::vector<std::shared_ptr<DynamicSiteProcedureNode>> dynamicSites_;
 
     /*
      * Selection Control
      */
     private:
     // List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-    std::vector<const SelectProcedureNode *> sameMoleculeExclusions_;
+    std::vector<std::shared_ptr<const SelectProcedureNode> > sameMoleculeExclusions_;
     // List of Molecules currently excluded from selection
     std::vector<std::shared_ptr<const Molecule>> excludedMolecules_;
     // List of other sites (nodes) which will exclude one of our sites if it is the same site
-    std::vector<const SelectProcedureNode *> sameSiteExclusions_;
+    std::vector<std::shared_ptr<const SelectProcedureNode> > sameSiteExclusions_;
     // List of Sites currently excluded from selection
     RefList<const Site> excludedSites_;
     // Molecule (from site) in which the site must exist (retrieved from keyword data)
-    const SelectProcedureNode *sameMolecule_;
+    std::shared_ptr<const SelectProcedureNode> sameMolecule_;
     // Site to use for distance check
-    const SelectProcedureNode *distanceReferenceSite_;
+    std::shared_ptr<const SelectProcedureNode> distanceReferenceSite_;
     // Range of distance to allow from distance reference site (if limiting)
     Range inclusiveDistanceRange_;
 
@@ -96,15 +96,15 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // Branch for ForEach (if defined)
-    SequenceProcedureNode *forEachBranch_;
+    std::shared_ptr<SequenceProcedureNode> forEachBranch_;
 
     public:
     // Return whether this node has a branch
     bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
+    std::shared_ptr<SequenceProcedureNode> branch() override;
     // Add and return ForEach sequence
-    SequenceProcedureNode *addForEachBranch(ProcedureNode::NodeContext context);
+    std::shared_ptr<SequenceProcedureNode> addForEachBranch(ProcedureNode::NodeContext context);
 
     /*
      * Execute

@@ -11,8 +11,8 @@
 #include "keywords/enumoptions.h"
 #include "procedure/nodes/select.h"
 
-CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedureNode *site0, OrientedSite::SiteAxis axis0,
-                                                                 SelectProcedureNode *site1, OrientedSite::SiteAxis axis1)
+CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0, OrientedSite::SiteAxis axis0,
+                                                                 std::shared_ptr<SelectProcedureNode> site1, OrientedSite::SiteAxis axis1)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAxisAngle, site0, site1)
 {
     // Create keywords - store the pointers to the superclasses for later use

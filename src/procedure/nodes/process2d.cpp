@@ -13,17 +13,17 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process2DProcedureNode::Process2DProcedureNode(Collect2DProcedureNode *target)
+Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process2D)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect2D, false, target), "SourceData",
+  keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Collect2D, false, target), "SourceData",
                   "Collect2D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
                   "File format and file name under which to save processed data");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 
     // Initialise branch
@@ -74,10 +74,10 @@ std::string Process2DProcedureNode::yAxisLabel() const { return keywords_.asStri
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Process2DProcedureNode::addNormalisationBranch()
+std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::addNormalisationBranch()
 {
     if (!normalisationBranch_)
-        normalisationBranch_ = new SequenceProcedureNode(ProcedureNode::OperateContext, procedure());
+      normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
 
     return normalisationBranch_;
 }
@@ -86,7 +86,7 @@ SequenceProcedureNode *Process2DProcedureNode::addNormalisationBranch()
 bool Process2DProcedureNode::hasBranch() const { return (normalisationBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Process2DProcedureNode::branch() { return normalisationBranch_; }
+std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::branch() { return normalisationBranch_; }
 
 /*
  * Execute
@@ -96,7 +96,7 @@ SequenceProcedureNode *Process2DProcedureNode::branch() { return normalisationBr
 bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Collect2D node target
-    collectNode_ = dynamic_cast<const Collect2DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
+    collectNode_ = std::dynamic_pointer_cast<const Collect2DProcedureNode>(keywords_.retrieve<ConstNodeRef >("SourceData"));
     if (!collectNode_)
         return Messenger::error("No source Collect2D node set in '{}'.\n", name());
 
@@ -128,7 +128,7 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
                 continue;
 
             // Cast the node
-            auto *operateNode = dynamic_cast<OperateProcedureNodeBase *>(node);
+            auto operateNode = std::dynamic_pointer_cast<OperateProcedureNodeBase>(node);
             operateNode->setTarget(processedData_);
         }
 

@@ -66,35 +66,35 @@ class CalculateAngleModule : public Module
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
-    SelectProcedureNode *selectA_;
+    std::shared_ptr<SelectProcedureNode> selectA_;
     // SelectNode for site B
-    SelectProcedureNode *selectB_;
+    std::shared_ptr<SelectProcedureNode> selectB_;
     // SelectNode for site C
-    SelectProcedureNode *selectC_;
+    std::shared_ptr<SelectProcedureNode> selectC_;
     // Collect1DNode for A-B RDF
-    Collect1DProcedureNode *collectAB_;
+    std::shared_ptr<Collect1DProcedureNode> collectAB_;
     // Collect1DNode for B-C RDF
-    Collect1DProcedureNode *collectBC_;
+    std::shared_ptr<Collect1DProcedureNode> collectBC_;
     // Collect1DNode for A-B-C angle histogram
-    Collect1DProcedureNode *collectABC_;
+    std::shared_ptr<Collect1DProcedureNode> collectABC_;
     // Collect2DNode for (A-B)-C distance-angle data
-    Collect2DProcedureNode *collectDAngleAB_;
+    std::shared_ptr<Collect2DProcedureNode> collectDAngleAB_;
     // Collect2DNode for A-(B-C) distance-angle data
-    Collect2DProcedureNode *collectDAngleBC_;
+    std::shared_ptr<Collect2DProcedureNode> collectDAngleBC_;
     // Collect3DNode for A-B vs B-C vs A-B-C distance-distance-angle data
-    Collect3DProcedureNode *collectDDA_;
+    std::shared_ptr<Collect3DProcedureNode> collectDDA_;
     // Process1DNode for A-B RDF
-    Process1DProcedureNode *processAB_;
+    std::shared_ptr<Process1DProcedureNode> processAB_;
     // Process1DNode for B-c RDF
-    Process1DProcedureNode *processBC_;
+    std::shared_ptr<Process1DProcedureNode> processBC_;
     // Process1DNode for A-B-C angle histogram
-    Process1DProcedureNode *processAngle_;
+    std::shared_ptr<Process1DProcedureNode> processAngle_;
     // Process2DNode for (A-B)-C distance-angle data
-    Process2DProcedureNode *processDAngleAB_;
+    std::shared_ptr<Process2DProcedureNode> processDAngleAB_;
     // Process2DNode for A-(B-C) distance-angle data
-    Process2DProcedureNode *processDAngleBC_;
+    std::shared_ptr<Process2DProcedureNode> processDAngleBC_;
     // Process3DNode for A-B vs B-C vs A-B-C distance-distance-angle data
-    Process3DProcedureNode *processDDA_;
+    std::shared_ptr<Process3DProcedureNode> processDDA_;
 
     /*
      * GUI Widget

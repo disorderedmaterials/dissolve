@@ -10,7 +10,7 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax,
+Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable, double rMin, double rMax,
                                                double binWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect1D)
 {
@@ -20,7 +20,7 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
                   new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxBinwidthlabels),
                   "RangeX", "Range and binwidth of the histogram for QuantityX");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantity was binned successfully");
 
     // Initialise branch
@@ -71,10 +71,10 @@ double Collect1DProcedureNode::binWidth() const { return keywords_.asVec3Double(
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
     if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
+      subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
 
     return subCollectBranch_;
 }
@@ -83,7 +83,7 @@ SequenceProcedureNode *Collect1DProcedureNode::addSubCollectBranch(ProcedureNode
 bool Collect1DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect1DProcedureNode::branch() { return subCollectBranch_; }
+std::shared_ptr<SequenceProcedureNode> Collect1DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute
@@ -110,9 +110,9 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     histogram_ = target;
 
     // Retrieve the observable
-    const ProcedureNode *node;
-    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<const ProcedureNode *, int>>("QuantityX");
-    xObservable_ = dynamic_cast<const CalculateProcedureNodeBase *>(node);
+    ConstNodeRef node;
+    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef , int>>("QuantityX");
+    xObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
 

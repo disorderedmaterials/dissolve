@@ -6,9 +6,9 @@
 #include "base/sysfunc.h"
 #include "procedure/nodes/select.h"
 
-CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0,
-                                                       SelectProcedureNode *site1, SelectProcedureNode *site2,
-                                                       SelectProcedureNode *site3)
+CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, std::shared_ptr<SelectProcedureNode> site0,
+                                                       std::shared_ptr<SelectProcedureNode> site1, std::shared_ptr<SelectProcedureNode> site2,
+                                                       std::shared_ptr<SelectProcedureNode> site3)
     : ProcedureNode(nodeType, ProcedureNode::NodeClass::Calculate)
 {
     sites_[0] = site0;
@@ -52,8 +52,8 @@ bool CalculateProcedureNodeBase::prepare(Configuration *cfg, std::string_view pr
     // Check that the sites have been properly defined
     for (auto n = 0; n < nSitesRequired(); ++n)
     {
-        sites_[n] = siteKeywords_[n] ? dynamic_cast<const SelectProcedureNode *>(siteKeywords_[n]->data()) : nullptr;
-        if (!sites_[n])
+      sites_[n] = siteKeywords_[n] ? std::dynamic_pointer_cast<const SelectProcedureNode>(siteKeywords_[n]->data()) : nullptr; //FIXME: Commented to allow compile
+	if (!sites_[n])
             return Messenger::error("Observable site {} is not set.\n", n);
     }
 

@@ -16,7 +16,7 @@ class NodeScopeStack;
 class Collect1DProcedureNode : public ProcedureNode
 {
     public:
-    Collect1DProcedureNode(CalculateProcedureNodeBase *observable = nullptr, double rMin = 0.0, double rMax = 10.0,
+    Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable = nullptr, double rMin = 0.0, double rMax = 10.0,
                            double binWidth = 0.05);
     ~Collect1DProcedureNode() override = default;
 
@@ -32,7 +32,7 @@ class Collect1DProcedureNode : public ProcedureNode
      */
     private:
     // Observable to bin along x (retrieved from keyword)
-    const CalculateProcedureNodeBase *xObservable_;
+    std::shared_ptr<const CalculateProcedureNodeBase> xObservable_;
     // Index of x observable data to use (retrieved from keyword)
     int xObservableIndex_;
     // Histogram in which to accumulate data
@@ -55,15 +55,15 @@ class Collect1DProcedureNode : public ProcedureNode
      */
     private:
     // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_;
+    std::shared_ptr<SequenceProcedureNode> subCollectBranch_;
 
     public:
     // Add and return subcollection sequence branch
-    SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
+    std::shared_ptr<SequenceProcedureNode> addSubCollectBranch(ProcedureNode::NodeContext context);
     // Return whether this node has a branch
     bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
+    std::shared_ptr<SequenceProcedureNode> branch() override;
 
     /*
      * Execute

@@ -6,9 +6,9 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
-NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer,
+NodeBranchKeyword::NodeBranchKeyword(NodeRef parentNode, std::shared_ptr<SequenceProcedureNode> *branchPointer,
                                      ProcedureNode::NodeContext branchContext)
-    : KeywordData<SequenceProcedureNode **>(KeywordData::NodeBranchData, branchPointer)
+    : KeywordData<std::shared_ptr<SequenceProcedureNode> *>(KeywordData::NodeBranchData, branchPointer)
 {
     parentNode_ = parentNode;
     branchContext_ = branchContext;

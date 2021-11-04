@@ -10,7 +10,7 @@
 #include "keywords/bool.h"
 #include "procedure/nodes/select.h"
 
-CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1,
+CalculateVectorProcedureNode::CalculateVectorProcedureNode(std::shared_ptr<SelectProcedureNode> site0, std::shared_ptr<SelectProcedureNode> site1,
                                                            bool rotateIntoFrame)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateVector, site0, site1)
 {

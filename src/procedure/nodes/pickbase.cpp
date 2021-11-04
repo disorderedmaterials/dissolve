@@ -8,7 +8,7 @@
 PickProcedureNodeBase::PickProcedureNodeBase(ProcedureNode::NodeType nodeType)
     : ProcedureNode(nodeType, ProcedureNode::NodeClass::Pick)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "From",
+  keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeClass::Pick, true), "From",
                   "Previous selection of molecules from which to pick");
 }
 
