@@ -23,7 +23,6 @@ class SelectProcedureNode : public ProcedureNode
 {
     public:
     explicit SelectProcedureNode(std::vector<const SpeciesSite *> sites = {}, bool axesRequired = false);
-    ~SelectProcedureNode() override;
 
     /*
      * Identity

@@ -48,17 +48,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     distanceReferenceSite_ = nullptr;
 }
 
-SelectProcedureNode::~SelectProcedureNode()
-{
-    // Remove the forEach branch
-    if (forEachBranch_)
-        delete forEachBranch_;
-
-    // Delete any dynamic site nodes (as we are the owner)
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
-        delete dynamicNode;
-}
-
 /*
  * Identity
  */
@@ -122,13 +111,13 @@ const Site *SelectProcedureNode::currentSite() const
 bool SelectProcedureNode::hasBranch() const { return (forEachBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *SelectProcedureNode::branch() { return forEachBranch_; }
+std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::branch() { return forEachBranch_; }
 
 // Add and return ForEach sequence
-SequenceProcedureNode *SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
 {
     if (!forEachBranch_)
-        forEachBranch_ = new SequenceProcedureNode(context, procedure(), this);
+      forEachBranch_ = new SequenceProcedureNode(context, procedure(), shared_from_this());
 
     return forEachBranch_;
 }
@@ -144,7 +133,7 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
     speciesSites_ = keywords_.retrieve<std::vector<const SpeciesSite *>>("Site");
 
     // Check for at least one site being defined
-    if ((speciesSites_.size() == 0) && (dynamicSites_.nItems() == 0))
+    if (speciesSites_.empty() && dynamicSites_.empty())
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     // Prep some variables
@@ -156,23 +145,23 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
         return false;
 
     // Prepare any dynamic site nodes
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
+    for (std::shared_ptr<DynamicSiteProcedureNode> dynamicNode : dynamicSites_)
         if (!dynamicNode->prepare(cfg, prefix, targetList))
             return false;
 
     // Retrieve data from keywords
-    auto *node = keywords_.retrieve<const ProcedureNode *>("SameMoleculeAsSite");
+    auto node = keywords_.retrieve<ConstNodeRef>("SameMoleculeAsSite");
     if (node)
     {
-        sameMolecule_ = dynamic_cast<const SelectProcedureNode *>(node);
+        sameMolecule_ = std::dynamic_pointer_cast<const SelectProcedureNode>(node);
         assert(sameMolecule_);
     }
     else
         sameMolecule_ = nullptr;
-    node = keywords_.retrieve<const ProcedureNode *>("ReferenceSite");
+    node = keywords_.retrieve<ConstNodeRef>("ReferenceSite");
     if (node)
     {
-        distanceReferenceSite_ = dynamic_cast<const SelectProcedureNode *>(node);
+        distanceReferenceSite_ = std::dynamic_pointer_cast<const SelectProcedureNode>(node);
         assert(distanceReferenceSite_);
     }
     else
@@ -180,11 +169,11 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
 
     inclusiveDistanceRange_ = keywords_.retrieve<Range>("InclusiveRange");
     sameMoleculeExclusions_.clear();
-    for (auto *node : keywords_.retrieve<std::vector<const ProcedureNode *>>("ExcludeSameMolecule"))
-        sameMoleculeExclusions_.push_back(dynamic_cast<const SelectProcedureNode *>(node));
+    for (auto node : keywords_.retrieve<std::vector<ConstNodeRef>>("ExcludeSameMolecule"))
+        sameMoleculeExclusions_.push_back(std::dynamic_pointer_cast<const SelectProcedureNode>(node));
     sameSiteExclusions_.clear();
-    for (auto *node : keywords_.retrieve<std::vector<const ProcedureNode *>>("ExcludeSameSite"))
-        sameSiteExclusions_.push_back(dynamic_cast<const SelectProcedureNode *>(node));
+    for (auto node : keywords_.retrieve<std::vector<ConstNodeRef>>("ExcludeSameSite"))
+        sameSiteExclusions_.push_back(std::dynamic_pointer_cast<const SelectProcedureNode>(node));
 
     return true;
 }
@@ -197,12 +186,12 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
 
     // Update our exclusion lists
     excludedMolecules_.clear();
-    for (auto *node : sameMoleculeExclusions_)
+    for (auto node : sameMoleculeExclusions_)
         if (node->currentSite())
             excludedMolecules_.emplace_back(node->currentSite()->molecule());
 
     excludedSites_.clear();
-    for (auto *node : sameSiteExclusions_)
+    for (auto node : sameSiteExclusions_)
         if (node->currentSite())
             excludedSites_.addUnique(node->currentSite());
 
@@ -257,7 +246,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
      * Call each DynamicSiteProcedureNode's execute function in turn, adding any generated sites to our reference array
      * afterwards.
      */
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
+    for (auto dynamicNode : dynamicSites_)
     {
         if (!dynamicNode->execute(procPool, cfg, prefix, targetList))
             return false;
@@ -294,7 +283,7 @@ bool SelectProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, st
         return false;
 
     // Finalise any dynamic site nodes
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
+    for (auto dynamicNode : dynamicSites_)
         if (!dynamicNode->finalise(procPool, cfg, prefix, targetList))
             return false;
 
