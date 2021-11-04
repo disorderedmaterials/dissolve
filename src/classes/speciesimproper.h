@@ -42,6 +42,8 @@ class SpeciesImproper : public SpeciesIntra
     void detach();
 
     public:
+    // Rewrite SpeciesAtom pointer
+    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
