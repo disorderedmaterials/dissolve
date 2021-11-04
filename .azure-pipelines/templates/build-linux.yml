@@ -23,6 +23,7 @@ steps:
       sh ./install-nix${{ parameters.nix_version }}
       mkdir -p ~/.config/nix/
       echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+      echo "system-features = kvm" >> ~/.config/nix/nix.conf
     displayName: 'Install nix'
   - bash: |
       set -ex
