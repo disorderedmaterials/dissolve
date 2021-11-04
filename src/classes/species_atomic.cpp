@@ -83,11 +83,9 @@ const SpeciesAtom &Species::atom(int n) const
     return *it;
 }
 
-// Return a vector of of immutable SpeciesAtoms
-const std::list<SpeciesAtom> &Species::atoms() const { return atoms_; }
-
-// Return vector of mutable atoms
-std::list<SpeciesAtom> &Species::atoms() { return atoms_; }
+// Return a vector of SpeciesAtoms
+const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
+std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
 
 // Set coordinates of specified atom
 void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)

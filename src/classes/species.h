@@ -58,7 +58,7 @@ class Species
      */
     private:
     // List of atoms in the Species
-    std::list<SpeciesAtom> atoms_;
+    std::vector<SpeciesAtom> atoms_;
     // Vector of selected atoms
     std::vector<SpeciesAtom *> selectedAtoms_;
     // Version of the atom selection
@@ -81,8 +81,8 @@ class Species
     SpeciesAtom &atom(int n);
     const SpeciesAtom &atom(int n) const;
     // Return a reference to the vector of atoms
-    const std::list<SpeciesAtom> &atoms() const;
-    std::list<SpeciesAtom> &atoms();
+    const std::vector<SpeciesAtom> &atoms() const;
+    std::vector<SpeciesAtom> &atoms();
     // Set coordinates of specified atom
     void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
     // Set coordinates of specified atom (by index and individual coordinates)
