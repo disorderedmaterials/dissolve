@@ -88,8 +88,6 @@ class SpeciesAtom
     void setSelected(bool selected);
     // Return whether the atom is currently selected
     bool isSelected() const;
-    // Copy properties from supplied Atom
-    void copyProperties(const SpeciesAtom *source);
 
     /*
      * Intramolecular Information
