@@ -101,7 +101,7 @@
         mkSingularity = { mpi ? false, gui ? false, threading ? true }:
           pkgs.singularity-tools.buildImage {
             name = "${exe-name mpi gui}-${version}";
-            diskSize = 1024 * 25;
+            diskSize = 1024 * 250;
             contents = [ (dissolve { inherit mpi gui threading; }) ];
             runScript = if gui then
               "${nixGL.nixGLIntel}/bin/nixGLIntel ${
