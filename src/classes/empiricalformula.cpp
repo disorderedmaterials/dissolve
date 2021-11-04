@@ -43,7 +43,7 @@ std::string EmpiricalFormula::formula(const Species *species, bool richText)
 }
 
 // Return empirical formula for supplied SpeciesAtom vector
-std::string EmpiricalFormula::formula(const std::vector<const SpeciesAtom *> &atoms, bool richText)
+std::string EmpiricalFormula::formula(const std::vector<SpeciesAtom *> &atoms, bool richText)
 {
     std::vector<int> elCounts(Elements::nElements, 0);
 

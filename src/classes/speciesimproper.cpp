@@ -106,6 +106,9 @@ SpeciesAtom *SpeciesImproper::k() const { return k_; }
 // Return fourth SpeciesAtom
 SpeciesAtom *SpeciesImproper::l() const { return l_; }
 
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesImproper::atoms() const { return {i_, j_, k_, l_}; }
+
 // Return whether the improper uses the specified SpeciesAtom
 bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
 {
