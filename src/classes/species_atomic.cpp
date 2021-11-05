@@ -82,9 +82,6 @@ void Species::renumberAtoms()
         i.setIndex(count++);
 }
 
-// Return the first Atom in the Species
-const SpeciesAtom &Species::firstAtom() const { return atoms_.front(); }
-
 // Return the nth Atom in the Species
 SpeciesAtom &Species::atom(int n)
 {
