@@ -4,15 +4,15 @@
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
 
-NodeKeyword::NodeKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+NodeKeyword::NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
                          ConstNodeRef node)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<ConstNodeRef>(KeywordBase::NodeData, node)
+  : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<const ProcedureNode*>(KeywordBase::NodeData, node.get())
 {
 }
 
-NodeKeyword::NodeKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+NodeKeyword::NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
                          ConstNodeRef node)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<ConstNodeRef >(KeywordBase::NodeData, node)
+  : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<const ProcedureNode* >(KeywordBase::NodeData, node.get())
 {
 }
 
@@ -43,7 +43,7 @@ bool NodeKeyword::read(LineParser &parser, int startArg, const CoreData &coreDat
     if (!validNode(node, nodeType_, nodeClass_, name()))
         return false;
 
-    setData(node);
+    setData(node.get());
 
     return true;
 }
@@ -66,7 +66,7 @@ bool NodeKeyword::write(LineParser &parser, std::string_view keywordName, std::s
  */
 
 // Prune any references to the supplied ProcedureNode in the contained data
-void NodeKeyword::removeReferencesTo(NodeRef node)
+void NodeKeyword::removeReferencesTo(ProcedureNode *node)
 {
     if (data_ == node)
         data_ = nullptr;

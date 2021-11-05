@@ -16,7 +16,7 @@
 
 Sum1DProcedureNode::Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target) : ProcedureNode(ProcedureNode::NodeType::Sum1D)
 {
-  keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Process1D, false, target), "SourceData",
+  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
                   "Process1D node containing the data to sum");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first summation region");

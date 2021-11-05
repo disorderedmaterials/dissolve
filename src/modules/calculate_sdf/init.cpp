@@ -65,8 +65,8 @@ void CalculateSDFModule::initialise()
     // -- Select: Site 'B'
     selectB_ = std::make_shared<SelectProcedureNode>();
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameSite", {selectA_});
-    selectB_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameMolecule", {selectA_});
+    selectB_->setKeyword<std::vector<const ProcedureNode*>>("ExcludeSameSite", {selectA_.get()});
+    selectB_->setKeyword<std::vector<const ProcedureNode*>>("ExcludeSameMolecule", {selectA_.get()});
     std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -86,7 +86,7 @@ void CalculateSDFModule::initialise()
     processPosition_->setKeyword<std::string>("LabelY", "y, \\symbol{Angstrom}");
     processPosition_->setKeyword<std::string>("LabelZ", "z, \\symbol{Angstrom}");
     std::shared_ptr<SequenceProcedureNode> sdfNormalisation = processPosition_->addNormalisationBranch();
-    sdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectA_}));
+    sdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get()}));
     sdfNormalisation->addNode(std::make_shared<OperateGridNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processPosition_);
 

@@ -14,7 +14,7 @@ class SequenceProcedureNode;
 class NodeBranchKeyword : public KeywordData<std::shared_ptr<SequenceProcedureNode> *>
 {
     public:
-    NodeBranchKeyword(NodeRef parentNode, std::shared_ptr<SequenceProcedureNode> *branchPointer,
+    NodeBranchKeyword(ProcedureNode *parentNode, std::shared_ptr<SequenceProcedureNode> *branchPointer,
                       ProcedureNode::NodeContext branchContext);
     ~NodeBranchKeyword() override;
 
@@ -23,7 +23,7 @@ class NodeBranchKeyword : public KeywordData<std::shared_ptr<SequenceProcedureNo
      */
     private:
     // Parent ProcedureNode
-    NodeRef parentNode_;
+    ProcedureNode* parentNode_;
 
     /*
      * Data

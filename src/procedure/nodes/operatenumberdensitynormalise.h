@@ -12,7 +12,7 @@ class SelectProcedureNode;
 class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
-    OperateNumberDensityNormaliseProcedureNode(std::vector<ConstNodeRef > nodes = {});
+    OperateNumberDensityNormaliseProcedureNode(std::vector<const ProcedureNode*> nodes = {});
     ~OperateNumberDensityNormaliseProcedureNode() override = default;
 
     /*

@@ -11,8 +11,8 @@
 class NodeKeywordBase
 {
     public:
-    NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-    NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
+    NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
+    NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
     virtual ~NodeKeywordBase() = default;
 
     /*

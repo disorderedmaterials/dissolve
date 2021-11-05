@@ -16,14 +16,14 @@
 Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process2D)
 {
-  keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Collect2D, false, target), "SourceData",
+  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect2D, false, target), "SourceData",
                   "Collect2D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
                   "File format and file name under which to save processed data");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 
     // Initialise branch

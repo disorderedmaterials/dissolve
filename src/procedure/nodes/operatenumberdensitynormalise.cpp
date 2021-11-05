@@ -10,11 +10,11 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(std::vector<ConstNodeRef > nodes)
+OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(std::vector<const ProcedureNode*> nodes)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise)
 {
     // Create keywords
-  keywords_.add("Control", new NodeVectorKeyword(shared_from_this(), ProcedureNode::NodeType::Select, false, nodes), "Site",
+  keywords_.add("Control", new NodeVectorKeyword(this, ProcedureNode::NodeType::Select, false, nodes), "Site",
                   "Site(s) by which to normalise data based on their population");
 }
 

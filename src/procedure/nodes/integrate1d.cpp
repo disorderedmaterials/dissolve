@@ -17,7 +17,7 @@
 Integrate1DProcedureNode::Integrate1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Integrate1D)
 {
-    keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Process1D, false, target), "SourceData",
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
                   "Process1D node containing the data to integrate");
     keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
                   "X range for first integration region");

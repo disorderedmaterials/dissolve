@@ -119,7 +119,7 @@ void CalculateDAngleModule::initialise()
     // -- -- Select: Site 'C'
     selectC_ = std::make_shared<SelectProcedureNode>();
     selectC_->setName("C");
-    selectC_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameMolecule", {selectA_});
+    selectC_->setKeyword<std::vector<const ProcedureNode*>>("ExcludeSameMolecule", {selectA_.get()});
     std::shared_ptr<SequenceProcedureNode> forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(selectC_);
 
@@ -151,8 +151,8 @@ void CalculateDAngleModule::initialise()
     processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
 
     std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
-    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectA_, selectB_}));
-    rdfNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectC_}));
+    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get(), selectB_.get()}));
+    rdfNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectC_.get()}));
     rdfNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processDistance_);
 

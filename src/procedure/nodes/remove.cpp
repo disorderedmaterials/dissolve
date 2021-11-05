@@ -15,7 +15,7 @@ RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeTy
 {
     // Set up keywords
     keywords_.add("Control", new SpeciesVectorKeyword(), "Species", "Target species to remove");
-    keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeClass::Pick, true), "Selection",
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "Selection",
                   "Picked selection of molecules to remove");
 }
 

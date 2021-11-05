@@ -52,7 +52,7 @@ bool CalculateProcedureNodeBase::prepare(Configuration *cfg, std::string_view pr
     // Check that the sites have been properly defined
     for (auto n = 0; n < nSitesRequired(); ++n)
     {
-      sites_[n] = siteKeywords_[n] ? std::dynamic_pointer_cast<const SelectProcedureNode>(siteKeywords_[n]->data()) : nullptr; //FIXME: Commented to allow compile
+      sites_[n] = siteKeywords_[n] ? std::dynamic_pointer_cast<const SelectProcedureNode>(siteKeywords_[n]->data()->shared_from_this()) : nullptr; //FIXME: Commented to allow compile
 	if (!sites_[n])
             return Messenger::error("Observable site {} is not set.\n", n);
     }

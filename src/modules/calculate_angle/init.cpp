@@ -200,8 +200,8 @@ void CalculateAngleModule::initialise()
     processAB_->setKeyword<std::string>("LabelValue", "g\\sub{AB}(r)");
     processAB_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
     std::shared_ptr<SequenceProcedureNode> rdfABNormalisation = processAB_->addNormalisationBranch();
-    rdfABNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectB_, selectA_, selectC_}));
-    rdfABNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectA_}));
+    rdfABNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectB_.get(), selectA_.get(), selectC_.get()}));
+    rdfABNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get()}));
     rdfABNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processAB_);
 
@@ -211,8 +211,8 @@ void CalculateAngleModule::initialise()
     processBC_->setKeyword<std::string>("LabelValue", "g\\sub{BC}(r)");
     processBC_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
     std::shared_ptr<SequenceProcedureNode> rdfBCNormalisation = processBC_->addNormalisationBranch();
-    rdfBCNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectB_, selectA_, selectC_}));
-    rdfBCNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectC_}));
+    rdfBCNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectB_.get(), selectA_.get(), selectC_.get()}));
+    rdfBCNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectC_.get()}));
     rdfBCNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processBC_);
 

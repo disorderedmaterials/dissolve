@@ -17,7 +17,7 @@ TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(ProcedureNode::
     // Set up keywords
     keywords_.add("Control", new SpeciesKeyword(), "Target", "Target species to transmute selected molecules in to");
     keywords_.add("Control", new SpeciesVectorKeyword(), "Species", "Species to transmute targets in to");
-    keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeClass::Pick, true), "Selection",
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "Selection",
                   "Picked selection of molecules to transmute");
 }
 

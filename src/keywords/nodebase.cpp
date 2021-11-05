@@ -3,12 +3,12 @@
 
 #include "keywords/nodebase.h"
 
-NodeKeywordBase::NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
+NodeKeywordBase::NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
     : parentNode_(parentNode), nodeType_(nodeType), onlyInScope_(onlyInScope)
 {
 }
 
-NodeKeywordBase::NodeKeywordBase(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
+NodeKeywordBase::NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
     : parentNode_(parentNode), nodeClass_(nodeClass), onlyInScope_(onlyInScope)
 {
 }

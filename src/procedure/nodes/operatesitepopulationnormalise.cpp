@@ -11,11 +11,11 @@
 #include "procedure/nodes/select.h"
 
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(
-    std::vector<ConstNodeRef > nodes)
+    std::vector<const ProcedureNode *> nodes)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateSitePopulationNormalise)
 {
     // Create keywords - store the pointers to the superclasses for later use
-  keywords_.add("Control", new NodeVectorKeyword(shared_from_this(), ProcedureNode::NodeType::Select, false, nodes), "Site",
+  keywords_.add("Control", new NodeVectorKeyword(this, ProcedureNode::NodeType::Select, false, nodes), "Site",
                   "Site(s) by which to normalise data based on their population");
 }
 

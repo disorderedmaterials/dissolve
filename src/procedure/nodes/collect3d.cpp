@@ -16,11 +16,11 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                                double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D)
 {
-  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xObservable, 0),
                   "QuantityX", "Calculated observable to collect for x axis");
-  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, yObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, yObservable, 0),
                   "QuantityY", "Calculated observable to collect for y axis");
-  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, zObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, zObservable, 0),
                   "QuantityZ", "Calculated observable to collect for z axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
@@ -34,7 +34,7 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.0015),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range and binwidth of the z-axis of the histogram");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 
     // Initialise branch
@@ -45,11 +45,11 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                                double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D)
 {
-  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xyzObservable, 0),
+  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 0),
                   "QuantityX", "Calculated observable to collect for x axis");
-  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xyzObservable, 1),
+  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 1),
                   "QuantityY", "Calculated observable to collect for y axis");
-  keywords_.add("Control", new NodeAndIntegerKeyword(shared_from_this(), ProcedureNode::NodeClass::Calculate, true, xyzObservable, 2),
+  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xyzObservable, 2),
                   "QuantityZ", "Calculated observable to collect for z axis");
     keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
@@ -63,7 +63,7 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range of calculation for the specified z observable");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 
     // Initialise branch

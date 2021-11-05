@@ -201,7 +201,7 @@ class KeywordBase : public ListItem<KeywordBase>
     // Prune any references to the supplied SpeciesSite in the contained data
     virtual void removeReferencesTo(SpeciesSite *spSite);
     // Prune any references to the supplied ProcedureNode in the contained data
-    virtual void removeReferencesTo(NodeRef node);
+    virtual void removeReferencesTo(ProcedureNode *node);
 
     public:
     // Gracefully deal with the specified object no longer being valid

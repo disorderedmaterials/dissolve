@@ -5,16 +5,16 @@
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
 
-NodeVectorKeyword::NodeVectorKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                                     std::vector<ConstNodeRef > nodes)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<ConstNodeRef>>(
+NodeVectorKeyword::NodeVectorKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                                     std::vector<const ProcedureNode*> nodes)
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<const ProcedureNode*>>(
                                                               KeywordBase::NodeVectorData, nodes)
 {
 }
 
-NodeVectorKeyword::NodeVectorKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                                     std::vector<ConstNodeRef> nodes)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<ConstNodeRef >>(
+NodeVectorKeyword::NodeVectorKeyword(ProcedureNode* parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                                     std::vector<const ProcedureNode*> nodes)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<const ProcedureNode* >>(
                                                                KeywordBase::NodeVectorData, nodes)
 {
 }
@@ -46,7 +46,7 @@ bool NodeVectorKeyword::read(LineParser &parser, int startArg, const CoreData &c
         if (!validNode(node, nodeType_, nodeClass_, name()))
             return false;
 
-        data_.push_back(node);
+        data_.push_back(node.get());
     }
 
     return true;
@@ -73,7 +73,7 @@ bool NodeVectorKeyword::write(LineParser &parser, std::string_view keywordName, 
  */
 
 // Prune any references to the supplied ProcedureNode in the contained data
-void NodeVectorKeyword::removeReferencesTo(NodeRef node)
+void NodeVectorKeyword::removeReferencesTo(ProcedureNode *node)
 {
     // Check the node type
     if (node->type() != nodeType())

@@ -6,8 +6,9 @@
 #include "classes/coredata.h"
 #include "expression/variable.h"
 #include "procedure/nodes/dynamicsite.h"
+#include "procedure/nodes/select.h"
 
-DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::shared_ptr<SelectProcedureNode> parentNode, std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &nodes,
+DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &nodes,
                                                  bool axesRequired)
     : KeywordData<std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &>(KeywordBase::DynamicSiteNodesData, nodes)
 {
@@ -22,7 +23,7 @@ DynamicSiteNodesKeyword::~DynamicSiteNodesKeyword() = default;
  */
 
 // Return parent SelectProcedureNode
-std::shared_ptr<const SelectProcedureNode> DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
+const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Data
@@ -48,7 +49,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreD
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
 
     // Create a new DynamicSite and add it to our data RefList
-    auto dynamicSite = std::make_shared<DynamicSiteProcedureNode>(parentNode_);
+    auto dynamicSite = std::dynamic_pointer_cast<DynamicSiteProcedureNode>(parentNode_->shared_from_this());
     data_.push_back(dynamicSite);
 
     // Attempt to read the DynamicSite data

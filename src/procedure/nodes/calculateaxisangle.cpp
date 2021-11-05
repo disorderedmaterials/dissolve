@@ -16,11 +16,11 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(std::shared_ptr
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAxisAngle, site0, site1)
 {
     // Create keywords - store the pointers to the superclasses for later use
-  siteKeywords_[0] = new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Select, true, site0);
+  siteKeywords_[0] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site0);
     keywords_.add("Control", siteKeywords_[0], "I", "Site that contains the first set of axes");
     keywords_.add("Control", new EnumOptionsKeyword<OrientedSite::SiteAxis>(OrientedSite::siteAxis() = axis0), "AxisI",
                   "Axis to use from site I");
-    siteKeywords_[1] = new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Select, true, site1);
+    siteKeywords_[1] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site1);
     keywords_.add("Control", siteKeywords_[1], "J", "Site that contains the second set of axes");
     keywords_.add("Control", new EnumOptionsKeyword<OrientedSite::SiteAxis>(OrientedSite::siteAxis() = axis1), "AxisJ",
                   "Axis to use from site J");

@@ -9,13 +9,13 @@
 #include "procedure/nodes/node.h"
 
 // Keyword with ProcedureNode RefList
-class NodeVectorKeyword : public NodeKeywordBase, public KeywordData<std::vector<ConstNodeRef>>
+class NodeVectorKeyword : public NodeKeywordBase, public KeywordData<std::vector<const ProcedureNode*>>
 {
     public:
-    NodeVectorKeyword(NodeRef parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                      std::vector<ConstNodeRef > initNodes = {});
-    NodeVectorKeyword(NodeRef parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                      std::vector<ConstNodeRef > initNodes = {});
+    NodeVectorKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+                      std::vector<const ProcedureNode* > initNodes = {});
+    NodeVectorKeyword(ProcedureNode* parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+                      std::vector<const ProcedureNode* > initNodes = {});
     ~NodeVectorKeyword() override = default;
 
     /*
@@ -36,5 +36,5 @@ class NodeVectorKeyword : public NodeKeywordBase, public KeywordData<std::vector
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(NodeRef node) override;
+    void removeReferencesTo(ProcedureNode *node) override;
 };

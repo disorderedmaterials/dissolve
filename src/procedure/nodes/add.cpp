@@ -34,7 +34,7 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
                   new EnumOptionsKeyword<AddProcedureNode::PositioningType>(positioningTypes() =
                                                                                 AddProcedureNode::PositioningType::Random),
                   "Positioning", "Positioning type for individual molecules");
-    keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeClass::Region, true), "Region",
+    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Region, true), "Region",
                   "Region into which to add the species");
 }
 

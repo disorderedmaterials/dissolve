@@ -86,7 +86,7 @@ void CalculateAxisAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = std::make_shared<SelectProcedureNode, std::vector<const SpeciesSite *>, bool>({}, true);
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<ConstNodeRef>>("ExcludeSameMolecule", {selectA_});
+    selectB_->setKeyword<std::vector<const ProcedureNode*>>("ExcludeSameMolecule", {selectA_.get()});
     auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -118,8 +118,8 @@ void CalculateAxisAngleModule::initialise()
     processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
 
     std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
-    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectA_}));
-    rdfNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<ConstNodeRef>>({selectB_}));
+    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get()}));
+    rdfNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectB_.get()}));
     rdfNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processDistance_);
 

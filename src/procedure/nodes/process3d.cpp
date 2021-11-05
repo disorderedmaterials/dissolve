@@ -14,7 +14,7 @@
 Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process3D)
 {
-  keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Collect3D, false, target), "SourceData",
+  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect3D, false, target), "SourceData",
                   "Collect3D node containing the histogram data to process");
     keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
@@ -22,7 +22,7 @@ Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedur
     keywords_.add("Control", new StringKeyword("Z"), "LabelZ", "Label for the z axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
                   "File format and file name under which to save processed data");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 
     // Initialise branch

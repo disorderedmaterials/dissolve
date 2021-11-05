@@ -17,7 +17,7 @@
 Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process1D)
 {
-  keywords_.add("Control", new NodeKeyword(shared_from_this(), ProcedureNode::NodeType::Collect1D, false, target), "SourceData",
+  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect1D, false, target), "SourceData",
                   "Collect1D node containing the histogram data to process");
     keywords_.add("Control", new BoolKeyword(false), "CurrentDataOnly",
                   "Whether to use only the current binned data of the histogram, rather than the accumulated average");
@@ -25,7 +25,7 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
                   "File format and file name under which to save processed data");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(shared_from_this(), &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
+    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 
     // Initialise branch
