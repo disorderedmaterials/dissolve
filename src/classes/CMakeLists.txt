@@ -31,7 +31,6 @@ add_library(
   data2dstore.cpp
   data3dstore.cpp
   distributor.cpp
-  empiricalformula.cpp
   energykernel.cpp
   forcekernel.cpp
   isotopedata.cpp
