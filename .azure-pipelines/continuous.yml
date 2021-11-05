@@ -76,7 +76,11 @@ stages:
               ArtifactName: 'windows-artifacts'
             displayName: 'Publish Windows Artifacts'
 
-  # Deploy
-  - template: templates/create-release.yml
-    parameters:
-      continuous: true
+  # Create Release
+  - stage: 'release'
+    displayName: 'Create Release'
+    jobs:
+      - template: templates/create-release.yml
+        parameters:
+          continuous: true
+
