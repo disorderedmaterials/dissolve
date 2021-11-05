@@ -37,8 +37,8 @@ steps:
       cachix --version
       echo $CACHIX_AUTH_TOKEN
       nix build --json .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
-    env:
-      CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
+    # env:
+    #   CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
     displayName: 'Build'
   - bash: |
       set -ex
