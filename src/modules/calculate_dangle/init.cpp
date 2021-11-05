@@ -112,7 +112,7 @@ void CalculateDAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = std::make_shared<SelectProcedureNode>();
     selectB_->setName("B");
-    selectB_->setKeyword<ConstNodeRef>("SameMoleculeAsSite", selectA_);
+    selectB_->setKeyword<const ProcedureNode *>("SameMoleculeAsSite", selectA_.get());
     std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
