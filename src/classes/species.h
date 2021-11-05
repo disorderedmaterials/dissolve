@@ -59,12 +59,15 @@ class Species
     private:
     // List of atoms in the Species
     std::vector<SpeciesAtom> atoms_;
-    // Vector of selected atoms
-    std::vector<SpeciesAtom *> selectedAtoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
     // AtomType mixture present in the Species
     AtomTypeMix atomTypes_;
+
+    private:
+    // Recursively select atoms along any path from the specified one, ignoring the bond(s) provided
+    void selectFromAtomRecursive(std::vector<SpeciesAtom *>, SpeciesAtom *i, SpeciesBond &exclude,
+                                 OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
 
     public:
     // Add a new atom to the Species
@@ -98,11 +101,11 @@ class Species
     // Toggle selection state of specified atom
     void toggleAtomSelection(SpeciesAtom *i);
     // Select atoms along any path from the specified one, ignoring the bond(s) provided
-    void selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt);
+    std::vector<SpeciesAtom *> selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude,
+                                              OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
     // Return current atom selection
-    const std::vector<SpeciesAtom *> &selectedAtoms() const;
-    // Return number of selected atoms
-    int nSelectedAtoms() const;
+    std::vector<SpeciesAtom *> selectedAtoms();
+    const std::vector<const SpeciesAtom *> selectedAtoms() const;
     // Return whether the current selection comprises atoms of a single element
     bool isSelectionSingleElement() const;
     // Return version of the atom selection

@@ -115,13 +115,14 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
     // Atom selection context menu?
     QAction *selectSimilarDirect = nullptr, *selectSimilarPrimary = nullptr, *selectSimilarSecondary = nullptr;
-    if (species_ && species_->nSelectedAtoms() > 0)
+    auto nSelected = species_->selectedAtoms().size();
+    if (species_ && nSelected > 0)
     {
         menu.addSection("Current Selection");
 
         // Atom select submenu
         auto *selectMenu = menu.addMenu("Select similar atoms...");
-        selectMenu->setEnabled(species_->nSelectedAtoms() == 1);
+        selectMenu->setEnabled(nSelected == 1);
         selectSimilarDirect = selectMenu->addAction("By direct connectivity");
         selectSimilarPrimary = selectMenu->addAction("Based on primary neighbours");
         selectSimilarSecondary = selectMenu->addAction("Based on primary and secondary neighbours");
@@ -151,7 +152,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         for (auto &i : species_->atoms())
             if (i.Z() == Z && neta.matches(&i))
                 species_->selectAtom(&i);
-        Messenger::print("Selected {} additional atoms.\n", species_->nSelectedAtoms() - 1);
+        Messenger::print("Selected {} additional atoms.\n", species_->selectedAtoms().size() - 1);
         speciesRenderable_->recreateSelectionPrimitive();
         emit(atomsChanged());
         postRedisplay();

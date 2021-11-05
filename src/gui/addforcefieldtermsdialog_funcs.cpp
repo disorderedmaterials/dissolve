@@ -32,7 +32,7 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
             SLOT(atomTypeConflictsDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 
     // Set initial state of controls
-    if (targetSpecies_->nSelectedAtoms() != 0)
+    if (!targetSpecies_->selectedAtoms().empty())
     {
         ui_.AtomTypesAssignSelectionRadio->setChecked(true);
         ui_.IntramolecularTermsAssignSelectionRadio->setChecked(true);
@@ -90,9 +90,6 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
     auto ff = ui_.ForcefieldWidget->currentForcefield();
     switch (currentIndex)
     {
-        case (AddForcefieldTermsDialog::SelectForcefieldPage):
-            ui_.AtomTypesAssignSelectionRadio->setEnabled(targetSpecies_->nSelectedAtoms() != 0);
-            break;
         case (AddForcefieldTermsDialog::AtomTypesPage):
             // Sanity check the current Forcefield
             if (!ff)

@@ -238,7 +238,7 @@ void DissolveWindow::on_SpeciesSetAtomTypesInSelectionAction_triggered(bool chec
         return;
 
     // Check current selection
-    if (species->nSelectedAtoms() == 0 || !species->isSelectionSingleElement())
+    if (species->selectedAtoms().empty() || !species->isSelectionSingleElement())
         return;
 
     SelectAtomTypeDialog atomTypeDialog(this, dissolve_.coreData(), "Select Atom Type");
