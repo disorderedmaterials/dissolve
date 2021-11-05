@@ -25,7 +25,7 @@ class Procedure
     // Context for the main Procedure
     ProcedureNode::NodeContext context_;
     // Sequence node from which the Procedure starts
-    SequenceProcedureNode rootSequence_;
+    std::shared_ptr<SequenceProcedureNode> rootSequence_;
 
     public:
     // Clear all data
