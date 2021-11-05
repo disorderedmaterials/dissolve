@@ -73,7 +73,7 @@ class Species
     // Add a new atom to the Species, returning its index
     int addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
     // Remove the specified atom from the species
-    void removeAtom(SpeciesAtom *i);
+    void removeAtom(int index);
     // Return the number of atoms in the species
     int nAtoms() const;
     // Renumber atoms so they are sequential in the list
@@ -89,16 +89,15 @@ class Species
     // Set coordinates of specified atom (by index and individual coordinates)
     void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
-    void transmuteAtom(SpeciesAtom *i, Elements::Element newZ);
+    void transmuteAtom(int index, Elements::Element newZ);
     // Clear current atom selection
     void clearAtomSelection();
     // Add atom to selection
-    void selectAtom(SpeciesAtom *i);
     void selectAtom(int index);
     // Remove atom from selection
-    void deselectAtom(SpeciesAtom *i);
+    void deselectAtom(int index);
     // Toggle selection state of specified atom
-    void toggleAtomSelection(SpeciesAtom *i);
+    void toggleAtomSelection(int index);
     // Select atoms along any path from the specified one, ignoring the bond(s) provided
     std::vector<SpeciesAtom *> selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude,
                                               OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
@@ -138,12 +137,12 @@ class Species
     bool attachedAtomListsGenerated_;
 
     public:
-    // Add new SpeciesBond definition (from SpeciesAtom*)
-    SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
     // Add new SpeciesBond definition
+    SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
     SpeciesBond &addBond(int i, int j);
-    // Remove bond between specified SpeciesAtoms*
+    // Remove bond between specified SpeciesAtoms
     void removeBond(SpeciesAtom *i, SpeciesAtom *j);
+    void removeBond(int i, int j);
     // Return number of SpeciesBonds defined
     int nBonds() const;
     // Return array of SpeciesBond
@@ -151,7 +150,6 @@ class Species
     const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
     bool hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
-    // Return whether SpeciesBond between specified atom indices exists
     bool hasBond(int i, int j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
@@ -165,7 +163,6 @@ class Species
     void updateIntramolecularTerms();
     // Add new SpeciesAngle definition
     SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    // Add new SpeciesAngle dedefinitionfinition
     SpeciesAngle &addAngle(int i, int j, int k);
     // Return number of SpeciesAngle defined
     int nAngles() const;
@@ -181,9 +178,8 @@ class Species
     // Return the SpeciesAngle between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesAngle> getAngle(int i, int j, int k);
     OptionalReferenceWrapper<const SpeciesAngle> getAngle(int i, int j, int k) const;
-    // Add new SpeciesTorsion definition (from SpeciesAtom*)
-    SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesTorsion definition
+    SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     SpeciesTorsion &addTorsion(int i, int j, int k, int l);
     // Return number of SpeciesTorsion defined
     int nTorsions() const;
@@ -199,9 +195,8 @@ class Species
     // Return the SpeciesTorsion between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int i, int j, int k, int l);
     OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(int i, int j, int k, int l) const;
-    // Add new SpeciesImproper definition (from SpeciesAtom*)
-    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition
+    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     SpeciesImproper &addImproper(int i, int j, int k, int l);
     // Return number of SpeciesImproper defined
     int nImpropers() const;

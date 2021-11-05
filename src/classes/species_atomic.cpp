@@ -38,12 +38,14 @@ int Species::addAtom(Elements::Element Z, Vec3<double> r, double q)
 }
 
 // Remove the specified atom from the species
-void Species::removeAtom(SpeciesAtom *i)
+void Species::removeAtom(int index)
 {
     /*
      * Note: This is a deliberately simplistic function, and is intended only for use when creating / editing basic
      * species definitions upon which the simulation has no dependencies.
      */
+
+    auto *i = &atoms_[index];
 
     // Clear higher-order terms
     angles_.clear();
@@ -115,17 +117,17 @@ void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
 void Species::setAtomCoordinates(int id, double x, double y, double z) { atom(id).setCoordinates(x, y, z); }
 
 // Transmute specified SpeciesAtom
-void Species::transmuteAtom(SpeciesAtom *i, Elements::Element newZ)
+void Species::transmuteAtom(int index, Elements::Element newZ)
 {
-    assert(i);
+    auto &i = atoms_[index];
 
     // Nothing to do if current element matches that supplied
-    if (i->Z() == newZ)
+    if (i.Z() == newZ)
         return;
 
     // Remove any existing AtomType assignment
-    i->setAtomType(nullptr);
-    i->setZ(newZ);
+    i.setAtomType(nullptr);
+    i.setZ(newZ);
 
     ++version_;
 }
@@ -140,36 +142,36 @@ void Species::clearAtomSelection()
 }
 
 // Add Atom to selection
-void Species::selectAtom(SpeciesAtom *i)
+void Species::selectAtom(int index)
 {
-    if (!i->isSelected())
+    auto &i = atoms_[index];
+    if (!i.isSelected())
     {
-        i->setSelected(true);
+        i.setSelected(true);
 
         ++atomSelectionVersion_;
     }
 }
 
-void Species::selectAtom(int index) { selectAtom(&atoms_[index]); }
-
 // Remove atom from selection
-void Species::deselectAtom(SpeciesAtom *i)
+void Species::deselectAtom(int index)
 {
-    if (i->isSelected())
+    auto &i = atoms_[index];
+    if (i.isSelected())
     {
-        i->setSelected(false);
+        i.setSelected(false);
 
         ++atomSelectionVersion_;
     }
 }
 
 // Toggle selection state of specified atom
-void Species::toggleAtomSelection(SpeciesAtom *i)
+void Species::toggleAtomSelection(int index)
 {
-    if (i->isSelected())
-        deselectAtom(i);
+    if (atoms_[index].isSelected())
+        deselectAtom(index);
     else
-        selectAtom(i);
+        selectAtom(index);
 }
 
 // Select Atoms along any path from the specified one, ignoring the bond(s) provided

@@ -13,7 +13,7 @@
  * Public
  */
 
-// Add new SpeciesBond definition (from SpeciesAtoms*)
+// Add new SpeciesBond definition
 SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 {
     // Check for existence of Bond already
@@ -32,8 +32,6 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 
     return bonds_.back();
 }
-
-// Add new SpeciesBond definition
 SpeciesBond &Species::addBond(int i, int j) { return addBond(&atom(i), &atom(j)); }
 
 // Remove bond between specified SpeciesAtoms
@@ -57,6 +55,7 @@ void Species::removeBond(SpeciesAtom *j, SpeciesAtom *k)
 
     ++version_;
 }
+void Species::removeBond(int i, int j) { removeBond(&atoms_[i], &atoms_[j]); }
 
 // Return number of SpeciesBonds defined
 int Species::nBonds() const { return bonds_.size(); }
@@ -73,8 +72,6 @@ bool Species::hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const
 
     return it != bonds_.cend();
 }
-
-// Return whether SpeciesBond between specified atom indices exists
 bool Species::hasBond(int i, int j) const { return hasBond(&atom(i), &atom(j)); }
 
 // Return the SpeciesBond between the specified SpeciesAtoms
@@ -209,7 +206,7 @@ void Species::updateIntramolecularTerms()
                      impropers_.end());
 }
 
-// Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)
+// Add new SpeciesAngle definition
 SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 {
     // Check for existence of Angle already
@@ -228,8 +225,6 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 
     return angles_.back();
 }
-
-// Add new SpeciesAngle definition
 SpeciesAngle &Species::addAngle(int i, int j, int k) { return addAngle(&atom(i), &atom(j), &atom(k)); }
 
 // Return number of SpeciesAngles defined
@@ -274,7 +269,7 @@ OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(int i, int j, int
     return getAngle(&atom(i), &atom(j), &atom(k));
 }
 
-// Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
+// Add new SpeciesTorsion definition
 SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     // Check for existence of Torsion already
@@ -293,8 +288,6 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
 
     return torsions_.back();
 }
-
-// Add new SpeciesTorsion definition
 SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l) { return addTorsion(&atom(i), &atom(j), &atom(k), &atom(l)); }
 
 // Return number of SpeciesTorsions defined
@@ -343,7 +336,7 @@ OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(int i, int j,
     return getTorsion(&atom(i), &atom(j), &atom(k), &atom(l));
 }
 
-// Add new SpeciesImproper definition (from SpeciesAtom*)
+// Add new SpeciesImproper definition
 SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     // Check for existence of Improper already
@@ -362,8 +355,6 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
 
     return impropers_.back();
 }
-
-// Add new SpeciesImproper definition
 SpeciesImproper &Species::addImproper(int i, int j, int k, int l)
 {
     return addImproper(&atom(i), &atom(j), &atom(k), &atom(l));

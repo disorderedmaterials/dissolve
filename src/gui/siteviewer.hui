@@ -12,14 +12,14 @@ class Element;
 class Species;
 class SpeciesAtom;
 
-// Species Rendering Widget
+// Site Rendering Widget
 class SiteViewer : public BaseViewer
 {
     Q_OBJECT
 
     public:
     SiteViewer(QWidget *parent);
-    ~SiteViewer();
+    ~SiteViewer() = default;
 
     /*
      * Rendering (BaseViewer virtuals)
@@ -64,11 +64,11 @@ class SiteViewer : public BaseViewer
     // Transient interaction mode (i.e. one not invoked by primary button)
     TransientInteractionMode transientInteractionMode_;
     // Clicked atom at the start of the interaction (if any)
-    SpeciesAtom *clickedAtom_;
+    std::optional<int> clickedAtomIndex_;
 
     private:
-    // Return atom at specified coordinates
-    SpeciesAtom *atomAt(int x, int y);
+    // Return atom index at specified coordinates
+    std::optional<int> atomIndexAt(int x, int y);
 
     protected:
     // Start interaction at the specified screen coordinates
