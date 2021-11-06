@@ -147,7 +147,7 @@ class Box
     virtual Vec3<double> fracToReal(const Vec3<double> &r) const = 0;
 
     /*
-     * Utility Routines
+     * Geometry
      */
     public:
     // Return angle (in degrees, no MIM) between Atoms

@@ -160,10 +160,21 @@ std::shared_ptr<Atom> Configuration::atom(int n)
     return atoms_[n];
 }
 
+// Unfold molecule coordinates
+void Configuration::unFoldMolecules()
+{
+    for (auto &mol : molecules_)
+        mol->unFold(box_.get());
+}
+
 // Scale contents of the box by the specified factor
 void Configuration::scaleContents(double factor)
 {
-    Vec3<double> oldCog, newCog, newPos;
+    // Un-fold all molecules so we can determine true centres of geometry
+    unFoldMolecules();
+
+    // For each molecule, set its new centre of geometry
+    Vec3<double> oldCog, newCog;
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position
@@ -174,15 +185,17 @@ void Configuration::scaleContents(double factor)
         }
         else
         {
-            // First, work out the centre of geometry of the Molecule, and fold it into the Box
-            oldCog = box()->fold(mol->centreOfGeometry(box()));
+            // First, work out the centre of geometry of the Molecule from the now un-folded coordinates
+            oldCog = 0.0;
+            for (const auto &i : mol->atoms())
+                oldCog += i->r();
+            oldCog /= mol->nAtoms();
 
             // Scale centre of geometry by supplied factor
-            newCog = oldCog * factor;
+            newCog = box()->fold(oldCog) * factor;
 
-            // Loop over Atoms in Molecule, setting new coordinates as we go
-            for (auto &i : mol->atoms())
-                i->setCoordinates(newCog + box()->minimumVector(i->r(), oldCog));
+            // Can now just translate the molecule
+            mol->translate(newCog - oldCog);
         }
     }
 }

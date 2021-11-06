@@ -262,7 +262,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
 }
 
 /*
- * Utility Routines
+ * Geometry
  */
 
 // Return angle (in degrees) between Atoms
