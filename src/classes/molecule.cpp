@@ -4,6 +4,8 @@
 #include "classes/molecule.h"
 #include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/speciesatom.h"
+#include "classes/speciesbond.h"
 #include "templates/algorithms.h"
 
 Molecule::Molecule() { species_ = nullptr; }
@@ -65,6 +67,81 @@ void Molecule::updateAtoms(std::vector<Atom> &source)
  * Manipulations
  */
 
+// Recursive function for general manipulation
+void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ManipulationFunction action)
+{
+    if (flags[indexI])
+        return;
+
+    // Set the flag for indexI and get some necessary values
+    flags[indexI] = true;
+    auto rI = atoms_[indexI]->r();
+    auto *spI = atoms_[indexI]->speciesAtom();
+
+    // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
+    for (const SpeciesBond &b : spI->bonds())
+    {
+        auto indexJ = b.partner(spI)->index();
+        auto &j = atoms_[indexJ];
+        if (flags[indexJ])
+            continue;
+
+        action(j, box->minimumImage(j->r(), rI));
+
+        // Recurse into bound neighbours
+        recurseLocal(flags, box, indexJ, action);
+    }
+}
+void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ConstManipulationFunction action) const
+{
+    if (flags[indexI])
+        return;
+
+    // Set the flag for indexI and get some necessary values
+    flags[indexI] = true;
+    auto rI = atoms_[indexI]->r();
+    auto *spI = atoms_[indexI]->speciesAtom();
+
+    // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
+    for (const SpeciesBond &b : spI->bonds())
+    {
+        auto indexJ = b.partner(spI)->index();
+        auto &j = atoms_[indexJ];
+        if (flags[indexJ])
+            continue;
+
+        action(j, box->minimumImage(j->r(), rI));
+
+        // Recurse into bound neighbours
+        recurseLocal(flags, box, indexJ, action);
+    }
+}
+
+// General manipulation function working on reassembled molecule
+void Molecule::traverseLocal(const Box *box, ManipulationFunction action)
+{
+    std::vector<bool> flags(atoms_.size(), false);
+    action(atoms_[0], atoms_[0]->r());
+    recurseLocal(flags, box, 0, action);
+}
+void Molecule::traverseLocal(const Box *box, ConstManipulationFunction action) const
+{
+    std::vector<bool> flags(atoms_.size(), false);
+    action(atoms_[0], atoms_[0]->r());
+    recurseLocal(flags, box, 0, action);
+}
+
+// Un-fold molecule so it is not cut by box boundaries
+Vec3<double> Molecule::unFold(const Box *box)
+{
+    Vec3<double> cog{0.0, 0.0, 0.0};
+    traverseLocal(box, [&cog](Atom *j, Vec3<double> rJ) {
+        j->setCoordinates(rJ);
+        cog += rJ;
+    });
+    return cog;
+}
+
 // Set centre of geometry of molecule
 void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> newCentre)
 {
@@ -84,14 +161,12 @@ void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> newCentre)
 Vec3<double> Molecule::centreOfGeometry(const Box *box) const
 {
     if (nAtoms() == 0)
-        return Vec3<double>();
+        return {};
 
-    // Calculate center relative to first atom in molecule
-    auto cog = atom(0)->r();
-    for (auto n = 1; n < nAtoms(); ++n)
-        cog += box->minimumImage(atom(n)->r(), atom(0)->r());
+    Vec3<double> cog{0.0, 0.0, 0.0};
+    traverseLocal(box, [&cog](auto *j, auto rJ) { cog += rJ; });
 
-    return (cog / nAtoms());
+    return cog / nAtoms();
 }
 
 // Transform molecule with supplied matrix, using centre of geometry as the origin
@@ -99,12 +174,12 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 {
     // Calculate Molecule centre of geometry
     Vec3<double> newR;
-    const auto cog = centreOfGeometry(box);
+    const auto cog = unFold(box);
 
     // Apply transform
     for (auto n = 0; n < nAtoms(); ++n)
     {
-        newR = transformationMatrix * box->minimumVector(cog, atom(n)->r()) + cog;
+        newR = transformationMatrix * (atom(n)->r() - cog) + cog;
         atom(n)->setCoordinates(newR);
     }
 }

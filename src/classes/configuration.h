@@ -140,7 +140,10 @@ class Configuration
     const std::vector<Atom> &atoms() const;
     // Return nth Atom
     Atom &atom(int n);
+    // Unfold molecule coordinates
+    void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
+    void funky(std::vector<bool> &flags, std::vector<std::shared_ptr<Atom>> &atoms, int i);
     void scaleContents(Vec3<double> scaleFactors);
 
     /*
