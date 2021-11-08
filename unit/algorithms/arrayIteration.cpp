@@ -15,30 +15,30 @@ namespace UnitTest
 TEST(ArrayIterationTest, IndexIterator)
 {
     int x = 3;
-    int y = 3;
-    int z = 3;
-    Array2D<int> array(x, y);
-    for (auto i = 0; i < array.nRows(); ++i)
-        for (auto j = 0; j < array.nColumns(); ++j)
-            array[{i, j}] = i * array.nColumns() + j;
+    int y = 4;
+    int z = 5;
+    Array2D<double> array2(x, y);
+    for (auto i = 0; i < array2.nRows(); ++i)
+        for (auto j = 0; j < array2.nColumns(); ++j)
+            array2[{i, j}] = i * array2.nColumns() + j;
 
-    Array3D<int> array(x, y, z);
-    for (auto i = 0; i < array.nX(); ++i)
-        for (auto j = 0; j < array.nY(); ++j)
-            for (auto k = 0; k < array.nZ(); ++k)
-                array[{i, j, k}] = i * array.nY() + j * array.nZ() + k;
+    Array3D<double> array3(x, y, z);
+    for (auto i = 0; i < array3.nX(); ++i)
+        for (auto j = 0; j < array3.nY(); ++j)
+            for (auto k = 0; k < array3.nZ(); ++k)
+                array3[{i, j, k}] = i * array3.nY() + j * array3.nZ() + k;
 
-    EXPECT_EQ(*(ArrayIndex2D(array).begin()), {0, 0});
-    EXPECT_EQ(*(ArrayIndex2D(array).end()), {x - 1, y - 1});
+    EXPECT_EQ(*(ArrayIndex2D(array2).begin()), std::make_tuple(0, 0));
+    EXPECT_EQ(*(ArrayIndex2D(array2).end()), std::make_tuple(x, 0));
 
-    EXPECT_EQ(*(ArrayIndex3D(array).begin()), {0, 0, 0});
-    EXPECT_EQ(*(ArrayIndex3D(array).end()), {x - 1, y - 1, z - 1});
+    EXPECT_EQ(*(ArrayIndex3D(array3).begin()), std::make_tuple(0, 0, 0));
+    EXPECT_EQ(*(ArrayIndex3D(array3).end()), std::make_tuple(x, 0, 0));
 
     int i = 0;
     int j = 0;
-    for (auto index : ArrayIndex2D(array))
+    for (auto index : ArrayIndex2D(array2))
     {
-        EXPECT_EQ(index, {i, j});
+        EXPECT_EQ(index, std::make_tuple(i, j));
         if (j < y - 1)
             j++;
         else
@@ -48,23 +48,24 @@ TEST(ArrayIterationTest, IndexIterator)
         }
     }
 
-    auto index = ArrayIndex2D(array);
-    for (auto i = 0; i < array.nRows(); ++i)
-        for (auto j = 0; j < array.nColumns(); ++j)
-            EXPECT_EQ(*index++, {i, j});
+    auto index2 = ArrayIndex2D(array2);
+    for (auto i = 0; i < array2.nRows(); ++i)
+        for (auto j = 0; j < array2.nColumns(); ++j)
+            EXPECT_EQ(*index2++, std::make_tuple(i, j));
 
-    int i = 0;
-    int j = 0;
+    i = 0;
+    j = 0;
     int k = 0;
-    for (auto index : ArrayIndex3D(array))
+    for (auto index2 : ArrayIndex3D(array3))
     {
-        EXPECT_EQ(index, {i, j});
+        EXPECT_EQ(index2, std::make_tuple(i, j, k));
         if (k < z - 1)
-            k++ else if (j < y - 1)
-            {
-                k = 0;
-                j++;
-            }
+            k++;
+        else if (j < y - 1)
+        {
+            k = 0;
+            j++;
+        }
         else
         {
             k = 0;
@@ -73,11 +74,11 @@ TEST(ArrayIterationTest, IndexIterator)
         }
     }
 
-    auto index = ArrayIndex3D(array);
-    for (auto i = 0; i < array.nX(); ++i)
-        for (auto j = 0; j < array.nY(); ++j)
-            for (auto k = 0; k < array.nZ(); ++k)
-                EXPECT_EQ(*index++, {i, j, k});
+    auto index3 = ArrayIndex3D(array3);
+    for (auto i = 0; i < array3.nX(); ++i)
+        for (auto j = 0; j < array3.nY(); ++j)
+            for (auto k = 0; k < array3.nZ(); ++k)
+                EXPECT_EQ(*index3++, std::make_tuple(i, j, k));
 }
 
 } // namespace UnitTest
