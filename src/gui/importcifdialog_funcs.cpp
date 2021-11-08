@@ -22,7 +22,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SelectCIFFilePage, "Choose CIF File");
     registerPage(ImportCIFDialog::SelectSpacegroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
-    registerPage(ImportCIFDialog::StructurePage, "Structure", ImportCIFDialog::SpeciesPartitioningPage);
+    registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::SupercellPage);
+    registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::SpeciesPartitioningPage);
     registerPage(ImportCIFDialog::SpeciesPartitioningPage, "Species Partitioning");
 
     // Add spacegroup list
@@ -45,6 +46,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Create preview configurations
     structureConfiguration_ = temporaryCoreData_.addConfiguration();
     structureConfiguration_->setName("Crystal");
+    supercellConfiguration_ = temporaryCoreData_.addConfiguration();
+    supercellConfiguration_->setName("Supercell");
     partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
     partitioningConfiguration_->setName("Partitioning");
 
@@ -52,164 +55,24 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 }
 
-/*
- * Data
- */
-
-// Generate structural species from CIF data
-bool ImportCIFDialog::createStructuralSpecies()
+// Apply CIF bond definitions within specified species
+void ImportCIFDialog::applyCIFBonding(Species *sp)
 {
-    ui_.StructureViewer->setConfiguration(nullptr);
-    partitioningConfiguration_->empty();
-    structureConfiguration_->empty();
-
-    temporaryCoreData_.species().clear();
-    temporaryCoreData_.atomTypes().clear();
-
-    // Create temporary atom types corresponding to the unique atom labels
-    for (auto &a : cifImporter_.assemblies())
-    {
-        for (auto &i : a.activeGroup().atoms())
-            if (!temporaryCoreData_.findAtomType(i.label()))
-            {
-                auto at = temporaryCoreData_.addAtomType(i.Z());
-                at->setName(i.label());
-            }
-    }
-
-    // Generate a single species containing the entire crystal
-    auto *sp = temporaryCoreData_.addSpecies();
-    sp->setName("Crystal");
-    // -- Set unit cell
-    auto cellLengths = cifImporter_.getCellLengths();
-    if (!cellLengths)
-        return false;
-    auto cellAngles = cifImporter_.getCellAngles();
-    if (!cellAngles)
-        return false;
-    sp->createBox(cellLengths.value(), cellAngles.value());
     auto *box = sp->box();
-    structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 7.0, 1.0);
-    partitioningConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 7.0, 1.0);
-    // -- Generate atoms
-    auto symmetryGenerators = cifImporter_.spaceGroup().symmetryOperators();
-    auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
-    for (auto &generator : symmetryGenerators)
-        for (auto &a : cifImporter_.assemblies())
-            for (auto &unique : a.activeGroup().atoms())
-            {
-                // Generate folded atomic position in real space
-                auto r = generator.transform(unique.rFrac());
-                box->toReal(r);
-                r = box->fold(r);
-
-                // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
-                if (std::find_if(sp->atoms().begin(), sp->atoms().end(), [&r, box, tolerance](const auto &j) {
-                        return box->minimumDistance(r, j.r()) < tolerance;
-                    }) != sp->atoms().end())
-                    continue;
-
-                // Create the new atom
-                auto i = sp->addAtom(unique.Z(), r);
-                sp->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
-            }
-
-    // Bonding
-    if (ui_.CalculateBondingRadio->isChecked())
-        sp->addMissingBonds();
-    else
+    for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
     {
-        for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
+        // Get SpeciesAtom 'i' and its radius
+        auto &i = sp->atom(indexI);
+        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
-            // Get SpeciesAtom 'i' and its radius
-            auto &i = sp->atom(indexI);
-            for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
-            {
-                auto &j = sp->atom(indexJ);
-                auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
-                if (!r)
-                    continue;
-                else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
-                    sp->addBond(&i, &j);
-            }
+            auto &j = sp->atom(indexJ);
+            auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
+            if (!r)
+                continue;
+            else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
+                sp->addBond(&i, &j);
         }
     }
-
-    // Moiety Removal
-    if (ui_.MoietyRemovalGroup->isChecked() && moietyNETA_.isValid())
-    {
-        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
-        std::unordered_set<const SpeciesAtom *> toRemove;
-        for (auto &i : sp->atoms())
-            if (moietyNETA_.matches(&i))
-            {
-                // Select all atoms that are part of the same moiety?
-                if (ui_.MoietyRemoveFragmentsCheck->isChecked())
-                {
-                    sp->clearAtomSelection();
-                    sp->selectFromAtom(&i);
-                    for (auto *sel : sp->selectedAtoms())
-                        toRemove.insert(sel);
-                }
-                else
-                    toRemove.insert(&i);
-            }
-        Messenger::print("Moiety removal deleted {} atoms.\n", toRemove.size());
-
-        // Remove selected atoms
-        for (auto *i : toRemove)
-            sp->removeAtom(i->index());
-    }
-
-    // Add the structural species to the configuration
-    AtomChangeToken lock(*structureConfiguration_);
-    structureConfiguration_->addMolecule(lock, sp);
-    structureConfiguration_->updateCellContents();
-
-    ui_.StructureViewer->setConfiguration(structureConfiguration_);
-
-    return true;
-}
-
-// Create partitioned species from CIF data
-bool ImportCIFDialog::createPartitionedSpecies()
-{
-    ui_.PartitioningViewer->setConfiguration(nullptr);
-    partitioningConfiguration_->clear();
-
-    auto validSpecies = true;
-
-    if (ui_.PartioningNoneRadio->isChecked())
-    {
-        // Add the structural species to the configuration
-        auto *sp = temporaryCoreData_.findSpecies("Crystal");
-        assert(sp);
-        AtomChangeToken lock(*partitioningConfiguration_);
-        partitioningConfiguration_->addMolecule(lock, sp);
-        partitioningConfiguration_->updateCellContents();
-
-        // Update the indicator and label
-        sp->clearAtomSelection();
-        sp->selectFromAtom(&sp->atom(0));
-        if (sp->nSelectedAtoms() != sp->nAtoms())
-        {
-            ui_.PartitioningIndicator->setOK(false);
-            ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
-                                           "simulation. Choose a different partitioning.");
-
-            validSpecies = false;
-        }
-    }
-
-    ui_.PartitioningViewer->setConfiguration(partitioningConfiguration_);
-
-    if (validSpecies)
-    {
-        ui_.PartitioningIndicator->setOK(true);
-        ui_.PartitioningLabel->setText("Species are valid.");
-    }
-
-    return true;
 }
 
 /*
@@ -263,6 +126,9 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
                 return false;
             break;
         case (ImportCIFDialog::StructurePage):
+            createSupercellSpecies();
+            break;
+        case (ImportCIFDialog::SupercellPage):
             createPartitionedSpecies();
             break;
         default:
@@ -289,6 +155,7 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
     {
         case (ImportCIFDialog::CIFInfoPage):
             structureConfiguration_->empty();
+            supercellConfiguration_->empty();
             partitioningConfiguration_->empty();
             temporaryCoreData_.species().clear();
             temporaryCoreData_.atomTypes().clear();
@@ -306,9 +173,10 @@ void ImportCIFDialog::finalise()
     if (ui_.PartioningNoneRadio->isChecked())
     {
         // Copy the species to the main Dissolve instance and set its new name
-        auto *crystalSpecies = temporaryCoreData_.findSpecies("Crystal");
-        assert(crystalSpecies);
-        auto *sp = dissolve_.copySpecies(crystalSpecies);
+        auto *supercell = temporaryCoreData_.findSpecies("Supercell");
+        assert(supercell);
+        supercell->updateIntramolecularTerms();
+        auto *sp = dissolve_.copySpecies(supercell);
         sp->setName(cifImporter_.chemicalFormula());
     }
 }
@@ -361,6 +229,8 @@ void ImportCIFDialog::on_SpacegroupsList_currentRowChanged(int row)
         updateProgressionControls();
 }
 
+void ImportCIFDialog::on_SpacegroupsList_itemDoubleClicked(QListWidgetItem *item) { goToNextPage(); }
+
 /*
  * Basic CIF Info Page
  */
@@ -399,6 +269,105 @@ void ImportCIFDialog::updateInfoPage()
 /*
  * Structure Page
  */
+
+// Generate structural species from CIF data
+bool ImportCIFDialog::createStructuralSpecies()
+{
+    ui_.StructureViewer->setConfiguration(nullptr);
+    partitioningConfiguration_->empty();
+    supercellConfiguration_->empty();
+    structureConfiguration_->empty();
+
+    temporaryCoreData_.species().clear();
+    temporaryCoreData_.atomTypes().clear();
+
+    // Create temporary atom types corresponding to the unique atom labels
+    for (auto &a : cifImporter_.assemblies())
+    {
+        for (auto &i : a.activeGroup().atoms())
+            if (!temporaryCoreData_.findAtomType(i.label()))
+            {
+                auto at = temporaryCoreData_.addAtomType(i.Z());
+                at->setName(i.label());
+            }
+    }
+
+    // Generate a single species containing the entire crystal
+    auto *sp = temporaryCoreData_.addSpecies();
+    sp->setName("Crystal");
+    // -- Set unit cell
+    auto cellLengths = cifImporter_.getCellLengths();
+    if (!cellLengths)
+        return false;
+    auto cellAngles = cifImporter_.getCellAngles();
+    if (!cellAngles)
+        return false;
+    sp->createBox(cellLengths.value(), cellAngles.value());
+    auto *box = sp->box();
+    structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 7.0, 1.0);
+    // -- Generate atoms
+    auto symmetryGenerators = cifImporter_.spaceGroup().symmetryOperators();
+    auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
+    for (auto &generator : symmetryGenerators)
+        for (auto &a : cifImporter_.assemblies())
+            for (auto &unique : a.activeGroup().atoms())
+            {
+                // Generate folded atomic position in real space
+                auto r = generator.transform(unique.rFrac());
+                box->toReal(r);
+                r = box->fold(r);
+
+                // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
+                if (std::find_if(sp->atoms().begin(), sp->atoms().end(), [&r, box, tolerance](const auto &j) {
+                        return box->minimumDistance(r, j.r()) < tolerance;
+                    }) != sp->atoms().end())
+                    continue;
+
+                // Create the new atom
+                auto i = sp->addAtom(unique.Z(), r);
+                sp->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
+            }
+
+    // Bonding
+    if (ui_.CalculateBondingRadio->isChecked())
+        sp->addMissingBonds();
+    else
+        applyCIFBonding(sp);
+
+    // Moiety Removal
+    if (ui_.MoietyRemovalGroup->isChecked() && moietyNETA_.isValid())
+    {
+        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
+        std::vector<int> indicesToRemove;
+        for (auto &i : sp->atoms())
+            if (moietyNETA_.matches(&i))
+            {
+                // Select all atoms that are part of the same moiety?
+                if (ui_.MoietyRemoveFragmentsCheck->isChecked())
+                {
+                    sp->clearAtomSelection();
+                    sp->selectFromAtom(&i);
+                    for (auto *sel : sp->selectedAtoms())
+                        indicesToRemove.push_back(sel->index());
+                }
+                else
+                    indicesToRemove.push_back(i.index());
+            }
+        Messenger::print("Moiety removal deleted {} atoms.\n", indicesToRemove.size());
+
+        // Remove selected atoms
+        sp->removeAtoms(indicesToRemove);
+    }
+
+    // Add the structural species to the configuration
+    AtomChangeToken lock(*structureConfiguration_);
+    structureConfiguration_->addMolecule(lock, sp);
+    structureConfiguration_->updateCellContents();
+
+    ui_.StructureViewer->setConfiguration(structureConfiguration_);
+
+    return true;
+}
 
 // Create / check NETA definition for moiety removal
 bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
@@ -450,5 +419,122 @@ void ImportCIFDialog::on_MoietyRemoveFragmentsCheck_clicked(bool checked)
 }
 
 /*
+ * Supercell Page
+ */
+
+// Create supercell species
+bool ImportCIFDialog::createSupercellSpecies()
+{
+    ui_.SupercellViewer->setConfiguration(nullptr);
+    supercellConfiguration_->empty();
+    partitioningConfiguration_->empty();
+
+    // Remove the old Supercell species if it exists, and create a new one
+    auto *supercell = temporaryCoreData_.findSpecies("Supercell");
+    if (supercell)
+        temporaryCoreData_.removeSpecies(supercell);
+    supercell = temporaryCoreData_.addSpecies();
+    supercell->setName("Supercell");
+
+    // Set the repeat vector
+    Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
+
+    // Get the Crystal species and set a new Supercell box
+    const auto *crystal = temporaryCoreData_.findSpecies("Crystal");
+    if (!crystal)
+        return Messenger::error("Crystal reference species doesn't exist.\n");
+    auto supercellLengths = crystal->box()->axisLengths();
+    supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
+    supercell->createBox(supercellLengths, crystal->box()->axisAngles(), false);
+    supercellConfiguration_->createBoxAndCells(supercellLengths, crystal->box()->axisAngles(), false, 7.0, 1.0);
+
+    // Copy atoms from the Crystal species - we'll do the bonding afterwards
+    supercell->atoms().reserve(repeat.x * repeat.y * repeat.z * crystal->nAtoms());
+    for (auto ix = 0; ix < repeat.x; ++ix)
+        for (auto iy = 0; iy < repeat.y; ++iy)
+            for (auto iz = 0; iz < repeat.z; ++iz)
+            {
+                Vec3<double> deltaR = crystal->box()->axes() * Vec3<double>(ix, iy, iz);
+                for (const auto &i : crystal->atoms())
+                    supercell->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
+            }
+
+    // Bonding
+    if (ui_.CalculateBondingRadio->isChecked())
+        supercell->addMissingBonds();
+    else
+        applyCIFBonding(supercell);
+
+    // Add the structural species to the configuration
+    AtomChangeToken lock(*supercellConfiguration_);
+    supercellConfiguration_->addMolecule(lock, supercell);
+    supercellConfiguration_->updateCellContents();
+    ui_.SupercellViewer->setConfiguration(supercellConfiguration_);
+
+    // Update the information panel
+    ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
+    ui_.SupercellBoxBLabel->setText(QString::number(supercell->box()->axisLengths().y) + " &#8491;");
+    ui_.SupercellBoxCLabel->setText(QString::number(supercell->box()->axisLengths().z) + " &#8491;");
+    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercell->box()->axisAngles().x) + "&deg;");
+    ui_.SupercellBoxBetaLabel->setText(QString::number(supercell->box()->axisAngles().y) + "&deg;");
+    ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
+    ui_.SupercellDensityLabel->setText(QString::number(supercellConfiguration_->chemicalDensity()) + " g cm<sup>3</sup>");
+    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration_->box()->volume()) + " &#8491;<sup>3</sup>");
+    ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration_->nAtoms()));
+
+    return true;
+}
+
+void ImportCIFDialog::on_RepeatASpin_valueChanged(int value) { createSupercellSpecies(); }
+
+void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value) { createSupercellSpecies(); }
+
+void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { createSupercellSpecies(); }
+
+/*
  * Species Partitioning Page
  */
+
+// Create partitioned species from CIF data
+bool ImportCIFDialog::createPartitionedSpecies()
+{
+    ui_.PartitioningViewer->setConfiguration(nullptr);
+    partitioningConfiguration_->clear();
+
+    // Set up the basic configuration
+    auto *sp = temporaryCoreData_.findSpecies("Supercell");
+    assert(sp);
+    partitioningConfiguration_->createBoxAndCells(sp->box()->axisLengths(), sp->box()->axisAngles(), false, 7.0, 1.0);
+
+    auto validSpecies = true;
+
+    if (ui_.PartioningNoneRadio->isChecked())
+    {
+        // Add the supercell species to the configuration
+        AtomChangeToken lock(*partitioningConfiguration_);
+        partitioningConfiguration_->addMolecule(lock, sp);
+        partitioningConfiguration_->updateCellContents();
+
+        // Update the indicator and label
+        sp->clearAtomSelection();
+        auto selection = sp->selectFromAtom(&sp->atom(0));
+        if (selection.size() != sp->nAtoms())
+        {
+            ui_.PartitioningIndicator->setOK(false);
+            ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
+                                           "simulation. Choose a different partitioning.");
+
+            validSpecies = false;
+        }
+    }
+
+    ui_.PartitioningViewer->setConfiguration(partitioningConfiguration_);
+
+    if (validSpecies)
+    {
+        ui_.PartitioningIndicator->setOK(true);
+        ui_.PartitioningLabel->setText("Species are valid.");
+    }
+
+    return true;
+}

@@ -30,10 +30,6 @@ class ImportCIFDialog : public WizardDialog
     CIFAssemblyModel cifAssemblyModel_;
     // Temporary core data
     CoreData temporaryCoreData_;
-    // Structure preview Configuration
-    Configuration *structureConfiguration_;
-    // Partitioning preview Configuration
-    Configuration *partitioningConfiguration_;
 
     /*
      * Data
@@ -44,11 +40,9 @@ class ImportCIFDialog : public WizardDialog
     // CIF Importer
     CIFImport cifImporter_;
 
-    private slots:
-    // Generate structural species from CIF data
-    bool createStructuralSpecies();
-    // Create partitioned species from CIF data
-    bool createPartitionedSpecies();
+    private:
+    // Apply CIF bond definitions within specified species
+    void applyCIFBonding(Species *sp);
 
     /*
      * Wizard
@@ -61,6 +55,7 @@ class ImportCIFDialog : public WizardDialog
         SelectSpacegroupPage,   /* Select space group page */
         CIFInfoPage,            /* Basic CIF info page to check parsing */
         StructurePage,          /* Structure page */
+        SupercellPage,          /* Options to create supercell */
         SpeciesPartitioningPage /* Species partitioning scheme page */
     };
 
@@ -89,6 +84,7 @@ class ImportCIFDialog : public WizardDialog
     private slots:
     void updateSpaceGroupPage();
     void on_SpacegroupsList_currentRowChanged(int row);
+    void on_SpacegroupsList_itemDoubleClicked(QListWidgetItem *item);
 
     /*
      * CIF Info Page
@@ -100,6 +96,8 @@ class ImportCIFDialog : public WizardDialog
      * Structure Page
      */
     private:
+    // Structure preview Configuration
+    Configuration *structureConfiguration_;
     // NETA for moiety removal
     NETADefinition moietyNETA_;
 
@@ -108,6 +106,8 @@ class ImportCIFDialog : public WizardDialog
     bool createMoietyRemovalNETA(std::string definition);
 
     private slots:
+    // Generate structural species from CIF data
+    bool createStructuralSpecies();
     void on_NormalOverlapToleranceRadio_clicked(bool checked);
     void on_LooseOverlapToleranceRadio_clicked(bool checked);
     void on_CalculateBondingRadio_clicked(bool checked);
@@ -117,7 +117,27 @@ class ImportCIFDialog : public WizardDialog
     void on_MoietyRemoveFragmentsCheck_clicked(bool checked);
 
     /*
+     * Supercell Page
+     */
+    private:
+    // Supercell preview Configuration
+    Configuration *supercellConfiguration_;
+
+    private slots:
+    // Create supercell species
+    bool createSupercellSpecies();
+    void on_RepeatASpin_valueChanged(int value);
+    void on_RepeatBSpin_valueChanged(int value);
+    void on_RepeatCSpin_valueChanged(int value);
+
+    /*
      * Species Partitioning Page
      */
     private:
+    // Partitioning preview Configuration
+    Configuration *partitioningConfiguration_;
+
+    private slots:
+    // Create partitioned species from CIF data
+    bool createPartitionedSpecies();
 };
