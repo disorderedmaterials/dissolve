@@ -80,7 +80,7 @@ class ArrayIndex3D
 
     bool operator!=(const ArrayIndex3D &rhs) { return !(*this == rhs); }
 
-    std::tuple<int, int, int> operator*() { return {index_ / (nY_ * nZ_), index_ % nY_ / nZ_, index_ % nY_ % nZ_}; }
+    std::tuple<int, int, int> operator*() { return {index_ / (nY_ * nZ_), (index_ / nZ_) % nY_, index_ % nZ_}; }
 
     ArrayIndex3D begin() { return ArrayIndex3D(nX_, nY_, nZ_); }
 
