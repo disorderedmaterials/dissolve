@@ -46,10 +46,10 @@ steps:
       cachix use dissolve-nix
       nix bundle -L .#${{ parameters.package }}
       mkdir -p packages
-      cp ${{ parameters.package }} packages
+      ln -s ${{ parameters.package }} packages/${{ parameters.package }}
       nix build -L .#${{ parameters.singularity }}
       mkdir -p singularity
-      cp result singularity
+      ln -s result singularity/${{ parameters.package }}.sif
     env:
       CACHIX_AUTH_TOKEN: $(CACHIX_TOKEN)
     displayName: 'Package'
