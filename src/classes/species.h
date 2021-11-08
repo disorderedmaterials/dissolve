@@ -66,7 +66,8 @@ class Species
 
     private:
     // Recursively select atoms along any path from the specified one, ignoring the bond(s) provided
-    void selectFromAtomRecursive(std::vector<SpeciesAtom *>, SpeciesAtom *i, SpeciesBond &exclude,
+    void selectFromAtomRecursive(std::vector<SpeciesAtom *> &selection, SpeciesAtom *i,
+                                 OptionalReferenceWrapper<SpeciesBond> exclude,
                                  OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
 
     public:
@@ -99,7 +100,7 @@ class Species
     // Toggle selection state of specified atom
     void toggleAtomSelection(int index);
     // Select atoms along any path from the specified one, ignoring the bond(s) provided
-    std::vector<SpeciesAtom *> selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude,
+    std::vector<SpeciesAtom *> selectFromAtom(SpeciesAtom *i, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,
                                               OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
     // Return current atom selection
     std::vector<SpeciesAtom *> selectedAtoms();

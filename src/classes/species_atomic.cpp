@@ -6,7 +6,8 @@
 #include "data/atomicmasses.h"
 
 // Recursively select atoms along any path from the specified one, ignoring the bond(s) provided
-void Species::selectFromAtomRecursive(std::vector<SpeciesAtom *> selection, SpeciesAtom *i, SpeciesBond &exclude,
+void Species::selectFromAtomRecursive(std::vector<SpeciesAtom *> &selection, SpeciesAtom *i,
+                                      OptionalReferenceWrapper<SpeciesBond> exclude,
                                       OptionalReferenceWrapper<SpeciesBond> excludeToo) const
 {
     // Loop over Bonds on specified Atom
@@ -14,7 +15,7 @@ void Species::selectFromAtomRecursive(std::vector<SpeciesAtom *> selection, Spec
     for (const SpeciesBond &bond : i->bonds())
     {
         // Is this either of the excluded bonds?
-        if (&exclude == &bond)
+        if (exclude && &(*exclude).get() == &bond)
             continue;
         if (excludeToo && &(*excludeToo).get() == &bond)
             continue;
@@ -175,7 +176,7 @@ void Species::toggleAtomSelection(int index)
 }
 
 // Select Atoms along any path from the specified one, ignoring the bond(s) provided
-std::vector<SpeciesAtom *> Species::selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude,
+std::vector<SpeciesAtom *> Species::selectFromAtom(SpeciesAtom *i, OptionalReferenceWrapper<SpeciesBond> exclude,
                                                    OptionalReferenceWrapper<SpeciesBond> excludeToo) const
 {
     std::vector<SpeciesAtom *> selection;
