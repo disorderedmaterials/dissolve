@@ -34,8 +34,8 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
-      nix build -L .#${{ parameters.package }}
-      nix build --json .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+      # nix build -L .#${{ parameters.package }}
+      # nix build --json .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
     env:
       CACHIX_AUTH_TOKEN: $(cachix_token)
     displayName: 'Build'
@@ -43,13 +43,14 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
-      nix bundle -L .#${{ parameters.package }}
+      # nix bundle -L .#${{ parameters.package }}
       mkdir -p packages
       echo $CACHIX_AUTH_TOKEN > packages/token
-      cp ${{ parameters.package }} packages/${{ parameters.package }}
-      nix build -L .#${{ parameters.singularity }}
+      # cp ${{ parameters.package }} packages/${{ parameters.package }}
+      # nix build -L .#${{ parameters.singularity }}
       mkdir -p singularity
-      cp result singularity/${{ parameters.package }}.sif
+      # cp result singularity/${{ parameters.package }}.sif
+      echo $CACHIX_AUTH_TOKEN > singularity/token
     env:
       CACHIX_AUTH_TOKEN: $(cachix_token)
     displayName: 'Package'
