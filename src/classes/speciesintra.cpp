@@ -32,11 +32,18 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 }
 
 /*
+ * SpeciesAtom Information
+ */
+
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesIntra::atoms() const { return {}; }
+
+/*
  * Interaction Parameters
  */
 
 // Set linked master from which parameters should be taken
-void SpeciesIntra::setMasterParameters(MasterIntra *master) { masterParameters_ = master; }
+void SpeciesIntra::setMasterParameters(const MasterIntra *master) { masterParameters_ = master; }
 
 // Return linked master from which parameters should be taken
 const MasterIntra *SpeciesIntra::masterParameters() const { return masterParameters_; }
@@ -137,7 +144,7 @@ const std::vector<double> &SpeciesIntra::parameters() const
  */
 
 // Set attached SpeciesAtoms for the terminus specified
-void SpeciesIntra::setAttachedAtoms(int terminus, const std::vector<const SpeciesAtom *> &atoms)
+void SpeciesIntra::setAttachedAtoms(int terminus, const std::vector<SpeciesAtom *> &atoms)
 {
     attached_[terminus].clear();
 

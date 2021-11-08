@@ -367,7 +367,10 @@ void DissolveWindow::updateMenus()
     ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesReduceForcefieldTermsMenu->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesCopyTermsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesSetAtomTypesInSelectionAction->setEnabled(activeTab->type() == MainTab::TabType::Species &&
+                                                         ui_.MainTabs->currentSpecies()->isSelectionSingleElement());
 
     // Configuration Menu
     ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);

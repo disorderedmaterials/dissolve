@@ -23,6 +23,13 @@ class SpeciesIntra
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
 
     /*
+     * SpeciesAtom Information
+     * */
+    public:
+    // Return vector of involved atoms
+    virtual std::vector<const SpeciesAtom *> atoms() const;
+
+    /*
      * Interaction Parameters
      */
     public:
@@ -37,7 +44,7 @@ class SpeciesIntra
 
     protected:
     // Linked master from which parameters should be taken (if relevant)
-    MasterIntra *masterParameters_;
+    const MasterIntra *masterParameters_;
     // Index of functional form of interaction
     int form_;
     // Parameters for interaction
@@ -45,7 +52,7 @@ class SpeciesIntra
 
     public:
     // Set linked master from which parameters should be taken
-    void setMasterParameters(MasterIntra *master);
+    void setMasterParameters(const MasterIntra *master);
     // Return linked master from which parameters should be taken
     const MasterIntra *masterParameters() const;
     // Detach from MasterIntra, if we are currently referencing one
@@ -86,7 +93,7 @@ class SpeciesIntra
 
     public:
     // Set attached SpeciesAtoms for terminus specified
-    void setAttachedAtoms(int terminus, const std::vector<const SpeciesAtom *> &atoms);
+    void setAttachedAtoms(int terminus, const std::vector<SpeciesAtom *> &atoms);
     // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
     void setAttachedAtoms(int terminus, SpeciesAtom *atom);
     // Return vector of attached indices for terminus specified
