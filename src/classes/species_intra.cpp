@@ -99,8 +99,7 @@ OptionalReferenceWrapper<const SpeciesBond> Species::getBond(int i, int j) const
 // Add missing bonds
 void Species::addMissingBonds(double tolerance)
 {
-    Vec3<double> vij;
-    double radiusI;
+    double r, radiusI;
     for (auto indexI = 0; indexI < nAtoms() - 1; ++indexI)
     {
         // Get SpeciesAtom 'i' and its radius
@@ -116,10 +115,10 @@ void Species::addMissingBonds(double tolerance)
                 continue;
 
             // Calculate distance between atoms
-            vij = j.r() - i.r();
+            r = box_ ? box_->minimumDistance(j.r(), i.r()) : (j.r() - i.r()).magnitude();
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (vij.magnitude() <= (radiusI + AtomicRadii::radius(j.Z())) * tolerance)
+            if (r <= (radiusI + AtomicRadii::radius(j.Z())) * tolerance)
                 addBond(&i, &j);
         }
     }
