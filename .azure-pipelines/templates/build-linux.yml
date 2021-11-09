@@ -29,7 +29,6 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       mkdir -p .config/cachix
-      cp $(authToken.secureFilePath) ~/.config/cachix/cachix.dhall
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       cachix use dissolve-nix
     displayName: 'Install Cachix'
