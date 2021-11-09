@@ -23,7 +23,7 @@ int SpeciesTorsionModel::columnCount(const QModelIndex &parent) const
 QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::ToolTipRole)
-        headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
+        return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
     auto &item = torsions_[index.row()];
 
