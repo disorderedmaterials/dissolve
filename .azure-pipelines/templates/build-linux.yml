@@ -25,11 +25,6 @@ steps:
       echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
       echo "system-features = kvm" >> ~/.config/nix/nix.conf
     displayName: 'Install nix'
-  - task: DownloadSecureFile@1
-    name: authToken
-    inputs:
-      secureFile: cachix.dhall
-    displayName: 'Get Cachix Token'
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
@@ -41,14 +36,16 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
-      nix build -L .#${{ parameters.package }}
-      nix build --json .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+      # nix build -L .#${{ parameters.package }}
+      # nix build --json .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
     displayName: 'Build'
+    env:
+      CACHIX_AUTH_TOKEN: $(cachix_token)
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
-      nix bundle -L .#${{ parameters.package }}
+      # nix bundle -L .#${{ parameters.package }}
       mkdir -p packages
       echo $CACHIX_AUTH_TOKEN > packages/token
       cp ${{ parameters.package }} packages/${{ parameters.package }}
@@ -57,3 +54,5 @@ steps:
       cp result singularity/${{ parameters.package }}.sif
     displayName: 'Package'
     condition: eq( '${{ parameters.export }}', 'true' )
+    env:
+      CACHIX_AUTH_TOKEN: $(cachix_token)
