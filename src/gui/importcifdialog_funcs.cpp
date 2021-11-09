@@ -346,9 +346,8 @@ bool ImportCIFDialog::createStructuralSpecies()
                 if (ui_.MoietyRemoveFragmentsCheck->isChecked())
                 {
                     sp->clearAtomSelection();
-                    sp->selectFromAtom(&i);
-                    for (auto *sel : sp->selectedAtoms())
-                        indicesToRemove.push_back(sel->index());
+                    auto selection = sp->fragment(i.index());
+                    std::copy(selection.begin(), selection.end(), std::back_inserter(indicesToRemove));
                 }
                 else
                     indicesToRemove.push_back(i.index());
@@ -517,7 +516,7 @@ bool ImportCIFDialog::createPartitionedSpecies()
 
         // Update the indicator and label
         sp->clearAtomSelection();
-        auto selection = sp->selectFromAtom(&sp->atom(0));
+        auto selection = sp->fragment(0);
         if (selection.size() != sp->nAtoms())
         {
             ui_.PartitioningIndicator->setOK(false);

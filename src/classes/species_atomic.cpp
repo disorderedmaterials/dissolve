@@ -5,14 +5,14 @@
 #include "classes/species.h"
 #include "data/atomicmasses.h"
 
-// Recursively select atoms along any path from the specified one, ignoring the bond(s) provided
-void Species::selectFromAtomRecursive(std::vector<SpeciesAtom *> &selection, SpeciesAtom *i,
-                                      OptionalReferenceWrapper<SpeciesBond> exclude,
-                                      OptionalReferenceWrapper<SpeciesBond> excludeToo) const
+// Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
+void Species::getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
+                                  OptionalReferenceWrapper<SpeciesBond> excludeToo) const
 {
     // Loop over Bonds on specified Atom
-    selection.emplace_back(i);
-    for (const SpeciesBond &bond : i->bonds())
+    indices.emplace_back(index);
+    const auto &i = atoms_[index];
+    for (const SpeciesBond &bond : i.bonds())
     {
         // Is this either of the excluded bonds?
         if (exclude && &(*exclude).get() == &bond)
@@ -21,9 +21,9 @@ void Species::selectFromAtomRecursive(std::vector<SpeciesAtom *> &selection, Spe
             continue;
 
         // Get the partner atom in the bond and select it (if it is not selected already)
-        auto *j = bond.partner(i);
-        if (std::find(selection.begin(), selection.end(), j) == selection.end())
-            selectFromAtomRecursive(selection, j, exclude, excludeToo);
+        auto *j = bond.partner(&i);
+        if (std::find(indices.begin(), indices.end(), j->index()) == indices.end())
+            getIndicesRecursive(indices, j->index(), exclude, excludeToo);
     }
 }
 
@@ -208,13 +208,13 @@ void Species::toggleAtomSelection(int index)
         selectAtom(index);
 }
 
-// Select Atoms along any path from the specified one, ignoring the bond(s) provided
-std::vector<SpeciesAtom *> Species::selectFromAtom(SpeciesAtom *i, OptionalReferenceWrapper<SpeciesBond> exclude,
-                                                   OptionalReferenceWrapper<SpeciesBond> excludeToo) const
+// Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
+std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude,
+                                   OptionalReferenceWrapper<SpeciesBond> excludeToo) const
 {
-    std::vector<SpeciesAtom *> selection;
-    selectFromAtomRecursive(selection, i, exclude, excludeToo);
-    return selection;
+    std::vector<int> indices;
+    getIndicesRecursive(indices, startIndex, exclude, excludeToo);
+    return indices;
 }
 
 // Return current atom selection

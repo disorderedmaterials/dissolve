@@ -144,18 +144,13 @@ const std::vector<double> &SpeciesIntra::parameters() const
  */
 
 // Set attached SpeciesAtoms for the terminus specified
-void SpeciesIntra::setAttachedAtoms(int terminus, const std::vector<SpeciesAtom *> &atoms)
-{
-    attached_[terminus].clear();
-
-    std::transform(atoms.begin(), atoms.end(), std::back_inserter(attached_[terminus]), [](auto *i) { return i->index(); });
-}
+void SpeciesIntra::setAttachedAtoms(int terminus, const std::vector<int> atoms) { attached_[terminus] = std::move(atoms); }
 
 // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
-void SpeciesIntra::setAttachedAtoms(int terminus, SpeciesAtom *atom)
+void SpeciesIntra::setAttachedAtoms(int terminus, int index)
 {
     attached_[terminus].clear();
-    attached_[terminus].push_back(atom->index());
+    attached_[terminus].push_back(index);
 }
 
 // Return vector of attached indices for terminus specified

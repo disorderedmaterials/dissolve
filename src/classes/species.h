@@ -65,10 +65,9 @@ class Species
     AtomTypeMix atomTypes_;
 
     private:
-    // Recursively select atoms along any path from the specified one, ignoring the bond(s) provided
-    void selectFromAtomRecursive(std::vector<SpeciesAtom *> &selection, SpeciesAtom *i,
-                                 OptionalReferenceWrapper<SpeciesBond> exclude,
-                                 OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
+    // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
+    void getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
+                             OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
 
     public:
     // Add a new atom to the Species, returning its index
@@ -101,9 +100,10 @@ class Species
     void deselectAtom(int index);
     // Toggle selection state of specified atom
     void toggleAtomSelection(int index);
-    // Select atoms along any path from the specified one, ignoring the bond(s) provided
-    std::vector<SpeciesAtom *> selectFromAtom(SpeciesAtom *i, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,
-                                              OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
+    // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
+    // provided
+    std::vector<int> fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,
+                              OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
     // Return current atom selection
     std::vector<SpeciesAtom *> selectedAtoms();
     const std::vector<const SpeciesAtom *> selectedAtoms() const;
