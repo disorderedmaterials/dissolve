@@ -3,10 +3,8 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
 #include "base/timer.h"
 #include "gui/render/fontinstance.h"
-#include "gui/render/primitive.h"
 #include "gui/render/renderable.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
@@ -22,6 +20,7 @@
 #include <vector>
 
 // Forward Declarations
+class DissolveWindow;
 class QOpenGLFramebufferObject;
 
 // Base rendering widget
@@ -30,8 +29,19 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
     public:
-    BaseViewer(QWidget *parent);
-    ~BaseViewer();
+    explicit BaseViewer(QWidget *parent);
+    ~BaseViewer() = default;
+
+    /*
+     * Main UI
+     */
+    protected:
+    // Pointer to DissolveWindow (for optional integrations with main UI)
+    std::optional<DissolveWindow *> dissolveWindow_;
+
+    public:
+    // Set pointer to DissolveWindow (for optional integrations with main UI)
+    void setDissolveWindow(DissolveWindow *dissolveWindow);
 
     /*
      * View

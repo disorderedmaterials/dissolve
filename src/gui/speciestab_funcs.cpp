@@ -82,6 +82,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
             SLOT(siteSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set up SpeciesViewer
+    ui_.ViewerWidget->speciesViewer()->setDissolveWindow(dissolveWindow_);
     ui_.ViewerWidget->setDissolve(&dissolve);
     ui_.ViewerWidget->setSpecies(species_);
 
