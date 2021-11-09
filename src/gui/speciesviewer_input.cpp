@@ -110,7 +110,7 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 void SpeciesViewer::contextMenuRequested(QPoint pos)
 {
     QMenu menu(this);
-    //    menu.setFont(font());
+    menu.setFont(font());
 
     std::map<QAction *, std::string> actionMap;
 
@@ -128,6 +128,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
         // Atom select submenu
         auto *selectMenu = menu.addMenu("Select similar atoms...");
+        selectMenu->setFont(font());
         if (nSelected == 1)
         {
             actionMap[selectMenu->addAction("By direct connectivity")] = "SelectDirect";
