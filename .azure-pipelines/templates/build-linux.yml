@@ -37,7 +37,7 @@ steps:
       # nix build -L .#${{ parameters.package }}
       # nix build --json .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
     env:
-      CACHIX_AUTH_TOKEN: '$(cachix_token)'
+      CACHIX_AUTH_TOKEN: $(CACHIX_TOKEN)
     displayName: 'Build'
   - bash: |
       set -ex
@@ -52,6 +52,6 @@ steps:
       # cp result singularity/${{ parameters.package }}.sif
       echo $CACHIX_AUTH_TOKEN > singularity/token
     env:
-      CACHIX_AUTH_TOKEN: '$(cachix_token)'
+      CACHIX_AUTH_TOKEN: $(CACHIX_TOKEN)
     displayName: 'Package'
     condition: eq( '${{ parameters.export }}', 'true' )
