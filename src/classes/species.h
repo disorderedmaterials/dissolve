@@ -75,6 +75,8 @@ class Species
     int addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
     // Remove the specified atom from the species
     void removeAtom(int index);
+    // Remove set of atom indices
+    void removeAtoms(std::vector<int> indices);
     // Return the number of atoms in the species
     int nAtoms() const;
     // Renumber atoms so they are sequential in the list

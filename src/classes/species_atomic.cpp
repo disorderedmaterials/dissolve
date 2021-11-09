@@ -74,6 +74,38 @@ void Species::removeAtom(int index)
     ++version_;
 }
 
+// Remove set of atom indices
+void Species::removeAtoms(std::vector<int> indices)
+{
+    // Clear higher-order terms
+    angles_.clear();
+    torsions_.clear();
+    impropers_.clear();
+
+    // Detach & remove any bond terms that involve any of the supplied atom
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [&indices](auto &bond) {
+        if (std::find_if(indices.begin(), indices.end(),
+                         [&bond](const auto i) { return (bond.i()->index() == i || bond.j()->index() == i); }) != indices.end())
+        {
+            bond.detach();
+            return true;
+        }
+        else
+            return false;
+    });
+    if (it != bonds_.end())
+        bonds_.erase(it, bonds_.end());
+
+    // Now remove the atoms
+    auto atomIt = std::remove_if(atoms_.begin(), atoms_.end(), [&](const auto &i) {
+        return std::find(indices.begin(), indices.end(), i.index()) != indices.end();
+    });
+    atoms_.erase(atomIt, atoms_.end());
+    renumberAtoms();
+
+    ++version_;
+}
+
 // Return the number of Atoms in the Species
 int Species::nAtoms() const { return atoms_.size(); }
 
