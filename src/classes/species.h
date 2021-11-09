@@ -72,7 +72,7 @@ class Species
 
     public:
     // Add a new atom to the Species, returning its index
-    int addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
+    int addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
     // Remove the specified atom from the species
     void removeAtom(int index);
     // Remove set of atom indices
