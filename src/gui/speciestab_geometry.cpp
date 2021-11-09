@@ -64,9 +64,9 @@ void SpeciesTab::updateUnderlyingAtomSelection()
     {
         i = atoms_.data(atoms_.index(n, 0), Qt::UserRole).value<SpeciesAtom *>();
         if (ui_.AtomTable->selectionModel()->isSelected(atoms_.index(n, 0)))
-            species_->selectAtom(i);
+            species_->selectAtom(i->index());
         else
-            species_->deselectAtom(i);
+            species_->deselectAtom(i->index());
     }
 
     // Recreate selection primitive and update viewer

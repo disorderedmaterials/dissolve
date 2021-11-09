@@ -15,7 +15,6 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
     // Interaction
     setInteractionMode(SpeciesViewer::InteractionMode::Select);
     transientInteractionMode_ = SpeciesViewer::TransientInteractionMode::None;
-    clickedAtom_ = nullptr;
     drawElement_ = Elements::H;
 
     // Set up the view
@@ -27,8 +26,6 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
     // Tweak the options of the underlying BaseViewer
     setClipToAxesVolume(false);
 }
-
-SpeciesViewer::~SpeciesViewer() {}
 
 /*
  * Target Species

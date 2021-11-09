@@ -13,7 +13,7 @@
  * Public
  */
 
-// Add new SpeciesBond definition (from SpeciesAtoms*)
+// Add new SpeciesBond definition
 SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 {
     // Check for existence of Bond already
@@ -32,8 +32,6 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 
     return bonds_.back();
 }
-
-// Add new SpeciesBond definition
 SpeciesBond &Species::addBond(int i, int j) { return addBond(&atom(i), &atom(j)); }
 
 // Remove bond between specified SpeciesAtoms
@@ -57,6 +55,7 @@ void Species::removeBond(SpeciesAtom *j, SpeciesAtom *k)
 
     ++version_;
 }
+void Species::removeBond(int i, int j) { removeBond(&atoms_[i], &atoms_[j]); }
 
 // Return number of SpeciesBonds defined
 int Species::nBonds() const { return bonds_.size(); }
@@ -73,8 +72,6 @@ bool Species::hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const
 
     return it != bonds_.cend();
 }
-
-// Return whether SpeciesBond between specified atom indices exists
 bool Species::hasBond(int i, int j) const { return hasBond(&atom(i), &atom(j)); }
 
 // Return the SpeciesBond between the specified SpeciesAtoms
@@ -209,7 +206,7 @@ void Species::updateIntramolecularTerms()
                      impropers_.end());
 }
 
-// Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)
+// Add new SpeciesAngle definition
 SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 {
     // Check for existence of Angle already
@@ -228,8 +225,6 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 
     return angles_.back();
 }
-
-// Add new SpeciesAngle definition
 SpeciesAngle &Species::addAngle(int i, int j, int k) { return addAngle(&atom(i), &atom(j), &atom(k)); }
 
 // Return number of SpeciesAngles defined
@@ -274,7 +269,7 @@ OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(int i, int j, int
     return getAngle(&atom(i), &atom(j), &atom(k));
 }
 
-// Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
+// Add new SpeciesTorsion definition
 SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     // Check for existence of Torsion already
@@ -293,8 +288,6 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
 
     return torsions_.back();
 }
-
-// Add new SpeciesTorsion definition
 SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l) { return addTorsion(&atom(i), &atom(j), &atom(k), &atom(l)); }
 
 // Return number of SpeciesTorsions defined
@@ -343,7 +336,7 @@ OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(int i, int j,
     return getTorsion(&atom(i), &atom(j), &atom(k), &atom(l));
 }
 
-// Add new SpeciesImproper definition (from SpeciesAtom*)
+// Add new SpeciesImproper definition
 SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     // Check for existence of Improper already
@@ -362,8 +355,6 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
 
     return impropers_.back();
 }
-
-// Add new SpeciesImproper definition
 SpeciesImproper &Species::addImproper(int i, int j, int k, int l)
 {
     return addImproper(&atom(i), &atom(j), &atom(k), &atom(l));
@@ -429,12 +420,11 @@ void Species::generateAttachedAtomLists()
     for (auto &bond : bonds_)
     {
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        clearAtomSelection();
-        selectFromAtom(bond.i(), bond);
+        auto selection = selectFromAtom(bond.i(), bond);
 
         // If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
-        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), bond.j()) != selectedAtoms_.end())
+        if (std::find(selection.begin(), selection.end(), bond.j()) != selection.end())
         {
             Messenger::printVerbose("Bond between Atoms {}-{} is present in a cycle, so a minimal set of attached "
                                     "atoms will be used.\n",
@@ -445,12 +435,12 @@ void Species::generateAttachedAtomLists()
             continue;
         }
         else
-            bond.setAttachedAtoms(0, selectedAtoms_);
+            bond.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
         clearAtomSelection();
         selectFromAtom(bond.j(), bond);
-        bond.setAttachedAtoms(1, selectedAtoms_);
+        bond.setAttachedAtoms(1, selection);
     }
 
     // Angles - termini are 'i' and 'k'
@@ -461,15 +451,14 @@ void Species::generateAttachedAtomLists()
         auto jk = angle.j()->getBond(angle.k());
 
         // Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
-        clearAtomSelection();
-        selectFromAtom(angle.i(), *ji, *jk);
+        auto selection = selectFromAtom(angle.i(), *ji, *jk);
 
         // Remove Atom 'j' from the list if it's there
-        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), angle.j()));
+        selection.erase(std::remove(selection.begin(), selection.end(), angle.j()));
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
-        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), angle.k()) != selectedAtoms_.end())
+        if (std::find(selection.begin(), selection.end(), angle.k()) != selection.end())
         {
             Messenger::printVerbose("Angle between Atoms {}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
@@ -480,16 +469,16 @@ void Species::generateAttachedAtomLists()
             continue;
         }
         else
-            angle.setAttachedAtoms(0, selectedAtoms_);
+            angle.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
         clearAtomSelection();
         selectFromAtom(angle.k(), *ji, jk);
 
         // Remove Atom 'j' from the list if it's there
-        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), angle.j()));
+        selection.erase(std::remove(selection.begin(), selection.end(), angle.j()));
 
-        angle.setAttachedAtoms(1, selectedAtoms_);
+        angle.setAttachedAtoms(1, selection);
     }
 
     // Torsions - termini are 'j' and 'k'
@@ -499,15 +488,14 @@ void Species::generateAttachedAtomLists()
         auto jk = torsion.j()->getBond(torsion.k());
 
         // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
-        clearAtomSelection();
-        selectFromAtom(torsion.j(), *jk);
+        auto selection = selectFromAtom(torsion.j(), *jk);
 
         // Remove Atom 'j' from the list
-        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), torsion.j()));
+        selection.erase(std::remove(selection.begin(), selection.end(), torsion.j()));
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i'
-        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), torsion.k()) != selectedAtoms_.end())
+        if (std::find(selection.begin(), selection.end(), torsion.k()) != selection.end())
         {
             Messenger::printVerbose("Torsion between Atoms {}-{}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
@@ -519,16 +507,16 @@ void Species::generateAttachedAtomLists()
             continue;
         }
         else
-            torsion.setAttachedAtoms(0, selectedAtoms_);
+            torsion.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
         clearAtomSelection();
         selectFromAtom(torsion.k(), *jk);
 
         // Remove Atom 'k' from the list
-        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), torsion.k()));
+        selection.erase(std::remove(selection.begin(), selection.end(), torsion.k()));
 
-        torsion.setAttachedAtoms(1, selectedAtoms_);
+        torsion.setAttachedAtoms(1, selection);
     }
 
     attachedAtomListsGenerated_ = true;

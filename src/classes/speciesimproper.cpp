@@ -62,6 +62,21 @@ SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source) noexcept
  * Atom Information
  */
 
+// Rewrite SpeciesAtom pointer
+void SpeciesImproper::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
+{
+    assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr || l_ == oldPtr);
+
+    if (i_ == oldPtr)
+        i_ = newPtr;
+    else if (j_ == oldPtr)
+        j_ = newPtr;
+    else if (k_ == oldPtr)
+        k_ = newPtr;
+    else
+        l_ = newPtr;
+}
+
 // Set Atoms involved in Improper
 void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {

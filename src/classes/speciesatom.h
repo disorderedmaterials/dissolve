@@ -25,23 +25,31 @@ class SpeciesTorsion;
 class SpeciesAtom
 {
     public:
-    SpeciesAtom();
+    SpeciesAtom() = default;
     ~SpeciesAtom() = default;
+    SpeciesAtom(SpeciesAtom &source) = delete;
+    SpeciesAtom(SpeciesAtom &&source) noexcept;
+    SpeciesAtom &operator=(const SpeciesAtom &source) = delete;
+    SpeciesAtom &operator=(SpeciesAtom &&source) noexcept;
+
+    private:
+    // Move all data from source to this
+    void move(SpeciesAtom &source);
 
     /*
      * Properties
      */
     private:
     // Parent Species
-    Species *parent_;
+    Species *parent_{nullptr};
     // Atomic element
     Elements::Element Z_{Elements::Unknown};
     // Coordinates
-    Vec3<double> r_;
+    Vec3<double> r_{0.0, 0.0, 0.0};
     // Charge (if contained in file)
     double charge_{0.0};
     // Assigned AtomType
-    std::shared_ptr<AtomType> atomType_;
+    std::shared_ptr<AtomType> atomType_{nullptr};
     // Index in Species
     int index_{-1};
     // Whether the atom is currently selected
@@ -80,8 +88,6 @@ class SpeciesAtom
     void setSelected(bool selected);
     // Return whether the atom is currently selected
     bool isSelected() const;
-    // Copy properties from supplied Atom
-    void copyProperties(const SpeciesAtom *source);
 
     /*
      * Intramolecular Information

@@ -46,12 +46,16 @@ TEST(CellsTest, Basic)
     // Set up pseudo-species
     auto *argon = dissolve.addSpecies();
     argon->setName("Argon");
-    argon->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0).setAtomType(arType);
+    argon->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0);
+    argon->atom(0).setAtomType(arType);
     auto *water = dissolve.addSpecies();
     water->setName("Water");
-    water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0).setAtomType(hType);
-    water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0).setAtomType(oType);
-    water->addAtom(Elements::H, {-cos(109.5), sin(109.5), 0.0}, 0.0).setAtomType(hType);
+    water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0);
+    water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0);
+    water->addAtom(Elements::H, {-cos(109.5), sin(109.5), 0.0}, 0.0);
+    water->atom(0).setAtomType(hType);
+    water->atom(1).setAtomType(oType);
+    water->atom(2).setAtomType(hType);
     water->addBond(0, 1);
     water->addBond(1, 2);
 

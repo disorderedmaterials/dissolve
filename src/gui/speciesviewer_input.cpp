@@ -15,7 +15,7 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
         return;
 
     auto refresh = false;
-    SpeciesAtom *currentAtom = nullptr;
+    std::optional<int> currentAtomIndex;
 
     // What we do here depends on the current mode
     switch (transientInteractionMode_)
@@ -35,20 +35,21 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
                         break;
 
                     // Get atom at the current position (if any)
-                    currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
+                    currentAtomIndex = atomIndexAt(rMouseLast_.x, rMouseLast_.y);
 
                     // Set the current drawing coordinates in data-space
-                    drawCoordinateCurrent_ =
-                        currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
+                    drawCoordinateCurrent_ = currentAtomIndex ? species_->atom(currentAtomIndex.value()).r()
+                                                              : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
 
                     // Update the interaction Primitive
-                    if (clickedAtom_)
+                    if (clickedAtomIndex_)
                     {
-                        if (currentAtom)
-                            speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, currentAtom);
+                        if (currentAtomIndex)
+                            speciesRenderable_->recreateDrawInteractionPrimitive(&species_->atom(clickedAtomIndex_.value()),
+                                                                                 &species_->atom(currentAtomIndex.value()));
                         else
-                            speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_,
-                                                                                 drawElement_);
+                            speciesRenderable_->recreateDrawInteractionPrimitive(&species_->atom(clickedAtomIndex_.value()),
+                                                                                 drawCoordinateCurrent_, drawElement_);
                     }
                     else
                         speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
@@ -61,9 +62,13 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
                         break;
 
                     // Update the interaction Primitive
-                    if (clickedAtom_)
-                        speciesRenderable_->recreateDeleteInteractionPrimitive(clickedAtom_,
-                                                                               atomAt(rMouseLast_.x, rMouseLast_.y));
+                    if (clickedAtomIndex_)
+                    {
+                        currentAtomIndex = atomIndexAt(rMouseLast_.x, rMouseLast_.y);
+                        speciesRenderable_->recreateDeleteInteractionPrimitive(
+                            &species_->atom(clickedAtomIndex_.value()),
+                            currentAtomIndex ? &species_->atom(currentAtomIndex.value()) : nullptr);
+                    }
                     else
                         speciesRenderable_->clearInteractionPrimitive();
 
@@ -115,13 +120,14 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
     // Atom selection context menu?
     QAction *selectSimilarDirect = nullptr, *selectSimilarPrimary = nullptr, *selectSimilarSecondary = nullptr;
-    if (species_ && species_->nSelectedAtoms() > 0)
+    auto nSelected = species_->selectedAtoms().size();
+    if (species_ && nSelected > 0)
     {
         menu.addSection("Current Selection");
 
         // Atom select submenu
         auto *selectMenu = menu.addMenu("Select similar atoms...");
-        selectMenu->setEnabled(species_->nSelectedAtoms() == 1);
+        selectMenu->setEnabled(nSelected == 1);
         selectSimilarDirect = selectMenu->addAction("By direct connectivity");
         selectSimilarPrimary = selectMenu->addAction("Based on primary neighbours");
         selectSimilarSecondary = selectMenu->addAction("Based on primary and secondary neighbours");
@@ -150,8 +156,8 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         Messenger::print("NETA definition is '{}'.\n", neta.definitionString());
         for (auto &i : species_->atoms())
             if (i.Z() == Z && neta.matches(&i))
-                species_->selectAtom(&i);
-        Messenger::print("Selected {} additional atoms.\n", species_->nSelectedAtoms() - 1);
+                species_->selectAtom(i.index());
+        Messenger::print("Selected {} additional atoms.\n", species_->selectedAtoms().size() - 1);
         speciesRenderable_->recreateSelectionPrimitive();
         emit(atomsChanged());
         postRedisplay();

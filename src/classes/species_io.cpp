@@ -58,9 +58,7 @@ bool Species::loadFromXYZ(std::string_view filename)
             return false;
         }
         auto Z = Elements::element(parser.argsv(0));
-        auto &i = addAtom(Z, parser.arg3d(1));
-        if (parser.hasArg(4))
-            i.setCharge(parser.argd(4));
+        addAtom(Z, parser.arg3d(1), parser.hasArg(4) ? parser.argd(4) : 0.0);
     }
 
     Messenger::print("Successfully loaded XYZ data from file '{}'.\n", filename);
@@ -196,9 +194,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     error = true;
                     break;
                 }
-                auto &i = addAtom(Z, parser.arg3d(3));
-                if (parser.hasArg(7))
-                    i.setCharge(parser.argd(7));
+                auto id = addAtom(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
 
                 // Locate the AtomType assigned to the Atom
                 if (DissolveSys::sameString("None", parser.argsv(6)))
@@ -215,7 +211,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
 
                 // Finally, set AtomType for the Atom
-                i.setAtomType(at);
+                atoms_[id].setAtomType(at);
                 break;
             }
             case (Species::SpeciesKeyword::Bond):

@@ -1,7 +1,7 @@
 #include "gui/models/speciesAtomModel.h"
 #include "classes/atomtype.h"
 
-SpeciesAtomModel::SpeciesAtomModel(std::list<SpeciesAtom> &atoms, Dissolve &dissolve) : atoms_(atoms), dissolve_(dissolve) {}
+SpeciesAtomModel::SpeciesAtomModel(std::vector<SpeciesAtom> &atoms, Dissolve &dissolve) : atoms_(atoms), dissolve_(dissolve) {}
 
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {

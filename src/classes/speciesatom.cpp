@@ -9,8 +9,58 @@
 #include "data/elements.h"
 #include <algorithm>
 
-SpeciesAtom::SpeciesAtom() : atomType_(nullptr) { r_.zero(); }
+SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
 
+SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
+{
+    move(source);
+
+    return *this;
+}
+
+// Move all data from source to this
+void SpeciesAtom::move(SpeciesAtom &source)
+{
+    parent_ = source.parent_;
+    Z_ = source.Z_;
+    r_ = source.r_;
+    charge_ = source.charge_;
+    atomType_ = source.atomType_;
+    selected_ = source.selected_;
+    index_ = source.index_;
+
+    bonds_ = std::move(source.bonds_);
+    angles_ = std::move(source.angles_);
+    torsions_ = std::move(source.torsions_);
+    impropers_ = std::move(source.impropers_);
+
+    // Rewrite pointers in intramolecular terms
+    for (auto &bond : bonds_)
+        bond.get().switchAtom(&source, this);
+    for (auto &angle : angles_)
+        angle.get().switchAtom(&source, this);
+    for (auto &torsion : torsions_)
+        torsion.get().switchAtom(&source, this);
+    for (auto &improper : impropers_)
+        improper.get().switchAtom(&source, this);
+
+    // Tidy old element
+    source.parent_ = nullptr;
+    source.Z_ = Elements::Unknown;
+    source.r_ = {};
+    source.charge_ = 0.0;
+    source.atomType_ = nullptr;
+    source.selected_ = false;
+    source.index_ = -1;
+    source.bonds_.clear();
+    source.angles_.clear();
+    source.torsions_.clear();
+    source.impropers_.clear();
+}
+
+/*
+ * Properties
+ */
 // Set Species parent
 void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
 
