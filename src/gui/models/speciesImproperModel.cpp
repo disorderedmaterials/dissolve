@@ -30,25 +30,25 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
     if (role == Qt::UserRole)
         return QVariant::fromValue(&item);
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return {};
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
+        switch (index.column())
+        {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                return item.index(index.column()) + 1;
+            case 4:
+                return item.masterParameters()
+                           ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
+                           : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
+            case 5:
+                return QString::fromStdString(joinStrings(item.parameters()));
+            default:
+                return {};
+        }
 
-    switch (index.column())
-    {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-            return item.index(index.column()) + 1;
-        case 4:
-            return item.masterParameters()
-                       ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
-                       : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
-        case 5:
-            return QString::fromStdString(joinStrings(item.parameters()));
-        default:
-            return {};
-    }
+    return {};
 }
 
 QVariant SpeciesImproperModel::headerData(int section, Qt::Orientation orientation, int role) const
