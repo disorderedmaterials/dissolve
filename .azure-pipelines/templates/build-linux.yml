@@ -47,10 +47,10 @@ steps:
       # nix bundle -L .#${{ parameters.package }}
       mkdir -p packages
       echo $CACHIX_AUTH_TOKEN > packages/token
-      cp ${{ parameters.package }} packages/${{ parameters.package }}
-      nix build -L .#${{ parameters.singularity }}
-      mkdir -p singularity
-      cp result singularity/${{ parameters.package }}.sif
+      # cp ${{ parameters.package }} packages/${{ parameters.package }}
+      # nix build -L .#${{ parameters.singularity }}
+      # mkdir -p singularity
+      # cp result singularity/${{ parameters.package }}.sif
     displayName: 'Package'
     condition: eq( '${{ parameters.export }}', 'true' )
     env:
