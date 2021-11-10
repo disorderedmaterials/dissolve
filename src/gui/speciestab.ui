@@ -198,7 +198,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <weight>75</weight>
+                  <pointsize>10</pointsize>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -297,6 +297,28 @@
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="CheckIndicator" name="TotalAtomChargeIndicator">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16</width>
+                       <height>16</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -331,6 +353,28 @@
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="CheckIndicator" name="TotalAtomTypeChargeIndicator">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16</width>
+                       <height>16</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -402,7 +446,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <weight>75</weight>
+                  <pointsize>10</pointsize>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -506,7 +550,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <weight>75</weight>
+                  <pointsize>10</pointsize>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -580,7 +624,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <weight>75</weight>
+                  <pointsize>10</pointsize>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -654,7 +698,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <weight>75</weight>
+                  <pointsize>10</pointsize>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -1109,6 +1153,7 @@
                   <widget class="QLabel" name="SiteOriginAtomsLabel">
                    <property name="font">
                     <font>
+                     <pointsize>10</pointsize>
                      <italic>true</italic>
                     </font>
                    </property>
@@ -1140,6 +1185,7 @@
                   <widget class="QLabel" name="SiteXAxisLabel">
                    <property name="font">
                     <font>
+                     <pointsize>10</pointsize>
                      <italic>true</italic>
                     </font>
                    </property>
@@ -1171,6 +1217,7 @@
                   <widget class="QLabel" name="SiteYAxisLabel">
                    <property name="font">
                     <font>
+                     <pointsize>10</pointsize>
                      <italic>true</italic>
                     </font>
                    </property>
@@ -1233,6 +1280,11 @@
    <extends>QWidget</extends>
    <header>gui/sitewidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CheckIndicator</class>
+   <extends>QLabel</extends>
+   <header>gui/widgets/checkindicator.hui</header>
   </customwidget>
  </customwidgets>
  <resources>
