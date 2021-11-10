@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "classes/species.h"
-#include "gui/render/renderablespecies.h"
 #include "gui/speciesviewer.hui"
 #include "neta/neta.h"
 #include <QtGui/QMouseEvent>
@@ -137,6 +135,17 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         }
         else
             selectMenu->setEnabled(false);
+
+        // Set menu (only if DissolveWindow is set)
+        if (dissolveWindow_)
+        {
+            auto *setMenu = menu.addMenu("Set...");
+            setMenu->setFont(font());
+            auto *setAtomTypeAction = setMenu->addAction("Atom type...");
+            setAtomTypeAction->setEnabled(species_->isSelectionSingleElement());
+            connect(setAtomTypeAction, SIGNAL(triggered(bool)), dissolveWindow_.value(), SLOT(on_SpeciesSetAtomTypesInSelectionAction_triggered(bool)));
+            connect(setMenu->addAction("Charges..."), SIGNAL(triggered(bool)), dissolveWindow_.value(), SLOT(on_SpeciesSetChargesInSelectionAction_triggered(bool)));
+        }
     }
 
     // Execute the menu

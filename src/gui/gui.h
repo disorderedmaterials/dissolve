@@ -140,7 +140,7 @@ class DissolveWindow : public QMainWindow
     // Clear all data and start new simulation afresh
     void startNew();
 
-    private slots:
+    public slots:
     // File
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenLocalAction_triggered(bool checked);
