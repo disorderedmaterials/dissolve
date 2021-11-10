@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 
 RangeKeyword::RangeKeyword(Range &data, Vec3Labels::LabelType labelType)
-    : KeywordBase(KeywordBase::RangeData), data_(data), labelType_(labelType)
+    : KeywordBase(typeid(this), KeywordBase::RangeData), data_(data), labelType_(labelType)
 {
 }
 

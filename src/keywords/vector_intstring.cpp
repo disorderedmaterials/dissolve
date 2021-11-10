@@ -7,7 +7,7 @@
 
 IntegerStringVectorKeyword::IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers,
                                                        std::optional<int> nRequiredValues)
-    : KeywordBase(KeywordBase::VectorIntegerStringData), data_(data), nRequiredIntegers_(nRequiredIntegers),
+    : KeywordBase(typeid(this), KeywordBase::VectorIntegerStringData), data_(data), nRequiredIntegers_(nRequiredIntegers),
       nRequiredValues_(nRequiredValues)
 {
 }

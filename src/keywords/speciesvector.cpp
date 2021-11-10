@@ -7,7 +7,7 @@
 #include "classes/species.h"
 
 SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data)
-    : KeywordBase(KeywordBase::SpeciesVectorData), data_(data)
+    : KeywordBase(typeid(this), KeywordBase::SpeciesVectorData), data_(data)
 {
 }
 

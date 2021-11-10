@@ -33,10 +33,10 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
     ui_.ModuleIconLabel->setPixmap(modulePixmap(module_));
 
     // Create a suitable keyword widget for our Configuration targets
-    auto optCfgKeyword = module_->keywords().find("Configuration");
+    auto *optCfgKeyword = module_->keywords().find("Configuration");
     if (optCfgKeyword)
     {
-        auto *cfgWidget = new ConfigurationVectorKeywordWidget(nullptr, optCfgKeyword->get().keyword, dissolve.coreData());
+        auto *cfgWidget = new ConfigurationVectorKeywordWidget(nullptr, optCfgKeyword, dissolve.coreData());
         connect(cfgWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
         auto *layout = new QHBoxLayout;
         layout->addWidget(cfgWidget);

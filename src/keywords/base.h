@@ -7,6 +7,7 @@
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
+#include <typeindex>
 
 // Forward Declarations
 class AtomType;
@@ -70,7 +71,7 @@ class KeywordBase : public ListItem<KeywordBase>
         VectorDoublePairData,
         VectorStringPairData
     };
-    KeywordBase(KeywordDataType type);
+    KeywordBase(const std::type_index typeIndex, KeywordDataType type);
     virtual ~KeywordBase();
     // Return DataType name
     static std::string_view keywordDataType(KeywordDataType kdt);
@@ -91,20 +92,24 @@ class KeywordBase : public ListItem<KeywordBase>
     private:
     // Data type stored by keyword
     KeywordDataType type_;
+    // Type index of derived class
+    const std::type_index typeIndex_;
     // Keyword name
     std::string name_;
     // Description of keyword, if any
     std::string description_;
     // Keyword option mask
-    int optionMask_;
+    int optionMask_{NoOptions};
 
     protected:
     // Whether the current data value has ever been set
-    bool set_;
+    bool set_{false};
 
     public:
-    // Set name, description, arguments, and option mask
-    void set(std::string_view name, std::string_view description, int optionMask = NoOptions);
+    // Set base keyword information
+    void setBaseInfo(std::string_view name, std::string_view description);
+    // Set option mask
+    void setOptionMask(int opttionMask);
     // Flag that data has been set by some other means
     void setAsModified();
     // Return data type stored by keyword

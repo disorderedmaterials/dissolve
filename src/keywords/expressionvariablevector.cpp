@@ -10,7 +10,7 @@
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
                                                                  ProcedureNode *parentNode)
-    : KeywordBase(KeywordBase::ExpressionVariableVectorData), data_(data), parentNode_(parentNode)
+    : KeywordBase(typeid(this), KeywordBase::ExpressionVariableVectorData), data_(data), parentNode_(parentNode)
 {
 }
 

@@ -6,7 +6,7 @@
 #include "classes/coredata.h"
 
 GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> &data, Geometry::GeometryType geometryType)
-    : KeywordBase(KeywordBase::GeometryListData), data_(data), geometryType_(geometryType)
+    : KeywordBase(typeid(this), KeywordBase::GeometryListData), data_(data), geometryType_(geometryType)
 {
 }
 

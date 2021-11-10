@@ -7,7 +7,7 @@
 #include "classes/coredata.h"
 
 ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration *> &data, int maxListSize)
-    : KeywordBase(KeywordBase::ConfigurationVectorData), data_(data)
+    : KeywordBase(typeid(this), KeywordBase::ConfigurationVectorData), data_(data)
 {
     maxListSize_ = maxListSize;
 }

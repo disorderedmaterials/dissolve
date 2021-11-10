@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 
 StringPairVectorKeyword::StringPairVectorKeyword(StringPairVectorKeywordData &data)
-    : KeywordBase(KeywordBase::VectorStringPairData), data_(data)
+    : KeywordBase(typeid(this), KeywordBase::VectorStringPairData), data_(data)
 {
 }
 

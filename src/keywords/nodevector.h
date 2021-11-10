@@ -14,11 +14,11 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
     NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(KeywordBase::NodeVectorData)
+        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this), KeywordBase::NodeVectorData)
     {
     }
     NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(KeywordBase::NodeVectorData)
+        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this), KeywordBase::NodeVectorData)
     {
     }
     ~NodeVectorKeywordBase() override = default;
@@ -48,7 +48,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     }
     NodeVectorKeyword(std::vector<const N *> &data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass,
                       bool onlyInScope)
-        : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), KeywordBase(KeywordBase::NodeVectorData), data_(data)
+        : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
     {
     }
     ~NodeVectorKeyword() override = default;
@@ -64,8 +64,6 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Return reference to vector of data
     std::vector<const N *> &data() { return data_; }
     const std::vector<const N *> &data() const { return data_; }
-    // Set data
-    void setData(std::vector<const N *> data) { data_ = std::move(data); }
     // Add node to vector
     bool addNode(const ProcedureNode *node) override
     {

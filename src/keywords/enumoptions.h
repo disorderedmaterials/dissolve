@@ -11,7 +11,8 @@
 class EnumOptionsBaseKeyword : public KeywordBase
 {
     public:
-    EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : KeywordBase(KeywordBase::EnumOptionsData), baseOptions_(baseOptions)
+    EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions)
+        : KeywordBase(typeid(this), KeywordBase::EnumOptionsData), baseOptions_(baseOptions)
     {
     }
 

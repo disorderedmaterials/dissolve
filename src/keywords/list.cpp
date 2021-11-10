@@ -46,16 +46,23 @@ void KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
  */
 
 // Find named keyword
-OptionalReferenceWrapper<const KeywordInfo> KeywordList::find(std::string_view name) const
+KeywordBase *KeywordList::find(std::string_view name)
 {
     auto it = keywords_.find(name);
     if (it == keywords_.end())
-        return {};
+        return nullptr;
+    return it->second;
+}
+const KeywordBase *KeywordList::find(std::string_view name) const
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        return nullptr;
     return it->second;
 }
 
 // Return keywords
-const std::map<std::string_view, KeywordInfo> KeywordList::keywords() const { return keywords_; }
+const std::map<std::string_view, KeywordBase *> KeywordList::keywords() const { return keywords_; }
 
 // Return keyword group mappings
 const std::map<std::string_view, std::vector<std::string_view>> KeywordList::displayGroups() const { return displayGroups_; };
@@ -64,22 +71,22 @@ const std::map<std::string_view, std::vector<std::string_view>> KeywordList::dis
 bool KeywordList::hasBeenSet(std::string_view name) const
 {
     // Find the named keyword
-    auto optKeyword = find(name);
-    if (!optKeyword)
+    auto *keyword = find(name);
+    if (!keyword)
         throw(std::runtime_error(fmt::format("No Module keyword named '{}' exists to check whether it is set.\n", name)));
 
-    return optKeyword->get().keyword->hasBeenSet();
+    return keyword->hasBeenSet();
 }
 
 // Flag that the specified keyword has been set by some external means
 void KeywordList::setAsModified(std::string_view name) const
 {
     // Find the named keyword
-    auto optKeyword = find(name);
-    if (!optKeyword)
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
         throw(std::runtime_error(fmt::format("No Module keyword named '{}' exists to set its modification status.\n", name)));
 
-    optKeyword->get().keyword->setAsModified();
+    it->second->setAsModified();
 }
 
 /*
@@ -97,16 +104,15 @@ const KeywordTypeMap &KeywordList::setters()
 // Set specified keyword with supplied data
 void KeywordList::set(std::string_view name, const std::any value)
 {
-    auto keyIt = keywords_.find(name);
-    if (keyIt == keywords_.end())
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
         throw(std::runtime_error(fmt::format("No keyword named '{}' exists to set.\n", name)));
 
     // Attempt to set the keyword
-    fmt::print("SETTING name={}\n", name);
-    setters().set(keyIt->second.keyword, value);
+    setters().set(it->second, value);
     printf("*HHHH\n");
 
-    keyIt->second.keyword->setAsModified();
+    it->second->setAsModified();
 }
 
 /*
@@ -120,7 +126,7 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &
     auto it = keywords_.find(parser.argsv(startArg));
     if (it == keywords_.end())
         return KeywordBase::Unrecognised;
-    auto *keyword = it->second.keyword;
+    auto *keyword = it->second;
 
     // We recognised the keyword - check the number of arguments we have against the min / max for the keyword
     if (!keyword->validNArgs(parser.nArgs() - startArg - 1))
@@ -139,13 +145,13 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &
 // Write all keywords to specified LineParser
 bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
-    for (const auto &[name, info] : keywords_)
+    for (const auto &[name, keyword] : keywords_)
     {
         // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-        if (onlyIfSet && (!info.keyword->hasBeenSet()))
+        if (onlyIfSet && (!keyword->hasBeenSet()))
             continue;
 
-        if (!info.keyword->write(parser, name, prefix))
+        if (!keyword->write(parser, name, prefix))
             return false;
     }
 

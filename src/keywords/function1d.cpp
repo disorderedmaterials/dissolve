@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 
 Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties)
-    : KeywordBase(KeywordBase::Function1DData), data_(data), functionProperties_(functionProperties)
+    : KeywordBase(typeid(this), KeywordBase::Function1DData), data_(data), functionProperties_(functionProperties)
 {
 }
 

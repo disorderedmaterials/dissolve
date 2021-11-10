@@ -12,7 +12,7 @@ void AtomShakeModule::initialise()
                                  cutoffDistance_, -1.0);
     keywords_.add<IntegerKeyword>("Control", "ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_, 1);
     keywords_.add<DoubleKeyword>("Control", "StepSize", "Step size in Angstroms to use in Monte Carlo moves", stepSize_, 0.001)
-        .optionMask = KeywordBase::InRestartFileOption;
+        ->setOptionMask(KeywordBase::InRestartFileOption);
     keywords_.add<DoubleKeyword>("Control", "StepSizeMax", "Maximum allowed value for step size, in Angstroms", stepSizeMax_,
                                  0.01);
     keywords_.add<DoubleKeyword>("Control", "StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_,

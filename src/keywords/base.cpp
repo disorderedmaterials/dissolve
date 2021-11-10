@@ -7,7 +7,8 @@
 // Static Singletons
 RefList<KeywordBase> KeywordBase::allKeywords_;
 
-KeywordBase::KeywordBase(KeywordDataType type) : ListItem<KeywordBase>(), type_(type)
+KeywordBase::KeywordBase(const std::type_index typeIndex, KeywordDataType type)
+    : ListItem<KeywordBase>(), type_(type), typeIndex_(typeIndex)
 {
     set_ = false;
 
@@ -73,13 +74,15 @@ std::string_view KeywordBase::keywordDataType(KeywordDataType kdt) { return Keyw
  * Keyword Description
  */
 
-// Set name, description, arguments, and option mask
-void KeywordBase::set(std::string_view name, std::string_view description, int optionMask)
+// Set base keyword information
+void KeywordBase::setBaseInfo(std::string_view name, std::string_view description)
 {
     name_ = name;
     description_ = description;
-    optionMask_ = optionMask;
 }
+
+// Set option mask
+void KeywordBase::setOptionMask(int opttionMask) { optionMask_ = opttionMask; }
 
 // Flag that data has been set by some other means
 void KeywordBase::setAsModified() { set_ = true; }

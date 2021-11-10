@@ -6,7 +6,7 @@
 #include "data/elements.h"
 
 ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data)
-    : KeywordBase(KeywordBase::ElementVectorData), data_(data)
+    : KeywordBase(typeid(this), KeywordBase::ElementVectorData), data_(data)
 {
 }
 

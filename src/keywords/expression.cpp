@@ -6,7 +6,7 @@
 #include "expression/expression.h"
 
 ExpressionKeyword::ExpressionKeyword(Expression &data, const std::vector<std::shared_ptr<ExpressionVariable>> &variables)
-    : KeywordBase(KeywordBase::ExpressionData), data_(data), variables_(variables)
+    : KeywordBase(typeid(this), KeywordBase::ExpressionData), data_(data), variables_(variables)
 {
 }
 

@@ -232,7 +232,7 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 }
 
 // Set up keyword controls for specified keyword list
-void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData)
+void KeywordsWidget::setUp(KeywordList &keywords, const CoreData &coreData)
 {
     // Clear existing item groups....
     while (count() > 0)
@@ -249,31 +249,29 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
         for (const auto &keyName : keyNames)
         {
             // Find the keyword in the main map
-            auto optKey = keywords.find(keyName);
-            if (!optKey)
+            auto *keyword = keywords.find(keyName);
+            if (!keyword)
                 throw(std::runtime_error(
                     fmt::format("Keyword '{}' is listed in group '{}', but it could not be found.\n", keyName, groupName)));
-            auto info = optKey->get();
 
             // Create / setup the keyword widget
-            auto *widget = createKeywordWidget(keywordWidgets_, info.keyword, coreData);
+            auto *widget = createKeywordWidget(keywordWidgets_, keyword, coreData);
 
             if (!widget)
             {
                 // WORKAROUND - Don't raise errors for datastore types (issue #36)
-                if ((info.keyword->type() == KeywordBase::Data1DStoreData) ||
-                    (info.keyword->type() == KeywordBase::Data2DStoreData) ||
-                    (info.keyword->type() == KeywordBase::Data3DStoreData))
+                if ((keyword->type() == KeywordBase::Data1DStoreData) || (keyword->type() == KeywordBase::Data2DStoreData) ||
+                    (keyword->type() == KeywordBase::Data3DStoreData))
                     continue;
 
-                Messenger::error("Can't create widget for keyword '{}' ({}).\n", info.name,
-                                 KeywordBase::keywordDataType(info.keyword->type()));
+                Messenger::error("Can't create widget for keyword '{}' ({}).\n", keyword->name(),
+                                 KeywordBase::keywordDataType(keyword->type()));
                 continue;
             }
 
             // Create a label and add it and the widget to our layout
-            QLabel *nameLabel = new QLabel(QString::fromStdString(std::string(info.name)));
-            nameLabel->setToolTip(QString::fromStdString(std::string(info.description)));
+            QLabel *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
+            nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description)));
             groupLayout->addRow(nameLabel, widget);
         }
 

@@ -6,7 +6,7 @@
 #include "io/fileandformat.h"
 
 FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &data, std::string_view endKeyword)
-    : KeywordBase(KeywordBase::FileAndFormatData), data_(data), endKeyword_{endKeyword}
+    : KeywordBase(typeid(this), KeywordBase::FileAndFormatData), data_(data), endKeyword_{endKeyword}
 {
 }
 

@@ -7,7 +7,7 @@
 #include "classes/species.h"
 
 SpeciesSiteKeyword::SpeciesSiteKeyword(const SpeciesSite *&data, bool axesRequired)
-    : KeywordBase(KeywordBase::SpeciesSiteData), data_(data), axesRequired_(axesRequired)
+    : KeywordBase(typeid(this), KeywordBase::SpeciesSiteData), data_(data), axesRequired_(axesRequired)
 {
 }
 

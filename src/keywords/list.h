@@ -11,20 +11,6 @@
 #include <map>
 #include <typeindex>
 
-struct KeywordInfo
-{
-    // Referenced keyword (via base class)
-    KeywordBase *keyword;
-    // Type index of derived class
-    const std::type_index typeIndex;
-    // Keyword name
-    const std::string_view name;
-    // Keyword description
-    const std::string_view description;
-    // Option mask
-    int optionMask;
-};
-
 // Keyword TypeMap
 class KeywordTypeMap
 {
@@ -102,41 +88,45 @@ class KeywordList
     ~KeywordList() = default;
 
     /*
-     * Keyword List
+     * Keyword Data
      */
     private:
-    // Vector of defined keywords
-    std::map<std::string_view, KeywordInfo> keywords_;
+    // Defined keywords
+    std::map<std::string_view, KeywordBase *> keywords_;
     // Keyword group mappings
     std::map<std::string_view, std::vector<std::string_view>> displayGroups_;
 
     public:
     // Add keyword (no group)
     template <class K, typename... Args>
-    KeywordInfo &addKeyword(std::string_view name, std::string_view description, Args &&... args)
+    KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&... args)
     {
         // Check for keyword of this name already
         if (keywords_.find(name) != keywords_.end())
             throw(std::runtime_error(fmt::format("Keyword named '{}' already exists, and can't be added again.", name)));
 
         // Create new keyword using the supplied arguments
-        return keywords_.emplace(name, KeywordInfo{new K(std::forward<Args>(args)...), typeid(K), name, description, 0})
-            .first->second;
+        K *k = new K(std::forward<Args>(args)...);
+        k->setBaseInfo(name, description);
+
+        keywords_.emplace(name, k);
+        return k;
     }
     // Add keyword (displaying in named group)
     template <class K, typename... Args>
-    KeywordInfo &add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&... args)
+    KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&... args)
     {
-        auto &ki = addKeyword<K>(name, description, args...);
+        auto *k = addKeyword<K>(name, description, args...);
 
         displayGroups_[displayGroup].push_back(name);
 
-        return ki;
+        return k;
     }
     // Find named keyword
-    OptionalReferenceWrapper<const KeywordInfo> find(std::string_view name) const;
+    KeywordBase *find(std::string_view name);
+    const KeywordBase *find(std::string_view name) const;
     // Return keywords
-    const std::map<std::string_view, KeywordInfo> keywords() const;
+    const std::map<std::string_view, KeywordBase *> keywords() const;
     // Return keyword group mappings
     const std::map<std::string_view, std::vector<std::string_view>> displayGroups() const;
     // Return whether the keyword has been set, and is not currently empty (if relevant)
@@ -161,7 +151,7 @@ class KeywordList
         if (it == keywords_.end())
             throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
 
-        setters().set(it->second.keyword, value);
+        setters().set(it->second, value);
     }
     // Set specified enumerated keyword
     template <class E> void setEnumeration(std::string_view name, E data)
@@ -171,7 +161,7 @@ class KeywordList
             throw(std::runtime_error(
                 fmt::format("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name)));
 
-        auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(it->second.keyword);
+        auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(it->second);
         if (!k)
             throw(std::runtime_error(
                 fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
@@ -185,7 +175,7 @@ class KeywordList
         if (it == keywords_.end())
             throw(std::runtime_error(fmt::format("Data for keyword '{}' cannot be retrieved as it doesn't exist..\n", name)));
 
-        return setters().get<D>(it->second.keyword);
+        return setters().get<D>(it->second);
     }
     // Get specified keyword data, casting as necessary
     template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name) const
@@ -195,7 +185,7 @@ class KeywordList
             return {};
 
         // Cast the keyword
-        K *keyword = dynamic_cast<K *>(it->second.keyword);
+        K *keyword = dynamic_cast<K *>(it->second);
         if (!keyword)
             throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
 
@@ -209,7 +199,7 @@ class KeywordList
             return {};
 
         // Cast the keyword
-        auto *keyword = dynamic_cast<EnumOptionsKeyword<E> *>(it->second.keyword);
+        auto *keyword = dynamic_cast<EnumOptionsKeyword<E> *>(it->second);
         if (!keyword)
             throw(std::runtime_error(
                 fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));

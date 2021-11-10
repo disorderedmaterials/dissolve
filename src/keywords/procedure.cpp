@@ -6,7 +6,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 
-ProcedureKeyword::ProcedureKeyword(Procedure &data) : KeywordBase(KeywordBase::ProcedureData), data_(data) {}
+ProcedureKeyword::ProcedureKeyword(Procedure &data) : KeywordBase(typeid(this), KeywordBase::ProcedureData), data_(data) {}
 
 /*
  * Data

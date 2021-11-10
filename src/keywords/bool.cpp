@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-BoolKeyword::BoolKeyword(bool &data) : KeywordBase(KeywordBase::BoolData), data_(data) {}
+BoolKeyword::BoolKeyword(bool &data) : KeywordBase(typeid(this), KeywordBase::BoolData), data_(data) {}
 
 /*
  * Data

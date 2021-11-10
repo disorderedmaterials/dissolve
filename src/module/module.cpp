@@ -42,8 +42,8 @@ void Module::printValidKeywords()
 {
     Messenger::print("Valid keywords for '{}' Module are:\n", type());
 
-    for (auto &[name, info] : keywords_.keywords())
-        Messenger::print("  {:30}  {}\n", name, info.description);
+    for (auto &[name, keyword] : keywords_.keywords())
+        Messenger::print("  {:30}  {}\n", name, keyword->description());
 }
 
 /*
