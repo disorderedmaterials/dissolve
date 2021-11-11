@@ -73,6 +73,7 @@ Layer  'Correlations'
     #Save  On
     Frequency  1
     BinWidth 0.03
+    IntraBroadening  None
   EndModule
 
   Module  SQ  SQs
