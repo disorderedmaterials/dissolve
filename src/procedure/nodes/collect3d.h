@@ -16,13 +16,14 @@ class NodeScopeStack;
 class Collect3DProcedureNode : public ProcedureNode
 {
     public:
-    Collect3DProcedureNode(CalculateProcedureNodeBase *xObservable = nullptr, CalculateProcedureNodeBase *yObservable = nullptr,
-                           CalculateProcedureNodeBase *zObservable = nullptr, double xMin = 0.0, double xMax = 10.0,
-                           double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
-                           double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
-    Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin = 0.0, double xMax = 10.0,
-                           double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
-                           double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+    explicit Collect3DProcedureNode(CalculateProcedureNodeBase *xObservable = nullptr,
+                                    CalculateProcedureNodeBase *yObservable = nullptr,
+                                    CalculateProcedureNodeBase *zObservable = nullptr, double xMin = 0.0, double xMax = 10.0,
+                                    double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
+                                    double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+    explicit Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin = 0.0, double xMax = 10.0,
+                                    double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
+                                    double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
     ~Collect3DProcedureNode() override = default;
 
     /*
@@ -37,19 +38,19 @@ class Collect3DProcedureNode : public ProcedureNode
      */
     private:
     // Observable (and associated index thereof) to bin along x
-    std::pair<const CalculateProcedureNodeBase *, int> xObservable_;
+    std::pair<const CalculateProcedureNodeBase *, int> xObservable_{nullptr, 0};
     // Observable (and associated index thereof) to bin along y
-    std::pair<const CalculateProcedureNodeBase *, int> yObservable_;
+    std::pair<const CalculateProcedureNodeBase *, int> yObservable_{nullptr, 0};
     // Observable (and associated index thereof) to bin along z
-    std::pair<const CalculateProcedureNodeBase *, int> zObservable_;
+    std::pair<const CalculateProcedureNodeBase *, int> zObservable_{nullptr, 0};
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram3D> histogram_;
     // Range and binwidth of the histogram for QuantityX
-    Vec3<double> rangeX_;
+    Vec3<double> rangeX_{0.0, 10.0, 0.05};
     // Range and binwidth of the histogram for QuantityY
-    Vec3<double> rangeY_;
+    Vec3<double> rangeY_{0.0, 10.0, 0.05};
     // Range and binwidth of the histogram for QuantityZ
-    Vec3<double> rangeZ_;
+    Vec3<double> rangeZ_{0.0, 10.0, 0.05};
 
     public:
     // Return accumulated data
@@ -60,7 +61,7 @@ class Collect3DProcedureNode : public ProcedureNode
      */
     private:
     // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_;
+    SequenceProcedureNode *subCollectBranch_{nullptr};
 
     public:
     // Add and return subcollection sequence branch

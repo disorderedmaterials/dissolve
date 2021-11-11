@@ -20,7 +20,7 @@ void MolShakeModule::initialise()
         .add<DoubleKeyword>("Control", "RotationStepSize",
                             "Step size in degrees to use for the rotational component of the Monte Carlo moves",
                             rotationStepSize_)
-        .optionMask = KeywordBase::InRestartFileOption;
+        ->setOptionMask(KeywordBase::InRestartFileOption);
     keywords_.add<DoubleKeyword>("Control", "RotationStepSizeMin", "Minimum step size for rotations (degrees)",
                                  rotationStepSizeMin_, 0.001, 180.0);
     keywords_.add<DoubleKeyword>("Control", "RotationStepSizeMax", "Maximum step size for rotations (degrees)",
@@ -29,7 +29,7 @@ void MolShakeModule::initialise()
         .add<DoubleKeyword>("Control", "TranslationStepSize",
                             "Step size in Angstroms for the translational component of the Monte Carlo moves",
                             translationStepSize_, 0.0001, 100.0)
-        .optionMask = KeywordBase::InRestartFileOption;
+        ->setOptionMask(KeywordBase::InRestartFileOption);
     keywords_.add<DoubleKeyword>("Control", "TranslationStepSizeMin", "Minimum step size for translations (Angstroms)",
                                  translationStepSizeMin_, 0.0001);
     keywords_.add<DoubleKeyword>("Control", "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)",

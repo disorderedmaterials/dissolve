@@ -20,7 +20,7 @@ void IntraShakeModule::initialise()
     keywords_.add<BoolKeyword>("Bonds", "AdjustBonds", "Whether Bonds in the molecule should be shaken", adjustBonds_);
     keywords_
         .add<DoubleKeyword>("Bonds", "BondStepSize", "Step size for Bond adjustments (Angstroms)", bondStepSize_, 0.001, 1.0)
-        .optionMask = KeywordBase::InRestartFileOption;
+        ->setOptionMask(KeywordBase::InRestartFileOption);
     keywords_.add<DoubleKeyword>("Bonds", "BondStepSizeMin", "Minimum step size for Bond adjustments (Angstroms)",
                                  bondStepSizeMin_, 0.001, 1.0);
     keywords_.add<DoubleKeyword>("Bonds", "BondStepSizeMax", "Maximum step size for Bond adjustments (Angstroms)",
@@ -30,7 +30,7 @@ void IntraShakeModule::initialise()
     keywords_.add<BoolKeyword>("Angles", "AdjustAngles", "Whether Angles in the molecule should be shaken", adjustAngles_);
     keywords_
         .add<DoubleKeyword>("Angles", "AngleStepSize", "Step size for Angle adjustments (degrees)", angleStepSize_, 0.01, 45.0)
-        .optionMask = KeywordBase::InRestartFileOption;
+        ->setOptionMask(KeywordBase::InRestartFileOption);
     keywords_.add<DoubleKeyword>("Angles", "AngleStepSizeMin", "Minimum step size for Angle adjustments (degrees)",
                                  angleStepSizeMin_, 0.01, 45.0);
     keywords_.add<DoubleKeyword>("Angles", "AngleStepSizeMax", "Maximum step size for Angle adjustments (degrees)",
@@ -42,7 +42,7 @@ void IntraShakeModule::initialise()
     keywords_
         .add<DoubleKeyword>("Torsions", "TorsionStepSize", "Step size for Torsion adjustments (degrees)", torsionStepSize_,
                             0.01, 45.0)
-        .optionMask = KeywordBase::InRestartFileOption;
+        ->setOptionMask(KeywordBase::InRestartFileOption);
     keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMin", "Minimum step size for Torsion adjustments (degrees)",
                                  torsionStepSizeMin_, 0.01, 45.0);
     keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMax", "Maximum step size for Torsion adjustments (degrees)",

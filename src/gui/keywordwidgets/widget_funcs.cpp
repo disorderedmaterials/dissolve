@@ -271,7 +271,7 @@ void KeywordsWidget::setUp(KeywordList &keywords, const CoreData &coreData)
 
             // Create a label and add it and the widget to our layout
             QLabel *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
-            nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description)));
+            nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             groupLayout->addRow(nameLabel, widget);
         }
 

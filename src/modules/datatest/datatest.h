@@ -58,7 +58,7 @@ class DataTestModule : public Module
     // Test SampledValue datasets
     ValueStore testSampledVectorData_;
     // Threshold for error metric above which test fails
-    double threshold_;
+    double threshold_{5.0e-3};
 
     protected:
     // Perform any necessary initialisation for the Module

@@ -311,7 +311,7 @@ bool ProcedureNode::write(LineParser &parser, std::string_view prefix)
     std::string newPrefix = fmt::format("  {}", prefix);
 
     // Write keywords
-    if (!keywords_.write(parser, newPrefix, false))
+    if (!keywords_.write(parser, newPrefix, true))
         return false;
 
     // Block End

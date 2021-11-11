@@ -39,7 +39,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          Functions::function1D().keyword(intraBroadening_.type()), intraBroadening_.parameterSummary());
     Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
-    Messenger::print("RDF: Degree of nSmooths_ to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
+    Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
                      DissolveSys::onOff(nSmooths_ > 0));
     Messenger::print("\n");
 

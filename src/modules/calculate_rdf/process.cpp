@@ -19,7 +19,7 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    collectDistance_->setRangeX(distanceRange_);
+    collectDistance_->keywords().set("RangeX", distanceRange_);
     if (excludeSameMolecule_)
         selectB_->setSameMoleculeExclusions({selectA_});
     else

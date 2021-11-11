@@ -38,10 +38,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     module_ = module;
     dissolve_ = dissolve;
     if ((!module_) || (!dissolve_))
-    {
-        ui_.ModuleKeywordsWidget->setUp(KeywordList(), CoreData());
-        return;
-    }
+        throw(std::runtime_error("Can't create a ModuleControlWidget without both Module and Dissolve pointers.\n"));
 
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(module_));

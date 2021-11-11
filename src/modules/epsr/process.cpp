@@ -36,7 +36,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     for (auto *module : targets_)
     {
         // Retrieve source SQ module, and then the related RDF module
-        auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<SQModule>>("SourceSQs");
+        auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
         const SQModule *sqModule = nullptr;
         if (optSQModule)
             sqModule = optSQModule.value();
@@ -199,7 +199,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
-        auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<SQModule>>("SourceSQs");
+        auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
         const SQModule *sqModule = nullptr;
         if (optSQModule)
             sqModule = optSQModule.value();

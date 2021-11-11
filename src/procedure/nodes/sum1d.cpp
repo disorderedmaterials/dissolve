@@ -14,7 +14,8 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-Sum1DProcedureNode::Sum1DProcedureNode(Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::NodeType::Sum1D)
+Sum1DProcedureNode::Sum1DProcedureNode(Process1DProcedureNode *target)
+    : ProcedureNode(ProcedureNode::NodeType::Sum1D), sourceData_(target)
 {
     keywords_.add<NodeKeyword<Process1DProcedureNode>>("Control", "SourceData", "Process1D node containing the data to sum",
                                                        sourceData_, this, ProcedureNode::NodeType::Process1D, false);

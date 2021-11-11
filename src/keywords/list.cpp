@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "keywords/types.h"
+#include "procedure/nodes/nodes.h"
 
 /*
  * Keyword Setter
@@ -15,22 +16,25 @@ KeywordTypeMap::KeywordTypeMap()
     // PODs
     registerDirectMapping<bool, BoolKeyword>();
     // -- Double and int keywords must use the setData() function as they have validation
-    registerDirectMapping<int, DoubleKeyword>(
+    registerDirectMapping<double, DoubleKeyword>(
         [](DoubleKeyword *keyword, const double value) { return keyword->setData(value); });
     registerDirectMapping<int, IntegerKeyword>(
         [](IntegerKeyword *keyword, const int value) { return keyword->setData(value); });
 
     // Custom classes
-    registerDirectMapping<std::vector<const SelectProcedureNode *>, NodeVectorKeyword<SelectProcedureNode>>();
+    registerDirectMapping<Collect1DProcedureNode *, NodeKeyword<Collect1DProcedureNode>>();
+    registerDirectMapping<std::vector<const Collect1DProcedureNode *>, NodeVectorKeyword<Collect1DProcedureNode>>();
     registerDirectMapping<SelectProcedureNode *, NodeKeyword<SelectProcedureNode>>();
+    registerDirectMapping<std::vector<const SelectProcedureNode *>, NodeVectorKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
     registerBaseMapping<const Module *, ModuleKeywordBase>();
     registerDirectMapping<std::string, StringKeyword>();
-    registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>();
+    registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(
+        [](Vec3DoubleKeyword *keyword, const Vec3<double> value) { return keyword->setData(value); });
 }
 
 // Set keyword data
-void KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
+bool KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
 {
     // Find a suitable setter and call it
     auto it = directMapSetter_.find(data.type());
@@ -38,7 +42,7 @@ void KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
         throw(std::runtime_error(fmt::format(
             "Item of type '{}' cannot be set as no suitable type mapping has been registered.\n", data.type().name())));
 
-    (it->second)(keyword, data);
+    return (it->second)(keyword, data);
 }
 
 /*
@@ -110,7 +114,6 @@ void KeywordList::set(std::string_view name, const std::any value)
 
     // Attempt to set the keyword
     setters().set(it->second, value);
-    printf("*HHHH\n");
 
     it->second->setAsModified();
 }

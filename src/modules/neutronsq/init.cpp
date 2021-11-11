@@ -21,12 +21,12 @@ void NeutronSQModule::initialise()
 
     // Reference Data
     keywords_.add<FileAndFormatKeyword>("Reference Data", "Reference", "F(Q) reference data", referenceFQ_, "EndReference")
-        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
+        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
     keywords_
         .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
             "Reference Data", "ReferenceNormalisation", "Normalisation to remove from reference data before use",
             referenceNormalisation_, StructureFactors::normalisationTypes())
-        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
+        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTQMin",
                                  "Set the minimum Q value to use when Fourier-transforming the data", referenceFTQMin_);
     keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTQMax",
@@ -39,7 +39,7 @@ void NeutronSQModule::initialise()
             "Reference Data", "ReferenceWindowFunction",
             "Window function to apply when Fourier-transforming reference S(Q) to g(r)", referenceWindowFunction_,
             WindowFunction::forms())
-        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
+        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
 
     // Export
     keywords_.add<BoolKeyword>("Export", "SaveGR", "Save weighted g(r) and G(r)", saveGR_);

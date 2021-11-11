@@ -178,7 +178,7 @@ SequenceProcedureNode *SelectProcedureNode::addForEachBranch(ProcedureNode::Node
 bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Check for at least one site being defined
-    if (speciesSites_.empty() && (dynamicSites_.empty() == 0))
+    if (speciesSites_.empty() && dynamicSites_.empty())
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     // Prep some variables
@@ -193,13 +193,6 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
     for (auto *dynamicNode : dynamicSites_)
         if (!dynamicNode->prepare(cfg, prefix, targetList))
             return false;
-
-    sameMoleculeExclusions_.clear();
-    for (auto *node : sameMoleculeExclusions_)
-        sameMoleculeExclusions_.push_back(dynamic_cast<const SelectProcedureNode *>(node));
-    sameSiteExclusions_.clear();
-    for (auto *node : sameSiteExclusions_)
-        sameSiteExclusions_.push_back(dynamic_cast<const SelectProcedureNode *>(node));
 
     return true;
 }

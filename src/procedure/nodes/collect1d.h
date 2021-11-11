@@ -31,26 +31,25 @@ class Collect1DProcedureNode : public ProcedureNode
      */
     private:
     // Observable (and associated index thereof) to bin along x
-    std::pair<const CalculateProcedureNodeBase *, int> xObservable_;
+    std::pair<const CalculateProcedureNodeBase *, int> xObservable_{nullptr, 0};
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram1D> histogram_;
     // Range and binwidth of the histogram for QuantityX
-    Vec3<double> rangeX_;
+    Vec3<double> rangeX_{0.0, 10.0, 0.05};
+    ;
 
     public:
     // Return current data
     Data1D data() const;
     // Return accumulated data
     const Data1D &accumulatedData() const;
-    // Set range and binwidth of the histogram for QuantityX
-    void setRangeX(Vec3<double> range);
 
     /*
      * Branches
      */
     private:
     // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_;
+    SequenceProcedureNode *subCollectBranch_{nullptr};
 
     public:
     // Add and return subcollection sequence branch

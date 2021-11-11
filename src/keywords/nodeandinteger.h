@@ -93,7 +93,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
      */
     public:
     // Return minimum number of arguments accepted
-    int minArguments() const override { return 2; }
+    int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 2; }
     // Parse arguments from supplied LineParser, starting at given argument offset

@@ -29,7 +29,7 @@ class Vec3DoubleKeyword : public KeywordBase
     // Set data
     bool setData(Vec3<double> value);
     // Return data
-    Vec3<double> data() const;
+    const Vec3<double> &data() const;
     // Return validation minimum limit
     std::optional<Vec3<double>> validationMin();
     // Return validation maximum limit

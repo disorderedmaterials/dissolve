@@ -71,7 +71,7 @@ void CalculateRDFModule::initialise()
     forEachB->addNode(calcDistance);
 
     // -- -- Collect1D: 'RDF'
-    collectDistance_ = new Collect1DProcedureNode(calcDistance, 0.0, 10.0, 0.05);
+    collectDistance_ = new Collect1DProcedureNode(calcDistance);
     forEachB->addNode(collectDistance_);
 
     // Process1D: @dataName

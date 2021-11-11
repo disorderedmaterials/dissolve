@@ -40,7 +40,7 @@ bool Vec3DoubleKeyword::setData(Vec3<double> value)
 }
 
 // Return data
-Vec3<double> Vec3DoubleKeyword::data() const { return data_; }
+const Vec3<double> &Vec3DoubleKeyword::data() const { return data_; }
 
 // Return validation minimum limit
 std::optional<Vec3<double>> Vec3DoubleKeyword::validationMin() { return minimumLimit_; }

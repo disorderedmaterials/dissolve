@@ -11,7 +11,7 @@ void CalculateAvgMolModule::initialise()
     keywords_
         .add<SpeciesSiteKeyword>("Control", "Site", "Target site about which to calculate average species geometry",
                                  targetSite_, true)
-        .optionMask = KeywordBase::ModificationRequiresSetUpOption;
+        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
 
     targetSpecies_ = nullptr;
 }

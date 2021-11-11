@@ -56,9 +56,6 @@ const Data1D &Collect1DProcedureNode::accumulatedData() const
     return histogram_->get().accumulatedData();
 }
 
-// Set range and binwidth of the histogram for QuantityX
-void Collect1DProcedureNode::setRangeX(Vec3<double> range) { rangeX_ = range; }
-
 /*
  * Branches
  */
@@ -85,6 +82,8 @@ SequenceProcedureNode *Collect1DProcedureNode::branch() { return subCollectBranc
 // Prepare any necessary data, ready for execution
 bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
+    printf("IN PREPARE:\n");
+    rangeX_.print();
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
     auto [target, status] = targetList.realiseIf<Histogram1D>(dataName, prefix, GenericItem::InRestartFileFlag);

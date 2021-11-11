@@ -29,6 +29,10 @@ class KeywordTypeMap
     // Register direct setter for specific keyword / data type pair
     template <class D, class K> void registerDirectMapping()
     {
+        // Check for existing data
+        if (directMapSetter_.find(typeid(D)) != directMapSetter_.end())
+            throw(std::runtime_error(fmt::format("Duplicate mapping registered for type '{}'\n", typeid(D).name())));
+
         directMapSetter_[typeid(D)] = [](KeywordBase *keyword, const std::any data) {
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
@@ -65,7 +69,7 @@ class KeywordTypeMap
 
     public:
     // Set keyword data
-    void set(KeywordBase *keyword, const std::any data) const;
+    bool set(KeywordBase *keyword, const std::any data) const;
     // Get keyword data
     template <class D> D get(KeywordBase *keyword) const
     {
@@ -145,13 +149,13 @@ class KeywordList
     // Set specified keyword with supplied data
     void set(std::string_view name, const std::any value);
     // Set specified keyword with supplied, template-guided data
-    template <class D> void set(std::string_view name, const D value)
+    template <class D> bool set(std::string_view name, const D value)
     {
         auto it = keywords_.find(name);
         if (it == keywords_.end())
             throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
 
-        setters().set(it->second, value);
+        return setters().set(it->second, value);
     }
     // Set specified enumerated keyword
     template <class E> void setEnumeration(std::string_view name, E data)

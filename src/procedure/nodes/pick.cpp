@@ -23,7 +23,7 @@ bool PickProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Gen
 {
     // Check for at least one site being defined
     if (speciesToPick_.empty())
-        return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
+        return Messenger::error("No sites are defined in the Pick node '{}'.\n", name());
 
     return true;
 }
