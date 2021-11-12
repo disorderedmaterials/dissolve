@@ -8,10 +8,8 @@
 RefList<KeywordBase> KeywordBase::allKeywords_;
 
 KeywordBase::KeywordBase(const std::type_index typeIndex, KeywordDataType type)
-    : ListItem<KeywordBase>(), type_(type), typeIndex_(typeIndex)
+    : type_(type), typeIndex_(typeIndex), set_(false)
 {
-    set_ = false;
-
     // Add ourselves to the master reference list of keywords
     allKeywords_.append(this);
 }

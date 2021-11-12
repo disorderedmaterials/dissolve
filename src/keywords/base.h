@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "templates/listitem.h"
 #include "templates/reflist.h"
-#include "templates/vector3.h"
 #include <memory>
 #include <typeindex>
 
@@ -21,7 +19,7 @@ class Species;
 class SpeciesSite;
 
 // Keyword Base Class
-class KeywordBase : public ListItem<KeywordBase>
+class KeywordBase
 {
     public:
     // Keyword Data Type
