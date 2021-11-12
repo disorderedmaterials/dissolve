@@ -27,7 +27,6 @@ KeywordTypeMap::KeywordTypeMap()
     registerDirectMapping<SelectProcedureNode *, NodeKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<const SelectProcedureNode *>, NodeVectorKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
-    registerBaseMapping<const Module *, ModuleKeywordBase>();
     registerDirectMapping<std::string, StringKeyword>();
     registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(
         [](Vec3DoubleKeyword *keyword, const Vec3<double> value) { return keyword->setData(value); });

@@ -23,7 +23,7 @@ class KeywordTypeMap
     using SetterFunction = std::function<bool(KeywordBase *keyword, const std::any data)>;
     using GetterFunction = std::function<const std::any(KeywordBase *keyword)>;
     // Setter function map
-    std::unordered_map<std::type_index, SetterFunction> directMapSetter_, baseMap_;
+    std::unordered_map<std::type_index, SetterFunction> directMapSetter_;
     // Getter function maps
     std::unordered_map<std::type_index, GetterFunction> directMapGetter_;
     // Register direct setter for specific keyword / data type pair
@@ -53,17 +53,6 @@ class KeywordTypeMap
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
             return setFunction(k, std::any_cast<D>(data));
-        };
-    }
-    // Register setter for specific keyword / data type pair, setting data through a "setData" function in the base class
-    template <class D, class K> void registerBaseMapping()
-    {
-        baseMap_[typeid(D)] = [](KeywordBase *keyword, const std::any &data) {
-            auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
-            k->setData(std::any_cast<D>(data));
-            k->setAsModified();
-            return true;
         };
     }
 
