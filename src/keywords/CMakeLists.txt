@@ -41,7 +41,6 @@ add_library(
   base.h
   bool.h
   configurationvector.h
-  data.h
   data1dstore.h
   data2dstore.h
   data3dstore.h

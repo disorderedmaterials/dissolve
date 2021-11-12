@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 
 // Keyword with Integer Data
 class IntegerKeyword : public KeywordBase
