@@ -4,6 +4,7 @@
 #pragma once
 
 #include "keywords/base.h"
+#include <optional>
 
 // Keyword with Double Data
 class DoubleKeyword : public KeywordBase

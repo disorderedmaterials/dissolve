@@ -4,7 +4,9 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "vec3labels.h"
+#include "keywords/vec3labels.h"
+#include "templates/vector3.h"
+#include <optional>
 
 // Keyword with Vec3<int>
 class Vec3IntegerKeyword : public KeywordBase

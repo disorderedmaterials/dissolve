@@ -4,6 +4,7 @@
 #pragma once
 
 #include "keywords/base.h"
+#include <optional>
 
 // Keyword with Integer Data
 class IntegerKeyword : public KeywordBase

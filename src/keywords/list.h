@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <typeindex>
+#include <unordered_map>
 
 // Keyword TypeMap
 class KeywordTypeMap
