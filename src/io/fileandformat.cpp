@@ -58,7 +58,7 @@ bool FileAndFormat::hasFilename() const { return (!filename_.empty()); }
  */
 
 // Return available keywords
-KeywordList &FileAndFormat::keywords() { return keywords_; }
+KeywordStore &FileAndFormat::keywords() { return keywords_; }
 
 /*
  * Read / Write

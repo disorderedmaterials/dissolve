@@ -2,9 +2,9 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/group.h"
-#include "keywords/list.h"
+#include "keywords/store.h"
 
-KeywordGroup::KeywordGroup(KeywordList &keywordList) : ListItem<KeywordGroup>(), keywordList_(keywordList) {}
+KeywordGroup::KeywordGroup(KeywordStore &keywordList) : ListItem<KeywordGroup>(), keywordList_(keywordList) {}
 
 /*
  * Identity

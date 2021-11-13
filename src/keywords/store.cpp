@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "keywords/list.h"
+#include "keywords/store.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "keywords/types.h"
 #include "procedure/nodes/nodes.h"
 
 /*
- * Keyword Setter
+ * Keyword Map
  */
 
 KeywordTypeMap::KeywordTypeMap()
@@ -45,18 +45,18 @@ bool KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
 }
 
 /*
- * Keyword List
+ * Keyword Store
  */
 
 // Find named keyword
-KeywordBase *KeywordList::find(std::string_view name)
+KeywordBase *KeywordStore::find(std::string_view name)
 {
     auto it = keywords_.find(name);
     if (it == keywords_.end())
         return nullptr;
     return it->second;
 }
-const KeywordBase *KeywordList::find(std::string_view name) const
+const KeywordBase *KeywordStore::find(std::string_view name) const
 {
     auto it = keywords_.find(name);
     if (it == keywords_.end())
@@ -65,13 +65,13 @@ const KeywordBase *KeywordList::find(std::string_view name) const
 }
 
 // Return keywords
-const std::map<std::string_view, KeywordBase *> KeywordList::keywords() const { return keywords_; }
+const std::map<std::string_view, KeywordBase *> KeywordStore::keywords() const { return keywords_; }
 
 // Return keyword group mappings
-const std::map<std::string_view, std::vector<std::string_view>> KeywordList::displayGroups() const { return displayGroups_; };
+const std::map<std::string_view, std::vector<std::string_view>> KeywordStore::displayGroups() const { return displayGroups_; };
 
 // Return whether the keyword has been set, and is not currently empty (if relevant)
-bool KeywordList::hasBeenSet(std::string_view name) const
+bool KeywordStore::hasBeenSet(std::string_view name) const
 {
     // Find the named keyword
     auto *keyword = find(name);
@@ -82,7 +82,7 @@ bool KeywordList::hasBeenSet(std::string_view name) const
 }
 
 // Flag that the specified keyword has been set by some external means
-void KeywordList::setAsModified(std::string_view name) const
+void KeywordStore::setAsModified(std::string_view name) const
 {
     // Find the named keyword
     auto it = keywords_.find(name);
@@ -97,7 +97,7 @@ void KeywordList::setAsModified(std::string_view name) const
  */
 
 // Return the setter instance
-const KeywordTypeMap &KeywordList::setters()
+const KeywordTypeMap &KeywordStore::setters()
 {
     static const KeywordTypeMap setters;
 
@@ -105,7 +105,7 @@ const KeywordTypeMap &KeywordList::setters()
 }
 
 // Set specified keyword with supplied data
-void KeywordList::set(std::string_view name, const std::any value)
+void KeywordStore::set(std::string_view name, const std::any value)
 {
     auto it = keywords_.find(name);
     if (it == keywords_.end())
@@ -122,7 +122,7 @@ void KeywordList::set(std::string_view name, const std::any value)
  */
 
 // Try to parse a single keyword through the specified LineParser
-KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &coreData, int startArg)
+KeywordBase::ParseResult KeywordStore::parse(LineParser &parser, const CoreData &coreData, int startArg)
 {
     // Do we recognise the first item (the 'keyword')?
     auto it = keywords_.find(parser.argsv(startArg));
@@ -145,7 +145,7 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &
 }
 
 // Write all keywords to specified LineParser
-bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
+bool KeywordStore::write(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
     for (const auto &[name, keyword] : keywords_)
     {

@@ -8,13 +8,13 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class KeywordList;
+class KeywordStore;
 
 // Keyword Group
 class KeywordGroup : public ListItem<KeywordGroup>
 {
     public:
-    KeywordGroup(KeywordList &keywordList);
+    KeywordGroup(KeywordStore &keywordList);
 
     /*
      * Identity
@@ -34,7 +34,7 @@ class KeywordGroup : public ListItem<KeywordGroup>
      */
     private:
     // Associated KeywordList
-    KeywordList &keywordList_;
+    KeywordStore &keywordList_;
     // List of keywords (in the referenced KeywordList) that are in this group
     RefList<KeywordBase> keywords_;
 

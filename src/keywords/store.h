@@ -74,12 +74,12 @@ class KeywordTypeMap
     }
 };
 
-// Keyword List
-class KeywordList
+// Keyword Store
+class KeywordStore
 {
     public:
-    KeywordList() = default;
-    ~KeywordList() = default;
+    KeywordStore() = default;
+    ~KeywordStore() = default;
 
     /*
      * Keyword Data
