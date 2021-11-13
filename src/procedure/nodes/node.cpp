@@ -279,7 +279,7 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
             return true;
 
         // Try to parse this line as a keyword
-        KeywordBase::ParseResult result = keywords_.parse(parser, coreData);
+        KeywordBase::ParseResult result = keywords_.deserialise(parser, coreData);
         if (result == KeywordBase::Failed)
             return Messenger::error("Failed to parse keyword '{}'.\n", parser.argsv(0));
         else if (result == KeywordBase::Success)

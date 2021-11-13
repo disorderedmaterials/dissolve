@@ -4,20 +4,7 @@
 #include "keywords/base.h"
 #include "base/messenger.h"
 
-// Static Singletons
-RefList<KeywordBase> KeywordBase::allKeywords_;
-
-KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false)
-{
-    // Add ourselves to the master reference list of keywords
-    allKeywords_.append(this);
-}
-
-KeywordBase::~KeywordBase()
-{
-    // Remove ourselves from the master reference list of keywords
-    allKeywords_.remove(this);
-}
+KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false) {}
 
 /*
  * Keyword Description

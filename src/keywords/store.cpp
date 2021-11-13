@@ -7,6 +7,9 @@
 #include "keywords/types.h"
 #include "procedure/nodes/nodes.h"
 
+// Static Singletons
+std::vector<KeywordBase *> KeywordStore::allKeywords_;
+
 /*
  * Keyword Map
  */

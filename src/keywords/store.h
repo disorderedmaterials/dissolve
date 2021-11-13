@@ -79,7 +79,17 @@ class KeywordStore
 {
     public:
     KeywordStore() = default;
-    ~KeywordStore() = default;
+    ~KeywordStore()
+    {
+        // Remove keywords in this store from the global reference
+        auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(), [&](const auto *k) {
+            for (auto &[name, keyword] : keywords_)
+                if (k == keyword)
+                    return true;
+            return false;
+        });
+        allKeywords_.erase(it, allKeywords_.end());
+    }
 
     /*
      * Keyword Data
@@ -103,7 +113,10 @@ class KeywordStore
         K *k = new K(std::forward<Args>(args)...);
         k->setBaseInfo(name, description);
 
+        // Add ourselves to both the local map and the global reference vector
         keywords_.emplace(name, k);
+        allKeywords_.push_back(k);
+
         return k;
     }
     // Add keyword (displaying in named group)
@@ -209,4 +222,20 @@ class KeywordStore
     KeywordBase::ParseResult deserialise(LineParser &parser, const CoreData &coreData, int startArg = 0);
     // Write all keywords to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
+
+    /*
+     * Object Management
+     */
+    private:
+    // Vector of all keywords globally
+    static std::vector<KeywordBase *> allKeywords_;
+
+    public:
+    // Gracefully deal with the specified object no longer being valid
+    template <class O> static void objectNoLongerValid(O *object)
+    {
+        // Loop over all keyword objects and call their local functions
+        for (auto *kwd : allKeywords_)
+            kwd->removeReferencesTo(object);
+    }
 };

@@ -248,7 +248,7 @@ bool Dissolve::deleteModuleInstance(std::unique_ptr<Module> instance)
     moduleInstances_.remove(instance.get());
 
     // Invalidate any references to the module in keywords
-    KeywordBase::objectNoLongerValid(instance.get());
+    KeywordStore::objectNoLongerValid(instance.get());
 
     return true;
 }

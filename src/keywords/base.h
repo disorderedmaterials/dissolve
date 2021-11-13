@@ -12,11 +12,9 @@ class AtomType;
 class Configuration;
 class CoreData;
 class Isotopologue;
-class KeywordWidgetBase;
 class LineParser;
 class Module;
 class ProcedureNode;
-class QWidget;
 class Species;
 class SpeciesSite;
 
@@ -25,7 +23,7 @@ class KeywordBase
 {
     public:
     KeywordBase(const std::type_index typeIndex);
-    virtual ~KeywordBase();
+    virtual ~KeywordBase() = default;
 
     /*
      * Keyword Description
@@ -108,9 +106,9 @@ class KeywordBase
      */
     private:
     // References to all keyword objects
-    static RefList<KeywordBase> allKeywords_;
+    static std::vector<KeywordBase *> allKeywords_;
 
-    protected:
+    public:
     // Prune any references to the supplied AtomType in the contained data
     virtual void removeReferencesTo(std::shared_ptr<AtomType> at);
     // Prune any references to the supplied Configuration in the contained data
@@ -125,13 +123,4 @@ class KeywordBase
     virtual void removeReferencesTo(SpeciesSite *spSite);
     // Prune any references to the supplied ProcedureNode in the contained data
     virtual void removeReferencesTo(ProcedureNode *node);
-
-    public:
-    // Gracefully deal with the specified object no longer being valid
-    template <class O> static void objectNoLongerValid(O *object)
-    {
-        // Loop over all keyword objects and call their local functions
-        for (auto kwd : allKeywords_)
-            kwd->removeReferencesTo(object);
-    }
 };
