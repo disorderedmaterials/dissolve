@@ -3,18 +3,11 @@
 
 #include "gui/keywordwidgets/bool.hui"
 
-BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QCheckBox(parent), KeywordWidgetBase(coreData)
+BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, BoolKeyword *keyword, const CoreData &coreData)
+    : QCheckBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<BoolKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into BoolKeyword.\n", keyword->name());
-    else
-    {
-        // Set current value
-        setChecked(keyword_->data());
-    }
+    // Set current state
+    setChecked(keyword_->data());
 
     // Connect the
     connect(this, SIGNAL(clicked(bool)), this, SLOT(myClicked(bool)));

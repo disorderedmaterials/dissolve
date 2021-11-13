@@ -14,7 +14,7 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    Vec3DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    Vec3DoubleKeywordWidget(QWidget *parent, Vec3DoubleKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

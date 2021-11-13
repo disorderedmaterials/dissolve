@@ -13,7 +13,7 @@ class StringKeywordWidget : public QLineEdit, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    StringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    StringKeywordWidget(QWidget *parent, StringKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

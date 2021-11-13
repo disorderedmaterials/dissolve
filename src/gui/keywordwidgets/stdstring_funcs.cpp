@@ -3,15 +3,10 @@
 
 #include "gui/keywordwidgets/stdstring.hui"
 
-StringKeywordWidget::StringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QLineEdit(parent), KeywordWidgetBase(coreData)
+StringKeywordWidget::StringKeywordWidget(QWidget *parent, StringKeyword *keyword, const CoreData &coreData)
+    : QLineEdit(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<StringKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into StringKeyword.\n", keyword->name());
-    else
-        setText(QString::fromStdString(keyword_->data()));
+    setText(QString::fromStdString(keyword_->data()));
 
     // Connect the currentTextChanged signal to our own slot
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));

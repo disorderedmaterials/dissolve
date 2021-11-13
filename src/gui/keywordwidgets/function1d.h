@@ -15,7 +15,7 @@ class Function1DKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    Function1DKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    Function1DKeywordWidget(QWidget *parent, Function1DKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

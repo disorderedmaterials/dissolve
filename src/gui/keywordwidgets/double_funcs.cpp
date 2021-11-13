@@ -4,24 +4,17 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/double.hui"
 
-DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : ExponentialSpin(parent), KeywordWidgetBase(coreData)
+DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, DoubleKeyword *keyword, const CoreData &coreData)
+    : ExponentialSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<DoubleKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into DoubleKeyword.\n", keyword->name());
-    else
-    {
-        // Set minimum and maximum values
-        if (keyword_->validationMin())
-            setMinimumLimit(keyword_->validationMin().value());
-        if (keyword_->validationMax())
-            setMaximumLimit(keyword_->validationMax().value());
+    // Set minimum and maximum values
+    if (keyword_->validationMin())
+        setMinimumLimit(keyword_->validationMin().value());
+    if (keyword_->validationMax())
+        setMaximumLimit(keyword_->validationMax().value());
 
-        // Set current value
-        setValue(keyword_->data());
-    }
+    // Set current value
+    setValue(keyword_->data());
 
     // Connect the valueChanged signal to our own slot
     connect(this, SIGNAL(valueChanged(double)), this, SLOT(myValueChanged(double)));

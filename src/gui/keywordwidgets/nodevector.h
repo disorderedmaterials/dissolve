@@ -16,7 +16,7 @@ class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    NodeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    NodeVectorKeywordWidget(QWidget *parent, NodeVectorKeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword

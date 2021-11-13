@@ -47,7 +47,7 @@ class KeywordWidgetProducer
             // Cast the base up to the full keyword
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
-            auto *w = new W(nullptr, keyword, coreData);
+            auto *w = new W(nullptr, k, coreData);
             return WidgetKeywordProduct{w, w};
         };
     }

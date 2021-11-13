@@ -10,22 +10,17 @@
 #include <QHBoxLayout>
 #include <QString>
 
-SpeciesVectorKeywordWidget::SpeciesVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+SpeciesVectorKeywordWidget::SpeciesVectorKeywordWidget(QWidget *parent, SpeciesVectorKeyword *keyword, const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
     ui_.SpeciesList->setModel(&speciesModel_);
+    speciesModel_.setCheckStateData(keyword_->data());
 
     // Connect signals / slots
     connect(&speciesModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<SpeciesVectorKeyword *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into SpeciesVectorKeyword.\n", keyword->name())));
-    speciesModel_.setCheckStateData(keyword_->data());
 }
 
 /*

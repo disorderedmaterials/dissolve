@@ -5,39 +5,32 @@
 #include "gui/keywordwidgets/vec3double.h"
 #include "vec3labels.h"
 
-Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget *parent, Vec3DoubleKeyword *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
 
     refreshing_ = true;
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<Vec3DoubleKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into Vec3DoubleKeyword.\n", keyword->name());
-    else
+    // Set minimum and maximum values for each component
+    if (keyword_->validationMin())
     {
-        // Set minimum and maximum values for each component
-        if (keyword_->validationMin())
-        {
-            ui_.Spin1->setMinimumLimit(keyword_->validationMin().value().x);
-            ui_.Spin2->setMinimumLimit(keyword_->validationMin().value().y);
-            ui_.Spin3->setMinimumLimit(keyword_->validationMin().value().z);
-        }
-        if (keyword_->validationMax())
-        {
-            ui_.Spin1->setMaximumLimit(keyword_->validationMax().value().x);
-            ui_.Spin2->setMaximumLimit(keyword_->validationMax().value().y);
-            ui_.Spin3->setMaximumLimit(keyword_->validationMax().value().z);
-        }
-
-        // Set current values
-        ui_.Spin1->setValue(keyword_->data().x);
-        ui_.Spin2->setValue(keyword_->data().y);
-        ui_.Spin3->setValue(keyword_->data().z);
+        ui_.Spin1->setMinimumLimit(keyword_->validationMin().value().x);
+        ui_.Spin2->setMinimumLimit(keyword_->validationMin().value().y);
+        ui_.Spin3->setMinimumLimit(keyword_->validationMin().value().z);
     }
+    if (keyword_->validationMax())
+    {
+        ui_.Spin1->setMaximumLimit(keyword_->validationMax().value().x);
+        ui_.Spin2->setMaximumLimit(keyword_->validationMax().value().y);
+        ui_.Spin3->setMaximumLimit(keyword_->validationMax().value().z);
+    }
+
+    // Set current values
+    ui_.Spin1->setValue(keyword_->data().x);
+    ui_.Spin2->setValue(keyword_->data().y);
+    ui_.Spin3->setValue(keyword_->data().z);
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)

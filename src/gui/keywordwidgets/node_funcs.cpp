@@ -5,8 +5,8 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/node.h"
 
-NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, NodeKeywordBase *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
@@ -17,11 +17,6 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, KeywordBase *keyword, cons
     // Connect signals / slots
     connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<NodeKeywordBase *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into NodeKeywordBase.\n", keyword->name())));
 
     // Get allowed nodes, set model for combo box, and set current index
     allowedNodes_ = keyword_->allowedNodes();

@@ -4,20 +4,15 @@
 #include "gui/keywordwidgets/vec3labels.h"
 #include "gui/keywordwidgets/vec3nodevalue.h"
 
-Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, Vec3NodeValueKeyword *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
 
     refreshing_ = true;
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<Vec3NodeValueKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into Vec3NodeValueKeyword.\n", keyword->name());
-    else
-        updateValue();
+    updateValue();
 
     // Set appropriate labels
     Vec3WidgetLabels::set(ui_.ValueALabel, keyword_->labelType(), 0);

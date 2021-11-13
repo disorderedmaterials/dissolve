@@ -3,24 +3,17 @@
 
 #include "gui/keywordwidgets/nodevalue.h"
 
-NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget *parent, NodeValueKeyword *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
 
     refreshing_ = true;
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<NodeValueKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into NodeValueKeyword.\n", keyword->name());
-    else
-    {
-        // Set expression text
-        ui_.ValueEdit->setText(QString::fromStdString(keyword_->data().asString()));
-        checkValueValidity();
-    }
+    // Set expression text
+    ui_.ValueEdit->setText(QString::fromStdString(keyword_->data().asString()));
+    checkValueValidity();
 
     refreshing_ = false;
 }

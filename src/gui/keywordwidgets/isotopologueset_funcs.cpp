@@ -11,8 +11,9 @@
 #include "module/module.h"
 #include "templates/algorithms.h"
 
-IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, IsotopologueSetKeyword *keyword,
+                                                           const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
@@ -22,6 +23,7 @@ IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, Keyw
                                                           this, &IsotopologueSetKeywordWidget::availableIsotopologueNames));
     ui_.IsotopologueTree->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this, 0.0));
     ui_.IsotopologueTree->setModel(&setModel_);
+    setModel_.setSourceData(keyword_->data());
 
     // Connect signals / slots
     connect(&setModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
@@ -33,13 +35,6 @@ IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, Keyw
     connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
     connect(ui_.IsotopologueTree->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(currentItemChanged()));
-
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<IsotopologueSetKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into IsotopologueSetKeyword.\n", keyword->name());
-    else
-        setModel_.setSourceData(keyword_->data());
 
     updateSummaryText();
 }

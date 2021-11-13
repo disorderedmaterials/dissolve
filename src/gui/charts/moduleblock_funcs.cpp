@@ -36,7 +36,8 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
     auto *optCfgKeyword = module_->keywords().find("Configuration");
     if (optCfgKeyword)
     {
-        auto *cfgWidget = new ConfigurationVectorKeywordWidget(nullptr, optCfgKeyword, dissolve.coreData());
+        auto *cfgWidget = new ConfigurationVectorKeywordWidget(
+            nullptr, dynamic_cast<ConfigurationVectorKeyword *>(optCfgKeyword), dissolve.coreData());
         connect(cfgWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
         auto *layout = new QHBoxLayout;
         layout->addWidget(cfgWidget);

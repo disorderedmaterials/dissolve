@@ -5,22 +5,15 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/module.h"
 
-ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, ModuleKeywordBase *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
 
     refreshing_ = true;
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<ModuleKeywordBase *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into ModuleKeywordBase.\n", keyword->name());
-    else
-    {
-        updateValue();
-    }
+    updateValue();
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)

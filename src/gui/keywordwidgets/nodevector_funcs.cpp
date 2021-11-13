@@ -8,8 +8,8 @@
 #include "templates/algorithms.h"
 #include <QLabel>
 
-NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, NodeVectorKeywordBase *keyword, const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
@@ -19,10 +19,6 @@ NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, KeywordBase *k
     connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<NodeVectorKeywordBase *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into NodeKeyword.\n", keyword->name())));
     allowedNodes_ = keyword_->allowedNodes();
     nodeModel_.setData(allowedNodes_);
     nodeModel_.setNodeSelectedFunction([&](const ProcedureNode *node) { return keyword_->addNode(node); });

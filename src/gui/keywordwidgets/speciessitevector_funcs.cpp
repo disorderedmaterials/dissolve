@@ -7,17 +7,12 @@
 #include "gui/keywordwidgets/speciessitevector.h"
 #include "templates/algorithms.h"
 
-SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, SpeciesSiteVectorKeyword *keyword,
+                                                               const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
-
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<SpeciesSiteVectorKeyword *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(
-            fmt::format("Couldn't cast base keyword '{}' into SpeciesSiteVectorKeyword.\n", keyword->name())));
 
     sitesFilterProxy_.setSourceModel(&sites_);
     ui_.SitesTree->setModel(&sitesFilterProxy_);

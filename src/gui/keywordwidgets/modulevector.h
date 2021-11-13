@@ -18,7 +18,7 @@ class ModuleVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
     Q_OBJECT
 
     public:
-    ModuleVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    ModuleVectorKeywordWidget(QWidget *parent, ModuleVectorKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword
