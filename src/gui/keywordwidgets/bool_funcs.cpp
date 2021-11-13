@@ -10,7 +10,7 @@ BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, BoolKeyword *keyword, cons
     setChecked(keyword_->data());
 
     // Connect the
-    connect(this, SIGNAL(clicked(bool)), this, SLOT(myClicked(bool)));
+    connect(this, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)));
 }
 
 /*
@@ -18,7 +18,7 @@ BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, BoolKeyword *keyword, cons
  */
 
 // Check box state changed
-void BoolKeywordWidget::myClicked(bool checked)
+void BoolKeywordWidget::checkBoxClicked(bool checked)
 {
     if (refreshing_)
         return;

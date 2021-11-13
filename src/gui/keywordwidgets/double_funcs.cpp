@@ -17,7 +17,7 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, DoubleKeyword *keyword
     setValue(keyword_->data());
 
     // Connect the valueChanged signal to our own slot
-    connect(this, SIGNAL(valueChanged(double)), this, SLOT(myValueChanged(double)));
+    connect(this, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -29,7 +29,7 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, DoubleKeyword *keyword
  */
 
 // Spin box value changed
-void DoubleKeywordWidget::myValueChanged(double newValue)
+void DoubleKeywordWidget::spinBoxValueChanged(double newValue)
 {
     if (refreshing_)
         return;
