@@ -20,18 +20,10 @@ const Data2DStore &Data2DStoreKeyword::data() const { return data_; }
  */
 
 // Return minimum number of arguments accepted
-int Data2DStoreKeyword::minArguments() const
-{
-    // Must have reference data name and format as a minimum
-    return 2;
-}
+int Data2DStoreKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int Data2DStoreKeyword::maxArguments() const
-{
-    // Filename, name of data, and other args
-    return 99;
-}
+std::optional<int> Data2DStoreKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool Data2DStoreKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

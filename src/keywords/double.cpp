@@ -41,12 +41,6 @@ std::optional<double> DoubleKeyword::validationMax() { return maximumLimit_; }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int DoubleKeyword::minArguments() const { return 1; }
-
-// Return maximum number of arguments accepted
-int DoubleKeyword::maxArguments() const { return 1; }
-
 // Deserialise from supplied LineParser, starting at given argument offset
 bool DoubleKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {

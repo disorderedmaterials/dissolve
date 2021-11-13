@@ -42,7 +42,7 @@ bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
 int Vec3NodeValueKeyword::minArguments() const { return 3; }
 
 // Return maximum number of arguments accepted
-int Vec3NodeValueKeyword::maxArguments() const { return 3; }
+std::optional<int> Vec3NodeValueKeyword::maxArguments() const { return 3; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool Vec3NodeValueKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

@@ -35,7 +35,7 @@ bool ExpressionVariableVectorKeyword::isDataEmpty() const { return data_.empty()
 int ExpressionVariableVectorKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int ExpressionVariableVectorKeyword::maxArguments() const { return 2; }
+std::optional<int> ExpressionVariableVectorKeyword::maxArguments() const { return 2; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ExpressionVariableVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

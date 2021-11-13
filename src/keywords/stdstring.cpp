@@ -19,12 +19,6 @@ const std::string &StringKeyword::data() const { return data_; }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int StringKeyword::minArguments() const { return 1; }
-
-// Return minimum number of arguments accepted
-int StringKeyword::maxArguments() const { return 1; }
-
 // Deserialise from supplied LineParser, starting at given argument offset
 bool StringKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {

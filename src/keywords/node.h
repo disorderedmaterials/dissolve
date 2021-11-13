@@ -81,10 +81,6 @@ template <class N> class NodeKeyword : public NodeKeywordBase
      * Arguments
      */
     public:
-    // Return minimum number of arguments accepted
-    int minArguments() const override { return 1; }
-    // Return maximum number of arguments accepted
-    int maxArguments() const override { return 1; }
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {

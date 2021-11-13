@@ -24,7 +24,7 @@ const StringDoubleVectorKeywordData &StringDoubleVectorKeyword::data() const { r
 int StringDoubleVectorKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int StringDoubleVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> StringDoubleVectorKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool StringDoubleVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

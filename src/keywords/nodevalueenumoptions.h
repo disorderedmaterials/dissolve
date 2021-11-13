@@ -104,7 +104,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     // Return minimum number of arguments accepted
     int minArguments() const override { return 2; }
     // Return maximum number of arguments accepted
-    int maxArguments() const override { return 2; }
+    std::optional<int> maxArguments() const override { return 2; }
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {

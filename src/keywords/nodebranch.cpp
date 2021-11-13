@@ -27,7 +27,7 @@ bool NodeBranchKeyword::isDataEmpty() const { return data_ == nullptr || data_->
 int NodeBranchKeyword::minArguments() const { return 0; }
 
 // Return maximum number of arguments accepted
-int NodeBranchKeyword::maxArguments() const { return 0; }
+std::optional<int> NodeBranchKeyword::maxArguments() const { return 0; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool NodeBranchKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

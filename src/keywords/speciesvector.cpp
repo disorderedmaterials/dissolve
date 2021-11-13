@@ -23,11 +23,8 @@ const std::vector<const Species *> &SpeciesVectorKeyword::data() const { return 
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int SpeciesVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int SpeciesVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> SpeciesVectorKeyword::maxArguments() const { return 99; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool SpeciesVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

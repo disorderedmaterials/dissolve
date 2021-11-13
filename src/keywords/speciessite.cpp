@@ -30,7 +30,7 @@ bool SpeciesSiteKeyword::axesRequired() const { return axesRequired_; }
 int SpeciesSiteKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteKeyword::maxArguments() const { return 2; }
+std::optional<int> SpeciesSiteKeyword::maxArguments() const { return 2; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

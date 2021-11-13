@@ -22,7 +22,7 @@ const StringPairVectorKeywordData &StringPairVectorKeyword::data() const { retur
 int StringPairVectorKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int StringPairVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> StringPairVectorKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool StringPairVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

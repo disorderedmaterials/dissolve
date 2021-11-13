@@ -63,7 +63,7 @@ Vec3Labels::LabelType Vec3DoubleKeyword::labelType() const { return labelType_; 
 int Vec3DoubleKeyword::minArguments() const { return 3; }
 
 // Return maximum number of arguments accepted
-int Vec3DoubleKeyword::maxArguments() const { return 3; }
+std::optional<int> Vec3DoubleKeyword::maxArguments() const { return 3; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool Vec3DoubleKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

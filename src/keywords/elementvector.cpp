@@ -22,11 +22,8 @@ const std::vector<Elements::Element> &ElementVectorKeyword::data() const { retur
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ElementVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int ElementVectorKeyword::maxArguments() const { return 999; }
+std::optional<int> ElementVectorKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ElementVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

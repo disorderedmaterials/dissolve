@@ -20,18 +20,10 @@ const ValueStore &ValueStoreKeyword::data() const { return data_; }
  */
 
 // Return minimum number of arguments accepted
-int ValueStoreKeyword::minArguments() const
-{
-    // Must have reference data name and format as a minimum
-    return 2;
-}
+int ValueStoreKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int ValueStoreKeyword::maxArguments() const
-{
-    // Filename, name of data, and other args
-    return 99;
-}
+std::optional<int> ValueStoreKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ValueStoreKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

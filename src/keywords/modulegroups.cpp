@@ -15,9 +15,6 @@ ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups) : KeywordData<Mod
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ModuleGroupsKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
 int ModuleGroupsKeyword::maxArguments() const
 {

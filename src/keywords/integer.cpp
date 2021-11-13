@@ -41,12 +41,6 @@ std::optional<int> IntegerKeyword::validationMax() { return maximumLimit_; }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int IntegerKeyword::minArguments() const { return 1; }
-
-// Return maximum number of arguments accepted
-int IntegerKeyword::maxArguments() const { return 1; }
-
 // Deserialise from supplied LineParser, starting at given argument offset
 bool IntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {

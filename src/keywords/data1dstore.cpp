@@ -21,17 +21,13 @@ const Data1DStore &Data1DStoreKeyword::data() const { return data_; }
  */
 
 // Return minimum number of arguments accepted
-int Data1DStoreKeyword::minArguments() const
-{
-    // Must have reference data name and format as a minimum
-    return 2;
-}
+int Data1DStoreKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int Data1DStoreKeyword::maxArguments() const
+std::optional<int> Data1DStoreKeyword::maxArguments() const
 {
     // Filename, name of data, and other args
-    return 99;
+    return std::nullopt;
 }
 
 // Deserialise from supplied LineParser, starting at given argument offset

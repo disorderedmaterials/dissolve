@@ -35,7 +35,7 @@ const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return 
 int DynamicSiteNodesKeyword::minArguments() const { return 0; }
 
 // Return maximum number of arguments accepted
-int DynamicSiteNodesKeyword::maxArguments() const { return 0; }
+std::optional<int> DynamicSiteNodesKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

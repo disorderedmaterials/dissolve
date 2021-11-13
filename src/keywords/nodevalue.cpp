@@ -36,12 +36,6 @@ bool NodeValueKeyword::setData(std::string_view expressionText)
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int NodeValueKeyword::minArguments() const { return 1; }
-
-// Return maximum number of arguments accepted
-int NodeValueKeyword::maxArguments() const { return 1; }
-
 // Deserialise from supplied LineParser, starting at given argument offset
 bool NodeValueKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {

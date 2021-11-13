@@ -24,11 +24,8 @@ int Function1DKeyword::functionProperties() const { return functionProperties_; 
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int Function1DKeyword::minArguments() const { return 0; }
-
 // Return maximum number of arguments accepted
-int Function1DKeyword::maxArguments() const { return 99; }
+std::optional<int> Function1DKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

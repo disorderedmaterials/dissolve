@@ -57,7 +57,7 @@ Vec3Labels::LabelType Vec3IntegerKeyword::labelType() const { return labelType_;
 int Vec3IntegerKeyword::minArguments() const { return 3; }
 
 // Return maximum number of arguments accepted
-int Vec3IntegerKeyword::maxArguments() const { return 3; }
+std::optional<int> Vec3IntegerKeyword::maxArguments() const { return 3; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool Vec3IntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

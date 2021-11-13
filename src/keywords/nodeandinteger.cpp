@@ -20,9 +20,6 @@ NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, Procedur
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int NodeAndIntegerKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
 int NodeAndIntegerKeyword::maxArguments() const { return 2; }
 

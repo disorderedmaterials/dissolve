@@ -28,7 +28,7 @@ Vec3Labels::LabelType RangeKeyword::labelType() const { return labelType_; }
 int RangeKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int RangeKeyword::maxArguments() const { return 2; }
+std::optional<int> RangeKeyword::maxArguments() const { return 2; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool RangeKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

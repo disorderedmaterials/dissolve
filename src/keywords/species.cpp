@@ -20,12 +20,6 @@ const Species *&SpeciesKeyword::data() const { return data_; }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int SpeciesKeyword::minArguments() const { return 1; }
-
-// Return maximum number of arguments accepted
-int SpeciesKeyword::maxArguments() const { return 1; }
-
 // Deserialise from supplied LineParser, starting at given argument offset
 bool SpeciesKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {

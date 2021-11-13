@@ -30,11 +30,8 @@ int ConfigurationVectorKeyword::maxListSize() const { return maxListSize_; }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ConfigurationVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int ConfigurationVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> ConfigurationVectorKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ConfigurationVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

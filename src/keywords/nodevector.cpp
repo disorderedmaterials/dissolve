@@ -21,9 +21,6 @@ NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::N
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int NodeVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
 int NodeVectorKeyword::maxArguments() const { return 99; }
 

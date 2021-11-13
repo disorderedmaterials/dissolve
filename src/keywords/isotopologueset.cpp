@@ -24,7 +24,7 @@ const IsotopologueSet &IsotopologueSetKeyword::data() const { return data_; }
 int IsotopologueSetKeyword::minArguments() const { return 3; }
 
 // Return maximum number of arguments accepted
-int IsotopologueSetKeyword::maxArguments() const { return 3; }
+std::optional<int> IsotopologueSetKeyword::maxArguments() const { return 3; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

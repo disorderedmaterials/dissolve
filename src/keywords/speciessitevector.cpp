@@ -31,7 +31,7 @@ bool SpeciesSiteVectorKeyword::axesRequired() const { return axesRequired_; }
 int SpeciesSiteVectorKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> SpeciesSiteVectorKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool SpeciesSiteVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

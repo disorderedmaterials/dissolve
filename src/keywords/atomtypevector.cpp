@@ -26,11 +26,8 @@ bool AtomTypeVectorKeyword::isDataEmpty() const { return data_.empty(); }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int AtomTypeVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int AtomTypeVectorKeyword::maxArguments() const { return 999; }
+std::optional<int> AtomTypeVectorKeyword::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

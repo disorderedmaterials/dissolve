@@ -9,13 +9,13 @@
 #include "templates/algorithms.h"
 #include <utility>
 
-ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, int maxModules)
+ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, std::optional<int> maxModules)
     : KeywordBase(typeid(this)), data_(data), maxModules_(maxModules)
 {
 }
 
 ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes,
-                                         int maxModules)
+                                         std::optional<int> maxModules)
     : KeywordBase(typeid(this)), data_(data), moduleTypes_(std::move(allowedModuleTypes)), maxModules_(maxModules)
 {
 }
@@ -35,17 +35,14 @@ const std::vector<Module *> &ModuleVectorKeyword::data() const { return data_; }
 const std::vector<std::string> &ModuleVectorKeyword::moduleTypes() const { return moduleTypes_; }
 
 // Return maximum number of Modules to allow in the list
-int ModuleVectorKeyword::maxModules() const { return maxModules_; }
+std::optional<int> ModuleVectorKeyword::maxModules() const { return maxModules_; }
 
 /*
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ModuleVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int ModuleVectorKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 : maxModules_); }
+std::optional<int> ModuleVectorKeyword::maxArguments() const { return maxModules(); }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

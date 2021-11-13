@@ -32,7 +32,7 @@ class IsotopologueSetKeyword : public KeywordBase
     // Return minimum number of arguments accepted
     int minArguments() const override;
     // Return maximum number of arguments accepted
-    int maxArguments() const override;
+    std::optional<int> maxArguments() const override;
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser

@@ -24,7 +24,7 @@ const Procedure &ProcedureKeyword::data() const { return data_; }
 int ProcedureKeyword::minArguments() const { return 0; }
 
 // Return maximum number of arguments accepted
-int ProcedureKeyword::maxArguments() const { return 0; }
+std::optional<int> ProcedureKeyword::maxArguments() const { return 0; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ProcedureKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)

@@ -104,10 +104,8 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
      * Arguments
      */
     public:
-    // Return minimum number of arguments accepted
-    int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
-    int maxArguments() const override { return 99; }
+    std::optional<int> maxArguments() const override { return std::nullopt; }
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {

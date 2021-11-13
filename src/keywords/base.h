@@ -81,9 +81,9 @@ class KeywordBase
      */
     public:
     // Return minimum number of arguments accepted
-    virtual int minArguments() const = 0;
+    virtual int minArguments() const;
     // Return maximum number of arguments accepted
-    virtual int maxArguments() const = 0;
+    virtual std::optional<int> maxArguments() const;
     // Check number of arguments provided to keyword
     bool validNArgs(int nArgsProvided) const;
     // Deserialise from supplied LineParser, starting at given argument offset

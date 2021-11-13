@@ -29,19 +29,8 @@ bool FileAndFormatKeyword::hasOptions() const { return !data_.keywords().keyword
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int FileAndFormatKeyword::minArguments() const
-{
-    // Must have data format as bare minimum
-    return 1;
-}
-
 // Return maximum number of arguments accepted
-int FileAndFormatKeyword::maxArguments() const
-{
-    // Data format and filename
-    return 2;
-}
+std::optional<int> FileAndFormatKeyword::maxArguments() const { return 2; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
