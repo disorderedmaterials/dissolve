@@ -30,8 +30,8 @@ int Function1DKeyword::minArguments() const { return 0; }
 // Return maximum number of arguments accepted
 int Function1DKeyword::maxArguments() const { return 99; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool Function1DKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Check function name
     if (!Functions::function1D().isValid(parser.argsv(startArg)))
@@ -52,8 +52,8 @@ bool Function1DKeyword::read(LineParser &parser, int startArg, const CoreData &c
     return result;
 }
 
-// Write keyword data to specified LineParser
-bool Function1DKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool Function1DKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     std::string params;
     for (auto p : data_.parameters())

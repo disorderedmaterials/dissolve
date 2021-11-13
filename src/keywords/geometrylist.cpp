@@ -40,8 +40,8 @@ int GeometryListKeyword::maxArguments() const
         return 5;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool GeometryListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool GeometryListKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Geometry &g = data_.emplace_back();
     for (auto i = startArg; i <= (startArg + maxArguments() - 1); i++)
@@ -64,8 +64,8 @@ bool GeometryListKeyword::read(LineParser &parser, int startArg, const CoreData 
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool GeometryListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool GeometryListKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     std::string index;
 

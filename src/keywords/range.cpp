@@ -30,8 +30,8 @@ int RangeKeyword::minArguments() const { return 2; }
 // Return maximum number of arguments accepted
 int RangeKeyword::maxArguments() const { return 2; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool RangeKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool RangeKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg + 1))
     {
@@ -44,8 +44,8 @@ bool RangeKeyword::read(LineParser &parser, int startArg, const CoreData &coreDa
     return false;
 }
 
-// Write keyword data to specified LineParser
-bool RangeKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool RangeKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.minimum(), data_.maximum());
 }

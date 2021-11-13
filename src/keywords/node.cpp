@@ -26,8 +26,8 @@ int NodeKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int NodeKeyword::maxArguments() const { return 1; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool NodeKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode())
         return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
@@ -48,8 +48,8 @@ bool NodeKeyword::read(LineParser &parser, int startArg, const CoreData &coreDat
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool NodeKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool NodeKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // No need to write the keyword if the node pointer is null
     if (data_ == nullptr)

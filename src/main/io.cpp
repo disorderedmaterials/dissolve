@@ -356,7 +356,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
 
             // Write keyword options
-            if (!module->keywords().write(parser, "    ", true))
+            if (!module->keywords().serialise(parser, "    ", true))
                 return false;
 
             if (!parser.writeLineF("  {}\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword)))
@@ -418,7 +418,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             }
 
             // Does the Module have a keyword by this name?
-            auto result = module->keywords().parse(parser, coreData_, 2);
+            auto result = module->keywords().deserialise(parser, coreData_, 2);
             if (result == KeywordBase::Unrecognised)
             {
                 Messenger::error("Module '{}' has no keyword '{}'.\n", parser.argsv(2));
@@ -608,7 +608,7 @@ bool Dissolve::saveRestart(std::string_view filename)
             if (!keyword->isOptionSet(KeywordBase::InRestartFileOption))
                 continue;
 
-            if (!keyword->write(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), name)))
+            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), name)))
                 return false;
         }
     }

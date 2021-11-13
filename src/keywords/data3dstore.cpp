@@ -33,8 +33,8 @@ int Data3DStoreKeyword::maxArguments() const
     return 99;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool Data3DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool Data3DStoreKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
                      parser.argsv(startArg + 2), parser.argsv(startArg + 1));
@@ -47,8 +47,8 @@ bool Data3DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool Data3DStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool Data3DStoreKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of one-dimensional data
     for (const auto &[data, format] : data_.data())

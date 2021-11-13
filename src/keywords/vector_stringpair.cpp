@@ -24,8 +24,8 @@ int StringPairVectorKeyword::minArguments() const { return 2; }
 // Return maximum number of arguments accepted
 int StringPairVectorKeyword::maxArguments() const { return 99; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool StringPairVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool StringPairVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Read value pairs
     for (auto n = startArg; n < parser.nArgs(); n += 2)
@@ -36,8 +36,8 @@ bool StringPairVectorKeyword::read(LineParser &parser, int startArg, const CoreD
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool StringPairVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool StringPairVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (const auto &[s1, s2] : data_)
         if (!parser.writeLineF("{}{}  '{}'  '{}'\n", prefix, keywordName, s1, s2))

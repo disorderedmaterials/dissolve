@@ -80,8 +80,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 1; }
-    // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
+    // Deserialise from supplied LineParser, starting at given argument offset
+    bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         if (parser.hasArg(startArg))
         {
@@ -97,8 +97,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
 
         return false;
     }
-    // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
+    // Serialise data to specified LineParser
+    bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         return parser.writeLineF("{}{}  {}\n", prefix, keywordName, optionData_.keyword(data_));
     }

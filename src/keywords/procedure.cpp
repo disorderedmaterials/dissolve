@@ -26,8 +26,8 @@ int ProcedureKeyword::minArguments() const { return 0; }
 // Return maximum number of arguments accepted
 int ProcedureKeyword::maxArguments() const { return 0; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ProcedureKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ProcedureKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!data_.deserialise(parser, coreData))
         return false;
@@ -37,8 +37,8 @@ bool ProcedureKeyword::read(LineParser &parser, int startArg, const CoreData &co
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ProcedureKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ProcedureKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Write the keyword name as the start of the data
     if (!parser.writeLineF("{}{}\n", prefix, name()))

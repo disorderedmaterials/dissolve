@@ -205,8 +205,8 @@ class KeywordStore
      * Read / Write
      */
     public:
-    // Try to parse a single keyword through the specified LineParser
-    KeywordBase::ParseResult parse(LineParser &parser, const CoreData &coreData, int startArg = 0);
+    // Try to deserialise a single keyword through the specified LineParser
+    KeywordBase::ParseResult deserialise(LineParser &parser, const CoreData &coreData, int startArg = 0);
     // Write all keywords to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
+    bool serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
 };

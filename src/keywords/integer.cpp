@@ -47,8 +47,8 @@ int IntegerKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int IntegerKeyword::maxArguments() const { return 1; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool IntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {
@@ -72,8 +72,8 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &core
     return false;
 }
 
-// Write keyword data to specified LineParser
-bool IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool IntegerKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }

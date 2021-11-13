@@ -27,8 +27,8 @@ int NodeVectorKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int NodeVectorKeyword::maxArguments() const { return 99; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool NodeVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode())
         return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n", name());
@@ -50,8 +50,8 @@ bool NodeVectorKeyword::read(LineParser &parser, int startArg, const CoreData &c
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool NodeVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool NodeVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (data_.empty())
         return true;

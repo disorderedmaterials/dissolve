@@ -121,8 +121,8 @@ void KeywordStore::set(std::string_view name, const std::any value)
  * Read / Write
  */
 
-// Try to parse a single keyword through the specified LineParser
-KeywordBase::ParseResult KeywordStore::parse(LineParser &parser, const CoreData &coreData, int startArg)
+// Try to deserialise a single keyword through the specified LineParser
+KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const CoreData &coreData, int startArg)
 {
     // Do we recognise the first item (the 'keyword')?
     auto it = keywords_.find(parser.argsv(startArg));
@@ -135,7 +135,7 @@ KeywordBase::ParseResult KeywordStore::parse(LineParser &parser, const CoreData 
         return KeywordBase::Failed;
 
     // All OK, so parse the keyword
-    if (!keyword->read(parser, startArg + 1, coreData))
+    if (!keyword->deserialise(parser, startArg + 1, coreData))
     {
         Messenger::error("Failed to parse arguments for keyword '{}'.\n", keyword->name());
         return KeywordBase::Failed;
@@ -145,7 +145,7 @@ KeywordBase::ParseResult KeywordStore::parse(LineParser &parser, const CoreData 
 }
 
 // Write all keywords to specified LineParser
-bool KeywordStore::write(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
+bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
     for (const auto &[name, keyword] : keywords_)
     {
@@ -153,7 +153,7 @@ bool KeywordStore::write(LineParser &parser, std::string_view prefix, bool onlyI
         if (onlyIfSet && (!keyword->hasBeenSet()))
             continue;
 
-        if (!keyword->write(parser, name, prefix))
+        if (!keyword->serialise(parser, name, prefix))
             return false;
     }
 

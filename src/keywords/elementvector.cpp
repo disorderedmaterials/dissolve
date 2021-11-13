@@ -28,8 +28,8 @@ int ElementVectorKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int ElementVectorKeyword::maxArguments() const { return 999; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ElementVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ElementVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments (which are Element names) and add them to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -52,8 +52,8 @@ bool ElementVectorKeyword::read(LineParser &parser, int startArg, const CoreData
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ElementVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ElementVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Don't write anything if there are no items in the list
     if (data_.size() == 0)

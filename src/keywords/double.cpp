@@ -47,8 +47,8 @@ int DoubleKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int DoubleKeyword::maxArguments() const { return 1; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool DoubleKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {
@@ -72,8 +72,8 @@ bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreD
     return false;
 }
 
-// Write keyword data to specified LineParser
-bool DoubleKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool DoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_);
 }

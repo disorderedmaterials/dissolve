@@ -36,8 +36,8 @@ int ConfigurationVectorKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int ConfigurationVectorKeyword::maxArguments() const { return 99; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ConfigurationVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ConfigurationVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Each argument is the name of a Configuration that we will add to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -63,8 +63,8 @@ bool ConfigurationVectorKeyword::read(LineParser &parser, int startArg, const Co
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ConfigurationVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ConfigurationVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of Configuration
     std::string configurationString;

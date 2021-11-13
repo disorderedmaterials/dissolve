@@ -34,8 +34,8 @@ int BoolKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int BoolKeyword::maxArguments() const { return 1; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool BoolKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool BoolKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {
@@ -47,8 +47,8 @@ bool BoolKeyword::read(LineParser &parser, int startArg, const CoreData &coreDat
     return false;
 }
 
-// Write keyword data to specified LineParser
-bool BoolKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }

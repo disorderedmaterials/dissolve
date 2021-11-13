@@ -29,8 +29,8 @@ int IntegerStringVectorKeyword::minArguments() const { return (nRequiredIntegers
 // Return maximum number of arguments accepted
 int IntegerStringVectorKeyword::maxArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(99)); }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool IntegerStringVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     std::vector<int> i;
     std::vector<std::string> s;
@@ -66,8 +66,8 @@ bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, const Co
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool IntegerStringVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool IntegerStringVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (const auto &d : data_)
     {

@@ -33,8 +33,8 @@ int ValueStoreKeyword::maxArguments() const
     return 99;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ValueStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ValueStoreKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
                      parser.argsv(startArg + 2), parser.argsv(startArg + 1));
@@ -47,8 +47,8 @@ bool ValueStoreKeyword::read(LineParser &parser, int startArg, const CoreData &c
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ValueStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ValueStoreKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of one-dimensional data
     for (const auto &[tag, data, format] : data_.data())

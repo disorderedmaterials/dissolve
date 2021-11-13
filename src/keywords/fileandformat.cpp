@@ -43,8 +43,8 @@ int FileAndFormatKeyword::maxArguments() const
     return 2;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool FileAndFormatKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!data_.read(parser, startArg, endKeyword_, coreData))
         return Messenger::error("Failed to read file/format.\n");
@@ -54,8 +54,8 @@ bool FileAndFormatKeyword::read(LineParser &parser, int startArg, const CoreData
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool FileAndFormatKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
         return false;

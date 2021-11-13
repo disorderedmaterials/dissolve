@@ -108,8 +108,8 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     int minArguments() const override { return 1; }
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 99; }
-    // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
+    // Deserialise from supplied LineParser, starting at given argument offset
+    bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Loop over arguments
         for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -127,8 +127,8 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 
         return true;
     }
-    // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
+    // Serialise data to specified LineParser
+    bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         if (data_.empty())
             return true;

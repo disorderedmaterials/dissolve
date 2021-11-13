@@ -105,8 +105,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     int minArguments() const override { return 2; }
     // Return maximum number of arguments accepted
     int maxArguments() const override { return 2; }
-    // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
+    // Deserialise from supplied LineParser, starting at given argument offset
+    bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Need two args...
         if (!parser.hasArg(startArg + 1))
@@ -124,8 +124,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 
         return true;
     }
-    // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
+    // Serialise data to specified LineParser
+    bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(), data_.first.asString(),
                                  optionData_.keyword(data_.second));

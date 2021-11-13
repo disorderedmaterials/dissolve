@@ -32,8 +32,8 @@ int AtomTypeVectorKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int AtomTypeVectorKeyword::maxArguments() const { return 999; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool AtomTypeVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments (which are AtomType names) and add them to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -59,8 +59,8 @@ bool AtomTypeVectorKeyword::read(LineParser &parser, int startArg, const CoreDat
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool AtomTypeVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool AtomTypeVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over the AtomType selection list
     std::string selection;

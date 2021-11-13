@@ -25,8 +25,8 @@ int ModuleGroupsKeyword::maxArguments() const
     return 2;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ModuleGroupsKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Module by its unique name
     Module *module = coreData.findModule(parser.argsv(startArg));
@@ -55,8 +55,8 @@ bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData 
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ModuleGroupsKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ModuleGroupsKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over defined groups
     for (auto &group : data_.groups())

@@ -86,10 +86,10 @@ class KeywordBase
     virtual int maxArguments() const = 0;
     // Check number of arguments provided to keyword
     bool validNArgs(int nArgsProvided) const;
-    // Parse arguments from supplied LineParser, starting at given argument offset
-    virtual bool read(LineParser &parser, int startArg, const CoreData &coreData) = 0;
-    // Write keyword data to specified LineParser
-    virtual bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
+    // Deserialise from supplied LineParser, starting at given argument offset
+    virtual bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) = 0;
+    // Serialise data to specified LineParser
+    virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
 
     /*
      * Parse Result

@@ -37,8 +37,8 @@ int DynamicSiteNodesKeyword::minArguments() const { return 0; }
 // Return maximum number of arguments accepted
 int DynamicSiteNodesKeyword::maxArguments() const { return 0; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
@@ -60,8 +60,8 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreD
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of dynamic sites in the RefList
     for (auto dynamicSite : data_)

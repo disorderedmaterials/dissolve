@@ -47,8 +47,8 @@ int ModuleVectorKeyword::minArguments() const { return 1; }
 // Return maximum number of arguments accepted
 int ModuleVectorKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 : maxModules_); }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments provided to the keyword
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -73,8 +73,8 @@ bool ModuleVectorKeyword::read(LineParser &parser, int startArg, const CoreData 
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ModuleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ModuleVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     // Loop over list of referenced Modules
     for (auto *module : data_)

@@ -29,8 +29,8 @@ int NodeBranchKeyword::minArguments() const { return 0; }
 // Return maximum number of arguments accepted
 int NodeBranchKeyword::maxArguments() const { return 0; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool NodeBranchKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Check that a branch hasn't already been defined
     if (data_)
@@ -46,8 +46,8 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &c
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool NodeBranchKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!data_ || (data_->nNodes() == 0))
         return true;
