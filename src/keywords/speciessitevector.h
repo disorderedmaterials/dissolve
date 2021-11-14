@@ -8,7 +8,7 @@
 // Forward Declarations
 class SpeciesSite;
 
-// Keyword with vector of SpeciesSites
+// Keyword managing vector of SpeciesSites
 class SpeciesSiteVectorKeyword : public KeywordBase
 {
     public:
@@ -21,7 +21,7 @@ class SpeciesSiteVectorKeyword : public KeywordBase
     private:
     // Reference to data vector
     std::vector<const SpeciesSite *> &data_;
-    // Whether sites in the list must have a defined orientation
+    // Whether supplied sites must have a defined orientation
     bool axesRequired_;
 
     public:

@@ -35,7 +35,7 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual void setIndex(int i) = 0;
 };
 
-// Keyword with ProcedureNode and integer index
+// Keyword managing ProcedureNode and integer index
 template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase
 {
     public:

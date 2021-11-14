@@ -6,7 +6,7 @@
 #include "keywords/base.h"
 #include "procedure/procedure.h"
 
-// Keyword with Procedure data
+// Keyword managing Procedure data
 class ProcedureKeyword : public KeywordBase
 {
     public:

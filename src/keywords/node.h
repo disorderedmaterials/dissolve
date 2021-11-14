@@ -32,7 +32,7 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual bool setData(const ProcedureNode *node) = 0;
 };
 
-// Keyword with ProcedureNode
+// Keyword managing ProcedureNode
 template <class N> class NodeKeyword : public NodeKeywordBase
 {
     public:

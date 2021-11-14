@@ -8,7 +8,7 @@
 // Forward Declarations
 class Species;
 
-// Keyword with Species Vector Data
+// Keyword managing vector of Species
 class SpeciesVectorKeyword : public KeywordBase
 {
     public:

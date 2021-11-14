@@ -10,7 +10,7 @@
 
 using StringPairVectorKeywordData = std::vector<std::pair<std::string, std::string>>;
 
-// Keyword with list of pairs of std::string
+// Keyword managing vector of pairs of std::string
 class StringPairVectorKeyword : public KeywordBase
 {
     public:

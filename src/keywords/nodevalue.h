@@ -10,7 +10,7 @@
 class NodeValue;
 class ProcedureNode;
 
-// Keyword with NodeValue
+// Keyword managing NodeValue
 class NodeValueKeyword : public KeywordBase
 {
     public:

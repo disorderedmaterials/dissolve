@@ -8,7 +8,7 @@
 // Forward Declarations
 class SpeciesSite;
 
-// Keyword with Site Data
+// Keyword managing Site data
 class SpeciesSiteKeyword : public KeywordBase
 {
     public:
@@ -21,7 +21,7 @@ class SpeciesSiteKeyword : public KeywordBase
     private:
     // Reference to data
     const SpeciesSite *&data_;
-    // Whether sites in the list must have a defined orientation
+    // Whether supplied sites must have a defined orientation
     bool axesRequired_;
 
     public:

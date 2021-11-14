@@ -7,7 +7,7 @@
 #include "math/range.h"
 #include "vec3labels.h"
 
-// Keyword with Range data
+// Keyword managing Range data
 class RangeKeyword : public KeywordBase
 {
     public:

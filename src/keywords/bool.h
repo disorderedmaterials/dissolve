@@ -5,7 +5,7 @@
 
 #include "keywords/base.h"
 
-// Keyword with Bool Data
+// Keyword managing Bool data
 class BoolKeyword : public KeywordBase
 {
     public:

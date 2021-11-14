@@ -32,7 +32,7 @@ std::optional<int> AtomTypeVectorKeyword::maxArguments() const { return std::nul
 // Deserialise from supplied LineParser, starting at given argument offset
 bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    // Loop over arguments (which are AtomType names) and add them to our list
+    // Loop over arguments which are AtomType names
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
@@ -40,14 +40,14 @@ bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const 
             return DissolveSys::sameString(atomType->name(), parser.argsv(n));
         });
         if (it == coreData.atomTypes().end())
-            return Messenger::error("Unrecognised AtomType '{}' found in list.\n", parser.argsv(n));
+            return Messenger::error("Unrecognised AtomType '{}' given to '{}' keyword.\n", parser.argsv(n), name());
         auto atomType = *it;
 
-        // If the AtomType is in the list already, complain
+        // If the AtomType is already present, complain
         if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
-            return Messenger::error("AtomType '{}' specified in selection list twice.\n", parser.argsv(n));
+            return Messenger::error("AtomType '{}' specified in selection twice.\n", parser.argsv(n));
 
-        // All OK - add it to our selection list
+        // All OK - add it to our vector
         data_.push_back(atomType);
     }
 
@@ -59,7 +59,6 @@ bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const 
 // Serialise data to specified LineParser
 bool AtomTypeVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over the AtomType selection list
     std::string selection;
     for (auto &at : data_)
         selection += fmt::format("  {}", at->name());

@@ -10,7 +10,7 @@
 class ExpressionVariable;
 class ProcedureNode;
 
-// Keyword with ExpressionVariable List
+// Keyword managing vector of ExpressionVariable
 class ExpressionVariableVectorKeyword : public KeywordBase
 {
     public:

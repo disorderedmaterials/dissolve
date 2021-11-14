@@ -6,7 +6,7 @@
 #include "keywords/base.h"
 #include <optional>
 
-// Keyword with Integer Data
+// Keyword managing Integer data
 class IntegerKeyword : public KeywordBase
 {
     public:

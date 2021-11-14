@@ -11,7 +11,7 @@
 // Forward Declarations
 class ProcedureNode;
 
-// Keyword with NodeValue Triplet Data
+// Keyword managing Vec3<NodeValue>
 class Vec3NodeValueKeyword : public KeywordBase
 {
     public:

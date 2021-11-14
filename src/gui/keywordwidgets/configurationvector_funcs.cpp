@@ -62,7 +62,7 @@ void ConfigurationVectorKeywordWidget::itemChanged(QListWidgetItem *item)
     for (auto n = 0; n < ui_.SelectionList->count(); ++n)
         if (ui_.SelectionList->item(n)->checkState() == Qt::Checked)
             ++nChecked;
-    switch (keyword_->maxListSize())
+    switch (keyword_->maxListSize().value_or(-10))
     {
         case (Module::ZeroTargets):
             if (nChecked != 0)

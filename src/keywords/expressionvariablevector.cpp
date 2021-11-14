@@ -75,7 +75,6 @@ bool ExpressionVariableVectorKeyword::deserialise(LineParser &parser, int startA
 // Serialise data to specified LineParser
 bool ExpressionVariableVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over list of defined ExpressionNode's (ExpressionVariables)
     for (const auto &node : data_)
     {
         if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, node->name(), node->value().asString()))

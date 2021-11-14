@@ -8,7 +8,7 @@
 #include "templates/vector3.h"
 #include <optional>
 
-// Keyword with Vec3<int>
+// Keyword managing Vec3<int>
 class Vec3IntegerKeyword : public KeywordBase
 {
     public:

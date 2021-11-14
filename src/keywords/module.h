@@ -8,7 +8,7 @@
 #include "keywords/base.h"
 #include "module/module.h"
 
-// Keyword with Module base class
+// Keyword managing Module base class
 class ModuleKeywordBase : public KeywordBase
 {
     public:
@@ -31,7 +31,7 @@ class ModuleKeywordBase : public KeywordBase
     virtual const Module *module() const = 0;
 };
 
-// Keyword with Module
+// Keyword managing Module
 template <class M> class ModuleKeyword : public ModuleKeywordBase
 {
     public:

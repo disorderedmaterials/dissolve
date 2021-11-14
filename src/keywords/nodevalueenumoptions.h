@@ -12,7 +12,7 @@
 // Forward Declarations
 class ProcedureNode;
 
-// Keyword with NodeValue and EnumOptions base class
+// Keyword managing NodeValue and EnumOptions base class
 class NodeValueEnumOptionsBaseKeyword : public KeywordBase
 {
     public:
@@ -41,7 +41,7 @@ class NodeValueEnumOptionsBaseKeyword : public KeywordBase
     virtual bool setEnumeration(std::string_view keyword) = 0;
 };
 
-// Keyword with NodeValue and EnumOptions
+// Keyword managing NodeValue and EnumOptions
 template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword
 {
     public:

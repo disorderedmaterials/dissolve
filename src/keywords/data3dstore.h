@@ -8,7 +8,7 @@
 // Forward Declarations
 class Data3DStore;
 
-// Keyword with a store of Data3D
+// Keyword managing a store of Data3D
 class Data3DStoreKeyword : public KeywordBase
 {
     public:

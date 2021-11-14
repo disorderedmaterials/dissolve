@@ -6,7 +6,7 @@
 #include "keywords/base.h"
 #include "math/function1d.h"
 
-// Keyword with Function1D Data
+// Keyword managing Function1D data
 class Function1DKeyword : public KeywordBase
 {
     public:

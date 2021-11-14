@@ -8,7 +8,7 @@
 // Forward Declarations
 class ValueStore;
 
-// Keyword with a store of values
+// Keyword managing a store of values
 class ValueStoreKeyword : public KeywordBase
 {
     public:

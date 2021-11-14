@@ -10,7 +10,7 @@
 class DynamicSiteProcedureNode;
 class SelectProcedureNode;
 
-// Keyword with vector of dynamic site references
+// Keyword managing vector of dynamic site references
 class DynamicSiteNodesKeyword : public KeywordBase
 {
     public:
@@ -26,7 +26,7 @@ class DynamicSiteNodesKeyword : public KeywordBase
     std::vector<DynamicSiteProcedureNode *> &data_;
     // Parent SelectProcedureNode
     SelectProcedureNode *parentNode_;
-    // Whether sites in the list must have a defined orientation
+    // Whether sites in the vector must have a defined orientation
     bool axesRequired_;
 
     protected:

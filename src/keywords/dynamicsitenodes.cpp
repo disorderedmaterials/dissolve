@@ -43,7 +43,7 @@ bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, cons
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
 
-    // Create a new DynamicSite and add it to our data RefList
+    // Create a new DynamicSite and add it to our vector
     auto *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
     data_.push_back(dynamicSite);
 
@@ -63,7 +63,6 @@ bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, cons
 // Serialise data to specified LineParser
 bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over list of dynamic sites in the RefList
     for (auto dynamicSite : data_)
         if (!dynamicSite->write(parser, prefix))
             return false;

@@ -6,7 +6,7 @@
 #include "classes/atomtype.h"
 #include "keywords/base.h"
 
-// Keyword with vector of AtomType pointers
+// Keyword managing vector of AtomType pointers
 class AtomTypeVectorKeyword : public KeywordBase
 {
     public:

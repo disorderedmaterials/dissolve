@@ -37,7 +37,7 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual std::vector<const ProcedureNode *> nodes() const = 0;
 };
 
-// Keyword with vector of ProcedureNode
+// Keyword managing vector of ProcedureNode
 template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 {
     public:

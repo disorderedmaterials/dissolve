@@ -9,7 +9,7 @@
 class Expression;
 class ExpressionVariable;
 
-// Keyword with Expression
+// Keyword managing Expression
 class ExpressionKeyword : public KeywordBase
 {
     public:

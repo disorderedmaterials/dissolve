@@ -6,7 +6,7 @@
 #include "base/geometry.h"
 #include "keywords/base.h"
 
-// Keyword with vector of Geometry Data
+// Keyword managing vector of Geometry Data
 class GeometryListKeyword : public KeywordBase
 {
     public:

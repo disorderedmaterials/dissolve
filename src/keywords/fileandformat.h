@@ -8,7 +8,7 @@
 // Forward Declarations
 class FileAndFormat;
 
-// Keyword with a file format
+// Keyword managing a file format
 class FileAndFormatKeyword : public KeywordBase
 {
     public:

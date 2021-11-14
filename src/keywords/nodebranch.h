@@ -10,7 +10,7 @@
 class NodeValue;
 class SequenceProcedureNode;
 
-// Keyword with node sequence
+// Keyword managing node sequence
 class NodeBranchKeyword : public KeywordBase
 {
     public:

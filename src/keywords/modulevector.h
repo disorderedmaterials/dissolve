@@ -8,7 +8,7 @@
 // Forward Declarations
 class Module;
 
-// Keyword with Module RefList data
+// Keyword managing Module
 class ModuleVectorKeyword : public KeywordBase
 {
     public:
@@ -25,7 +25,7 @@ class ModuleVectorKeyword : public KeywordBase
     std::vector<Module *> &data_;
     // Module type(s) to allow
     std::vector<std::string> moduleTypes_;
-    // Maximum number of modules to allow in list, if defined
+    // Maximum number of modules to allow
     std::optional<int> maxModules_;
 
     protected:
@@ -38,7 +38,7 @@ class ModuleVectorKeyword : public KeywordBase
     const std::vector<Module *> &data() const;
     // Return the Module type(s) to allow
     const std::vector<std::string> &moduleTypes() const;
-    // Return maximum number of Modules to allow in the list
+    // Return maximum number of Modules to allow
     std::optional<int> maxModules() const;
 
     /*

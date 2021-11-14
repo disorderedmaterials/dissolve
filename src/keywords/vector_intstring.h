@@ -10,7 +10,7 @@
 
 using IntegerStringVectorKeywordData = std::vector<std::tuple<std::vector<int>, std::vector<std::string>>>;
 
-// Keyword with list of Tuples of Vectors
+// Keyword managing vector of Tuples of Vectors
 class IntegerStringVectorKeyword : public KeywordBase
 {
     public:

@@ -54,7 +54,7 @@ bool SpeciesSiteVectorKeyword::deserialise(LineParser &parser, int startArg, con
                                     "specifications for all sites.\n",
                                     speciesSite->name(), name());
 
-        // Add site to the list
+        // Add site to the vector
         data_.push_back(speciesSite);
     }
 
@@ -66,11 +66,10 @@ bool SpeciesSiteVectorKeyword::deserialise(LineParser &parser, int startArg, con
 // Serialise data to specified LineParser
 bool SpeciesSiteVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // If there are no sites in the list, no need to write anything
+    // If there are no sites in the vector, no need to write anything
     if (data_.empty())
         return true;
 
-    // Loop over list of SpeciesSiteReferences
     std::string sites;
     for (auto *site : data_)
         sites += fmt::format("  '{}'  '{}'", site->parent()->name(), site->name());

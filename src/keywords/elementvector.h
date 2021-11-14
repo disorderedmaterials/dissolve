@@ -6,7 +6,7 @@
 #include "data/elements.h"
 #include "keywords/base.h"
 
-// Keyword with Element vector data
+// Keyword managing Element vector data
 class ElementVectorKeyword : public KeywordBase
 {
     public:

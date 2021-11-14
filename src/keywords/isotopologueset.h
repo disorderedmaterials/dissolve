@@ -6,7 +6,7 @@
 #include "classes/isotopologueset.h"
 #include "keywords/base.h"
 
-// Keyword with IsotopologueSet Data
+// Keyword managing IsotopologueSet data
 class IsotopologueSetKeyword : public KeywordBase
 {
     public:

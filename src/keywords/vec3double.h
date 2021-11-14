@@ -8,7 +8,7 @@
 #include "templates/vector3.h"
 #include <optional>
 
-// Keyword with Vec3<double>
+// Keyword managing Vec3<double>
 class Vec3DoubleKeyword : public KeywordBase
 {
     public:

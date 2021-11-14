@@ -8,7 +8,7 @@
 // Forward Declarations
 class Data2DStore;
 
-// Keyword with a store of Data2D
+// Keyword managing a store of Data2D
 class Data2DStoreKeyword : public KeywordBase
 {
     public:

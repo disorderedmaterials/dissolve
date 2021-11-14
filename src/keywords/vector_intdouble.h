@@ -10,7 +10,7 @@
 
 using IntegerDoubleVectorKeywordData = std::vector<std::tuple<std::vector<int>, std::vector<double>>>;
 
-// Keyword with list of Tuples of Vectors
+// Keyword managing vector of Tuples of Vectors
 class IntegerDoubleVectorKeyword : public KeywordBase
 {
     public:

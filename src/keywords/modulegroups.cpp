@@ -55,11 +55,9 @@ bool ModuleGroupsKeyword::deserialise(LineParser &parser, int startArg, const Co
 // Serialise data to specified LineParser
 bool ModuleGroupsKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over defined groups
     for (auto &group : data_.groups())
     {
-        // Loop over list of referenced Modules in this group
-        for (Module *module : group->modules())
+        for (auto *module : group->modules())
         {
             if (!parser.writeLineF("{}{}  '{}'  '{}'\n", prefix, keywordName, module->uniqueName(), group->name()))
                 return false;

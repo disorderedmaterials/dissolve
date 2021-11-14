@@ -6,7 +6,7 @@
 #include "keywords/base.h"
 #include <optional>
 
-// Keyword with Double Data
+// Keyword managing Double data
 class DoubleKeyword : public KeywordBase
 {
     public:

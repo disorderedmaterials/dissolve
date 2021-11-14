@@ -5,7 +5,7 @@
 
 #include "keywords/base.h"
 
-// Keyword with std::string data
+// Keyword managing std::string data
 class StringKeyword : public KeywordBase
 {
     public:

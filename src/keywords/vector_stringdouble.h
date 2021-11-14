@@ -9,7 +9,7 @@
 
 using StringDoubleVectorKeywordData = std::vector<std::pair<std::string, double>>;
 
-// Keyword with list of pairs of std::string and double
+// Keyword managing vector of pairs of std::string and double
 class StringDoubleVectorKeyword : public KeywordBase
 {
     public:

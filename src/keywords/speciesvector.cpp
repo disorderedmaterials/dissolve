@@ -29,7 +29,7 @@ std::optional<int> SpeciesVectorKeyword::maxArguments() const { return 99; }
 // Deserialise from supplied LineParser, starting at given argument offset
 bool SpeciesVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    // Each argument is the name of a Species that we will add to our list
+    // Each argument is the name of a Species
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         const auto *sp = coreData.findSpecies(parser.argsv(n));
@@ -50,7 +50,6 @@ bool SpeciesVectorKeyword::serialise(LineParser &parser, std::string_view keywor
     if (isDataEmpty())
         return true;
 
-    // Loop over list of Species
     std::string speciesString;
     for (const auto *sp : data_)
         speciesString += fmt::format("  '{}'", sp->name());
