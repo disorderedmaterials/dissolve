@@ -36,19 +36,29 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
  * Private Slots
  */
 
+// Atom table item changed
+void SpeciesTab::atomTableDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+    // Update the charge information?
+    if (topLeft.column() == 5 || bottomRight.column() == 5)
+        updateTotalCharges();
+
+    dissolveWindow_->setModified();
+}
+
 // Update atom table selection
 void SpeciesTab::updateAtomTableSelection()
 {
-    SpeciesAtom *i;
-
     auto selection = QItemSelection();
+
     // Set atom selection in table to reflect the atom data
     for (auto n = 0; n < atoms_.rowCount(); ++n)
     {
-        i = atoms_.data(atoms_.index(n, 0), Qt::UserRole).value<SpeciesAtom *>();
+        auto *i = atoms_.data(atoms_.index(n, 0), Qt::UserRole).value<SpeciesAtom *>();
         if (i->isSelected())
             selection.select(atoms_.index(n, 0), atoms_.index(n, 5));
     }
+
     ui_.AtomTable->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
@@ -78,8 +88,37 @@ void SpeciesTab::updateUnderlyingAtomSelection()
  * Public Functions
  */
 
-// Update Geometry tab
-void SpeciesTab::updateGeometryTab()
+// Update total charges
+void SpeciesTab::updateTotalCharges()
+{
+    auto warningPalette = palette();
+    warningPalette.setBrush(QPalette::WindowText, Qt::red);
+    auto ppHaveCharges = dissolve_.pairPotentialsIncludeCoulomb();
+
+    auto atomCharge = species_->totalCharge(false);
+    auto atomChargeOK = fabs(atomCharge) < 1.0e-5;
+    ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1").arg(atomCharge) : QString::number(atomCharge));
+    ui_.TotalAtomChargeLabel->setPalette(!ppHaveCharges && !atomChargeOK ? warningPalette : palette());
+    ui_.TotalAtomChargeIndicator->setHidden(atomChargeOK);
+    if (ppHaveCharges)
+        ui_.TotalAtomChargeIndicator->setOK(atomChargeOK);
+    else
+        ui_.TotalAtomChargeIndicator->setWarning();
+
+    auto atomTypeCharge = species_->totalCharge(true);
+    auto atomTypeChargeOK = fabs(atomTypeCharge) < 1.0e-5;
+    ui_.TotalAtomTypeChargeLabel->setText(atomTypeCharge > 0.0 ? QString("+%1").arg(atomTypeCharge)
+                                                               : QString::number(atomTypeCharge));
+    ui_.TotalAtomTypeChargeLabel->setPalette(ppHaveCharges && !atomTypeChargeOK ? warningPalette : palette());
+    ui_.TotalAtomTypeChargeIndicator->setHidden(atomTypeChargeOK);
+    if (!ppHaveCharges)
+        ui_.TotalAtomTypeChargeIndicator->setOK(atomTypeChargeOK);
+    else
+        ui_.TotalAtomTypeChargeIndicator->setWarning();
+}
+
+// Update Geometry tables
+void SpeciesTab::updateGeometryTables()
 {
     ui_.BondTable->resizeColumnsToContents();
     ui_.AngleTable->resizeColumnsToContents();
