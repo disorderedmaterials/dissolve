@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
+#include "templates/algorithms.h"
 
 ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration *> &data, int maxListSize)
     : KeywordBase(typeid(this)), data_(data)
@@ -63,14 +64,11 @@ bool ConfigurationVectorKeyword::deserialise(LineParser &parser, int startArg, c
 // Serialise data to specified LineParser
 bool ConfigurationVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    std::string configurationString;
-    for (Configuration *cfg : data_)
-        configurationString += fmt::format("{}'{}'", configurationString.empty() ? "" : "  ", cfg->name());
+    if (data_.empty())
+        return true;
 
-    if (!parser.writeLineF("{}{}  {}\n", prefix, keywordName, configurationString))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
+                             joinStrings(data_, "  ", [](const auto *cfg) { return fmt::format("{}", cfg->name()); }));
 }
 
 /*

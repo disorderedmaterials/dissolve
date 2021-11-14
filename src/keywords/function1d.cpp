@@ -3,6 +3,7 @@
 
 #include "keywords/function1d.h"
 #include "base/lineparser.h"
+#include "templates/algorithms.h"
 
 Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties)
     : KeywordBase(typeid(this)), data_(data), functionProperties_(functionProperties)
@@ -52,8 +53,6 @@ bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const Core
 // Serialise data to specified LineParser
 bool Function1DKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    std::string params;
-    for (auto p : data_.parameters())
-        params += fmt::format("  {}", p);
-    return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, Functions::function1D().keyword(data_.type()), params);
+    return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, Functions::function1D().keyword(data_.type()),
+                             joinStrings(data_.parameters(), "  "));
 }

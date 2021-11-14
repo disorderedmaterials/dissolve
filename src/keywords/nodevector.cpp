@@ -53,14 +53,8 @@ bool NodeVectorKeyword::serialise(LineParser &parser, std::string_view keywordNa
     if (data_.empty())
         return true;
 
-    std::string nodes;
-    for (auto *node : data_)
-        nodes += fmt::format("  '{}'", node->name());
-
-    if (!parser.writeLineF("{}{}  {}\n", prefix, name(), nodes))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}  {}\n", prefix, name(),
+                             joinStrings(data_, "  ", [](const auto *node) { return node->name(); }));
 }
 
 /*

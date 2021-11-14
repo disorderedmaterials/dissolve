@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
+#include "templates/algorithms.h"
 
 AtomTypeVectorKeyword::AtomTypeVectorKeyword(std::vector<std::shared_ptr<AtomType>> &data)
     : KeywordBase(typeid(this)), data_(data)
@@ -59,14 +60,11 @@ bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const 
 // Serialise data to specified LineParser
 bool AtomTypeVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    std::string selection;
-    for (auto &at : data_)
-        selection += fmt::format("  {}", at->name());
+    if (data_.empty())
+        return true;
 
-    if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, selection))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}{}\n", prefix, keywordName,
+                             joinStrings(data_, "  ", [](const auto &at) { return at->name(); }));
 }
 
 /*

@@ -4,6 +4,7 @@
 #include "keywords/elementvector.h"
 #include "base/lineparser.h"
 #include "data/elements.h"
+#include "templates/algorithms.h"
 
 ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data) : KeywordBase(typeid(this)), data_(data) {}
 
@@ -52,16 +53,9 @@ bool ElementVectorKeyword::deserialise(LineParser &parser, int startArg, const C
 // Serialise data to specified LineParser
 bool ElementVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Don't write anything if the vector is empty
     if (data_.empty())
         return true;
 
-    std::string elements;
-    for (auto el : data_)
-        elements += fmt::format("  {}", Elements::symbol(el));
-
-    if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, elements))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}{}\n", prefix, keywordName,
+                             joinStrings(data_, "  ", [](const auto &el) { return Elements::symbol(el); }));
 }

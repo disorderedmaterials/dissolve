@@ -35,14 +35,8 @@ bool ModuleGroupsKeyword::deserialise(LineParser &parser, int startArg, const Co
 
     // Check the module's type
     if (!data_.moduleTypeIsAllowed(module->type()))
-    {
-        std::string allowedTypes;
-        for (const auto &s : data_.allowedModuleTypes())
-            allowedTypes += allowedTypes.empty() ? s : ", " + s;
-        Messenger::error("Module '{}' is of type '{}', and is not permitted in these groups (allowed types = {}).\n",
-                         parser.argsv(startArg), module->type(), allowedTypes);
-        return false;
-    }
+        return Messenger::error("Module '{}' is of type '{}', and is not permitted in these groups (allowed types = {}).\n",
+                         parser.argsv(startArg), module->type(), joinStrings(data_.allowedModuleTypes());
 
     // If a second argument was given, this is the name of the group we should add the Module to. Otherwise, use the default
     data_.addModule(module, parser.hasArg(startArg + 1) ? parser.argsv(startArg + 1) : "Default");

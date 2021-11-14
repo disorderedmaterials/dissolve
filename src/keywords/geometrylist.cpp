@@ -63,6 +63,9 @@ bool GeometryListKeyword::deserialise(LineParser &parser, int startArg, const Co
 // Serialise data to specified LineParser
 bool GeometryListKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (data_.empty())
+        return true;
+
     std::string index;
 
     for (auto &ref : data_)

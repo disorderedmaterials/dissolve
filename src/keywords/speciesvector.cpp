@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
+#include "templates/algorithms.h"
 
 SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data) : KeywordBase(typeid(this)), data_(data) {}
 
@@ -50,14 +51,8 @@ bool SpeciesVectorKeyword::serialise(LineParser &parser, std::string_view keywor
     if (isDataEmpty())
         return true;
 
-    std::string speciesString;
-    for (const auto *sp : data_)
-        speciesString += fmt::format("  '{}'", sp->name());
-
-    if (!parser.writeLineF("{}{}  {}\n", prefix, keywordName, speciesString))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
+                             joinStrings(data_, "  ", [](const auto *sp) { return sp->name(); }));
 }
 
 /*
