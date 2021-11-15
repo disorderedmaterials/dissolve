@@ -223,8 +223,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for (auto step = 1; step <= nSteps_; ++step)
         {
             // Get timestep
-            auto deltaT = variableTimestep_ ? determineTimeStep(forces) : deltaT_;
-            auto deltaTSq = deltaT * deltaT;
+            auto dT = variableTimestep_ ? determineTimeStep(forces) : deltaT_;
+            auto deltaTSq = dT * dT;
 
             // Velocity Verlet first stage (A)
             // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -234,10 +234,10 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (auto &&[i, v, a] : zip(atoms, velocities, accelerations))
             {
                 // Propagate positions (by whole step)...
-                i.translateCoordinates(v * deltaT_ + a * 0.5 * deltaTSq);
+                i.translateCoordinates(v * dT + a * 0.5 * deltaTSq);
 
                 // ...velocities (by half step)...
-                v += a * 0.5 * deltaT_;
+                v += a * 0.5 * dT;
             }
 
             // Update Cell contents / Atom locations
@@ -266,7 +266,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 a = f / m;
 
                 // ..and finally velocities again (by second half-step)
-                v += a * 0.5 * deltaT_;
+                v += a * 0.5 * dT;
 
                 ke += 0.5 * m * v.dp(v);
             }
@@ -288,11 +288,11 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     peInter = EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
                     peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
                     Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
-                                     tInstant, ke, peInter, peIntra, ke + peIntra + peInter, deltaT_);
+                                     tInstant, ke, peInter, peIntra, ke + peIntra + peInter, dT);
                 }
                 else
                     Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n",
-                                     step, tInstant, ke, deltaT_);
+                                     step, tInstant, ke, dT);
             }
 
             // Save trajectory frame
