@@ -25,6 +25,8 @@ class SpaceGroup
     public:
     // Initialise for specified Hermann-Mauguin group
     bool initialise(std::string hmName);
+    // Return number of defined space groups
+    static int nSpaceGroups();
     // Return whether the space group is valid
     bool isValid() const;
     // Return space group name

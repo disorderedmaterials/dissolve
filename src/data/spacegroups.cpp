@@ -298,6 +298,9 @@ bool SpaceGroup::initialise(std::string hmName)
     return true;
 }
 
+// Return number of defined space groups
+int SpaceGroup::nSpaceGroups() { return 230; }
+
 // Return whether the space group is valid
 bool SpaceGroup::isValid() const { return sgNameId_; }
 

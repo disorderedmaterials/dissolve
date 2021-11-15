@@ -27,7 +27,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SpeciesPartitioningPage, "Species Partitioning");
 
     // Add spacegroup list
-    for (auto n = 1; n <= 230; ++n)
+    for (auto n = 1; n <= SpaceGroup::nSpaceGroups(); ++n)
         ui_.SpacegroupsList->addItem(
             QString("%1 %2").arg(QString::number(n), QString::fromStdString(std::string(SpaceGroup::name(n)))));
 
