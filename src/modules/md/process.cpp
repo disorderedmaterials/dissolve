@@ -92,7 +92,6 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto nCapped = 0;
         auto &atoms = cfg->atoms();
         double tInstant, ke, tScale, peInter, peIntra;
-        auto deltaTSq = deltaT_ * deltaT_;
 
         // Determine target molecules from the restrictedSpecies vector (if any), and zero velocities for those atoms
         std::vector<const Molecule *> targetMolecules;
@@ -223,9 +222,9 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Ready to do MD propagation of system
         for (auto step = 1; step <= nSteps_; ++step)
         {
-            // Variable timestep?
-            if (variableTimestep_)
-                deltaT_ = determineTimeStep(forces);
+            // Get timestep
+            auto deltaT = variableTimestep_ ? determineTimeStep(forces) : deltaT_;
+            auto deltaTSq = deltaT * deltaT;
 
             // Velocity Verlet first stage (A)
             // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
