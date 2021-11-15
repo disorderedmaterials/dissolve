@@ -5,6 +5,15 @@ on:
   push:
     branches:
       - develop
+    paths-ignore:
+      - 'docs/**'
+      - examples/*
+      - scripts/*
+      - web/*
+      - tests/**
+      - unit/**
+      - README.md
+      - .azure-pipelines/**
 
 env:
   BUILD_TYPE: Release
