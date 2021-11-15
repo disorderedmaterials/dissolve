@@ -47,6 +47,7 @@ steps:
       nix bundle -L .#${{ parameters.package }}
       mkdir -p packages
       cp ${{ parameters.package }} packages/${{ parameters.package }}
+      df -h
       nix build -L .#${{ parameters.singularity }}
       mkdir -p singularity
       cp result singularity/${{ parameters.package }}.sif
