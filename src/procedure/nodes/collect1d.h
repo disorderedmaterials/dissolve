@@ -36,7 +36,6 @@ class Collect1DProcedureNode : public ProcedureNode
     OptionalReferenceWrapper<Histogram1D> histogram_;
     // Range and binwidth of the histogram for QuantityX
     Vec3<double> rangeX_{0.0, 10.0, 0.05};
-    ;
 
     public:
     // Return current data
