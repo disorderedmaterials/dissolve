@@ -39,18 +39,12 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
 }
 
-ConfigurationTab::~ConfigurationTab()
-{
-    // Remove the Configuration represented in this tab
-    dissolve_.removeConfiguration(configuration_);
-}
-
 /*
  * MainTab Reimplementations
  */
 
 // Return tab type
-MainTab::TabType ConfigurationTab::type() const { return MainTab::ConfigurationTabType; }
+MainTab::TabType ConfigurationTab::type() const { return MainTab::TabType::Configuration; }
 
 // Raise suitable dialog for entering / checking new tab name
 QString ConfigurationTab::getNewTitle(bool &ok)

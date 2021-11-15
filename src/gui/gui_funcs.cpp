@@ -44,6 +44,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     // Connect signals from our main tab widget
     connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(setModified()));
     connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(fullUpdate()));
+    connect(ui_.MainTabs, SIGNAL(tabClosed(QWidget *)), this, SLOT(closeTab(QWidget *)));
 
     refreshing_ = false;
     modified_ = false;
@@ -316,20 +317,20 @@ void DissolveWindow::updateMenus()
         return;
 
     // Species Menu
-    ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesReduceForcefieldTermsMenu->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-    ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+    ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesReduceForcefieldTermsMenu->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
 
     // Configuration Menu
-    ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
-    ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
-    ui_.ConfigurationExportToMenu->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+    ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
+    ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
+    ui_.ConfigurationExportToMenu->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
 
     // Layer Menu
-    ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
-    ui_.LayerDeleteAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
+    ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Layer);
+    ui_.LayerDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Layer);
 }
 
 // Perform full update of the GUI, including tab reconciliation

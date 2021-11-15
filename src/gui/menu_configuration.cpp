@@ -194,7 +194,7 @@ void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab, then call its rename() function
     auto tab = ui_.MainTabs->currentTab();
-    if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
+    if ((!tab) || (tab->type() != MainTab::TabType::Configuration))
         return;
     tab->rename();
 }
@@ -203,7 +203,7 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab
     auto tab = ui_.MainTabs->currentTab();
-    if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
+    if ((!tab) || (tab->type() != MainTab::TabType::Configuration))
         return;
 
     // Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
@@ -212,7 +212,7 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
         return;
 
     // Check that we really want to delete the Configuration
-    if (!cfgTab->close())
+    if (!cfgTab->canClose())
         return;
 
     // Update the GUI

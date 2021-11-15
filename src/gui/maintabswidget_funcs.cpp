@@ -45,7 +45,7 @@ Species *MainTabsWidget::currentSpecies() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::SpeciesTabType)
+    if (tab->type() != MainTab::TabType::Species)
         return nullptr;
 
     auto speciesTab = dynamic_cast<SpeciesTab *>(tab);
@@ -57,7 +57,7 @@ Configuration *MainTabsWidget::currentConfiguration() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::ConfigurationTabType)
+    if (tab->type() != MainTab::TabType::Configuration)
         return nullptr;
 
     auto configurationTab = dynamic_cast<ConfigurationTab *>(tab);
@@ -69,7 +69,7 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 {
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     auto tab = currentTab();
-    if (tab->type() != MainTab::LayerTabType)
+    if (tab->type() != MainTab::TabType::Layer)
         return nullptr;
 
     auto layerTab = dynamic_cast<LayerTab *>(tab);
@@ -120,6 +120,13 @@ QPointer<WorkspaceTab> MainTabsWidget::workspaceTab(QWidget *page)
 MainTab *MainTabsWidget::findTab(const QString title)
 {
     auto result = std::find_if(allTabs_.begin(), allTabs_.end(), [&title](auto tab) { return tab->title() == title; });
+    return result == allTabs_.end() ? nullptr : *result;
+}
+
+// Find tab displaying specified page
+MainTab *MainTabsWidget::findTab(const QWidget *page)
+{
+    auto result = std::find_if(allTabs_.begin(), allTabs_.end(), [page](auto tab) { return tab->page() == page; });
     return result == allTabs_.end() ? nullptr : *result;
 }
 
@@ -303,37 +310,23 @@ void MainTabsWidget::removeByPage(QWidget *page)
     if (indexToRemove)
         removeTab(indexToRemove);
 
-    // Now delete the tab from its list - this will delete the actual page widget
-    auto updateAll = false;
-    if (speciesTab(page))
+    // Now delete the tab from our reference vectors
+    auto *tab = findTab(page);
+    allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), tab));
+    switch (tab->type())
     {
-        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), speciesTab(page)));
-        speciesTabs_.erase(std::remove(speciesTabs_.begin(), speciesTabs_.end(), speciesTab(page)));
-        updateAll = true;
-    }
-    else if (configurationTab(page))
-    {
-        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), configurationTab(page)));
-        configurationTabs_.erase(std::remove(configurationTabs_.begin(), configurationTabs_.end(), configurationTab(page)));
-        updateAll = true;
-    }
-    else if (processingLayerTab(page))
-    {
-        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), processingLayerTab(page)));
-        processingLayerTabs_.erase(
-            std::remove(processingLayerTabs_.begin(), processingLayerTabs_.end(), processingLayerTab(page)));
-        updateAll = true;
-    }
-    else if (workspaceTab(page))
-    {
-        allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), workspaceTab(page)));
-        workspaceTabs_.erase(std::remove(workspaceTabs_.begin(), workspaceTabs_.end(), workspaceTab(page)));
-    }
-
-    if (updateAll)
-    {
-        emit(dataModified());
-        updateAllTabs();
+        case (MainTab::TabType::Configuration):
+            configurationTabs_.erase(std::remove(configurationTabs_.begin(), configurationTabs_.end(), configurationTab(page)));
+            break;
+        case (MainTab::TabType::Layer):
+            processingLayerTabs_.erase(
+                std::remove(processingLayerTabs_.begin(), processingLayerTabs_.end(), processingLayerTab(page)));
+            break;
+        case (MainTab::TabType::Species):
+            speciesTabs_.erase(std::remove(speciesTabs_.begin(), speciesTabs_.end(), speciesTab(page)));
+            break;
+        default:
+            break;
     }
 }
 
@@ -445,13 +438,6 @@ void MainTabsWidget::updateAllTabs()
         tab->updateControls();
 }
 
-// Update all Species tabs
-void MainTabsWidget::updateSpeciesTabs()
-{
-    for (auto tab : speciesTabs_)
-        tab->updateControls();
-}
-
 // Disable sensitive controls in all tabs
 void MainTabsWidget::disableSensitiveControls()
 {
@@ -536,34 +522,20 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
 
     auto it = std::find_if(closeButtons_.begin(), closeButtons_.end(),
                            [toolButton](auto &term) { return std::get<QToolButton *>(term) == toolButton; });
-    if (it != closeButtons_.end())
-    {
-        auto [button, page] = *it;
-        // Find the tab containing the page widget (stored as the RefListItem's data)
-        auto tabIndex = indexOf(page);
-        if (tabIndex == -1)
-            return;
+    if (it == closeButtons_.end())
+        return;
 
-        // Get the relevant widget (as a MainTab)
-        MainTab *tab = dynamic_cast<MainTab *>(widget(tabIndex));
-        if (!tab)
-            return;
-        MainTab::TabType tabType = tab->type();
+    // Find the tab containing the page widget
+    auto [button, page] = *it;
+    auto *tab = findTab(page);
+    if (!tab || !tab->canClose())
+        return;
 
-        // Check whether the tab can / should be closed
-        if (!tab->canClose())
-            return;
+    // Remove the button item
+    closeButtons_.erase(it);
 
-        // Remove the button item
-        closeButtons_.erase(it);
-
-        // Delete the tab (referenced by its page widget)
-        removeByPage(page);
-
-        // Emit data modified signal dependent on tab type
-        if (tabType != MainTab::WorkspaceTabType)
-            emit(dataModified());
-    }
+    // Tell the main GUI to do the clean-up
+    emit(tabClosed(page));
 }
 
 // Tab bar double-clicked

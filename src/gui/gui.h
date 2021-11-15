@@ -296,6 +296,12 @@ class DissolveWindow : public QMainWindow
     void appendMessage(const QString &msg);
 
     /*
+     * Tabs
+     */
+    public slots:
+    void closeTab(QWidget *page);
+
+    /*
      * GUI State
      */
     private:

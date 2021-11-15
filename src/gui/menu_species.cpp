@@ -110,7 +110,7 @@ void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab, then call its rename() function
     auto tab = ui_.MainTabs->currentTab();
-    if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
+    if ((!tab) || (tab->type() != MainTab::TabType::Species))
         return;
     tab->rename();
 }
@@ -193,7 +193,7 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab
     auto tab = ui_.MainTabs->currentTab();
-    if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
+    if ((!tab) || (tab->type() != MainTab::TabType::Species))
         return;
 
     // Cast up the tab to a SpeciesTab
@@ -202,7 +202,7 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
         return;
 
     // Check that we really want to delete the Species
-    if (!spTab->close())
+    if (!spTab->canClose())
         return;
 
     // Update the GUI
