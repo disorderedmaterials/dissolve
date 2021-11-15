@@ -315,8 +315,9 @@ void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
     if (!layerTab->canClose())
         return;
 
-    // Update the GUI
     ui_.MainTabs->removeByPage(layerTab->page());
+    dissolve_.removeProcessingLayer(layerTab->moduleLayer());
+
     setModified();
     fullUpdate();
 }

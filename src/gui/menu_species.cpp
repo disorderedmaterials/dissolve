@@ -133,8 +133,9 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
     if (!spTab->canClose())
         return;
 
-    // Update the GUI
     ui_.MainTabs->removeByPage(spTab->page());
+    dissolve_.removeSpecies(spTab->species());
+
     setModified();
     fullUpdate();
 }

@@ -201,8 +201,9 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
     if (!cfgTab->canClose())
         return;
 
-    // Update the GUI
     ui_.MainTabs->removeByPage(cfgTab->page());
+    dissolve_.removeConfiguration(cfgTab->configuration());
+
     setModified();
     fullUpdate();
 }
