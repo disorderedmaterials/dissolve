@@ -5,7 +5,4 @@
 #include "modules/skeleton/skeleton.h"
 
 // Perform any necessary initialisation for the Module
-void SkeletonModule::initialise()
-{
-    // 	keywords_.add<BoolKeyword>("ExampleKeyword", "Example keyword description", localVariable_);
-}
+void SkeletonModule::initialise() {}

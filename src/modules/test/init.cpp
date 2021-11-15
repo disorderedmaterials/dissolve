@@ -5,7 +5,4 @@
 #include "modules/test/test.h"
 
 // Perform any necessary initialisation for the Module
-void TestModule::initialise()
-{
-    // 	keywords_.add<BoolKeyword>("ExampleKeyword", "Example keyword description", localVariable_);
-}
+void TestModule::initialise() {}
