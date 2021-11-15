@@ -198,7 +198,7 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
         return;
 
     // Check that we really want to delete the Configuration
-    if (!cfgTab->close())
+    if (!cfgTab->canClose())
         return;
 
     // Update the GUI

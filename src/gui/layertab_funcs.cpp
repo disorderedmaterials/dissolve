@@ -23,8 +23,6 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
     ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
 }
 
-LayerTab::~LayerTab() { dissolve_.removeProcessingLayer(moduleLayer_); }
-
 /*
  * MainTab Reimplementations
  */
