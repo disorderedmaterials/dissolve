@@ -79,6 +79,7 @@ Layer  'Processing'
     Configuration  'Bulk'
     Frequency  1
     BinWidth 0.03
+    IntraBroadening  None
   EndModule
 
   Module  SQ  'SQ01'

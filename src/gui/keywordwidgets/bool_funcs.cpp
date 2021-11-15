@@ -13,7 +13,7 @@ BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, cons
     else
     {
         // Set current value
-        setChecked(keyword_->asBool());
+        setChecked(keyword_->data());
     }
 
     // Connect the
@@ -44,7 +44,7 @@ void BoolKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setChecked(keyword_->asBool());
+    setChecked(keyword_->data());
 
     refreshing_ = false;
 }

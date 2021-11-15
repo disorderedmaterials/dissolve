@@ -2,8 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/box.h"
-#include "classes/configuration.h"
-#include "classes/neutronweights.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
@@ -20,40 +18,29 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
-    const auto averaging = keywords_.asInt("Averaging");
-    auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-    auto &intraBroadening = keywords_.retrieve<Functions::Function1DWrapper>("IntraBroadening");
-    auto method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
-    const auto useHalfCellRange = keywords_.asBool("UseHalfCellRange");
-    const auto specifiedRange = keywords_.asDouble("Range");
-    const auto binWidth = keywords_.asDouble("BinWidth");
-    const bool internalTest = keywords_.asBool("InternalTest");
-    const bool saveData = keywords_.asBool("Save");
-    const auto smoothing = keywords_.asInt("Smoothing");
-
     // Print argument/parameter summary
-    if (useHalfCellRange)
+    if (useHalfCellRange_)
         Messenger::print("RDF: Partials will be calculated up to the half-cell range limit.\n");
     else
-        Messenger::print("RDF: Partials will be calculated out to {} Angstroms.\n", specifiedRange);
-    Messenger::print("RDF: Bin-width to use is {} Angstroms.\n", binWidth);
-    if (averaging <= 1)
-        Messenger::print("RDF: No averaging of partials will be performed.\n");
+        Messenger::print("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_);
+    Messenger::print("RDF: Bin-width to use is {} Angstroms.\n", binWidth_);
+    if (averagingLength_ <= 1)
+        Messenger::print("RDF: No averagingLength_ of partials will be performed.\n");
     else
-        Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averaging,
-                         Averaging::averagingSchemes().keyword(averagingScheme));
-    if (intraBroadening.type() == Functions::Function1D::None)
+        Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
+                         Averaging::averagingSchemes().keyword(averagingScheme_));
+    if (intraBroadening_.type() == Functions::Function1D::None)
         Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
     else
         Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is {} ({}).",
-                         Functions::function1D().keyword(intraBroadening.type()), intraBroadening.parameterSummary());
-    Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(method));
-    Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(saveData));
-    Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {} ({}).\n", smoothing,
-                     DissolveSys::onOff(smoothing > 0));
+                         Functions::function1D().keyword(intraBroadening_.type()), intraBroadening_.parameterSummary());
+    Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
+    Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
+    Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
+                     DissolveSys::onOff(nSmooths_ > 0));
     Messenger::print("\n");
 
     /*
@@ -61,68 +48,68 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * multiple independent Configurations, we must loop over the specified targetConfigurations_ and calculate the partials
      * for each.
      */
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Check RDF range
         double rdfRange = cfg->box()->inscribedSphereRadius();
-        if (useHalfCellRange)
+        if (useHalfCellRange_)
         {
             Messenger::print("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->niceName(), rdfRange);
         }
         else
         {
-            if (specifiedRange > rdfRange)
+            if (requestedRange_ > rdfRange)
                 return Messenger::error("Specified RDF range of {} Angstroms is out of range for Configuration "
                                         "'{}' (max = {} Angstroms).\n",
-                                        specifiedRange, cfg->niceName(), rdfRange);
-            rdfRange = specifiedRange;
+                                        requestedRange_, cfg->niceName(), rdfRange);
+            rdfRange = requestedRange_;
             Messenger::print("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->niceName(), rdfRange);
         }
 
         // 'Snap' rdfRange_ to nearest bin width...
-        rdfRange = int(rdfRange / binWidth) * binWidth;
+        rdfRange = int(rdfRange / binWidth_) * binWidth_;
         Messenger::print("Cutoff (snapped to bin width) is {} Angstroms.\n", rdfRange);
 
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
-        calculateGR(dissolve.processingModuleData(), procPool, cfg, method, rdfRange, binWidth, alreadyUpToDate);
+        calculateGR(dissolve.processingModuleData(), procPool, cfg, partialsMethod_, rdfRange, binWidth_, alreadyUpToDate);
         auto &originalgr =
             dissolve.processingModuleData().retrieve<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), uniqueName_);
 
-        // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
-        if ((averaging > 1) && (!alreadyUpToDate))
+        // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
+        if ((averagingLength_ > 1) && (!alreadyUpToDate))
         {
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{originalgr.fingerprint()};
 
             Averaging::average<PartialSet>(dissolve.processingModuleData(), fmt::format("{}//OriginalGR", cfg->niceName()),
-                                           uniqueName_, averaging, averagingScheme);
+                                           uniqueName_, averagingLength_, averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);
         }
 
         // Perform internal test of original g(r)?
-        if (internalTest)
+        if (internalTest_)
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr;
-            calculateGR(dissolve.processingModuleData(), procPool, cfg, RDFModule::TestMethod, rdfRange, binWidth,
+            calculateGR(dissolve.processingModuleData(), procPool, cfg, RDFModule::TestMethod, rdfRange, binWidth_,
                         alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
                 return false;
         }
 
-        // Form unweighted g(r) from original g(r), applying any requested smoothing / intramolecular broadening
+        // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
         auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
             fmt::format("{}//UnweightedGR", cfg->niceName()), uniqueName_, GenericItem::InRestartFileFlag);
-        calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, smoothing);
+        calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_);
 
         // Save data if requested
-        if (saveData && (!MPIRunMaster(procPool, unweightedgr.save(uniqueName_, "UnweightedGR", "gr", "r, Angstroms"))))
+        if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(uniqueName_, "UnweightedGR", "gr", "r, Angstroms"))))
             return false;
     }
 

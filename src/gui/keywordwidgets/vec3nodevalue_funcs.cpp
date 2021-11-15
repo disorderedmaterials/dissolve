@@ -36,7 +36,7 @@ void Vec3NodeValueKeywordWidget::on_ValueAEdit_editingFinished()
     if (refreshing_)
         return;
 
-    keyword_->setValue(0, qPrintable(ui_.ValueAEdit->text()));
+    keyword_->setData(0, qPrintable(ui_.ValueAEdit->text()));
     ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
 
     emit(keywordValueChanged(keyword_->optionMask()));
@@ -47,7 +47,7 @@ void Vec3NodeValueKeywordWidget::on_ValueAEdit_returnPressed()
     if (refreshing_)
         return;
 
-    keyword_->setValue(0, qPrintable(ui_.ValueAEdit->text()));
+    keyword_->setData(0, qPrintable(ui_.ValueAEdit->text()));
     ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
 
     emit(keywordValueChanged(keyword_->optionMask()));
@@ -58,7 +58,7 @@ void Vec3NodeValueKeywordWidget::on_ValueBEdit_editingFinished()
     if (refreshing_)
         return;
 
-    keyword_->setValue(1, qPrintable(ui_.ValueBEdit->text()));
+    keyword_->setData(1, qPrintable(ui_.ValueBEdit->text()));
     ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
 
     emit(keywordValueChanged(keyword_->optionMask()));
@@ -69,7 +69,7 @@ void Vec3NodeValueKeywordWidget::on_ValueBEdit_returnPressed()
     if (refreshing_)
         return;
 
-    keyword_->setValue(1, qPrintable(ui_.ValueBEdit->text()));
+    keyword_->setData(1, qPrintable(ui_.ValueBEdit->text()));
     ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
 
     emit(keywordValueChanged(keyword_->optionMask()));
@@ -80,7 +80,7 @@ void Vec3NodeValueKeywordWidget::on_ValueCEdit_editingFinished()
     if (refreshing_)
         return;
 
-    keyword_->setValue(2, qPrintable(ui_.ValueCEdit->text()));
+    keyword_->setData(2, qPrintable(ui_.ValueCEdit->text()));
     ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
     emit(keywordValueChanged(keyword_->optionMask()));
@@ -91,7 +91,7 @@ void Vec3NodeValueKeywordWidget::on_ValueCEdit_returnPressed()
     if (refreshing_)
         return;
 
-    keyword_->setValue(2, qPrintable(ui_.ValueCEdit->text()));
+    keyword_->setData(2, qPrintable(ui_.ValueCEdit->text()));
     ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
     emit(keywordValueChanged(keyword_->optionMask()));

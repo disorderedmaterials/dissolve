@@ -37,8 +37,22 @@ class AtomShakeModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Interatomic cutoff distance to use for energy calculation
+    double cutoffDistance_{-1.0};
+    // Number of shakes to attempt per atom
+    int nShakesPerAtom_{1};
+    // Step size in Angstroms to use in Monte Carlo moves
+    double stepSize_{0.05};
+    // Maximum allowed value for step size, in Angstroms
+    double stepSizeMax_{1.0};
+    // Minimum allowed value for step size, in Angstroms
+    double stepSizeMin_{0.001};
+    // Target acceptance rate for Monte Carlo moves
+    double targetAcceptanceRate_{0.33};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

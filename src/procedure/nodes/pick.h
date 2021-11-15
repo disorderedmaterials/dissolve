@@ -18,11 +18,11 @@ class PickProcedureNode : public PickProcedureNodeBase
     ~PickProcedureNode() override = default;
 
     /*
-     * Pick Criteria
+     * Control
      */
     private:
-    // Target species (retrieved from keyword)
-    std::vector<const Species *> targetSpecies_;
+    // Species to pick
+    std::vector<const Species *> speciesToPick_;
 
     /*
      * Execute

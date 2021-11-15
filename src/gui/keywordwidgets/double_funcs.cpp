@@ -14,13 +14,13 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, 
     else
     {
         // Set minimum and maximum values
-        if (keyword_->hasValidationMin())
-            setMinimumLimit(keyword_->validationMin());
-        if (keyword_->hasValidationMax())
-            setMaximumLimit(keyword_->validationMax());
+        if (keyword_->validationMin())
+            setMinimumLimit(keyword_->validationMin().value());
+        if (keyword_->validationMax())
+            setMaximumLimit(keyword_->validationMax().value());
 
         // Set current value
-        setValue(keyword_->asDouble());
+        setValue(keyword_->data());
     }
 
     // Connect the valueChanged signal to our own slot
@@ -41,9 +41,8 @@ void DoubleKeywordWidget::myValueChanged(double newValue)
     if (refreshing_)
         return;
 
-    keyword_->setData(newValue);
-
-    emit(keywordValueChanged(keyword_->optionMask()));
+    if (keyword_->setData(newValue))
+        emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
@@ -55,7 +54,7 @@ void DoubleKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setValue(keyword_->asDouble());
+    setValue(keyword_->data());
 
     refreshing_ = false;
 }

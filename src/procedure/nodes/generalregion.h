@@ -16,7 +16,9 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase
      * Control
      */
     private:
-    // Distance tolerance (threshold) for avoiding existing atoms (retrieved from keywords)
+    // Distance tolerance (threshold) for avoiding existing atoms
+    double tolerance_;
+    // Squared tolerance
     double toleranceSquared_;
 
     /*

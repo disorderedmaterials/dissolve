@@ -11,7 +11,7 @@ StringKeywordWidget::StringKeywordWidget(QWidget *parent, KeywordBase *keyword, 
     if (!keyword_)
         Messenger::error("Couldn't cast base keyword '{}' into StringKeyword.\n", keyword->name());
     else
-        setText(QString::fromStdString(keyword_->asString()));
+        setText(QString::fromStdString(keyword_->data()));
 
     // Connect the currentTextChanged signal to our own slot
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));
@@ -27,7 +27,8 @@ void StringKeywordWidget::myTextChanged(const QString &text)
     if (refreshing_)
         return;
 
-    keyword_->setData(qPrintable(text));
+    keyword_->data() = qPrintable(text);
+    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -41,7 +42,7 @@ void StringKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setText(QString::fromStdString(keyword_->asString()));
+    setText(QString::fromStdString(keyword_->data()));
 
     refreshing_ = false;
 }

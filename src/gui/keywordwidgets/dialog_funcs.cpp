@@ -6,7 +6,7 @@
 #include "classes/species.h"
 #include "gui/keywordwidgets/dialog.h"
 
-KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordList &keywords, const CoreData &coreData) : coreData_(coreData)
+KeywordsDialog::KeywordsDialog(QWidget *parent, KeywordList &keywords, const CoreData &coreData) : coreData_(coreData)
 {
     ui_.setupUi(this);
 

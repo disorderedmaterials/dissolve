@@ -3,17 +3,29 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class ValueStore;
 
 // Keyword with a store of values
-class ValueStoreKeyword : public KeywordData<ValueStore &>
+class ValueStoreKeyword : public KeywordBase
 {
     public:
-    ValueStoreKeyword(ValueStore &dataStore);
-    ~ValueStoreKeyword() override;
+    explicit ValueStoreKeyword(ValueStore &data);
+    ~ValueStoreKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    ValueStore &data_;
+
+    public:
+    // Return reference to data
+    ValueStore &data();
+    const ValueStore &data() const;
 
     /*
      * Arguments

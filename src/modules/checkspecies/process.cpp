@@ -4,6 +4,8 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
+#include "keywords/vector_intdouble.h"
+#include "keywords/vector_intstring.h"
 #include "main/dissolve.h"
 #include "modules/checkspecies/checkspecies.h"
 #include <numeric>
@@ -12,13 +14,11 @@
 bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Retrieve necessary keyword values
-    auto *sp = keywords_.retrieve<const Species *>("Species");
-    if (!sp)
+    if (!targetSpecies_)
         return Messenger::error("No target species provided.\n");
-    const auto tolerance = keywords_.asDouble("Tolerance");
 
-    Messenger::print("CheckSpecies: Target species is '{}'.\n", sp->name());
-    Messenger::print("CheckSpecies: Tolerance for parameter checks is {:.5e}.", tolerance);
+    Messenger::print("CheckSpecies: Target species is '{}'.\n", targetSpecies_->name());
+    Messenger::print("CheckSpecies: Tolerance for parameter checks is {:.5e}.", tolerance_);
 
     // Check atom types
     auto nAtomTypesFailed = 0;
@@ -31,10 +31,10 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Get specified atom - tuple contains 'human-readable' indices from 1 - N...
             auto i = std::get<0>(indexName).at(0);
-            if (i - 1 >= sp->nAtoms())
-                return Messenger::error("Atom index {} is out of range ({} atoms in species).\n", i, sp->nAtoms());
+            if (i - 1 >= targetSpecies_->nAtoms())
+                return Messenger::error("Atom index {} is out of range ({} atoms in species).\n", i, targetSpecies_->nAtoms());
 
-            auto &spAtom = sp->atom(i - 1);
+            auto &spAtom = targetSpecies_->atom(i - 1);
             auto at = spAtom.atomType();
 
             // Get type name to validate against
@@ -61,73 +61,74 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         Messenger::print("\nChecking total charge...\n");
 
-        auto q = sp->totalCharge(dissolve.pairPotentialsIncludeCoulomb());
-        auto qDiff = fabs(q - keywords_.asDouble("TotalCharge"));
-        if (qDiff > keywords_.asDouble("ChargeTolerance"))
+        auto q = targetSpecies_->totalCharge(dissolve.pairPotentialsIncludeCoulomb());
+        auto qDiff = fabs(q - totalCharge_);
+        if (qDiff > chargeTolerance_)
         {
             ++nChargesFailed;
-            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q,
-                             keywords_.asDouble("TotalCharge"));
+            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q, totalCharge_);
         }
         else
             Messenger::print("Total charge on species is {} e, which is within the tolerance ({:12.6e} e).\n", q,
-                             keywords_.asDouble("ChargeTolerance"));
+                             chargeTolerance_);
     }
 
     // Check bond parameters
     auto nBondsFailed = 0;
-    if (bondParameters_.size() != 0)
+    if (!bondParameters_.empty())
     {
         Messenger::print("\nChecking bond parameters...\n");
         nBondsFailed =
             std::accumulate(bondParameters_.begin(), bondParameters_.end(), 0, [&](const auto &acc, const auto &bond) {
                 auto &indices = std::get<0>(bond);
-                return acc + parametersDiffer<const SpeciesBond>("bond", sp->getBond(indices.at(0) - 1, indices.at(1) - 1),
-                                                                 indices, std::get<1>(bond), tolerance);
+                return acc + parametersDiffer<const SpeciesBond>("bond",
+                                                                 targetSpecies_->getBond(indices.at(0) - 1, indices.at(1) - 1),
+                                                                 indices, std::get<1>(bond), tolerance_);
             });
     }
 
     // Check angle parameters
     auto nAnglesFailed = 0;
-    if (angleParameters_.size() != 0)
+    if (!angleParameters_.empty())
     {
         Messenger::print("\nChecking angle parameters...\n");
         nAnglesFailed =
             std::accumulate(angleParameters_.begin(), angleParameters_.end(), 0, [&](const auto &acc, const auto &angle) {
                 auto &indices = std::get<0>(angle);
                 return acc + parametersDiffer<SpeciesAngle>(
-                                 "angle", sp->getAngle(indices.at(0) - 1, indices.at(1) - 1, indices.at(2) - 1), indices,
-                                 std::get<1>(angle), tolerance);
+                                 "angle", targetSpecies_->getAngle(indices.at(0) - 1, indices.at(1) - 1, indices.at(2) - 1),
+                                 indices, std::get<1>(angle), tolerance_);
             });
     }
 
     // Check torsion parameters
     auto nTorsionsFailed = 0;
-    if (torsionParameters_.size() != 0)
+    if (!torsionParameters_.empty())
     {
         Messenger::print("\nChecking torsion parameters...\n");
         nTorsionsFailed =
             std::accumulate(torsionParameters_.begin(), torsionParameters_.end(), 0, [&](const auto &acc, const auto &torsion) {
                 auto &indices = std::get<0>(torsion);
-                return acc + parametersDiffer<SpeciesTorsion>(
-                                 "torsion",
-                                 sp->getTorsion(indices.at(0) - 1, indices.at(1) - 1, indices.at(2) - 1, indices.at(3) - 1),
-                                 indices, std::get<1>(torsion), tolerance);
+                return acc + parametersDiffer<SpeciesTorsion>("torsion",
+                                                              targetSpecies_->getTorsion(indices.at(0) - 1, indices.at(1) - 1,
+                                                                                         indices.at(2) - 1, indices.at(3) - 1),
+                                                              indices, std::get<1>(torsion), tolerance_);
             });
     }
 
     // Check improper parameters
     auto nImpropersFailed = 0;
-    if (improperParameters_.size() != 0)
+    if (!improperParameters_.empty())
     {
         Messenger::print("\nChecking improper parameters...\n");
         nImpropersFailed = std::accumulate(
             improperParameters_.begin(), improperParameters_.end(), 0, [&](const auto &acc, const auto &improper) {
                 auto &indices = std::get<0>(improper);
-                return acc + parametersDiffer<SpeciesImproper>(
-                                 "improper",
-                                 sp->getImproper(indices.at(0) - 1, indices.at(1) - 1, indices.at(2) - 1, indices.at(3) - 1),
-                                 indices, std::get<1>(improper), tolerance);
+                return acc +
+                       parametersDiffer<SpeciesImproper>("improper",
+                                                         targetSpecies_->getImproper(indices.at(0) - 1, indices.at(1) - 1,
+                                                                                     indices.at(2) - 1, indices.at(3) - 1),
+                                                         indices, std::get<1>(improper), tolerance_);
             });
     }
 

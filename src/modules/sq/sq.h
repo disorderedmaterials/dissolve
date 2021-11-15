@@ -5,11 +5,15 @@
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
+#include "math/averaging.h"
+#include "math/function1d.h"
 #include "math/windowfunction.h"
 #include "module/module.h"
 
 // Forward Declarations
+class BraggModule;
 class PartialSet;
+class RDFModule;
 
 // SQ Module
 class SQModule : public Module
@@ -39,11 +43,39 @@ class SQModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Number of historical partial sets to combine into final partials
+    int averagingLength_{1};
+    // Weighting scheme to use when averaging partials
+    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
+    // Broadening function to apply to Bragg S(Q)
+    Functions::Function1DWrapper braggQBroadening_{Functions::Function1D::GaussianC2, {0.0, 0.02}};
+    // Broadening function to apply to S(Q)
+    Functions::Function1DWrapper qBroadening_;
+    // Step size in Q for S(Q) calculation
+    double qDelta_{0.05};
+    // Maximum Q for calculated S(Q)
+    double qMax_{30.0};
+    // Minimum Q for calculated S(Q)
+    double qMin_{0.01};
+    // Whether to save partials to disk after calculation
+    bool save_{false};
+    // Source module for Bragg calculation
+    const BraggModule *sourceBragg_{nullptr};
+    // Source module for main calculation
+    const RDFModule *sourceRDF_{nullptr};
+    // Window function to use when Fourier-transforming reference S(Q) to g(r))
+    WindowFunction::Form windowFunction_{WindowFunction::Form::None};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;
+
+    public:
+    // Return source module for main calculation
+    const RDFModule *sourceRDF() const;
 
     /*
      * Processing

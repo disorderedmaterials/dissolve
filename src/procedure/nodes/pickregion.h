@@ -16,6 +16,13 @@ class PickRegionProcedureNode : public PickProcedureNodeBase
     ~PickRegionProcedureNode() override = default;
 
     /*
+     * Data
+     */
+    private:
+    // Target region for the pick
+    const RegionProcedureNodeBase *region_;
+
+    /*
      * Execute
      */
     public:

@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include "templates/listitem.h"
 #include "templates/reflist.h"
-#include "templates/vector3.h"
 #include <memory>
+#include <typeindex>
 
 // Forward Declarations
 class AtomType;
@@ -20,7 +19,7 @@ class Species;
 class SpeciesSite;
 
 // Keyword Base Class
-class KeywordBase : public ListItem<KeywordBase>
+class KeywordBase
 {
     public:
     // Keyword Data Type
@@ -70,17 +69,10 @@ class KeywordBase : public ListItem<KeywordBase>
         VectorDoublePairData,
         VectorStringPairData
     };
-    KeywordBase(KeywordDataType type);
+    KeywordBase(const std::type_index typeIndex, KeywordDataType type);
     virtual ~KeywordBase();
     // Return DataType name
     static std::string_view keywordDataType(KeywordDataType kdt);
-
-    /*
-     * Base Pointer Return
-     */
-    public:
-    // Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-    virtual KeywordBase *base();
 
     /*
      * Keyword Description
@@ -98,22 +90,24 @@ class KeywordBase : public ListItem<KeywordBase>
     private:
     // Data type stored by keyword
     KeywordDataType type_;
+    // Type index of derived class
+    const std::type_index typeIndex_;
     // Keyword name
     std::string name_;
-    // Arguments string (for information)
-    std::string arguments_;
     // Description of keyword, if any
     std::string description_;
     // Keyword option mask
-    int optionMask_;
+    int optionMask_{NoOptions};
 
     protected:
     // Whether the current data value has ever been set
-    bool set_;
+    bool set_{false};
 
     public:
-    // Set name, description, arguments, and option mask
-    void set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask = NoOptions);
+    // Set base keyword information
+    void setBaseInfo(std::string_view name, std::string_view description);
+    // Set option mask
+    void setOptionMask(int opttionMask);
     // Flag that data has been set by some other means
     void setAsModified();
     // Return data type stored by keyword
@@ -122,8 +116,6 @@ class KeywordBase : public ListItem<KeywordBase>
     std::string_view typeName() const;
     // Return keyword name
     std::string_view name() const;
-    // Return arguments string
-    std::string_view arguments() const;
     // Return keyword description
     std::string_view description() const;
     // Return keyword option mask
@@ -161,23 +153,6 @@ class KeywordBase : public ListItem<KeywordBase>
         Failed = 0,
         Success = 1
     };
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as bool)
-    virtual bool asBool();
-    // Return value (as int)
-    virtual int asInt();
-    // Return value (as double)
-    virtual double asDouble();
-    // Return value (as string)
-    virtual std::string asString();
-    // Return value as Vec3<int>
-    virtual Vec3<int> asVec3Int();
-    // Return value as Vec3<double>
-    virtual Vec3<double> asVec3Double();
 
     /*
      * Object Management

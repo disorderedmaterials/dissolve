@@ -4,14 +4,18 @@
 #include "keywords/function1d.h"
 #include "base/lineparser.h"
 
-Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper value, int functionProperties)
-    : KeywordData<Functions::Function1DWrapper>(KeywordBase::Function1DData, value), functionProperties_(functionProperties)
+Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties)
+    : KeywordBase(typeid(this), KeywordBase::Function1DData), data_(data), functionProperties_(functionProperties)
 {
 }
 
 /*
  * Data
  */
+
+// Return reference to data
+Functions::Function1DWrapper &Function1DKeyword::data() { return data_; }
+const Functions::Function1DWrapper &Function1DKeyword::data() const { return data_; }
 
 // Return requested function properties
 int Function1DKeyword::functionProperties() const { return functionProperties_; }

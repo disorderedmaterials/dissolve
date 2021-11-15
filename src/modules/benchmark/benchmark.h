@@ -33,8 +33,26 @@ class BenchmarkModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Number of times to run each benchmark in order to form average
+    int nRepeats_{5};
+    // Whether to save new timings to the restart file
+    bool save_{true};
+    // Whether to benchmark intramolecular energy calculation
+    bool testIntraEnergy_{true};
+    // Whether to benchmark interatomic energy calculation
+    bool testInterEnergy_{true};
+    // Whether to benchmark configuration generator
+    bool testGenerator_{true};
+    // Whether to benchmark the RDF cells method (to half-cell range)
+    bool testRDFCells_{true};
+    // Whether to benchmark the RDF simple method (to half-cell range)
+    bool testRDFSimple_{false};
+    // Whether to benchmark molecule distributors
+    bool testDistributors_{true};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

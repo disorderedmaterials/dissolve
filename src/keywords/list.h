@@ -3,219 +3,210 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
-#include "keywords/data.h"
-#include "keywords/group.h"
-#include "templates/list.h"
+#include "keywords/base.h"
+#include "keywords/enumoptions.h"
+#include "templates/optionalref.h"
+#include <any>
+#include <list>
+#include <map>
+#include <typeindex>
+#include <unordered_map>
+
+// Keyword TypeMap
+class KeywordTypeMap
+{
+    public:
+    KeywordTypeMap();
+    ~KeywordTypeMap() = default;
+
+    private:
+    // Function typedefs
+    using SetterFunction = std::function<bool(KeywordBase *keyword, const std::any data)>;
+    using GetterFunction = std::function<const std::any(KeywordBase *keyword)>;
+    // Setter function map
+    std::unordered_map<std::type_index, SetterFunction> directMapSetter_;
+    // Getter function maps
+    std::unordered_map<std::type_index, GetterFunction> directMapGetter_;
+    // Register direct setter for specific keyword / data type pair
+    template <class D, class K> void registerDirectMapping()
+    {
+        // Check for existing data
+        if (directMapSetter_.find(typeid(D)) != directMapSetter_.end())
+            throw(std::runtime_error(fmt::format("Duplicate mapping registered for type '{}'\n", typeid(D).name())));
+
+        directMapSetter_[typeid(D)] = [](KeywordBase *keyword, const std::any data) {
+            auto *k = dynamic_cast<K *>(keyword);
+            assert(k);
+            k->data() = std::any_cast<D>(data);
+            k->setAsModified();
+            return true;
+        };
+        directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
+            auto *k = dynamic_cast<K *>(keyword);
+            assert(k);
+            return k->data();
+        };
+    }
+    // Register direct setter for specific keyword / data type pair, with specific data setter on the keyword
+    template <class D, class K> void registerDirectMapping(std::function<bool(K *keyword, const D data)> setFunction)
+    {
+        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const std::any &data) {
+            auto *k = dynamic_cast<K *>(keyword);
+            assert(k);
+            return setFunction(k, std::any_cast<D>(data));
+        };
+    }
+
+    public:
+    // Set keyword data
+    bool set(KeywordBase *keyword, const std::any data) const;
+    // Get keyword data
+    template <class D> D get(KeywordBase *keyword) const
+    {
+        // Find a suitable getter and call it
+        auto it = directMapGetter_.find(typeid(D));
+        if (it == directMapGetter_.end())
+            throw(std::runtime_error(fmt::format(
+                "Item of type '{}' cannot be returned as no suitable type mapping has been registered.\n", typeid(D).name())));
+
+        auto data = (it->second)(keyword);
+        return std::any_cast<D>(data);
+    }
+};
 
 // Keyword List
 class KeywordList
 {
     public:
-    KeywordList();
-    ~KeywordList();
+    KeywordList() = default;
+    ~KeywordList() = default;
 
     /*
-     * Keyword List
+     * Keyword Data
      */
     private:
-    // List of defined keywords
-    List<KeywordBase> keywords_;
+    // Defined keywords
+    std::map<std::string_view, KeywordBase *> keywords_;
+    // Keyword group mappings
+    std::map<std::string_view, std::vector<std::string_view>> displayGroups_;
 
     public:
-    // Add keyword
-    bool add(KeywordBase *object, std::string_view name, std::string_view description, int optionMask = KeywordBase::NoOptions);
-    // Add keyword (including argument description)
-    bool add(KeywordBase *object, std::string_view name, std::string_view description, std::string_view arguments,
-             int optionMask = KeywordBase::NoOptions);
-    // Add keyword to named group
-    bool add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-             int optionMask = KeywordBase::NoOptions);
-    // Add keyword to named group (including argument description)
-    bool add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-             std::string_view arguments, int optionMask = KeywordBase::NoOptions);
-    // Add link to specified keyword that exists elsewhere
-    bool link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-              int optionMask = KeywordBase::NoOptions);
-    // Add link to specified keyword that exists elsewhere (including argument description)
-    bool link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
-              std::string_view arguments, int optionMask = KeywordBase::NoOptions);
+    // Add keyword (no group)
+    template <class K, typename... Args>
+    KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&... args)
+    {
+        // Check for keyword of this name already
+        if (keywords_.find(name) != keywords_.end())
+            throw(std::runtime_error(fmt::format("Keyword named '{}' already exists, and can't be added again.", name)));
+
+        // Create new keyword using the supplied arguments
+        K *k = new K(std::forward<Args>(args)...);
+        k->setBaseInfo(name, description);
+
+        keywords_.emplace(name, k);
+        return k;
+    }
+    // Add keyword (displaying in named group)
+    template <class K, typename... Args>
+    KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&... args)
+    {
+        auto *k = addKeyword<K>(name, description, args...);
+
+        displayGroups_[displayGroup].push_back(name);
+
+        return k;
+    }
     // Find named keyword
-    KeywordBase *find(std::string_view name) const;
-    // Cut keyword from list
-    void cut(KeywordBase *kwd);
-    // Return keywords list
-    const List<KeywordBase> &keywords() const;
-
-    /*
-     * Groups
-     */
-    private:
-    // Keywords organised by group
-    List<KeywordGroup> groups_;
-
-    private:
-    // Create and/or return named keyword group
-    KeywordGroup *addGroup(std::string_view name);
-
-    public:
-    // Return defined groups
-    const List<KeywordGroup> &groups() const;
+    KeywordBase *find(std::string_view name);
+    const KeywordBase *find(std::string_view name) const;
+    // Return keywords
+    const std::map<std::string_view, KeywordBase *> keywords() const;
+    // Return keyword group mappings
+    const std::map<std::string_view, std::vector<std::string_view>> displayGroups() const;
+    // Return whether the keyword has been set, and is not currently empty (if relevant)
+    bool hasBeenSet(std::string_view name) const;
+    // Flag that the specified keyword has been set by some external means
+    void setAsModified(std::string_view name) const;
 
     /*
      * Set / Get
      */
+    private:
+    // Return the setter instance
+    static const KeywordTypeMap &setters();
+
     public:
-    // Retrieve named item from specified list as template-guided type
-    template <class T> T &retrieve(std::string_view name, T defaultValue = T(), bool *found = nullptr)
+    // Set specified keyword with supplied data
+    void set(std::string_view name, const std::any value);
+    // Set specified keyword with supplied, template-guided data
+    template <class D> bool set(std::string_view name, const D value)
     {
-        // Find item in the list
-        KeywordBase *item = find(name);
-        if (!item)
-        {
-            Messenger::printVerbose("No item named '{}' in the keyword list - default value item will be returned.\n", name);
-            static T dummy;
-            dummy = defaultValue;
-            if (found != nullptr)
-                (*found) = false;
-            return dummy;
-        }
+        auto it = keywords_.find(name);
+        if (it == keywords_.end())
+            throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
 
-        // Attempt to cast to specified type
-        auto *castItem = dynamic_cast<KeywordData<T> *>(item);
-        if (!castItem)
-            throw std::runtime_error(
-                fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
-
-        if (found != nullptr)
-            (*found) = true;
-        return castItem->data();
+        return setters().set(it->second, value);
     }
-    template <class T> const T &retrieve(std::string_view name, T defaultValue = T(), bool *found = nullptr) const
+    // Set specified enumerated keyword
+    template <class E> void setEnumeration(std::string_view name, E data)
     {
-        // Find item in the list
-        KeywordBase *item = find(name);
-        if (!item)
-        {
-            Messenger::printVerbose("No item named '{}' in the keyword list - default value item will be returned.\n", name);
-            static T dummy;
-            dummy = defaultValue;
-            if (found != nullptr)
-                (*found) = false;
-            return dummy;
-        }
+        auto it = keywords_.find(name);
+        if (it == keywords_.end())
+            throw(std::runtime_error(
+                fmt::format("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name)));
 
-        // Attempt to cast to specified type
-        auto *castItem = dynamic_cast<KeywordData<T> *>(item);
-        if (!castItem)
-            throw std::runtime_error(
-                fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
+        auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(it->second);
+        if (!k)
+            throw(std::runtime_error(
+                fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
 
-        if (found != nullptr)
-            (*found) = true;
-        return castItem->data();
+        k->data() = data;
     }
-    // Set named item from specified list as a template-guided type
-    template <class T> bool set(std::string_view name, T value)
+    // Get specified keyword data, casting as necessary
+    template <class D> D get(std::string_view name) const
     {
-        // Find item in the list
-        KeywordBase *item = find(name);
-        if (!item)
-        {
-            Messenger::warn("No item named '{}' in the keyword list - cannot set it's value.\n", name);
-            return false;
-        }
+        auto it = keywords_.find(name);
+        if (it == keywords_.end())
+            throw(std::runtime_error(fmt::format("Data for keyword '{}' cannot be retrieved as it doesn't exist..\n", name)));
 
-        // Attempt to cast to specified type
-        auto *castItem = dynamic_cast<KeywordData<T> *>(item);
-        if (!castItem)
-            throw std::runtime_error(
-                fmt::format("KeywordList::set({}) failed, because the target item is of the wrong type.", name));
-
-        // Set the new value
-        castItem->setData(value);
-
-        return true;
+        return setters().get<D>(it->second);
     }
-    // Set named EnumOptions from specified list as a template-guided type
-    template <class E> bool setEnumeration(std::string_view name, E value)
+    // Get specified keyword data, casting as necessary
+    template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name) const
     {
-        // Find item in the list
-        KeywordBase *item = find(name);
-        if (!item)
-        {
-            Messenger::warn("No item named '{}' in the keyword list - cannot set it's value.\n", name);
-            return false;
-        }
+        auto it = keywords_.find(name);
+        if (it == keywords_.end())
+            return {};
 
-        // Attempt to cast to specified type
-        auto *castItem = dynamic_cast<KeywordData<EnumOptions<E>> *>(item);
-        if (!castItem)
-            throw std::runtime_error(
-                fmt::format("KeywordList::setEnumeration({}) failed, because the target enum is of the wrong type.", name));
+        // Cast the keyword
+        K *keyword = dynamic_cast<K *>(it->second);
+        if (!keyword)
+            throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
 
-        // Set the new value
-        castItem->data() = value;
-
-        return true;
+        return keyword->data();
     }
-    // Retrieve named EnumOptions with specified class, and return its current enumeration
-    template <class E> E enumeration(std::string_view name, bool *found = nullptr)
+    // Get specified keyword enumeration, casting as necessary
+    template <class E> std::optional<E> getEnumeration(std::string_view name) const
     {
-        // Find item in the list
-        KeywordBase *item = find(name);
-        if (!item)
-        {
-            Messenger::error("No item named '{}' in the keyword list - default enumeration of -1 will be returned.\n", name);
-            if (found != nullptr)
-                (*found) = false;
-            return (E)-1;
-        }
+        auto it = keywords_.find(name);
+        if (it == keywords_.end())
+            return {};
 
-        // Attempt to cast to EnumOptionsBase
-        auto *castItem = dynamic_cast<KeywordData<EnumOptions<E>> *>(item);
-        if (!castItem)
-        {
-            Messenger::error("Failed to cast keyword '{}' into EnumOptions<E> because it's of a different type.\n", name);
-            if (found != nullptr)
-                (*found) = false;
-            return (E)-1;
-        }
+        // Cast the keyword
+        auto *keyword = dynamic_cast<EnumOptionsKeyword<E> *>(it->second);
+        if (!keyword)
+            throw(std::runtime_error(
+                fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
 
-        if (found != nullptr)
-            (*found) = true;
-        return castItem->data().enumeration();
+        return keyword->data();
     }
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return simple keyword value (as bool)
-    bool asBool(std::string_view name) const;
-    // Return simple keyword value (as int)
-    int asInt(std::string_view name) const;
-    // Return simple keyword value (as double)
-    double asDouble(std::string_view name) const;
-    // Return simple keyword value (as string)
-    std::string asString(std::string_view name) const;
-    // Return simple keyword value (as Vec3<int>)
-    Vec3<int> asVec3Int(std::string_view name) const;
-    // Return simple keyword value (as Vec3<double>)
-    Vec3<double> asVec3Double(std::string_view name) const;
-    // Return whether the keyword has been set, and is not currently empty (if relevant)
-    bool hasBeenSet(std::string_view name) const;
-    // Flag that the specified keyword has been set by some external means
-    void setAsModified(std::string_view name);
 
     /*
      * Read / Write
      */
     public:
-    // Try to parse keyword in specified LineParser
-    KeywordBase::ParseResult parse(LineParser &parser, const CoreData &coreData);
+    // Try to parse a single keyword through the specified LineParser
+    KeywordBase::ParseResult parse(LineParser &parser, const CoreData &coreData, int startArg = 0);
     // Write all keywords to specified LineParser
     bool write(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
-    // Write all keywords in groups to specified LineParser
-    bool writeGroups(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
 };

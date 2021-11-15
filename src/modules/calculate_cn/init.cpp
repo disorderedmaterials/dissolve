@@ -27,7 +27,7 @@ void CalculateCNModule::initialise()
     // Process1D - targets Collect1D in source RDF module
     process1D_ = new Process1DProcedureNode;
     process1D_->setName("HistogramNorm");
-    process1D_->setKeyword("CurrentDataOnly", true);
+    process1D_->keywords().set("CurrentDataOnly", true);
     SequenceProcedureNode *rdfNormalisation = process1D_->addNormalisationBranch();
     siteNormaliser_ = new OperateSitePopulationNormaliseProcedureNode;
     rdfNormalisation->addNode(siteNormaliser_);
@@ -39,25 +39,26 @@ void CalculateCNModule::initialise()
     analyser_.addRootSequenceNode(sum1D_);
 
     // Target / Ranges
-    keywords_.add("Target / Ranges", new ModuleKeyword<const CalculateRDFModule>("CalculateRDF"), "SourceRDF",
-                  "Source CalculateRDFModule containing the data to process");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeA"), "RangeA",
-                   "Distance range for first coordination number");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeBEnabled"), "RangeBEnabled",
-                   "Whether calculation of the second coordination number is enabled");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeB"), "RangeB",
-                   "Distance range for second coordination number");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeCEnabled"), "RangeCEnabled",
-                   "Whether calculation of the third coordination number is enabled");
-    keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeC"), "RangeC",
-                   "Distance range for third coordination number");
+    keywords_.add<ModuleKeyword<CalculateRDFModule>>(
+        "Target / Ranges", "SourceRDF", "Source CalculateRDFModule containing the data to process", sourceRDF_, "CalculateRDF");
+    keywords_.add<RangeKeyword>("Target / Ranges", "RangeA", "Distance range for first coordination number", sum1D_->range(0));
+    keywords_.add<BoolKeyword>("Target / Ranges", "RangeBEnabled",
+                               "Whether calculation of the second coordination number is enabled", sum1D_->rangeEnabled(1));
+    keywords_.add<RangeKeyword>("Target / Ranges", "RangeB", "Distance range for second coordination number", sum1D_->range(1));
+    keywords_.add<BoolKeyword>("Target / Ranges", "RangeCEnabled",
+                               "Whether calculation of the third coordination number is enabled", sum1D_->rangeEnabled(2));
+    keywords_.add<RangeKeyword>("Target / Ranges", "RangeC", "Distance range for third coordination number", sum1D_->range(2));
 
     // Test
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestRangeA",
-                  "Reference coordination number for range A against which calculated value should be tested");
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestRangeB",
-                  "Reference coordination number for range B against which calculated value should be tested");
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestRangeC",
-                  "Reference coordination number for range C against which calculated value should be tested");
-    keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold difference at which test comparisons will fail");
+    keywords_.add<DoubleKeyword>("Test", "TestRangeA",
+                                 "Reference coordination number for range A against which calculated value should be tested",
+                                 testRangeA_);
+    keywords_.add<DoubleKeyword>("Test", "TestRangeB",
+                                 "Reference coordination number for range B against which calculated value should be tested",
+                                 testRangeB_);
+    keywords_.add<DoubleKeyword>("Test", "TestRangeC",
+                                 "Reference coordination number for range C against which calculated value should be tested",
+                                 testRangeC_);
+    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold difference at which test comparisons will fail",
+                                 testThreshold_, 1.0e-5);
 }

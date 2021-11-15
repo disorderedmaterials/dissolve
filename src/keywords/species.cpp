@@ -6,9 +6,15 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesKeyword::SpeciesKeyword(const Species *sp) : KeywordData<const Species *>(KeywordBase::SpeciesData, sp) {}
+SpeciesKeyword::SpeciesKeyword(const Species *&data) : KeywordBase(typeid(this), KeywordBase::SpeciesData), data_(data) {}
 
-SpeciesKeyword::~SpeciesKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+const Species *&SpeciesKeyword::data() { return data_; }
+const Species *&SpeciesKeyword::data() const { return data_; }
 
 /*
  * Arguments
@@ -26,10 +32,7 @@ bool SpeciesKeyword::read(LineParser &parser, int startArg, const CoreData &core
     // Find target Species (first argument)
     data_ = coreData.findSpecies(parser.argsv(startArg));
     if (!data_)
-    {
-        Messenger::error("Error setting Species - no Species named '{}' exists.\n", parser.argsv(startArg));
-        return false;
-    }
+        return Messenger::error("Error setting Species - no Species named '{}' exists.\n", parser.argsv(startArg));
 
     set_ = true;
 

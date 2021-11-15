@@ -3,15 +3,27 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include "procedure/procedure.h"
 
 // Keyword with Procedure data
-class ProcedureKeyword : public KeywordData<Procedure &>
+class ProcedureKeyword : public KeywordBase
 {
     public:
-    ProcedureKeyword(Procedure &procedure);
-    ~ProcedureKeyword() override;
+    explicit ProcedureKeyword(Procedure &data);
+    ~ProcedureKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    Procedure &data_;
+
+    public:
+    // Return reference to data
+    Procedure &data();
+    const Procedure &data() const;
 
     /*
      * Arguments

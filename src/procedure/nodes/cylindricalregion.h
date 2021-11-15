@@ -13,6 +13,17 @@ class CylindricalRegionProcedureNode : public RegionProcedureNodeBase
     ~CylindricalRegionProcedureNode() override = default;
 
     /*
+     * Control
+     */
+    private:
+    // Origin of vector in fractional coordinates
+    Vec3<double> originFrac_{0.0, 0.0, 0.0};
+    // Radius of cylindrical region
+    double radius_{5.0};
+    // Cylinder vector
+    Vec3<double> vector_{0.0, 0.0, 1.0};
+
+    /*
      * Region Data
      */
     public:

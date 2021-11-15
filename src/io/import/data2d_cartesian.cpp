@@ -19,14 +19,13 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
         return Messenger::error("Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
 
     // Set up our data
-    const auto xRange = keywords_.asVec3Double("XRange");
-    const auto xMin = xRange.x;
-    const auto xMax = xRange.y;
-    const auto xDelta = xRange.z;
-    const auto yRange = keywords_.asVec3Double("YRange");
-    const auto yMin = yRange.x;
-    const auto yMax = yRange.y;
-    const auto yDelta = yRange.z;
+    const auto xMin = xAxis_.x;
+    const auto xMax = xAxis_.y;
+    const auto xDelta = xAxis_.z;
+    ;
+    const auto yMin = yAxis_.x;
+    const auto yMax = yAxis_.y;
+    const auto yDelta = yAxis_.z;
     data.initialise(xMin, xMax, xDelta, yMin, yMax, yDelta);
 
     // Loop over lines in the file - we expect blocks with three columns (x, y, f(x,y))

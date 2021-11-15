@@ -7,10 +7,9 @@
 // Static Singletons
 RefList<KeywordBase> KeywordBase::allKeywords_;
 
-KeywordBase::KeywordBase(KeywordDataType type) : ListItem<KeywordBase>(), type_(type)
+KeywordBase::KeywordBase(const std::type_index typeIndex, KeywordDataType type)
+    : type_(type), typeIndex_(typeIndex), set_(false)
 {
-    set_ = false;
-
     // Add ourselves to the master reference list of keywords
     allKeywords_.append(this);
 }
@@ -70,24 +69,18 @@ std::string_view KeywordDataTypeKeywords[] = {"AtomTypeVector",
 std::string_view KeywordBase::keywordDataType(KeywordDataType kdt) { return KeywordDataTypeKeywords[kdt]; }
 
 /*
- * Base Pointer Return
- */
-
-// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-KeywordBase *KeywordBase::base() { return this; }
-
-/*
  * Keyword Description
  */
 
-// Set name, description, arguments, and option mask
-void KeywordBase::set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask)
+// Set base keyword information
+void KeywordBase::setBaseInfo(std::string_view name, std::string_view description)
 {
     name_ = name;
-    arguments_ = arguments;
     description_ = description;
-    optionMask_ = optionMask;
 }
+
+// Set option mask
+void KeywordBase::setOptionMask(int opttionMask) { optionMask_ = opttionMask; }
 
 // Flag that data has been set by some other means
 void KeywordBase::setAsModified() { set_ = true; }
@@ -135,58 +128,6 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
     }
 
     return true;
-}
-
-/*
- * Conversion
- */
-
-// Return value (as bool)
-bool KeywordBase::asBool()
-{
-    Messenger::warn("No suitable conversion to bool from KeywordDataType {} ({}) exists. Returning 'false'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return false;
-}
-
-// Return value (as int)
-int KeywordBase::asInt()
-{
-    Messenger::warn("No suitable conversion to int from KeywordDataType {} ({}) exists. Returning '0'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return 0;
-}
-
-// Return value (as double)
-double KeywordBase::asDouble()
-{
-    Messenger::warn("No suitable conversion to double from KeywordDataType {} ({}) exists. Returning '0.0'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return 0.0;
-}
-
-// Return value (as string)
-std::string KeywordBase::asString()
-{
-    Messenger::warn("No suitable conversion to string from KeywordDataType {} ({}) exists. Returning 'NULL'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return "NULL";
-}
-
-// Return value as Vec3<int>
-Vec3<int> KeywordBase::asVec3Int()
-{
-    Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType {} ({}) exists. Returning '(0,0,0)'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return Vec3<int>(0, 0, 0);
-}
-
-// Return value as Vec3<double>
-Vec3<double> KeywordBase::asVec3Double()
-{
-    Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType {} ({}) exists. Returning '(0.0,0.0,0.0)'.\n",
-                    type_, KeywordBase::keywordDataType(type_));
-    return Vec3<double>(0.0, 0.0, 0.0);
 }
 
 /*

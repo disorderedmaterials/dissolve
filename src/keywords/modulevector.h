@@ -3,24 +3,25 @@
 
 #pragma once
 
-#include "keywords/data.h"
-#include "templates/reflist.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class Module;
 
 // Keyword with Module RefList data
-class ModuleVectorKeyword : public KeywordData<std::vector<Module *>>
+class ModuleVectorKeyword : public KeywordBase
 {
     public:
-    ModuleVectorKeyword(int maxModules = -1);
-    ModuleVectorKeyword(std::vector<std::string> allowedModuleTypes, int maxModules = -1);
-    ~ModuleVectorKeyword() override;
+    ModuleVectorKeyword(std::vector<Module *> &data, int maxModules = -1);
+    ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes, int maxModules = -1);
+    ~ModuleVectorKeyword() override = default;
 
     /*
      * Data
      */
     private:
+    // Reference to data vector
+    std::vector<Module *> &data_;
     // Module type(s) to allow
     std::vector<std::string> moduleTypes_;
     // Maximum number of modules to allow in list (-1 for any number)
@@ -31,6 +32,9 @@ class ModuleVectorKeyword : public KeywordData<std::vector<Module *>>
     bool isDataEmpty() const override;
 
     public:
+    // Return the data vector
+    std::vector<Module *> &data();
+    const std::vector<Module *> &data() const;
     // Return the Module type(s) to allow
     const std::vector<std::string> &moduleTypes() const;
     // Return maximum number of Modules to allow in the list

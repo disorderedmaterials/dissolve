@@ -5,64 +5,37 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-IntegerKeyword::IntegerKeyword(int value) : KeywordData<int>(KeywordBase::IntegerData, value)
+IntegerKeyword::IntegerKeyword(int &data, std::optional<int> minValue, std::optional<int> maxValue)
+    : KeywordBase(typeid(this), KeywordBase::IntegerData), data_(data)
 {
-    minimumLimit_ = false;
-    maximumLimit_ = false;
+    minimumLimit_ = minValue;
+    maximumLimit_ = maxValue;
 }
-
-IntegerKeyword::IntegerKeyword(int value, int minValue) : KeywordData<int>(KeywordBase::IntegerData, value)
-{
-    minimumLimit_ = true;
-    min_ = minValue;
-    maximumLimit_ = false;
-}
-
-IntegerKeyword::IntegerKeyword(int value, int minValue, int maxValue) : KeywordData<int>(KeywordBase::IntegerData, value)
-{
-    minimumLimit_ = true;
-    min_ = minValue;
-    maximumLimit_ = true;
-    max_ = maxValue;
-}
-
-IntegerKeyword::~IntegerKeyword() = default;
 
 /*
- * Data Validation
+ * Data
  */
 
-// Return whether a minimum validation limit has been set
-bool IntegerKeyword::hasValidationMin() { return minimumLimit_; }
-
-// Return validation minimum limit
-int IntegerKeyword::validationMin() { return min_; }
-
-// Return whether a maximum validation limit has been set
-bool IntegerKeyword::hasValidationMax() { return maximumLimit_; }
-
-// Return validation maximum limit
-int IntegerKeyword::validationMax() { return max_; }
-
-// Validate supplied value
-bool IntegerKeyword::isValid(int value)
+// Set data
+bool IntegerKeyword::setData(int value)
 {
-    // Check minimum limit
-    if (minimumLimit_)
-    {
-        if (value < min_)
-            return false;
-    }
+    if ((minimumLimit_ && value < minimumLimit_.value()) || (maximumLimit_ && value > maximumLimit_))
+        return false;
 
-    // Check maximum limit
-    if (maximumLimit_)
-    {
-        if (value > max_)
-            return false;
-    }
+    data_ = value;
+    set_ = true;
 
     return true;
 }
+
+// Return data
+int IntegerKeyword::data() const { return data_; }
+
+// Return validation minimum limit
+std::optional<int> IntegerKeyword::validationMin() { return minimumLimit_; }
+
+// Return validation maximum limit
+std::optional<int> IntegerKeyword::validationMax() { return maximumLimit_; }
 
 /*
  * Arguments
@@ -79,23 +52,23 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &core
 {
     if (parser.hasArg(startArg))
     {
-        if (!setData(parser.argi(startArg)))
+        auto x = parser.argi(startArg);
+        if (!setData(x))
         {
             if (minimumLimit_ && maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", parser.argi(startArg),
-                                 min_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", x,
+                                 minimumLimit_.value(), maximumLimit_.value());
             else if (minimumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", parser.argi(startArg),
-                                 min_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", x, minimumLimit_.value());
             else
-                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", parser.argi(startArg),
-                                 max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", x, maximumLimit_.value());
 
             return false;
         }
 
         return true;
     }
+
     return false;
 }
 
@@ -104,19 +77,3 @@ bool IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std
 {
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }
-
-/*
- * Conversion
- */
-
-// Return value (as bool)
-bool IntegerKeyword::asBool() { return data_; }
-
-// Return value (as int)
-int IntegerKeyword::asInt() { return data_; }
-
-// Return value (as double)
-double IntegerKeyword::asDouble() { return data_ * 1.0; }
-
-// Return value (as string)
-std::string IntegerKeyword::asString() { return fmt::format("{}", data_); }

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "procedure/nodes/operatebase.h"
+#include "procedure/nodevalue.h"
 
 // Operate Multiply Node
 class OperateMultiplyProcedureNode : public OperateProcedureNodeBase
@@ -11,6 +12,13 @@ class OperateMultiplyProcedureNode : public OperateProcedureNodeBase
     public:
     OperateMultiplyProcedureNode();
     ~OperateMultiplyProcedureNode() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Operating value
+    NodeValue value_{1.0};
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

@@ -13,17 +13,27 @@
 
 CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedureNode *site0, OrientedSite::SiteAxis axis0,
                                                                  SelectProcedureNode *site1, OrientedSite::SiteAxis axis1)
-    : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAxisAngle, site0, site1)
+    : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAxisAngle, site0, site1), axes_{axis0, axis1}
 {
-    // Create keywords - store the pointers to the superclasses for later use
-    siteKeywords_[0] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site0);
-    keywords_.add("Control", siteKeywords_[0], "I", "Site that contains the first set of axes");
-    keywords_.add("Control", new EnumOptionsKeyword<OrientedSite::SiteAxis>(OrientedSite::siteAxis() = axis0), "AxisI",
-                  "Axis to use from site I");
-    siteKeywords_[1] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site1);
-    keywords_.add("Control", siteKeywords_[1], "J", "Site that contains the second set of axes");
-    keywords_.add("Control", new EnumOptionsKeyword<OrientedSite::SiteAxis>(OrientedSite::siteAxis() = axis1), "AxisJ",
-                  "Axis to use from site J");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that contains the first set of axes", sites_[0], this,
+                                                    ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that contains the second set of axes", sites_[1],
+                                                    this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisI", "Axis to use from site I", axes_[0],
+                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisJ", "Axis to use from site J", axes_[1],
+                                                              OrientedSite::siteAxis());
+}
+
+/*
+ * Data
+ */
+
+// Return axis specified
+OrientedSite::SiteAxis &CalculateAxisAngleProcedureNode::axis(int n)
+{
+    assert(n >= 0 && n < 2);
+    return axes_[n];
 }
 
 /*
@@ -47,10 +57,6 @@ bool CalculateAxisAngleProcedureNode::prepare(Configuration *cfg, std::string_vi
     if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList))
         return false;
 
-    // Get orientation flag
-    axisI_ = keywords_.enumeration<OrientedSite::SiteAxis>("AxisI");
-    axisJ_ = keywords_.enumeration<OrientedSite::SiteAxis>("AxisJ");
-
     return true;
 }
 
@@ -61,8 +67,8 @@ bool CalculateAxisAngleProcedureNode::execute(ProcessPool &procPool, Configurati
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
 
-    value_ = Box::angleInDegrees(sites_[0]->currentSite()->axes().columnAsVec3(axisI_),
-                                 sites_[1]->currentSite()->axes().columnAsVec3(axisJ_));
+    value_ = Box::angleInDegrees(sites_[0]->currentSite()->axes().columnAsVec3(axes_[0]),
+                                 sites_[1]->currentSite()->axes().columnAsVec3(axes_[1]));
 
     return true;
 }

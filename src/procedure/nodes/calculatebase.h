@@ -27,13 +27,6 @@ class CalculateProcedureNodeBase : public ProcedureNode
     bool isContextRelevant(ProcedureNode::NodeContext context) override;
 
     /*
-     * Keywords
-     */
-    protected:
-    // Pointers to available site node keywords
-    std::array<NodeKeyword *, 4> siteKeywords_;
-
-    /*
      * Observable Target
      */
     protected:

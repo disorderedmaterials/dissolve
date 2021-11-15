@@ -26,7 +26,7 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *pa
         for (int n = 0; n < options.nOptions(); ++n)
         {
             ui_.OptionsCombo->addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
-            if (options.index() == n)
+            if (keyword_->enumerationIndex() == n)
                 ui_.OptionsCombo->setCurrentIndex(n);
         }
 
@@ -72,7 +72,7 @@ void NodeValueEnumOptionsKeywordWidget::on_OptionsCombo_currentIndexChanged(int 
     if (refreshing_)
         return;
 
-    keyword_->setEnumerationByIndex(index);
+    keyword_->setEnumeration(index);
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }

@@ -298,7 +298,7 @@ SequenceProcedureNode::parameterExists(std::string_view name, const std::shared_
 }
 
 // Create and return reference list of parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(ProcedureNode *queryingNode)
+std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(const ProcedureNode *queryingNode)
 {
     if (queryingNode)
         assert(sequence_.contains(queryingNode));

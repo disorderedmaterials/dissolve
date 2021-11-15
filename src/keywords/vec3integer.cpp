@@ -4,34 +4,43 @@
 #include "keywords/vec3integer.h"
 #include "base/lineparser.h"
 
-Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3Labels::LabelType labelType)
-    : KeywordData<Vec3<int>>(KeywordBase::Vec3IntegerData, value)
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>> minValue, std::optional<Vec3<int>> maxValue,
+                                       Vec3Labels::LabelType labelType)
+    : KeywordBase(typeid(this), KeywordBase::Vec3DoubleData), data_(data)
 {
     labelType_ = labelType;
-    minimumLimit_ = false;
-    maximumLimit_ = false;
+    minimumLimit_ = minValue;
+    maximumLimit_ = maxValue;
 }
 
-Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3Labels::LabelType labelType)
-    : KeywordData<Vec3<int>>(KeywordBase::Vec3IntegerData, value)
+/*
+ * Data
+ */
+
+// Set data
+bool Vec3IntegerKeyword::setData(Vec3<int> value)
 {
-    labelType_ = labelType;
-    minimumLimit_ = true;
-    min_ = minValue;
-    maximumLimit_ = false;
+    if (minimumLimit_ &&
+        (value.x < minimumLimit_.value().x || value.y < minimumLimit_.value().y || value.z < minimumLimit_.value().z))
+        return false;
+    if (maximumLimit_ &&
+        (value.x > maximumLimit_.value().x || value.y > maximumLimit_.value().y || value.z > maximumLimit_.value().z))
+        return false;
+
+    data_ = value;
+    set_ = true;
+
+    return true;
 }
 
-Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue, Vec3Labels::LabelType labelType)
-    : KeywordData<Vec3<int>>(KeywordBase::Vec3IntegerData, value)
-{
-    labelType_ = labelType;
-    minimumLimit_ = true;
-    min_ = minValue;
-    maximumLimit_ = true;
-    max_ = maxValue;
-}
+// Return data
+const Vec3<int> &Vec3IntegerKeyword::data() const { return data_; }
 
-Vec3IntegerKeyword::~Vec3IntegerKeyword() = default;
+// Return validation minimum limit
+std::optional<Vec3<int>> Vec3IntegerKeyword::validationMin() { return minimumLimit_; }
+
+// Return validation maximum limit
+std::optional<Vec3<int>> Vec3IntegerKeyword::validationMax() { return maximumLimit_; }
 
 /*
  * Label Type
@@ -39,55 +48,6 @@ Vec3IntegerKeyword::~Vec3IntegerKeyword() = default;
 
 // Label type to display in GUI
 Vec3Labels::LabelType Vec3IntegerKeyword::labelType() const { return labelType_; }
-
-/*
- * Data Validation
- */
-
-// Return whether a minimum validation limit has been set for supplied index
-bool Vec3IntegerKeyword::hasValidationMin(int index) { return minimumLimit_[index]; }
-
-// Return validation minimum limit for supplied index
-int Vec3IntegerKeyword::validationMin(int index) { return min_[index]; }
-
-// Return whether a maximum validation limit has been set for supplied index
-bool Vec3IntegerKeyword::hasValidationMax(int index) { return maximumLimit_[index]; }
-
-// Return validation maximum limit for supplied index
-int Vec3IntegerKeyword::validationMax(int index) { return max_[index]; }
-
-// Validate supplied value
-bool Vec3IntegerKeyword::isValid(Vec3<int> value)
-{
-    if (!isValid(0, value.x))
-        return false;
-    if (!isValid(1, value.y))
-        return false;
-    if (!isValid(2, value.z))
-        return false;
-
-    return true;
-}
-
-// Validate supplied value
-bool Vec3IntegerKeyword::isValid(int index, int value)
-{
-    // Check minimum limit
-    if (minimumLimit_[index])
-    {
-        if (value < min_[index])
-            return false;
-    }
-
-    // Check maximum limit
-    if (maximumLimit_[index])
-    {
-        if (value > max_[index])
-            return false;
-    }
-
-    return true;
-}
 
 /*
  * Arguments
@@ -104,27 +64,26 @@ bool Vec3IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &
 {
     if (parser.hasArg(startArg + 2))
     {
-        // Check individual components of the vector
-        for (auto n = 0; n < 3; ++n)
+        auto v = parser.arg3i(startArg);
+        if (!setData(v))
         {
-            if (!isValid(n, parser.argi(startArg + n)))
-            {
-                if (minimumLimit_[n] && maximumLimit_[n])
-                    Messenger::error("Value {} is out of range for keyword '{}'. Valid range is {} <= n <= {}.\n", data_[n],
-                                     name(), min_[n], max_[n]);
-                else if (minimumLimit_[n])
-                    Messenger::error("Value {} is out of range for keyword '{}'. Valid range is {} <= n.\n", data_[n], name(),
-                                     min_[n]);
-                else
-                    Messenger::error("Value {} is out of range for keyword '{}'. Valid range is n <= {}.\n", data_[n], name(),
-                                     max_[n]);
+            if (minimumLimit_ && maximumLimit_)
+                Messenger::error("Value [{},{},{}] is out of range. Valid range is "
+                                 "[{},{},{}] <= [x,y,z] "
+                                 "<= [{},{},{}].\n",
+                                 v.x, v.y, v.z, minimumLimit_.value().x, minimumLimit_.value().y, minimumLimit_.value().z,
+                                 maximumLimit_.value().x, maximumLimit_.value().y, maximumLimit_.value().z);
+            else if (minimumLimit_)
+                Messenger::error("Value [{},{},{}] is out of range. Valid range is "
+                                 "[{},{},{}] <= [x,y,z].\n",
+                                 v.x, v.y, v.z, minimumLimit_.value().x, minimumLimit_.value().y, minimumLimit_.value().z);
+            else
+                Messenger::error("Value [{},{},{}] is out of range. Valid range is [x,y,z] "
+                                 "<= [{},{},{}].\n",
+                                 v.x, v.y, v.z, maximumLimit_.value().x, maximumLimit_.value().y, maximumLimit_.value().z);
 
-                return false;
-            }
-        }
-
-        if (!setData(parser.arg3i(startArg)))
             return false;
+        }
 
         return true;
     }
@@ -136,13 +95,3 @@ bool Vec3IntegerKeyword::write(LineParser &parser, std::string_view keywordName,
 {
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
-
-/*
- * Conversion
- */
-
-// Return value (as Vec3<int>)
-Vec3<int> Vec3IntegerKeyword::asVec3Int() { return data_; }
-
-// Return value (as Vec3<int>)
-Vec3<double> Vec3IntegerKeyword::asVec3Double() { return Vec3<double>(data_.x, data_.y, data_.z); }

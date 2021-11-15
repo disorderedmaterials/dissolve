@@ -9,26 +9,19 @@ add_library(
   data3dstore.cpp
   double.cpp
   dynamicsitenodes.cpp
-  elementreflist.cpp
+  elementvector.cpp
   expression.cpp
   expressionvariablevector.cpp
   fileandformat.cpp
   function1d.cpp
   geometrylist.cpp
-  group.cpp
   integer.cpp
   isotopologueset.cpp
-  linkto.cpp
   list.cpp
-  module.cpp
-  modulegroups.cpp
   modulevector.cpp
-  node.cpp
-  nodeandinteger.cpp
-  nodebase.cpp
   nodebranch.cpp
+  nodeunderlay.cpp
   nodevalue.cpp
-  nodevector.cpp
   procedure.cpp
   range.cpp
   species.cpp
@@ -48,31 +41,27 @@ add_library(
   base.h
   bool.h
   configurationvector.h
-  data.h
   data1dstore.h
   data2dstore.h
   data3dstore.h
   double.h
   dynamicsitenodes.h
-  elementreflist.h
+  elementvector.h
   enumoptions.h
   expression.h
   expressionvariablevector.h
   fileandformat.h
   function1d.h
   geometrylist.h
-  group.h
   integer.h
   isotopologueset.h
-  linkto.h
   list.h
   module.h
-  modulegroups.h
   modulevector.h
   node.h
   nodeandinteger.h
-  nodebase.h
   nodebranch.h
+  nodeunderlay.h
   nodevalue.h
   nodevalueenumoptions.h
   nodevector.h

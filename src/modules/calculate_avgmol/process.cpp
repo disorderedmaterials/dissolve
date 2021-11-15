@@ -9,25 +9,23 @@
 // Run set-up stage
 bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 {
-    auto *site = keywords_.retrieve<SpeciesSite *>("Site");
-
     // Clear species
     averageSpecies_.clear();
 
     // If the targetSpecies_ is different from the current target site, or the site is nullptr, clear the arrays
-    if (!site)
+    if (!targetSite_)
         targetSpecies_ = nullptr;
     else
     {
-        if (site->parent() == nullptr)
+        if (targetSite_->parent() == nullptr)
         {
             targetSpecies_ = nullptr;
 
             return Messenger::error("Target site has no parent species.\n");
         }
-        else if (site->parent() != targetSpecies_)
+        else if (targetSite_->parent() != targetSpecies_)
         {
-            targetSpecies_ = site->parent();
+            targetSpecies_ = targetSite_->parent();
 
             // Copy basic atom and bond information from species
             for (const auto &i : targetSpecies_->atoms())
@@ -38,7 +36,8 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Set name and object tag for average species
-    averageSpecies_.setName(fmt::format("{}@{}", site ? site->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
+    averageSpecies_.setName(
+        fmt::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 
     // Realise arrays
     updateArrays(dissolve);
@@ -53,23 +52,22 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Grab Configuration and Box pointers
-    auto *cfg = targetConfigurationsKeyword_.data().front();
+    auto *cfg = targetConfigurations_.front();
     const auto *box = cfg->box();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());
 
     // Get the target site
-    auto *site = keywords_.retrieve<SpeciesSite *>("Site");
-    if (!site)
+    if (!targetSite_)
         return Messenger::error("No target site defined.\n");
 
     // Get site parent species
-    auto *sp = site->parent();
+    auto *sp = targetSite_->parent();
     if (sp != targetSpecies_)
         return Messenger::error("Internal error - target site parent is not the same as the target species.\n");
 
@@ -77,7 +75,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     updateArrays(dissolve);
 
     // Get the site stack
-    const auto *stack = cfg->siteStack(site);
+    const auto *stack = cfg->siteStack(targetSite_);
 
     // Retrieve data arrays
     auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", uniqueName());

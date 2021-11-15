@@ -21,30 +21,21 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
-    auto *cfg = targetConfigurationsKeyword_.data().front();
-
-    const auto averaging = keywords_.asInt("Averaging");
-    auto averagingScheme = Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
-    const auto qDelta = keywords_.asDouble("QDelta");
-    const auto qMax = keywords_.asDouble("QMax");
-    const auto qMin = keywords_.asDouble("QMin");
-    const auto multiplicity = keywords_.asVec3Int("Multiplicity");
-    const auto saveReflections = keywords_.asBool("SaveReflections");
-    const auto testReflections = keywords_.asString("TestReflections");
+    auto *cfg = targetConfigurations_.front();
 
     // Print argument/parameter summary
-    Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n", qMin,
-                     qMax, qDelta);
-    Messenger::print("Bragg: Multiplicity is ({} {} {}).\n", multiplicity.x, multiplicity.y, multiplicity.z);
-    if (averaging <= 1)
+    Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
+                     qMin_, qMax_, qDelta_);
+    Messenger::print("Bragg: Multiplicity is ({} {} {}).\n", multiplicity_.x, multiplicity_.y, multiplicity_.z);
+    if (averagingLength_ <= 1)
         Messenger::print("Bragg: No averaging of reflections will be performed.\n");
     else
-        Messenger::print("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averaging,
-                         Averaging::averagingSchemes().keyword(averagingScheme));
-    Messenger::print("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity.x, multiplicity.y,
-                     multiplicity.z);
+        Messenger::print("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averagingLength_,
+                         Averaging::averagingSchemes().keyword(averagingScheme_));
+    Messenger::print("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity_.x, multiplicity_.y,
+                     multiplicity_.z);
     Messenger::print("\n");
 
     // Set up process pool - must do this to ensure we are using all available processes
@@ -55,19 +46,20 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &combinedAtomTypes =
         dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", uniqueName_, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
         combinedAtomTypes.add(cfg->atomTypes());
 
     // Store unit cell information
     auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", uniqueName_, GenericItem::InRestartFileFlag);
-    unitCellVolume = cfg->box()->volume() / (multiplicity.x * multiplicity.y * multiplicity.z);
+    unitCellVolume = cfg->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Finalise combined AtomTypes matrix
     combinedAtomTypes.finalise();
 
     // Calculate Bragg vectors and intensities for the current Configuration
     bool alreadyUpToDate;
-    if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, cfg, qMin, qDelta, qMax, multiplicity, alreadyUpToDate))
+    if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, cfg, qMin_, qDelta_, qMax_, multiplicity_,
+                             alreadyUpToDate))
         return false;
 
     // If we are already up-to-date, then theres nothing more to do for this Configuration
@@ -78,21 +70,21 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Perform averaging of reflections data if requested
-    if (averaging > 1)
+    if (averagingLength_ > 1)
         Averaging::vectorAverage<std::vector<BraggReflection>>(dissolve.processingModuleData(), "Reflections", uniqueName(),
-                                                               averaging, averagingScheme);
+                                                               averagingLength_, averagingScheme_);
 
     // Form partial and total reflection functions
-    formReflectionFunctions(dissolve.processingModuleData(), procPool, cfg, qMin, qDelta, qMax);
+    formReflectionFunctions(dissolve.processingModuleData(), procPool, cfg, qMin_, qDelta_, qMax_);
 
     // Test reflection data
-    if (!testReflections.empty())
+    if (!testReflectionsFile_.empty())
     {
         Messenger::print("Testing calculated intensity data against reference...\n");
 
         // Attempt to load the specified file
         LineParser reflectionParser(&procPool);
-        if (!reflectionParser.openInput(testReflections))
+        if (!reflectionParser.openInput(testReflectionsFile_))
             return false;
 
         // Retrieve BraggReflection data from the Configuration's module data
@@ -145,7 +137,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Save reflection data?
-    if (saveReflections)
+    if (saveReflections_)
     {
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =

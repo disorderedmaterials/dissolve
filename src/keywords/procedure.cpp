@@ -6,9 +6,15 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 
-ProcedureKeyword::ProcedureKeyword(Procedure &procedure) : KeywordData<Procedure &>(KeywordBase::ProcedureData, procedure) {}
+ProcedureKeyword::ProcedureKeyword(Procedure &data) : KeywordBase(typeid(this), KeywordBase::ProcedureData), data_(data) {}
 
-ProcedureKeyword::~ProcedureKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+Procedure &ProcedureKeyword::data() { return data_; }
+const Procedure &ProcedureKeyword::data() const { return data_; }
 
 /*
  * Arguments

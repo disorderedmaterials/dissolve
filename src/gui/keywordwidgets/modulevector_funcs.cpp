@@ -104,7 +104,8 @@ void ModuleVectorKeywordWidget::updateKeywordData()
     }
 
     // Update the data
-    keyword_->setData(newSelection);
+    keyword_->data() = newSelection;
+    keyword_->setAsModified();
 }
 
 // Update summary text

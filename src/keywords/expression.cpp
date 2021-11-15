@@ -5,12 +5,28 @@
 #include "base/lineparser.h"
 #include "expression/expression.h"
 
-ExpressionKeyword::ExpressionKeyword(Expression &expression, const std::vector<std::shared_ptr<ExpressionVariable>> &variables)
-    : KeywordData<Expression &>(KeywordData::ExpressionData, expression), variables_(variables)
+ExpressionKeyword::ExpressionKeyword(Expression &data, const std::vector<std::shared_ptr<ExpressionVariable>> &variables)
+    : KeywordBase(typeid(this), KeywordBase::ExpressionData), data_(data), variables_(variables)
 {
 }
 
-ExpressionKeyword::~ExpressionKeyword() = default;
+/*
+ * Data
+ */
+
+// Return reference to data
+const Expression &ExpressionKeyword::data() const { return data_; }
+
+// Set data
+bool ExpressionKeyword::setData(std::string_view expressionText)
+{
+    if (!data_.create(expressionText, variables_))
+        return false;
+
+    set_ = true;
+
+    return true;
+}
 
 /*
  * Arguments
@@ -25,7 +41,7 @@ int ExpressionKeyword::maxArguments() const { return 1; }
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool ExpressionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    return setValue(parser.argsv(startArg));
+    return setData(parser.argsv(startArg));
 }
 
 // Write keyword data to specified LineParser
@@ -36,32 +52,3 @@ bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, 
 
     return true;
 }
-
-/*
- * Set
- */
-
-// Set the value from supplied expression text
-bool ExpressionKeyword::setValue(std::string_view expressionText)
-{
-    if (!data_.create(expressionText, variables_))
-        return false;
-
-    set_ = true;
-
-    return true;
-}
-
-/*
- * Conversion
- */
-
-// Return value (as int)
-int ExpressionKeyword::asInt() { return data_.asInteger(); }
-
-// Return value (as double)
-double ExpressionKeyword::asDouble() { return data_.asDouble(); }
-
-/*
- * Object Management
- */

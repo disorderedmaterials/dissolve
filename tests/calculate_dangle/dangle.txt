@@ -164,11 +164,11 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
                   SubCollect
                     Collect1D  'RDF(BC)'
                       QuantityX  'rHO'
-		      RangeX  0.0  5.0  0.01
+                      RangeX  0.0  5.0  0.01
                     EndCollect1D
                     Collect1D  'ANGLE(ABC)'
                       QuantityX  'aXHO'
-		      RangeX  0.0  180.0  1.0
+                      RangeX  0.0  180.0  1.0
                     EndCollect1D
                   EndSubCollect
                 EndCollect2D
@@ -251,6 +251,7 @@ EndModule
 
 Module DataTest
   Frequency  95
+  ErrorType  Euclidean
   Data1D  'DAngle(X-H...O)-Analyser//Process1D//Angle'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
 EndModule

@@ -3,26 +3,31 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class SpeciesSite;
 
 // Keyword with vector of SpeciesSites
-class SpeciesSiteVectorKeyword : public KeywordData<std::vector<const SpeciesSite *>>
+class SpeciesSiteVectorKeyword : public KeywordBase
 {
     public:
-    SpeciesSiteVectorKeyword(std::vector<const SpeciesSite *> sites, bool axesRequired = false);
-    ~SpeciesSiteVectorKeyword() override;
+    SpeciesSiteVectorKeyword(std::vector<const SpeciesSite *> &data, bool axesRequired = false);
+    ~SpeciesSiteVectorKeyword() override = default;
 
     /*
-     * Specification
+     * Data
      */
     private:
+    // Reference to data vector
+    std::vector<const SpeciesSite *> &data_;
     // Whether sites in the list must have a defined orientation
     bool axesRequired_;
 
     public:
+    // Return reference to data vector
+    std::vector<const SpeciesSite *> &data();
+    const std::vector<const SpeciesSite *> &data() const;
     // Return whether axes are required for the site
     bool axesRequired() const;
 

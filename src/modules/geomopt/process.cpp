@@ -10,23 +10,18 @@
 // Run main processing
 bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    // Retrieve Module options
-    nCycles_ = keywords_.asInt("NCycles");
-    tolerance_ = keywords_.asDouble("Tolerance");
-    initialStepSize_ = keywords_.asDouble("StepSize");
-
     // Print argument/parameter summary
-    Messenger::print("Optimise: Maximum number of cycles is {}.\n", nCycles_);
+    Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
     Messenger::print("Optimise: Base convergence tolerance is {:e}.\n", tolerance_);
     Messenger::print("Optimise: Initial step size to be used is {:e}.\n", initialStepSize_);
     Messenger::print("\n");
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());

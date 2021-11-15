@@ -4,16 +4,26 @@
 #pragma once
 
 #include "classes/isotopologueset.h"
-#include "keywords/data.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
+#include "keywords/base.h"
 
 // Keyword with IsotopologueSet Data
-class IsotopologueSetKeyword : public KeywordData<IsotopologueSet>
+class IsotopologueSetKeyword : public KeywordBase
 {
     public:
-    IsotopologueSetKeyword();
-    ~IsotopologueSetKeyword() override;
+    explicit IsotopologueSetKeyword(IsotopologueSet &data);
+    ~IsotopologueSetKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    IsotopologueSet &data_;
+
+    public:
+    // Return reference to data
+    IsotopologueSet &data();
+    const IsotopologueSet &data() const;
 
     /*
      * Arguments

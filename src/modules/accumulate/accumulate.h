@@ -33,14 +33,7 @@ class AccumulateModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
-     */
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Processing
+     * Control
      */
     public:
     // Target PartialSet Enum
@@ -53,6 +46,22 @@ class AccumulateModule : public Module
     // Return EnumOptions for TargetPartialSet
     static EnumOptions<TargetPartialSet> targetPartialSet();
 
+    private:
+    // Type of target PartialSet
+    AccumulateModule::TargetPartialSet targetPartialSet_;
+    // Module containing the target partial set data to accumulate
+    std::vector<Module *> targetModule_;
+    // Whether to save the accumulated partials to disk
+    bool save_{false};
+
+    protected:
+    // Perform any necessary initialisation for the Module
+    void initialise() override;
+
+    /*
+     * Processing
+     */
+    public:
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
