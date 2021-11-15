@@ -59,19 +59,19 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
 void ImportCIFDialog::applyCIFBonding(Species *sp)
 {
     auto *box = sp->box();
-    for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
+    auto pairs = PairIterator(sp->nAtoms());
+    for (auto pair : pairs)
     {
-        // Get SpeciesAtom 'i' and its radius
+        auto [indexI, indexJ] = pair;
+        if (indexI == indexJ)
+            return;
         auto &i = sp->atom(indexI);
-        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
-        {
-            auto &j = sp->atom(indexJ);
-            auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
-            if (!r)
-                continue;
-            else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
-                sp->addBond(&i, &j);
-        }
+        auto &j = sp->atom(indexJ);
+        auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
+        if (!r)
+            continue;
+        else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
+            sp->addBond(&i, &j);
     }
 }
 
@@ -318,9 +318,8 @@ bool ImportCIFDialog::createStructuralSpecies()
                 r = box->fold(r);
 
                 // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
-                if (std::find_if(sp->atoms().begin(), sp->atoms().end(), [&r, box, tolerance](const auto &j) {
-                        return box->minimumDistance(r, j.r()) < tolerance;
-                    }) != sp->atoms().end())
+                if (std::any_of(sp->atoms().begin(), sp->atoms().end(),
+                                [&r, box, tolerance](const auto &j) { return box->minimumDistance(r, j.r()) < tolerance; }))
                     continue;
 
                 // Create the new atom
