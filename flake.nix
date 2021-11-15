@@ -48,11 +48,11 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         nixGL = import nixGL-src { inherit pkgs; };
-        qt6 = import ./nix/qt6.nix { inherit pkgs; };
+        QTDIR = "${import ./nix/qt6.nix { inherit pkgs; }}/6.1.1/gcc_64";
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
-          pkgs.gcc9Stdenv.mkDerivation rec {
+          pkgs.gcc9Stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
             src =
@@ -84,20 +84,21 @@
               mv ./$out/bin/* $out/bin/
             '';
 
-            QTDIR = "${qt6}/6.1.1/gcc_64";
-            PATH = "${QTDIR}/bin";
-            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
-            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
-            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
-            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
-
             meta = with pkgs.lib; {
               description = "";
               homepage = "";
               # license = licenses.unlicense;
               maintainers = [ maintainers.rprospero ];
             };
-          };
+          } // (if gui then {
+            inherit QTDIR;
+            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
+            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
+            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
+            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
+
+          } else
+            { }));
         mkSingularity = { mpi ? false, gui ? false, threading ? true }:
           pkgs.singularity-tools.buildImage {
             name = "${exe-name mpi gui}-${version}";
@@ -127,7 +128,7 @@
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
-        devShell = pkgs.gcc9Stdenv.mkDerivation rec {
+        devShell = pkgs.gcc9Stdenv.mkDerivation {
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
@@ -151,7 +152,7 @@
           CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
-          QTDIR = "${qt6}/6.1.1/gcc_64";
+          inherit QTDIR;
           Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
           Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
           Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
