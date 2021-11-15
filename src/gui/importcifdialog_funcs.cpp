@@ -3,6 +3,7 @@
 
 #include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
+#include "classes/pair_iter.h"
 #include "classes/species.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
