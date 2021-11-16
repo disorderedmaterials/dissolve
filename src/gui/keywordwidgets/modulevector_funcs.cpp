@@ -11,8 +11,8 @@
 #include <QHBoxLayout>
 #include <QString>
 
-ModuleVectorKeywordWidget::ModuleVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+ModuleVectorKeywordWidget::ModuleVectorKeywordWidget(QWidget *parent, ModuleVectorKeyword *keyword, const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
@@ -20,15 +20,8 @@ ModuleVectorKeywordWidget::ModuleVectorKeywordWidget(QWidget *parent, KeywordBas
     // Connect signals / slots
     connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(itemChanged(QListWidgetItem *)));
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<ModuleVectorKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword into ModuleVectorKeyword.\n");
-    else
-    {
-        // Set current information
-        updateWidgetValues(coreData_);
-    }
+    // Set current information
+    updateWidgetValues(coreData_);
 }
 
 /*

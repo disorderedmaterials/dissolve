@@ -6,9 +6,7 @@
 #include "classes/data1dstore.h"
 #include "io/import/data1d.h"
 
-Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data) : KeywordBase(typeid(this), KeywordBase::Data1DStoreData), data_(data)
-{
-}
+Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data

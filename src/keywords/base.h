@@ -12,9 +12,11 @@ class AtomType;
 class Configuration;
 class CoreData;
 class Isotopologue;
+class KeywordWidgetBase;
 class LineParser;
 class Module;
 class ProcedureNode;
+class QWidget;
 class Species;
 class SpeciesSite;
 
@@ -22,57 +24,8 @@ class SpeciesSite;
 class KeywordBase
 {
     public:
-    // Keyword Data Type
-    enum KeywordDataType
-    {
-        AtomTypeVectorData,
-        BoolData,
-        ConfigurationVectorData,
-        Data1DStoreData,
-        Data2DStoreData,
-        Data3DStoreData,
-        DoubleData,
-        DynamicSiteNodesData,
-        ElementVectorData,
-        EnumOptionsData,
-        ExpressionData,
-        ExpressionVariableVectorData,
-        FileAndFormatData,
-        Function1DData,
-        GeometryListData,
-        IntegerData,
-        IsotopologueListData,
-        IsotopologueSetData,
-        LinkToKeywordData,
-        ModuleData,
-        ModuleGroupsData,
-        ModuleRefListData,
-        NodeData,
-        NodeAndIntegerData,
-        NodeBranchData,
-        NodeValueData,
-        NodeValueEnumOptionsData,
-        NodeVectorData,
-        ProcedureData,
-        RangeData,
-        SpeciesData,
-        SpeciesSiteData,
-        SpeciesSiteVectorData,
-        SpeciesVectorData,
-        StringData,
-        ValueStoreData,
-        Vec3DoubleData,
-        Vec3IntegerData,
-        Vec3NodeValueData,
-        VectorIntegerDoubleData,
-        VectorIntegerStringData,
-        VectorDoublePairData,
-        VectorStringPairData
-    };
-    KeywordBase(const std::type_index typeIndex, KeywordDataType type);
+    KeywordBase(const std::type_index typeIndex);
     virtual ~KeywordBase();
-    // Return DataType name
-    static std::string_view keywordDataType(KeywordDataType kdt);
 
     /*
      * Keyword Description
@@ -88,8 +41,6 @@ class KeywordBase
     };
 
     private:
-    // Data type stored by keyword
-    KeywordDataType type_;
     // Type index of derived class
     const std::type_index typeIndex_;
     // Keyword name
@@ -106,14 +57,12 @@ class KeywordBase
     public:
     // Set base keyword information
     void setBaseInfo(std::string_view name, std::string_view description);
+    // Return typeindex for the keyword
+    const std::type_index typeIndex() const;
     // Set option mask
     void setOptionMask(int opttionMask);
     // Flag that data has been set by some other means
     void setAsModified();
-    // Return data type stored by keyword
-    KeywordDataType type() const;
-    // Return name of data type stored by keyword
-    std::string_view typeName() const;
     // Return keyword name
     std::string_view name() const;
     // Return keyword description

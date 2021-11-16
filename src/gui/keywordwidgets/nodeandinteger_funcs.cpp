@@ -7,8 +7,9 @@
 
 Q_DECLARE_METATYPE(const ProcedureNode *)
 
-NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, NodeAndIntegerKeywordBase *keyword,
+                                                         const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
@@ -19,12 +20,6 @@ NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, Keywor
     // Connect signals / slots
     connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<NodeAndIntegerKeywordBase *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(
-            fmt::format("Couldn't cast base keyword '{}' into NodeAndIntegerKeywordBase.\n", keyword->name())));
 
     // Get allowed nodes, set model for combo box, and set current index
     allowedNodes_ = keyword_->allowedNodes();

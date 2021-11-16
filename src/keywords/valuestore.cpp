@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/valuestore.h"
 
-ValueStoreKeyword::ValueStoreKeyword(ValueStore &data) : KeywordBase(typeid(this), KeywordBase::ValueStoreData), data_(data) {}
+ValueStoreKeyword::ValueStoreKeyword(ValueStore &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data

@@ -8,8 +8,7 @@
 IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data,
                                                                                    int nRequiredIntegers,
                                                                                    std::optional<int> nRequiredValues)
-    : KeywordBase(typeid(this), KeywordBase::VectorIntegerDoubleData), data_(data), nRequiredIntegers_(nRequiredIntegers),
-      nRequiredValues_(nRequiredValues)
+    : KeywordBase(typeid(this)), data_(data), nRequiredIntegers_(nRequiredIntegers), nRequiredValues_(nRequiredValues)
 {
 }
 

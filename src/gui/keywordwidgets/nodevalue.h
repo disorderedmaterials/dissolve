@@ -14,7 +14,7 @@ class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    NodeValueKeywordWidget(QWidget *parent, NodeValueKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

@@ -12,8 +12,7 @@
 class ModuleKeywordBase : public KeywordBase
 {
     public:
-    explicit ModuleKeywordBase(std::string_view moduleType)
-        : KeywordBase(typeid(this), KeywordBase::ModuleData), moduleType_(moduleType){};
+    explicit ModuleKeywordBase(std::string_view moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType){};
     ~ModuleKeywordBase() override = default;
 
     /*

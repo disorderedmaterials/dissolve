@@ -6,7 +6,7 @@
 #include "base/sysfunc.h"
 
 DoubleKeyword::DoubleKeyword(double &data, std::optional<double> minValue, std::optional<double> maxValue)
-    : KeywordBase(typeid(this), KeywordBase::DoubleData), data_(data)
+    : KeywordBase(typeid(this)), data_(data)
 {
     minimumLimit_ = minValue;
     maximumLimit_ = maxValue;

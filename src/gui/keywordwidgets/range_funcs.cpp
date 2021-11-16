@@ -5,24 +5,17 @@
 #include "gui/keywordwidgets/range.h"
 #include "vec3labels.h"
 
-RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, RangeKeyword *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
 
     refreshing_ = true;
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<RangeKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into RangeKeyword.\n", keyword->name());
-    else
-    {
-        // Set current values
-        ui_.Spin1->setValue(keyword_->data().minimum());
-        ui_.Spin2->setValue(keyword_->data().maximum());
-    }
+    // Set current values
+    ui_.Spin1->setValue(keyword_->data().minimum());
+    ui_.Spin2->setValue(keyword_->data().maximum());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)

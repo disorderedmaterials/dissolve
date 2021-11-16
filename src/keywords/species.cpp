@@ -6,7 +6,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesKeyword::SpeciesKeyword(const Species *&data) : KeywordBase(typeid(this), KeywordBase::SpeciesData), data_(data) {}
+SpeciesKeyword::SpeciesKeyword(const Species *&data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data

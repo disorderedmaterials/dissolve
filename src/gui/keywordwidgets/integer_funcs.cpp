@@ -4,22 +4,15 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/integer.hui"
 
-IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QSpinBox(parent), KeywordWidgetBase(coreData)
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, IntegerKeyword *keyword, const CoreData &coreData)
+    : QSpinBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<IntegerKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into IntegerKeyword.\n", keyword->name());
-    else
-    {
-        // Set minimum and maximum values
-        setRange(keyword_->validationMin() ? keyword_->validationMin().value() : -1e6,
-                 keyword_->validationMax() ? keyword_->validationMax().value() : 1e6);
+    // Set minimum and maximum values
+    setRange(keyword_->validationMin() ? keyword_->validationMin().value() : -1e6,
+             keyword_->validationMax() ? keyword_->validationMax().value() : 1e6);
 
-        // Set current value
-        setValue(keyword_->data());
-    }
+    // Set current value
+    setValue(keyword_->data());
 
     // Connect the
     connect(this, SIGNAL(valueChanged(int)), this, SLOT(myValueChanged(int)));

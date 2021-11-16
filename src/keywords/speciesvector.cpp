@@ -6,10 +6,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data)
-    : KeywordBase(typeid(this), KeywordBase::SpeciesVectorData), data_(data)
-{
-}
+SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data

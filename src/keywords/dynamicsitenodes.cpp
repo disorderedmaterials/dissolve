@@ -9,8 +9,7 @@
 
 DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedureNode *> &data, SelectProcedureNode *parentNode,
                                                  bool axesRequired)
-    : KeywordBase(typeid(this), KeywordBase::DynamicSiteNodesData), data_(data), parentNode_(parentNode),
-      axesRequired_(axesRequired)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), axesRequired_(axesRequired)
 {
 }
 

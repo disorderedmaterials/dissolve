@@ -5,10 +5,7 @@
 #include "base/lineparser.h"
 #include "data/elements.h"
 
-ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data)
-    : KeywordBase(typeid(this), KeywordBase::ElementVectorData), data_(data)
-{
-}
+ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data

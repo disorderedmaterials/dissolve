@@ -10,15 +10,11 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, FileAndFormatKeyword *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     ui_.setupUi(this);
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<FileAndFormatKeyword *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into FileAndFormatKeyword.\n", keyword->name())));
     enumOptionsModel_.setData(keyword_->data().formats());
 
     refreshing_ = true;

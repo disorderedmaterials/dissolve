@@ -16,10 +16,7 @@ class ProcedureNode;
 class NodeValueEnumOptionsBaseKeyword : public KeywordBase
 {
     public:
-    NodeValueEnumOptionsBaseKeyword(EnumOptionsBase &baseOptions)
-        : KeywordBase(typeid(this), KeywordBase::NodeValueEnumOptionsData), baseOptions_(baseOptions)
-    {
-    }
+    NodeValueEnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : KeywordBase(typeid(this)), baseOptions_(baseOptions) {}
 
     /*
      * Data

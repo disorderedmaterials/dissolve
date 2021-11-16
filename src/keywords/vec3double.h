@@ -16,6 +16,7 @@ class Vec3DoubleKeyword : public KeywordBase
     explicit Vec3DoubleKeyword(Vec3<double> &data, std::optional<Vec3<double>> minValue = std::nullopt,
                                std::optional<Vec3<double>> maxValue = std::nullopt,
                                Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+
     ~Vec3DoubleKeyword() override = default;
 
     /*

@@ -19,7 +19,7 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     Q_OBJECT
 
     public:
-    ExpressionVariableVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    ExpressionVariableVectorKeywordWidget(QWidget *parent, ExpressionVariableVectorKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

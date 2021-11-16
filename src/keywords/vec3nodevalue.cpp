@@ -6,7 +6,7 @@
 #include "procedure/nodes/node.h"
 
 Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this), KeywordBase::Vec3NodeValueData), data_(data), parentNode_(parentNode), labelType_(labelType)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), labelType_(labelType)
 {
 }
 

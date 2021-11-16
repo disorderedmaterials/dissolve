@@ -14,11 +14,11 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
     NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this), KeywordBase::NodeVectorData)
+        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this))
     {
     }
     NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this), KeywordBase::NodeVectorData)
+        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this))
     {
     }
     ~NodeVectorKeywordBase() override = default;

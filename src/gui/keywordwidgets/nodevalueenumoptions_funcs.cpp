@@ -4,39 +4,32 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/nodevalueenumoptions.h"
 
-NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword,
+NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *parent, NodeValueEnumOptionsBaseKeyword *keyword,
                                                                      const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
 
     refreshing_ = true;
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<NodeValueEnumOptionsBaseKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into NodeValueEnumOptionsBaseKeyword.\n", keyword->name());
-    else
+    // Get the underlying EnumOptionsBase
+    const EnumOptionsBase &options = keyword_->baseOptions();
+
+    // Populate the combo with the available keywords
+    for (int n = 0; n < options.nOptions(); ++n)
     {
-        // Get the underlying EnumOptionsBase
-        const EnumOptionsBase &options = keyword_->baseOptions();
-
-        // Populate the combo with the available keywords
-        for (int n = 0; n < options.nOptions(); ++n)
-        {
-            ui_.OptionsCombo->addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
-            if (keyword_->enumerationIndex() == n)
-                ui_.OptionsCombo->setCurrentIndex(n);
-        }
-
-        // Set event filtering on the combo so that we do not blindly accept mouse wheel events (problematic since we
-        // will exist in a QScrollArea)
-        ui_.OptionsCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.OptionsCombo));
-
-        // Update values
-        updateValue();
+        ui_.OptionsCombo->addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
+        if (keyword_->enumerationIndex() == n)
+            ui_.OptionsCombo->setCurrentIndex(n);
     }
+
+    // Set event filtering on the combo so that we do not blindly accept mouse wheel events (problematic since we
+    // will exist in a QScrollArea)
+    ui_.OptionsCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.OptionsCombo));
+
+    // Update values
+    updateValue();
 
     refreshing_ = false;
 }

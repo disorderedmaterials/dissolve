@@ -8,7 +8,7 @@
 #include "classes/species.h"
 
 SpeciesSiteVectorKeyword::SpeciesSiteVectorKeyword(std::vector<const SpeciesSite *> &data, bool axesRequired)
-    : KeywordBase(typeid(this), KeywordBase::SpeciesSiteVectorData), data_(data), axesRequired_(axesRequired)
+    : KeywordBase(typeid(this)), data_(data), axesRequired_(axesRequired)
 {
 }
 

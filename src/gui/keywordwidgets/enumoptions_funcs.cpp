@@ -4,29 +4,22 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/enumoptions.hui"
 
-EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QComboBox(parent), KeywordWidgetBase(coreData)
+EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, EnumOptionsBaseKeyword *keyword, const CoreData &coreData)
+    : QComboBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<EnumOptionsBaseKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into EnumOptionsBaseKeyword.\n", keyword->name());
-    else
+    // Get the underlying EnumOptionsBase
+    const EnumOptionsBase &options = keyword_->baseOptions();
+
+    // Populate the combo with the available keywords
+    for (int n = 0; n < options.nOptions(); ++n)
     {
-        // Get the underlying EnumOptionsBase
-        const EnumOptionsBase &options = keyword_->baseOptions();
-
-        // Populate the combo with the available keywords
-        for (int n = 0; n < options.nOptions(); ++n)
-        {
-            addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
-            if (options.index() == n)
-                setCurrentIndex(n);
-        }
-
-        // Turn off editability
-        setEditable(false);
+        addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
+        if (options.index() == n)
+            setCurrentIndex(n);
     }
+
+    // Turn off editability
+    setEditable(false);
 
     // Connect the currentTextChanged signal to our own slot
     connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myCurrentIndexChanged(int)));
