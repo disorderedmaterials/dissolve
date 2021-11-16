@@ -139,7 +139,7 @@ Vec3<double> Molecule::unFold(const Box *box)
         j->setCoordinates(rJ);
         cog += rJ;
     });
-    return cog;
+    return cog / nAtoms();
 }
 
 // Set centre of geometry of molecule
@@ -172,16 +172,12 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box) const
 // Transform molecule with supplied matrix, using centre of geometry as the origin
 void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 {
-    // Calculate Molecule centre of geometry
-    Vec3<double> newR;
+    // Unfold and get Molecule centre of geometry
     const auto cog = unFold(box);
 
     // Apply transform
-    for (auto n = 0; n < nAtoms(); ++n)
-    {
-        newR = transformationMatrix * (atom(n)->r() - cog) + cog;
-        atom(n)->setCoordinates(newR);
-    }
+    for (auto &i : atoms())
+        i->setCoordinates(transformationMatrix * (i->r() - cog) + cog);
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
