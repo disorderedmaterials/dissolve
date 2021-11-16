@@ -5,6 +5,7 @@
 
 #include "templates/reflist.h"
 #include <memory>
+#include <optional>
 #include <typeindex>
 
 // Forward Declarations
