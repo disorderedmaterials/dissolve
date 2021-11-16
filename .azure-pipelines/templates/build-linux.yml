@@ -48,6 +48,8 @@ steps:
       mkdir -p packages
       cp ${{ parameters.package }} packages/${{ parameters.package }}
       df -h
+      nix-collect-garbage -d
+      df -h
       nix build -L .#${{ parameters.singularity }}
       mkdir -p singularity
       cp result singularity/${{ parameters.package }}.sif
