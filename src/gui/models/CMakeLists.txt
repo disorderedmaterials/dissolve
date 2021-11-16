@@ -11,6 +11,7 @@ set(models_MOC_HDRS
     pairPotentialModel.h
     procedureNodeModel.h
     masterTermModel.h
+    moduleLayerModel.h
     sitesFilterProxy.h
     sitesModel.h
     speciesFilterProxy.h
@@ -45,6 +46,7 @@ set(models_SRCS
     enumOptionsModel.cpp
     isotopologueSetModel.cpp
     masterTermModel.cpp
+    moduleLayerModel.cpp
     pairPotentialModel.cpp
     procedureNodeModel.cpp
     sitesFilterProxy.cpp
