@@ -11,6 +11,3 @@ std::string_view BraggModule::category() const { return "Correlation Functions";
 
 // Return brief description of module
 std::string_view BraggModule::brief() const { return "Calculate Bragg intensities"; }
-
-// Return the number of Configuration targets this Module requires
-int BraggModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

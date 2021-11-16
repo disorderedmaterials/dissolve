@@ -3,7 +3,7 @@
 
 #include "modules/energy/energy.h"
 
-EnergyModule::EnergyModule() : Module(nRequiredTargets())
+EnergyModule::EnergyModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

@@ -7,6 +7,10 @@
 // Perform any necessary initialisation for the Module
 void IntraShakeModule::initialise()
 {
+    // Targets
+    keywords_.add<ConfigurationVectorKeyword>("Target", "Configuration", "Set target configuration(s) for the module",
+                                              targetConfigurations_);
+
     // Control
     keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to employ", cutoffDistance_, -1.0);
     keywords_.add<IntegerKeyword>("Control", "ShakesPerTerm", "Number of shakes per term", nShakesPerTerm_, 1);

@@ -3,11 +3,10 @@
 
 #pragma once
 
-#include "classes/species.h"
+#include "classes/configuration.h"
 #include "templates/optionalref.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
-
 #include <vector>
 
 class ConfigurationModel : public QAbstractListModel
@@ -16,7 +15,7 @@ class ConfigurationModel : public QAbstractListModel
 
     private:
     // Source Configuration data
-    OptionalReferenceWrapper<const std::vector<std::unique_ptr<Configuration>>> species_;
+    OptionalReferenceWrapper<const std::vector<std::unique_ptr<Configuration>>> configuration_;
     // Vector containing checked items (if relevant)
     OptionalReferenceWrapper<std::vector<Configuration *>> checkedItems_;
     // Return object represented by specified model index
@@ -24,7 +23,7 @@ class ConfigurationModel : public QAbstractListModel
 
     public:
     // Set source Configuration data
-    void setData(const std::vector<std::unique_ptr<Configuration>> &species);
+    void setData(const std::vector<std::unique_ptr<Configuration>> &configuration);
     // Set vector containing checked items
     void setCheckStateData(std::vector<Configuration *> &checkedItemsVector);
 

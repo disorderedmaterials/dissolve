@@ -29,13 +29,13 @@ class BenchmarkModule : public Module
     std::string_view category() const override;
     // Return brief description of module
     std::string_view brief() const override;
-    // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const override;
 
     /*
      * Control
      */
     private:
+    // Target configurations
+    std::vector<Configuration *> targetConfigurations_;
     // Number of times to run each benchmark in order to form average
     int nRepeats_{5};
     // Whether to save new timings to the restart file

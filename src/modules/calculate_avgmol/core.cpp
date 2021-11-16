@@ -3,7 +3,7 @@
 
 #include "modules/calculate_avgmol/avgmol.h"
 
-CalculateAvgMolModule::CalculateAvgMolModule() : Module(nRequiredTargets())
+CalculateAvgMolModule::CalculateAvgMolModule() : Module()
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

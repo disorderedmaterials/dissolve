@@ -3,7 +3,7 @@
 
 #include "modules/rdf/rdf.h"
 
-RDFModule::RDFModule() : Module(nRequiredTargets())
+RDFModule::RDFModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

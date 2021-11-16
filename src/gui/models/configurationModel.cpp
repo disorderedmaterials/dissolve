@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "gui/models/speciesModel.h"
-
-Q_DECLARE_METATYPE(const Configuration *);
+#include "gui/models/configurationModel.h"
 
 // Set source Configuration data
-void ConfigurationModel::setData(const std::vector<std::unique_ptr<Configuration>> &species)
+void ConfigurationModel::setData(const std::vector<std::unique_ptr<Configuration>> &configuration)
 {
     beginResetModel();
-    species_ = species;
+    configuration_ = configuration;
     endResetModel();
 }
 
@@ -23,8 +21,8 @@ void ConfigurationModel::setCheckStateData(std::vector<Configuration *> &checked
 
 Configuration *ConfigurationModel::rawData(const QModelIndex &index) const
 {
-    assert(species_);
-    return species_->get()[index.row()].get();
+    assert(configuration_);
+    return configuration_->get()[index.row()].get();
 }
 
 /*
@@ -34,7 +32,7 @@ Configuration *ConfigurationModel::rawData(const QModelIndex &index) const
 int ConfigurationModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return species_ ? species_->get().size() : 0;
+    return configuration_ ? configuration_->get().size() : 0;
 }
 
 QVariant ConfigurationModel::data(const QModelIndex &index, int role) const

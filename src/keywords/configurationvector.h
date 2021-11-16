@@ -12,7 +12,7 @@ class Configuration;
 class ConfigurationVectorKeyword : public KeywordBase
 {
     public:
-    ConfigurationVectorKeyword(std::vector<Configuration *> &cfgs, int maxListSize);
+    explicit ConfigurationVectorKeyword(std::vector<Configuration *> &data);
     ~ConfigurationVectorKeyword() override = default;
 
     /*
@@ -21,8 +21,6 @@ class ConfigurationVectorKeyword : public KeywordBase
     private:
     // Reference to data vector
     std::vector<Configuration *> &data_;
-    // Maximum number of Configurations to allow
-    std::optional<int> maxListSize_;
 
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
@@ -32,8 +30,6 @@ class ConfigurationVectorKeyword : public KeywordBase
     // Return reference to data vector
     std::vector<Configuration *> &data();
     const std::vector<Configuration *> &data() const;
-    // Return maximum number of Configurations to allow
-    std::optional<int> maxListSize() const;
 
     /*
      * Arguments

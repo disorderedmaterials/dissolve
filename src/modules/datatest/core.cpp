@@ -3,7 +3,7 @@
 
 #include "modules/datatest/datatest.h"
 
-DataTestModule::DataTestModule() : Module(nRequiredTargets())
+DataTestModule::DataTestModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

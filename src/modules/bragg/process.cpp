@@ -20,10 +20,9 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
-    auto *cfg = targetConfigurations_.front();
+    // Check for Configuration target
+    if (!targetConfiguration_)
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
@@ -39,33 +38,31 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(cfg->processPool());
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
-    // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one, but we're
-    // future-proofing)
+    // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one)
     auto &combinedAtomTypes =
         dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", uniqueName_, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
-    for (auto *cfg : targetConfigurations_)
-        combinedAtomTypes.add(cfg->atomTypes());
+    combinedAtomTypes.add(targetConfiguration_->atomTypes());
 
     // Store unit cell information
     auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", uniqueName_, GenericItem::InRestartFileFlag);
-    unitCellVolume = cfg->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
+    unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Finalise combined AtomTypes matrix
     combinedAtomTypes.finalise();
 
     // Calculate Bragg vectors and intensities for the current Configuration
     bool alreadyUpToDate;
-    if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, cfg, qMin_, qDelta_, qMax_, multiplicity_,
-                             alreadyUpToDate))
+    if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_,
+                             multiplicity_, alreadyUpToDate))
         return false;
 
-    // If we are already up-to-date, then theres nothing more to do for this Configuration
+    // If we are already up-to-date, then there's nothing more to do for this Configuration
     if (alreadyUpToDate)
     {
-        Messenger::print("Bragg data is up-to-date for Configuration '{}'.\n", cfg->name());
+        Messenger::print("Bragg data is up-to-date for Configuration '{}'.\n", targetConfiguration_->name());
         return true;
     }
 
@@ -75,7 +72,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                averagingLength_, averagingScheme_);
 
     // Form partial and total reflection functions
-    formReflectionFunctions(dissolve.processingModuleData(), procPool, cfg, qMin_, qDelta_, qMax_);
+    formReflectionFunctions(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_);
 
     // Test reflection data
     if (!testReflectionsFile_.empty())
@@ -158,7 +155,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         braggParser.closeFiles();
 
         // Save intensity data
-        auto &types = cfg->atomTypes();
+        auto &types = targetConfiguration_->atomTypes();
         auto success = for_each_pair_early(
             types.begin(), types.end(),
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool> {

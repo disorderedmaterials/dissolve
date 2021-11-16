@@ -3,7 +3,7 @@
 
 #include "modules/checkspecies/checkspecies.h"
 
-CheckSpeciesModule::CheckSpeciesModule() : Module(nRequiredTargets())
+CheckSpeciesModule::CheckSpeciesModule() : Module()
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

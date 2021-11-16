@@ -11,6 +11,3 @@ std::string_view AnalyseModule::category() const { return "Analysis"; }
 
 // Return brief description of module
 std::string_view AnalyseModule::brief() const { return "Perform custom analysis of one or more Configurations"; }
-
-// Return the number of Configuration targets this Module requires
-int AnalyseModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

@@ -117,7 +117,7 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
     dAngleBCGraph_->clearRenderables();
 
     // Get Configuration target
-    Configuration *cfg = module_->targetConfigurations().front();
+    auto *cfg = module_->keywords().get<Configuration *>("Configuration");
     if (!cfg)
         return;
 

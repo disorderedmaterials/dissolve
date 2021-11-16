@@ -14,6 +14,3 @@ std::string_view ImportTrajectoryModule::brief() const
 {
     return "Import coordinates from a trajectory into a target Configuration";
 }
-
-// Return the number of Configuration targets this Module requires
-int ImportTrajectoryModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

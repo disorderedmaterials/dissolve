@@ -194,7 +194,7 @@ class Dissolve
     // Create a Module instance for the named Module type
     Module *createModuleInstance(std::string_view moduleType);
     // Create a Module instance for the named Module type, and add it to the specified layer
-    Module *createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer, bool configurationLocal = false);
+    Module *createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer);
     // Search for any instance of any Module with the specified unique name
     Module *findModuleInstance(std::string_view uniqueName);
     // Search for any instance of any Module with the specified Module type

@@ -90,6 +90,10 @@ void CalculateRDFModule::initialise()
      * Keywords (including those exposed from the ProcedureNodes)
      */
 
+    // Targets
+    keywords_.add<ConfigurationKeyword>("Target", "Configuration", "Set target configuration for the module",
+                                        targetConfiguration_);
+
     // Control
     keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);

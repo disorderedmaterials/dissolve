@@ -35,11 +35,14 @@ void CalculateRDFModuleWidget::updateControls(ModuleWidget::UpdateType updateTyp
         rdfGraph_->clearRenderables();
 
     if (rdfGraph_->renderables().empty())
-        for (const auto *cfg : module_->targetConfigurations())
+    {
+        auto *cfg = module_->keywords().get<Configuration *>("Configuration");
+        if (cfg)
             rdfGraph_
                 ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->uniqueName(), cfg->niceName()),
                                                      fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
+    }
 
     // Validate renderables if they need it
     rdfGraph_->validateRenderables(processingData_);

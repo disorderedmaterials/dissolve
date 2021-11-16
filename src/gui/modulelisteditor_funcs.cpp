@@ -241,24 +241,23 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 
     // Create a new instance of the Module
     Module *newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
-    newInstance->setConfigurationLocal(localConfiguration_);
 
-    // Set Configuration targets as appropriate
-    if (newInstance->nRequiredTargets() != Module::ZeroTargets)
-    {
-        if (localConfiguration_)
-            newInstance->addTargetConfiguration(localConfiguration_);
-        else
-        {
-            for (auto &cfg : dissolveWindow_->dissolve().configurations())
-            {
-                newInstance->addTargetConfiguration(cfg.get());
-                if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) &&
-                    (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations()))
-                    break;
-            }
-        }
-    }
+    //    // Set Configuration targets as appropriate
+    //    if (newInstance->nRequiredTargets() != Module::ZeroTargets)
+    //    {
+    //        if (localConfiguration_)
+    //            newInstance->addTargetConfiguration(localConfiguration_);
+    //        else
+    //        {
+    //            for (auto &cfg : dissolveWindow_->dissolve().configurations())
+    //            {
+    //                newInstance->addTargetConfiguration(cfg.get());
+    //                if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) &&
+    //                    (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations()))
+    //                    break;
+    //            }
+    //        }
+    //    }
 
     moduleLayer_->own(newInstance);
 

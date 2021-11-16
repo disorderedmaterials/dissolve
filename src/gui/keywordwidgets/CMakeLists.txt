@@ -26,6 +26,7 @@ set(keywordwidgets_MOC_HDRS
     vec3labels.h
     vec3nodevalue.h
     bool.hui
+    configuration.hui
     double.hui
     dropwidget.hui
     enumoptions.hui
@@ -68,6 +69,7 @@ set(keywordwidgets_SRCS
     base.cpp
     atomtypevector_funcs.cpp
     bool_funcs.cpp
+    configuration_funcs.cpp
     configurationvector_funcs.cpp
     dialog_funcs.cpp
     double_funcs.cpp

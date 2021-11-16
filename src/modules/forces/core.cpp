@@ -3,7 +3,7 @@
 
 #include "modules/forces/forces.h"
 
-ForcesModule::ForcesModule() : Module(nRequiredTargets())
+ForcesModule::ForcesModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

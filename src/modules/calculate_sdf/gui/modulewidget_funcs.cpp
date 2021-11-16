@@ -82,7 +82,7 @@ void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateTyp
         sdfRenderable_ = sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//Process3D//SDF", module_->uniqueName()),
                                                                        fmt::format("SDF"));
         sdfRenderable_->setColour(StockColours::BlueStockColour);
-        auto *cfg = module_->targetConfigurations().front();
+        auto *cfg = module_->keywords().get<Configuration *>("Configuration");
         if (cfg)
         {
             auto lowerCutoff = (cfg->nMolecules() / cfg->box()->volume()) * 3.0;

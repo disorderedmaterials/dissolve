@@ -98,7 +98,6 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 }
 
                 // Parse rest of Module block
-                module->setConfigurationLocal(false);
                 if (!ModuleBlock::parse(parser, dissolve, module, dissolve->processingModuleData(), false))
                     error = true;
                 else if (!module->setUp(*dissolve, dissolve->worldPool()))

@@ -14,6 +14,3 @@ std::string_view IntraShakeModule::brief() const
 {
     return "Perform Monte Carlo shakes on intramolecular terms within Molecules";
 }
-
-// Return the number of Configuration targets this Module requires
-int IntraShakeModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

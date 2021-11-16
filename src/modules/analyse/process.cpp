@@ -8,20 +8,16 @@
 // Run main processing
 bool AnalyseModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    // Check for Configuration target
+    if (!targetConfiguration_)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
-    // Loop over target Configurations
-    for (auto *cfg : targetConfigurations_)
-    {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
+    // Set up process pool - must do this to ensure we are using all available processes
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
-        // Execute the analysis
-        if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData()))
-            return Messenger::error("Analysis failed.\n");
-    }
+    // Execute the analysis
+    if (!analyser_.execute(procPool, targetConfiguration_, uniqueName(), dissolve.processingModuleData()))
+        return Messenger::error("Analysis failed.\n");
 
     return true;
 }

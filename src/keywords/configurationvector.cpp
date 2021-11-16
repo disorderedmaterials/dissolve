@@ -7,10 +7,9 @@
 #include "classes/coredata.h"
 #include "templates/algorithms.h"
 
-ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration *> &data, int maxListSize)
+ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration *> &data)
     : KeywordBase(typeid(this)), data_(data)
 {
-    maxListSize_ = maxListSize;
 }
 
 /*
@@ -23,9 +22,6 @@ bool ConfigurationVectorKeyword::isDataEmpty() const { return data_.empty(); }
 // Return reference to data vector
 std::vector<Configuration *> &ConfigurationVectorKeyword::data() { return data_; }
 const std::vector<Configuration *> &ConfigurationVectorKeyword::data() const { return data_; }
-
-// Return maximum number of Configurations to allow
-std::optional<int> ConfigurationVectorKeyword::maxListSize() const { return maxListSize_; }
 
 /*
  * Arguments
@@ -44,10 +40,6 @@ bool ConfigurationVectorKeyword::deserialise(LineParser &parser, int startArg, c
         if (!cfg)
             return Messenger::error("Error defining Configuration targets - no Configuration named '{}' exists.\n",
                                     parser.argsv(n));
-
-        // Check maximum size of vector
-        if (maxListSize_ && (data_.size() >= maxListSize_))
-            return Messenger::error("Too many configurations given to keyword. Maximum allowed is {}.\n", maxListSize_.value());
 
         // Check that the configuration isn't already present
         if (std::find(data_.begin(), data_.end(), cfg) != data_.end())

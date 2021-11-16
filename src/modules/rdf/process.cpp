@@ -118,7 +118,8 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, this, this, summedUnweightedGR))
+    if (!RDFModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, uniqueName(), uniqueName(),
+                                    targetConfigurations_, summedUnweightedGR))
         return false;
 
     return true;

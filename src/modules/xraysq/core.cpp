@@ -3,7 +3,7 @@
 
 #include "modules/xraysq/xraysq.h"
 
-XRaySQModule::XRaySQModule() : Module(nRequiredTargets())
+XRaySQModule::XRaySQModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

@@ -43,7 +43,10 @@ class KeywordTypeMap
         };
         directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
             auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
+            if (!k)
+                throw(std::runtime_error(
+                    fmt::format("Can't get data for keyword '{}' - mismatch between data ('{}') and keyword ('{}') types.\n",
+                                keyword->name(), typeid(D).name(), typeid(K).name())));
             return k->data();
         };
     }

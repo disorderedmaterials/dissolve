@@ -8,11 +8,6 @@ void Dissolve::removeReferencesTo(Configuration *cfg)
 {
     // Remove references in keywords
     KeywordStore::objectNoLongerValid<Configuration>(cfg);
-
-    // Remove references (targets) in Modules
-    for (Module *module : moduleInstances_)
-        if (module->isTargetConfiguration(cfg))
-            module->removeTargetConfiguration(cfg);
 }
 
 // Remove all references to the specified Module

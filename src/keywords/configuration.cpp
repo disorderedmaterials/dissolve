@@ -20,14 +20,8 @@ Configuration *&ConfigurationKeyword::data() const { return data_; }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ConfigurationKeyword::minArguments() const { return 1; }
-
-// Return maximum number of arguments accepted
-int ConfigurationKeyword::maxArguments() const { return 1; }
-
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ConfigurationKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ConfigurationKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Configuration (first argument)
     data_ = coreData.findConfiguration(parser.argsv(startArg));
@@ -39,8 +33,8 @@ bool ConfigurationKeyword::read(LineParser &parser, int startArg, const CoreData
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ConfigurationKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ConfigurationKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (data_)
     {

@@ -11,6 +11,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     // Keywords with normal widgets
     registerProducer<AtomTypeVectorKeyword, AtomTypeVectorKeywordWidget>();
     registerProducer<BoolKeyword, BoolKeywordWidget>();
+    registerProducer<ConfigurationKeyword, ConfigurationKeywordWidget>();
     registerProducer<ConfigurationVectorKeyword, ConfigurationVectorKeywordWidget>();
     registerProducer<DoubleKeyword, DoubleKeywordWidget>();
     registerProducer<EnumOptionsBaseKeyword, EnumOptionsKeywordWidget>();

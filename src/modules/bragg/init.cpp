@@ -7,6 +7,10 @@
 // Perform any necessary initialisation for the Module
 void BraggModule::initialise()
 {
+    // Targets
+    keywords_.add<ConfigurationKeyword>("Target", "Configuration", "Set target configuration for the module",
+                                        targetConfiguration_);
+
     // Control
     keywords_.add<IntegerKeyword>("Control", "Averaging",
                                   "Number of historical data sets to combine into final reflection data", averagingLength_, 0);

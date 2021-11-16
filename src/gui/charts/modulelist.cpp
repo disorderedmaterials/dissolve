@@ -298,17 +298,6 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         else
             moduleList_->modules().emplace_back(newModule);
 
-        newModule->setConfigurationLocal(localConfiguration_ != nullptr);
-
-        // Set Configuration targets as appropriate
-        if (newModule->nRequiredTargets() != Module::ZeroTargets)
-        {
-            if (localConfiguration_)
-                newModule->addTargetConfiguration(localConfiguration_);
-            else
-                newModule->addTargetConfigurations(dissolve_.configurations());
-        }
-
         // Flag that the current data has changed
         emit(dataModified());
     }

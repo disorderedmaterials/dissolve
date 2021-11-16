@@ -30,8 +30,6 @@ class ImportTrajectoryModule : public Module
     std::string_view category() const override;
     // Return brief description of module
     std::string_view brief() const override;
-    // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const override;
 
     /*
      * Initialisation
@@ -44,6 +42,8 @@ class ImportTrajectoryModule : public Module
      * Data
      */
     private:
+    // Target configuration
+    Configuration *targetConfiguration_;
     // Trajectory file source
     TrajectoryImportFileFormat trajectoryFormat_;
 

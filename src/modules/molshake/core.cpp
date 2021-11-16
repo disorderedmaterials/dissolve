@@ -3,7 +3,7 @@
 
 #include "modules/molshake/molshake.h"
 
-MolShakeModule::MolShakeModule() : Module(nRequiredTargets())
+MolShakeModule::MolShakeModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();
