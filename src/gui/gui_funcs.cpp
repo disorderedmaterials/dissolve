@@ -41,6 +41,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     // Connect signals from our main tab widget
     connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(setModified()));
     connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(fullUpdate()));
+    connect(ui_.MainTabs, SIGNAL(tabClosed(QWidget *)), this, SLOT(closeTab(QWidget *)));
 
     refreshing_ = false;
     modified_ = false;

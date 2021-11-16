@@ -83,3 +83,35 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 
 // Return list of all current tabs
 const std::vector<MainTab *> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
+
+void DissolveWindow::closeTab(QWidget *page)
+{
+    auto *tab = ui_.MainTabs->findTab(page);
+    if (!tab)
+        return;
+
+    // Determine what we need to delete...
+    if (tab->type() == MainTab::TabType::Configuration)
+    {
+        auto *cfg = dynamic_cast<ConfigurationTab *>(tab)->configuration();
+        ui_.MainTabs->removeByPage(page);
+        dissolve_.removeConfiguration(cfg);
+    }
+    else if (tab->type() == MainTab::TabType::Layer)
+    {
+        auto *layer = dynamic_cast<LayerTab *>(tab)->moduleLayer();
+        ui_.MainTabs->removeByPage(page);
+        dissolve_.removeProcessingLayer(layer);
+    }
+    else if (tab->type() == MainTab::TabType::Species)
+    {
+        auto *sp = dynamic_cast<SpeciesTab *>(tab)->species();
+        ui_.MainTabs->removeByPage(page);
+        dissolve_.removeSpecies(sp);
+    }
+    else
+        return;
+
+    setModified();
+    fullUpdate();
+}

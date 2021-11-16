@@ -31,7 +31,7 @@ class SpeciesTab : public QWidget, public MainTab
     public:
     SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                Species *species);
-    ~SpeciesTab();
+    ~SpeciesTab() = default;
 
     /*
      * UI

@@ -116,12 +116,6 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(ui_.IsotopologueAddButton, SIGNAL(clicked()), &isos_, SLOT(addIso()));
 }
 
-SpeciesTab::~SpeciesTab()
-{
-    // Remove the Species represented in this tab
-    dissolve_.removeSpecies(species_);
-}
-
 /*
  * UI
  */

@@ -242,6 +242,8 @@ class DissolveWindow : public QMainWindow
     void enableSensitiveControls();
     // All iterations requested are complete
     void iterationsComplete();
+    // Specified tab (indicated by page widget) has been closed, and relevant data should be deleted accordingly
+    void closeTab(QWidget *page);
 
     signals:
     void iterate(int);

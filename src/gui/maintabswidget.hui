@@ -79,6 +79,8 @@ class MainTabsWidget : public QTabWidget
     QPointer<WorkspaceTab> workspaceTab(QWidget *page);
     // Find tab with title specified
     MainTab *findTab(const QString title);
+    // Find tab displaying specified page
+    MainTab *findTab(const QWidget *page);
     // Generate unique tab name with base name provided
     const QString uniqueTabName(const QString base);
 
@@ -116,8 +118,6 @@ class MainTabsWidget : public QTabWidget
     public:
     // Update all tabs
     void updateAllTabs();
-    // Update all Species tabs
-    void updateSpeciesTabs();
     // Disable sensitive controls in all tabs
     void disableSensitiveControls();
     // Enable sensitive controls in all tabs
