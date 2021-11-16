@@ -55,6 +55,11 @@ class KeywordTypeMap
             assert(k);
             return setFunction(k, std::any_cast<D>(data));
         };
+        directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
+            auto *k = dynamic_cast<K *>(keyword);
+            assert(k);
+            return k->data();
+        };
     }
 
     public:
