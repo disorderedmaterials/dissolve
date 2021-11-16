@@ -82,6 +82,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
             SLOT(siteSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set up SpeciesViewer
+    ui_.ViewerWidget->speciesViewer()->setDissolveWindow(dissolveWindow_);
     ui_.ViewerWidget->setDissolve(&dissolve);
     ui_.ViewerWidget->setSpecies(species_);
 
@@ -92,6 +93,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     // Connect signals / slots
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), dissolveWindow_, SLOT(updateMenus()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), this, SLOT(updateAtomTableSelection()));
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
     connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));

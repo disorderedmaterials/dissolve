@@ -140,7 +140,7 @@ class DissolveWindow : public QMainWindow
     // Clear all data and start new simulation afresh
     void startNew();
 
-    private slots:
+    public slots:
     // File
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenLocalAction_triggered(bool checked);
@@ -173,6 +173,7 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesCopyTermsAction_triggered(bool checked);
     void on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked);
     void on_SpeciesSetAtomTypesInSelectionAction_triggered(bool checked);
+    void on_SpeciesSetChargesInSelectionAction_triggered(bool checked);
     // Configuration
     void on_ConfigurationCreateEmptyAction_triggered(bool checked);
     void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);

@@ -12,6 +12,7 @@
 #include "gui/selectelementdialog.h"
 #include "gui/speciestab.h"
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
@@ -249,6 +250,31 @@ void DissolveWindow::on_SpeciesSetAtomTypesInSelectionAction_triggered(bool chec
     for (auto *i : species->selectedAtoms())
         i->setAtomType(at);
     species->updateAtomTypes();
+
+    setModified();
+
+    fullUpdate();
+}
+
+void DissolveWindow::on_SpeciesSetChargesInSelectionAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    // Check current selection
+    if (species->selectedAtoms().empty())
+        return;
+
+    auto ok = false;
+    auto q = QInputDialog::getDouble(this, "Set atom charges", "Enter the charge (per atom) to apply to the selection", 0.0,
+                                     -100.0, 100.0, 5, &ok);
+    if (!ok)
+        return;
+
+    for (auto *i : species->selectedAtoms())
+        i->setCharge(q);
 
     setModified();
 
