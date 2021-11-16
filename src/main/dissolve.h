@@ -230,8 +230,6 @@ class Dissolve
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
-    // Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
-    Module *createModuleInLayer(std::string_view moduleType, std::string_view layerName, Configuration *cfg = nullptr);
 
     /*
      * Simulation

@@ -74,29 +74,3 @@ std::vector<std::unique_ptr<ModuleLayer>> &Dissolve::processingLayers() { return
 
 // Return data associated with processing Modules
 GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
-
-// Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
-Module *Dissolve::createModuleInLayer(std::string_view moduleType, std::string_view layerName, Configuration *cfg)
-{
-    // First, attempt to create a new Module with the specified name
-    Module *module = createModuleInstance(moduleType);
-    if (!module)
-        return nullptr;
-
-    // Find / create the specified layer
-    ModuleLayer *layer = findProcessingLayer(layerName);
-    if (!layer)
-    {
-        layer = addProcessingLayer();
-        layer->setName(layerName);
-    }
-
-    // Add the new Module to the layer
-    layer->own(module);
-
-    // Set Configuration target in the Module if specified
-    if (cfg)
-        module->addTargetConfiguration(cfg);
-
-    return module;
-}
