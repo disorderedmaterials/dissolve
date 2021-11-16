@@ -6,6 +6,7 @@
 #include "gui/gui.h"
 #include "gui/layertab.h"
 #include "gui/maintabswidget.hui"
+#include "gui/modulecontrolwidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 
@@ -15,13 +16,25 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
 {
     ui_.setupUi(this);
 
-    Locker refreshLocker(refreshLock_);
-
     moduleLayer_ = layer;
 
-    // Set up ModuleEditor
-    ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
+    // Set the module list model and connect signals
+    ui_.ModulesList->setModel(&moduleLayerModel_);
+    moduleLayerModel_.setData(moduleLayer_);
+    connect(ui_.ModulesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    if (moduleLayer_->nModules() >= 1)
+    {
+        auto firstIndex = moduleLayerModel_.index(0, 0);
+        ui_.ModulesList->selectionModel()->setCurrentIndex(firstIndex, QItemSelectionModel::ClearAndSelect);
+    }
+
+    // Hide the module palette by default
+    ui_.AvailableModulesTree->setVisible(false);
 }
+
+// Return displayed ModuleLayer
+ModuleLayer *LayerTab::moduleLayer() const { return moduleLayer_; }
 
 /*
  * MainTab Reimplementations
@@ -70,23 +83,17 @@ bool LayerTab::canClose() const
 }
 
 /*
- * ModuleLayer Target
- */
-
-// Return displayed ModuleLayer
-ModuleLayer *LayerTab::moduleLayer() const { return moduleLayer_; }
-
-/*
  * Widgets
  */
 
-void LayerTab::on_ShowPaletteButton_clicked(bool checked)
+void LayerTab::on_ShowAvailableModulesButton_clicked(bool checked)
 {
-    // Show / hide the module palette
-    ui_.ModuleListPanel->setModulePaletteVisible(checked);
+    // Toggle the visibility of the available modules tree
+    ui_.AvailableModulesTree->setVisible(!ui_.AvailableModulesTree->isVisible());
 
     // Set correct text on our button
-    ui_.ShowPaletteButton->setText(checked ? "Hide Palette" : "Show Palette");
+    ui_.ShowAvailableModulesButton->setText(ui_.AvailableModulesTree->isVisible() ? "Hide Available Modules"
+                                                                                  : "Show Available Modules");
 }
 
 void LayerTab::on_EnabledButton_clicked(bool checked)
@@ -99,6 +106,14 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer.svg"));
     else
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
+
+    // Refresh the module list
+    std::optional<QModelIndex> selectedIndex;
+    if (!ui_.ModulesList->selectionModel()->selection().indexes().empty())
+        selectedIndex = ui_.ModulesList->selectionModel()->selection().indexes().front();
+    moduleLayerModel_.setData(moduleLayer_);
+    if (selectedIndex)
+        ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
 
     dissolveWindow_->setModified();
 }
@@ -113,6 +128,38 @@ void LayerTab::on_FrequencySpin_valueChanged(int value)
     dissolveWindow_->setModified();
 }
 
+void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    auto modelIndices = current.indexes();
+
+    // If there is no selected index, show the default page on the stack
+    if (modelIndices.empty())
+        ui_.ModuleControlsStack->setCurrentIndex(0);
+
+    // Get the selected module
+    auto *module = moduleLayer_->modules()[modelIndices.front().row()].get();
+
+    // See if our stack already contains a control widget for the module - if not, create one
+    ModuleControlWidget *mcw = nullptr;
+    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *w = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (w && (w->module() == module))
+        {
+            ui_.ModuleControlsStack->setCurrentIndex(n);
+            break;
+        }
+    }
+    if (!mcw)
+    {
+        // Create a new widget to display this Module
+        auto *mcw = new ModuleControlWidget;
+        mcw->setModule(module, &dissolveWindow_->dissolve());
+        connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+        ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));
+    }
+}
+
 /*
  * Update
  */
@@ -125,10 +172,12 @@ void LayerTab::updateControls()
 
     Locker refreshLocker(refreshLock_);
 
-    ui_.EnabledButton->setChecked(moduleLayer_->enabled());
+    ui_.EnabledButton->setChecked(moduleLayer_->isEnabled());
     ui_.FrequencySpin->setValue(moduleLayer_->frequency());
 
-    ui_.ModuleListPanel->updateControls();
+    auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
+    if (mcw)
+        mcw->updateControls();
 }
 
 // Disable sensitive controls within tab
@@ -136,7 +185,13 @@ void LayerTab::disableSensitiveControls()
 {
     ui_.EnabledButton->setEnabled(false);
     ui_.FrequencySpin->setEnabled(false);
-    ui_.ModuleListPanel->disableSensitiveControls();
+    ui_.AvailableModulesTree->setEnabled(false);
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (mcw)
+            mcw->disableSensitiveControls();
+    }
 }
 
 // Enable sensitive controls within tab
@@ -144,5 +199,11 @@ void LayerTab::enableSensitiveControls()
 {
     ui_.EnabledButton->setEnabled(true);
     ui_.FrequencySpin->setEnabled(true);
-    ui_.ModuleListPanel->enableSensitiveControls();
+    ui_.AvailableModulesTree->setEnabled(true);
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (mcw)
+            mcw->enableSensitiveControls();
+    }
 }
