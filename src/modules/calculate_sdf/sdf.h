@@ -41,8 +41,18 @@ class CalculateSDFModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Whether to exclude correlations between sites on the same molecule
+    bool excludeSameMolecule_{true};
+    // Range along X axis
+    Vec3<double> rangeX_{-10.0, 10.0, 0.5};
+    // Range along Y axis
+    Vec3<double> rangeY_{-10.0, 10.0, 0.5};
+    // Range along Z axis
+    Vec3<double> rangeZ_{-10.0, 10.0, 0.5};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

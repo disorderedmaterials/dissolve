@@ -11,7 +11,6 @@
 // Forward Declarations
 class Process1DProcedureNode;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Sum1D
 class Sum1DProcedureNode : public ProcedureNode
@@ -31,18 +30,22 @@ class Sum1DProcedureNode : public ProcedureNode
      * Data
      */
     private:
-    // Process1D node that we are targetting (retrieved from keyword 'SourceData')
-  std::shared_ptr<const Process1DProcedureNode> processNode_;
-    // Ranges for sums (retrieved from keywords)
-    Range range_[3];
+    // Process1D node that we are targetting
+      std::shared_ptr<const Process1DProcedureNode> *sourceData_{nullptr};
+    // Ranges for sums
+    Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Flags for ranges
-    bool rangeEnabled_[3];
+    bool rangeEnabled_[3] = {true, false, false};
     // Calculated sums (stored in processing data list)
     OptionalReferenceWrapper<SampledDouble> sum_[3];
 
     public:
     // Return calculated sum specified
     SampledDouble sum(int index) const;
+    // Return reference to specified range for calculation
+    Range &range(int n);
+    // Return reference to range enabled flag
+    bool &rangeEnabled(int n);
     // Return whether range B is enabled (from keyword data)
     bool isRangeBEnabled() const;
     // Return whether range C is enabled (from keyword data)

@@ -5,9 +5,24 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-BoolKeyword::BoolKeyword(bool value) : KeywordData<bool>(KeywordBase::BoolData, value) {}
+BoolKeyword::BoolKeyword(bool &data) : KeywordBase(typeid(this)), data_(data) {}
 
-BoolKeyword::~BoolKeyword() = default;
+/*
+ * Data
+ */
+
+// Set data
+bool BoolKeyword::setData(bool value)
+{
+    data_ = value;
+    set_ = true;
+
+    return true;
+}
+
+// Return data
+bool &BoolKeyword::data() { return data_; }
+const bool &BoolKeyword::data() const { return data_; }
 
 /*
  * Arguments
@@ -24,7 +39,8 @@ bool BoolKeyword::read(LineParser &parser, int startArg, const CoreData &coreDat
 {
     if (parser.hasArg(startArg))
     {
-        setData(parser.argb(startArg));
+        data_ = parser.argb(startArg);
+        set_ = true;
 
         return true;
     }
@@ -36,19 +52,3 @@ bool BoolKeyword::write(LineParser &parser, std::string_view keywordName, std::s
 {
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }
-
-/*
- * Conversion
- */
-
-// Return value (as bool)
-bool BoolKeyword::asBool() { return data_; }
-
-// Return value (as int)
-int BoolKeyword::asInt() { return data_ ? 1 : 0; }
-
-// Return value (as double)
-double BoolKeyword::asDouble() { return data_ ? 1.0 : 0.0; }
-
-// Return value (as string)
-std::string BoolKeyword::asString() { return std::string(DissolveSys::btoa(data_)); }

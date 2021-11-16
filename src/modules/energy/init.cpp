@@ -8,23 +8,29 @@
 void EnergyModule::initialise()
 {
     // Control
-    keywords_.add("Control", new DoubleKeyword(0.001), "StabilityThreshold",
-                  "Threshold value at which energy is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
-    keywords_.add("Control", new IntegerKeyword(10), "StabilityWindow",
-                  "Number of points over which to assess the stability of the energy (per Configuration)");
+    keywords_.add<DoubleKeyword>("Control", "StabilityThreshold",
+                                 "Threshold value at which energy is deemed stable over the defined windowing period",
+                                 stabilityThreshold_, 0.0);
+    keywords_.add<IntegerKeyword>("Control", "StabilityWindow",
+                                  "Number of points over which to assess the stability of the energy (per Configuration)",
+                                  stabilityWindow_, 1);
 
     // Test
-    keywords_.add("Test", new BoolKeyword(false), "Test",
-                  "Test parallel energy routines against basic serial versions and supplied reference values");
-    keywords_.add("Test", new BoolKeyword(false), "TestAnalytic",
-                  "Use analytic interatomic energies rather than (production) tabulated potentials for tests");
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestReferenceInter",
-                  "Reference value for interatomic energy against which to test calculated value");
-    keywords_.add("Test", new DoubleKeyword(0.0), "TestReferenceIntra",
-                  "Reference value for intramolecular energy against which to test calculated value");
-    keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold of energy at which test comparison will fail");
+    keywords_.add<BoolKeyword>(
+        "Test", "Test", "Test parallel energy routines against basic serial versions and supplied reference values", test_);
+    keywords_.add<BoolKeyword>("Test", "TestAnalytic",
+                               "Use analytic interatomic energies rather than (production) tabulated potentials for tests",
+                               testAnalytic_);
+    keywords_.add<DoubleKeyword>("Test", "TestReferenceInter",
+                                 "Reference value for interatomic energy against which to test calculated value",
+                                 testReferenceInter_);
+    keywords_.add<DoubleKeyword>("Test", "TestReferenceIntra",
+                                 "Reference value for intramolecular energy against which to test calculated value",
+                                 testReferenceIntra_);
+    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold of energy at which test comparison will fail",
+                                 testThreshold_);
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "Save",
-                  "Save calculated energies to disk, one file per targetted configuration");
+    keywords_.add<BoolKeyword>("Export", "Save", "Save calculated energies to disk, one file per targetted configuration",
+                               save_);
 }

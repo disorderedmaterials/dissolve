@@ -3,15 +3,29 @@
 
 #pragma once
 
-#include "classes/data3dstore.h"
-#include "keywords/data.h"
+#include "keywords/base.h"
+
+// Forward Declarations
+class Data3DStore;
 
 // Keyword with a store of Data3D
-class Data3DStoreKeyword : public KeywordData<Data3DStore &>
+class Data3DStoreKeyword : public KeywordBase
 {
     public:
-    Data3DStoreKeyword(Data3DStore &dataStore);
-    ~Data3DStoreKeyword() override;
+    explicit Data3DStoreKeyword(Data3DStore &data);
+    ~Data3DStoreKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    Data3DStore &data_;
+
+    public:
+    // Return reference to data
+    Data3DStore &data();
+    const Data3DStore &data() const;
 
     /*
      * Arguments

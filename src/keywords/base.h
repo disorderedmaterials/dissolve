@@ -3,85 +3,31 @@
 
 #pragma once
 
-#include "templates/listitem.h"
+#include "procedure/nodes/aliases.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
-#include "procedure/nodes/aliases.h"
 #include <memory>
+#include <typeindex>
 
 // Forward Declarations
 class AtomType;
 class Configuration;
 class CoreData;
 class Isotopologue;
+class KeywordWidgetBase;
 class LineParser;
 class Module;
 class ProcedureNode;
+class QWidget;
 class Species;
 class SpeciesSite;
 
 // Keyword Base Class
-class KeywordBase : public ListItem<KeywordBase>
+class KeywordBase
 {
     public:
-    // Keyword Data Type
-    enum KeywordDataType
-    {
-        AtomTypeVectorData,
-        BoolData,
-        ConfigurationVectorData,
-        Data1DStoreData,
-        Data2DStoreData,
-        Data3DStoreData,
-        DoubleData,
-        DynamicSiteNodesData,
-        ElementVectorData,
-        EnumOptionsData,
-        ExpressionData,
-        ExpressionVariableVectorData,
-        FileAndFormatData,
-        Function1DData,
-        GeometryListData,
-        IntegerData,
-        IsotopologueListData,
-        IsotopologueSetData,
-        LinkToKeywordData,
-        ModuleData,
-        ModuleGroupsData,
-        ModuleRefListData,
-        NodeData,
-        NodeAndIntegerData,
-        NodeBranchData,
-        NodeValueData,
-        NodeValueEnumOptionsData,
-        NodeVectorData,
-        ProcedureData,
-        RangeData,
-        SpeciesData,
-        SpeciesSiteData,
-        SpeciesSiteVectorData,
-        SpeciesVectorData,
-        StringData,
-        ValueStoreData,
-        Vec3DoubleData,
-        Vec3IntegerData,
-        Vec3NodeValueData,
-        VectorIntegerDoubleData,
-        VectorIntegerStringData,
-        VectorDoublePairData,
-        VectorStringPairData
-    };
-    KeywordBase(KeywordDataType type);
+    KeywordBase(const std::type_index typeIndex);
     virtual ~KeywordBase();
-    // Return DataType name
-    static std::string_view keywordDataType(KeywordDataType kdt);
-
-    /*
-     * Base Pointer Return
-     */
-    public:
-    // Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-    virtual KeywordBase *base();
 
     /*
      * Keyword Description
@@ -97,34 +43,30 @@ class KeywordBase : public ListItem<KeywordBase>
     };
 
     private:
-    // Data type stored by keyword
-    KeywordDataType type_;
+    // Type index of derived class
+    const std::type_index typeIndex_;
     // Keyword name
     std::string name_;
-    // Arguments string (for information)
-    std::string arguments_;
     // Description of keyword, if any
     std::string description_;
     // Keyword option mask
-    int optionMask_;
+    int optionMask_{NoOptions};
 
     protected:
     // Whether the current data value has ever been set
-    bool set_;
+    bool set_{false};
 
     public:
-    // Set name, description, arguments, and option mask
-    void set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask = NoOptions);
+    // Set base keyword information
+    void setBaseInfo(std::string_view name, std::string_view description);
+    // Return typeindex for the keyword
+    const std::type_index typeIndex() const;
+    // Set option mask
+    void setOptionMask(int opttionMask);
     // Flag that data has been set by some other means
     void setAsModified();
-    // Return data type stored by keyword
-    KeywordDataType type() const;
-    // Return name of data type stored by keyword
-    std::string_view typeName() const;
     // Return keyword name
     std::string_view name() const;
-    // Return arguments string
-    std::string_view arguments() const;
     // Return keyword description
     std::string_view description() const;
     // Return keyword option mask
@@ -162,23 +104,6 @@ class KeywordBase : public ListItem<KeywordBase>
         Failed = 0,
         Success = 1
     };
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as bool)
-    virtual bool asBool();
-    // Return value (as int)
-    virtual int asInt();
-    // Return value (as double)
-    virtual double asDouble();
-    // Return value (as string)
-    virtual std::string asString();
-    // Return value as Vec3<int>
-    virtual Vec3<int> asVec3Int();
-    // Return value as Vec3<double>
-    virtual Vec3<double> asVec3Double();
 
     /*
      * Object Management

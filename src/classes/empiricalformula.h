@@ -4,22 +4,40 @@
 #pragma once
 
 #include "data/elements.h"
-#include "templates/reflist.h"
+#include <fmt/core.h>
 
-// Forward Declarations
-class Species;
-class SpeciesAtom;
-
-// Empirical Formula Generator
-class EmpiricalFormula
+namespace EmpiricalFormula
 {
-    private:
-    // Construct empirical formula from supplied element counts
-    static std::string constructFormula(const std::vector<int> &elCounts, bool richText = false);
+// Return empirical formula for range
+template <class Class, class Lam> std::string formula(const Class &range, Lam lambda, bool richText = false)
+{
+    std::vector<int> elCounts(Elements::nElements, 0);
 
-    public:
-    // Return empirical formula for supplied Species
-    static std::string formula(const Species *species, bool richText = false);
-    // Return empirical formula for supplied SpeciesAtom vector
-    static std::string formula(const std::vector<const SpeciesAtom *> &atoms, bool richText = false);
-};
+    for (const auto &obj : range)
+    {
+        Elements::Element Z = lambda(obj);
+        ++elCounts[Z];
+    }
+
+    // Loop over elements in descending order and construct formula string
+    std::string formula;
+    for (auto n = Elements::nElements - 1; n >= 0; --n)
+    {
+        if (elCounts[n] == 0)
+            continue;
+
+        auto Z = Elements::element(n);
+        if (elCounts[n] > 1)
+        {
+            if (richText)
+                formula += fmt::format("{}<sub>{}</sub>", Elements::symbol(Z), elCounts[n]);
+            else
+                formula += fmt::format("{}{}", Elements::symbol(Z), elCounts[n]);
+        }
+        else
+            formula += fmt::format("{}", Elements::symbol(Z));
+    }
+
+    return formula;
+}
+}; // namespace EmpiricalFormula

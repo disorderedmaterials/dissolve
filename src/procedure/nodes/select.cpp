@@ -15,29 +15,38 @@
 #include "procedure/nodes/sequence.h"
 
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
-    : ProcedureNode(ProcedureNode::NodeType::Select), axesRequired_(axesRequired)
+    : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired)
 {
     axesRequired_ = axesRequired;
     inclusiveDistanceRange_.set(0.0, 5.0);
 
-    keywords_.add("Control", new SpeciesSiteVectorKeyword(std::move(sites), axesRequired_), "Site",
-                  "Add target site(s) to the selection");
-    keywords_.add("Control", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite",
-                  "Add a new dynamic site to the selection");
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Select, true), "SameMoleculeAsSite",
-                  "Request that the selected site comes from the molecule containing the current site in the specified "
-                  "SelectNode");
-    keywords_.add("Control", new NodeVectorKeyword(this, ProcedureNode::NodeType::Select, true), "ExcludeSameMolecule",
-                  "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
-                  "SelectNode(s)");
-    keywords_.add("Control", new NodeVectorKeyword(this, ProcedureNode::NodeType::Select, true), "ExcludeSameSite",
-                  "Exclude sites from selection if they are the current site in the specified SelectNode(s)");
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Select, true), "ReferenceSite",
-                  "Site to use as reference point when determining inclusions / exclusions");
-    keywords_.add("Control", new RangeKeyword(inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels), "InclusiveRange",
-                  "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &forEachBranch_, ProcedureNode::AnalysisContext), "ForEach",
-                  "Branch to run on each site selected");
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "Site", "Add target site(s) to the selection", speciesSites_,
+                                            axesRequired_);
+    keywords_.add<DynamicSiteNodesKeyword>("Control", "DynamicSite", "Add a new dynamic site to the selection", dynamicSites_,
+                                           this, axesRequired_);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>(
+        "Control", "SameMoleculeAsSite",
+        "Request that the selected site comes from the molecule containing the current site in the specified "
+        "SelectNode",
+        sameMolecule_, this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
+        "Control", "ExcludeSameMolecule",
+        "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
+        "SelectNode(s)",
+        sameMoleculeExclusions_, this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
+        "Control", "ExcludeSameSite",
+        "Exclude sites from selection if they are the current site in the specified SelectNode(s)", sameSiteExclusions_, this,
+        ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "ReferenceSite",
+                                                    "Site to use as reference point when determining inclusions / exclusions",
+                                                    distanceReferenceSite_, this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<RangeKeyword>(
+        "Control", "InclusiveRange",
+        "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)",
+        inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.addKeyword<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_, this,
+                                            ProcedureNode::AnalysisContext);
 
     forEachBranch_ = nullptr;
 
@@ -59,8 +68,30 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 }
 
 /*
+ * Selection Targets
+ */
+
+// Return vector of sites to select
+std::vector<const SpeciesSite *> &SelectProcedureNode::speciesSites() { return speciesSites_; }
+
+// Return whether sites must have a defined orientation
+bool SelectProcedureNode::axesRequired() { return axesRequired_; }
+
+/*
  * Selection Control
  */
+
+// Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
+void SelectProcedureNode::setSameMoleculeExclusions(std::vector<const SelectProcedureNode *> exclusions)
+{
+    sameMoleculeExclusions_ = std::move(exclusions);
+}
+
+// Set other sites (nodes) which will exclude one of our sites if it is the same site
+void SelectProcedureNode::setSameSiteExclusions(std::vector<const SelectProcedureNode *> exclusions)
+{
+    sameSiteExclusions_ = std::move(exclusions);
+}
 
 // Return list of Molecules currently excluded from selection
 const std::vector<std::shared_ptr<const Molecule>> &SelectProcedureNode::excludedMolecules() const
@@ -83,6 +114,12 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 
     return site->molecule();
 }
+
+// Set site to use for distance check
+void SelectProcedureNode::setDistanceReferenceSite(const SelectProcedureNode *site) { distanceReferenceSite_ = site; }
+
+// Set range of distance to allow from distance reference site
+void SelectProcedureNode::setInclusiveDistanceRange(Range range) { inclusiveDistanceRange_ = range; }
 
 /*
  * Selected Sites
@@ -129,9 +166,6 @@ std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(Pro
 // Prepare any necessary data, ready for execution
 bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve target sites from keyword
-    speciesSites_ = keywords_.retrieve<std::vector<const SpeciesSite *>>("Site");
-
     // Check for at least one site being defined
     if (speciesSites_.empty() && dynamicSites_.empty())
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
@@ -145,35 +179,9 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
         return false;
 
     // Prepare any dynamic site nodes
-    for (std::shared_ptr<DynamicSiteProcedureNode> dynamicNode : dynamicSites_)
+    for (auto dynamicNode : dynamicSites_)
         if (!dynamicNode->prepare(cfg, prefix, targetList))
             return false;
-
-    // Retrieve data from keywords
-    auto node = keywords_.retrieve<ConstNodeRef>("SameMoleculeAsSite");
-    if (node)
-    {
-        sameMolecule_ = std::dynamic_pointer_cast<const SelectProcedureNode>(node);
-        assert(sameMolecule_);
-    }
-    else
-        sameMolecule_ = nullptr;
-    node = keywords_.retrieve<ConstNodeRef>("ReferenceSite");
-    if (node)
-    {
-        distanceReferenceSite_ = std::dynamic_pointer_cast<const SelectProcedureNode>(node);
-        assert(distanceReferenceSite_);
-    }
-    else
-        distanceReferenceSite_ = nullptr;
-
-    inclusiveDistanceRange_ = keywords_.retrieve<Range>("InclusiveRange");
-    sameMoleculeExclusions_.clear();
-    for (auto node : keywords_.retrieve<std::vector<ConstNodeRef>>("ExcludeSameMolecule"))
-        sameMoleculeExclusions_.push_back(std::dynamic_pointer_cast<const SelectProcedureNode>(node));
-    sameSiteExclusions_.clear();
-    for (auto node : keywords_.retrieve<std::vector<ConstNodeRef>>("ExcludeSameSite"))
-        sameSiteExclusions_.push_back(std::dynamic_pointer_cast<const SelectProcedureNode>(node));
 
     return true;
 }
@@ -205,39 +213,39 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
      * Add sites from specified Species/Sites
      */
     double r;
-    for (auto *site : speciesSites_)
+    for (auto *spSite : speciesSites_)
     {
-        const auto *siteStack = cfg->siteStack(site);
+        const auto *siteStack = cfg->siteStack(spSite);
         if (siteStack == nullptr)
             return false;
 
         for (auto n = 0; n < siteStack->nSites(); ++n)
         {
-            const Site *site = &siteStack->site(n);
+            const auto &site = siteStack->site(n);
 
             // Check Molecule inclusion / exclusions
             if (moleculeParent)
             {
-                if (site->molecule() != moleculeParent)
+                if (site.molecule() != moleculeParent)
                     continue;
             }
-            else if (find(excludedMolecules_.begin(), excludedMolecules_.end(), site->molecule()) != excludedMolecules_.end())
+            else if (find(excludedMolecules_.begin(), excludedMolecules_.end(), site.molecule()) != excludedMolecules_.end())
                 continue;
 
             // Check Site exclusions
-            if (excludedSites_.contains(site))
+            if (excludedSites_.contains(&site))
                 continue;
 
             // Check distance from reference site (if defined)
             if (distanceRef)
             {
-                r = cfg->box()->minimumDistance(site->origin(), distanceRef->origin());
+                r = cfg->box()->minimumDistance(site.origin(), distanceRef->origin());
                 if (!inclusiveDistanceRange_.contains(r))
                     continue;
             }
 
             // All OK, so add site
-            sites_.push_back(site);
+            sites_.push_back(&site);
         }
     }
 

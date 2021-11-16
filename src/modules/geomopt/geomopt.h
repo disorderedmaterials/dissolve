@@ -40,8 +40,16 @@ class GeometryOptimisationModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Initial step size to employ
+    double initialStepSize_{1.0e-5};
+    // Maximum number of minimisation cycles to perform
+    int maxCycles_{1000};
+    // Tolerance controlling convergence of algorithm
+    double tolerance_{1.0e-4};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;
@@ -63,10 +71,6 @@ class GeometryOptimisationModule : public Module
     std::vector<Vec3<double>> rTemp_;
     // Current forces
     std::vector<Vec3<double>> f_;
-    // Control variables (retrieved from keywords)
-    int nCycles_;
-    double tolerance_;
-    double initialStepSize_;
 
     private:
     // Copy coordinates from supplied target into reference arrays
@@ -243,7 +247,7 @@ class GeometryOptimisationModule : public Module
                          stepSize);
 
         auto nStepSizeResets = 0;
-        for (auto cycle = 1; cycle <= nCycles_; ++cycle)
+        for (auto cycle = 1; cycle <= maxCycles_; ++cycle)
         {
             // Copy current target coordinates as our reference (they will be modified by lineMinimise())
             setReferenceCoordinates(target);

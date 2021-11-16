@@ -108,7 +108,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     // Return node type
     NodeType type() const;
     // Return whether specified context is relevant for this node type
-    virtual bool isContextRelevant(NodeContext context) = 0;
+    virtual bool isContextRelevant(NodeContext context);
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name (and nice name)
@@ -127,14 +127,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
 
     public:
     // Return keywords for this node
+    KeywordList &keywords();
     const KeywordList &keywords() const;
-    // Set specified keyword (pass-thru to KeywordList::set<D>())
-    template <class D> bool setKeyword(std::string_view name, D value) { return keywords_.set<D>(name, value); }
-    // Set specified enum keyword (pass-thru to KeywordList::setEnumeration<D>())
-    template <class E> bool setEnumeration(std::string_view name, E enumeration)
-    {
-        return keywords_.setEnumeration<E>(name, enumeration);
-    }
 
     /*
      * Scope
@@ -173,7 +167,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
-    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope();
+    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope() const;
 
     /*
      * Branch

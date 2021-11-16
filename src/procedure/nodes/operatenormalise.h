@@ -4,14 +4,23 @@
 #pragma once
 
 #include "procedure/nodes/operatebase.h"
+#include "procedure/nodevalue.h"
 
 // Operate Value Normalise Node
 class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
-    OperateNormaliseProcedureNode(double value = 1.0);
-    OperateNormaliseProcedureNode(int value);
+    explicit OperateNormaliseProcedureNode(double value = 1.0);
     ~OperateNormaliseProcedureNode() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Operating value
+    NodeValue value_{1.0};
+    // Whether to normalise absolute sum of values rather than direct sum
+    bool absolute_{true};
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

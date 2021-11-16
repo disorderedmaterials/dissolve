@@ -55,7 +55,7 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Set origin atoms
-bool SpeciesSite::setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms)
+bool SpeciesSite::setOriginAtoms(const std::vector<SpeciesAtom *> &atoms)
 {
     originAtoms_.clear();
 
@@ -115,7 +115,7 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 }
 
 // Set x-axis atoms
-bool SpeciesSite::setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
+bool SpeciesSite::setXAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
 {
     xAxisAtoms_.clear();
 
@@ -163,7 +163,7 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 }
 
 // Set y-axis atoms
-bool SpeciesSite::setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
+bool SpeciesSite::setYAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
 {
     yAxisAtoms_.clear();
 

@@ -12,8 +12,15 @@ class SelectProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
-    OperateSitePopulationNormaliseProcedureNode(std::vector<const ProcedureNode *> nodes = {});
+    OperateSitePopulationNormaliseProcedureNode(std::vector<const SelectProcedureNode *> sites = {});
     ~OperateSitePopulationNormaliseProcedureNode() override = default;
+
+    /*
+     * Control
+     */
+    private:
+    // Select nodes containing sites for normalisation
+    std::vector<const SelectProcedureNode *> normalisationSites_;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

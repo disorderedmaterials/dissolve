@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include "procedure/nodevalue.h"
 
 // Forward Declarations
@@ -11,18 +11,27 @@ class NodeValue;
 class ProcedureNode;
 
 // Keyword with NodeValue
-class NodeValueKeyword : public KeywordData<NodeValue>
+class NodeValueKeyword : public KeywordBase
 {
     public:
-    NodeValueKeyword(ProcedureNode *parentNode, const NodeValue &value);
-    ~NodeValueKeyword() override;
+    NodeValueKeyword(NodeValue &value, ProcedureNode *parentNode);
+    ~NodeValueKeyword() override = default;
 
     /*
-     * Parent Node
+     * Data
      */
     private:
+    // Reference to data
+    NodeValue &data_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
+
+    public:
+    // Return reference to data
+    NodeValue &data();
+    const NodeValue &data() const;
+    // Set the value from supplied expression text
+    bool setData(std::string_view expressionText);
 
     /*
      * Arguments
@@ -36,25 +45,4 @@ class NodeValueKeyword : public KeywordData<NodeValue>
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Set
-     */
-    public:
-    // Set the value from supplied expression text
-    bool setValue(std::string_view expressionText);
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as int)
-    int asInt() override;
-    // Return value (as double)
-    double asDouble() override;
-
-    /*
-     * Object Management
-     */
-    protected:
 };

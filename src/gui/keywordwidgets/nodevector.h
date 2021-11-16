@@ -16,14 +16,14 @@ class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    NodeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    NodeVectorKeywordWidget(QWidget *parent, NodeVectorKeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    NodeVectorKeyword *keyword_;
+    NodeVectorKeywordBase *keyword_;
 
     /*
      * Widgets
@@ -31,6 +31,8 @@ class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     private:
     // Main form declaration
     Ui::NodeRefListWidget ui_;
+    // Allowed nodes to display in the model
+    std::vector<const ProcedureNode *> allowedNodes_;
     // Model for the node list
     ProcedureNodeModel nodeModel_;
 

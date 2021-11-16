@@ -25,7 +25,7 @@ ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImp
 // Set up keywords for the format
 void ForceImportFileFormat::setUpKeywords()
 {
-    keywords_.add("Conversion", new DoubleKeyword(1.0), "Factor", "Factor to multiply forces by (for unit conversion etc.)");
+    keywords_.add<DoubleKeyword>("Conversion", "Factor", "Factor to multiply forces by (for unit conversion etc.)", factor_);
 }
 
 /*
@@ -69,8 +69,7 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
     }
 
     // Apply factor to data
-    auto factor = keywords_.asDouble("Factor");
-    std::transform(f.begin(), f.end(), f.begin(), [factor](auto &value) { return value * factor; });
+    std::transform(f.begin(), f.end(), f.begin(), [&](auto &value) { return value * factor_; });
 
     return result;
 }

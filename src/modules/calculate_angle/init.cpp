@@ -197,55 +197,55 @@ void CalculateAngleModule::initialise()
     // Process1D: 'RDF(AB)'
     processAB_ = std::make_shared<Process1DProcedureNode>(collectAB_);
     processAB_->setName("RDF(AB)");
-    processAB_->setKeyword<std::string>("LabelValue", "g\\sub{AB}(r)");
-    processAB_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processAB_->keywords().set("LabelValue", std::string("g\\sub{AB}(r)"));
+    processAB_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
     std::shared_ptr<SequenceProcedureNode> rdfABNormalisation = processAB_->addNormalisationBranch();
-    rdfABNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectB_.get(), selectA_.get(), selectC_.get()}));
-    rdfABNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get()}));
-    rdfABNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
+    rdfABNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectB_, selectA_, selectC_}));
+    rdfABNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectA_}));
+    rdfABNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processAB_);
 
     // Process1D: 'RDF(BC)'
     processBC_ = std::make_shared<Process1DProcedureNode>(collectBC_);
     processBC_->setName("RDF(BC)");
-    processBC_->setKeyword<std::string>("LabelValue", "g\\sub{BC}(r)");
-    processBC_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processBC_->keywords().set("LabelValue", std::string("g\\sub{BC}(r)"));
+    processBC_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
     std::shared_ptr<SequenceProcedureNode> rdfBCNormalisation = processBC_->addNormalisationBranch();
-    rdfBCNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectB_.get(), selectA_.get(), selectC_.get()}));
-    rdfBCNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectC_.get()}));
-    rdfBCNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
+    rdfBCNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectB_, selectA_, selectC_}));
+    rdfBCNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectC_}));
+    rdfBCNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processBC_);
 
     // Process1D: 'ANGLE(ABC)'
     processAngle_ = std::make_shared<Process1DProcedureNode>(collectABC_);
     processAngle_->setName("Angle(ABC)");
-    processAngle_->setKeyword<std::string>("LabelValue", "Normalised Frequency");
-    processAngle_->setKeyword<std::string>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
+    processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
+    processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> angleNormalisation = processAngle_->addNormalisationBranch();
-    angleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(x)"));
-    angleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
+    angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
+    angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
     analyser_.addRootSequenceNode(processAngle_);
 
     // Process2D: 'DAngle (A-B)-C'
     processDAngleAB_ = std::make_shared<Process2DProcedureNode>(collectDAngleAB_);
     processDAngleAB_->setName("DAngle((A-B)-C)");
-    processDAngleAB_->setKeyword<std::string>("LabelValue", "g\\sub{AB}(r)");
-    processDAngleAB_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
-    processDAngleAB_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+    processDAngleAB_->keywords().set("LabelValue", std::string("g\\sub{AB}(r)"));
+    processDAngleAB_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
+    processDAngleAB_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> dAngleABNormalisation = processDAngleAB_->addNormalisationBranch();
-    dAngleABNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
-    dAngleABNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
+    dAngleABNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
+    dAngleABNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
     analyser_.addRootSequenceNode(processDAngleAB_);
 
     // Process2D: 'DAngle A-(B-C)'
     processDAngleBC_ = std::make_shared<Process2DProcedureNode>(collectDAngleBC_);
     processDAngleBC_->setName("DAngle(A-(B-C))");
-    processDAngleBC_->setKeyword<std::string>("LabelValue", "g\\sub{BC}(r)");
-    processDAngleBC_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
-    processDAngleBC_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+    processDAngleBC_->keywords().set("LabelValue", std::string("g\\sub{BC}(r)"));
+    processDAngleBC_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
+    processDAngleBC_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> dAngleBCNormalisation = processDAngleBC_->addNormalisationBranch();
-    dAngleBCNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
-    dAngleBCNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
+    dAngleBCNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
+    dAngleBCNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
     analyser_.addRootSequenceNode(processDAngleBC_);
 
     /*
@@ -253,40 +253,42 @@ void CalculateAngleModule::initialise()
      */
 
     // Control
-    keywords_.add(
-        "Control",
-        new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "RangeAB", "Range (min, max, binwidth) of A-B distance axis", "<min> <max> <binwidth> (Angstroms)");
-    keywords_.add(
-        "Control",
-        new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "RangeBC", "Range (min, max, binwidth) of B-C distance axis", "<min> <max> <binwidth> (Angstroms)");
-    keywords_.add(
-        "Control",
-        new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
-    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
-                   "Add site(s) which represent 'A' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
-                   "Add site(s) which represent 'B' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Control", selectC_->keywords().find("Site"), "SiteC",
-                   "Add site(s) which represent 'C' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeAB",
-                  "Whether to exclude correlations between A and B sites on the same molecule", "<True|False>");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMoleculeBC",
-                  "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameSiteAC",
-                  "Whether to exclude correlations between A and C sites on the same molecule", "<True|False>");
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeAB", "Range (min, max, binwidth) of A-B distance axis", rangeAB_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeBC", "Range (min, max, binwidth) of B-C distance axis", rangeBC_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle axis", angleRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Add site(s) which represent 'A' in the interaction A-B-C",
+                                            selectA_->speciesSites(), selectA_->axesRequired());
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Add site(s) which represent 'B' in the interaction A-B-C",
+                                            selectB_->speciesSites(), selectB_->axesRequired());
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteC", "Add site(s) which represent 'C' in the interaction A-B-C",
+                                            selectC_->speciesSites(), selectC_->axesRequired());
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeAB",
+                               "Whether to exclude correlations between A and B sites on the same molecule",
+                               excludeSameMoleculeAB_);
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeBC",
+                               "Whether to exclude correlations between B and C sites on the same molecule",
+                               excludeSameMoleculeBC_);
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameSiteAC",
+                               "Whether to exclude correlations between A and C sites on the same molecule",
+                               excludeSameSiteAC_);
 
     // Export
-    keywords_.link("Export", processAB_->keywords().find("Export"), "ExportAB",
-                   "File format and file name under which to save calculated A-B RDF data");
-    keywords_.link("Export", processBC_->keywords().find("Export"), "ExportBC",
-                   "File format and file name under which to save calculated B-C RDF data");
-    keywords_.link("Export", processAngle_->keywords().find("Export"), "ExportAngle",
-                   "File format and file name under which to save calculated A-B-C angle histogram");
-    keywords_.link("Export", processDAngleAB_->keywords().find("Export"), "ExportDAngleAB",
-                   "File format and file name under which to save calculated (A-B)-C distance-angle map");
-    keywords_.link("Export", processDAngleBC_->keywords().find("Export"), "ExportDAngleBC",
-                   "File format and file name under which to save calculated A-(B-C) distance-angle map");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportAB",
+                                        "File format and file name under which to save calculated A-B RDF data",
+                                        processAB_->exportFileAndFormat(), "EndExportAB");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportBC",
+                                        "File format and file name under which to save calculated B-C RDF data",
+                                        processBC_->exportFileAndFormat(), "EndExportBC");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportAngle",
+                                        "File format and file name under which to save calculated A-B-C angle histogram",
+                                        processAngle_->exportFileAndFormat(), "EndExportAngle");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngleAB",
+                                        "File format and file name under which to save calculated (A-B)-C distance-angle map",
+                                        processDAngleAB_->exportFileAndFormat(), "EndExportDAngleAB");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngleBC",
+                                        "File format and file name under which to save calculated A-(B-C) distance-angle map",
+                                        processDAngleBC_->exportFileAndFormat(), "EndExportDAngleBC");
 }

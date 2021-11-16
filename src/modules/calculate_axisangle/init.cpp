@@ -86,8 +86,8 @@ void CalculateAxisAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = std::make_shared<SelectProcedureNode, std::vector<const SpeciesSite *>, bool>({}, true);
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<const ProcedureNode*>>("ExcludeSameMolecule", {selectA_.get()});
-    auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+    selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode> >{selectA_});
+    std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'rAB'
@@ -114,8 +114,8 @@ void CalculateAxisAngleModule::initialise()
     // Process1D: 'RDF(AB)'
     processDistance_ = std::make_shared<Process1DProcedureNode>(collectDistance_);
     processDistance_->setName("RDF(AB)");
-    processDistance_->setKeyword<std::string>("LabelValue", "g(r)");
-    processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processDistance_->keywords().set("LabelValue", std::string("g(r)"));
+    processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
     std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
     rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get()}));
@@ -126,22 +126,21 @@ void CalculateAxisAngleModule::initialise()
     // Process1D: 'ANGLE(axis)'
     processAngle_ = std::make_shared<Process1DProcedureNode>(collectAngle_);
     processAngle_->setName("AxisAngle(AB)");
-    processAngle_->setKeyword<std::string>("LabelValue", "Normalised Frequency");
-    processAngle_->setKeyword<std::string>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
+    processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
+    processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> angleNormalisation = processAngle_->addNormalisationBranch();
-    angleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(x)"));
-    angleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
+    angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
+    angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
     analyser_.addRootSequenceNode(processAngle_);
 
     // Process2D: 'DAngle'
     processDAngle_ = std::make_shared<Process2DProcedureNode>(collectDAngle_);
     processDAngle_->setName("DAxisAngle");
-    processDAngle_->setKeyword<std::string>("LabelValue", "g(r)");
-    processDAngle_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
-    processDAngle_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+    processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
+    processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> dAngleNormalisation = processDAngle_->addNormalisationBranch();
-    dAngleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
-    dAngleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
+    dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
+    dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
     analyser_.addRootSequenceNode(processDAngle_);
 
     /*
@@ -149,28 +148,30 @@ void CalculateAxisAngleModule::initialise()
      */
 
     // Control
-    keywords_.add(
-        "Control",
-        new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "DistanceRange", "Range (min, max, binwidth) of distance axis", "<min> <max> <binwidth> (Angstroms)");
-    keywords_.add(
-        "Control",
-        new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels),
-        "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
-    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
-                   "Add site(s) which represent 'A' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Control", calcAngle->keywords().find("AxisI"), "AxisA", "Axis to use from site A");
-    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
-                   "Add site(s) which represent 'B' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
-    keywords_.link("Control", calcAngle->keywords().find("AxisJ"), "AxisB", "Axis to use from site B");
-    keywords_.add("Control", new BoolKeyword(false), "ExcludeSameMolecule",
-                  "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
+    keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, binwidth) of distance axis", distanceRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle axis", angleRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C",
+                                            selectA_->speciesSites(), selectA_->axesRequired());
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisA", "Axis to use from site A", calcAngle->axis(0),
+                                                              OrientedSite::siteAxis());
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Add site(s) which represent 'B' in the interaction A-B...C",
+                                            selectB_->speciesSites(), selectB_->axesRequired());
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisB", "Axis to use from site B", calcAngle->axis(1),
+                                                              OrientedSite::siteAxis());
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
+                               "Whether to exclude correlations between B and C sites on the same molecule",
+                               excludeSameMolecule_);
 
     // Export
-    keywords_.link("Export", processDistance_->keywords().find("Export"), "ExportRDF",
-                   "File format and file name under which to save calculated B-C RDF");
-    keywords_.link("Export", processAngle_->keywords().find("Export"), "ExportAngle",
-                   "File format and file name under which to save calculated A-B...C angle histrogram to disk");
-    keywords_.link("Export", processDAngle_->keywords().find("Export"), "ExportDAngle",
-                   "File format and file name under which to save calculated A-B...C angle map to disk");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportRDF",
+                                        "File format and file name under which to save calculated B-C RDF",
+                                        processDistance_->exportFileAndFormat(), "EndExportRDF");
+    keywords_.add<FileAndFormatKeyword>(
+        "Export", "ExportAngle", "File format and file name under which to save calculated A-B...C angle histogram to disk",
+        processAngle_->exportFileAndFormat(), "EndExportAngle");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngle",
+                                        "File format and file name under which to save calculated A-B...C angle map to disk",
+                                        processDAngle_->exportFileAndFormat(), "EndExportDAngle");
 }

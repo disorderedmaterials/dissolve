@@ -6,10 +6,10 @@
 #include "keywords/node.h"
 
 PickProcedureNodeBase::PickProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Pick)
+    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Pick), selection_(nullptr)
 {
-  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Pick, true), "From",
-                  "Previous selection of molecules from which to pick");
+    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("Control", "From", "Previous selection of molecules from which to pick",
+                                                      selection_, this, ProcedureNode::NodeClass::Pick, true);
 }
 
 /*
@@ -29,29 +29,13 @@ bool PickProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context
 // Return source molecule pool
 const std::vector<std::shared_ptr<Molecule>> &PickProcedureNodeBase::moleculePool(const Configuration *cfg) const
 {
-    auto *node = keywords_.retrieve<const ProcedureNode *>("From");
-    if (node)
-    {
-        auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);
-        assert(pickNode);
-        return pickNode->pickedMolecules();
-    }
-
-    return cfg->molecules();
+    return selection_ ? selection_->pickedMolecules() : cfg->molecules();
 }
 
 // Return source molecule pool name
 std::string PickProcedureNodeBase::moleculePoolName() const
 {
-    auto *node = keywords_.retrieve<const ProcedureNode *>("From");
-    if (node)
-    {
-        auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(node);
-        assert(pickNode);
-        return fmt::format("picked selection '{}'", pickNode->name());
-    }
-
-    return "configuration";
+    return selection_ ? fmt::format("picked selection '{}'", selection_->name()) : "configuration";
 }
 
 // Return vector of picked Molecules

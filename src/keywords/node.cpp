@@ -4,15 +4,15 @@
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
 
-NodeKeyword::NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
                          ConstNodeRef node)
-  : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<const ProcedureNode*>(KeywordBase::NodeData, node.get())
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<ConstNodeRef >(node)
 {
 }
 
-NodeKeyword::NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
+NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
                          ConstNodeRef node)
-  : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<const ProcedureNode* >(KeywordBase::NodeData, node.get())
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<ConstNodeRef >(node)
 {
 }
 

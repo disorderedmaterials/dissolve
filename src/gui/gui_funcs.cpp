@@ -41,6 +41,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     // Connect signals from our main tab widget
     connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(setModified()));
     connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(fullUpdate()));
+    connect(ui_.MainTabs, SIGNAL(tabClosed(QWidget *)), this, SLOT(closeTab(QWidget *)));
 
     refreshing_ = false;
     modified_ = false;
@@ -363,11 +364,18 @@ void DissolveWindow::updateMenus()
         return;
 
     // Species Menu
+    auto speciesAtomSelection = activeTab->type() == MainTab::TabType::Species ? ui_.MainTabs->currentSpecies()->selectedAtoms()
+                                                                               : std::vector<SpeciesAtom *>();
     ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesReduceForcefieldTermsMenu->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesCopyTermsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesSetAtomTypesInSelectionAction->setEnabled(activeTab->type() == MainTab::TabType::Species &&
+                                                         ui_.MainTabs->currentSpecies()->isSelectionSingleElement());
+    ui_.SpeciesSetChargesInSelectionAction->setEnabled(activeTab->type() == MainTab::TabType::Species &&
+                                                       !ui_.MainTabs->currentSpecies()->selectedAtoms().empty());
 
     // Configuration Menu
     ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);

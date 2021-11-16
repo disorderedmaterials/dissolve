@@ -12,11 +12,10 @@
 CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(std::shared_ptr<SelectProcedureNode> site0, std::shared_ptr<SelectProcedureNode> site1)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateDistance, site0, site1)
 {
-    // Create keywords - store the pointers to the superclasses for later use
-  siteKeywords_[0] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site0);
-    keywords_.add("Control", siteKeywords_[0], "I", "Site that represents 'i' in the distance i-j");
-    siteKeywords_[1] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site1);
-    keywords_.add("Control", siteKeywords_[1], "J", "Site that represents 'j' in the distance i-j");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that represents 'i' in the distance i-j", sites_[0],
+                                                    this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that represents 'j' in the distance i-j", sites_[1],
+                                                    this, ProcedureNode::NodeType::Select, true);
 }
 
 /*

@@ -44,8 +44,20 @@ class ForcesModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Test parallel force routines against basic serial versions and supplied reference values (if provided)
+    bool test_{false};
+    // Use analytic interatomic forces rather than (production) tabulated potentials for tests
+    bool testAnalytic_{false};
+    // Include interatomic forces in test
+    bool testInter_{true};
+    // Include intramolecular forces in test
+    bool testIntra_{true};
+    // Threshold of force (%) at which test comparison will fail
+    double testThreshold_{0.1};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

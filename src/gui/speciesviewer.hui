@@ -17,8 +17,8 @@ class SpeciesViewer : public BaseViewer
     Q_OBJECT
 
     public:
-    SpeciesViewer(QWidget *parent);
-    ~SpeciesViewer();
+    explicit SpeciesViewer(QWidget *parent);
+    ~SpeciesViewer() = default;
 
     /*
      * Rendering (BaseViewer virtuals)
@@ -37,6 +37,10 @@ class SpeciesViewer : public BaseViewer
     protected:
     // Mouse moved
     void mouseMoved(int dx, int dy);
+
+    protected slots:
+    // Context menu requested
+    void contextMenuRequested(QPoint pos);
 
     /*
      * Interaction (BaseViewer virtuals)
@@ -64,8 +68,8 @@ class SpeciesViewer : public BaseViewer
     InteractionMode interactionMode_;
     // Transient interaction mode (i.e. one not invoked by primary button)
     TransientInteractionMode transientInteractionMode_;
-    // Clicked atom at the start of the interaction (if any)
-    SpeciesAtom *clickedAtom_;
+    // Clicked atom index at the start of the interaction (if any)
+    std::optional<int> clickedAtomIndex_;
     // Element for created atoms in DrawInteraction
     Elements::Element drawElement_;
     // Species-space coordinates at clicked position for DrawInteraction
@@ -75,7 +79,7 @@ class SpeciesViewer : public BaseViewer
 
     private:
     // Return atom at specified coordinates
-    SpeciesAtom *atomAt(int x, int y);
+    std::optional<int> atomIndexAt(int x, int y);
 
     protected:
     // Start interaction at the specified screen coordinates

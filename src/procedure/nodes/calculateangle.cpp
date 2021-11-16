@@ -13,13 +13,12 @@ CalculateAngleProcedureNode::CalculateAngleProcedureNode(std::shared_ptr<SelectP
                                                          std::shared_ptr<SelectProcedureNode> site2)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAngle, site0, site1, site2)
 {
-    // Create keywords - store the pointers to the superclasses for later use
-  siteKeywords_[0] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site0);
-    keywords_.add("Control", siteKeywords_[0], "I", "Site that represents 'i' in the angle i-j-k");
-    siteKeywords_[1] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site1);
-    keywords_.add("Control", siteKeywords_[1], "J", "Site that represents 'j' in the angle i-j-k");
-    siteKeywords_[2] = new NodeKeyword(this, ProcedureNode::NodeType::Select, true, site2);
-    keywords_.add("Control", siteKeywords_[2], "K", "Site that represents 'k' in the angle i-j-k");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that represents 'i' in the angle i-j-k", sites_[0],
+                                                    this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that represents 'j' in the angle i-j-k", sites_[1],
+                                                    this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "K", "Site that represents 'k' in the angle i-j-k", sites_[2],
+                                                    this, ProcedureNode::NodeType::Select, true);
 }
 
 /*

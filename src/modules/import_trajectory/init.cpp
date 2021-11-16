@@ -7,5 +7,5 @@
 // Perform any necessary initialisation for the Module
 void ImportTrajectoryModule::initialise()
 {
-    keywords_.add("Format", new FileAndFormatKeyword(trajectoryFormat_, "EndFormat"), "Format", "File / format for trajectory");
+    keywords_.add<FileAndFormatKeyword>("Format", "Format", "File / format for trajectory", trajectoryFormat_, "EndFormat");
 }

@@ -35,10 +35,14 @@ class SpeciesBond : public SpeciesIntra
     void assign(SpeciesAtom *i, SpeciesAtom *j);
 
     public:
+    // Rewrite SpeciesAtom pointer
+    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
     SpeciesAtom *j() const;
+    // Return vector of involved atoms
+    std::vector<const SpeciesAtom *> atoms() const override;
     // Return the 'other' SpeciesAtom
     SpeciesAtom *partner(const SpeciesAtom *i) const;
     // Return index (in parent Species) of first SpeciesAtom

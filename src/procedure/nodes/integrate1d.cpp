@@ -15,16 +15,17 @@
 #include "procedure/nodes/select.h"
 
 Integrate1DProcedureNode::Integrate1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
-    : ProcedureNode(ProcedureNode::NodeType::Integrate1D)
+    : ProcedureNode(ProcedureNode::NodeType::Integrate1D), sourceData_(target)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Process1D, false, target), "SourceData",
-                  "Process1D node containing the data to integrate");
-    keywords_.add("Control", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
-                  "X range for first integration region");
-    keywords_.add("Control", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
-                  "X range for second integration region");
-    keywords_.add("Control", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
-                  "X range for third integration region");
+    keywords_.add<NodeKeyword<Process1DProcedureNode>>("Control", "SourceData",
+                                                       "Process1D node containing the data to integrate", sourceData_, this,
+                                                       ProcedureNode::NodeType::Process1D, false);
+    keywords_.add<RangeKeyword>("Control", "RangeA", "X range for first integration region", range_[0],
+                                Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<RangeKeyword>("Control", "RangeB", "X range for second integration region", range_[1],
+                                Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<RangeKeyword>("Control", "RangeC", "X range for third integration region", range_[2],
+                                Vec3Labels::MinMaxDeltaLabels);
 }
 
 /*
@@ -51,9 +52,7 @@ const SampledDouble &Integrate1DProcedureNode::integral(int index) const { retur
 // Prepare any necessary data, ready for execution
 bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Process1D node target
-  processNode_ = std::dynamic_pointer_cast<const Process1DProcedureNode>(keywords_.retrieve<ConstNodeRef >("SourceData"));
-    if (!processNode_)
+    if (!sourceData_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
 
     return true;
@@ -63,23 +62,18 @@ bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view pref
 bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                         GenericList &targetList)
 {
-    // Get ranges
-    auto rangeA = keywords_.retrieve<Range>("RangeA");
-    auto rangeB = keywords_.retrieve<Range>("RangeB");
-    auto rangeC = keywords_.retrieve<Range>("RangeC");
-
     // Calculate integrals
-    integral_[0] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeA"));
-    integral_[1] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeB"));
-    integral_[2] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeC"));
+    integral_[0] += Integrator::trapezoid(sourceData_->processedData(), range_[0]);
+    integral_[1] += Integrator::trapezoid(sourceData_->processedData(), range_[1]);
+    integral_[2] += Integrator::trapezoid(sourceData_->processedData(), range_[2]);
 
     // Print info
     Messenger::print("Integrate1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[0].value(), integral_[0].stDev(),
-                     rangeA.minimum(), rangeA.maximum());
+                     range_[0].minimum(), range_[0].maximum());
     Messenger::print("Integrate1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[1].value(), integral_[1].stDev(),
-                     rangeB.minimum(), rangeB.maximum());
+                     range_[1].minimum(), range_[1].maximum());
     Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].value(), integral_[2].stDev(),
-                     rangeC.minimum(), rangeC.maximum());
+                     range_[2].minimum(), range_[2].maximum());
 
     return true;
 }

@@ -23,43 +23,32 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters from Configuration
-        double cutoffDistance = keywords_.asDouble("CutoffDistance");
-        if (cutoffDistance < 0.0)
-            cutoffDistance = dissolve.pairPotentialRange();
-        auto &rotationStepSize = keywords_.retrieve<double>("RotationStepSize");
-        const auto rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
-        const auto rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
-        const auto nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
-        const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-        auto &translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
-        const auto translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
-        const auto translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
-        const auto restrictToSpecies = keywords_.retrieve<std::vector<const Species *>>("RestrictToSpecies");
+        auto rCut = cutoffDistance_ < 0.0 ? dissolve.pairPotentialRange() : cutoffDistance_;
         const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
-        Messenger::print("MolShake: Cutoff distance is {}.\n", cutoffDistance);
-        Messenger::print("MolShake: Performing {} shake(s) per Molecule.\n", nShakesPerMolecule);
+        Messenger::print("MolShake: Cutoff distance is {}.\n", rCut);
+        Messenger::print("MolShake: Performing {} shake(s) per Molecule.\n", nShakesPerMolecule_);
         Messenger::print("MolShake: Step size for translation adjustments is {:.5f} Angstroms (allowed range is {} <= "
                          "delta <= {}).\n",
-                         translationStepSize, translationStepSizeMin, translationStepSizeMax);
+                         translationStepSize_, translationStepSizeMin_, translationStepSizeMax_);
         Messenger::print(
             "MolShake: Step size for rotation adjustments is {:.5f} degrees (allowed range is {} <= delta <= {}).\n",
-            rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
-        if (!restrictToSpecies.empty())
+            rotationStepSize_, rotationStepSizeMin_, rotationStepSizeMax_);
+        if (!restrictToSpecies_.empty())
         {
             std::string speciesNames;
-            for (auto *sp : restrictToSpecies)
+            for (auto *sp : restrictToSpecies_)
                 speciesNames += fmt::format("  {}", sp->name());
             Messenger::print("MolShake: Calculation will be restricted to species:{}\n", speciesNames);
         }
@@ -71,13 +60,13 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         RegionalDistributor distributor(cfg->nMolecules(), cfg->cells(), procPool, strategy);
 
         // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
-        if (!restrictToSpecies.empty())
+        if (!restrictToSpecies_.empty())
         {
             std::vector<int> targetIndices;
             auto id = 0;
             for (const auto &mol : cfg->molecules())
             {
-                if (std::find(restrictToSpecies.begin(), restrictToSpecies.end(), mol->species()) != restrictToSpecies.end())
+                if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
                     targetIndices.push_back(id);
                 ++id;
             }
@@ -86,7 +75,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Create a local ChangeStore and a suitable EnergyKernel
         ChangeStore changeStore(procPool);
-        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), cutoffDistance);
+        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), rCut);
 
         // Initialise the random number buffer
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
@@ -142,7 +131,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 currentEnergy = kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
 
                 // Loop over number of shakes per atom
-                for (shake = 0; shake < nShakesPerMolecule; ++shake)
+                for (shake = 0; shake < nShakesPerMolecule_; ++shake)
                 {
                     // Determine what move(s) will we attempt
                     if (count == 0)
@@ -164,17 +153,17 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     // Create a random translation vector and apply it to the Molecule's centre
                     if (translate)
                     {
-                        rDelta.set(procPool.randomPlusMinusOne() * translationStepSize,
-                                   procPool.randomPlusMinusOne() * translationStepSize,
-                                   procPool.randomPlusMinusOne() * translationStepSize);
+                        rDelta.set(procPool.randomPlusMinusOne() * translationStepSize_,
+                                   procPool.randomPlusMinusOne() * translationStepSize_,
+                                   procPool.randomPlusMinusOne() * translationStepSize_);
                         mol->translate(rDelta);
                     }
 
                     // Create a random rotation matrix and apply it to the Molecule
                     if (rotate)
                     {
-                        transform.createRotationXY(procPool.randomPlusMinusOne() * rotationStepSize,
-                                                   procPool.randomPlusMinusOne() * rotationStepSize);
+                        transform.createRotationXY(procPool.randomPlusMinusOne() * rotationStepSize_,
+                                                   procPool.randomPlusMinusOne() * rotationStepSize_);
                         mol->transform(box, transform);
                     }
 
@@ -267,22 +256,24 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          nRotationsAccepted, nRotationAttempts);
 
         // Update and set translation step size
-        translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : transRate / targetAcceptanceRate;
-        if (translationStepSize < translationStepSizeMin)
-            translationStepSize = translationStepSizeMin;
-        else if (translationStepSize > translationStepSizeMax)
-            translationStepSize = translationStepSizeMax;
+        translationStepSize_ *= (nTranslationsAccepted == 0) ? 0.8 : transRate / targetAcceptanceRate_;
+        if (translationStepSize_ < translationStepSizeMin_)
+            translationStepSize_ = translationStepSizeMin_;
+        else if (translationStepSize_ > translationStepSizeMax_)
+            translationStepSize_ = translationStepSizeMax_;
+        keywords_.setAsModified("TranslationStepSize");
 
-        Messenger::print("Updated step size for translations is {:.5f} Angstroms.\n", translationStepSize);
+        Messenger::print("Updated step size for translations is {:.5f} Angstroms.\n", translationStepSize_);
 
         // Update and set rotation step size
-        rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rotRate / targetAcceptanceRate;
-        if (rotationStepSize < rotationStepSizeMin)
-            rotationStepSize = rotationStepSizeMin;
-        else if (rotationStepSize > rotationStepSizeMax)
-            rotationStepSize = rotationStepSizeMax;
+        rotationStepSize_ *= (nRotationsAccepted == 0) ? 0.8 : rotRate / targetAcceptanceRate_;
+        if (rotationStepSize_ < rotationStepSizeMin_)
+            rotationStepSize_ = rotationStepSizeMin_;
+        else if (rotationStepSize_ > rotationStepSizeMax_)
+            rotationStepSize_ = rotationStepSizeMax_;
+        keywords_.setAsModified("RotationStepSize");
 
-        Messenger::print("Updated step size for rotations is {:.5f} degrees.\n", rotationStepSize);
+        Messenger::print("Updated step size for rotations is {:.5f} degrees.\n", rotationStepSize_);
 
         // Increase contents version in Configuration
         if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0))

@@ -7,8 +7,8 @@
 
 GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::GeneralRegion)
 {
-    keywords_.add("Control", new DoubleKeyword(2.0), "Tolerance",
-                  "Distance threshold for avoiding existing atoms in the configuration");
+    keywords_.add<DoubleKeyword>("Control", "Tolerance", "Distance threshold for avoiding existing atoms in the configuration",
+                                 tolerance_, 0.1);
 }
 
 /*
@@ -31,8 +31,7 @@ bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Ve
 bool GeneralRegionProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve keyword values
-    toleranceSquared_ = keywords_.asDouble("Tolerance");
-    toleranceSquared_ *= toleranceSquared_;
+    toleranceSquared_ = tolerance_ * tolerance_;
 
     return true;
 }

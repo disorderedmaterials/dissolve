@@ -39,12 +39,16 @@ class SpeciesAngle : public SpeciesIntra
     void detach();
 
     public:
+    // Rewrite SpeciesAtom pointer
+    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second (central) SpeciesAtom
     SpeciesAtom *j() const;
     // Return third SpeciesAtom
     SpeciesAtom *k() const;
+    // Return vector of involved atoms
+    std::vector<const SpeciesAtom *> atoms() const override;
     // Return index (in parent Species) of first SpeciesAtom
     int indexI() const;
     // Return index (in parent Species) of second (central) SpeciesAtom

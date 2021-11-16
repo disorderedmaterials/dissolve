@@ -38,8 +38,28 @@ class CheckSpeciesModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Atom types to check against indices
+    std::vector<std::tuple<std::vector<int>, std::vector<std::string>>> atomTypes_;
+    // Bond parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> bondParameters_;
+    // Angle parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> angleParameters_;
+    // Torsion parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> torsionParameters_;
+    // Improper parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> improperParameters_;
+    // Tolerance beyond which charges are said to differ
+    double chargeTolerance_{1.0e-3};
+    // Target species to check
+    const Species *targetSpecies_;
+    // Check the total charge of the species against the specified value
+    double totalCharge_{0.0};
+    // Tolerance beyond which parameters are said to differ
+    double tolerance_{1.0e-3};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;
@@ -97,16 +117,4 @@ class CheckSpeciesModule : public Module
 
         return !result;
     }
-
-    private:
-    // Atom types to check against indices
-    std::vector<std::tuple<std::vector<int>, std::vector<std::string>>> atomTypes_;
-    // Bond parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> bondParameters_;
-    // Angle parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> angleParameters_;
-    // Torsion parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> torsionParameters_;
-    // Improper parameters to check
-    std::vector<std::tuple<std::vector<int>, std::vector<double>>> improperParameters_;
 };

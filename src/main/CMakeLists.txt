@@ -27,7 +27,7 @@ add_library(
   version.h
 )
 
-include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/src)
+include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/src ${CONAN_INCLUDE_DIRS})
 if(CONAN)
   target_link_libraries(main PRIVATE CONAN_PKG::fmt CONAN_PKG::cli11)
 else(CONAN)

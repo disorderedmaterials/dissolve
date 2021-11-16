@@ -67,6 +67,17 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
  * SpeciesAtom Information
  */
 
+// Rewrite SpeciesAtom pointer
+void SpeciesBond::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
+{
+    assert(i_ == oldPtr || j_ == oldPtr);
+
+    if (i_ == oldPtr)
+        i_ = newPtr;
+    else
+        j_ = newPtr;
+}
+
 // Assign the two atoms in the bond
 void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
 {
@@ -84,6 +95,9 @@ SpeciesAtom *SpeciesBond::i() const { return i_; }
 
 // Return second SpeciesAtom involved in SpeciesBond
 SpeciesAtom *SpeciesBond::j() const { return j_; }
+
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesBond::atoms() const { return {i_, j_}; }
 
 // Return the 'other' SpeciesAtom in the SpeciesBond
 SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ ? j_ : i_); }

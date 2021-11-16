@@ -13,22 +13,21 @@
 Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable, std::shared_ptr<CalculateProcedureNodeBase> yObservable,
                                                double xMin, double xMax, double xBinWidth, double yMin, double yMax,
                                                double yBinWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect2D)
+    : ProcedureNode(ProcedureNode::NodeType::Collect2D), xObservable_{xObservable, 0},
+      yObservable_{yObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}
 {
-  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, xObservable, 0),
-                  "QuantityX", "Calculated observable to collect for x axis");
-  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, yObservable, 0),
-                  "QuantityY", "Calculated observable to collect for y axis");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
-                                        Vec3Labels::MinMaxBinwidthlabels),
-                  "RangeX", "Range and binwidth of the x-axis of the histogram");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
-                                        Vec3Labels::MinMaxDeltaLabels),
-                  "RangeY", "Range and binwidth of the y-axis of the histogram");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
-                  "Branch which runs if the target quantities were binned successfully");
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
+        "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,
+        ProcedureNode::NodeClass::Calculate, true);
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
+        "Control", "QuantityY", "Calculated observable to collect for y axis", yObservable_, this,
+        ProcedureNode::NodeClass::Calculate, true);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
+                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
 
     // Initialise branch
     subCollectBranch_ = nullptr;
@@ -55,24 +54,6 @@ const Data2D &Collect2DProcedureNode::accumulatedData() const
 
     return histogram_->get().accumulatedData();
 }
-
-// Return x range minimum
-double Collect2DProcedureNode::xMinimum() const { return keywords_.asVec3Double("RangeX").x; }
-
-// Return x range maximum
-double Collect2DProcedureNode::xMaximum() const { return keywords_.asVec3Double("RangeX").y; }
-
-// Return x bin width
-double Collect2DProcedureNode::xBinWidth() const { return keywords_.asVec3Double("RangeX").z; }
-
-// Return y range minimum
-double Collect2DProcedureNode::yMinimum() const { return keywords_.asVec3Double("RangeY").x; }
-
-// Return y range maximum
-double Collect2DProcedureNode::yMaximum() const { return keywords_.asVec3Double("RangeY").y; }
-
-// Return y bin width
-double Collect2DProcedureNode::yBinWidth() const { return keywords_.asVec3Double("RangeY").z; }
 
 /*
  * Branches
@@ -108,7 +89,7 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
         Messenger::printVerbose("Two-dimensional histogram data for '{}' was not in the target list, so it will now be "
                                 "initialised...\n",
                                 name());
-        target.initialise(xMinimum(), xMaximum(), xBinWidth(), yMinimum(), yMaximum(), yBinWidth());
+        target.initialise(rangeX_.x, rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z);
     }
 
     // Zero the current bins, ready for the new pass
@@ -117,15 +98,10 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Store a reference to the data
     histogram_ = target;
 
-    // Retrieve the observables
-    ConstNodeRef node;
-    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef , int>>("QuantityX");
-    xObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
-    if (!xObservable_)
+    // Check target observables
+    if (!xObservable_.first)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
-    std::tie(node, yObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef , int>>("QuantityY");
-    yObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
-    if (!yObservable_)
+    if (!yObservable_.first)
         return Messenger::error("No valid y quantity set in '{}'.\n", name());
 
     // Prepare any branches
@@ -139,11 +115,13 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 bool Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                      GenericList &targetList)
 {
-    assert(xObservable_ && yObservable_ && histogram_);
+    auto [xObs, xIndex] = xObservable_;
+    auto [yObs, yIndex] = yObservable_;
+
+    assert(xObs && yObs && histogram_);
 
     // Bin the current value of the observable
-    if (histogram_->get().bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_)) &&
-        subCollectBranch_)
+    if (histogram_->get().bin(xObs->value(xIndex), yObs->value(yIndex)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
     return true;

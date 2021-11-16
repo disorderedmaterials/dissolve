@@ -14,17 +14,18 @@
 #include "procedure/nodes/select.h"
 
 Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target)
-    : ProcedureNode(ProcedureNode::NodeType::Process2D)
+    : ProcedureNode(ProcedureNode::NodeType::Process2D), sourceData_(target)
 {
-  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect2D, false, target), "SourceData",
-                  "Collect2D node containing the histogram data to process");
-    keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
-    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
-    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
-                  "File format and file name under which to save processed data");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
-                  "Branch providing normalisation operations for the data");
+    keywords_.add<NodeKeyword<Collect2DProcedureNode>>("Control", "SourceData",
+                                                       "Collect2D node containing the histogram data to process", sourceData_,
+                                                       this, ProcedureNode::NodeType::Collect2D, false);
+    keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
+    keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
+    keywords_.add<StringKeyword>("Control", "LabelY", "Label for the y axis", labelY_);
+    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
+                                        exportFileAndFormat_, "EndExport");
+    keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
+                                            normalisationBranch_, this, ProcedureNode::OperateContext);
 
     // Initialise branch
     normalisationBranch_ = nullptr;
@@ -60,14 +61,17 @@ const Data2D &Process2DProcedureNode::processedData() const
     return (*processedData_);
 }
 
+// Return export file and format for processed data
+Data2DExportFileFormat &Process2DProcedureNode::exportFileAndFormat() { return exportFileAndFormat_; }
+
 // Return value label
-std::string Process2DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process2DProcedureNode::valueLabel() const { return labelValue_; }
 
 // Return x axis label
-std::string Process2DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process2DProcedureNode::xAxisLabel() const { return labelX_; }
 
 // Return y axis label
-std::string Process2DProcedureNode::yAxisLabel() const { return keywords_.asString("LabelY"); }
+std::string Process2DProcedureNode::yAxisLabel() const { return labelY_; }
 
 /*
  * Branches
@@ -95,9 +99,7 @@ std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::branch() { return
 // Prepare any necessary data, ready for execution
 bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Collect2D node target
-    collectNode_ = std::dynamic_pointer_cast<const Collect2DProcedureNode>(keywords_.retrieve<ConstNodeRef >("SourceData"));
-    if (!collectNode_)
+    if (!sourceData_)
         return Messenger::error("No source Collect2D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
@@ -116,7 +118,7 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     data.setTag(name());
 
     // Copy the averaged data from the associated Process1D node
-    data = collectNode_->accumulatedData();
+    data = sourceData_->accumulatedData();
 
     // Run normalisation on the data
     if (normalisationBranch_)

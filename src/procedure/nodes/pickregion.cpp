@@ -9,10 +9,11 @@
 #include "procedure/nodes/regionbase.h"
 
 PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region)
-    : PickProcedureNodeBase(ProcedureNode::NodeType::PickRegion)
+    : PickProcedureNodeBase(ProcedureNode::NodeType::PickRegion), region_(region)
 {
-  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeClass::Region, true, region), "Region",
-                  "Region containing molecules that should be picked");
+    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Control", "Region",
+                                                        "Region containing molecules that should be picked", region_, this,
+                                                        ProcedureNode::NodeClass::Region, true);
 }
 
 /*
@@ -23,17 +24,16 @@ PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionPro
 bool PickRegionProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-    auto regionNode = std::dynamic_pointer_cast<const RegionProcedureNodeBase>(keywords_.retrieve<ConstNodeRef >("Region"));
-    if (!regionNode)
+    if (!region_)
         return Messenger::error("A region must be supplied to PickRegion.\n");
     Messenger::print("[PickRegion] Molecules will be selected from {}.\n", moleculePoolName());
-    Messenger::print("[PickRegion] Target region is '{}'.\n", regionNode->name());
+    Messenger::print("[PickRegion] Target region is '{}'.\n", region_->name());
 
     // Create our molecules vector
     pickedMolecules_.clear();
 
     // Get the updated region
-    auto region = regionNode->generateRegion(cfg);
+    auto region = region_->generateRegion(cfg);
     if (!region.isValid())
     {
         Messenger::warn("Region will not capture any molecules...\n");

@@ -8,6 +8,6 @@
 void ExportPairPotentialsModule::initialise()
 {
     // Format
-    keywords_.add("Format", new FileAndFormatKeyword(pairPotentialFormat_, "EndFormat"), "Format",
-                  "Basename and format in which to write potentials");
+    keywords_.add<FileAndFormatKeyword>("Format", "Format", "Basename and format in which to write potentials",
+                                        pairPotentialFormat_, "EndFormat");
 }

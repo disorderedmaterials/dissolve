@@ -11,10 +11,10 @@
  */
 
 // Return atom at specified coordinates
-SpeciesAtom *SiteViewer::atomAt(int x, int y)
+std::optional<int> SiteViewer::atomIndexAt(int x, int y)
 {
     if (!species_)
-        return nullptr;
+        return {};
 
     double lengthScale;
     Vec3<double> rScreen;
@@ -32,10 +32,10 @@ SpeciesAtom *SiteViewer::atomAt(int x, int y)
         rScreen.x -= x;
         rScreen.y -= y;
         if (sqrt(rScreen.x * rScreen.x + rScreen.y * rScreen.y) < lengthScale)
-            return &i;
+            return i.index();
     }
 
-    return nullptr;
+    return {};
 }
 
 /*
@@ -83,18 +83,18 @@ void SiteViewer::endInteraction()
                     if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
                     {
                         // Single, targetted click - atom under mouse?
-                        SpeciesAtom *i = atomAt(rMouseLast_.x, rMouseLast_.y);
+                        auto currentAtomIndex = atomIndexAt(rMouseLast_.x, rMouseLast_.y);
 
                         // If there is an atom at the current position, (de)select it, maintaining the current selection
                         // if Shift was pressed
-                        if (i)
+                        if (currentAtomIndex)
                         {
                             if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
-                                species_->toggleAtomSelection(i);
+                                species_->toggleAtomSelection(currentAtomIndex.value());
                             else
                             {
                                 species_->clearAtomSelection();
-                                species_->selectAtom(i);
+                                species_->selectAtom(currentAtomIndex.value());
                             }
                         }
                         else
@@ -116,7 +116,7 @@ void SiteViewer::endInteraction()
                         {
                             rScreen = view_.dataToScreen(i.r());
                             if (selectionRect.contains(rScreen.x, rScreen.y))
-                                species_->selectAtom(&i);
+                                species_->selectAtom(i.index());
                         }
                     }
 
@@ -156,7 +156,7 @@ void SiteViewer::cancelInteraction()
     }
 
     // Reset other data
-    clickedAtom_ = nullptr;
+    clickedAtomIndex_ = {};
 }
 
 /*

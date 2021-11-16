@@ -40,8 +40,14 @@ class CalculateRDFModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Whether to exclude correlations between sites on the same molecule
+    bool excludeSameMolecule_{false};
+    // Range (min, max, delta) of distance axis
+    Vec3<double> distanceRange_{0.0, 10.0, 0.05};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

@@ -11,19 +11,20 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target)
-    : ProcedureNode(ProcedureNode::NodeType::Process3D)
+Process3DProcedureNode::Process3DProcedureNode(Collect3DProcedureNode *target)
+    : ProcedureNode(ProcedureNode::NodeType::Process3D), sourceData_(target)
 {
-  keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect3D, false, target), "SourceData",
-                  "Collect3D node containing the histogram data to process");
-    keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
-    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
-    keywords_.add("Control", new StringKeyword("Z"), "LabelZ", "Label for the z axis");
-    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
-                  "File format and file name under which to save processed data");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
-                  "Branch providing normalisation operations for the data");
+    keywords_.add<NodeKeyword<Collect3DProcedureNode>>("Control", "SourceData",
+                                                       "Collect2D node containing the histogram data to process", sourceData_,
+                                                       this, ProcedureNode::NodeType::Collect3D, false);
+    keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
+    keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
+    keywords_.add<StringKeyword>("Control", "LabelY", "Label for the y axis", labelY_);
+    keywords_.add<StringKeyword>("Control", "LabelZ", "Label for the z axis", labelZ_);
+    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
+                                        exportFileAndFormat_, "EndExport");
+    keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
+                                            normalisationBranch_, this, ProcedureNode::OperateContext);
 
     // Initialise branch
     normalisationBranch_ = nullptr;
@@ -59,17 +60,20 @@ const Data3D &Process3DProcedureNode::processedData() const
     return (*processedData_);
 }
 
+// Return export file and format for processed data
+Data3DExportFileFormat &Process3DProcedureNode::exportFileAndFormat() { return exportFileAndFormat_; }
+
 // Return value label
-std::string Process3DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process3DProcedureNode::valueLabel() const { return labelValue_; }
 
 // Return x axis label
-std::string Process3DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process3DProcedureNode::xAxisLabel() const { return labelX_; }
 
 // Return y axis label
-std::string Process3DProcedureNode::yAxisLabel() const { return keywords_.asString("LabelY"); }
+std::string Process3DProcedureNode::yAxisLabel() const { return labelY_; }
 
 // Return z axis label
-std::string Process3DProcedureNode::zAxisLabel() const { return keywords_.asString("LabelZ"); }
+std::string Process3DProcedureNode::zAxisLabel() const { return labelZ_; }
 
 /*
  * Branches
@@ -97,9 +101,7 @@ std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::branch() { return
 // Prepare any necessary data, ready for execution
 bool Process3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Collect1D node target
-    collectNode_ = std::dynamic_pointer_cast<const Collect3DProcedureNode>(keywords_.retrieve<ConstNodeRef >("SourceData"));
-    if (!collectNode_)
+    if (!sourceData_)
         return Messenger::error("No source Collect3D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
@@ -118,7 +120,7 @@ bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     data.setTag(name());
 
     // Copy the averaged data from the associated Process3D node
-    data = collectNode_->accumulatedData();
+    data = sourceData_->accumulatedData();
 
     // Run normalisation on the data
     if (normalisationBranch_)

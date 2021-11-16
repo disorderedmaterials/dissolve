@@ -4,6 +4,7 @@
 #pragma once
 
 #include "procedure/nodes/operatebase.h"
+#include "procedure/nodevalue.h"
 
 // Operate Divide Node
 class OperateDivideProcedureNode : public OperateProcedureNodeBase
@@ -11,6 +12,13 @@ class OperateDivideProcedureNode : public OperateProcedureNodeBase
     public:
     OperateDivideProcedureNode();
     ~OperateDivideProcedureNode() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Operating value
+    NodeValue value_{1.0};
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

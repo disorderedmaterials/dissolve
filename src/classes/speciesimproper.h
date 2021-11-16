@@ -42,6 +42,8 @@ class SpeciesImproper : public SpeciesIntra
     void detach();
 
     public:
+    // Rewrite SpeciesAtom pointer
+    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
@@ -50,6 +52,8 @@ class SpeciesImproper : public SpeciesIntra
     SpeciesAtom *k() const;
     // Return fourth SpeciesAtom
     SpeciesAtom *l() const;
+    // Return vector of involved atoms
+    std::vector<const SpeciesAtom *> atoms() const override;
     // Return whether the improper uses the specified SpeciesAtom
     bool uses(SpeciesAtom *spAtom) const;
     // Return index (in parent Species) of first SpeciesAtom

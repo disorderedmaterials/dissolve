@@ -7,6 +7,7 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
+class CalculateRDFModule;
 class Process1DProcedureNode;
 class Sum1DProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode;
@@ -39,8 +40,20 @@ class CalculateCNModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Source module for calculation
+    const CalculateRDFModule *sourceRDF_{nullptr};
+    // Reference coordination number for range A against which calculated value should be tested
+    double testRangeA_{0.0};
+    // Reference coordination number for range B against which calculated value should be tested
+    double testRangeB_{0.0};
+    // Reference coordination number for range C against which calculated value should be tested
+    double testRangeC_{0.0};
+    // Threshold difference at which test comparisons will fail
+    double testThreshold_{0.1};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

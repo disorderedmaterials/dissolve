@@ -9,18 +9,16 @@
 #include "templates/algorithms.h"
 #include <utility>
 
-ModuleVectorKeyword::ModuleVectorKeyword(int maxModules)
-    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {}), maxModules_(maxModules)
+ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, int maxModules)
+    : KeywordBase(typeid(this)), data_(data), maxModules_(maxModules)
 {
 }
 
-ModuleVectorKeyword::ModuleVectorKeyword(std::vector<std::string> allowedModuleTypes, int maxModules)
-    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {}), moduleTypes_(std::move(allowedModuleTypes)),
-      maxModules_(maxModules)
+ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes,
+                                         int maxModules)
+    : KeywordBase(typeid(this)), data_(data), moduleTypes_(std::move(allowedModuleTypes)), maxModules_(maxModules)
 {
 }
-
-ModuleVectorKeyword::~ModuleVectorKeyword() = default;
 
 /*
  * Data
@@ -28,6 +26,10 @@ ModuleVectorKeyword::~ModuleVectorKeyword() = default;
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool ModuleVectorKeyword::isDataEmpty() const { return data_.empty(); }
+
+// Return the data vector
+std::vector<Module *> &ModuleVectorKeyword::data() { return data_; }
+const std::vector<Module *> &ModuleVectorKeyword::data() const { return data_; }
 
 // Return the Module type(s) to allow
 const std::vector<std::string> &ModuleVectorKeyword::moduleTypes() const { return moduleTypes_; }

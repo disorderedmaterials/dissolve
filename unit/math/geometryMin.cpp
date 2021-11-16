@@ -25,15 +25,15 @@ TEST(GeometryMinimisationTest, Water)
     potMap.initialise(coreData.atomTypes(), pairPotentials, 15.0);
 
     Species water;
-    auto &i = water.addAtom(Elements::H, {0.5, 0.1, 0.0});
-    i.setAtomType(atH);
-    auto &j = water.addAtom(Elements::O, {0.0, 0.0, 0.0});
-    j.setAtomType(atO);
-    auto &k = water.addAtom(Elements::H, {0.0, 0.5, -0.06});
-    k.setAtomType(atH);
-    water.addBond(&i, &j).setFormAndParameters(SpeciesBond::HarmonicForm, {4000.0, 1.0});
-    water.addBond(&j, &k).setFormAndParameters(SpeciesBond::HarmonicForm, {4000.0, 1.2});
-    water.addAngle(&i, &j, &k).setFormAndParameters(SpeciesBond::HarmonicForm, {4000.0, 123.45});
+    water.addAtom(Elements::H, {0.5, 0.1, 0.0});
+    water.addAtom(Elements::O, {0.0, 0.0, 0.0});
+    water.addAtom(Elements::H, {0.0, 0.5, -0.06});
+    water.atom(0).setAtomType(atH);
+    water.atom(1).setAtomType(atO);
+    water.atom(2).setAtomType(atH);
+    water.addBond(0, 1).setFormAndParameters(SpeciesBond::HarmonicForm, {4000.0, 1.0});
+    water.addBond(1, 2).setFormAndParameters(SpeciesBond::HarmonicForm, {4000.0, 1.2});
+    water.addAngle(0, 1, 2).setFormAndParameters(SpeciesBond::HarmonicForm, {4000.0, 123.45});
 
     // Run the geometry optimisation
     GeometryOptimisationModule geomOpt;
@@ -43,9 +43,12 @@ TEST(GeometryMinimisationTest, Water)
     geomOpt.optimiseSpecies(potMap, processPool, &water);
 
     // Check final geometry
-    EXPECT_NEAR(1.0, (i.r() - j.r()).magnitude(), 1.0e-4);
-    EXPECT_NEAR(1.2, (j.r() - k.r()).magnitude(), 1.0e-4);
-    EXPECT_NEAR(123.45, NonPeriodicBox::literalAngleInDegrees(i.r(), j.r(), k.r()), 1.0e-3);
+    auto &b01 = water.getBond(0, 1)->get();
+    auto &b12 = water.getBond(1, 2)->get();
+    auto &a = water.getAngle(0, 1, 2)->get();
+    EXPECT_NEAR(1.0, (b01.i()->r() - b01.j()->r()).magnitude(), 1.0e-4);
+    EXPECT_NEAR(1.2, (b12.i()->r() - b12.j()->r()).magnitude(), 1.0e-4);
+    EXPECT_NEAR(123.45, NonPeriodicBox::literalAngleInDegrees(a.i()->r(), a.j()->r(), a.k()->r()), 1.0e-3);
 }
 
 } // namespace UnitTest

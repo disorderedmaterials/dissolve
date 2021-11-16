@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "classes/isotopologueset.h"
 #include "classes/species.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"
@@ -86,12 +87,11 @@ void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeight
     // Clear weights and get species populations from RDFModule
     weights.clear();
     auto populations = rdfModule->speciesPopulations();
-    auto &isotopologues = keywords_.retrieve<IsotopologueSet>("Isotopologue");
 
     for (auto speciesPop : populations)
     {
         // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-        auto isoRef = isotopologues.getIsotopologues(speciesPop.first);
+        auto isoRef = isotopologueSet_.getIsotopologues(speciesPop.first);
         if (isoRef)
         {
             const Isotopologues &topes = *isoRef;

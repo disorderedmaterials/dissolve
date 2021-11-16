@@ -62,7 +62,7 @@ void SiteWidget::updateToolbar()
     ui_.ViewSpheresButton->setChecked(siteViewer()->speciesRenderableDrawStyle() != RenderableSpecies::LinesStyle);
 
     // Enable site-definition buttons
-    auto currentSelection = (siteViewer()->species() ? siteViewer()->species()->nSelectedAtoms() != 0 : false);
+    auto currentSelection = (siteViewer()->species() ? !siteViewer()->species()->selectedAtoms().empty() : false);
     ui_.SiteCreateButton->setEnabled(currentSelection);
     ui_.SiteSetOriginButton->setEnabled(currentSelection && siteViewer()->speciesSite());
     ui_.SiteSetXAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite());
@@ -79,9 +79,15 @@ void SiteWidget::updateStatusBar()
     ui_.ModeLabel->setText(siteViewer()->interactionModeText());
 
     // Set / update empirical formula for the Species and its current atom selection
-    ui_.FormulaLabel->setText(sp ? QString::fromStdString(EmpiricalFormula::formula(sp, true)) : "--");
-    ui_.SelectionLabel->setText(
-        sp && (sp->nSelectedAtoms() > 0) ? QString::fromStdString(EmpiricalFormula::formula(sp->selectedAtoms(), true)) : "--");
+    if (sp)
+    {
+        auto selection = sp->selectedAtoms();
+        ui_.FormulaLabel->setText(
+            QString::fromStdString(EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
+        ui_.SelectionLabel->setText(!selection.empty() ? QString::fromStdString(EmpiricalFormula::formula(
+                                                             selection, [](const auto &i) { return i->Z(); }, true))
+                                                       : "--");
+    }
 }
 
 /*
@@ -141,11 +147,11 @@ void SiteWidget::on_SiteCreateButton_clicked(bool checked)
 {
     // Sanity check for valid Species and selection
     auto *sp = siteViewer()->species();
-    if ((!sp) || (sp->nSelectedAtoms() == 0))
+    if ((!sp) || sp->selectedAtoms().empty())
         return;
 
     // Create the new site, using the empirical formula of the selection as the base name
-    auto *site = sp->addSite(EmpiricalFormula::formula(sp->selectedAtoms()));
+    auto *site = sp->addSite(EmpiricalFormula::formula(sp->selectedAtoms(), [](const auto &i) { return i->Z(); }));
     site->setOriginAtoms(sp->selectedAtoms());
 
     // Update the siteViewer

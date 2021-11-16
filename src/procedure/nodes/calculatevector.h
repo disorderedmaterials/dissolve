@@ -20,7 +20,7 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
      * Data
      */
     private:
-    // Whether to rotate into the frame of the first site (retrieved from keyword)
+    // Whether to rotate into the frame of the first site
     bool rotateIntoFrame_;
 
     /*

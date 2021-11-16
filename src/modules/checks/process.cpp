@@ -16,21 +16,17 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
-        // Retrieve control parameters from Configuration
-        const auto angleThreshold = keywords_.asDouble("AngleThreshold");
-        const auto distanceThreshold = keywords_.asDouble("DistanceThreshold");
-
-        Messenger::print("Checks: Threshold for distance checks is {} Angstroms\n", distanceThreshold);
-        Messenger::print("Checks: Threshold for angle checks is {} degrees\n", angleThreshold);
+        Messenger::print("Checks: Threshold for distance checks is {} Angstroms\n", distanceThreshold_);
+        Messenger::print("Checks: Threshold for angle checks is {} degrees\n", angleThreshold_);
 
         auto &atoms = cfg->atoms();
 
@@ -42,14 +38,13 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over distances to check
-        auto &distances = keywords_.retrieve<std::vector<Geometry>>("Distance");
-        for (const auto &d : distances)
+        for (const auto &d : distances_)
         {
             actual = cfg->box()->minimumDistance(atoms[d.indices(0)].r(), atoms[d.indices(1)].r());
             delta = fabs(actual - d.value());
-            ok = delta < distanceThreshold;
+            ok = delta < distanceThreshold_;
             Messenger::print("Distance between Atoms {} and {} is {} Angstroms, and is {} (delta = {}, tolerance = {}).\n",
-                             d.indices(0) + 1, d.indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold);
+                             d.indices(0) + 1, d.indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold_);
 
             // Check consistency between processes
             if (!procPool.allTrue(ok))
@@ -64,15 +59,14 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over angles to check
-        auto &angles = keywords_.retrieve<std::vector<Geometry>>("Angle");
-        for (const auto &a : angles)
+        for (const auto &a : angles_)
         {
             actual = cfg->box()->angleInDegrees(atoms[a.indices(0)].r(), atoms[a.indices(1)].r(), atoms[a.indices(2)].r());
             delta = fabs(actual - a.value());
-            ok = delta < angleThreshold;
+            ok = delta < angleThreshold_;
             Messenger::print("Angle between Atoms {}, {} and {} is {} degrees, and is {} (delta = {}, tolerance = {}).\n",
                              a.indices(0) + 1, a.indices(1) + 1, a.indices(2) + 1, actual, ok ? "OK" : "NOT OK", delta,
-                             angleThreshold);
+                             angleThreshold_);
 
             // Check consistency between processes
             if (!procPool.allTrue(ok))

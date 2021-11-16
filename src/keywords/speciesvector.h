@@ -3,25 +3,33 @@
 
 #pragma once
 
-#include "keywords/data.h"
-#include "templates/reflist.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class Species;
 
 // Keyword with Species Vector Data
-class SpeciesVectorKeyword : public KeywordData<std::vector<const Species *>>
+class SpeciesVectorKeyword : public KeywordBase
 {
     public:
-    SpeciesVectorKeyword(std::vector<const Species *> species = {});
-    ~SpeciesVectorKeyword() override;
+    SpeciesVectorKeyword(std::vector<const Species *> &data);
+    ~SpeciesVectorKeyword() override = default;
 
     /*
      * Data
      */
+    private:
+    // Reference to data vector
+    std::vector<const Species *> &data_;
+
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
     bool isDataEmpty() const override;
+
+    public:
+    // Return reference to data vector
+    std::vector<const Species *> &data();
+    const std::vector<const Species *> &data() const;
 
     /*
      * Arguments

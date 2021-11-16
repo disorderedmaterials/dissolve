@@ -17,7 +17,6 @@ SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
     // Interaction
     setInteractionMode(SiteViewer::InteractionMode::Select);
     transientInteractionMode_ = TransientInteractionMode::None;
-    clickedAtom_ = nullptr;
 
     // Set up the view
     view_.setViewType(View::NormalView);
@@ -28,8 +27,6 @@ SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
     // Tweak the options of the underlying BaseViewer
     setClipToAxesVolume(false);
 }
-
-SiteViewer::~SiteViewer() {}
 
 /*
  * Source Species and Site

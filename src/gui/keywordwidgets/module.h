@@ -14,7 +14,7 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    ModuleKeywordWidget(QWidget *parent, ModuleKeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword

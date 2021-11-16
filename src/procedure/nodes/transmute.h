@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class Species;
+class PickProcedureNodeBase;
 
 // Transmute Node
 class TransmuteProcedureNode : public ProcedureNode
@@ -25,6 +26,17 @@ class TransmuteProcedureNode : public ProcedureNode
     bool isContextRelevant(ProcedureNode::NodeContext context) override;
     // Return whether a name for the node must be provided
     bool mustBeNamed() const override;
+
+    /*
+     * Control
+     */
+    private:
+    // Existing selection from which to pick
+    const PickProcedureNodeBase *selection_;
+    // Target species to transmute in to
+    const Species *targetSpecies_;
+    // Species to transmute
+    std::vector<const Species *> speciesToTransmute_;
 
     /*
      * Execute

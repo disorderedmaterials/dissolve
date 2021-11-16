@@ -63,6 +63,19 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source) noexcept
  * Atom Information
  */
 
+// Rewrite SpeciesAtom pointer
+void SpeciesAngle::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
+{
+    assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr);
+
+    if (i_ == oldPtr)
+        i_ = newPtr;
+    else if (j_ == oldPtr)
+        j_ = newPtr;
+    else
+        k_ = newPtr;
+}
+
 // Assign the three atoms in the angle
 void SpeciesAngle::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 {
@@ -84,6 +97,9 @@ SpeciesAtom *SpeciesAngle::j() const { return j_; }
 
 // Return third SpeciesAtom
 SpeciesAtom *SpeciesAngle::k() const { return k_; }
+
+// Return vector of involved atoms
+std::vector<const SpeciesAtom *> SpeciesAngle::atoms() const { return {i_, j_, k_}; }
 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesAngle::indexI() const

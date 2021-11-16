@@ -86,6 +86,9 @@ ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
 // Return whether the node is of the specified class
 ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 
+// Return whether specified context is relevant for this node type
+bool ProcedureNode::isContextRelevant(NodeContext context) { return false; }
+
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
 
@@ -109,6 +112,7 @@ std::string_view ProcedureNode::niceName() const { return niceName_; }
  */
 
 // Return keywords for this node
+KeywordList &ProcedureNode::keywords() { return keywords_; }
 const KeywordList &ProcedureNode::keywords() const { return keywords_; }
 
 /*
@@ -202,7 +206,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::parameterExists(std::string_v
 }
 
 // Create and return reference list of parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScope()
+std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScope() const
 {
     if (!scope_)
         return {};
@@ -307,7 +311,7 @@ bool ProcedureNode::write(LineParser &parser, std::string_view prefix)
     std::string newPrefix = fmt::format("  {}", prefix);
 
     // Write keywords
-    if (!keywords_.write(parser, newPrefix, false))
+    if (!keywords_.write(parser, newPrefix, true))
         return false;
 
     // Block End

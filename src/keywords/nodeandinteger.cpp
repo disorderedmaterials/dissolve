@@ -6,15 +6,13 @@
 
 NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
                                              ConstNodeRef node, int index)
-  : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::pair<const ProcedureNode*, int>>(
-													  KeywordBase::NodeAndIntegerData, {node.get(), index})
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>({node, index})
 {
 }
 
 NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
                                              ConstNodeRef node, int index)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::pair<const ProcedureNode* , int>>(
-												      KeywordBase::NodeAndIntegerData, {node.get(), index})
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>({node, index})
 {
 }
 

@@ -296,7 +296,7 @@ SequenceProcedureNode::parameterExists(std::string_view name, const std::shared_
 }
 
 // Create and return reference list of parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(NodeRef queryingNode)
+std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(ConstNodeRef queryingNode)
 {
     auto range = QueryRange(queryingNode, sequence_);
     if (queryingNode)

@@ -13,12 +13,22 @@ void ProcedureNodeModel::setData(const std::vector<const ProcedureNode *> &nodes
     endResetModel();
 }
 
-// Set vector containing checked items
-void ProcedureNodeModel::setCheckStateData(std::vector<const ProcedureNode *> &checkedItemsVector)
+// Set node selected function
+void ProcedureNodeModel::setNodeSelectedFunction(std::function<bool(const ProcedureNode *)> nodeSelectedFunction)
 {
-    beginResetModel();
-    checkedItems_ = checkedItemsVector;
-    endResetModel();
+    nodeSelectedFunction_ = std::move(nodeSelectedFunction);
+}
+
+// Set node selected function
+void ProcedureNodeModel::setNodeDeselectedFunction(std::function<bool(const ProcedureNode *)> nodeDeselectedFunction)
+{
+    nodeDeselectedFunction_ = std::move(nodeDeselectedFunction);
+}
+
+// Set node presence function
+void ProcedureNodeModel::setNodePresenceFunction(std::function<bool(const ProcedureNode *)> nodePresenceFunction)
+{
+    nodePresenceFunction_ = std::move(nodePresenceFunction);
 }
 
 const ProcedureNode *ProcedureNodeModel::rawData(const QModelIndex &index) const { return nodes_[index.row()]; }
@@ -37,10 +47,8 @@ QVariant ProcedureNodeModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
         return QString::fromStdString(std::string(rawData(index)->name()));
-    else if (role == Qt::CheckStateRole && checkedItems_)
-        return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
-                   ? Qt::Unchecked
-                   : Qt::Checked;
+    else if (role == Qt::CheckStateRole && nodePresenceFunction_)
+        return nodePresenceFunction_(rawData(index)) ? Qt::Unchecked : Qt::Checked;
     else if (role == Qt::UserRole)
         return QVariant::fromValue(rawData(index));
 
@@ -49,16 +57,18 @@ QVariant ProcedureNodeModel::data(const QModelIndex &index, int role) const
 
 bool ProcedureNodeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role == Qt::CheckStateRole && checkedItems_)
+    if (role == Qt::CheckStateRole)
     {
-        auto &xitems = checkedItems_->get();
         if (value.value<Qt::CheckState>() == Qt::Checked)
         {
-            if (std::find(xitems.begin(), xitems.end(), rawData(index)) == xitems.end())
-                xitems.push_back(rawData(index));
+            if (!nodeSelectedFunction_ || !nodeSelectedFunction_(rawData(index)))
+                return false;
         }
         else
-            xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
+        {
+            if (!nodeDeselectedFunction_ || !nodeSelectedFunction_(rawData(index)))
+                return false;
+        }
 
         emit dataChanged(index, index);
 
@@ -70,8 +80,9 @@ bool ProcedureNodeModel::setData(const QModelIndex &index, const QVariant &value
 
 Qt::ItemFlags ProcedureNodeModel::flags(const QModelIndex &index) const
 {
-    return checkedItems_ ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
-                         : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return nodeSelectedFunction_ && nodeDeselectedFunction_ && nodePresenceFunction_
+               ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
+               : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 QVariant ProcedureNodeModel::headerData(int section, Qt::Orientation orientation, int role) const

@@ -16,9 +16,9 @@ class NodeScopeStack;
 class Collect2DProcedureNode : public ProcedureNode
 {
     public:
-    Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable = nullptr, std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr,
-                           double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0,
-                           double yMax = 10.0, double yBinWidth = 0.05);
+    explicit Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable = nullptr,
+                                    std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr, double xMin = 0.0, double xMax = 10.0,
+                                    double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05);
     ~Collect2DProcedureNode() override = default;
 
     /*
@@ -32,39 +32,27 @@ class Collect2DProcedureNode : public ProcedureNode
      * Data
      */
     private:
-    // Observable to bin along x (retrieved from keyword)
-    std::shared_ptr<const CalculateProcedureNodeBase> xObservable_;
-    // Index of x observable data to use (retrieved from keyword)
-    int xObservableIndex_;
-    // Observable to bin along y (retrieved from keyword)
-    std::shared_ptr<const CalculateProcedureNodeBase> yObservable_;
-    // Index of y observable data to use (retrieved from keyword)
-    int yObservableIndex_;
+    // Observable (and associated index thereof) to bin along x
+    std::pair<std::shared_ptr<const CalculateProcedureNodeBase> , int> xObservable_{nullptr, 0};
+    // Observable (and associated index thereof) to bin along y
+    std::pair<std::shared_ptr<const CalculateProcedureNodeBase> , int> yObservable_{nullptr, 0};
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram2D> histogram_;
+    // Range and binwidth of the histogram for QuantityX
+    Vec3<double> rangeX_{0.0, 10.0, 0.05};
+    // Range and binwidth of the histogram for QuantityY
+    Vec3<double> rangeY_{0.0, 10.0, 0.05};
 
     public:
     // Return accumulated data
     const Data2D &accumulatedData() const;
-    // Return x range minimum
-    double xMinimum() const;
-    // Return x range maximum
-    double xMaximum() const;
-    // Return x bin width
-    double xBinWidth() const;
-    // Return y range minimum
-    double yMinimum() const;
-    // Return y range maximum
-    double yMaximum() const;
-    // Return y bin width
-    double yBinWidth() const;
 
     /*
      * Branches
      */
     private:
     // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    std::shared_ptr<SequenceProcedureNode> subCollectBranch_;
+    std::shared_ptr<SequenceProcedureNode> subCollectBranch_{nullptr};
 
     public:
     // Add and return subcollection sequence branch

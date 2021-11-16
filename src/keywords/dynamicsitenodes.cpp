@@ -8,22 +8,11 @@
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/select.h"
 
-DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &nodes,
+DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedureNode *> &data, SelectProcedureNode *parentNode,
                                                  bool axesRequired)
-    : KeywordData<std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &>(KeywordBase::DynamicSiteNodesData, nodes)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), axesRequired_(axesRequired)
 {
-    parentNode_ = parentNode;
-    axesRequired_ = axesRequired;
 }
-
-DynamicSiteNodesKeyword::~DynamicSiteNodesKeyword() = default;
-
-/*
- * Parent Node
- */
-
-// Return parent SelectProcedureNode
-const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Data
@@ -31,6 +20,13 @@ const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return 
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.empty(); }
+
+// Return reference to data
+std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() { return data_; }
+const std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() const { return data_; }
+
+// Return parent SelectProcedureNode
+const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Arguments
@@ -75,7 +71,3 @@ bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keyword
 
     return true;
 }
-
-/*
- * Object Management
- */

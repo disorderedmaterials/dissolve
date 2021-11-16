@@ -13,7 +13,7 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    BoolKeywordWidget(QWidget *parent, BoolKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

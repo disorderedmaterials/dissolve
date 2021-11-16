@@ -7,9 +7,9 @@
 // Perform any necessary initialisation for the Module
 void AccumulateModule::initialise()
 {
-    keywords_.add("Control", new ModuleVectorKeyword({"NeutronSQ", "XRaySQ", "SQ", "RDF"}, 1), "Target",
-                  "Module containing the target partial set data to accumulate", "<ModuleName>");
-    keywords_.add("Control", new EnumOptionsKeyword<AccumulateModule::TargetPartialSet>(AccumulateModule::targetPartialSet()),
-                  "Data", "Data type to accumulate");
-    keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save the accumulated partials to disk");
+    keywords_.add<ModuleVectorKeyword>("Control", "Target", "Module containing the target partial set data to accumulate",
+                                       targetModule_, std::vector<std::string>{"NeutronSQ", "XRaySQ", "SQ", "RDF"}, 1);
+    keywords_.add<EnumOptionsKeyword<AccumulateModule::TargetPartialSet>>(
+        "Control", "Data", "Data type to accumulate", targetPartialSet_, AccumulateModule::targetPartialSet());
+    keywords_.add<BoolKeyword>("Export", "Save", "Whether to save the accumulated partials to disk", save_);
 }

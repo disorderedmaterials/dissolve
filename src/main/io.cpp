@@ -418,17 +418,16 @@ bool Dissolve::loadRestart(std::string_view filename)
             }
 
             // Does the Module have a keyword by this name?
-            KeywordBase *keyword = module->keywords().find(parser.argsv(2));
-            if (!keyword)
+            auto result = module->keywords().parse(parser, coreData_, 2);
+            if (result == KeywordBase::Unrecognised)
             {
                 Messenger::error("Module '{}' has no keyword '{}'.\n", parser.argsv(2));
                 error = true;
                 break;
             }
-
-            if (!keyword->read(parser, 3, coreData_))
+            else if (result == KeywordBase::Failed)
             {
-                Messenger::error("Failed to read keyword data '{}' from restart file.\n", keyword->name());
+                Messenger::error("Failed to read keyword data '{}' from restart file.\n", parser.argsv(2));
                 error = true;
                 break;
             }
@@ -603,14 +602,13 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module Keyword Data
     for (Module *module : moduleInstances_)
     {
-        ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
-        while (KeywordBase *keyword = keywordIterator.iterate())
+        for (auto &[name, keyword] : module->keywords().keywords())
         {
             // If the keyword is not flagged to be saved in the restart file, skip it
             if (!keyword->isOptionSet(KeywordBase::InRestartFileOption))
                 continue;
 
-            if (!keyword->write(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), keyword->name())))
+            if (!keyword->write(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), name)))
                 return false;
         }
     }

@@ -14,6 +14,7 @@ class FileAndFormat
 {
     public:
     FileAndFormat(EnumOptionsBase &formats, std::string_view filename = "");
+    FileAndFormat(const FileAndFormat &source) = default;
     virtual ~FileAndFormat() = default;
     operator std::string_view() const;
 

@@ -21,7 +21,7 @@ class ConfigurationTab : public QWidget, public MainTab
     public:
     ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                      Configuration *cfg);
-    ~ConfigurationTab();
+    ~ConfigurationTab() = default;
 
     /*
      * UI

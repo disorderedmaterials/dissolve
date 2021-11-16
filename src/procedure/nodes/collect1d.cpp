@@ -12,16 +12,15 @@
 
 Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable, double rMin, double rMax,
                                                double binWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect1D)
+    : ProcedureNode(ProcedureNode::NodeType::Collect1D), xObservable_{observable, 0}, rangeX_{rMin, rMax, binWidth}
 {
-  keywords_.add("Control", new NodeAndIntegerKeyword(this, ProcedureNode::NodeClass::Calculate, true, observable, 0),
-                  "QuantityX", "Calculated observable to collect");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
-                                        Vec3Labels::MinMaxBinwidthlabels),
-                  "RangeX", "Range and binwidth of the histogram for QuantityX");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
-                  "Branch which runs if the target quantity was binned successfully");
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("Control", "QuantityX", "Calculated observable to collect",
+                                                                     xObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantity was binned successfully",
+                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
 
     // Initialise branch
     subCollectBranch_ = nullptr;
@@ -57,15 +56,6 @@ const Data1D &Collect1DProcedureNode::accumulatedData() const
     return histogram_->get().accumulatedData();
 }
 
-// Return range minimum
-double Collect1DProcedureNode::minimum() const { return keywords_.asVec3Double("RangeX").x; }
-
-// Return range maximum
-double Collect1DProcedureNode::maximum() const { return keywords_.asVec3Double("RangeX").y; }
-
-// Return bin width
-double Collect1DProcedureNode::binWidth() const { return keywords_.asVec3Double("RangeX").z; }
-
 /*
  * Branches
  */
@@ -92,6 +82,8 @@ std::shared_ptr<SequenceProcedureNode> Collect1DProcedureNode::branch() { return
 // Prepare any necessary data, ready for execution
 bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
+    printf("IN PREPARE:\n");
+    rangeX_.print();
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
     auto [target, status] = targetList.realiseIf<Histogram1D>(dataName, prefix, GenericItem::InRestartFileFlag);
@@ -100,7 +92,7 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
         Messenger::printVerbose("One-dimensional histogram data for '{}' was not in the target list, so it will now be "
                                 "initialised...\n",
                                 name());
-        target.initialise(minimum(), maximum(), binWidth());
+        target.initialise(rangeX_.x, rangeX_.y, rangeX_.z);
     }
 
     // Zero the current bins, ready for the new pass
@@ -109,11 +101,8 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Store a reference to the data
     histogram_ = target;
 
-    // Retrieve the observable
-    ConstNodeRef node;
-    std::tie(node, xObservableIndex_) = keywords_.retrieve<std::pair<ConstNodeRef , int>>("QuantityX");
-    xObservable_ = std::dynamic_pointer_cast<const CalculateProcedureNodeBase>(node);
-    if (!xObservable_)
+    // Check target observable
+    if (!xObservable_.first)
         return Messenger::error("No valid x quantity set in '{}'.\n", name());
 
     // Prepare any branches
@@ -127,10 +116,12 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 bool Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                      GenericList &targetList)
 {
-    assert(xObservable_ && histogram_);
+    auto [observable, index] = xObservable_;
+
+    assert(observable && histogram_);
 
     // Bin the current value of the observable, and execute sub-collection branch on success
-    if (histogram_->get().bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
+    if (histogram_->get().bin(observable->value(index)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
     return true;

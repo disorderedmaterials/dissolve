@@ -19,7 +19,7 @@ class LayerTab : public QWidget, public MainTab
     public:
     LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
              ModuleLayer *layer);
-    ~LayerTab();
+    ~LayerTab() = default;
 
     /*
      * UI

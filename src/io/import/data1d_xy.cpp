@@ -8,10 +8,10 @@
 // Read simple XY data using specified parser
 bool Data1DImportFileFormat::importXY(LineParser &parser, Data1D &data)
 {
-    // Grab column indices
-    const auto xCol = keywords_.asInt("X") - 1;
-    const auto yCol = keywords_.asInt("Y") - 1;
-    const auto errorCol = keywords_.asInt("Error") - 1;
+    // Get zero-indexed columns
+    const auto xCol = xColumn_ - 1;
+    const auto yCol = yColumn_ - 1;
+    const auto errorCol = errorColumn_ - 1;
 
     // Clear the structure, and initialise error arrays if necessary
     data.clear();

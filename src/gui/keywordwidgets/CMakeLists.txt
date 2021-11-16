@@ -11,7 +11,6 @@ set(keywordwidgets_MOC_HDRS
     function1d.h
     isotopologueset.h
     module.h
-    modulegroups.h
     modulevector.h
     node.h
     nodeandinteger.h
@@ -48,7 +47,6 @@ set(keywordwidgets_UIS
     function1d.ui
     isotopologueset.ui
     module.ui
-    modulegroups.ui
     modulevector.ui
     node.ui
     nodeandinteger.ui
@@ -82,13 +80,13 @@ set(keywordwidgets_SRCS
     integer_funcs.cpp
     isotopologueset_funcs.cpp
     module_funcs.cpp
-    modulegroups_funcs.cpp
     modulevector_funcs.cpp
     node_funcs.cpp
     nodeandinteger_funcs.cpp
     nodevalue_funcs.cpp
     nodevalueenumoptions_funcs.cpp
     nodevector_funcs.cpp
+    producers.cpp
     range_funcs.cpp
     species_funcs.cpp
     speciessite_funcs.cpp
@@ -101,6 +99,7 @@ set(keywordwidgets_SRCS
     vec3labels.cpp
     vec3nodevalue_funcs.cpp
     base.h
+    producers.h
 )
 
 # Target 'keywordwidgets'

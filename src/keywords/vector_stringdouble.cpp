@@ -4,13 +4,22 @@
 #include "keywords/vector_stringdouble.h"
 #include "base/lineparser.h"
 
-StringDoubleVectorKeyword::StringDoubleVectorKeyword()
-    : KeywordData<StringDoubleVectorKeywordData>(KeywordBase::VectorDoublePairData, StringDoubleVectorKeywordData())
+StringDoubleVectorKeyword::StringDoubleVectorKeyword(StringDoubleVectorKeywordData &data)
+    : KeywordBase(typeid(this)), data_(data)
 {
 }
 
-StringDoubleVectorKeyword::~StringDoubleVectorKeyword() = default;
+/*
+ * Data
+ */
 
+// Return reference to data
+StringDoubleVectorKeywordData &StringDoubleVectorKeyword::data() { return data_; }
+const StringDoubleVectorKeywordData &StringDoubleVectorKeyword::data() const { return data_; }
+
+/*
+ * Arguments
+ */
 // Return minimum number of arguments accepted
 int StringDoubleVectorKeyword::minArguments() const { return 2; }
 

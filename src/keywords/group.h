@@ -46,9 +46,6 @@ class KeywordGroup : public ListItem<KeywordGroup>
     // Add keyword (pass-thru to KeywordList)
     bool add(KeywordBase *object, std::string_view keyword, std::string_view description,
              int optionMask = KeywordBase::NoOptions);
-    // Add keyword (pass-thru to KeywordList)
-    bool add(KeywordBase *object, std::string_view keyword, std::string_view description, std::string_view arguments,
-             int optionMask = KeywordBase::NoOptions);
     // Return reference list of keywords in group
     RefList<KeywordBase> &keywords();
 };

@@ -3,19 +3,31 @@
 
 #pragma once
 
-#include "classes/atomtype.h"
-#include "keywords/data.h"
-#include "templates/reflist.h"
-
-// Forward Declarations
-class Configuration;
+#include "data/elements.h"
+#include "keywords/base.h"
 
 // Keyword with Element vector data
-class ElementVectorKeyword : public KeywordData<std::vector<Elements::Element> &>
+class ElementVectorKeyword : public KeywordBase
 {
     public:
-    ElementVectorKeyword(std::vector<Elements::Element> &targetData);
-    ~ElementVectorKeyword() override;
+    explicit ElementVectorKeyword(std::vector<Elements::Element> &data);
+    ~ElementVectorKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    std::vector<Elements::Element> &data_;
+
+    protected:
+    // Return if the current data object is empty
+    bool isDataEmpty() const override;
+
+    public:
+    // Return reference to data
+    std::vector<Elements::Element> &data();
+    const std::vector<Elements::Element> &data() const;
 
     /*
      * Arguments

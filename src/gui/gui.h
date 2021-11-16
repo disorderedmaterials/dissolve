@@ -140,7 +140,7 @@ class DissolveWindow : public QMainWindow
     // Clear all data and start new simulation afresh
     void startNew();
 
-    private slots:
+    public slots:
     // File
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenLocalAction_triggered(bool checked);
@@ -166,11 +166,14 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesImportFromXYZAction_triggered(bool checked);
     void on_SpeciesImportLigParGenAction_triggered(bool checked);
     void on_SpeciesRenameAction_triggered(bool checked);
+    void on_SpeciesDeleteAction_triggered(bool checked);
     void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
-    void on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked);
     void on_SpeciesSimplifyAtomTypesAction_triggered(bool checked);
     void on_SpeciesReduceToMasterTermsAction_triggered(bool checked);
-    void on_SpeciesDeleteAction_triggered(bool checked);
+    void on_SpeciesCopyTermsAction_triggered(bool checked);
+    void on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked);
+    void on_SpeciesSetAtomTypesInSelectionAction_triggered(bool checked);
+    void on_SpeciesSetChargesInSelectionAction_triggered(bool checked);
     // Configuration
     void on_ConfigurationCreateEmptyAction_triggered(bool checked);
     void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
@@ -239,6 +242,8 @@ class DissolveWindow : public QMainWindow
     void enableSensitiveControls();
     // All iterations requested are complete
     void iterationsComplete();
+    // Specified tab (indicated by page widget) has been closed, and relevant data should be deleted accordingly
+    void closeTab(QWidget *page);
 
     signals:
     void iterate(int);

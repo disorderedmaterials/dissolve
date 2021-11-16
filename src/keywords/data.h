@@ -9,7 +9,7 @@
 template <class T> class KeywordData : public KeywordBase
 {
     public:
-    KeywordData(KeywordBase::KeywordDataType type, T data) : KeywordBase(type), data_(data) {}
+    KeywordData(T data) : KeywordBase(), data_(data) {}
 
     /*
      * Data

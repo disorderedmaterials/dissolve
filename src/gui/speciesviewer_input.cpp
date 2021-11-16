@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "classes/species.h"
-#include "gui/render/renderablespecies.h"
+#include "gui/gui.h"
 #include "gui/speciesviewer.hui"
+#include "neta/neta.h"
 #include <QtGui/QMouseEvent>
 
 // Mouse moved
@@ -14,7 +14,7 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
         return;
 
     auto refresh = false;
-    SpeciesAtom *currentAtom = nullptr;
+    std::optional<int> currentAtomIndex;
 
     // What we do here depends on the current mode
     switch (transientInteractionMode_)
@@ -34,20 +34,21 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
                         break;
 
                     // Get atom at the current position (if any)
-                    currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
+                    currentAtomIndex = atomIndexAt(rMouseLast_.x, rMouseLast_.y);
 
                     // Set the current drawing coordinates in data-space
-                    drawCoordinateCurrent_ =
-                        currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
+                    drawCoordinateCurrent_ = currentAtomIndex ? species_->atom(currentAtomIndex.value()).r()
+                                                              : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
 
                     // Update the interaction Primitive
-                    if (clickedAtom_)
+                    if (clickedAtomIndex_)
                     {
-                        if (currentAtom)
-                            speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, currentAtom);
+                        if (currentAtomIndex)
+                            speciesRenderable_->recreateDrawInteractionPrimitive(&species_->atom(clickedAtomIndex_.value()),
+                                                                                 &species_->atom(currentAtomIndex.value()));
                         else
-                            speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_,
-                                                                                 drawElement_);
+                            speciesRenderable_->recreateDrawInteractionPrimitive(&species_->atom(clickedAtomIndex_.value()),
+                                                                                 drawCoordinateCurrent_, drawElement_);
                     }
                     else
                         speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
@@ -60,9 +61,13 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
                         break;
 
                     // Update the interaction Primitive
-                    if (clickedAtom_)
-                        speciesRenderable_->recreateDeleteInteractionPrimitive(clickedAtom_,
-                                                                               atomAt(rMouseLast_.x, rMouseLast_.y));
+                    if (clickedAtomIndex_)
+                    {
+                        currentAtomIndex = atomIndexAt(rMouseLast_.x, rMouseLast_.y);
+                        speciesRenderable_->recreateDeleteInteractionPrimitive(
+                            &species_->atom(clickedAtomIndex_.value()),
+                            currentAtomIndex ? &species_->atom(currentAtomIndex.value()) : nullptr);
+                    }
                     else
                         speciesRenderable_->clearInteractionPrimitive();
 
@@ -98,4 +103,84 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 
     if (refresh)
         postRedisplay();
+}
+
+// Context menu requested
+void SpeciesViewer::contextMenuRequested(QPoint pos)
+{
+    QMenu menu(this);
+    menu.setFont(font());
+
+    std::map<QAction *, std::string> actionMap;
+
+    // Reset View
+    actionMap[menu.addAction("&Reset View")] = "ResetView";
+
+    // Copy to clipboard
+    actionMap[menu.addAction("&Copy to clipboard")] = "CopyToClipboard";
+
+    // Atom selection context menu?
+    auto nSelected = species_->selectedAtoms().size();
+    if (species_ && nSelected > 0)
+    {
+        menu.addSection("Current Selection");
+
+        // Atom select submenu
+        auto *selectMenu = menu.addMenu("Select similar atoms...");
+        selectMenu->setFont(font());
+        if (nSelected == 1)
+        {
+            actionMap[selectMenu->addAction("By direct connectivity")] = "SelectDirect";
+            actionMap[selectMenu->addAction("Based on primary neighbours")] = "SelectPrimary";
+            actionMap[selectMenu->addAction("Based on primary and secondary neighbours")] = "SelectSecondary";
+        }
+        else
+            selectMenu->setEnabled(false);
+
+        // Set menu (only if DissolveWindow is set)
+        if (dissolveWindow_)
+        {
+            auto *setMenu = menu.addMenu("Set...");
+            setMenu->setFont(font());
+            auto *setAtomTypeAction = setMenu->addAction("Atom type...");
+            setAtomTypeAction->setEnabled(species_->isSelectionSingleElement());
+            connect(setAtomTypeAction, SIGNAL(triggered(bool)), dissolveWindow_.value(),
+                    SLOT(on_SpeciesSetAtomTypesInSelectionAction_triggered(bool)));
+            connect(setMenu->addAction("Charges..."), SIGNAL(triggered(bool)), dissolveWindow_.value(),
+                    SLOT(on_SpeciesSetChargesInSelectionAction_triggered(bool)));
+        }
+    }
+
+    // Execute the menu
+    auto *selectedAction = menu.exec(mapToGlobal(pos));
+    if (selectedAction == nullptr)
+    {
+        cancelInteraction();
+        return;
+    }
+
+    // Act on the action!
+    if (actionMap[selectedAction] == "ResetView")
+        view_.resetViewMatrix();
+    else if (actionMap[selectedAction] == "CopyToClipboard")
+        copyViewToClipboard(true);
+    else if (DissolveSys::startsWith(actionMap[selectedAction], "Select"))
+    {
+        // Create a NETA description from the current atom
+        NETADefinition neta(species_->selectedAtoms().front(), actionMap[selectedAction] == "SelectDirect"
+                                                                   ? 0
+                                                                   : (actionMap[selectedAction] == "SelectPrimary" ? 1 : 2));
+        auto Z = species_->selectedAtoms().front()->Z();
+        Messenger::print("NETA definition is '{}'.\n", neta.definitionString());
+        for (auto &i : species_->atoms())
+            if (i.Z() == Z && neta.matches(&i))
+                species_->selectAtom(i.index());
+        Messenger::print("Selected {} additional atoms.\n", species_->selectedAtoms().size() - 1);
+        speciesRenderable_->recreateSelectionPrimitive();
+        emit(atomsChanged());
+        postRedisplay();
+    }
+
+    // Cancel any current interaction
+    cancelInteraction();
 }

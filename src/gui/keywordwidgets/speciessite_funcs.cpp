@@ -12,21 +12,14 @@
 #include <QRadioButton>
 #include <QSpacerItem>
 
-SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, SpeciesSiteKeyword *keyword, const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<SpeciesSiteKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into SpeciesSiteKeyword.\n", keyword->name());
-    else
-    {
-        // Set current information
-        updateWidgetValues(coreData_);
-    }
+    // Set current information
+    updateWidgetValues(coreData_);
 }
 
 /*

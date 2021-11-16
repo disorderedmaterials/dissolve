@@ -65,8 +65,8 @@ void CalculateSDFModule::initialise()
     // -- Select: Site 'B'
     selectB_ = std::make_shared<SelectProcedureNode>();
     selectB_->setName("B");
-    selectB_->setKeyword<std::vector<const ProcedureNode*>>("ExcludeSameSite", {selectA_.get()});
-    selectB_->setKeyword<std::vector<const ProcedureNode*>>("ExcludeSameMolecule", {selectA_.get()});
+    selectB_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode> >{selectA_});
+    selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode> >{selectA_});
     std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -81,13 +81,13 @@ void CalculateSDFModule::initialise()
     // Process3D: @dataName
     processPosition_ = std::make_shared<Process3DProcedureNode>(collectVector_);
     processPosition_->setName("SDF");
-    processPosition_->setKeyword<std::string>("LabelValue", "\\symbol{rho}(x,y,z)");
-    processPosition_->setKeyword<std::string>("LabelX", "x, \\symbol{Angstrom}");
-    processPosition_->setKeyword<std::string>("LabelY", "y, \\symbol{Angstrom}");
-    processPosition_->setKeyword<std::string>("LabelZ", "z, \\symbol{Angstrom}");
+    processPosition_->keywords().set("LabelValue", std::string("\\symbol{rho}(x,y,z)"));
+    processPosition_->keywords().set("LabelX", std::string("x, \\symbol{Angstrom}"));
+    processPosition_->keywords().set("LabelY", std::string("y, \\symbol{Angstrom}"));
+    processPosition_->keywords().set("LabelZ", std::string("z, \\symbol{Angstrom}"));
     std::shared_ptr<SequenceProcedureNode> sdfNormalisation = processPosition_->addNormalisationBranch();
-    sdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get()}));
-    sdfNormalisation->addNode(std::make_shared<OperateGridNormaliseProcedureNode>());
+    sdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_}));
+    sdfNormalisation->addNode(new OperateGridNormaliseProcedureNode());
     analyser_.addRootSequenceNode(processPosition_);
 
     /*
@@ -95,27 +95,22 @@ void CalculateSDFModule::initialise()
      */
 
     // Control
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                        Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
-                  "RangeX", "Range along X axis", "<min> <max> <delta> (Angstroms)");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                        Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
-                  "RangeY", "Range along Y axis", "<min> <max> <delta> (Angstroms)");
-    keywords_.add("Control",
-                  new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                        Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
-                  "RangeZ", "Range along Z axis", "<min> <max> <delta> (Angstroms)");
-    keywords_.link("Control", selectA_->keywords().find("Site"), "SiteA",
-                   "Set the site(s) 'A' which are to represent the origin of the SDF", "<Species> <Site>");
-    keywords_.link("Control", selectB_->keywords().find("Site"), "SiteB",
-                   "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
-                   "<Species> <Site>");
-    keywords_.add("Control", new BoolKeyword(true), "ExcludeSameMolecule",
-                  "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range along Y axis", rangeY_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range along Z axis", rangeZ_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA",
+                                            "Set the site(s) 'A' which are to represent the origin of the SDF",
+                                            selectA_->speciesSites(), selectA_->axesRequired());
+    keywords_.add<SpeciesSiteVectorKeyword>(
+        "Control", "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+        selectB_->speciesSites(), selectB_->axesRequired());
+    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
+                               "Whether to exclude correlations between sites on the same molecule", excludeSameMolecule_);
 
     // Export
-    keywords_.add("Export", new FileAndFormatKeyword(sdfFileAndFormat_, "EndExportSDF"), "ExportSDF",
-                  "Save the SDF to the specified file / format");
+    keywords_.add<FileAndFormatKeyword>("Export", "ExportSDF", "Save the SDF to the specified file / format", sdfFileAndFormat_,
+                                        "EndExportSDF");
 }

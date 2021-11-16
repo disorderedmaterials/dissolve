@@ -6,10 +6,12 @@
 #include "base/sysfunc.h"
 #include "keywords/types.h"
 #include "math/data1d.h"
+#include "math/data2d.h"
+#include "math/data3d.h"
 
 OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateDivide)
 {
-    keywords_.add("Control", new NodeValueKeyword(this, 1.0), "Value", "Constant value to use as the divisor");
+    keywords_.add<NodeValueKeyword>("Control", "Value", "Constant value to use as the divisor", value_, this);
 }
 
 /*
@@ -19,9 +21,7 @@ OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeB
 // Operate on Data1D target
 bool OperateDivideProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the divisor
-    const auto divisor = keywords_.asDouble("Value");
-    (*targetData1D_) /= divisor;
+    (*targetData1D_) /= value_.asDouble();
 
     return true;
 }
@@ -29,9 +29,7 @@ bool OperateDivideProcedureNode::operateData1D(ProcessPool &procPool, Configurat
 // Operate on Data2D target
 bool OperateDivideProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the divisor
-    const auto divisor = keywords_.asDouble("Value");
-    (*targetData2D_) /= divisor;
+    (*targetData2D_) /= value_.asDouble();
 
     return true;
 }
@@ -39,9 +37,7 @@ bool OperateDivideProcedureNode::operateData2D(ProcessPool &procPool, Configurat
 // Operate on Data3D target
 bool OperateDivideProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    // Evaluate the expression to get the divisor
-    const auto divisor = keywords_.asDouble("Value");
-    (*targetData3D_) /= divisor;
+    (*targetData3D_) /= value_.asDouble();
 
     return true;
 }
