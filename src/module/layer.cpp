@@ -20,7 +20,7 @@ std::string_view ModuleLayer::name() const { return name_; }
 void ModuleLayer::setEnabled(bool enabled) { enabled_ = enabled; }
 
 // Return whether the layer is enabled
-bool ModuleLayer::enabled() const { return enabled_; }
+bool ModuleLayer::isEnabled() const { return enabled_; }
 
 // Frequency, relative to the main iteration counter, at which to execute the layer
 void ModuleLayer::setFrequency(int frequency) { frequency_ = frequency; }

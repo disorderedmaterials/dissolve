@@ -143,7 +143,7 @@ bool Dissolve::iterate(int nIterations)
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
-            if (!layer->enabled())
+            if (!layer->isEnabled())
                 continue;
 
             auto layerExecutionCount = iteration_ / layer->frequency();
