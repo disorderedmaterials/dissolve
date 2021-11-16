@@ -7,6 +7,7 @@
 #include "math/mathfunc.h"
 #include <cmath>
 #include <fmt/core.h>
+#include <stdexcept>
 
 // 3D vector
 template <class T> class Vec3
@@ -72,7 +73,7 @@ template <class T> class Vec3
         else if (index == 2)
             return z;
 
-        throw std::runtime_error(fmt::format("Vec3 - element index {} is out of bounds.", index));
+        throw(std::runtime_error(fmt::format("Vec3 - element index {} is out of bounds.", index)));
         return T();
     }
 
@@ -168,7 +169,7 @@ template <class T> class Vec3
         else if (index == 2)
             return z;
 
-        throw std::runtime_error(fmt::format("Vec3 - array access failed - index {} is out of bounds.", index));
+        throw(std::runtime_error(fmt::format("Vec3 - array access failed - index {} is out of bounds.", index)));
 
         static T dummy;
         return dummy;
@@ -402,7 +403,7 @@ template <class T> class Vec3
         else if (index == 2)
             return Vec3<T>(0, 0, 1);
 
-        throw std::runtime_error(fmt::format("Vec3 - unit() generation failed - index {} is out of bounds.", index));
+        throw(std::runtime_error(fmt::format("Vec3 - unit() generation failed - index {} is out of bounds.", index)));
         return Vec3<T>();
     }
     // Swap the two specified elements

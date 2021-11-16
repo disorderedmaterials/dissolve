@@ -100,14 +100,12 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
         if (DissolveSys::sameString(parser.argsv(0), endKeyword))
             break;
 
-        // Do we recognise the keyword?
-        KeywordBase *keyword = keywords_.find(parser.argsv(0));
-        if (!keyword)
+        // Can we parse the keyword?
+        auto result = keywords_.parse(parser, coreData);
+        if (result == KeywordBase::Unrecognised)
             return Messenger::error("Unrecognised option '{}' found in file and format block.\n", parser.argsv(0));
-
-        // Read in the keyword's data
-        if (!keyword->read(parser, 1, coreData))
-            return Messenger::error("Error reading option '{}'.\n", keyword->name());
+        else if (result == KeywordBase::Failed)
+            return Messenger::error("Error reading option '{}'.\n", parser.argsv(0));
     }
 
     return true;

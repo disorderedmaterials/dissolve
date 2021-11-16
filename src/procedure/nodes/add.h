@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class Species;
+class RegionProcedureNodeBase;
 
 // Add Node
 class AddProcedureNode : public ProcedureNode
@@ -51,6 +52,24 @@ class AddProcedureNode : public ProcedureNode
     };
     // Return enum option info for PositioningType
     static EnumOptions<PositioningType> positioningTypes();
+
+    private:
+    // Action to take on the Box geometry / volume on addition of the species
+    AddProcedureNode::BoxActionStyle boxAction_{AddProcedureNode::BoxActionStyle::AddVolume};
+    // Target density when adding molecules
+    std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
+    // Population of molecules to add
+    NodeValue population_{1.0};
+    // Positioning type for individual molecules
+    AddProcedureNode::PositioningType positioningType_{AddProcedureNode::PositioningType::Random};
+    // Region into which we will add molecules (if any)
+    const RegionProcedureNodeBase *region_{nullptr};
+    // Whether to rotate molecules on insertion
+    bool rotate_{true};
+    // Flags controlling box axis scaling
+    bool scaleA_{true}, scaleB_{true}, scaleC_{true};
+    // Species to be added
+    const Species *species_{nullptr};
 
     /*
      * Execute

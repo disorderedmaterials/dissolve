@@ -13,22 +13,20 @@
 bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    const auto rangeX = keywords_.asVec3Double("RangeX");
-    const auto rangeY = keywords_.asVec3Double("RangeY");
-    const auto rangeZ = keywords_.asVec3Double("RangeZ");
-    collectVector_->setKeyword<Vec3<double>>("RangeX", rangeX);
-    collectVector_->setKeyword<Vec3<double>>("RangeY", rangeY);
-    collectVector_->setKeyword<Vec3<double>>("RangeZ", rangeZ);
-    const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
-    if (excludeSameMolecule)
-        selectB_->setKeyword<std::vector<const ProcedureNode *>>("ExcludeSameMolecule", {selectA_});
+    collectVector_->keywords().set("RangeX", rangeX_);
+    collectVector_->keywords().set("RangeY", rangeY_);
+    collectVector_->keywords().set("RangeZ", rangeZ_);
+    if (excludeSameMolecule_)
+        selectB_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectA_});
+    else
+        selectB_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{});
 
     // Grab Configuration pointer
-    auto *cfg = targetConfigurationsKeyword_.data().front();
+    auto *cfg = targetConfigurations_.front();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

@@ -7,15 +7,13 @@
 
 NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
                                      std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(
-                                                              KeywordBase::NodeVectorData, nodes)
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(nodes)
 {
 }
 
 NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
                                      std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(
-                                                               KeywordBase::NodeVectorData, nodes)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(nodes)
 {
 }
 

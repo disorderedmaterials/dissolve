@@ -62,10 +62,8 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
         else
         {
             // Might be a keyword defined in the Module itself?
-            auto result = module->parseKeyword(parser, dissolve, targetList, std::string(module->uniqueName()));
-            if (result == 0)
-                error = true;
-            else if (result == -1)
+            auto result = module->keywords().parse(parser, dissolve->coreData());
+            if (result == KeywordBase::Unrecognised)
             {
                 Messenger::error("Unrecognised {} block keyword '{}' found, and the Module '{}' contains no "
                                  "option with this name.\n",
@@ -75,6 +73,8 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                 module->printValidKeywords();
                 error = true;
             }
+            else if (result == KeywordBase::Failed)
+                error = true;
         }
 
         // Error encountered?

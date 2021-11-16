@@ -54,7 +54,7 @@ void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
                                        module_->targetConfigurations().end(), [](auto *item) { return item->name(); });
 
     // Set gradient and stability labels
-    auto stabilityWindow = module_->keywords().asInt("StabilityWindow");
+    auto stabilityWindow = module_->keywords().get<int>("StabilityWindow");
     ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
     // Create / update renderables?

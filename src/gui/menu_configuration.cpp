@@ -106,9 +106,9 @@ void DissolveWindow::on_ConfigurationCreateEmptyFrameworkAction_triggered(bool c
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
     auto *node = new AddProcedureNode(framework, 1);
-    node->setEnumeration<AddProcedureNode::BoxActionStyle>("BoxAction", AddProcedureNode::BoxActionStyle::Set);
-    node->setEnumeration<AddProcedureNode::PositioningType>("Positioning", AddProcedureNode::PositioningType::Current);
-    node->setKeyword<bool>("Rotate", false);
+    node->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
+    node->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+    node->keywords().set("Rotate", false);
     generator.addRootSequenceNode(node);
 
     // Run the generator
@@ -137,9 +137,9 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
     auto *node = new AddProcedureNode(framework, 1);
-    node->setEnumeration<AddProcedureNode::BoxActionStyle>("BoxAction", AddProcedureNode::BoxActionStyle::Set);
-    node->setEnumeration<AddProcedureNode::PositioningType>("Positioning", AddProcedureNode::PositioningType::Current);
-    node->setKeyword<bool>("Rotate", false);
+    node->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
+    node->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+    node->keywords().set("Rotate", false);
     generator.addRootSequenceNode(node);
 
     // Add a parameters node
@@ -162,7 +162,7 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
             addSpeciesNode =
                 new AddProcedureNode(sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
         }
-        addSpeciesNode->setEnumeration<AddProcedureNode::BoxActionStyle>("BoxAction", AddProcedureNode::BoxActionStyle::None);
+        addSpeciesNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
         generator.addRootSequenceNode(addSpeciesNode);
 
         ++count;
@@ -198,11 +198,12 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
         return;
 
     // Check that we really want to delete the Configuration
-    if (!cfgTab->close())
+    if (!cfgTab->canClose())
         return;
 
-    // Update the GUI
     ui_.MainTabs->removeByPage(cfgTab->page());
+    dissolve_.removeConfiguration(cfgTab->configuration());
+
     setModified();
     fullUpdate();
 }

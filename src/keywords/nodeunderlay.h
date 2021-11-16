@@ -3,17 +3,15 @@
 
 #pragma once
 
-#include "base/lineparser.h"
-#include "keywords/data.h"
 #include "procedure/nodes/node.h"
 
-// Base Class for ProcedureNode-based Keywords
-class NodeKeywordBase
+// Underlay class for ProcedureNode-based Keywords
+class NodeKeywordUnderlay
 {
     public:
-    NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-    NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
-    virtual ~NodeKeywordBase() = default;
+    NodeKeywordUnderlay(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
+    NodeKeywordUnderlay(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope);
+    virtual ~NodeKeywordUnderlay() = default;
 
     /*
      * Data
@@ -37,7 +35,10 @@ class NodeKeywordBase
     std::optional<ProcedureNode::NodeClass> nodeClass() const;
     // Return whether to accept nodes within scope only
     bool onlyInScope() const;
+    // Return vector of possible nodes allowed based on class and type definitions
+    std::vector<const ProcedureNode *> allowedNodes() const;
+    // Find the named node, obeying scope
+    const ProcedureNode *findNode(std::string_view name) const;
     // Return whether the supplied node has valid class or type
-    bool validNode(const ProcedureNode *node, std::optional<ProcedureNode::NodeType> nodeType,
-                   std::optional<ProcedureNode::NodeClass> nodeClass, std::string_view keywordName) const;
+    bool validNode(const ProcedureNode *node, std::string_view keywordName) const;
 };

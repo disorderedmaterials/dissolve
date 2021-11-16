@@ -15,7 +15,7 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    FileAndFormatKeywordWidget(QWidget *parent, FileAndFormatKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

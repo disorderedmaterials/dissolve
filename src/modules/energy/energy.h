@@ -40,8 +40,26 @@ class EnergyModule : public Module
     int nRequiredTargets() const override;
 
     /*
-     * Initialisation
+     * Control
      */
+    private:
+    // Save calculated energies to disk, one file per targetted configuration
+    bool save_{false};
+    // Threshold value at which energy is deemed stable over the defined windowing period
+    double stabilityThreshold_{0.001};
+    // Number of points over which to assess the stability of the energy (per Configuration)
+    int stabilityWindow_{10};
+    // Test parallel energy routines against basic serial versions and supplied reference values
+    bool test_{false};
+    // Use analytic interatomic energies rather than (production) tabulated potentials for tests
+    bool testAnalytic_{false};
+    // Reference value for interatomic energy against which to test calculated value
+    double testReferenceInter_{0.0};
+    // Reference value for intramolecular energy against which to test calculated value
+    double testReferenceIntra_{0.0};
+    // Threshold of energy at which test comparison will fail
+    double testThreshold_{0.1};
+
     protected:
     // Perform any necessary initialisation for the Module
     void initialise() override;

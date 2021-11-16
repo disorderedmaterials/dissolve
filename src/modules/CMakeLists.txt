@@ -47,6 +47,7 @@ macro(dissolve_add_module header modulename)
     ${PROJECT_SOURCE_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/src
+    ${CONAN_INCLUDE_DIRS_TBB}
   )
   target_link_libraries(
     module_${modulename}

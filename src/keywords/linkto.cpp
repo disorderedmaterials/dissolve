@@ -3,9 +3,7 @@
 
 #include "keywords/linkto.h"
 
-LinkToKeyword::LinkToKeyword(KeywordBase *keywordData) : KeywordData<KeywordBase *>(KeywordBase::LinkToKeywordData, keywordData)
-{
-}
+LinkToKeyword::LinkToKeyword(KeywordBase *keywordData) : KeywordData<KeywordBase *>(keywordData) {}
 
 LinkToKeyword::~LinkToKeyword() = default;
 

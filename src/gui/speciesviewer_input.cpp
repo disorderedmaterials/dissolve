@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "classes/species.h"
-#include "gui/render/renderablespecies.h"
+#include "gui/gui.h"
 #include "gui/speciesviewer.hui"
 #include "neta/neta.h"
 #include <QtGui/QMouseEvent>
@@ -110,16 +109,17 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 void SpeciesViewer::contextMenuRequested(QPoint pos)
 {
     QMenu menu(this);
-    //    menu.setFont(font());
+    menu.setFont(font());
+
+    std::map<QAction *, std::string> actionMap;
 
     // Reset View
-    auto *resetViewAction = menu.addAction("&Reset View");
+    actionMap[menu.addAction("&Reset View")] = "ResetView";
 
     // Copy to clipboard
-    auto *copyToClipboardAction = menu.addAction("&Copy to clipboard");
+    actionMap[menu.addAction("&Copy to clipboard")] = "CopyToClipboard";
 
     // Atom selection context menu?
-    QAction *selectSimilarDirect = nullptr, *selectSimilarPrimary = nullptr, *selectSimilarSecondary = nullptr;
     auto nSelected = species_->selectedAtoms().size();
     if (species_ && nSelected > 0)
     {
@@ -127,10 +127,28 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
         // Atom select submenu
         auto *selectMenu = menu.addMenu("Select similar atoms...");
-        selectMenu->setEnabled(nSelected == 1);
-        selectSimilarDirect = selectMenu->addAction("By direct connectivity");
-        selectSimilarPrimary = selectMenu->addAction("Based on primary neighbours");
-        selectSimilarSecondary = selectMenu->addAction("Based on primary and secondary neighbours");
+        selectMenu->setFont(font());
+        if (nSelected == 1)
+        {
+            actionMap[selectMenu->addAction("By direct connectivity")] = "SelectDirect";
+            actionMap[selectMenu->addAction("Based on primary neighbours")] = "SelectPrimary";
+            actionMap[selectMenu->addAction("Based on primary and secondary neighbours")] = "SelectSecondary";
+        }
+        else
+            selectMenu->setEnabled(false);
+
+        // Set menu (only if DissolveWindow is set)
+        if (dissolveWindow_)
+        {
+            auto *setMenu = menu.addMenu("Set...");
+            setMenu->setFont(font());
+            auto *setAtomTypeAction = setMenu->addAction("Atom type...");
+            setAtomTypeAction->setEnabled(species_->isSelectionSingleElement());
+            connect(setAtomTypeAction, SIGNAL(triggered(bool)), dissolveWindow_.value(),
+                    SLOT(on_SpeciesSetAtomTypesInSelectionAction_triggered(bool)));
+            connect(setMenu->addAction("Charges..."), SIGNAL(triggered(bool)), dissolveWindow_.value(),
+                    SLOT(on_SpeciesSetChargesInSelectionAction_triggered(bool)));
+        }
     }
 
     // Execute the menu
@@ -142,16 +160,16 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
     }
 
     // Act on the action!
-    if (selectedAction == resetViewAction)
+    if (actionMap[selectedAction] == "ResetView")
         view_.resetViewMatrix();
-    else if (selectedAction == copyToClipboardAction)
+    else if (actionMap[selectedAction] == "CopyToClipboard")
         copyViewToClipboard(true);
-    else if (selectedAction == selectSimilarDirect || selectedAction == selectSimilarPrimary ||
-             selectedAction == selectSimilarSecondary)
+    else if (DissolveSys::startsWith(actionMap[selectedAction], "Select"))
     {
         // Create a NETA description from the current atom
-        NETADefinition neta(species_->selectedAtoms().front(),
-                            selectedAction == selectSimilarDirect ? 0 : (selectedAction == selectSimilarPrimary ? 1 : 2));
+        NETADefinition neta(species_->selectedAtoms().front(), actionMap[selectedAction] == "SelectDirect"
+                                                                   ? 0
+                                                                   : (actionMap[selectedAction] == "SelectPrimary" ? 1 : 2));
         auto Z = species_->selectedAtoms().front()->Z();
         Messenger::print("NETA definition is '{}'.\n", neta.definitionString());
         for (auto &i : species_->atoms())

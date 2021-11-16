@@ -7,10 +7,8 @@
 // Static Singletons
 RefList<KeywordBase> KeywordBase::allKeywords_;
 
-KeywordBase::KeywordBase(KeywordDataType type) : ListItem<KeywordBase>(), type_(type)
+KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false)
 {
-    set_ = false;
-
     // Add ourselves to the master reference list of keywords
     allKeywords_.append(this);
 }
@@ -21,82 +19,25 @@ KeywordBase::~KeywordBase()
     allKeywords_.remove(this);
 }
 
-// Value Keyword Data Type Keywords
-std::string_view KeywordDataTypeKeywords[] = {"AtomTypeVector",
-                                              "Bool",
-                                              "ConfigurationRefList",
-                                              "Data1DStore",
-                                              "Data2DStore",
-                                              "Data3DStore",
-                                              "Double",
-                                              "DynamicSites",
-                                              "ElementVector",
-                                              "EnumOptions",
-                                              "Expression",
-                                              "ExpressionVariableList",
-                                              "FileAndFormat",
-                                              "Function1D",
-                                              "GeometryList",
-                                              "Integer",
-                                              "IsotopologueList",
-                                              "IsotopologueSet",
-                                              "LinkToKeyword",
-                                              "Module",
-                                              "ModuleGroups",
-                                              "ModuleRefList",
-                                              "Node",
-                                              "NodeAndInteger",
-                                              "NodeBranch",
-                                              "NodeValue",
-                                              "NodeValueEnumOptions",
-                                              "NodeVector",
-                                              "Procedure",
-                                              "Range",
-                                              "Species",
-                                              "SpeciesSite",
-                                              "SpeciesSiteVector",
-                                              "SpeciesVector",
-                                              "String",
-                                              "ValueStore",
-                                              "Vec3<Double>",
-                                              "Vec3<Integer>",
-                                              "Vec3<NodeValue>",
-                                              "Vector<Integer,Double>",
-                                              "Vector<Integer,String>",
-                                              "Vector<String,Double>",
-                                              "Vector<String,String>"};
-
-// Return ValueType name
-std::string_view KeywordBase::keywordDataType(KeywordDataType kdt) { return KeywordDataTypeKeywords[kdt]; }
-
-/*
- * Base Pointer Return
- */
-
-// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-KeywordBase *KeywordBase::base() { return this; }
-
 /*
  * Keyword Description
  */
 
-// Set name, description, arguments, and option mask
-void KeywordBase::set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask)
+// Set base keyword information
+void KeywordBase::setBaseInfo(std::string_view name, std::string_view description)
 {
     name_ = name;
-    arguments_ = arguments;
     description_ = description;
-    optionMask_ = optionMask;
 }
+
+// Return typeindex for the keyword
+const std::type_index KeywordBase::typeIndex() const { return typeIndex_; }
+
+// Set option mask
+void KeywordBase::setOptionMask(int optionMask) { optionMask_ = optionMask; }
 
 // Flag that data has been set by some other means
 void KeywordBase::setAsModified() { set_ = true; }
-
-// Return data type stored by keyword
-KeywordBase::KeywordDataType KeywordBase::type() const { return type_; }
-
-// Return name of data type stored by keyword
-std::string_view KeywordBase::typeName() const { return KeywordDataTypeKeywords[type_]; }
 
 // Return keyword name
 std::string_view KeywordBase::name() const { return name_; }
@@ -125,68 +66,16 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
 {
     if (nArgsProvided < minArguments())
     {
-        Messenger::error("Not enough arguments given to {} keyword '{}'.\n", typeName(), name());
+        Messenger::error("Not enough arguments given to keyword '{}'.\n", name());
         return false;
     }
     if ((maxArguments() >= 0) && (nArgsProvided > maxArguments()))
     {
-        Messenger::error("Too many arguments given to {} keyword '{}'.\n", typeName(), name());
+        Messenger::error("Too many arguments given to keyword '{}'.\n", name());
         return false;
     }
 
     return true;
-}
-
-/*
- * Conversion
- */
-
-// Return value (as bool)
-bool KeywordBase::asBool()
-{
-    Messenger::warn("No suitable conversion to bool from KeywordDataType {} ({}) exists. Returning 'false'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return false;
-}
-
-// Return value (as int)
-int KeywordBase::asInt()
-{
-    Messenger::warn("No suitable conversion to int from KeywordDataType {} ({}) exists. Returning '0'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return 0;
-}
-
-// Return value (as double)
-double KeywordBase::asDouble()
-{
-    Messenger::warn("No suitable conversion to double from KeywordDataType {} ({}) exists. Returning '0.0'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return 0.0;
-}
-
-// Return value (as string)
-std::string KeywordBase::asString()
-{
-    Messenger::warn("No suitable conversion to string from KeywordDataType {} ({}) exists. Returning 'NULL'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return "NULL";
-}
-
-// Return value as Vec3<int>
-Vec3<int> KeywordBase::asVec3Int()
-{
-    Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType {} ({}) exists. Returning '(0,0,0)'.\n", type_,
-                    KeywordBase::keywordDataType(type_));
-    return Vec3<int>(0, 0, 0);
-}
-
-// Return value as Vec3<double>
-Vec3<double> KeywordBase::asVec3Double()
-{
-    Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType {} ({}) exists. Returning '(0.0,0.0,0.0)'.\n",
-                    type_, KeywordBase::keywordDataType(type_));
-    return Vec3<double>(0.0, 0.0, 0.0);
 }
 
 /*

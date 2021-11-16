@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/render/renderabledata1d.h"
+#include "keywords/module.h"
 #include "modules/calculate_cn/cn.h"
 #include "modules/calculate_cn/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
@@ -51,11 +52,11 @@ void CalculateCNModuleWidget::updateControls(ModuleWidget::UpdateType updateType
         rdfGraph_->clearRenderables();
 
         // Get target RDF module
-        auto found = false;
-        auto *rdfModule = module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
-        if (!rdfModule)
+        auto optRDFModule = module_->keywords().get<const CalculateRDFModule *, ModuleKeyword<CalculateRDFModule>>("SourceRDF");
+        if (!optRDFModule)
             return;
 
+        const auto *rdfModule = optRDFModule->get();
         rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", rdfModule->uniqueName()), "RDF");
     }
 

@@ -3,26 +3,33 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class Expression;
 class ExpressionVariable;
-class ProcedureNode;
 
 // Keyword with Expression
-class ExpressionKeyword : public KeywordData<Expression &>
+class ExpressionKeyword : public KeywordBase
 {
     public:
-    ExpressionKeyword(Expression &expression, const std::vector<std::shared_ptr<ExpressionVariable>> &variables);
-    ~ExpressionKeyword() override;
+    ExpressionKeyword(Expression &data, const std::vector<std::shared_ptr<ExpressionVariable>> &variables);
+    ~ExpressionKeyword() override = default;
 
     /*
      * Data
      */
     private:
+    // Reference to data
+    Expression &data_;
     // Vector of variables available to the expression
     const std::vector<std::shared_ptr<ExpressionVariable>> &variables_;
+
+    public:
+    // Return reference to data
+    const Expression &data() const;
+    // Set data
+    bool setData(std::string_view expressionText);
 
     /*
      * Arguments
@@ -36,25 +43,4 @@ class ExpressionKeyword : public KeywordData<Expression &>
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Set
-     */
-    public:
-    // Set the value from supplied expression text
-    bool setValue(std::string_view expressionText);
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as int)
-    int asInt() override;
-    // Return value (as double)
-    double asDouble() override;
-
-    /*
-     * Object Management
-     */
-    protected:
 };

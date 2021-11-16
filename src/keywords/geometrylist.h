@@ -4,22 +4,28 @@
 #pragma once
 
 #include "base/geometry.h"
-#include "keywords/data.h"
+#include "keywords/base.h"
 
-// Keyword with Geometry Data
-class GeometryListKeyword : public KeywordData<std::vector<Geometry>>
+// Keyword with vector of Geometry Data
+class GeometryListKeyword : public KeywordBase
 {
     public:
-    GeometryListKeyword(std::vector<Geometry>, Geometry::GeometryType t);
-
-    ~GeometryListKeyword() override;
+    GeometryListKeyword(std::vector<Geometry> &data, Geometry::GeometryType geometryType);
+    ~GeometryListKeyword() override = default;
 
     /*
      * Data
      */
     private:
-    // enum variable
-    Geometry::GeometryType type_;
+    // Reference to vector of data
+    std::vector<Geometry> &data_;
+    // Geometry type accepted
+    Geometry::GeometryType geometryType_;
+
+    public:
+    // Return reference to vector of data
+    std::vector<Geometry> &data();
+    const std::vector<Geometry> &data() const;
 
     /*
      * Arguments

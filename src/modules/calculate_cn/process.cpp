@@ -15,32 +15,29 @@
 bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for valid CalculateRDF pointer
-    auto found = false;
-    const auto *rdfModule = keywords_.retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
-    if ((!found) || (!rdfModule))
+    if (!sourceRDF_)
         return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 
     // Set the target Collect1D and normalisation nodes in the Process1D
-    process1D_->setKeyword<const ProcedureNode *>("SourceData", rdfModule->collectDistanceNode());
-    siteNormaliser_->setKeyword<std::vector<const ProcedureNode *>>("Site", {rdfModule->selectANode()});
+    process1D_->keywords().set("SourceData", sourceRDF_->collectDistanceNode());
+    siteNormaliser_->keywords().set("Site", std::vector<const SelectProcedureNode *>{sourceRDF_->selectANode()});
 
     // Execute the analysis on the Configurations targeted by the RDF module
-    for (Configuration *cfg : rdfModule->targetConfigurations())
+    for (Configuration *cfg : sourceRDF_->targetConfigurations())
     {
         if (!analyser_.execute(procPool, cfg, fmt::format("{}//Analyser", uniqueName()), dissolve.processingModuleData()))
             return Messenger::error("CalculateCN experienced problems with its analysis.\n");
     }
 
     // Test?
-    const auto testThreshold = keywords_.asDouble("TestThreshold");
     if (keywords_.hasBeenSet("TestRangeA"))
     {
-        const auto delta = keywords_.asDouble("TestRangeA") - sum1D_->sum(0);
+        const auto delta = testRangeA_ - sum1D_->sum(0);
 
         Messenger::print("Reference coordination number delta with correct value for range A is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
-                         delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-        if (!procPool.allTrue(fabs(delta) < testThreshold))
+                         delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+        if (!procPool.allTrue(fabs(delta) < testThreshold_))
             return false;
     }
     if (keywords_.hasBeenSet("TestRangeB"))
@@ -50,12 +47,12 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const auto delta = keywords_.asDouble("TestRangeB") - sum1D_->sum(1);
+        const auto delta = testRangeB_ - sum1D_->sum(1);
 
         Messenger::print("Reference coordination number delta with correct value for range B is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
-                         delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-        if (!procPool.allTrue(fabs(delta) < testThreshold))
+                         delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+        if (!procPool.allTrue(fabs(delta) < testThreshold_))
             return false;
     }
     if (keywords_.hasBeenSet("TestRangeC"))
@@ -65,12 +62,12 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Test coordination number for range C supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const auto delta = keywords_.asDouble("TestRangeC") - sum1D_->sum(2);
+        const auto delta = testRangeC_ - sum1D_->sum(2);
 
         Messenger::print("Reference coordination number delta with correct value for range C is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
-                         delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-        if (!procPool.allTrue(fabs(delta) < testThreshold))
+                         delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+        if (!procPool.allTrue(fabs(delta) < testThreshold_))
             return false;
     }
 

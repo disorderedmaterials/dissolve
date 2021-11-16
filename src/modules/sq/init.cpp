@@ -11,28 +11,32 @@
 void SQModule::initialise()
 {
     // Control
-    keywords_.add("Control", new ModuleKeyword<const RDFModule>("RDF"), "SourceRDFs", "Source RDFs to transform into S(Q)");
-    keywords_.add("Control", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-    keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
-    keywords_.add("Control", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-    keywords_.add("Control", new Function1DKeyword({Functions::Function1D::GaussianC2, {0.0, 0.02}}), "QBroadening",
-                  "Instrument broadening function to apply when calculating S(Q)");
-    keywords_.add("Control", new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms()), "WindowFunction",
-                  "Window function to apply in Fourier-transform of g(r) to S(Q)");
-    keywords_.add("Control", new IntegerKeyword(1, 1), "Averaging",
-                  "Number of historical partial sets to combine into final partials", "<1>");
-    keywords_.add(
-        "Control",
-        new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
-        "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
+    keywords_.add<ModuleKeyword<const RDFModule>>("Control", "SourceRDFs", "Source RDFs to transform into S(Q)", sourceRDF_,
+                                                  "RDF");
+    keywords_.add<DoubleKeyword>("Control", "QDelta", "Step size in Q for S(Q) calculation", qDelta_, 1.0e-5);
+    keywords_.add<DoubleKeyword>("Control", "QMax", "Maximum Q for calculated S(Q)", qMax_, 0.0);
+    keywords_.add<DoubleKeyword>("Control", "QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
+    keywords_.add<Function1DKeyword>("Control", "QBroadening", "Instrument broadening function to apply when calculating S(Q)",
+                                     qBroadening_);
+    keywords_.add<EnumOptionsKeyword<WindowFunction::Form>>(
+        "Control", "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
+        windowFunction_, WindowFunction::forms());
+    keywords_.add<IntegerKeyword>("Control", "Averaging", "Number of historical partial sets to combine into final partials",
+                                  averagingLength_, 1);
+    keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
+                                                                  "Weighting scheme to use when averaging partials",
+                                                                  averagingScheme_, Averaging::averagingSchemes());
 
     // Bragg Scattering
-    keywords_.add("Bragg Scattering", new ModuleKeyword<const BraggModule>("Bragg"), "IncludeBragg",
-                  "Include Bragg scattering from specified module");
-    keywords_.add("Bragg Scattering", new Function1DKeyword, "BraggQBroadening",
-                  "Broadening function to apply to Bragg reflections when generating S(Q)");
+    keywords_.add<ModuleKeyword<const BraggModule>>("Bragg Scattering", "IncludeBragg",
+                                                    "Include Bragg scattering from specified module", sourceBragg_, "Bragg");
+    keywords_.add<Function1DKeyword>("Bragg Scattering", "BraggQBroadening",
+                                     "Broadening function to apply to Bragg reflections when generating S(Q)",
+                                     braggQBroadening_);
 
     // Export
-    keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation",
-                  "<True|False>");
+    keywords_.add<BoolKeyword>("Export", "Save", "Whether to save partials to disk after calculation", save_);
 }
+
+// Return source module for main calculation
+const RDFModule *SQModule::sourceRDF() const { return sourceRDF_; }

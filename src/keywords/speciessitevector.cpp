@@ -7,17 +7,18 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesSiteVectorKeyword::SpeciesSiteVectorKeyword(std::vector<const SpeciesSite *> sites, bool axesRequired)
-    : KeywordData<std::vector<const SpeciesSite *>>(KeywordData::SpeciesSiteVectorData, std::move(sites))
+SpeciesSiteVectorKeyword::SpeciesSiteVectorKeyword(std::vector<const SpeciesSite *> &data, bool axesRequired)
+    : KeywordBase(typeid(this)), data_(data), axesRequired_(axesRequired)
 {
-    axesRequired_ = axesRequired;
 }
-
-SpeciesSiteVectorKeyword::~SpeciesSiteVectorKeyword() = default;
 
 /*
  * Specification
  */
+
+// Return reference to data vector
+std::vector<const SpeciesSite *> &SpeciesSiteVectorKeyword::data() { return data_; }
+const std::vector<const SpeciesSite *> &SpeciesSiteVectorKeyword::data() const { return data_; }
 
 // Return whether axes are required for the site
 bool SpeciesSiteVectorKeyword::axesRequired() const { return axesRequired_; }

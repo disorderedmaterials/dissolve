@@ -36,26 +36,32 @@ class SelectProcedureNode : public ProcedureNode
      * Selection Targets
      */
     private:
+    // Vector of sites to select
+    std::vector<const SpeciesSite *> speciesSites_;
+    // Vector of DynamicSites to select, if any
+    std::vector<DynamicSiteProcedureNode *> dynamicSites_;
     // Whether sites must have a defined orientation
     bool axesRequired_;
-    // Vector of sites to select (retrieved from keyword)
-    std::vector<const SpeciesSite *> speciesSites_;
-    // List of DynamicSites to select, if any
-    RefList<DynamicSiteProcedureNode> dynamicSites_;
+
+    public:
+    // Return vector of sites to select
+    std::vector<const SpeciesSite *> &speciesSites();
+    // Return whether sites must have a defined orientation
+    bool axesRequired();
 
     /*
      * Selection Control
      */
     private:
-    // List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
+    // Other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
     std::vector<const SelectProcedureNode *> sameMoleculeExclusions_;
-    // List of Molecules currently excluded from selection
+    // Molecules currently excluded from selection
     std::vector<std::shared_ptr<const Molecule>> excludedMolecules_;
-    // List of other sites (nodes) which will exclude one of our sites if it is the same site
+    // Other sites (nodes) which will exclude one of our sites if it is the same site
     std::vector<const SelectProcedureNode *> sameSiteExclusions_;
-    // List of Sites currently excluded from selection
+    // Sites currently excluded from selection
     RefList<const Site> excludedSites_;
-    // Molecule (from site) in which the site must exist (retrieved from keyword data)
+    // Molecule (from site) in which the site must exist
     const SelectProcedureNode *sameMolecule_;
     // Site to use for distance check
     const SelectProcedureNode *distanceReferenceSite_;
@@ -63,10 +69,18 @@ class SelectProcedureNode : public ProcedureNode
     Range inclusiveDistanceRange_;
 
     public:
+    // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
+    void setSameMoleculeExclusions(std::vector<const SelectProcedureNode *> exclusions);
+    // Set other sites (nodes) which will exclude one of our sites if it is the same site
+    void setSameSiteExclusions(std::vector<const SelectProcedureNode *> exclusions);
     // Return list of Molecules currently excluded from selection
     const std::vector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
     // Return Molecule (from site) in which the site must exist
     std::shared_ptr<const Molecule> sameMoleculeMolecule();
+    // Set site to use for distance check
+    void setDistanceReferenceSite(const SelectProcedureNode *site);
+    // Set range of distance to allow from distance reference site
+    void setInclusiveDistanceRange(Range range);
 
     /*
      * Selected Sites

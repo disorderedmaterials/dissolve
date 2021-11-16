@@ -10,8 +10,8 @@ Q_DECLARE_METATYPE(Functions::Function1D);
 
 #define MaxParams 6
 
-Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyword *keyword, const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
@@ -32,11 +32,6 @@ Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, KeywordBase *k
     connect(ui_.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionCombo_currentIndexChanged(int)));
     for (auto *spin : spins_)
         connect(spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
-
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<Function1DKeyword *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into Function1DKeyword.\n", keyword->name())));
 
     // Get relevant function types to show in combo
     auto availableFunctions = Functions::matchingFunction1D(keyword_->functionProperties());

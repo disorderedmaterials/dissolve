@@ -15,18 +15,20 @@
 #include "procedure/nodes/select.h"
 
 Process1DProcedureNode::Process1DProcedureNode(Collect1DProcedureNode *target)
-    : ProcedureNode(ProcedureNode::NodeType::Process1D)
+    : ProcedureNode(ProcedureNode::NodeType::Process1D), sourceData_(target)
 {
-    keywords_.add("Control", new NodeKeyword(this, ProcedureNode::NodeType::Collect1D, false, target), "SourceData",
-                  "Collect1D node containing the histogram data to process");
-    keywords_.add("Control", new BoolKeyword(false), "CurrentDataOnly",
-                  "Whether to use only the current binned data of the histogram, rather than the accumulated average");
-    keywords_.add("Control", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
-    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndExport"), "Export",
-                  "File format and file name under which to save processed data");
-    keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
-                  "Branch providing normalisation operations for the data");
+    keywords_.add<NodeKeyword<Collect1DProcedureNode>>("Control", "SourceData",
+                                                       "Collect1D node containing the histogram data to process", sourceData_,
+                                                       this, ProcedureNode::NodeType::Collect1D, false);
+    keywords_.add<BoolKeyword>(
+        "Control", "CurrentDataOnly",
+        "Whether to use only the current binned data of the histogram, rather than the accumulated average", currentDataOnly_);
+    keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
+    keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
+    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
+                                        exportFileAndFormat_, "EndExport");
+    keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
+                                            normalisationBranch_, this, ProcedureNode::OperateContext);
 
     // Initialise branch
     normalisationBranch_ = nullptr;
@@ -65,11 +67,14 @@ const Data1D &Process1DProcedureNode::processedData() const
     return (*processedData_);
 }
 
+// Return export file and format for processed data
+Data1DExportFileFormat &Process1DProcedureNode::exportFileAndFormat() { return exportFileAndFormat_; }
+
 // Return value label
-std::string Process1DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process1DProcedureNode::valueLabel() const { return labelValue_; }
 
 // Return x axis label
-std::string Process1DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process1DProcedureNode::xAxisLabel() const { return labelX_; }
 
 /*
  * Branches
@@ -97,9 +102,7 @@ SequenceProcedureNode *Process1DProcedureNode::branch() { return normalisationBr
 // Prepare any necessary data, ready for execution
 bool Process1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve the Collect1D node target
-    collectNode_ = dynamic_cast<const Collect1DProcedureNode *>(keywords_.retrieve<const ProcedureNode *>("SourceData"));
-    if (!collectNode_)
+    if (!sourceData_)
         return Messenger::error("No source Collect1D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
@@ -118,10 +121,10 @@ bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     data.setTag(name());
 
     // Copy the averaged data from the associated Process1D node
-    if (keywords_.asBool("CurrentDataOnly"))
-        data = collectNode_->data();
+    if (currentDataOnly_)
+        data = sourceData_->data();
     else
-        data = collectNode_->accumulatedData();
+        data = sourceData_->accumulatedData();
 
     // Run normalisation on the data
     if (normalisationBranch_)

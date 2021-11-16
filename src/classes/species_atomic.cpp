@@ -241,6 +241,8 @@ const std::vector<const SpeciesAtom *> Species::selectedAtoms() const
 bool Species::isSelectionSingleElement() const
 {
     auto selection = selectedAtoms();
+    if (selection.empty())
+        return false;
     return std::all_of(selection.begin(), selection.end(), [&](const auto *i) { return i->Z() == selection.front()->Z(); });
 }
 

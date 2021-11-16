@@ -8,8 +8,8 @@
 void GeometryOptimisationModule::initialise()
 {
     // Method Control
-    keywords_.add("Control", new IntegerKeyword(1000, 1), "NCycles", "Maximum number of minimisation cycles to perform");
-    keywords_.add("Control", new DoubleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
-    keywords_.add("Control", new DoubleKeyword(1.0e-4, 1.0e-10), "Tolerance",
-                  "Tolerance controlling convergence of algorithm)");
+    keywords_.add<IntegerKeyword>("Control", "MaxCycles", "Maximum number of minimisation cycles to perform", maxCycles_, 1);
+    keywords_.add<DoubleKeyword>("Control", "StepSize", "Initial step size to employ", initialStepSize_, 1.0e-10);
+    keywords_.add<DoubleKeyword>("Control", "Tolerance", "Tolerance controlling convergence of algorithm)", tolerance_,
+                                 1.0e-10);
 }

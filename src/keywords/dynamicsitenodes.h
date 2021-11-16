@@ -4,45 +4,41 @@
 #pragma once
 
 #include "expression/node.h"
-#include "keywords/data.h"
-#include "templates/list.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class DynamicSiteProcedureNode;
 class SelectProcedureNode;
 
-// Keyword with DynamicSiteProcedureNode (Ref)List
-class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureNode> &>
+// Keyword with vector of dynamic site references
+class DynamicSiteNodesKeyword : public KeywordBase
 {
     public:
-    DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes,
+    DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedureNode *> &data, SelectProcedureNode *parentNode,
                             bool axesRequired = false);
-    ~DynamicSiteNodesKeyword() override;
-
-    /*
-     * Parent Node
-     */
-    private:
-    // Parent SelectProcedureNode
-    SelectProcedureNode *parentNode_;
-
-    public:
-    // Return parent SelectProcedureNode
-    const SelectProcedureNode *parentNode() const;
-
-    /*
-     * Specification
-     */
-    private:
-    // Whether sites in the list must have a defined orientation
-    bool axesRequired_;
+    ~DynamicSiteNodesKeyword() override = default;
 
     /*
      * Data
      */
+    private:
+    // Reference to data
+    std::vector<DynamicSiteProcedureNode *> &data_;
+    // Parent SelectProcedureNode
+    SelectProcedureNode *parentNode_;
+    // Whether sites in the list must have a defined orientation
+    bool axesRequired_;
+
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
     bool isDataEmpty() const override;
+
+    public:
+    // Return reference to data
+    std::vector<DynamicSiteProcedureNode *> &data();
+    const std::vector<DynamicSiteProcedureNode *> &data() const;
+    // Return parent SelectProcedureNode
+    const SelectProcedureNode *parentNode() const;
 
     /*
      * Arguments
@@ -56,9 +52,4 @@ class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureN
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Object Management
-     */
-    protected:
 };

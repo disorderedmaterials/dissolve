@@ -23,53 +23,36 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurationsKeyword_.data().empty())
+    if (targetConfigurations_.empty())
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (auto *cfg : targetConfigurationsKeyword_.data())
+    for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
-        // Retrieve control parameters from Configuration
-        auto adjustAngles = keywords_.asBool("AdjustAngles");
-        auto adjustBonds = keywords_.asBool("AdjustBonds");
-        auto adjustTorsions = keywords_.asBool("AdjustTorsions");
-        auto &angleStepSize = keywords_.retrieve<double>("AngleStepSize");
-        const auto angleStepSizeMax = keywords_.asDouble("AngleStepSizeMax");
-        const auto angleStepSizeMin = keywords_.asDouble("AngleStepSizeMin");
-        auto &bondStepSize = keywords_.retrieve<double>("BondStepSize");
-        const auto bondStepSizeMax = keywords_.asDouble("BondStepSizeMax");
-        const auto bondStepSizeMin = keywords_.asDouble("BondStepSizeMin");
-        double cutoffDistance = keywords_.asDouble("CutoffDistance");
-        if (cutoffDistance < 0.0)
-            cutoffDistance = dissolve.pairPotentialRange();
-        const auto nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
-        const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-        const bool termEnergyOnly = keywords_.asBool("TermEnergyOnly");
-        auto &torsionStepSize = keywords_.retrieve<double>("TorsionStepSize");
-        const auto torsionStepSizeMax = keywords_.asDouble("TorsionStepSizeMax");
-        const auto torsionStepSizeMin = keywords_.asDouble("TorsionStepSizeMin");
+        // Retrieve control parameters
+        auto rCut = cutoffDistance_ < 0.0 ? dissolve.pairPotentialRange() : cutoffDistance_;
         const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
-        Messenger::print("IntraShake: Cutoff distance is {}\n", cutoffDistance);
-        Messenger::print("IntraShake: Performing {} shake(s) per term\n", nShakesPerTerm);
-        if (adjustBonds)
+        Messenger::print("IntraShake: Cutoff distance is {}\n", rCut);
+        Messenger::print("IntraShake: Performing {} shake(s) per term\n", nShakesPerTerm_);
+        if (adjustBonds_)
             Messenger::print("IntraShake: Distance step size for bond adjustments is {:.5f} Angstroms (allowed range "
                              "is {} <= delta <= {}).\n",
-                             bondStepSize, bondStepSizeMin, bondStepSizeMax);
-        if (adjustAngles)
+                             bondStepSize_, bondStepSizeMin_, bondStepSizeMax_);
+        if (adjustAngles_)
             Messenger::print("IntraShake: Angle step size for angle adjustments is {:.5f} degrees (allowed range is {} "
                              "<= delta <= {}).\n",
-                             angleStepSize, angleStepSizeMin, angleStepSizeMax);
-        if (adjustTorsions)
+                             angleStepSize_, angleStepSizeMin_, angleStepSizeMax_);
+        if (adjustTorsions_)
             Messenger::print("IntraShake: Rotation step size for torsion adjustments is {:.5f} degrees (allowed range "
                              "is {} <= delta <= {}).\n",
-                             torsionStepSize, torsionStepSizeMin, torsionStepSizeMax);
-        Messenger::print("IntraShake: Target acceptance rate is {}.\n", targetAcceptanceRate);
-        if (termEnergyOnly)
+                             torsionStepSize_, torsionStepSizeMin_, torsionStepSizeMax_);
+        Messenger::print("IntraShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
+        if (termEnergyOnly_)
             Messenger::print("IntraShake: Only term energy will be considered (interatomic contributions with the "
                              "system will be excluded).\n");
         Messenger::print("\n");
@@ -81,7 +64,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Create a local ChangeStore and EnergyKernel
         ChangeStore changeStore(procPool);
-        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), cutoffDistance);
+        EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), dissolve.potentialMap(), rCut);
 
         // Initialise the random number buffer
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
@@ -136,10 +119,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 changeStore.add(mol);
 
                 // Calculate reference pairpotential energy for Molecule
-                ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                ppEnergy = termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
 
                 // Loop over defined bonds
-                if (adjustBonds)
+                if (adjustBonds_)
                     for (const auto &bond : mol->species()->bonds())
                     {
                         // Get Atom pointers
@@ -154,12 +137,12 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         terminus = procPool.random() > 0.5 ? 1 : 0;
 
                         // Loop over number of shakes per term
-                        for (shake = 0; shake < nShakesPerTerm; ++shake)
+                        for (shake = 0; shake < nShakesPerTerm_; ++shake)
                         {
                             // Get translation vector, normalise, and apply random delta
                             vji = box->minimumVector(i->r(), j->r());
                             vji.normalise();
-                            vji *= procPool.randomPlusMinusOne() * bondStepSize;
+                            vji *= procPool.randomPlusMinusOne() * bondStepSize_;
 
                             // Adjust the Atoms attached to the selected terminus
                             mol->translate(vji, bond.attachedAtoms(terminus));
@@ -169,7 +152,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                                termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
                             newIntraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(bond, *i, *j);
 
                             // Trial the transformed Molecule
@@ -193,7 +176,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                 // Loop over defined angles
-                if (adjustAngles)
+                if (adjustAngles_)
                     for (const auto &angle : mol->species()->angles())
                     {
                         // Get Atom pointers
@@ -208,7 +191,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         terminus = procPool.random() > 0.5 ? 1 : 0;
 
                         // Loop over number of shakes per term
-                        for (shake = 0; shake < nShakesPerTerm; ++shake)
+                        for (shake = 0; shake < nShakesPerTerm_; ++shake)
                         {
                             // Get bond vectors and calculate cross product to get rotation axis
                             vji = box->minimumVector(j->r(), i->r());
@@ -216,7 +199,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             v = vji * vjk;
 
                             // Create suitable transformation matrix
-                            transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne() * angleStepSize, true);
+                            transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne() * angleStepSize_, true);
 
                             // Adjust the Atoms attached to the selected terminus
                             mol->transform(box, transform, angle.j()->r(), angle.attachedAtoms(terminus));
@@ -226,7 +209,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                                termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
                             newIntraEnergy =
                                 angle.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(angle, *i, *j, *k);
 
@@ -251,7 +234,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                 // Loop over defined torsions
-                if (adjustTorsions)
+                if (adjustTorsions_)
                     for (const auto &torsion : mol->species()->torsions())
                     {
                         // Get Atom pointers
@@ -268,13 +251,13 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         terminus = procPool.random() > 0.5 ? 1 : 0;
 
                         // Loop over number of shakes per term
-                        for (shake = 0; shake < nShakesPerTerm; ++shake)
+                        for (shake = 0; shake < nShakesPerTerm_; ++shake)
                         {
                             // Get bond vectors j-k to get rotation axis
                             vjk = box->minimumVector(j->r(), k->r());
 
                             // Create suitable transformation matrix
-                            transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne() * torsionStepSize,
+                            transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne() * torsionStepSize_,
                                                          true);
 
                             // Adjust the Atoms attached to the selected terminus
@@ -285,7 +268,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                             // Calculate new energy
                             newPPEnergy =
-                                termEnergyOnly ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                                termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
                             newIntraEnergy =
                                 torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
 
@@ -346,52 +329,55 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Calculate and report acceptance rates and adjust step sizes - if no moves were accepted, just decrease the
         // current stepSize by a constant factor
-        if (adjustBonds && (nBondAttempts > 0))
+        if (adjustBonds_ && (nBondAttempts > 0))
         {
             double bondRate = double(nBondAccepted) / nBondAttempts;
             Messenger::print("IntraShake: Overall bond shake acceptance rate was {:4.2f}% ({} of {} attempted moves).\n",
                              100.0 * bondRate, nBondAccepted, nBondAttempts);
 
-            bondStepSize *= (nBondAccepted == 0) ? 0.8 : bondRate / targetAcceptanceRate;
-            if (bondStepSize < bondStepSizeMin)
-                bondStepSize = bondStepSizeMin;
-            else if (bondStepSize > bondStepSizeMax)
-                bondStepSize = bondStepSizeMax;
+            bondStepSize_ *= (nBondAccepted == 0) ? 0.8 : bondRate / targetAcceptanceRate_;
+            if (bondStepSize_ < bondStepSizeMin_)
+                bondStepSize_ = bondStepSizeMin_;
+            else if (bondStepSize_ > bondStepSizeMax_)
+                bondStepSize_ = bondStepSizeMax_;
+            keywords_.setAsModified("BondStepSize");
 
             Messenger::print("IntraShake: Updated distance step size for bond adjustments is {:.5f} Angstroms.\n",
-                             bondStepSize);
+                             bondStepSize_);
         }
 
-        if (adjustAngles && (nAngleAttempts > 0))
+        if (adjustAngles_ && (nAngleAttempts > 0))
         {
             double angleRate = double(nAngleAccepted) / nAngleAttempts;
             Messenger::print("IntraShake: Overall angle shake acceptance rate was {:4.2f}% ({} of {} attempted moves).\n",
                              100.0 * angleRate, nAngleAccepted, nAngleAttempts);
 
-            angleStepSize *= (nAngleAccepted == 0) ? 0.8 : angleRate / targetAcceptanceRate;
-            if (angleStepSize < angleStepSizeMin)
-                angleStepSize = angleStepSizeMin;
-            else if (angleStepSize > angleStepSizeMax)
-                angleStepSize = angleStepSizeMax;
+            angleStepSize_ *= (nAngleAccepted == 0) ? 0.8 : angleRate / targetAcceptanceRate_;
+            if (angleStepSize_ < angleStepSizeMin_)
+                angleStepSize_ = angleStepSizeMin_;
+            else if (angleStepSize_ > angleStepSizeMax_)
+                angleStepSize_ = angleStepSizeMax_;
+            keywords_.setAsModified("AngleStepSize");
 
             Messenger::print("IntraShake: Updated rotation step size for angle adjustments is {:.5f} degrees.\n",
-                             angleStepSize);
+                             angleStepSize_);
         }
 
-        if (adjustTorsions && (nTorsionAttempts > 0))
+        if (adjustTorsions_ && (nTorsionAttempts > 0))
         {
             double torsionRate = double(nTorsionAccepted) / nTorsionAttempts;
             Messenger::print("IntraShake: Overall torsion shake acceptance rate was {:4.2f}% ({} of {} attempted moves).\n",
                              100.0 * torsionRate, nTorsionAccepted, nTorsionAttempts);
 
-            torsionStepSize *= (nTorsionAccepted == 0) ? 0.8 : torsionRate / targetAcceptanceRate;
-            if (torsionStepSize < torsionStepSizeMin)
-                torsionStepSize = torsionStepSizeMin;
-            else if (torsionStepSize > torsionStepSizeMax)
-                torsionStepSize = torsionStepSizeMax;
+            torsionStepSize_ *= (nTorsionAccepted == 0) ? 0.8 : torsionRate / targetAcceptanceRate_;
+            if (torsionStepSize_ < torsionStepSizeMin_)
+                torsionStepSize_ = torsionStepSizeMin_;
+            else if (torsionStepSize_ > torsionStepSizeMax_)
+                torsionStepSize_ = torsionStepSizeMax_;
+            keywords_.setAsModified("TorsionStepSize");
 
             Messenger::print("IntraShake: Updated rotation step size for torsion adjustments is {:.5f} degrees.\n",
-                             torsionStepSize);
+                             torsionStepSize_);
         }
 
         // Increase contents version in Configuration

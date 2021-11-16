@@ -21,7 +21,7 @@ class KeywordsWidget : public QToolBox
 
     public:
     KeywordsWidget(QWidget *parent);
-    ~KeywordsWidget();
+    ~KeywordsWidget() = default;
 
     /*
      * Controls
@@ -38,7 +38,7 @@ class KeywordsWidget : public QToolBox
 
     public:
     // Set up controls for specified keyword list
-    void setUp(const KeywordList &keywords, const CoreData &coreData);
+    void setUp(KeywordList &keywords, const CoreData &coreData);
     // Update controls within widget
     void updateControls();
 

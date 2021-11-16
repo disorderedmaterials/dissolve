@@ -129,17 +129,17 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         {
             // Get underlying RDF module
             std::string rdfModuleName = "UNKNOWN_RDF_MODULE";
-            const auto &targets = module_->keywords().retrieve<std::vector<Module *>>("Target");
+            const auto targets = module_->keywords().get<std::vector<Module *>>("Target");
             if (!targets.empty())
             {
-                const SQModule *sqModule = targets[0]->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+                auto *sqModule = targets[0]->keywords().get<const SQModule *>("SourceSQs");
                 if (!sqModule)
                     Messenger::error("Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will "
                                      "be unavailable.",
                                      module_->uniqueName());
                 else
                 {
-                    auto *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+                    auto *rdfModule = sqModule->keywords().get<const RDFModule *>("SourceRDFs");
                     if (rdfModule)
                         rdfModuleName = rdfModule->uniqueName();
                     else

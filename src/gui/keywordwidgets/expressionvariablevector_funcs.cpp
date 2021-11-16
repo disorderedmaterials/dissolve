@@ -15,22 +15,16 @@
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<ExpressionVariable>)
 
-ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent, KeywordBase *keyword,
+ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent,
+                                                                             ExpressionVariableVectorKeyword *keyword,
                                                                              const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget
     ui_.setupUi(this);
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<ExpressionVariableVectorKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into ExpressionVariableVectorKeyword.\n", keyword->name());
-    else
-    {
-        // Set current information
-        updateValue();
-    }
+    // Set current information
+    updateValue();
 
     // Add suitable delegate to the table
     ui_.VariablesTable->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this));

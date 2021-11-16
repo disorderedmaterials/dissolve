@@ -3,18 +3,30 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include <tuple>
 #include <vector>
 
 using StringDoubleVectorKeywordData = std::vector<std::pair<std::string, double>>;
 
 // Keyword with list of pairs of std::string and double
-class StringDoubleVectorKeyword : public KeywordData<StringDoubleVectorKeywordData>
+class StringDoubleVectorKeyword : public KeywordBase
 {
     public:
-    StringDoubleVectorKeyword();
-    ~StringDoubleVectorKeyword() override;
+    explicit StringDoubleVectorKeyword(StringDoubleVectorKeywordData &data);
+    ~StringDoubleVectorKeyword() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Reference to data
+    StringDoubleVectorKeywordData &data_;
+
+    public:
+    // Return reference to data
+    StringDoubleVectorKeywordData &data();
+    const StringDoubleVectorKeywordData &data() const;
 
     /*
      * Arguments

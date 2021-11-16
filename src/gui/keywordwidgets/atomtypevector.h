@@ -21,7 +21,7 @@ class AtomTypeVectorKeywordWidget : public KeywordDropDown, public KeywordWidget
     Q_OBJECT
 
     public:
-    AtomTypeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    AtomTypeVectorKeywordWidget(QWidget *parent, AtomTypeVectorKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

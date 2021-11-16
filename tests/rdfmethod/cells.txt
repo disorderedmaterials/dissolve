@@ -25,7 +25,7 @@ Layer  'Processing'
 
   # Test 'Cells' method of RDF calculation
   Module  RDF
-    COnfiguration  'Box'
+    Configuration  'Box'
     Frequency  1
     InternalTest  On
     Method  Cells

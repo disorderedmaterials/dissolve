@@ -284,7 +284,7 @@ Layer  'Refine (EPSR)'
     Target  'H2Ox'
     QMin  0.5
     QMax  30.0
-    NPitss  10
+    NPItSs  10
     OnlyWhenEnergyStable  False
     #SaveSimulatedFR  On
     #SaveEstimatedPartials  On

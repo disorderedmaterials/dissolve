@@ -119,4 +119,8 @@ stages:
               package: "checks.x86_64-linux.dissolve-threadless"
 
   # Create Release
-  - template: templates/create-release.yml
+  - stage: 'release'
+    displayName: 'Create Release'
+    condition: not(endsWith(variables['Build.SourceBranch'], 'pre'))
+    jobs:
+      - template: templates/create-release.yml

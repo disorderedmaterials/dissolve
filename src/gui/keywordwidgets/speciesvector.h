@@ -19,7 +19,7 @@ class SpeciesVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetB
     Q_OBJECT
 
     public:
-    SpeciesVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    SpeciesVectorKeywordWidget(QWidget *parent, SpeciesVectorKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

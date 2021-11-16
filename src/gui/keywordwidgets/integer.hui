@@ -13,7 +13,7 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    IntegerKeywordWidget(QWidget *parent, IntegerKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

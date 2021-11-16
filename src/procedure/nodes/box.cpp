@@ -8,12 +8,13 @@
 #include "classes/configuration.h"
 #include "keywords/types.h"
 
-BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic)
-    : ProcedureNode(ProcedureNode::NodeType::Box)
+BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
+    : ProcedureNode(ProcedureNode::NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)),
+      nonPeriodic_(nonPeriodic)
 {
-    keywords_.add("Control", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
-    keywords_.add("Control", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");
-    keywords_.add("Control", new BoolKeyword(false), "NonPeriodic", "Whether the box is non-periodic");
+    keywords_.add<Vec3NodeValueKeyword>("Control", "Lengths", "Box lengths", lengths_, this, Vec3Labels::ABCLabels);
+    keywords_.add<Vec3NodeValueKeyword>("Control", "Angles", "Box angles", angles_, this, Vec3Labels::AlphaBetaGammaLabels);
+    keywords_.add<BoolKeyword>("Control", "NonPeriodic", "Whether the box is non-periodic", nonPeriodic_);
 }
 
 /*
@@ -39,18 +40,14 @@ bool BoxProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Gene
 // Execute node, targetting the supplied Configuration
 bool BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    // Retrieve necessary parameters
-    auto lengths = keywords_.asVec3Double("Lengths");
-    auto angles = keywords_.asVec3Double("Angles");
-    auto nonPeriodic = keywords_.asBool("NonPeriodic");
-
     // Create a Box in the target Configuration with our lengths and angles
-    cfg->createBox(lengths, angles, nonPeriodic);
+    cfg->createBox({lengths_.x.asDouble(), lengths_.y.asDouble(), lengths_.z.asDouble()},
+                   {angles_.x.asDouble(), angles_.y.asDouble(), angles_.z.asDouble()}, nonPeriodic_);
 
     Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", cfg->box()->volume(),
                      cfg->box()->reciprocalVolume());
-    lengths = cfg->box()->axisLengths();
-    angles = cfg->box()->axisAngles();
+    auto lengths = cfg->box()->axisLengths();
+    auto angles = cfg->box()->axisAngles();
     Messenger::print(
         "[Box] Type is {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = {:10.4e} gamma = {:10.4e}\n",
         Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y, angles.z);

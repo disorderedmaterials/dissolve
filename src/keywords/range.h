@@ -3,25 +3,30 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include "math/range.h"
 #include "vec3labels.h"
 
-// Keyword with Double Triplet Data
-class RangeKeyword : public KeywordData<Range>
+// Keyword with Range data
+class RangeKeyword : public KeywordBase
 {
     public:
-    RangeKeyword(Range value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    ~RangeKeyword() override;
+    RangeKeyword(Range &data, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+    ~RangeKeyword() override = default;
 
     /*
-     * Label Type
+     * Data
      */
     private:
+    // Reference to data
+    Range &data_;
     // Label type to display in GUI
     Vec3Labels::LabelType labelType_;
 
     public:
+    // Return reference to data
+    Range &data();
+    const Range &data() const;
     // Label type to display in GUI
     Vec3Labels::LabelType labelType() const;
 
