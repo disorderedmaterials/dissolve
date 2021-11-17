@@ -191,11 +191,6 @@ stages:
             displayName: "Publish Linux CLI Artifacts"
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "docker/"
-              ArtifactName: "linux-cli-docker"
-            displayName: "Publish Linux CLI Docker"
-          - task: PublishBuildArtifacts@1
-            inputs:
               PathtoPublish: "singularity/"
               ArtifactName: "cli-singularity"
             displayName: "Publish Linux CLI Singularity"
@@ -218,11 +213,6 @@ stages:
               PathtoPublish: "packages/"
               ArtifactName: "mpi-artifacts"
             displayName: "Publish MPI Artifacts"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "docker/"
-              ArtifactName: "mpi-docker"
-            displayName: "Publish MPI Docker"
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"
