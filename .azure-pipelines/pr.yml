@@ -103,7 +103,6 @@ stages:
         timeoutInMinutes: 120
         pool:
           vmImage: "macos-latest"
-        condition: eq(true, false)
         steps:
           - checkout: self
             fetchDepth: 1
@@ -120,7 +119,6 @@ stages:
         timeoutInMinutes: 120
         pool:
           vmImage: "windows-latest"
-        condition: eq(true, false)
         steps:
           - checkout: self
             fetchDepth: 1
