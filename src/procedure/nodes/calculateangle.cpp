@@ -9,7 +9,8 @@
 #include "classes/species.h"
 #include "procedure/nodes/select.h"
 
-CalculateAngleProcedureNode::CalculateAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0, std::shared_ptr<SelectProcedureNode> site1,
+CalculateAngleProcedureNode::CalculateAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0,
+                                                         std::shared_ptr<SelectProcedureNode> site1,
                                                          std::shared_ptr<SelectProcedureNode> site2)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAngle, site0, site1, site2)
 {

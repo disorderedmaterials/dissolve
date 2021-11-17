@@ -27,20 +27,20 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
      */
     public:
     // Return base node data
-    virtual const ProcedureNode *baseNode() = 0;
+    virtual ConstNodeRef baseNode() = 0;
     // Set base node data
-    virtual bool setData(const ProcedureNode *node) = 0;
+    virtual bool setData(ConstNodeRef node) = 0;
 };
 
 // Keyword with ProcedureNode
 template <class N> class NodeKeyword : public NodeKeywordBase
 {
     public:
-    NodeKeyword(const N *&data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
+    NodeKeyword(std::shared_ptr<const N> &data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
         : NodeKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
     {
     }
-    NodeKeyword(const N *&data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
+    NodeKeyword(std::shared_ptr<const N> &data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
         : NodeKeywordBase(parentNode, nodeClass, onlyInScope), data_(data)
     {
     }
@@ -51,25 +51,25 @@ template <class N> class NodeKeyword : public NodeKeywordBase
      */
     private:
     // Reference to data
-    const N *&data_;
+    std::shared_ptr<const N> &data_;
 
     public:
     // Return reference to data
-    const N *&data() { return data_; }
-    const N *&data() const { return data_; }
+    std::shared_ptr<const N> &data() { return data_; }
+    std::shared_ptr<const N> &data() const { return data_; }
     // Return base node
-    const ProcedureNode *baseNode() { return data_; }
+    ConstNodeRef baseNode() { return parentNode_; }
     // Set data
-    bool setData(const ProcedureNode *node) override
+    bool setData(ConstNodeRef node) override
     {
         if (node == nullptr)
             data_ = nullptr;
         else
         {
-            if (!validNode(node, name()))
+            if (!validNode(node.get(), name()))
                 return false;
 
-            data_ = dynamic_cast<const N *>(node);
+            data_ = std::dynamic_pointer_cast<const N>(node);
             assert(data_);
         }
         setAsModified();
@@ -89,7 +89,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Locate the named node
-        auto *node = findNode(parser.argsv(startArg));
+        auto node = findNode(parser.argsv(startArg));
         if (!node)
             return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());
@@ -114,7 +114,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(ProcedureNode *node) override
+    void removeReferencesTo(NodeRef node) override
     {
         if (data_ == node)
             data_ = nullptr;

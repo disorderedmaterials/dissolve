@@ -8,8 +8,8 @@
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/select.h"
 
-DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedureNode *> &data, SelectProcedureNode *parentNode,
-                                                 bool axesRequired)
+DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data,
+                                                 SelectProcedureNode *parentNode, bool axesRequired)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), axesRequired_(axesRequired)
 {
 }
@@ -22,8 +22,8 @@ DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedur
 bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data
-std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() { return data_; }
-const std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() const { return data_; }
+std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() { return data_; }
+const std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() const { return data_; }
 
 // Return parent SelectProcedureNode
 const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }

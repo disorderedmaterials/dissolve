@@ -16,7 +16,7 @@ class LineParser;
 class Sum1DProcedureNode : public ProcedureNode
 {
     public:
-  Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target = nullptr);
+    Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target = nullptr);
     ~Sum1DProcedureNode() override = default;
 
     /*
@@ -31,7 +31,7 @@ class Sum1DProcedureNode : public ProcedureNode
      */
     private:
     // Process1D node that we are targetting
-      std::shared_ptr<const Process1DProcedureNode> *sourceData_{nullptr};
+    std::shared_ptr<const Process1DProcedureNode> sourceData_{nullptr};
     // Ranges for sums
     Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Flags for ranges

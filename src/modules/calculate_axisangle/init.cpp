@@ -78,7 +78,7 @@ void CalculateAxisAngleModule::initialise()
      */
 
     // Select: Site 'A'
-  selectA_ = std::make_shared<SelectProcedureNode, std::vector<const SpeciesSite *>, bool>({}, true);
+    selectA_ = std::make_shared<SelectProcedureNode, std::vector<const SpeciesSite *>, bool>({}, true);
     selectA_->setName("A");
     auto forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
@@ -86,7 +86,7 @@ void CalculateAxisAngleModule::initialise()
     // -- Select: Site 'B'
     selectB_ = std::make_shared<SelectProcedureNode, std::vector<const SpeciesSite *>, bool>({}, true);
     selectB_->setName("B");
-    selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode> >{selectA_});
+    selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
@@ -95,7 +95,8 @@ void CalculateAxisAngleModule::initialise()
     forEachB->addNode(calcDistance);
 
     // -- -- Calculate: 'axisAngle'
-    auto calcAngle = std::make_shared<CalculateAxisAngleProcedureNode>(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
+    auto calcAngle =
+        std::make_shared<CalculateAxisAngleProcedureNode>(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
     forEachB->addNode(calcAngle);
 
     // -- -- Collect2D:  'rAB vs axisAngle)'
@@ -118,8 +119,10 @@ void CalculateAxisAngleModule::initialise()
     processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
     std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
-    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get()}));
-    rdfNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectB_.get()}));
+    rdfNormalisation->addNode(
+			      std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode> >>({selectA_}));
+    rdfNormalisation->addNode(
+			      std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode> >>({selectB_}));
     rdfNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processDistance_);
 
@@ -129,8 +132,8 @@ void CalculateAxisAngleModule::initialise()
     processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
     processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> angleNormalisation = processAngle_->addNormalisationBranch();
-    angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
-    angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
+    angleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(x)"));
+    angleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processAngle_);
 
     // Process2D: 'DAngle'
@@ -139,8 +142,8 @@ void CalculateAxisAngleModule::initialise()
     processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
     processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> dAngleNormalisation = processDAngle_->addNormalisationBranch();
-    dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
-    dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
+    dAngleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
+    dAngleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processDAngle_);
 
     /*

@@ -29,7 +29,8 @@ void CalculateCNModule::initialise()
     process1D_->setName("HistogramNorm");
     process1D_->keywords().set("CurrentDataOnly", true);
     std::shared_ptr<SequenceProcedureNode> rdfNormalisation = process1D_->addNormalisationBranch();
-    siteNormaliser_ = new OperateSitePopulationNormaliseProcedureNode;
+    siteNormaliser_ = std::make_shared<OperateSitePopulationNormaliseProcedureNode>(
+        std::vector<std::shared_ptr<const SelectProcedureNode>>());
     rdfNormalisation->addNode(siteNormaliser_);
     analyser_.addRootSequenceNode(process1D_);
 

@@ -104,7 +104,7 @@ void CalculateDAngleModule::initialise()
      */
 
     // Select: Site 'A'
-  selectA_ = std::make_shared<SelectProcedureNode>();
+    selectA_ = std::make_shared<SelectProcedureNode>();
     selectA_->setName("A");
     std::shared_ptr<SequenceProcedureNode> forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
@@ -119,7 +119,7 @@ void CalculateDAngleModule::initialise()
     // -- -- Select: Site 'C'
     selectC_ = std::make_shared<SelectProcedureNode>();
     selectC_->setName("C");
-    selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode> >{selectA_});
+    selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     std::shared_ptr<SequenceProcedureNode> forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(selectC_);
 
@@ -151,8 +151,9 @@ void CalculateDAngleModule::initialise()
     processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
     std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
-    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectA_.get(), selectB_.get()}));
-    rdfNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<const ProcedureNode*>>({selectC_.get()}));
+    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode> >>({selectA_, selectB_}));
+    rdfNormalisation->addNode(
+			      std::make_shared<OperateNumberDensityNormaliseProcedureNode>(std::vector<std::shared_ptr<const SelectProcedureNode> >({selectC_})));
     rdfNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processDistance_);
 
@@ -162,9 +163,8 @@ void CalculateDAngleModule::initialise()
     processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
     processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> angleNormalisation = processAngle_->addNormalisationBranch();
-    angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
-    angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
->>>>>>> 194029ad32faaf28c0b201cef878ce8f3e5b0c7f
+    angleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(x)"));
+    angleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processAngle_);
 
     // Process2D: 'DAngle'
@@ -174,8 +174,8 @@ void CalculateDAngleModule::initialise()
     processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
     processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     std::shared_ptr<SequenceProcedureNode> dAngleNormalisation = processDAngle_->addNormalisationBranch();
-    dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
-    dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
+    dAngleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
+    dAngleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processDAngle_);
 
     /*

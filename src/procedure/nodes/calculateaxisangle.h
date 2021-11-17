@@ -13,8 +13,10 @@ class SelectProcedureNode;
 class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
 {
     public:
-    CalculateAxisAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0 = nullptr, OrientedSite::SiteAxis axis0 = OrientedSite::XAxis,
-                                    std::shared_ptr<SelectProcedureNode> site1 = nullptr, OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
+    CalculateAxisAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0 = nullptr,
+                                    OrientedSite::SiteAxis axis0 = OrientedSite::XAxis,
+                                    std::shared_ptr<SelectProcedureNode> site1 = nullptr,
+                                    OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
     ~CalculateAxisAngleProcedureNode() override = default;
 
     /*

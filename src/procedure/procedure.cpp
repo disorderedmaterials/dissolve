@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword)
-  : rootSequence_(std::make_shared<SequenceProcedureNode>(context, this, nullptr, blockTerminationKeyword))
+    : rootSequence_(std::make_shared<SequenceProcedureNode>(context, this, nullptr, blockTerminationKeyword))
 {
     context_ = context;
 }
@@ -36,14 +36,14 @@ std::string_view Procedure::blockTerminationKeyword() const { return rootSequenc
 
 // Return named node if present (and matches the type / class given)
 ConstNodeRef Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
-                                     std::optional<ProcedureNode::NodeClass> optNodeClass) const
+                             std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     return rootSequence_->node(name, optNodeType, optNodeClass);
 }
 
 // Return all nodes (matching the type / class given)
-std::vector<ConstNodeRef > Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
-                                                    std::optional<ProcedureNode::NodeClass> optNodeClass) const
+std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
+                                           std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     return rootSequence_->nodes(optNodeType, optNodeClass);
 }

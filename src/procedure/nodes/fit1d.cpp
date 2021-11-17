@@ -11,7 +11,8 @@
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
 
-Fit1DProcedureNode::Fit1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target) : ProcedureNode(ProcedureNode::NodeType::Fit1D)
+Fit1DProcedureNode::Fit1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target)
+    : ProcedureNode(ProcedureNode::NodeType::Fit1D)
 {
     dataNode_.addAllowableNodeType(ProcedureNode::NodeType::Process1D);
 

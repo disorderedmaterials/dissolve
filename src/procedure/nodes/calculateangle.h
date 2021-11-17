@@ -12,7 +12,8 @@ class SelectProcedureNode;
 class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
 {
     public:
-    CalculateAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0 = nullptr, std::shared_ptr<SelectProcedureNode> site1 = nullptr,
+    CalculateAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0 = nullptr,
+                                std::shared_ptr<SelectProcedureNode> site1 = nullptr,
                                 std::shared_ptr<SelectProcedureNode> site2 = nullptr);
     ~CalculateAngleProcedureNode() override = default;
 

@@ -29,7 +29,7 @@ class PickProcedureNodeBase : public ProcedureNode
      */
     protected:
     // Existing selection from which to pick
-    const PickProcedureNodeBase *selection_;
+    std::shared_ptr<const PickProcedureNodeBase> selection_;
     // Vector of picked Molecules
     std::vector<std::shared_ptr<Molecule>> pickedMolecules_;
 

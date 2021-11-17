@@ -24,9 +24,9 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
     collectDAngle_->keywords().set("RangeX", distanceRange_);
     collectDAngle_->keywords().set("RangeY", angleRange_);
     if (excludeSameMolecule_)
-        selectC_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectA_});
+        selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     else
-        selectC_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{});
+        selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurations_.front();

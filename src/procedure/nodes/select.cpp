@@ -82,13 +82,13 @@ bool SelectProcedureNode::axesRequired() { return axesRequired_; }
  */
 
 // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-void SelectProcedureNode::setSameMoleculeExclusions(std::vector<const SelectProcedureNode *> exclusions)
+void SelectProcedureNode::setSameMoleculeExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions)
 {
     sameMoleculeExclusions_ = std::move(exclusions);
 }
 
 // Set other sites (nodes) which will exclude one of our sites if it is the same site
-void SelectProcedureNode::setSameSiteExclusions(std::vector<const SelectProcedureNode *> exclusions)
+void SelectProcedureNode::setSameSiteExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions)
 {
     sameSiteExclusions_ = std::move(exclusions);
 }
@@ -116,7 +116,10 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 }
 
 // Set site to use for distance check
-void SelectProcedureNode::setDistanceReferenceSite(const SelectProcedureNode *site) { distanceReferenceSite_ = site; }
+void SelectProcedureNode::setDistanceReferenceSite(std::shared_ptr<const SelectProcedureNode> site)
+{
+    distanceReferenceSite_ = site;
+}
 
 // Set range of distance to allow from distance reference site
 void SelectProcedureNode::setInclusiveDistanceRange(Range range) { inclusiveDistanceRange_ = range; }
@@ -154,7 +157,7 @@ std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::branch() { return fo
 std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
 {
     if (!forEachBranch_)
-      forEachBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this());
+        forEachBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this());
 
     return forEachBranch_;
 }

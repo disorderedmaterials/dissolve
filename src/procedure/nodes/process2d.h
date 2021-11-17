@@ -31,7 +31,7 @@ class Process2DProcedureNode : public ProcedureNode
      */
     private:
     // Collect2D node that we are processing
-    const Collect2DProcedureNode *sourceData_;
+    std::shared_ptr<const Collect2DProcedureNode> sourceData_;
     // Export file and format for processed data
     Data2DExportFileFormat exportFileAndFormat_;
     // Label for the value axis

@@ -20,7 +20,7 @@ class PickRegionProcedureNode : public PickProcedureNodeBase
      */
     private:
     // Target region for the pick
-    const RegionProcedureNodeBase *region_;
+    std::shared_ptr<const RegionProcedureNodeBase> region_;
 
     /*
      * Execute

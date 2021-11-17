@@ -38,10 +38,10 @@ class Procedure
     std::string_view blockTerminationKeyword() const;
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                              std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+                      std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return all nodes (matching the type / class given)
-    std::vector<ConstNodeRef > nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
 
     /*
      * Execute

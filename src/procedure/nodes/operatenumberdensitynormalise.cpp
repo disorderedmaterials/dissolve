@@ -13,7 +13,7 @@
 #include "procedure/nodes/select.h"
 
 OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(
-    std::vector<const SelectProcedureNode *> nodes)
+    std::vector<std::shared_ptr<const SelectProcedureNode>> nodes)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise), normalisationSites_(std::move(nodes))
 {
     // Create keywords

@@ -36,9 +36,9 @@ class NodeKeywordUnderlay
     // Return whether to accept nodes within scope only
     bool onlyInScope() const;
     // Return vector of possible nodes allowed based on class and type definitions
-    std::vector<const ProcedureNode *> allowedNodes() const;
+    std::vector<ConstNodeRef> allowedNodes() const;
     // Find the named node, obeying scope
-    const ProcedureNode *findNode(std::string_view name) const;
+    ConstNodeRef findNode(std::string_view name) const;
     // Return whether the supplied node has valid class or type
-    bool validNode(ConstNodeRef node, std::string_view keywordName) const;
+    bool validNode(const ProcedureNode *node, std::string_view keywordName) const;
 };

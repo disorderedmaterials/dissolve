@@ -6,8 +6,10 @@
 #include "base/sysfunc.h"
 #include "procedure/nodes/select.h"
 
-CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, std::shared_ptr<SelectProcedureNode> site0,
-                                                       std::shared_ptr<SelectProcedureNode> site1, SelectProcedureNode *site2,
+CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType,
+                                                       std::shared_ptr<SelectProcedureNode> site0,
+                                                       std::shared_ptr<SelectProcedureNode> site1,
+                                                       std::shared_ptr<SelectProcedureNode> site2,
                                                        std::shared_ptr<SelectProcedureNode> site3)
     : ProcedureNode(nodeType, ProcedureNode::NodeClass::Calculate), sites_{site0, site1, site2, site3}, value_{0.0, 0.0, 0.0}
 {

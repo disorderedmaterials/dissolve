@@ -15,7 +15,8 @@ class CalculateProcedureNodeBase : public ProcedureNode
 {
     public:
     CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, std::shared_ptr<SelectProcedureNode> site0 = nullptr,
-                               std::shared_ptr<SelectProcedureNode> site1 = nullptr, std::shared_ptr<SelectProcedureNode> site2 = nullptr,
+                               std::shared_ptr<SelectProcedureNode> site1 = nullptr,
+                               std::shared_ptr<SelectProcedureNode> site2 = nullptr,
                                std::shared_ptr<SelectProcedureNode> site3 = nullptr);
     ~CalculateProcedureNodeBase() override = default;
 

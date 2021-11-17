@@ -22,7 +22,7 @@ class NodeScopeStack;
 class DynamicSiteProcedureNode : public ProcedureNode
 {
     public:
-  DynamicSiteProcedureNode(std::shared_ptr<SelectProcedureNode> parent);
+    DynamicSiteProcedureNode(std::shared_ptr<SelectProcedureNode> parent);
 
     /*
      * Identity

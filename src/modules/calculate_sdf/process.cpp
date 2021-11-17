@@ -21,9 +21,9 @@ bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     collectVector_->keywords().set("RangeY", rangeY_);
     collectVector_->keywords().set("RangeZ", rangeZ_);
     if (excludeSameMolecule_)
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectA_});
+        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     else
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{});
+        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
 
     // Grab Configuration pointer
     auto *cfg = targetConfigurations_.front();

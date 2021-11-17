@@ -59,7 +59,7 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
     // Transmute molecules by selection
     if (selection_)
     {
-        auto *pickNode = dynamic_cast<const PickProcedureNodeBase *>(selection_);
+        auto pickNode = std::dynamic_pointer_cast<const PickProcedureNodeBase>(selection_);
         assert(pickNode);
         std::copy(pickNode->pickedMolecules().begin(), pickNode->pickedMolecules().end(), std::back_inserter(targets));
     }

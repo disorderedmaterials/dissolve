@@ -17,8 +17,9 @@ class Collect2DProcedureNode : public ProcedureNode
 {
     public:
     explicit Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable = nullptr,
-                                    std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr, double xMin = 0.0, double xMax = 10.0,
-                                    double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05);
+                                    std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr, double xMin = 0.0,
+                                    double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0,
+                                    double yBinWidth = 0.05);
     ~Collect2DProcedureNode() override = default;
 
     /*
@@ -33,9 +34,9 @@ class Collect2DProcedureNode : public ProcedureNode
      */
     private:
     // Observable (and associated index thereof) to bin along x
-    std::pair<std::shared_ptr<const CalculateProcedureNodeBase> , int> xObservable_{nullptr, 0};
+    std::pair<std::shared_ptr<const CalculateProcedureNodeBase>, int> xObservable_{nullptr, 0};
     // Observable (and associated index thereof) to bin along y
-    std::pair<std::shared_ptr<const CalculateProcedureNodeBase> , int> yObservable_{nullptr, 0};
+    std::pair<std::shared_ptr<const CalculateProcedureNodeBase>, int> yObservable_{nullptr, 0};
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram2D> histogram_;
     // Range and binwidth of the histogram for QuantityX

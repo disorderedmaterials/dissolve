@@ -11,7 +11,7 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process3DProcedureNode::Process3DProcedureNode(Collect3DProcedureNode *target)
+Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process3D), sourceData_(target)
 {
     keywords_.add<NodeKeyword<Collect3DProcedureNode>>("Control", "SourceData",
@@ -83,7 +83,7 @@ std::string Process3DProcedureNode::zAxisLabel() const { return labelZ_; }
 std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::addNormalisationBranch()
 {
     if (!normalisationBranch_)
-      normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
+        normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
 
     return normalisationBranch_;
 }
@@ -126,7 +126,7 @@ bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     if (normalisationBranch_)
     {
         // Set data targets in the normalisation nodes  TODO Will not work for sub-branches, if they are ever required
-	for (auto node : normalisationBranch_->sequence())
+        for (auto node : normalisationBranch_->sequence())
         {
             if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
                 continue;

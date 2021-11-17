@@ -12,7 +12,8 @@ class SelectProcedureNode;
 class CalculateDistanceProcedureNode : public CalculateProcedureNodeBase
 {
     public:
-    CalculateDistanceProcedureNode(std::shared_ptr<SelectProcedureNode> site0 = nullptr, std::shared_ptr<SelectProcedureNode> site1 = nullptr);
+    CalculateDistanceProcedureNode(std::shared_ptr<SelectProcedureNode> site0 = nullptr,
+                                   std::shared_ptr<SelectProcedureNode> site1 = nullptr);
     ~CalculateDistanceProcedureNode() override = default;
 
     /*

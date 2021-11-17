@@ -14,7 +14,7 @@ class SelectProcedureNode;
 class DynamicSiteNodesKeyword : public KeywordBase
 {
     public:
-    DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedureNode *> &data, SelectProcedureNode *parentNode,
+    DynamicSiteNodesKeyword(std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data, SelectProcedureNode *parentNode,
                             bool axesRequired = false);
     ~DynamicSiteNodesKeyword() override = default;
 
@@ -23,7 +23,7 @@ class DynamicSiteNodesKeyword : public KeywordBase
      */
     private:
     // Reference to data
-    std::vector<DynamicSiteProcedureNode *> &data_;
+    std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data_;
     // Parent SelectProcedureNode
     SelectProcedureNode *parentNode_;
     // Whether sites in the list must have a defined orientation
@@ -35,8 +35,8 @@ class DynamicSiteNodesKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    std::vector<DynamicSiteProcedureNode *> &data();
-    const std::vector<DynamicSiteProcedureNode *> &data() const;
+    std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data();
+    const std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data() const;
     // Return parent SelectProcedureNode
     const SelectProcedureNode *parentNode() const;
 

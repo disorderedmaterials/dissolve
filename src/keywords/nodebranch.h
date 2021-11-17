@@ -14,7 +14,8 @@ class SequenceProcedureNode;
 class NodeBranchKeyword : public KeywordBase
 {
     public:
-    NodeBranchKeyword(SequenceProcedureNode *&data, NodeRef parentNode, ProcedureNode::NodeContext branchContext);
+    NodeBranchKeyword(std::shared_ptr<SequenceProcedureNode> &data, ProcedureNode *parentNode,
+                      ProcedureNode::NodeContext branchContext);
     ~NodeBranchKeyword() override = default;
 
     /*
@@ -22,7 +23,7 @@ class NodeBranchKeyword : public KeywordBase
      */
     private:
     // Reference to data
-    SequenceProcedureNode *&data_;
+    std::shared_ptr<SequenceProcedureNode> &data_;
     // Parent ProcedureNode
     NodeRef parentNode_;
     // Context for the target branch

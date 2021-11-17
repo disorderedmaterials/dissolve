@@ -6,7 +6,7 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
-NodeBranchKeyword::NodeBranchKeyword(SequenceProcedureNode *&data, ProcedureNode *parentNode,
+NodeBranchKeyword::NodeBranchKeyword(std::shared_ptr<SequenceProcedureNode> &data, ProcedureNode *parentNode,
                                      ProcedureNode::NodeContext branchContext)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), branchContext_(branchContext)
 {
@@ -38,8 +38,8 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &c
                                 ProcedureNode::nodeTypes().keyword(parentNode_->type()));
 
     // Create and parse a new branch
-    data_ =
-      std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_, fmt::format("End{}", name()));
+    data_ = std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_,
+                                                    fmt::format("End{}", name()));
     if (!data_->deserialise(parser, coreData))
         return false;
 

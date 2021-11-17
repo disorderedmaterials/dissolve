@@ -22,10 +22,11 @@ KeywordTypeMap::KeywordTypeMap()
         [](IntegerKeyword *keyword, const int value) { return keyword->setData(value); });
 
     // Custom classes
-    registerDirectMapping<Collect1DProcedureNode *, NodeKeyword<Collect1DProcedureNode>>();
-    registerDirectMapping<std::vector<const Collect1DProcedureNode *>, NodeVectorKeyword<Collect1DProcedureNode>>();
-    registerDirectMapping<SelectProcedureNode *, NodeKeyword<SelectProcedureNode>>();
-    registerDirectMapping<std::vector<const SelectProcedureNode *>, NodeVectorKeyword<SelectProcedureNode>>();
+    registerDirectMapping<std::shared_ptr<Collect1DProcedureNode>, NodeKeyword<Collect1DProcedureNode>>();
+    registerDirectMapping<std::vector<std::shared_ptr<const Collect1DProcedureNode>>,
+                          NodeVectorKeyword<Collect1DProcedureNode>>();
+    registerDirectMapping<std::shared_ptr<SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>();
+    registerDirectMapping<std::vector<std::shared_ptr<const SelectProcedureNode>>, NodeVectorKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
     registerDirectMapping<std::string, StringKeyword>();
     registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(

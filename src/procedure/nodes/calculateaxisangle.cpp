@@ -11,8 +11,10 @@
 #include "keywords/enumoptions.h"
 #include "procedure/nodes/select.h"
 
-CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0, OrientedSite::SiteAxis axis0,
-                                                                 std::shared_ptr<SelectProcedureNode> site1, OrientedSite::SiteAxis axis1)
+CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0,
+                                                                 OrientedSite::SiteAxis axis0,
+                                                                 std::shared_ptr<SelectProcedureNode> site1,
+                                                                 OrientedSite::SiteAxis axis1)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAxisAngle, site0, site1), axes_{axis0, axis1}
 {
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that contains the first set of axes", sites_[0], this,

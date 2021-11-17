@@ -28,9 +28,9 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
      */
     public:
     // Return base node data
-    virtual const ProcedureNode *baseNode() = 0;
+    virtual ConstNodeRef baseNode() = 0;
     // Set node
-    virtual bool setNode(const ProcedureNode *node) = 0;
+    virtual bool setNode(ConstNodeRef node) = 0;
     // Set index
     virtual void setIndex(int i) = 0;
 };
@@ -39,13 +39,13 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase
 {
     public:
-    NodeAndIntegerKeyword(std::pair<const N *, int> &data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType,
-                          bool onlyInScope)
+    NodeAndIntegerKeyword(std::pair<std::shared_ptr<const N>, int> &data, ProcedureNode *parentNode,
+                          ProcedureNode::NodeType nodeType, bool onlyInScope)
         : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
     {
     }
-    NodeAndIntegerKeyword(std::pair<const N *, int> &data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass,
-                          bool onlyInScope)
+    NodeAndIntegerKeyword(std::pair<std::shared_ptr<const N>, int> &data, ProcedureNode *parentNode,
+                          ProcedureNode::NodeClass nodeClass, bool onlyInScope)
         : NodeAndIntegerKeywordBase(parentNode, nodeClass, onlyInScope), data_(data)
     {
     }
@@ -56,26 +56,26 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
      */
     private:
     // Reference to data
-    std::pair<const N *, int> &data_;
+    std::pair<std::shared_ptr<const N>, int> &data_;
 
     public:
     // Return reference to vector of data
-    std::pair<const N *, int> &data() { return data_; }
-    const std::pair<const N *, int> &data() const { return data_; }
+    std::pair<std::shared_ptr<const N>, int> &data() { return data_; }
+    const std::pair<std::shared_ptr<const N>, int> &data() const { return data_; }
     // Return base node data
-    const ProcedureNode *baseNode() override { return data_.first; }
+    std::shared_ptr<const ProcedureNode> baseNode() override { return data_.first; }
     // Set node
-    virtual bool setNode(const ProcedureNode *node)
+    virtual bool setNode(ConstNodeRef node)
     {
         if (node == nullptr)
             data_.first = nullptr;
         else
         {
             // Check the type
-            if (!validNode(node, name()))
+            if (!validNode(node.get(), name()))
                 return false;
 
-            data_.first = dynamic_cast<const N *>(node);
+            data_.first = std::dynamic_pointer_cast<const N>(node);
             assert(data_.first);
         }
         setAsModified();
@@ -100,7 +100,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Locate the named node in scope
-        auto *node = findNode(parser.argsv(startArg));
+        auto node = findNode(parser.argsv(startArg));
         if (!node)
             return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());
@@ -125,7 +125,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(ProcedureNode *node) override
+    void removeReferencesTo(NodeRef node) override
     {
         if (data_.first == node)
             data_.first = nullptr;

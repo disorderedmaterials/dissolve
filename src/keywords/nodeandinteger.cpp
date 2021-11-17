@@ -44,9 +44,9 @@ bool NodeAndIntegerKeyword::read(LineParser &parser, int startArg, const CoreDat
         return false;
 
     if (parser.hasArg(startArg + 1))
-      setData({node.get(), parser.argi(startArg + 1)});
+        setData({node.get(), parser.argi(startArg + 1)});
     else
-      setData({node.get(), 0});
+        setData({node.get(), 0});
 
     return true;
 }
@@ -63,7 +63,7 @@ bool NodeAndIntegerKeyword::write(LineParser &parser, std::string_view keywordNa
  */
 
 // Prune any references to the supplied ProcedureNode in the contained data
-void NodeAndIntegerKeyword::removeReferencesTo(ProcedureNode* node)
+void NodeAndIntegerKeyword::removeReferencesTo(ProcedureNode *node)
 {
     if (data_.first == node)
         data_.first = nullptr;

@@ -84,7 +84,7 @@ std::string Process1DProcedureNode::xAxisLabel() const { return labelX_; }
 std::shared_ptr<SequenceProcedureNode> Process1DProcedureNode::addNormalisationBranch()
 {
     if (!normalisationBranch_)
-      normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
+        normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
 
     return normalisationBranch_;
 }
@@ -130,7 +130,7 @@ bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     if (normalisationBranch_)
     {
         // Set data targets in the normalisation nodes  TODO Will not work for sub-branches, if they are ever required
-	for (auto node : normalisationBranch_->sequence())
+        for (auto node : normalisationBranch_->sequence())
         {
             if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
                 continue;

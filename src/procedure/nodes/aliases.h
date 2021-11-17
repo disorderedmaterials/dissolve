@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <memory>
+
 class ProcedureNode;
 using NodeRef = std::shared_ptr<ProcedureNode>;
 using ConstNodeRef = std::shared_ptr<const ProcedureNode>;
