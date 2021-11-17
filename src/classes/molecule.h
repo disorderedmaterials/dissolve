@@ -58,7 +58,20 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     /*
      * Manipulations
      */
+    private:
+    // Typedef for manipulation functions
+    using ManipulationFunction = std::function<void(Atom *j, Vec3<double> rJ)>;
+    using ConstManipulationFunction = std::function<void(const Atom *j, Vec3<double> rJ)>;
+    // Recursive function for general manipulation
+    void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ManipulationFunction action);
+    void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ConstManipulationFunction action) const;
+    // General manipulation function working on reassembled molecule
+    void traverseLocal(const Box *box, ManipulationFunction action);
+    void traverseLocal(const Box *box, ConstManipulationFunction action) const;
+
     public:
+    // Un-fold molecule so it is not cut by box boundaries, returning the centre of geometry
+    Vec3<double> unFold(const Box *box);
     // Set centre of geometry
     void setCentreOfGeometry(const Box *box, const Vec3<double> newCentre);
     // Calculate and return centre of geometry

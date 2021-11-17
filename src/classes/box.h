@@ -136,7 +136,11 @@ class Box
     virtual double minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const = 0;
 
     /*
+<<<<<<< HEAD
      * Geometry Calculation
+=======
+     * Geometry
+>>>>>>> efb17328b... Add manipulator functions to Molecule, and calculate COG correctly for large (all) molecules.
      */
     public:
     // Return angle (in degrees) between coordinates
