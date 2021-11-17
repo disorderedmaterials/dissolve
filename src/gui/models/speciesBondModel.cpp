@@ -21,25 +21,25 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return {};
-
     auto &bond = bonds_[index.row()];
 
-    switch (index.column())
-    {
-        case 0:
-        case 1:
-            return bond.index(index.column()) + 1;
-        case 2:
-            return bond.masterParameters()
-                       ? QString::fromStdString("@" + std::string(bond.masterParameters()->name()))
-                       : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())));
-        case 3:
-            return QString::fromStdString(joinStrings(bond.parameters()));
-        default:
-            return {};
-    }
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
+        switch (index.column())
+        {
+            case 0:
+            case 1:
+                return bond.index(index.column()) + 1;
+            case 2:
+                return bond.masterParameters()
+                           ? QString::fromStdString("@" + std::string(bond.masterParameters()->name()))
+                           : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())));
+            case 3:
+                return QString::fromStdString(joinStrings(bond.parameters()));
+            default:
+                return {};
+        }
+
+    return {};
 }
 
 QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, int role) const

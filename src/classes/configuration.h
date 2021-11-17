@@ -53,7 +53,7 @@ class Configuration
     // File / format of input coordinates file, if provided
     CoordinateImportFileFormat inputCoordinates_;
     // Temperature of this configuration (K)
-    double temperature_;
+    double temperature_{300.0};
 
     public:
     // Set name of the Configuration
@@ -151,13 +151,13 @@ class Configuration
      */
     private:
     // Requested size factor for Box
-    double requestedSizeFactor_;
+    double requestedSizeFactor_{1.0};
     // Size factor currently applied to Box / Cells
-    double appliedSizeFactor_;
+    double appliedSizeFactor_{1.0};
     // Periodic Box
-    std::unique_ptr<Box> box_;
+    std::unique_ptr<Box> box_{nullptr};
     // Requested side length for individual Cell
-    double requestedCellDivisionLength_;
+    double requestedCellDivisionLength_{7.0};
     // Cell array
     CellArray cells_;
 
@@ -166,6 +166,11 @@ class Configuration
     void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
     // Create Box definition from axes matrix
     void createBox(const Matrix3 axes);
+    // Create Box definition with specified lengths and angles, and initialise cell array
+    void createBoxAndCells(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic, double cellSize,
+                           double pairPotentialRange);
+    // Create Box definition from axes matrix, and initialise cell array
+    void createBoxAndCells(const Matrix3 axes, double cellSize, double pairPotentialRange);
     // Return Box
     const Box *box() const;
     // Scale Box lengths (and associated Cells) by specified factors
