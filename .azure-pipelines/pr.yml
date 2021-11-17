@@ -21,7 +21,7 @@ stages:
   - stage: "build"
     displayName: "Build"
     jobs:
-      - job: "test_linux_mpi"
+      - job: "release_linux_mpi"
         displayName: "Testing MPI, CLI"
         pool:
           vmImage: "ubuntu-latest"
@@ -32,7 +32,7 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               package: "dissolve-mpi"
-      - job: "test_linux_gui"
+      - job: "release_linux_gui"
         displayName: "Testing GUI"
         pool:
           vmImage: "ubuntu-latest"
@@ -43,7 +43,7 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               package: "dissolve"
-      - job: "test_linux_threadless"
+      - job: "release_linux_threadless"
         displayName: "Testing Threadless"
         pool:
           vmImage: "ubuntu-latest"
