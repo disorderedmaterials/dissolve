@@ -6,6 +6,7 @@
 #include "gui/copyspeciestermsdialog.h"
 #include "gui/editspeciesdialog.h"
 #include "gui/gui.h"
+#include "gui/importcifdialog.h"
 #include "gui/importligpargendialog.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectatomtypedialog.h"
@@ -102,6 +103,18 @@ void DissolveWindow::on_SpeciesImportLigParGenAction_triggered(bool checked)
     ImportLigParGenDialog importLigParGenDialog(this, dissolve_);
 
     if (importLigParGenDialog.exec() == QDialog::Accepted)
+    {
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+    }
+}
+
+void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
+{
+    ImportCIFDialog importCIFDialog(this, dissolve_);
+
+    if (importCIFDialog.exec() == QDialog::Accepted)
     {
         // Fully update GUI
         setModified();

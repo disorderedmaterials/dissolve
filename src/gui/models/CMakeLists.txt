@@ -2,6 +2,7 @@ set(models_MOC_HDRS
     atomTypeModel.h
     braggReflectionFilterProxy.h
     braggReflectionModel.h
+    cifAssemblyModel.h
     dataManagerReferencePointModel.h
     dataManagerSimulationModel.h
     enumOptionsModel.h
@@ -36,6 +37,7 @@ set(models_SRCS
     atomTypeModel.cpp
     braggReflectionFilterProxy.cpp
     braggReflectionModel.cpp
+    cifAssemblyModel.cpp
     dataManagerReferencePointModel.cpp
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp

@@ -93,9 +93,9 @@ class SpeciesIntra
 
     public:
     // Set attached SpeciesAtoms for terminus specified
-    void setAttachedAtoms(int terminus, const std::vector<SpeciesAtom *> &atoms);
+    void setAttachedAtoms(int terminus, const std::vector<int> atoms);
     // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
-    void setAttachedAtoms(int terminus, SpeciesAtom *atom);
+    void setAttachedAtoms(int terminus, int index);
     // Return vector of attached indices for terminus specified
     const std::vector<int> &attachedAtoms(int terminus) const;
     // Set whether the term is contained within a cycle

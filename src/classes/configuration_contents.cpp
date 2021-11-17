@@ -14,8 +14,6 @@ void Configuration::empty()
     molecules_.clear();
     atoms_.clear();
     atomTypes_.clear();
-    box_ = std::make_unique<CubicBox>(1.0);
-    cells_.clear();
     appliedSizeFactor_ = 1.0;
     speciesPopulations_.clear();
 
@@ -194,10 +192,21 @@ Atom &Configuration::atom(int n)
     return atoms_[n];
 }
 
+// Unfold molecule coordinates
+void Configuration::unFoldMolecules()
+{
+    for (auto &mol : molecules_)
+        mol->unFold(box_.get());
+}
+
 // Scale contents of the box by the specified factors along each axis
 void Configuration::scaleContents(Vec3<double> scaleFactors)
 {
-    Vec3<double> r, cog;
+    // Un-fold all molecules so we can determine true centres of geometry
+    unFoldMolecules();
+
+    // For each molecule, set its new centre of geometry
+    Vec3<double> oldCog, newCog, r;
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position
@@ -214,18 +223,18 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
         }
         else
         {
-            // First, work out the centre of geometry of the Molecule, and fold it into the Box
-            cog = box()->fold(mol->centreOfGeometry(box()));
+            // First, work out the centre of geometry of the Molecule from the now un-folded coordinates
+            oldCog = 0.0;
+            for (const auto &i : mol->atoms())
+                oldCog += i->r();
+            oldCog /= mol->nAtoms();
 
-            // Scale centre of geometry along axes by supplied factors
-            r = cog;
-            box()->toFractional(r);
-            r.multiply(scaleFactors);
-            box()->toReal(r);
+            // Scale centre of geometry by supplied factor
+            newCog = box()->fold(oldCog);
+            newCog.multiply(scaleFactors);
 
-            // Loop over Atoms in Molecule, setting new coordinates as we go
-            for (auto &i : mol->atoms())
-                i->setCoordinates(r + box()->minimumVector(i->r(), cog));
+            // Can now just translate the molecule
+            mol->translate(newCog - oldCog);
         }
     }
 }

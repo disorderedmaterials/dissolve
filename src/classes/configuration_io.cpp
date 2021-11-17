@@ -91,7 +91,7 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
     const auto angles = parser.arg3d(0);
     AtomChangeToken lock(*this);
 
-    createBox(lengths, angles, nonPeriodic);
+    createBoxAndCells(lengths, angles, nonPeriodic, requestedCellDivisionLength_, pairPotentialRange);
 
     // Read total number of Molecules to expect
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -142,9 +142,6 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
 
     // Finalise used AtomType list
     atomTypes_.finalise();
-
-    // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
 
     // Scale box and cells according to the applied size factor
     scaleBox({appliedSizeFactor_, appliedSizeFactor_, appliedSizeFactor_});
