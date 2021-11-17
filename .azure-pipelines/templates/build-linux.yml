@@ -3,6 +3,10 @@ parameters:
     default : "dissolve-gui"
   - name: export
     default : false
+  - name: exportExe
+    default : true
+  - name: exportSingularity
+    default : true
   - name: docker
     default: "docker-gui"
   - name: singularity
@@ -44,17 +48,19 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
-      # nix bundle -L .#${{ parameters.package }}
-      # mkdir -p packages
-      # cp ${{ parameters.package }} packages/${{ parameters.package }}
-      # rm ${{ parameters.package }}
-      # df -h
+      nix bundle -L .#${{ parameters.package }}
+      mkdir -p packages
+      cp ${{ parameters.package }} packages/${{ parameters.package }}
+      rm ${{ parameters.package }}
+    displayName: 'Package Executable'
+    condition: and(eq( '${{ parameters.export }}', 'true' ), eq( '${{ parameters.exportExe }}', 'true' ))
+  - bash: |
+      set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      cachix use dissolve-nix
       nix-collect-garbage -d
-      df -h
       nix build -L .#${{ parameters.singularity }}
       mkdir -p singularity
       cp result singularity/${{ parameters.package }}.sif
-    displayName: 'Package'
-    condition: eq( '${{ parameters.export }}', 'true' )
-    env:
-      CACHIX_AUTH_TOKEN: $(cachix_token)
+    displayName: 'Package Singularity'
+    condition: and(eq( '${{ parameters.export }}', 'true' ), eq( '${{ parameters.exportSingularity }}', 'true' ))
