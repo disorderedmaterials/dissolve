@@ -151,9 +151,11 @@ void CalculateDAngleModule::initialise()
     processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
     std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
-    rdfNormalisation->addNode(std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode> >>({selectA_, selectB_}));
     rdfNormalisation->addNode(
-			      std::make_shared<OperateNumberDensityNormaliseProcedureNode>(std::vector<std::shared_ptr<const SelectProcedureNode> >({selectC_})));
+        std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode>>>(
+            {selectA_, selectB_}));
+    rdfNormalisation->addNode(std::make_shared<OperateNumberDensityNormaliseProcedureNode>(
+        std::vector<std::shared_ptr<const SelectProcedureNode>>({selectC_})));
     rdfNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processDistance_);
 

@@ -12,7 +12,7 @@ class SelectProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
-  OperateSitePopulationNormaliseProcedureNode(std::vector<std::shared_ptr<const SelectProcedureNode>> sites = {});
+    OperateSitePopulationNormaliseProcedureNode(std::vector<std::shared_ptr<const SelectProcedureNode>> sites = {});
     ~OperateSitePopulationNormaliseProcedureNode() override = default;
 
     /*
