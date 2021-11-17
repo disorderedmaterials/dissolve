@@ -44,11 +44,11 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
-      nix bundle -L .#${{ parameters.package }}
-      mkdir -p packages
-      cp ${{ parameters.package }} packages/${{ parameters.package }}
-      rm ${{ parameters.package }}
-      df -h
+      # nix bundle -L .#${{ parameters.package }}
+      # mkdir -p packages
+      # cp ${{ parameters.package }} packages/${{ parameters.package }}
+      # rm ${{ parameters.package }}
+      # df -h
       nix-collect-garbage -d
       df -h
       nix build -L .#${{ parameters.singularity }}

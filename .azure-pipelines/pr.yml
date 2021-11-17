@@ -32,11 +32,11 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               export: true
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "packages/"
-              ArtifactName: "linux-GUI-artifacts"
-            displayName: "Publish Linux GUI Artifacts"
+          # - task: PublishBuildArtifacts@1
+          #   inputs:
+          #     PathtoPublish: "packages/"
+          #     ArtifactName: "linux-GUI-artifacts"
+          #   displayName: "Publish Linux GUI Artifacts"
           # - task: PublishBuildArtifacts@1
           #   inputs:
           #     PathtoPublish: "docker/"
@@ -61,11 +61,11 @@ stages:
               docker: "docker"
               singularity: "singularity"
               export: true
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "packages/"
-              ArtifactName: "linux-cli-artifacts"
-            displayName: "Publish Linux CLI Artifacts"
+          # - task: PublishBuildArtifacts@1
+          #   inputs:
+          #     PathtoPublish: "packages/"
+          #     ArtifactName: "linux-cli-artifacts"
+          #   displayName: "Publish Linux CLI Artifacts"
           # - task: PublishBuildArtifacts@1
           #   inputs:
           #     PathtoPublish: "docker/"
@@ -90,11 +90,11 @@ stages:
               docker: "docker-mpi"
               singularity: "singularity-mpi"
               export: true
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "packages/"
-              ArtifactName: "mpi-artifacts"
-            displayName: "Publish MPI Artifacts"
+          # - task: PublishBuildArtifacts@1
+          #   inputs:
+          #     PathtoPublish: "packages/"
+          #     ArtifactName: "mpi-artifacts"
+          #   displayName: "Publish MPI Artifacts"
           # - task: PublishBuildArtifacts@1
           #   inputs:
           #     PathtoPublish: "docker/"
