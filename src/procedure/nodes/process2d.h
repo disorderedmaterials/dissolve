@@ -31,7 +31,7 @@ class Process2DProcedureNode : public ProcedureNode
      */
     private:
     // Collect2D node that we are processing
-    const Collect2DProcedureNode *sourceData_;
+    const Collect2DProcedureNode *sourceData_{nullptr};
     // Export file and format for processed data
     Data2DExportFileFormat exportFileAndFormat_;
     // Label for the value axis
@@ -41,7 +41,7 @@ class Process2DProcedureNode : public ProcedureNode
     // Label for the y axis
     std::string labelY_{"Y"};
     // Pointer to processed data (stored in processing data list)
-    Data2D *processedData_;
+    Data2D *processedData_{nullptr};
 
     public:
     // Return processed data
