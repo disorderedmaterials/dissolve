@@ -24,7 +24,7 @@ class ModuleControlWidget : public QWidget
 
     public:
     ModuleControlWidget(QWidget *parent = nullptr);
-    ~ModuleControlWidget();
+    ~ModuleControlWidget() = default;
 
     private:
     // Lock for widget refresh
@@ -74,6 +74,8 @@ class ModuleControlWidget : public QWidget
     private slots:
     void on_ModuleControlsButton_clicked(bool checked);
     void on_ModuleOutputButton_clicked(bool checked);
+    void on_EnabledButton_clicked(bool checked);
+    void on_FrequencySpin_valueChanged(int value);
     // Keyword data for Module has been modified
     void keywordDataModified();
     // Target keyword data changed
