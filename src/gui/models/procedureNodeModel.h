@@ -16,21 +16,21 @@ class ProcedureNodeModel : public QAbstractListModel
 
     private:
     // Source ProcedureNode data
-    std::vector<const ProcedureNode *> nodes_;
+    std::vector<ConstNodeRef > nodes_;
     // Node selected/deselected/presence functions
-    std::function<bool(const ProcedureNode *)> nodeSelectedFunction_, nodeDeselectedFunction_, nodePresenceFunction_;
+    std::function<bool(ConstNodeRef )> nodeSelectedFunction_, nodeDeselectedFunction_, nodePresenceFunction_;
 
     public:
     // Set source ProcedureNode data
-    void setData(const std::vector<const ProcedureNode *> &nodes);
+    void setData(const std::vector<ConstNodeRef > &nodes);
     // Set node selected function
-    void setNodeSelectedFunction(std::function<bool(const ProcedureNode *)> nodeSelectedFunction);
+    void setNodeSelectedFunction(std::function<bool(ConstNodeRef )> nodeSelectedFunction);
     // Set node selected function
-    void setNodeDeselectedFunction(std::function<bool(const ProcedureNode *)> nodeDeselectedFunction);
+    void setNodeDeselectedFunction(std::function<bool(ConstNodeRef )> nodeDeselectedFunction);
     // Set node presence function
-    void setNodePresenceFunction(std::function<bool(const ProcedureNode *)> nodePresenceFunction);
+    void setNodePresenceFunction(std::function<bool(ConstNodeRef )> nodePresenceFunction);
     // Return object represented by specified model index
-    const ProcedureNode *rawData(const QModelIndex &index) const;
+    ConstNodeRef rawData(const QModelIndex &index) const;
 
     /*
      * QAbstractItemModel overrides

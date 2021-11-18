@@ -60,7 +60,7 @@ void ProcedureChart::paintEvent(QPaintEvent *event)
  */
 
 // Update the content block widgets against the current target data for the supplied SequenceNode
-void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence,
+void ProcedureChart::updateContentBlocks(std::shared_ptr<const SequenceProcedureNode> sequence,
                                          RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel)
 {
     // Create a temporary list that will store our widgets to be 'reused'
@@ -113,10 +113,10 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence,
 }
 
 // Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
-ProcedureChartNodeBlock *ProcedureChart::nodeBlock(ProcedureNode *node) { return nodeBlock(node, rootSequenceNodeWidgets_); }
+ProcedureChartNodeBlock *ProcedureChart::nodeBlock(NodeRef node) { return nodeBlock(node, rootSequenceNodeWidgets_); }
 
 // Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
-ProcedureChartNodeBlock *ProcedureChart::nodeBlock(ProcedureNode *node, const RefList<ProcedureChartNodeBlock> &list)
+ProcedureChartNodeBlock *ProcedureChart::nodeBlock(NodeRef node, const RefList<ProcedureChartNodeBlock> &list)
 {
     for (ProcedureChartNodeBlock *block : list)
     {
@@ -142,7 +142,7 @@ void ProcedureChart::updateContentBlocks()
     auto indentLevel = 0;
 
     // Start with the root sequence node of the Procedure - we deal recursively with the rest
-    updateContentBlocks(&procedure_->rootSequence(), rootSequenceNodeWidgets_, indentLevel);
+    updateContentBlocks(std::dynamic_pointer_cast<const SequenceProcedureNode>(procedure_->rootSequence().shared_from_this()), rootSequenceNodeWidgets_, indentLevel);
 }
 
 /*

@@ -31,7 +31,7 @@ class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::NodeAndIntegerValueWidget ui_;
     // Allowed nodes to display in the model
-    std::vector<const ProcedureNode *> allowedNodes_;
+    std::vector<ConstNodeRef > allowedNodes_;
     // Model for the node list
     ProcedureNodeModel nodeModel_;
 

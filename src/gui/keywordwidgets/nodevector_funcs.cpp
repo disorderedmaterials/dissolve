@@ -21,9 +21,9 @@ NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, NodeVectorKeyw
 
     allowedNodes_ = keyword_->allowedNodes();
     nodeModel_.setData(allowedNodes_);
-    nodeModel_.setNodeSelectedFunction([&](const ProcedureNode *node) { return keyword_->addNode(node); });
-    nodeModel_.setNodeDeselectedFunction([&](const ProcedureNode *node) { return keyword_->removeNode(node); });
-    nodeModel_.setNodePresenceFunction([&](const ProcedureNode *node) { return keyword_->isPresent(node); });
+    nodeModel_.setNodeSelectedFunction([&](ConstNodeRef node) { return keyword_->addNode(node); });
+    nodeModel_.setNodeDeselectedFunction([&](ConstNodeRef node) { return keyword_->removeNode(node); });
+    nodeModel_.setNodePresenceFunction([&](ConstNodeRef node) { return keyword_->isPresent(node); });
 
     // Summary text on KeywordDropDown button
     setSummaryText("Edit...");
