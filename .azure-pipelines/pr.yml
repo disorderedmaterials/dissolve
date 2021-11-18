@@ -21,50 +21,7 @@ stages:
   - stage: "build"
     displayName: "Build"
     jobs:
-      - job: "release_linux_mpi"
-        displayName: "Release MPI, CLI"
-        pool:
-          vmImage: "ubuntu-latest"
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
-            parameters:
-              package: "dissolve-mpi"
-      - job: "release_linux_gui"
-        displayName: "Release GUI"
-        pool:
-          vmImage: "ubuntu-latest"
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
-            parameters:
-              package: "dissolve-gui"
-      - job: "release_linux"
-        displayName: "Release CLI"
-        pool:
-          vmImage: "ubuntu-latest"
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
-            parameters:
-              package: "dissolve"
-      - job: "release_linux_threadless"
-        displayName: "Release Threadless"
-        pool:
-          vmImage: "ubuntu-latest"
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
-            parameters:
-              package: "dissolve-threadless"
+      - template: templates/build-linux-releases.yml
       - job: "test_linux_mpi"
         displayName: "Testing MPI, CLI"
         pool:
