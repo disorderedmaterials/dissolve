@@ -38,16 +38,18 @@ void CalculateCNModule::initialise()
     sum1D_->setName("CN");
     analyser_.addRootSequenceNode(sum1D_);
 
-    // Target / Ranges
-    keywords_.add<ModuleKeyword<CalculateRDFModule>>(
-        "Target / Ranges", "SourceRDF", "Source CalculateRDFModule containing the data to process", sourceRDF_, "CalculateRDF");
-    keywords_.add<RangeKeyword>("Target / Ranges", "RangeA", "Distance range for first coordination number", sum1D_->range(0));
-    keywords_.add<BoolKeyword>("Target / Ranges", "RangeBEnabled",
-                               "Whether calculation of the second coordination number is enabled", sum1D_->rangeEnabled(1));
-    keywords_.add<RangeKeyword>("Target / Ranges", "RangeB", "Distance range for second coordination number", sum1D_->range(1));
-    keywords_.add<BoolKeyword>("Target / Ranges", "RangeCEnabled",
-                               "Whether calculation of the third coordination number is enabled", sum1D_->rangeEnabled(2));
-    keywords_.add<RangeKeyword>("Target / Ranges", "RangeC", "Distance range for third coordination number", sum1D_->range(2));
+    // Target
+    keywords_.addTarget<ModuleKeyword<CalculateRDFModule>>(
+        "SourceRDF", "Source CalculateRDFModule containing the data to process", sourceRDF_, "CalculateRDF");
+
+    // Ranges
+    keywords_.add<RangeKeyword>("Ranges", "RangeA", "Distance range for first coordination number", sum1D_->range(0));
+    keywords_.add<BoolKeyword>("anges", "RangeBEnabled", "Whether calculation of the second coordination number is enabled",
+                               sum1D_->rangeEnabled(1));
+    keywords_.add<RangeKeyword>("Ranges", "RangeB", "Distance range for second coordination number", sum1D_->range(1));
+    keywords_.add<BoolKeyword>("Ranges", "RangeCEnabled", "Whether calculation of the third coordination number is enabled",
+                               sum1D_->rangeEnabled(2));
+    keywords_.add<RangeKeyword>("Ranges", "RangeC", "Distance range for third coordination number", sum1D_->range(2));
 
     // Test
     keywords_.add<DoubleKeyword>("Test", "TestRangeA",

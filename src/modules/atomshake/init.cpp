@@ -8,8 +8,8 @@
 void AtomShakeModule::initialise()
 {
     // Targets
-    keywords_.add<ConfigurationVectorKeyword>("Target", "Configuration", "Set target configuration(s) for the module",
-                                              targetConfigurations_);
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
 
     // Control
     keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to use for energy calculation",

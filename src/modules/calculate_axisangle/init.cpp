@@ -149,8 +149,7 @@ void CalculateAxisAngleModule::initialise()
      */
 
     // Targets
-    keywords_.add<ConfigurationKeyword>("Target", "Configuration", "Set target configuration for the module",
-                                        targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Control
     keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, binwidth) of distance axis", distanceRange_,

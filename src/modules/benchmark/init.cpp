@@ -8,8 +8,8 @@
 void BenchmarkModule::initialise()
 {
     // Targets
-    keywords_.add<ConfigurationVectorKeyword>("Target", "Configuration", "Set target configuration(s) for the module",
-                                              targetConfigurations_);
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
 
     // Control
     keywords_.add<IntegerKeyword>("Control", "N", "Number of times to run each benchmark in order to form average", nRepeats_,

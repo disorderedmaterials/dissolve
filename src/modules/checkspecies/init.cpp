@@ -8,7 +8,7 @@
 void CheckSpeciesModule::initialise()
 {
     // Target Species
-    keywords_.add<SpeciesKeyword>("Target", "Species", "Target species to check", targetSpecies_);
+    keywords_.addTarget<SpeciesKeyword>("Species", "Target species to check", targetSpecies_);
 
     // Checks
     keywords_.add<IntegerStringVectorKeyword>("Atoms", "AtomType", "Check that atom index <id> has the atom type <type>",

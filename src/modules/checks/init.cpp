@@ -8,8 +8,8 @@
 void ChecksModule::initialise()
 {
     // Targets
-    keywords_.add<ConfigurationVectorKeyword>("Target", "Configuration", "Set target configuration(s) for the module",
-                                              targetConfigurations_);
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
 
     // Distance
     keywords_.add<GeometryListKeyword>("Distance", "Distance", "Define a distance between Atoms to be checked", distances_,

@@ -8,8 +8,8 @@
 void ForcesModule::initialise()
 {
     // Targets
-    keywords_.add<ConfigurationVectorKeyword>("Target", "Configuration", "Set target configuration(s) for the module",
-                                              targetConfigurations_);
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
 
     // Test
     keywords_.add<BoolKeyword>(

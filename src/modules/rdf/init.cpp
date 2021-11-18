@@ -17,8 +17,8 @@ EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
 void RDFModule::initialise()
 {
     // Targets
-    keywords_.add<ConfigurationVectorKeyword>("Target", "Configuration", "Set target configuration(s) for the module",
-                                              targetConfigurations_);
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
 
     // Control
     keywords_.add<DoubleKeyword>("Control", "BinWidth", "Bin width (spacing in r) to use", binWidth_, 1.0e-3);

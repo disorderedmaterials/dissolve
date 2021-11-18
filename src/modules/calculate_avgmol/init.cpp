@@ -8,8 +8,7 @@
 void CalculateAvgMolModule::initialise()
 {
     // Targets
-    keywords_.add<ConfigurationKeyword>("Target", "Configuration", "Set target configuration for the module",
-                                        targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
     keywords_
         .add<SpeciesSiteKeyword>("Control", "Site", "Target site about which to calculate average species geometry",
                                  targetSite_, true)
