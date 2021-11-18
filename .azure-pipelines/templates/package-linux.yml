@@ -9,8 +9,8 @@ stages:
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
+          - template: set-short-hash.yml
+          - template: build-linux.yml
             parameters:
               export: true
               exportSingularity: false
@@ -26,8 +26,8 @@ stages:
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
+          - template: set-short-hash.yml
+          - template: build-linux.yml
             parameters:
               export: true
               exportExe: false
@@ -43,8 +43,8 @@ stages:
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
+          - template: set-short-hash.yml
+          - template: build-linux.yml
             parameters:
               package: "dissolve"
               docker: "docker"
@@ -67,8 +67,8 @@ stages:
         steps:
           - checkout: self
             fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
+          - template: set-short-hash.yml
+          - template: build-linux.yml
             parameters:
               package: "dissolve-mpi"
               docker: "docker-mpi"
