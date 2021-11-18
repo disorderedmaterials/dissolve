@@ -4,14 +4,10 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
 #include <QToolBox>
 
 // Forward Declarations
-class Dissolve;
-class DissolveWindow;
-class KeywordBase;
+class CoreData;
 class KeywordStore;
 
 // Keywords Widget
@@ -29,12 +25,8 @@ class KeywordsWidget : public QToolBox
     private:
     // Whether the widget is currently refreshing
     bool refreshing_;
-    // List of keyword widgets displayed
-    RefList<KeywordWidgetBase> keywordWidgets_;
-
-    private:
-    // Create widget for specified keyword
-    QWidget *createKeywordWidget(RefList<KeywordWidgetBase> &keywordWidgets, KeywordBase *keyword, const CoreData &coreData);
+    // Reference vector of displayed keyword widgets
+    std::vector<KeywordWidgetBase *> keywordWidgets_;
 
     public:
     // Set up controls for specified keywords
