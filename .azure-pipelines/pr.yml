@@ -87,5 +87,3 @@ stages:
               PathtoPublish: "packages/"
               ArtifactName: "windows-artifacts"
             displayName: "Publish Windows Artifacts"
-
-  - template: templates/package-linux.yml
