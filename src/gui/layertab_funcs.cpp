@@ -23,6 +23,8 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
     moduleLayerModel_.setData(moduleLayer_);
     connect(ui_.ModulesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
+            SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     if (moduleLayer_->nModules() >= 1)
     {
         auto firstIndex = moduleLayerModel_.index(0, 0);
@@ -134,10 +136,18 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
 
     // If there is no selected index, show the default page on the stack
     if (modelIndices.empty())
+    {
         ui_.ModuleControlsStack->setCurrentIndex(0);
+        return;
+    }
 
     // Get the selected module
     auto *module = moduleLayer_->modules()[modelIndices.front().row()].get();
+    if (!module)
+    {
+        ui_.ModuleControlsStack->setCurrentIndex(0);
+        return;
+    }
 
     // See if our stack already contains a control widget for the module - if not, create one
     ModuleControlWidget *mcw = nullptr;
@@ -153,11 +163,16 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
     if (!mcw)
     {
         // Create a new widget to display this Module
-        auto *mcw = new ModuleControlWidget;
+        mcw = new ModuleControlWidget;
         mcw->setModule(module, &dissolveWindow_->dissolve());
         connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
         ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));
     }
+}
+
+void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
+{
+    dissolveWindow_->setModified();
 }
 
 /*

@@ -5,6 +5,7 @@
 
 #include "module/layer.h"
 #include <QAbstractListModel>
+#include <QMimeData>
 #include <QModelIndex>
 
 class ModuleLayerModel : public QAbstractListModel
@@ -24,10 +25,26 @@ class ModuleLayerModel : public QAbstractListModel
     /*
      * QAbstractItemModel overrides
      */
+    private:
+    enum ModuleLayerModelAction
+    {
+        MoveInternal = Qt::UserRole,
+        CreateNew
+    };
+
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Qt::DropActions supportedDragActions() const override;
+    Qt::DropActions supportedDropActions() const override;
+    QStringList mimeTypes() const override;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
+                         const QModelIndex &parent) const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+    bool insertRows(int row, int count, const QModelIndex &parent) override;
+    bool removeRows(int row, int count, const QModelIndex &parent) override;
 };
