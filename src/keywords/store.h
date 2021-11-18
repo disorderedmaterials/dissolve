@@ -105,7 +105,7 @@ class KeywordStore
     // Targets group
     std::vector<KeywordBase *> targetsGroup_;
     // Keyword group mappings
-    std::map<std::string_view, std::vector<KeywordBase *>> displayGroups_;
+    std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups_;
 
     public:
     // Add keyword (no group)
@@ -142,7 +142,12 @@ class KeywordStore
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        displayGroups_[displayGroup].push_back(k);
+        auto it = std::find_if(displayGroups_.begin(), displayGroups_.end(),
+                               [displayGroup](auto &group) { return group.first == displayGroup; });
+        if (it == displayGroups_.end())
+            displayGroups_.emplace_back(displayGroup, std::vector<KeywordBase *>{k});
+        else
+            it->second.push_back(k);
 
         return k;
     }
@@ -154,7 +159,7 @@ class KeywordStore
     // Return "Target" group keywords
     const std::vector<KeywordBase *> targetsGroup() const;
     // Return keyword group mappings
-    const std::map<std::string_view, std::vector<KeywordBase *>> displayGroups() const;
+    const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups() const;
     // Return whether the keyword has been set, and is not currently empty (if relevant)
     bool hasBeenSet(std::string_view name) const;
     // Flag that the specified keyword has been set by some external means

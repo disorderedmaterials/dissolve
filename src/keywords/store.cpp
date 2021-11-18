@@ -74,7 +74,10 @@ const std::map<std::string_view, KeywordBase *> KeywordStore::keywords() const {
 const std::vector<KeywordBase *> KeywordStore::targetsGroup() const { return targetsGroup_; }
 
 // Return keyword group mappings
-const std::map<std::string_view, std::vector<KeywordBase *>> KeywordStore::displayGroups() const { return displayGroups_; };
+const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> KeywordStore::displayGroups() const
+{
+    return displayGroups_;
+};
 
 // Return whether the keyword has been set, and is not currently empty (if relevant)
 bool KeywordStore::hasBeenSet(std::string_view name) const
