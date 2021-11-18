@@ -21,7 +21,9 @@ void PrimitiveList::forgetAll()
 void PrimitiveList::reinitialise(int newSize, GLenum type, bool colourData)
 {
     // Add enough primitives to match the new size
-    primitives_.resize(newSize);
+    primitives_.clear();
+    primitives_.reserve(newSize);
+    std::generate_n(std::back_inserter(primitives_), newSize, [] { return std::make_unique<Primitive>(); });
 
     // Loop over all current primitives and set information
     for (auto &prim : primitives_)
