@@ -12,48 +12,7 @@ stages:
   - stage: 'build'
     displayName: 'Build and Package'
     jobs:
-      - job: 'linux'
-        displayName: 'Ubuntu, Threads, CLI/GUI'
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/build-linux.yml
-            parameters:
-              export: true
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "packages/"
-              ArtifactName: 'linux-artifacts'
-            displayName: 'Publish Linux Artifacts'
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "docker/"
-              ArtifactName: "linux-gui-docker"
-            displayName: "Publish Linux CLI Docker"
-      - job: 'linux_mpi'
-        displayName: 'Ubuntu, MPI, CLI'
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/build-linux-mpi.yml
-            parameters:
-              export: true
-              package: "dissolve-mpi"
-              docker: "docker-mpi"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "packages/"
-              ArtifactName: "mpi-artifacts"
-            displayName: "Publish MPI Artifacts"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "docker/"
-              ArtifactName: "mpi-docker"
-            displayName: "Publish MPI Docker"
+      - template: templates/build-linux-releases.yml
       - job: 'osx'
         displayName: 'OSX, Threads, CLI/GUI'
         timeoutInMinutes: 120
@@ -117,6 +76,7 @@ stages:
           - template: templates/build-linux.yml
             parameters:
               package: "checks.x86_64-linux.dissolve-threadless"
+  - template: templates/package-linux.yml
 
   # Create Release
   - template: templates/create-release.yml
