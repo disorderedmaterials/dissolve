@@ -3,8 +3,4 @@
 
 #include "modules/test/test.h"
 
-TestModule::TestModule() : Module()
-{
-    // Initialise Module - set up keywords etc.
-    initialise();
-}
+TestModule::TestModule() : Module() {}

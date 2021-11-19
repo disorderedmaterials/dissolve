@@ -35,15 +35,11 @@ class AccumulateModule : public Module
 
     private:
     // Type of target PartialSet
-    AccumulateModule::TargetPartialSet targetPartialSet_;
+    AccumulateModule::TargetPartialSet targetPartialSet_{TargetPartialSet::GR};
     // Module containing the target partial set data to accumulate
     std::vector<Module *> targetModule_;
     // Whether to save the accumulated partials to disk
     bool save_{false};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
 
     /*
      * Processing

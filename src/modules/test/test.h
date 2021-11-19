@@ -24,13 +24,6 @@ class TestModule : public Module
     std::string_view type() const override;
 
     /*
-     * Initialisation
-     */
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
      * Control
      */
     private:

@@ -47,10 +47,6 @@ class DataTestModule : public Module
     // Threshold for error metric above which test fails
     double threshold_{5.0e-3};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

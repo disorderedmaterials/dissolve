@@ -35,10 +35,6 @@ class ChecksModule : public Module
     // Threshold at which angle checks will fail (degrees)
     double angleThreshold_{0.05};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

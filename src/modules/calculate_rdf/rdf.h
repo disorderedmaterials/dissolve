@@ -37,10 +37,6 @@ class CalculateRDFModule : public Module
     // Range (min, max, delta) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

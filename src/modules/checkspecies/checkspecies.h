@@ -41,15 +41,11 @@ class CheckSpeciesModule : public Module
     // Tolerance beyond which charges are said to differ
     double chargeTolerance_{1.0e-3};
     // Target species to check
-    const Species *targetSpecies_;
+    const Species *targetSpecies_{nullptr};
     // Check the total charge of the species against the specified value
     double totalCharge_{0.0};
     // Tolerance beyond which parameters are said to differ
     double tolerance_{1.0e-3};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
 
     /*
      * Processing

@@ -58,10 +58,6 @@ class IntraShakeModule : public Module
     // Maximum step size for torsion adjustments (degrees)
     double torsionStepSizeMax_{45.0};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

@@ -63,10 +63,6 @@ class NeutronSQModule : public Module
     // Source module for calculation
     const SQModule *sourceSQ_{nullptr};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     public:
     // Return file and format for reference total F(Q)
     const Data1DImportFileFormat &referenceFQFileAndFormat();

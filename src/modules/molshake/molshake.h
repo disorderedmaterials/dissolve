@@ -46,10 +46,6 @@ class MolShakeModule : public Module
     // Maximum step size for translations (Angstroms)
     double translationStepSizeMax_{3.0};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

@@ -29,10 +29,6 @@ class ExportCoordinatesModule : public Module
     // Whether to tag (suffix) the filename with the current iteration index
     bool tagWithIteration_{false};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Data
      */

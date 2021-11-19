@@ -42,10 +42,6 @@ class CalculateSDFModule : public Module
     // Range along Z axis
     Vec3<double> rangeZ_{-10.0, 10.0, 0.5};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

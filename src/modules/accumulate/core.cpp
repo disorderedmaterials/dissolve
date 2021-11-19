@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "keywords/bool.h"
+#include "keywords/enumoptions.h"
+#include "keywords/modulevector.h"
 #include "modules/accumulate/accumulate.h"
 
 AccumulateModule::AccumulateModule() : Module()
 {
-    // Set unique name for this instance of the Module
-    static int instanceId = 0;
-    uniqueName_ = fmt::format("{}{:02d}", type(), instanceId++);
+    // Targets
+    keywords_.addTarget<ModuleVectorKeyword>("Target", "Module containing the target partial set data to accumulate",
+                                             targetModule_, std::vector<std::string>{"NeutronSQ", "XRaySQ", "SQ", "RDF"}, 1);
+    keywords_.addTarget<EnumOptionsKeyword<AccumulateModule::TargetPartialSet>>(
+        "Data", "Data type to accumulate", targetPartialSet_, AccumulateModule::targetPartialSet());
 
-    // Initialise Module - set up keywords etc.
-    initialise();
+    // Export
+    keywords_.add<BoolKeyword>("Export", "Save", "Whether to save the accumulated partials to disk", save_);
 }

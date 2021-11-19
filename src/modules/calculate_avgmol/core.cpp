@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "keywords/configuration.h"
+#include "keywords/speciessite.h"
 #include "modules/calculate_avgmol/avgmol.h"
 
 CalculateAvgMolModule::CalculateAvgMolModule() : Module()
 {
-    // Set unique name for this instance of the Module
-    static int instanceId = 0;
-    uniqueName_ = fmt::format("{}{:02d}", type(), instanceId++);
+    // Targets
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_
+        .add<SpeciesSiteKeyword>("Control", "Site", "Target site about which to calculate average species geometry",
+                                 targetSite_, true)
+        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
 
-    // Initialise Module - set up keywords etc.
-    initialise();
+    targetSpecies_ = nullptr;
 }

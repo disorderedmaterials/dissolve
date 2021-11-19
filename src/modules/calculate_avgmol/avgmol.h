@@ -22,13 +22,6 @@ class CalculateAvgMolModule : public Module
     std::string_view type() const override;
 
     /*
-     * Initialisation
-     */
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
      * Processing
      */
     private:
@@ -46,7 +39,7 @@ class CalculateAvgMolModule : public Module
     // Target site
     const SpeciesSite *targetSite_;
     // Species targeted by module (derived from selected site)
-    const Species *targetSpecies_;
+    const Species *targetSpecies_{nullptr};
     // Local Species representing average of targeted Species
     Species averageSpecies_;
 

@@ -41,10 +41,6 @@ class CalculateCNModule : public Module
     // Threshold difference at which test comparisons will fail
     double testThreshold_{0.1};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

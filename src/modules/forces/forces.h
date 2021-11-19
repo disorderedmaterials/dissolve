@@ -43,10 +43,6 @@ class ForcesModule : public Module
     // Threshold of force (%) at which test comparison will fail
     double testThreshold_{0.1};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Data
      */

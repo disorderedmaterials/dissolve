@@ -68,10 +68,6 @@ class RDFModule : public Module
     // Whether to use the maximal RDF range possible that avoids periodic images
     bool useHalfCellRange_{true};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

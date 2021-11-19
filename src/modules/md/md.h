@@ -53,10 +53,6 @@ class MDModule : public Module
     // Whether a variable timestep should be used, determined from the maximal force vector
     bool variableTimestep_{true};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

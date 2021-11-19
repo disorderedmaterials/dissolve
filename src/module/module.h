@@ -54,13 +54,6 @@ class Module
     void printValidKeywords();
 
     /*
-     * Initialisation
-     */
-    public:
-    // Perform any necessary initialisation for the Module
-    virtual void initialise() = 0;
-
-    /*
      * Control
      */
     protected:

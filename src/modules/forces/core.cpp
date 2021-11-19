@@ -1,10 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "keywords/bool.h"
+#include "keywords/double.h"
+#include "keywords/fileandformat.h"
 #include "modules/forces/forces.h"
 
 ForcesModule::ForcesModule() : Module()
 {
-    // Initialise Module - set up keywords etc.
-    initialise();
+    // Targets
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
+
+    // Test
+    keywords_.add<BoolKeyword>(
+        "Test", "Test",
+        "Test parallel force routines against basic serial versions and supplied reference values (if provided)", test_);
+    keywords_.add<BoolKeyword>("Test", "TestAnalytic",
+                               "Use analytic interatomic forces rather than (production) tabulated potentials for tests",
+                               testAnalytic_);
+    keywords_.add<BoolKeyword>("Test", "TestInter", "Include interatomic forces in test", testInter_);
+    keywords_.add<BoolKeyword>("Test", "TestIntra", "Include intramolecular forces in test", testIntra_);
+    keywords_.add<FileAndFormatKeyword>("Test", "TestReference", "Reference forces to test calculated forces against",
+                                        referenceForces_, "EndTestReference");
+    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold of force (%) at which test comparison will fail",
+                                 testThreshold_, 0.0);
+
+    // Export
+    keywords_.add<FileAndFormatKeyword>("Export", "SaveForces", "Save calculated energies to the specified file / format",
+                                        exportedForces_, "EndSaveForces");
 }

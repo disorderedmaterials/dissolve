@@ -98,10 +98,6 @@ class EPSRModule : public Module
     // Test threshold (%error) above which test fails
     double testThreshold_{0.1};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     public:
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;

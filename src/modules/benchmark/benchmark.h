@@ -42,10 +42,6 @@ class BenchmarkModule : public Module
     // Whether to benchmark molecule distributors
     bool testDistributors_{true};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

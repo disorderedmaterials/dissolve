@@ -56,10 +56,6 @@ class SQModule : public Module
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     public:
     // Return source module for main calculation
     const RDFModule *sourceRDF() const;

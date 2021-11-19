@@ -38,10 +38,6 @@ class AtomShakeModule : public Module
     // Target acceptance rate for Monte Carlo moves
     double targetAcceptanceRate_{0.33};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

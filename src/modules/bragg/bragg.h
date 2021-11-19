@@ -44,10 +44,6 @@ class BraggModule : public Module
     // File containing reflection data to test against
     std::string testReflectionsFile_;
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */

@@ -39,10 +39,6 @@ class GeometryOptimisationModule : public Module
     // Tolerance controlling convergence of algorithm
     double tolerance_{1.0e-4};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
      * Processing
      */
