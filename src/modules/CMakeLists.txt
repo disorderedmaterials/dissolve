@@ -127,3 +127,16 @@ endforeach()
 foreach(subdir ${MODULE_DIRS})
   add_subdirectory(${subdir})
 endforeach()
+
+add_library(moduleregistry registry.cpp registry.h)
+
+include_directories(
+  moduleregistry
+  PRIVATE
+  ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_BINARY_DIR}/src
+  ${PROJECT_SOURCE_DIR}
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/src
+  ${CONAN_INCLUDE_DIRS}
+)
