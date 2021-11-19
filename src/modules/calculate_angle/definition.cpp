@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view CalculateAngleModule::type() const { return "CalculateAngle"; }
-
-// Return category for module
-std::string_view CalculateAngleModule::category() const { return "Analysis"; }
-
-// Return brief description of module
-std::string_view CalculateAngleModule::brief() const { return "Calculate distance/angle maps"; }

@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view AccumulateModule::type() const { return "Accumulate"; }
-
-// Return category for module
-std::string_view AccumulateModule::category() const { return "NO CATEGORY ASSIGNED"; }
-
-// Return brief description of module
-std::string_view AccumulateModule::brief() const { return "Accumulate partials data to form an average"; }

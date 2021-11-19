@@ -8,10 +8,3 @@ NeutronSQModule::NeutronSQModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *NeutronSQModule::createInstance() const { return new NeutronSQModule; }

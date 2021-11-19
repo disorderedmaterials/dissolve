@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view AtomShakeModule::type() const { return "AtomShake"; }
-
-// Return category for module
-std::string_view AtomShakeModule::category() const { return "Evolution"; }
-
-// Return brief description of module
-std::string_view AtomShakeModule::brief() const { return "Perform atomic Monte Carlo on all atoms"; }

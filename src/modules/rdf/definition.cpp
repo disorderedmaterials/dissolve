@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view RDFModule::type() const { return "RDF"; }
-
-// Return category for module
-std::string_view RDFModule::category() const { return "Correlation Functions"; }
-
-// Return brief description of module
-std::string_view RDFModule::brief() const { return "Calculate partial and total g(r)"; }

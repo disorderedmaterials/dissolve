@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view EnergyModule::type() const { return "Energy"; }
-
-// Return category for module
-std::string_view EnergyModule::category() const { return "Forcefield"; }
-
-// Return brief description of module
-std::string_view EnergyModule::brief() const { return "Calculate the total energy of a Configuration"; }

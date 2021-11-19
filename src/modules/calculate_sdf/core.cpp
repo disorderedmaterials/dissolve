@@ -12,10 +12,3 @@ CalculateSDFModule::CalculateSDFModule() : Module(), analyser_(ProcedureNode::An
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *CalculateSDFModule::createInstance() const { return new CalculateSDFModule; }

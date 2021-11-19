@@ -8,10 +8,3 @@ IntraShakeModule::IntraShakeModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *IntraShakeModule::createInstance() const { return new IntraShakeModule; }

@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view NeutronSQModule::type() const { return "NeutronSQ"; }
-
-// Return category for module
-std::string_view NeutronSQModule::category() const { return "Correlation Functions"; }
-
-// Return brief description of module
-std::string_view NeutronSQModule::brief() const { return "Calculate neutron-weighted S(Q)"; }

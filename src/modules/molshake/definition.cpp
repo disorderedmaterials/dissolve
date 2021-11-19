@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view MolShakeModule::type() const { return "MolShake"; }
-
-// Return category for module
-std::string_view MolShakeModule::category() const { return "Evolution"; }
-
-// Return brief description of module
-std::string_view MolShakeModule::brief() const { return "Perform molecular Monte Carlo moves"; }

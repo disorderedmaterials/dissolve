@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view BraggModule::type() const { return "Bragg"; }
-
-// Return category for module
-std::string_view BraggModule::category() const { return "Correlation Functions"; }
-
-// Return brief description of module
-std::string_view BraggModule::brief() const { return "Calculate Bragg intensities"; }

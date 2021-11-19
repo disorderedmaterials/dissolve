@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view ExportTrajectoryModule::type() const { return "ExportTrajectory"; }
-
-// Return category for module
-std::string_view ExportTrajectoryModule::category() const { return "Export"; }
-
-// Return brief description of module
-std::string_view ExportTrajectoryModule::brief() const { return "Export trajectory for a Configuration"; }

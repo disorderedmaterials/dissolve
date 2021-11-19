@@ -12,10 +12,3 @@ CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::An
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *CalculateRDFModule::createInstance() const { return new CalculateRDFModule; }

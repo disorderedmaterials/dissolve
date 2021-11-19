@@ -8,10 +8,3 @@ XRaySQModule::XRaySQModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *XRaySQModule::createInstance() const { return new XRaySQModule; }

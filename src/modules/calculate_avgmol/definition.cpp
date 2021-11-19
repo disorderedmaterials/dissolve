@@ -5,12 +5,3 @@
 
 // Return type of module
 std::string_view CalculateAvgMolModule::type() const { return "CalculateAvgMol"; }
-
-// Return category for module
-std::string_view CalculateAvgMolModule::category() const { return "Analysis / Geometry"; }
-
-// Return brief description of module
-std::string_view CalculateAvgMolModule::brief() const
-{
-    return "Calculate average atomic positions of a species around an oriented site";
-}

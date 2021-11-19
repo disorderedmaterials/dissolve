@@ -12,10 +12,3 @@ CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNo
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *CalculateDAngleModule::createInstance() const { return new CalculateDAngleModule; }

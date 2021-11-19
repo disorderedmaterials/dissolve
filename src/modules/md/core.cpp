@@ -8,10 +8,3 @@ MDModule::MDModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *MDModule::createInstance() const { return new MDModule; }

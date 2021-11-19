@@ -12,10 +12,3 @@ CheckSpeciesModule::CheckSpeciesModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *CheckSpeciesModule::createInstance() const { return new CheckSpeciesModule; }

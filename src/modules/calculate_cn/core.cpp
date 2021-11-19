@@ -12,10 +12,3 @@ CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::Anal
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *CalculateCNModule::createInstance() const { return new CalculateCNModule; }

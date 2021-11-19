@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view XRaySQModule::type() const { return "XRaySQ"; }
-
-// Return category for module
-std::string_view XRaySQModule::category() const { return "Correlation Functions"; }
-
-// Return brief description of module
-std::string_view XRaySQModule::brief() const { return "Calculate x-ray-weighted S(Q)"; }

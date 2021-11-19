@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view DataTestModule::type() const { return "DataTest"; }
-
-// Return category for module
-std::string_view DataTestModule::category() const { return "Checks & Tests"; }
-
-// Return brief description of module
-std::string_view DataTestModule::brief() const { return "Test named data in other modules against reference data"; }

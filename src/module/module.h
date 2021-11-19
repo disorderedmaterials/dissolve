@@ -25,13 +25,6 @@ class Module
     virtual ~Module() = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    virtual Module *createInstance() const = 0;
-
-    /*
      * Definition
      */
     protected:
@@ -41,14 +34,10 @@ class Module
     public:
     // Return type of Module
     virtual std::string_view type() const = 0;
-    // Return category for Module
-    virtual std::string_view category() const = 0;
     // Set unique name of Module
     void setUniqueName(std::string_view uniqueName);
     // Return unique name of Module
     std::string_view uniqueName() const;
-    // Return brief description of Module
-    virtual std::string_view brief() const = 0;
 
     /*
      * Keywords

@@ -8,10 +8,3 @@ AnalyseModule::AnalyseModule() : Module(), analyser_(ProcedureNode::AnalysisCont
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *AnalyseModule::createInstance() const { return new AnalyseModule; }

@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view EPSRModule::type() const { return "EPSR"; }
-
-// Return category for module
-std::string_view EPSRModule::category() const { return "Forcefield"; }
-
-// Return brief description of module
-std::string_view EPSRModule::brief() const { return "Refine interatomic potentials in a manner consistent with EPSR"; }

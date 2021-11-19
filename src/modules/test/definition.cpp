@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view TestModule::type() const { return "Test"; }
-
-// Return category for module
-std::string_view TestModule::category() const { return "HIDDEN"; }
-
-// Return brief description of module
-std::string_view TestModule::brief() const { return "Development Module"; }

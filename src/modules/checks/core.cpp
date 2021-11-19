@@ -8,10 +8,3 @@ ChecksModule::ChecksModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *ChecksModule::createInstance() const { return new ChecksModule; }

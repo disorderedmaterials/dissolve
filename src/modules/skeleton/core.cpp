@@ -12,10 +12,3 @@ SkeletonModule::SkeletonModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *SkeletonModule::createInstance() const { return new SkeletonModule; }

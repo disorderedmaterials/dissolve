@@ -8,10 +8,3 @@ EPSRModule::EPSRModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *EPSRModule::createInstance() const { return new EPSRModule; }

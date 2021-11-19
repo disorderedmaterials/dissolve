@@ -8,10 +8,3 @@ ExportTrajectoryModule::ExportTrajectoryModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *ExportTrajectoryModule::createInstance() const { return new ExportTrajectoryModule; }

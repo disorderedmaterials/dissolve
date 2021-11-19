@@ -8,10 +8,3 @@ TestModule::TestModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *TestModule::createInstance() const { return new TestModule; }

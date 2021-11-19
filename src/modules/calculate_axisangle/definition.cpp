@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view CalculateAxisAngleModule::type() const { return "CalculateAxisAngle"; }
-
-// Return category for module
-std::string_view CalculateAxisAngleModule::category() const { return "Analysis"; }
-
-// Return brief description of module
-std::string_view CalculateAxisAngleModule::brief() const { return "Calculate distance/angle map between site axes"; }

@@ -8,10 +8,3 @@ DataTestModule::DataTestModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *DataTestModule::createInstance() const { return new DataTestModule; }

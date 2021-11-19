@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view GeometryOptimisationModule::type() const { return "GeometryOptimisation"; }
-
-// Return category for module
-std::string_view GeometryOptimisationModule::category() const { return "Optimisation"; }
-
-// Return brief description of module
-std::string_view GeometryOptimisationModule::brief() const { return "Optimise geometry with respect to energy (minimise)"; }

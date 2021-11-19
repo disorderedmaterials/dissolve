@@ -5,12 +5,3 @@
 
 // Return type of module
 std::string_view IntraShakeModule::type() const { return "IntraShake"; }
-
-// Return category for module
-std::string_view IntraShakeModule::category() const { return "Evolution"; }
-
-// Return brief description of module
-std::string_view IntraShakeModule::brief() const
-{
-    return "Perform Monte Carlo shakes on intramolecular terms within Molecules";
-}

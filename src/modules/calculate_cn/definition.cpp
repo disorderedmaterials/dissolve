@@ -5,12 +5,3 @@
 
 // Return type of module
 std::string_view CalculateCNModule::type() const { return "CalculateCN"; }
-
-// Return category for module
-std::string_view CalculateCNModule::category() const { return "Analysis"; }
-
-// Return brief description of module
-std::string_view CalculateCNModule::brief() const
-{
-    return "Calculate coordination numbers from an existing radial distribution function";
-}

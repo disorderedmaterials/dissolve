@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view SQModule::type() const { return "SQ"; }
-
-// Return category for module
-std::string_view SQModule::category() const { return "Correlation Functions"; }
-
-// Return brief description of module
-std::string_view SQModule::brief() const { return "Transform g(r) into unweighted S(Q)"; }

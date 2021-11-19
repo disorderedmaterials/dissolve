@@ -12,10 +12,3 @@ CalculateAngleModule::CalculateAngleModule() : Module(), analyser_(ProcedureNode
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *CalculateAngleModule::createInstance() const { return new CalculateAngleModule; }

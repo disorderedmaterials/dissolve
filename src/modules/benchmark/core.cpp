@@ -12,10 +12,3 @@ BenchmarkModule::BenchmarkModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *BenchmarkModule::createInstance() const { return new BenchmarkModule; }

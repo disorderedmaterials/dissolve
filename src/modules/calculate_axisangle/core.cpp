@@ -12,10 +12,3 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(Proce
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *CalculateAxisAngleModule::createInstance() const { return new CalculateAxisAngleModule; }

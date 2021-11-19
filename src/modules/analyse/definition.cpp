@@ -5,9 +5,3 @@
 
 // Return type of module
 std::string_view AnalyseModule::type() const { return "Analyse"; }
-
-// Return category for module
-std::string_view AnalyseModule::category() const { return "Analysis"; }
-
-// Return brief description of module
-std::string_view AnalyseModule::brief() const { return "Perform custom analysis of one or more Configurations"; }

@@ -8,10 +8,3 @@ SQModule::SQModule() : Module()
     // Initialise Module - set up keywords etc.
     initialise();
 }
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module *SQModule::createInstance() const { return new SQModule; }
