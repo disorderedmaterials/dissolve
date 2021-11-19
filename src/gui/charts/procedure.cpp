@@ -142,7 +142,8 @@ void ProcedureChart::updateContentBlocks()
     auto indentLevel = 0;
 
     // Start with the root sequence node of the Procedure - we deal recursively with the rest
-    updateContentBlocks(std::dynamic_pointer_cast<const SequenceProcedureNode>(procedure_->rootSequence().shared_from_this()), rootSequenceNodeWidgets_, indentLevel);
+    updateContentBlocks(std::dynamic_pointer_cast<const SequenceProcedureNode>(procedure_->rootSequence().shared_from_this()),
+                        rootSequenceNodeWidgets_, indentLevel);
 }
 
 /*

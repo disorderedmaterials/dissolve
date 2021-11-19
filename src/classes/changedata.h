@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/list.h"
 #include "templates/vector3.h"
 
 // Forward Declarations

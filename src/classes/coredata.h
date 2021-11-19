@@ -6,7 +6,6 @@
 #include "base/version.h"
 #include "classes/masterintra.h"
 #include "data/elements.h"
-#include "templates/list.h"
 #include "templates/optionalref.h"
 #include "templates/reflist.h"
 #include <list>

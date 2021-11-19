@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "templates/list.h"
 #include "templates/optionalref.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
@@ -203,42 +202,6 @@ template <class T, class I> class TreeWidgetUpdater
     }
 
     public:
-    // Update the top-level items of the specified parent QTreeWidget
-    TreeWidgetUpdater(QTreeWidget *treeWidget, const List<I> &data, T *functionParent,
-                      TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
-    {
-        int count = 0;
-
-        ListIterator<I> dataIterator(data);
-        while (I *dataItem = dataIterator.iterate())
-        {
-            updateTreeTopLevel(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
-            ++count;
-        }
-
-        // If there are still items remaining in the widget, delete them now
-        while (count < treeWidget->topLevelItemCount())
-        {
-            QTreeWidgetItem *item = treeWidget->takeTopLevelItem(count);
-            delete item;
-        }
-    }
-
-    // Update the children of the specified parent QTreeWidgetItem
-    TreeWidgetUpdater(QTreeWidgetItem *parentItem, const List<I> &data, T *functionParent,
-                      TreeWidgetChildUpdateFunction updateChildFunction)
-    {
-        int count = 0;
-
-        ListIterator<I> dataIterator(data);
-        while (I *dataItem = dataIterator.iterate())
-            updateTreeChildren(parentItem, count++, dataItem, functionParent, updateChildFunction);
-
-        // If there are still items remaining in the widget, delete them now
-        while (count < parentItem->childCount())
-            parentItem->removeChild(parentItem->child(count));
-    }
-
     // Update the children of the specified parent QTreeWidgetItem
     TreeWidgetUpdater(QTreeWidgetItem *parentItem, const RefList<I> &data, T *functionParent,
                       TreeWidgetChildUpdateFunction updateChildFunction)

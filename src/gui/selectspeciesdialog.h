@@ -5,7 +5,6 @@
 
 #include "gui/models/speciesFilterProxy.h"
 #include "gui/ui_selectspeciesdialog.h"
-#include "templates/list.h"
 #include <QDialog>
 
 // Forward Declarations

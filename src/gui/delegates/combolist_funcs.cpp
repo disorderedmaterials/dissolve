@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/delegates/combolist.hui"
-#include "templates/list.h"
 #include "templates/variantpointer.h"
 
 /*

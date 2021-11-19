@@ -5,7 +5,6 @@
 
 #include "classes/speciesintra.h"
 #include "templates/array2d.h"
-#include "templates/listitem.h"
 
 /*
  * MasterIntra Definition

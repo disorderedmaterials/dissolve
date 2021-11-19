@@ -7,7 +7,6 @@
 #include "gui/models/speciesFilterProxy.h"
 #include "gui/models/speciesModel.h"
 #include "gui/ui_selectspecieswidget.h"
-#include "templates/list.h"
 #include <QWidget>
 
 // Forward Declarations

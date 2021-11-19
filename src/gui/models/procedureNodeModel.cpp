@@ -3,10 +3,10 @@
 
 #include "gui/models/procedureNodeModel.h"
 
-Q_DECLARE_METATYPE(ConstNodeRef );
+Q_DECLARE_METATYPE(ConstNodeRef);
 
 // Set source Species data
-void ProcedureNodeModel::setData(const std::vector<ConstNodeRef > &nodes)
+void ProcedureNodeModel::setData(const std::vector<ConstNodeRef> &nodes)
 {
     beginResetModel();
     nodes_ = nodes;
@@ -14,19 +14,19 @@ void ProcedureNodeModel::setData(const std::vector<ConstNodeRef > &nodes)
 }
 
 // Set node selected function
-void ProcedureNodeModel::setNodeSelectedFunction(std::function<bool(ConstNodeRef )> nodeSelectedFunction)
+void ProcedureNodeModel::setNodeSelectedFunction(std::function<bool(ConstNodeRef)> nodeSelectedFunction)
 {
     nodeSelectedFunction_ = std::move(nodeSelectedFunction);
 }
 
 // Set node selected function
-void ProcedureNodeModel::setNodeDeselectedFunction(std::function<bool(ConstNodeRef )> nodeDeselectedFunction)
+void ProcedureNodeModel::setNodeDeselectedFunction(std::function<bool(ConstNodeRef)> nodeDeselectedFunction)
 {
     nodeDeselectedFunction_ = std::move(nodeDeselectedFunction);
 }
 
 // Set node presence function
-void ProcedureNodeModel::setNodePresenceFunction(std::function<bool(ConstNodeRef )> nodePresenceFunction)
+void ProcedureNodeModel::setNodePresenceFunction(std::function<bool(ConstNodeRef)> nodePresenceFunction)
 {
     nodePresenceFunction_ = std::move(nodePresenceFunction);
 }

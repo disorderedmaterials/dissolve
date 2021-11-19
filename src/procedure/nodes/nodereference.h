@@ -4,7 +4,6 @@
 #pragma once
 
 #include "procedure/nodes/node.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 class CoreData;

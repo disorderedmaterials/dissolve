@@ -52,8 +52,8 @@ class ProcedureChart : public ChartBase
 
     private:
     // Create / own chart block widgets for the specified sequence
-    void updateContentBlocks(std::shared_ptr<const SequenceProcedureNode> sequenceNode, RefList<ProcedureChartNodeBlock> &oldSequenceWidgets,
-                             int &indentLevel);
+    void updateContentBlocks(std::shared_ptr<const SequenceProcedureNode> sequenceNode,
+                             RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel);
     // Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
     ProcedureChartNodeBlock *nodeBlock(NodeRef node);
     // Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list

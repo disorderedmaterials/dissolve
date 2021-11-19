@@ -4,7 +4,6 @@
 #pragma once
 
 #include "module/group.h"
-#include "templates/list.h"
 #include "templates/refdatalist.h"
 
 // Forward Declarations

@@ -6,7 +6,6 @@
 #include "classes/atomtypemix.h"
 #include "classes/isotopologues.h"
 #include "templates/array2d.h"
-#include "templates/list.h"
 #include <vector>
 
 // Neutron Weights Container

@@ -38,7 +38,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     generator.addRootSequenceNode(paramsNode);
     generator.addRootSequenceNode(std::make_shared<BoxProcedureNode>());
     for (const auto *sp : mixSpecies)
-      generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(sp, 100, NodeValue("rho", paramsNode->parameters())));
+        generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(sp, 100, NodeValue("rho", paramsNode->parameters())));
 
     // Run the generator
     newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
@@ -70,16 +70,16 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     {
         // Add a parameter for the ratio of this species to the first (or the population of the first)
         if (count == 0)
-	  generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(sp, NodeValue("populationA", paramsNode->parameters()),
-                                                               NodeValue("rho", paramsNode->parameters())));
+            generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(
+                sp, NodeValue("populationA", paramsNode->parameters()), NodeValue("rho", paramsNode->parameters())));
         else
         {
             auto parameterName = fmt::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
 
-            generator.addRootSequenceNode(
-					  std::make_shared<AddProcedureNode>(sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()),
-                                     NodeValue("rho", paramsNode->parameters())));
+            generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(
+                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()),
+                NodeValue("rho", paramsNode->parameters())));
         }
 
         ++count;
@@ -153,14 +153,14 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
         // Add a parameter for the ratio of this species to the first (or the population of the first)
         std::shared_ptr<AddProcedureNode> addSpeciesNode = nullptr;
         if (count == 0)
-	  addSpeciesNode = std::make_shared<AddProcedureNode>(sp, NodeValue("populationA", paramsNode->parameters()));
+            addSpeciesNode = std::make_shared<AddProcedureNode>(sp, NodeValue("populationA", paramsNode->parameters()));
         else
         {
             auto parameterName = fmt::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
 
-            addSpeciesNode =
-	      std::make_shared<AddProcedureNode>(sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
+            addSpeciesNode = std::make_shared<AddProcedureNode>(
+                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
         }
         addSpeciesNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
         generator.addRootSequenceNode(addSpeciesNode);

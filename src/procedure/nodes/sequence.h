@@ -5,7 +5,6 @@
 
 #include "expression/expression.h"
 #include "procedure/nodes/node.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class Procedure;

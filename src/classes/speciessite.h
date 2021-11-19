@@ -5,7 +5,6 @@
 
 #include "base/enumoptions.h"
 #include "base/version.h"
-#include "templates/listitem.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 

@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/enumoptionsbase.h"
-#include "templates/list.h"
 #include "templates/variantpointer.h"
 #include <QComboBox>
 
@@ -28,16 +27,6 @@ class ComboEnumOptionsPopulator
 template <class T> class ComboNameListPopulator
 {
     public:
-    ComboNameListPopulator(QComboBox *combo, const List<T> &items, bool append = false)
-    {
-        // Clear the combobox
-        if (!append)
-            combo->clear();
-
-        // Add our text items to the list
-        for (T *item = items.first(); item != nullptr; item = item->next())
-            combo->addItem(item->name(), VariantPointer<T>(item));
-    }
     ComboNameListPopulator(QComboBox *combo, const std::vector<T> &items, QString prefix, bool append = false)
     {
         // Clear the combobox

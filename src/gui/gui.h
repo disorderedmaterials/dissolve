@@ -8,7 +8,6 @@
 #include "gui/outputhandler.hui"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class Configuration;

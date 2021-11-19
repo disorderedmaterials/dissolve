@@ -5,7 +5,6 @@
 
 #include "data/ff/library.h"
 #include "gui/ui_selectconfigurationwidget.h"
-#include "templates/list.h"
 #include <QWidget>
 
 // Forward Declarations

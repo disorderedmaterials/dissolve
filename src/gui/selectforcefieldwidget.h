@@ -5,7 +5,6 @@
 
 #include "data/ff/library.h"
 #include "gui/ui_selectforcefieldwidget.h"
-#include "templates/list.h"
 #include <QWidget>
 
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)

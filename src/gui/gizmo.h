@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/sysfunc.h"
-#include "templates/listitem.h"
 #include "templates/reflist.h"
 #include <QWidget>
 

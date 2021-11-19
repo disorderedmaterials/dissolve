@@ -6,7 +6,6 @@
 #include "classes/atomtypemix.h"
 #include "data/formfactors.h"
 #include "templates/array2d.h"
-#include "templates/list.h"
 #include <functional>
 #include <vector>
 

@@ -8,7 +8,6 @@
 #include "gui/models/dataManagerReferencePointModel.h"
 #include "gui/models/dataManagerSimulationModel.h"
 #include "gui/ui_datamanagerdialog.h"
-#include "templates/list.h"
 #include <QDialog>
 #include <QSortFilterProxyModel>
 #include <vector>

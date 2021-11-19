@@ -6,7 +6,6 @@
 #include "gui/charts/chartblock.h"
 #include "gui/charts/charthotspot.h"
 #include "gui/widgets/mimestrings.h"
-#include "templates/list.h"
 #include "templates/reflist.h"
 #include <QWidget>
 

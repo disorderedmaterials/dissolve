@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
-#include "templates/list.h"
 #include "templates/reflist.h"
 #include <QToolBox>
 

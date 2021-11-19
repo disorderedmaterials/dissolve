@@ -32,7 +32,7 @@ class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     // Main form declaration
     Ui::NodeRefListWidget ui_;
     // Allowed nodes to display in the model
-    std::vector<ConstNodeRef > allowedNodes_;
+    std::vector<ConstNodeRef> allowedNodes_;
     // Model for the node list
     ProcedureNodeModel nodeModel_;
 
