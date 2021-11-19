@@ -23,32 +23,32 @@ int SpeciesTorsionModel::columnCount(const QModelIndex &parent) const
 QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::ToolTipRole)
-        headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
+        return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
     auto &item = torsions_[index.row()];
 
     if (role == Qt::UserRole)
         return QVariant::fromValue(&item);
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return {};
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
+        switch (index.column())
+        {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                return item.index(index.column()) + 1;
+            case 4:
+                return item.masterParameters()
+                           ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
+                           : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
+            case 5:
+                return QString::fromStdString(joinStrings(item.parameters()));
+            default:
+                return {};
+        }
 
-    switch (index.column())
-    {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-            return item.index(index.column()) + 1;
-        case 4:
-            return item.masterParameters()
-                       ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
-                       : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
-        case 5:
-            return QString::fromStdString(joinStrings(item.parameters()));
-        default:
-            return {};
-    }
+    return {};
 }
 
 QVariant SpeciesTorsionModel::headerData(int section, Qt::Orientation orientation, int role) const

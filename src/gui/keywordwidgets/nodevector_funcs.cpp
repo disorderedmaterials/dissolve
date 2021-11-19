@@ -8,8 +8,8 @@
 #include "templates/algorithms.h"
 #include <QLabel>
 
-NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, NodeVectorKeywordBase *keyword, const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
@@ -19,11 +19,11 @@ NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, KeywordBase *k
     connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<NodeVectorKeyword *>(keyword);
-    if (!keyword_)
-        throw(std::runtime_error(fmt::format("Couldn't cast base keyword '{}' into NodeKeyword.\n", keyword->name())));
-    nodeModel_.setCheckStateData(keyword_->data());
+    allowedNodes_ = keyword_->allowedNodes();
+    nodeModel_.setData(allowedNodes_);
+    nodeModel_.setNodeSelectedFunction([&](const ProcedureNode *node) { return keyword_->addNode(node); });
+    nodeModel_.setNodeDeselectedFunction([&](const ProcedureNode *node) { return keyword_->removeNode(node); });
+    nodeModel_.setNodePresenceFunction([&](const ProcedureNode *node) { return keyword_->isPresent(node); });
 
     // Summary text on KeywordDropDown button
     setSummaryText("Edit...");
@@ -57,19 +57,6 @@ void NodeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
     refreshing_ = true;
 
-    // Get list of available nodes of the correct type and in the relevant scope
-    std::vector<const ProcedureNode *> nodes;
-    if (keyword_->onlyInScope())
-        nodes = keyword_->parentNode()->nodesInScope(keyword_->nodeType(), keyword_->nodeClass());
-    else
-    {
-        auto *proc = keyword_->parentNode()->procedure();
-        if (proc)
-            nodes = proc->nodes(keyword_->nodeType(), keyword_->nodeClass());
-    }
-    nodeModel_.setData(nodes);
-    nodeModel_.setCheckStateData(keyword_->data());
-
     updateSummaryText();
 
     refreshing_ = false;
@@ -84,9 +71,9 @@ void NodeVectorKeywordWidget::updateKeywordData()
 // Update summary text
 void NodeVectorKeywordWidget::updateSummaryText()
 {
-    if (keyword_->data().empty())
+    auto nodes{keyword_->nodes()};
+    if (nodes.empty())
         setSummaryText("<None>");
     else
-        setSummaryText(
-            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &node) { return node->name(); })));
+        setSummaryText(QString::fromStdString(joinStrings(nodes, ", ", [](const auto &node) { return node->name(); })));
 }

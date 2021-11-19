@@ -6,13 +6,11 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-ConfigurationVectorKeyword::ConfigurationVectorKeyword(const std::vector<Configuration *> &cfgs, int maxListSize)
-    : KeywordData<std::vector<Configuration *>>(KeywordBase::ConfigurationVectorData, cfgs)
+ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration *> &data, int maxListSize)
+    : KeywordBase(typeid(this)), data_(data)
 {
     maxListSize_ = maxListSize;
 }
-
-ConfigurationVectorKeyword::~ConfigurationVectorKeyword() = default;
 
 /*
  * Data
@@ -20,6 +18,10 @@ ConfigurationVectorKeyword::~ConfigurationVectorKeyword() = default;
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool ConfigurationVectorKeyword::isDataEmpty() const { return data_.empty(); }
+
+// Return reference to data vector
+std::vector<Configuration *> &ConfigurationVectorKeyword::data() { return data_; }
+const std::vector<Configuration *> &ConfigurationVectorKeyword::data() const { return data_; }
 
 // Return maximum number of Configurations to allow in the list
 int ConfigurationVectorKeyword::maxListSize() const { return maxListSize_; }

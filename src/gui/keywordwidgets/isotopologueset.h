@@ -19,7 +19,7 @@ class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidge
     Q_OBJECT
 
     public:
-    IsotopologueSetKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    IsotopologueSetKeywordWidget(QWidget *parent, IsotopologueSetKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

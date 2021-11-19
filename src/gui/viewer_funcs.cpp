@@ -41,4 +41,9 @@ BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderabl
     setFormat(surfaceFormat);
 }
 
-BaseViewer::~BaseViewer() {}
+/*
+ * Main UI
+ */
+
+// Set pointer to DissolveWindow (for optional integrations with main UI)
+void BaseViewer::setDissolveWindow(DissolveWindow *dissolveWindow) { dissolveWindow_ = dissolveWindow; }

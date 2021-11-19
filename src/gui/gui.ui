@@ -201,6 +201,7 @@
      <addaction name="SpeciesImportFromDissolveAction"/>
      <addaction name="SpeciesImportFromXYZAction"/>
      <addaction name="SpeciesImportLigParGenAction"/>
+     <addaction name="SpeciesImportFromCIFAction"/>
     </widget>
     <widget class="QMenu" name="SpeciesReduceForcefieldTermsMenu">
      <property name="font">
@@ -224,6 +225,7 @@
     <addaction name="SpeciesCopyTermsAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesSetAtomTypesInSelectionAction"/>
+    <addaction name="SpeciesSetChargesInSelectionAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
@@ -839,6 +841,16 @@
   <action name="SpeciesCopyTermsAction">
    <property name="text">
     <string>C&amp;opy Terms From Species...</string>
+   </property>
+  </action>
+  <action name="SpeciesImportFromCIFAction">
+   <property name="text">
+    <string>From &amp;CIF...</string>
+   </property>
+  </action>
+  <action name="SpeciesSetChargesInSelectionAction">
+   <property name="text">
+    <string>Set Atom C&amp;harges in Selection...</string>
    </property>
   </action>
  </widget>

@@ -3,27 +3,31 @@
 
 #pragma once
 
-#include "keywords/data.h"
-#include "templates/list.h"
+#include "keywords/base.h"
 
 // Forward Declarations
 class SpeciesSite;
 
 // Keyword with Site Data
-class SpeciesSiteKeyword : public KeywordData<SpeciesSite *>
+class SpeciesSiteKeyword : public KeywordBase
 {
     public:
-    SpeciesSiteKeyword(SpeciesSite *site = nullptr, bool axesRequired = false);
-    ~SpeciesSiteKeyword() override;
+    explicit SpeciesSiteKeyword(const SpeciesSite *&data, bool axesRequired = false);
+    ~SpeciesSiteKeyword() override = default;
 
     /*
-     * Specification
+     * Data
      */
     private:
+    // Reference to data
+    const SpeciesSite *&data_;
     // Whether sites in the list must have a defined orientation
     bool axesRequired_;
 
     public:
+    // Return reference to data
+    const SpeciesSite *&data();
+    const SpeciesSite *&data() const;
     // Return whether axes are required for the site
     bool axesRequired() const;
 

@@ -58,6 +58,8 @@ class CIFImport
     std::vector<CIFBondingPair> bondingPairs_;
 
     public:
+    // Set space group from index
+    void setSpaceGroupFromIndex(int index);
     // Return space group information
     const SpaceGroup &spaceGroup() const;
     // Return cell lengths

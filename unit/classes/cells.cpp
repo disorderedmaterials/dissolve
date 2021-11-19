@@ -46,19 +46,23 @@ TEST(CellsTest, Basic)
     // Set up pseudo-species
     auto *argon = dissolve.addSpecies();
     argon->setName("Argon");
-    argon->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0).setAtomType(arType);
+    argon->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0);
+    argon->atom(0).setAtomType(arType);
     auto *water = dissolve.addSpecies();
     water->setName("Water");
-    water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0).setAtomType(hType);
-    water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0).setAtomType(oType);
-    water->addAtom(Elements::H, {-cos(109.5), sin(109.5), 0.0}, 0.0).setAtomType(hType);
+    water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0);
+    water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0);
+    water->addAtom(Elements::H, {-cos(109.5), sin(109.5), 0.0}, 0.0);
+    water->atom(0).setAtomType(hType);
+    water->atom(1).setAtomType(oType);
+    water->atom(2).setAtomType(hType);
     water->addBond(0, 1);
     water->addBond(1, 2);
 
     // Setup Configuration
     auto *cfg = dissolve.addConfiguration();
     AtomChangeToken lock(*cfg);
-    cfg->createBox({20, 20, 20}, {90, 90, 90});
+    cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, 7.0, dissolve.pairPotentialRange());
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
     cfg->addMolecule(lock, argon);
     for (auto n = 0; n < 267; ++n)

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include <optional>
 #include <tuple>
 #include <vector>
@@ -11,21 +11,28 @@
 using IntegerStringVectorKeywordData = std::vector<std::tuple<std::vector<int>, std::vector<std::string>>>;
 
 // Keyword with list of Tuples of Vectors
-class IntegerStringVectorKeyword : public KeywordData<IntegerStringVectorKeywordData &>
+class IntegerStringVectorKeyword : public KeywordBase
 {
     public:
-    IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers,
-                               std::optional<int> nRequiredValues = std::nullopt);
-    ~IntegerStringVectorKeyword() override;
+    explicit IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers,
+                                        std::optional<int> nRequiredValues = std::nullopt);
+    ~IntegerStringVectorKeyword() override = default;
 
     /*
      * Data
      */
     private:
+    // Reference to data
+    IntegerStringVectorKeywordData &data_;
     // Number of required integers
     int nRequiredIntegers_;
     // Number of required values (or, if not specified, one or more)
     std::optional<int> nRequiredValues_;
+
+    public:
+    // Return reference to data
+    IntegerStringVectorKeywordData &data();
+    const IntegerStringVectorKeywordData &data() const;
 
     /*
      * Arguments

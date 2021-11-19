@@ -10,7 +10,6 @@
 class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Collect1D
 class Collect1DProcedureNode : public ProcedureNode
@@ -31,31 +30,26 @@ class Collect1DProcedureNode : public ProcedureNode
      * Data
      */
     private:
-    // Observable to bin along x (retrieved from keyword)
-    const CalculateProcedureNodeBase *xObservable_;
-    // Index of x observable data to use (retrieved from keyword)
-    int xObservableIndex_;
+    // Observable (and associated index thereof) to bin along x
+    std::pair<const CalculateProcedureNodeBase *, int> xObservable_{nullptr, 0};
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram1D> histogram_;
+    // Range and binwidth of the histogram for QuantityX
+    Vec3<double> rangeX_{0.0, 10.0, 0.05};
+    ;
 
     public:
     // Return current data
     Data1D data() const;
     // Return accumulated data
     const Data1D &accumulatedData() const;
-    // Return range minimum
-    double minimum() const;
-    // Return range maximum
-    double maximum() const;
-    // Return bin width
-    double binWidth() const;
 
     /*
      * Branches
      */
     private:
     // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_;
+    SequenceProcedureNode *subCollectBranch_{nullptr};
 
     public:
     // Add and return subcollection sequence branch

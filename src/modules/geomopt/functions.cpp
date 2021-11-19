@@ -12,13 +12,13 @@
 // Copy coordinates from supplied Configuration into reference arrays
 template <> void GeometryOptimisationModule::setReferenceCoordinates(Configuration *cfg)
 {
-    std::transform(cfg->atoms().begin(), cfg->atoms().end(), rRef_.begin(), [](const auto i) { return i.r(); });
+    std::transform(cfg->atoms().begin(), cfg->atoms().end(), rRef_.begin(), [](const auto &i) { return i.r(); });
 }
 
 // Copy coordinates from supplied Species into reference arrays
 template <> void GeometryOptimisationModule::setReferenceCoordinates(Species *sp)
 {
-    std::transform(sp->atoms().begin(), sp->atoms().end(), rRef_.begin(), [](const auto i) { return i.r(); });
+    std::transform(sp->atoms().begin(), sp->atoms().end(), rRef_.begin(), [](const auto &i) { return i.r(); });
 }
 
 // Revert Configuration to reference coordinates
@@ -90,13 +90,8 @@ double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, 
 // Geometry optimise supplied Species
 bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMap, ProcessPool &procPool, Species *sp)
 {
-    // Retrieve Module options
-    nCycles_ = keywords_.asInt("NCycles");
-    tolerance_ = keywords_.asDouble("Tolerance");
-    initialStepSize_ = keywords_.asDouble("StepSize");
-
     // Print argument/parameter summary
-    Messenger::print("Optimise: Maximum number of cycles is {}.\n", nCycles_);
+    Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
     Messenger::print("Optimise: Base convergence tolerance is {}.\n", tolerance_);
     Messenger::print("Optimise: Initial step size to be used is {}.\n", initialStepSize_);
     Messenger::print("\n");

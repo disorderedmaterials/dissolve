@@ -25,6 +25,8 @@ class SpaceGroup
     public:
     // Initialise for specified Hermann-Mauguin group
     bool initialise(std::string hmName);
+    // Return number of defined space groups
+    static int nSpaceGroups();
     // Return whether the space group is valid
     bool isValid() const;
     // Return space group name
@@ -34,7 +36,7 @@ class SpaceGroup
     // Return formatted space group name
     std::string_view formattedName() const;
     // Return formatted space group name for International Tables index provided
-    static std::string_view formattedNname(int id);
+    static std::string_view formattedName(int id);
     // Return space group index in International Tables
     int internationalTableIndex() const;
     // Return vector of symmetry group operators for the space group

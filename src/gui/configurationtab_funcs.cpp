@@ -39,12 +39,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
 }
 
-ConfigurationTab::~ConfigurationTab()
-{
-    // Remove the Configuration represented in this tab
-    dissolve_.removeConfiguration(configuration_);
-}
-
 /*
  * MainTab Reimplementations
  */

@@ -3,41 +3,34 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include "procedure/nodes/node.h"
 
 // Forward Declarations
 class NodeValue;
 class SequenceProcedureNode;
 
-// Keyword with NodeValue
-class NodeBranchKeyword : public KeywordData<SequenceProcedureNode **>
+// Keyword with node sequence
+class NodeBranchKeyword : public KeywordBase
 {
     public:
-    NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer,
-                      ProcedureNode::NodeContext branchContext);
-    ~NodeBranchKeyword() override;
-
-    /*
-     * Parent Node
-     */
-    private:
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    NodeBranchKeyword(SequenceProcedureNode *&data, ProcedureNode *parentNode, ProcedureNode::NodeContext branchContext);
+    ~NodeBranchKeyword() override = default;
 
     /*
      * Data
      */
+    private:
+    // Reference to data
+    SequenceProcedureNode *&data_;
+    // Parent ProcedureNode
+    ProcedureNode *parentNode_;
+    // Context for the target branch
+    ProcedureNode::NodeContext branchContext_;
+
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
     bool isDataEmpty() const override;
-
-    /*
-     * Branch Specification
-     */
-    private:
-    // Context for the target branch
-    ProcedureNode::NodeContext branchContext_;
 
     /*
      * Arguments

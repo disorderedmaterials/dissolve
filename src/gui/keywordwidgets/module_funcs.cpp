@@ -5,22 +5,15 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/module.h"
 
-ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData)
+ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, ModuleKeywordBase *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
 
     refreshing_ = true;
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<ModuleKeywordBase *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into ModuleKeywordBase.\n", keyword->name());
-    else
-    {
-        updateValue();
-    }
+    updateValue();
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -41,7 +34,7 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
 
     // Get data from the selected item
     Module *module = VariantPointer<Module>(ui_.ModuleCombo->itemData(index, Qt::UserRole));
-    keyword_->setModule(module);
+    keyword_->setData(module);
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -66,8 +59,8 @@ void ModuleKeywordWidget::updateValue()
 
     // Get the list of available modules of the specified type
     RefList<Module> availableModules = coreData_.findModules(keyword_->moduleType());
-    ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->baseModule(),
-                                                                  this, &ModuleKeywordWidget::uniqueNameOfModule);
+    ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->module(), this,
+                                                                  &ModuleKeywordWidget::uniqueNameOfModule);
 
     refreshing_ = false;
 }

@@ -345,7 +345,6 @@ if(GUI)
            keywordwidgets
            delegates
            charts
-           components
            models
            gui
            ${NO_WHOLE_ARCHIVE_FLAG}

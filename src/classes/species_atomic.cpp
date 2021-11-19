@@ -5,24 +5,49 @@
 #include "classes/species.h"
 #include "data/atomicmasses.h"
 
-// Add a new atom to the Species
-SpeciesAtom &Species::addAtom(Elements::Element Z, Vec3<double> r, double q)
+// Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
+void Species::getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
+                                  OptionalReferenceWrapper<SpeciesBond> excludeToo) const
+{
+    // Loop over Bonds on specified Atom
+    indices.emplace_back(index);
+    const auto &i = atoms_[index];
+    for (const SpeciesBond &bond : i.bonds())
+    {
+        // Is this either of the excluded bonds?
+        if (exclude && &(*exclude).get() == &bond)
+            continue;
+        if (excludeToo && &(*excludeToo).get() == &bond)
+            continue;
+
+        // Get the partner atom in the bond and select it (if it is not selected already)
+        auto *j = bond.partner(&i);
+        if (std::find(indices.begin(), indices.end(), j->index()) == indices.end())
+            getIndicesRecursive(indices, j->index(), exclude, excludeToo);
+    }
+}
+
+// Add a new atom to the Species, returning its index
+int Species::addAtom(Elements::Element Z, Vec3<double> r, double q, std::shared_ptr<AtomType> atomType)
 {
     auto &i = atoms_.emplace_back();
     i.setSpecies(this);
     i.set(Z, r.x, r.y, r.z, q);
     i.setIndex(atoms_.size() - 1);
+    i.setAtomType(atomType);
     ++version_;
-    return i;
+    return i.index();
 }
 
 // Remove the specified atom from the species
-void Species::removeAtom(SpeciesAtom *i)
+void Species::removeAtom(int index)
 {
     /*
      * Note: This is a deliberately simplistic function, and is intended only for use when creating / editing basic
      * species definitions upon which the simulation has no dependencies.
      */
+
+    auto *i = &atoms_[index];
 
     // Clear higher-order terms
     angles_.clear();
@@ -45,10 +70,38 @@ void Species::removeAtom(SpeciesAtom *i)
     // Now remove the atom
     auto atomIt = std::find_if(atoms_.begin(), atoms_.end(), [&](const auto &p) { return i == &p; });
     atoms_.erase(atomIt);
-    auto selAtomIt = std::find(selectedAtoms_.begin(), selectedAtoms_.end(), i);
-    if (selAtomIt != selectedAtoms_.end())
-        selectedAtoms_.erase(selAtomIt);
+    renumberAtoms();
 
+    ++version_;
+}
+
+// Remove set of atom indices
+void Species::removeAtoms(std::vector<int> indices)
+{
+    // Clear higher-order terms
+    angles_.clear();
+    torsions_.clear();
+    impropers_.clear();
+
+    // Detach & remove any bond terms that involve any of the supplied atom
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [&indices](auto &bond) {
+        if (std::find_if(indices.begin(), indices.end(),
+                         [&bond](const auto i) { return (bond.i()->index() == i || bond.j()->index() == i); }) != indices.end())
+        {
+            bond.detach();
+            return true;
+        }
+        else
+            return false;
+    });
+    if (it != bonds_.end())
+        bonds_.erase(it, bonds_.end());
+
+    // Now remove the atoms
+    auto atomIt = std::remove_if(atoms_.begin(), atoms_.end(), [&](const auto &i) {
+        return std::find(indices.begin(), indices.end(), i.index()) != indices.end();
+    });
+    atoms_.erase(atomIt, atoms_.end());
     renumberAtoms();
 
     ++version_;
@@ -65,9 +118,6 @@ void Species::renumberAtoms()
         i.setIndex(count++);
 }
 
-// Return the first Atom in the Species
-const SpeciesAtom &Species::firstAtom() const { return atoms_.front(); }
-
 // Return the nth Atom in the Species
 SpeciesAtom &Species::atom(int n)
 {
@@ -83,11 +133,9 @@ const SpeciesAtom &Species::atom(int n) const
     return *it;
 }
 
-// Return a vector of of immutable SpeciesAtoms
-const std::list<SpeciesAtom> &Species::atoms() const { return atoms_; }
-
-// Return vector of mutable atoms
-std::list<SpeciesAtom> &Species::atoms() { return atoms_; }
+// Return a vector of SpeciesAtoms
+const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
+std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
 
 // Set coordinates of specified atom
 void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
@@ -103,17 +151,17 @@ void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
 void Species::setAtomCoordinates(int id, double x, double y, double z) { atom(id).setCoordinates(x, y, z); }
 
 // Transmute specified SpeciesAtom
-void Species::transmuteAtom(SpeciesAtom *i, Elements::Element newZ)
+void Species::transmuteAtom(int index, Elements::Element newZ)
 {
-    assert(i);
+    auto &i = atoms_[index];
 
     // Nothing to do if current element matches that supplied
-    if (i->Z() == newZ)
+    if (i.Z() == newZ)
         return;
 
     // Remove any existing AtomType assignment
-    i->setAtomType(nullptr);
-    i->setZ(newZ);
+    i.setAtomType(nullptr);
+    i.setZ(newZ);
 
     ++version_;
 }
@@ -124,80 +172,78 @@ void Species::clearAtomSelection()
     for (auto &i : atoms_)
         i.setSelected(false);
 
-    selectedAtoms_.clear();
-
     ++atomSelectionVersion_;
 }
 
 // Add Atom to selection
-void Species::selectAtom(SpeciesAtom *i)
+void Species::selectAtom(int index)
 {
-    if (!i->isSelected())
+    auto &i = atoms_[index];
+    if (!i.isSelected())
     {
-        i->setSelected(true);
-
-        selectedAtoms_.push_back(i);
+        i.setSelected(true);
 
         ++atomSelectionVersion_;
     }
 }
 
 // Remove atom from selection
-void Species::deselectAtom(SpeciesAtom *i)
+void Species::deselectAtom(int index)
 {
-    if (i->isSelected())
+    auto &i = atoms_[index];
+    if (i.isSelected())
     {
-        i->setSelected(false);
-
-        selectedAtoms_.erase(std::remove(selectedAtoms_.begin(), selectedAtoms_.end(), i));
+        i.setSelected(false);
 
         ++atomSelectionVersion_;
     }
 }
 
 // Toggle selection state of specified atom
-void Species::toggleAtomSelection(SpeciesAtom *i)
+void Species::toggleAtomSelection(int index)
 {
-    if (i->isSelected())
-        deselectAtom(i);
+    if (atoms_[index].isSelected())
+        deselectAtom(index);
     else
-        selectAtom(i);
+        selectAtom(index);
 }
 
-// Select Atoms along any path from the specified one, ignoring the bond(s) provided
-void Species::selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalReferenceWrapper<SpeciesBond> excludeToo)
+// Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
+std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude,
+                                   OptionalReferenceWrapper<SpeciesBond> excludeToo) const
 {
-    // Loop over Bonds on specified Atom
-    selectAtom(i);
-    for (const SpeciesBond &bond : i->bonds())
-    {
-        // Is this either of the excluded bonds?
-        if (&exclude == &bond)
-            continue;
-        if (excludeToo && &(*excludeToo).get() == &bond)
-            continue;
-
-        // Get the partner atom in the bond and select it (if it is not selected already)
-        auto *partner = bond.partner(i);
-
-        if (std::find(selectedAtoms_.begin(), selectedAtoms_.end(), i) != selectedAtoms_.end())
-            ;
-        continue;
-        selectFromAtom(partner, exclude);
-    }
+    std::vector<int> indices;
+    getIndicesRecursive(indices, startIndex, exclude, excludeToo);
+    return indices;
 }
 
 // Return current atom selection
-const std::vector<SpeciesAtom *> &Species::selectedAtoms() const { return selectedAtoms_; }
+std::vector<SpeciesAtom *> Species::selectedAtoms()
+{
+    std::vector<SpeciesAtom *> selectedAtoms;
+    for (auto &i : atoms_)
+        if (i.isSelected())
+            selectedAtoms.emplace_back(&i);
 
-// Return number of selected Atoms
-int Species::nSelectedAtoms() const { return selectedAtoms_.size(); }
+    return selectedAtoms;
+}
+const std::vector<const SpeciesAtom *> Species::selectedAtoms() const
+{
+    std::vector<const SpeciesAtom *> selectedAtoms;
+    for (auto &i : atoms_)
+        if (i.isSelected())
+            selectedAtoms.emplace_back(&i);
+
+    return selectedAtoms;
+}
 
 // Return whether the current selection comprises atoms of a single element
 bool Species::isSelectionSingleElement() const
 {
-    return std::all_of(selectedAtoms_.begin(), selectedAtoms_.end(),
-                       [&](const auto *i) { return i->Z() == selectedAtoms_.front()->Z(); });
+    auto selection = selectedAtoms();
+    if (selection.empty())
+        return false;
+    return std::all_of(selection.begin(), selection.end(), [&](const auto *i) { return i->Z() == selection.front()->Z(); });
 }
 
 // Return version of the atom selection

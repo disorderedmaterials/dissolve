@@ -66,6 +66,10 @@ stages:
   - template: templates/package-linux.yml
 
   # Deploy
-  - template: templates/create-release.yml
-    parameters:
-      continuous: true
+  - stage: 'release'
+    displayName: 'Create Release'
+    jobs:
+      - template: templates/create-release.yml
+        parameters:
+          continuous: true
+

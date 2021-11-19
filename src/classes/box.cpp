@@ -198,7 +198,11 @@ Vec3<double> Box::getReal(Vec3<double> r) const
 }
 
 /*
+<<<<<<< HEAD
  * Geometry Calculation
+=======
+ * Geometry
+>>>>>>> efb17328b... Add manipulator functions to Molecule, and calculate COG correctly for large (all) molecules.
  */
 
 // Return angle (in degrees) between coordinates

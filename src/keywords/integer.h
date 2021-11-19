@@ -3,37 +3,34 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
+#include <optional>
 
 // Keyword with Integer Data
-class IntegerKeyword : public KeywordData<int>
+class IntegerKeyword : public KeywordBase
 {
     public:
-    IntegerKeyword(int value);
-    IntegerKeyword(int value, int minValue);
-    IntegerKeyword(int value, int minValue, int maxValue);
-    ~IntegerKeyword() override;
+    explicit IntegerKeyword(int &data, std::optional<int> minValue = std::nullopt, std::optional<int> maxValue = std::nullopt);
+    ~IntegerKeyword() override = default;
 
     /*
-     * Data Validation
+     * Data
      */
     private:
+    // Reference to target data
+    int &data_;
     // Validation limits to apply (if any)
-    bool minimumLimit_, maximumLimit_;
-    // Validation range (if appropriate)
-    int min_, max_;
+    std::optional<int> minimumLimit_, maximumLimit_;
 
     public:
-    // Return whether a minimum validation limit has been set
-    bool hasValidationMin();
+    // Set data
+    bool setData(int value);
+    // Return data
+    int data() const;
     // Return validation minimum limit
-    int validationMin();
-    // Return whether a maximum validation limit has been set
-    bool hasValidationMax();
+    std::optional<int> validationMin();
     // Return validation maximum limit
-    int validationMax();
-    // Validate supplied value
-    bool isValid(int value) override;
+    std::optional<int> validationMax();
 
     /*
      * Arguments
@@ -47,17 +44,4 @@ class IntegerKeyword : public KeywordData<int>
     bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Conversion
-     */
-    public:
-    // Return value (as bool)
-    bool asBool() override;
-    // Return value (as int)
-    int asInt() override;
-    // Return value (as double)
-    double asDouble() override;
-    // Return value (as string)
-    std::string asString() override;
 };

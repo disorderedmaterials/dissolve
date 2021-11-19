@@ -17,14 +17,18 @@ class ProcedureNodeModel : public QAbstractListModel
     private:
     // Source ProcedureNode data
     std::vector<const ProcedureNode *> nodes_;
-    // Vector containing checked items (if relevant)
-    OptionalReferenceWrapper<std::vector<const ProcedureNode *>> checkedItems_;
+    // Node selected/deselected/presence functions
+    std::function<bool(const ProcedureNode *)> nodeSelectedFunction_, nodeDeselectedFunction_, nodePresenceFunction_;
 
     public:
     // Set source ProcedureNode data
     void setData(const std::vector<const ProcedureNode *> &nodes);
-    // Set vector containing checked items
-    void setCheckStateData(std::vector<const ProcedureNode *> &checkedItemsVector);
+    // Set node selected function
+    void setNodeSelectedFunction(std::function<bool(const ProcedureNode *)> nodeSelectedFunction);
+    // Set node selected function
+    void setNodeDeselectedFunction(std::function<bool(const ProcedureNode *)> nodeDeselectedFunction);
+    // Set node presence function
+    void setNodePresenceFunction(std::function<bool(const ProcedureNode *)> nodePresenceFunction);
     // Return object represented by specified model index
     const ProcedureNode *rawData(const QModelIndex &index) const;
 

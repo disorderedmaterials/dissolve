@@ -2,25 +2,21 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "keywords/types.h"
-#include "math/error.h"
 #include "modules/datatest/datatest.h"
 
 // Perform any necessary initialisation for the Module
 void DataTestModule::initialise()
 {
     // Test
-    keywords_.add("Test", new Data1DStoreKeyword(test1DData_), "Data1D", "Specify one-dimensional test reference data",
-                  "<target> <fileformat> <filename> [options...]");
-    keywords_.add("Test", new Data2DStoreKeyword(test2DData_), "Data2D", "Specify two-dimensional test reference data",
-                  "<target> <fileformat> <filename> [options...]");
-    keywords_.add("Test", new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::EuclideanError), "ErrorType",
-                  "Type of error calculation to use");
-    keywords_.add("Test", new StringPairVectorKeyword(internal1DData_), "InternalData1D",
-                  "Specify one-dimensional internal reference and test data", "<target1> <target2>");
-    keywords_.add("Test", new StringDoubleVectorKeyword(), "SampledDouble",
-                  "Specify test reference values for named SampledDouble (value) data", "<target> <value> [...]");
-    keywords_.add("Test", new ValueStoreKeyword(testSampledVectorData_), "SampledVector",
-                  "Specify test reference values for named SampledVector data",
-                  "<target> <fileformat> <filename> [options...]");
-    keywords_.add("Test", new DoubleKeyword(5.0e-3, 1.0e-15), "Threshold", "Threshold for error metric above which test fails");
+    keywords_.add<Data1DStoreKeyword>("Test", "Data1D", "Specify one-dimensional test reference data", test1DData_);
+    keywords_.add<Data2DStoreKeyword>("Test", "Data2D", "Specify two-dimensional test reference data", test2DData_);
+    keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("Test", "ErrorType", "Type of error calculation to use", errorType_,
+                                                        Error::errorTypes());
+    keywords_.add<StringPairVectorKeyword>("Test", "InternalData1D", "Specify one-dimensional internal reference and test data",
+                                           internal1DData_);
+    keywords_.add<StringDoubleVectorKeyword>(
+        "Test", "SampledDouble", "Specify test reference values for named SampledDouble (value) data", testSampledDoubleData_);
+    keywords_.add<ValueStoreKeyword>("Test", "SampledVector", "Specify test reference values for named SampledVector data",
+                                     testSampledVectorData_);
+    keywords_.add<DoubleKeyword>("Test", "Threshold", "Threshold for error metric above which test fails", threshold_, 1.0e-15);
 }

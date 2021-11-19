@@ -15,21 +15,18 @@
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
 
-AtomTypeVectorKeywordWidget::AtomTypeVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData)
+AtomTypeVectorKeywordWidget::AtomTypeVectorKeywordWidget(QWidget *parent, AtomTypeVectorKeyword *keyword,
+                                                         const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
     ui_.AtomTypeList->setModel(&atomTypeModel_);
+    atomTypeModel_.setCheckStateData(keyword_->data());
 
     // Connect signals / slots
     connect(&atomTypeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<AtomTypeVectorKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into AtomTypeVectorKeyword.\n", keyword->name());
-    atomTypeModel_.setCheckStateData(keyword_->data());
 }
 
 /*

@@ -5,6 +5,7 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_node.h"
+#include "gui/models/procedureNodeModel.h"
 #include "keywords/node.h"
 #include <QWidget>
 
@@ -14,14 +15,14 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    NodeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    NodeKeywordWidget(QWidget *parent, NodeKeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    NodeKeyword *keyword_;
+    NodeKeywordBase *keyword_;
 
     /*
      * Widgets
@@ -29,10 +30,13 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
     private:
     // Main form declaration
     Ui::NodeWidget ui_;
+    // Allowed nodes to display in the model
+    std::vector<const ProcedureNode *> allowedNodes_;
+    // Model for the node list
+    ProcedureNodeModel nodeModel_;
 
     private slots:
-    // Value changed
-    void on_NodeCombo_currentIndexChanged(int index);
+    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
     // Keyword value changed

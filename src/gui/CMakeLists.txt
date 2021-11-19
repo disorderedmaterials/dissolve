@@ -1,11 +1,11 @@
 # Don't forget to include output directory, otherwise the UI file won't be wrapped!
 
-# -----------
-# Sub-Windows
-# -----------
+# -----------------
+# Main Dissolve GUI
+# -----------------
 
 # Meta-Objects
-set(components_MOC_HDRS
+set(gui_MOC_HDRS
     # Gizmos
     graphgizmo.h
     integrator1dgizmo.h
@@ -38,6 +38,7 @@ set(components_MOC_HDRS
     getspeciesnamedialog.h
     gettabnamedialog.h
     importligpargendialog.h
+    importcifdialog.h
     importspeciesdialog.h
     selectatomtypedialog.h
     selectconfigurationdialog.h
@@ -45,11 +46,32 @@ set(components_MOC_HDRS
     selectforcefielddialog.h
     selectgenericitemdialog.h
     selectspeciesdialog.h
+    # Editors
+    modulecontrolwidget.h
+    modulelisteditor.h
+    modulewidget.h
+    procedureeditor.h
+    # Main Tabs
+    configurationtab.h
+    forcefieldtab.h
+    layertab.h
+    maintab.h
+    messagestab.h
+    speciestab.h
+    workspacetab.h
+    # Main UI
+    gui.h
+    stockcolours.h
+    outputhandler.hui
+    tmdiarea.hui
+    thread.hui
+    maintabsbar.hui
+    maintabswidget.hui
 )
-qt6_wrap_cpp(components_MOC_SRCS ${components_MOC_HDRS})
+qt6_wrap_cpp(gui_MOC_SRCS ${gui_MOC_HDRS})
 
 # User Interface Files
-set(components_UIS
+set(gui_UIS
     # Gizmos
     graphgizmo.ui
     integrator1dgizmo.ui
@@ -78,6 +100,7 @@ set(components_UIS
     getspeciesnamedialog.ui
     gettabnamedialog.ui
     importligpargendialog.ui
+    importcifdialog.ui
     importspeciesdialog.ui
     selectatomtypedialog.ui
     selectconfigurationdialog.ui
@@ -85,11 +108,24 @@ set(components_UIS
     selectforcefielddialog.ui
     selectgenericitemdialog.ui
     selectspeciesdialog.ui
+    # Editors
+    modulecontrolwidget.ui
+    modulelisteditor.ui
+    procedureeditor.ui
+    # Main Tabs
+    configurationtab.ui
+    forcefieldtab.ui
+    layertab.ui
+    messagestab.ui
+    speciestab.ui
+    workspacetab.ui
+    # Main UI
+    gui.ui
 )
-qt6_wrap_ui(components_UIS_H ${components_UIS})
+qt6_wrap_ui(gui_UIS_H ${gui_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
-set(components_SRCS
+set(gui_SRCS
     # Gizmos
     gizmo.cpp
     graphgizmo_funcs.cpp
@@ -144,6 +180,7 @@ set(components_SRCS
     getspeciesnamedialog_funcs.cpp
     gettabnamedialog_funcs.cpp
     importligpargendialog_funcs.cpp
+    importcifdialog_funcs.cpp
     importspeciesdialog_funcs.cpp
     selectatomtypedialog_funcs.cpp
     selectconfigurationdialog_funcs.cpp
@@ -151,67 +188,6 @@ set(components_SRCS
     selectforcefielddialog_funcs.cpp
     selectgenericitemdialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
-)
-
-# Target 'components'
-add_library(components ${components_UIS_H} ${components_SRCS} ${components_MOC_SRCS})
-target_include_directories(
-  components PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
-                     ${Qt6OpenGLWidgets_INCLUDE_DIRS} ${CONAN_INCLUDE_DIRS_PUGIXML}
-)
-
-target_link_libraries(components widgets base)
-
-# -----------------
-# Main Dissolve GUI
-# -----------------
-
-# Meta-Objects
-set(gui_MOC_HDRS
-    # Editors
-    modulecontrolwidget.h
-    modulelisteditor.h
-    modulewidget.h
-    procedureeditor.h
-    # Main Tabs
-    configurationtab.h
-    forcefieldtab.h
-    layertab.h
-    maintab.h
-    messagestab.h
-    speciestab.h
-    workspacetab.h
-    # Main UI
-    gui.h
-    stockcolours.h
-    outputhandler.hui
-    tmdiarea.hui
-    thread.hui
-    maintabsbar.hui
-    maintabswidget.hui
-)
-qt6_wrap_cpp(gui_MOC_SRCS ${gui_MOC_HDRS})
-
-# User Interface Files
-set(gui_UIS
-    # Editors
-    modulecontrolwidget.ui
-    modulelisteditor.ui
-    procedureeditor.ui
-    # Main Tabs
-    configurationtab.ui
-    forcefieldtab.ui
-    layertab.ui
-    messagestab.ui
-    speciestab.ui
-    workspacetab.ui
-    # Main UI
-    gui.ui
-)
-qt6_wrap_ui(gui_UIS_H ${gui_UIS})
-
-# Source files (not Qt UI files or custom .h [uih])
-set(gui_SRCS
     # Editors
     modulecontrolwidget_funcs.cpp
     modulelisteditor_funcs.cpp
@@ -263,7 +239,6 @@ target_link_libraries(
   charts
   delegates
   widgets
-  components
   models
   base
   Qt6::OpenGL

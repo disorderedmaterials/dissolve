@@ -85,17 +85,19 @@ void SpeciesEditor::updateStatusBar()
 {
     // Get displayed Species
     const auto *sp = speciesViewer()->species();
+    if (!sp)
+        return;
 
     // Set interaction mode text
     ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
 
     // Set / update empirical formula for the Species and its current atom selection
+    auto selection = sp->selectedAtoms();
     ui_.FormulaLabel->setText(
-        sp ? QString::fromStdString(EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }, true)) : "--");
-    ui_.SelectionLabel->setText(
-        sp && (sp->nSelectedAtoms() > 0)
-            ? QString::fromStdString(EmpiricalFormula::formula(sp->selectedAtoms(), [](const auto &i) { return i->Z(); }, true))
-            : "--");
+        QString::fromStdString(EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
+    ui_.SelectionLabel->setText(selection.empty() ? "--"
+                                                  : QString::fromStdString(EmpiricalFormula::formula(
+                                                        selection, [](const auto &i) { return i->Z(); }, true)));
 }
 
 /*

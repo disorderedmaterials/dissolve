@@ -21,10 +21,10 @@ Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2D
 // Set up keywords for the format
 void Data2DImportFileFormat::setUpKeywords()
 {
-    keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "XAxis",
-                  "Min, max, and delta to assume for x axis");
-    keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "YAxis",
-                  "Min, max, and delta to assume for y axis");
+    keywords_.add<Vec3DoubleKeyword>("Ranges", "XAxis", "Min, max, and delta to assume for x axis", xAxis_,
+                                     Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("Ranges", "YAxis", "Min, max, and delta to assume for y axis", yAxis_,
+                                     Vec3Labels::MinMaxDeltaLabels);
 }
 
 /*

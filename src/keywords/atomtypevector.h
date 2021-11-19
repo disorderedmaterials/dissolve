@@ -3,24 +3,27 @@
 
 #pragma once
 
-#include "classes/atomtypemix.h"
-#include "keywords/data.h"
-#include "templates/reflist.h"
-
-// Forward Declarations
-class Configuration;
+#include "classes/atomtype.h"
+#include "keywords/base.h"
 
 // Keyword with vector of AtomType pointers
-class AtomTypeVectorKeyword : public KeywordData<std::vector<std::shared_ptr<AtomType>>>
+class AtomTypeVectorKeyword : public KeywordBase
 {
     public:
-    AtomTypeVectorKeyword();
+    explicit AtomTypeVectorKeyword(std::vector<std::shared_ptr<AtomType>> &data);
     ~AtomTypeVectorKeyword() override = default;
 
     /*
      * Data
      */
+    private:
+    // Reference to data vector
+    std::vector<std::shared_ptr<AtomType>> &data_;
+
     public:
+    // Return reference to data vector
+    std::vector<std::shared_ptr<AtomType>> &data();
+    const std::vector<std::shared_ptr<AtomType>> &data() const;
     // Determine whether current data is 'empty', and should be considered as 'not set'
     bool isDataEmpty() const override;
 

@@ -79,4 +79,8 @@ stages:
   - template: templates/package-linux.yml
 
   # Create Release
-  - template: templates/create-release.yml
+  - stage: 'release'
+    displayName: 'Create Release'
+    condition: not(endsWith(variables['Build.SourceBranch'], 'pre'))
+    jobs:
+      - template: templates/create-release.yml

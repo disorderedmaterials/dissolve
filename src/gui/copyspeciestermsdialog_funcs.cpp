@@ -13,7 +13,7 @@ CopySpeciesTermsDialog::CopySpeciesTermsDialog(QWidget *parent, Dissolve &dissol
     modifiedSpecies_ = nullptr;
 
     // Set initial state of controls
-    ui_.CopySelectionRadio->setChecked(targetSpecies_->nSelectedAtoms() > 0);
+    ui_.CopySelectionRadio->setChecked(!targetSpecies_->selectedAtoms().empty());
     ui_.SpeciesWidget->setSpecies(dissolve.coreData().species());
 
     // Register pages with the wizard

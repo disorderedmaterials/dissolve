@@ -7,18 +7,11 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/species.hui"
 
-SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-    : QComboBox(parent), KeywordWidgetBase(coreData)
+SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, SpeciesKeyword *keyword, const CoreData &coreData)
+    : QComboBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<SpeciesKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into SpeciesKeyword.\n", keyword->name());
-    else
-    {
-        // Set current information
-        updateValue();
-    }
+    // Set current information
+    updateValue();
 
     // Connect the
     connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myIndexChanged(int)));
@@ -39,7 +32,8 @@ void SpeciesKeywordWidget::myIndexChanged(int index)
         return;
 
     Species *sp = (index == -1 ? nullptr : VariantPointer<Species>(itemData(index, Qt::UserRole)));
-    keyword_->setData(sp);
+    keyword_->data() = sp;
+    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }

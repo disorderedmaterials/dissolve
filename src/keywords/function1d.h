@@ -3,25 +3,29 @@
 
 #pragma once
 
-#include "keywords/data.h"
+#include "keywords/base.h"
 #include "math/function1d.h"
 
 // Keyword with Function1D Data
-class Function1DKeyword : public KeywordData<Functions::Function1DWrapper>
+class Function1DKeyword : public KeywordBase
 {
     public:
-    Function1DKeyword(Functions::Function1DWrapper value = Functions::Function1DWrapper(Functions::Function1D::None),
-                      int functionProperties = FunctionProperties::None);
+    Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties = FunctionProperties::None);
     ~Function1DKeyword() override = default;
 
     /*
      * Data
      */
     private:
+    // Reference to data
+    Functions::Function1DWrapper &data_;
     // Requested function properties
     int functionProperties_;
 
     public:
+    // Return reference to data
+    Functions::Function1DWrapper &data();
+    const Functions::Function1DWrapper &data() const;
     // Return requested function properties
     int functionProperties() const;
 

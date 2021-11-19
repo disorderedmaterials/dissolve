@@ -6,13 +6,13 @@
 
 NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
                          const ProcedureNode *node)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<const ProcedureNode *>(KeywordBase::NodeData, node)
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<const ProcedureNode *>(node)
 {
 }
 
 NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
                          const ProcedureNode *node)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<const ProcedureNode *>(KeywordBase::NodeData, node)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<const ProcedureNode *>(node)
 {
 }
 

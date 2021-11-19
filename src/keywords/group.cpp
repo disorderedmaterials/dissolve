@@ -26,19 +26,7 @@ void KeywordGroup::addKeywordToGroup(KeywordBase *object) { keywords_.append(obj
 // Add keyword (pass-thru to KeywordList)
 bool KeywordGroup::add(KeywordBase *object, std::string_view keyword, std::string_view description, int optionMask)
 {
-    if (!keywordList_.add(object, keyword, description, "", optionMask))
-        return false;
-
-    addKeywordToGroup(object);
-
-    return false;
-}
-
-// Add keyword (pass-thru to KeywordList)
-bool KeywordGroup::add(KeywordBase *object, std::string_view keyword, std::string_view description, std::string_view arguments,
-                       int optionMask)
-{
-    if (!keywordList_.add(object, keyword, description, arguments, optionMask))
+    if (!keywordList_.add(object, keyword, description, optionMask))
         return false;
 
     addKeywordToGroup(object);

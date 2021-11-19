@@ -18,7 +18,7 @@ class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordW
     Q_OBJECT
 
     public:
-    ConfigurationVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    ConfigurationVectorKeywordWidget(QWidget *parent, ConfigurationVectorKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

@@ -132,6 +132,7 @@ Module  RDF  'RDFs'
   Configuration  'Liquid'
   IntraBroadening  None
   BinWidth  0.03
+  IntraBroadening  None
   Frequency  1
   #Save  On
 EndModule
@@ -190,7 +191,7 @@ Module  EPSR
   Target  '5050'
   OnlyWhenEnergyStable  False
   Frequency  1
-  NPitss  10
+  NPItSs  10
   Feedback  0.9
   PCofFile  'test.pcof'
 EndModule

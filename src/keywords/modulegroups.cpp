@@ -9,10 +9,7 @@
 #include "module/groups.h"
 #include "module/module.h"
 
-ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups)
-    : KeywordData<ModuleGroups &>(KeywordBase::ModuleGroupsData, groups)
-{
-}
+ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups) : KeywordData<ModuleGroups &>(groups) {}
 
 /*
  * Arguments

@@ -8,28 +8,24 @@
 #include "procedure/nodes/node.h"
 #include <memory>
 
-ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(ProcedureNode *parentNode,
-                                                                 std::vector<std::shared_ptr<ExpressionVariable>> &variables)
-    : KeywordData<std::vector<std::shared_ptr<ExpressionVariable>> &>(KeywordBase::ExpressionVariableVectorData, variables)
+ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
+                                                                 ProcedureNode *parentNode)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
 {
-    parentNode_ = parentNode;
 }
-
-ExpressionVariableVectorKeyword::~ExpressionVariableVectorKeyword() = default;
-
-/*
- * Parent Node
- */
-
-// Return parent ProcedureNode
-const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Data
  */
 
+// Return reference to vector of data
+const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
+
+// Return parent ProcedureNode
+const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
+
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ExpressionVariableVectorKeyword::isDataEmpty() const { return data_.size() == 0; }
+bool ExpressionVariableVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 /*
  * Arguments

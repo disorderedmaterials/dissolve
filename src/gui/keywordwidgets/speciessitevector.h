@@ -20,7 +20,7 @@ class SpeciesSiteVectorKeywordWidget : public KeywordDropDown, public KeywordWid
     Q_OBJECT
 
     public:
-    SpeciesSiteVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    SpeciesSiteVectorKeywordWidget(QWidget *parent, SpeciesSiteVectorKeyword *keyword, const CoreData &coreData);
     ~SpeciesSiteVectorKeywordWidget() override = default;
 
     /*

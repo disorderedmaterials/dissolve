@@ -14,7 +14,7 @@ class RangeKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    RangeKeywordWidget(QWidget *parent, RangeKeyword *keyword, const CoreData &coreData);
 
     /*
      * Keyword

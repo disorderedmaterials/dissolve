@@ -135,6 +135,9 @@ bool WizardDialog::displayPage(int index)
     return true;
 }
 
+// Return current page index
+std::optional<int> WizardDialog::currentPage() const { return currentPageID_; }
+
 // Return whether progression to the next page from the current page is allowed
 bool WizardDialog::progressionAllowed(int index) const { return true; }
 

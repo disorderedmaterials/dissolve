@@ -30,24 +30,24 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
     if (role == Qt::UserRole)
         return QVariant::fromValue(&angle);
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return {};
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
+        switch (index.column())
+        {
+            case 0:
+            case 1:
+            case 2:
+                return angle.index(index.column()) + 1;
+            case 3:
+                return angle.masterParameters()
+                           ? QString::fromStdString("@" + std::string(angle.masterParameters()->name()))
+                           : QString::fromStdString(SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
+            case 4:
+                return QString::fromStdString(joinStrings(angle.parameters()));
+            default:
+                return {};
+        }
 
-    switch (index.column())
-    {
-        case 0:
-        case 1:
-        case 2:
-            return angle.index(index.column()) + 1;
-        case 3:
-            return angle.masterParameters()
-                       ? QString::fromStdString("@" + std::string(angle.masterParameters()->name()))
-                       : QString::fromStdString(SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
-        case 4:
-            return QString::fromStdString(joinStrings(angle.parameters()));
-        default:
-            return {};
-    }
+    return {};
 }
 
 QVariant SpeciesAngleModel::headerData(int section, Qt::Orientation orientation, int role) const

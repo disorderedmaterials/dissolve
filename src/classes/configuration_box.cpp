@@ -33,6 +33,21 @@ void Configuration::createBox(const Matrix3 axes)
     box_ = Box::generate(lengths, angles);
 }
 
+// Create Box definition with specified lengths and angles, and initialise cell array
+void Configuration::createBoxAndCells(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic, double cellSize,
+                                      double pairPotentialRange)
+{
+    createBox(lengths, angles, nonPeriodic);
+    cells_.generate(box_.get(), cellSize, pairPotentialRange);
+}
+
+// Create Box definition from axes matrix, and initialise cell array
+void Configuration::createBoxAndCells(const Matrix3 axes, double cellSize, double pairPotentialRange)
+{
+    createBox(axes);
+    cells_.generate(box_.get(), cellSize, pairPotentialRange);
+}
+
 // Return Box
 const Box *Configuration::box() const { return box_.get(); }
 

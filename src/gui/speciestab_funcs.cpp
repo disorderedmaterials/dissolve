@@ -82,6 +82,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
             SLOT(siteSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set up SpeciesViewer
+    ui_.ViewerWidget->speciesViewer()->setDissolveWindow(dissolveWindow_);
     ui_.ViewerWidget->setDissolve(&dissolve);
     ui_.ViewerWidget->setSpecies(species_);
 
@@ -92,12 +93,14 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     // Connect signals / slots
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), dissolveWindow_, SLOT(updateMenus()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), this, SLOT(updateAtomTableSelection()));
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
     connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
     connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
-    connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
+    connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(atomTableDataChanged(const QModelIndex &, const QModelIndex &)));
     connect(&atoms_, SIGNAL(atomTypeChanged()), this, SLOT(updateIsotopologuesTab()));
     connect(ui_.AtomTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(updateUnderlyingAtomSelection()));
@@ -113,12 +116,6 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(ui_.IsotopologueAddButton, SIGNAL(clicked()), &isos_, SLOT(addIso()));
 }
 
-SpeciesTab::~SpeciesTab()
-{
-    // Remove the Species represented in this tab
-    dissolve_.removeSpecies(species_);
-}
-
 /*
  * UI
  */
@@ -131,8 +128,9 @@ void SpeciesTab::updateControls()
     // View / Generate Tab
     ui_.ViewerWidget->postRedisplay();
 
-    // Geometry Tab
-    updateGeometryTab();
+    // Contents / Forcefield Tab
+    updateTotalCharges();
+    updateGeometryTables();
 
     // Isotopologues Tab
     updateIsotopologuesTab();

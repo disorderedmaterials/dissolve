@@ -31,15 +31,23 @@ class Process2DProcedureNode : public ProcedureNode
      */
     private:
     // Collect2D node that we are processing
-    const Collect2DProcedureNode *collectNode_;
-    // Pointer to processed data (stored in processing data list)
-    Data2D *processedData_;
+    const Collect2DProcedureNode *sourceData_;
     // Export file and format for processed data
     Data2DExportFileFormat exportFileAndFormat_;
+    // Label for the value axis
+    std::string labelValue_{"Counts"};
+    // Label for the x axis
+    std::string labelX_{"X"};
+    // Label for the y axis
+    std::string labelY_{"Y"};
+    // Pointer to processed data (stored in processing data list)
+    Data2D *processedData_;
 
     public:
     // Return processed data
     const Data2D &processedData() const;
+    // Return export file and format for processed data
+    Data2DExportFileFormat &exportFileAndFormat();
     // Return value label
     std::string valueLabel() const;
     // Return x axis label
