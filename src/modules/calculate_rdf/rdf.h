@@ -31,7 +31,7 @@ class CalculateRDFModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{false};
     // Range (min, max, delta) of distance axis

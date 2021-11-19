@@ -25,7 +25,7 @@ class ExportCoordinatesModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether to tag (suffix) the filename with the current iteration index
     bool tagWithIteration_{false};
 

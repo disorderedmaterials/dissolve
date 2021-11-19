@@ -122,7 +122,7 @@ class EPSRModule : public Module
      */
     private:
     // Target Configuration (determined from target modules)
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
 
     private:
     // Create / update delta S(Q) information

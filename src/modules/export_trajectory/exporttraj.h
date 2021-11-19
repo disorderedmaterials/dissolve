@@ -32,7 +32,7 @@ class ExportTrajectoryModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Filename and format for trajectory export
     TrajectoryExportFileFormat trajectoryFormat_;
 

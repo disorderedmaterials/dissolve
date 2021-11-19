@@ -42,7 +42,7 @@ class CalculateAvgMolModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Target site
     const SpeciesSite *targetSite_;
     // Species targeted by module (derived from selected site)

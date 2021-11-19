@@ -26,7 +26,7 @@ class BraggModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Number of historical data sets to combine into final reflection data
     int averagingLength_{5};
     // Weighting scheme to use when averaging reflection data

@@ -39,7 +39,7 @@ class AnalyseModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Analysis procedure to be run
     Procedure analyser_;
 

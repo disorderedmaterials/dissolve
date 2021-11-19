@@ -32,7 +32,7 @@ class ImportTrajectoryModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Trajectory file source
     TrajectoryImportFileFormat trajectoryFormat_;
 

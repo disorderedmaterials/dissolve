@@ -33,7 +33,7 @@ class CalculateDAngleModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether to exclude correlations between B and C sites on the same molecule
     bool excludeSameMolecule_{false};
     // Range (min, max, binwidth) of distance axis

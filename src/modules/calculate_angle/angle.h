@@ -35,7 +35,7 @@ class CalculateAngleModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether to exclude correlations between A and B sites on the same molecule
     bool excludeSameMoleculeAB_{false};
     // Whether to exclude correlations between B and C sites on the same molecule
