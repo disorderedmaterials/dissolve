@@ -3,29 +3,33 @@
 
 #pragma once
 
-#include "module/list.h"
+#include <memory>
+#include <string>
+#include <vector>
 
 // Forward Declarations
-class Module;
+class Dissolve;
 class GenericList;
+class Module;
+class ProcessPool;
 
-// Module Layer - Named list of Modules with a defined processing frequency
-class ModuleLayer : public ModuleList
+// Module Layer
+class ModuleLayer
 {
     public:
-    ModuleLayer();
-    ~ModuleLayer() override = default;
+    ModuleLayer() = default;
+    ~ModuleLayer() = default;
 
     /*
      * Layer Definition
      */
     private:
     // Name of layer
-    std::string name_;
+    std::string name_{"Untitled Layer"};
     // Whether the layer is enabled
-    bool enabled_;
+    bool enabled_{true};
     // Frequency, relative to the main iteration counter, at which to execute the layer
-    int frequency_;
+    int frequency_{1};
 
     public:
     // Set name of layer
@@ -44,4 +48,28 @@ class ModuleLayer : public ModuleList
     std::string frequencyDetails(int iteration) const;
     // Return whether the layer should execute this iteration
     bool runThisIteration(int iteration) const;
+
+    /*
+     * Modules
+     */
+    private:
+    // List of Modules
+    std::vector<std::unique_ptr<Module>> modules_;
+
+    public:
+    // Clear modules
+    void clear();
+    // Find associated Module by unique name
+    Module *find(std::string_view uniqueName) const;
+    // Return whether specified Module is present in the layer
+    bool contains(Module *searchModule) const;
+    // Return vector of Modules
+    std::vector<std::unique_ptr<Module>> &modules();
+
+    /*
+     * General Actions
+     */
+    public:
+    // Run set-up stages for all modules
+    bool setUpAll(Dissolve &dissolve, ProcessPool &procPool);
 };

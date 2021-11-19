@@ -7,7 +7,6 @@
 #include "gui/charts/modulelistmetrics.h"
 #include "gui/widgets/mimestrings.h"
 #include "main/dissolve.h"
-#include "module/list.h"
 #include "module/module.h"
 #include <QApplication>
 #include <QDrag>
@@ -18,7 +17,7 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 
-ModuleListChart::ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration)
+ModuleListChart::ModuleListChart(ModuleLayer *moduleList, Dissolve &dissolve, Configuration *localConfiguration)
     : ChartBase(), dissolve_(dissolve)
 {
     refreshing_ = false;
