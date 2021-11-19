@@ -281,21 +281,21 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
     else if (strings->hasData(MimeString::ModuleType))
     {
         // Create a new instance of the specified module type
-        Module *newModule = dissolve_.createModuleInstance(strings->data(MimeString::ModuleType));
+        auto newModule = dissolve_.createModuleInstance(strings->data(MimeString::ModuleType));
 
         // Cast necessary blocks around the current hotspot up to ModuleBlocks, and get their Modules
         auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 
-        // Add the new modele
+        // Add the new module
         if (moduleAfterHotSpot)
         {
             auto pos = std::find_if(moduleList_->modules().begin(), moduleList_->modules().end(),
                                     [moduleAfterHotSpot](auto &mod) { return mod.get() == moduleAfterHotSpot; });
-            moduleList_->modules().emplace(pos + 1, newModule);
+            moduleList_->modules().emplace(pos + 1, std::move(newModule));
         }
         else
-            moduleList_->modules().emplace_back(newModule);
+            moduleList_->modules().emplace_back(std::move(newModule));
 
         // Flag that the current data has changed
         emit(dataModified());

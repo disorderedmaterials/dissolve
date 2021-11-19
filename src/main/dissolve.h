@@ -178,7 +178,7 @@ class Dissolve
 
     public:
     // Create a Module instance for the named Module type
-    std::unique_ptr<Module> &createModuleInstance(std::string_view moduleType);
+    std::unique_ptr<Module> createModuleInstance(std::string_view moduleType);
     // Create a Module instance for the named Module type, and add it to the specified layer
     Module *createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer);
     // Search for any instance of any Module with the specified unique name

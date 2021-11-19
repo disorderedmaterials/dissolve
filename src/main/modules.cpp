@@ -5,7 +5,7 @@
 #include "modules/registry.h"
 
 // Create a Module instance for the named Module type
-std::unique_ptr<Module> &Dissolve::createModuleInstance(std::string_view moduleType)
+std::unique_ptr<Module> Dissolve::createModuleInstance(std::string_view moduleType)
 {
     // Find a suitable unique name for the Module
     auto instanceId = 1;
@@ -16,7 +16,7 @@ std::unique_ptr<Module> &Dissolve::createModuleInstance(std::string_view moduleT
     } while (findModuleInstance(uniqueName));
 
     // Create a new instance of the specified Module and add it to our list
-    auto &instance = ModuleRegistry::create(moduleType);
+    auto instance = ModuleRegistry::create(moduleType);
     moduleInstances_.append(instance.get());
     instance->setUniqueName(uniqueName);
 
@@ -26,14 +26,15 @@ std::unique_ptr<Module> &Dissolve::createModuleInstance(std::string_view moduleT
 // Create a Module instance for the named Module type, and add it to the specified layer
 Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer)
 {
-    auto &instance = createModuleInstance(moduleType);
-    if (!module)
+    auto instance = createModuleInstance(moduleType);
+    if (!instance)
         return nullptr;
 
     // Add the new module instance to the specified destination layer
-    destinationLayer->insert(instance);
+    auto *m = instance.get();
+    destinationLayer->modules().emplace_back(std::move(instance));
 
-    return instance.get();
+    return m;
 }
 
 // Search for any instance of any Module with the specified unique name
