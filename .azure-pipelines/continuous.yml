@@ -27,24 +27,9 @@ stages:
 
   # Build and Package Executables
   - stage: 'build'
-    displayName: 'Build and Package'
+    displayName: 'Build'
     jobs:
-      - job: 'linux'
-        displayName: 'Ubuntu, Threads, CLI/GUI'
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux.yml
-            parameters:
-              export: true
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "packages/"
-              ArtifactName: 'linux-artifacts'
-            displayName: 'Publish Linux Artifacts'
+      - template: templates/build-linux-releases.yml
       - job: 'osx'
         displayName: 'OSX, Threads, CLI/GUI'
         timeoutInMinutes: 120
@@ -77,6 +62,8 @@ stages:
               PathtoPublish: "packages/"
               ArtifactName: 'windows-artifacts'
             displayName: 'Publish Windows Artifacts'
+
+  - template: templates/package-linux.yml
 
   # Deploy
   - template: templates/create-release.yml

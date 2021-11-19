@@ -2,8 +2,8 @@ stages:
   - stage: "Package"
     displayName: "Packaging"
     jobs:
-      - job: "linux_singularity"
-        displayName: "Ubuntu, Threads, CLI/GUI, Singularity"
+      - job: "linux_static"
+        displayName: "Ubuntu, Threads, CLI/GUI, Executable"
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -19,8 +19,8 @@ stages:
               PathtoPublish: "packages/"
               ArtifactName: "linux-GUI-artifacts"
             displayName: "Publish Linux GUI Artifacts"
-      - job: "linux_static"
-        displayName: "Ubuntu, Threads, CLI/GUI, Executable"
+      - job: "linux_singularity"
+        displayName: "Ubuntu, Threads, CLI/GUI, Singularity"
         pool:
           vmImage: "ubuntu-latest"
         steps:
