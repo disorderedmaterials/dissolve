@@ -57,21 +57,12 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
             case (LayerBlock::ModuleKeyword):
                 // The argument following the keyword is the module name, so try to create an instance of that
                 // Module
-                module = dissolve->createModuleInstance(parser.argsv(1));
+                module = dissolve->createModuleInstance(parser.argsv(1), layer);
                 if (!module)
                 {
                     error = true;
                     break;
                 }
-
-                // Add the new instance to the processing list
-                if (!layer->own(module))
-                {
-                    Messenger::error("Failed to add Module '{}' as processing layer task.\n", parser.argsv(1));
-                    error = true;
-                }
-                if (error)
-                    break;
 
                 // Set unique name, if it was provided - need to check if it has been used elsewhere (in any
                 // Module or instance of it)
