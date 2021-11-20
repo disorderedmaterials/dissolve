@@ -12,3 +12,6 @@ AnalyseModule::AnalyseModule() : Module("Analyse"), analyser_(ProcedureNode::Ana
 
     keywords_.addKeyword<ProcedureKeyword>("Analyser", "Analysis procedure to run", analyser_);
 }
+
+// Return the analyser
+Procedure &AnalyseModule::analyser() { return analyser_; }
