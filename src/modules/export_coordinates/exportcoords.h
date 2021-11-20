@@ -24,10 +24,6 @@ class ExportCoordinatesModule : public Module
     // Filename and format for coordinate export
     CoordinateExportFileFormat coordinatesFormat_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

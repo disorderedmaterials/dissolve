@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/epsr/epsr.h"
 #include "keywords/bool.h"
 #include "keywords/data1dstore.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/modulevector.h"
 #include "keywords/stdstring.h"
-#include "modules/epsr/epsr.h"
 
-EPSRModule::EPSRModule() : Module()
+EPSRModule::EPSRModule() : Module("EPSR")
 {
     // Initialise Module - set up keywords etc.
     // Targets
@@ -89,6 +89,3 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 
 // Return list of target Modules / data for refinement
 const std::vector<Module *> &EPSRModule::targets() const { return targets_; }
-
-// Return type of module
-std::string_view EPSRModule::type() const { return "EPSR"; }

@@ -13,7 +13,6 @@
 // Forward Declarations
 class Dissolve;
 class Configuration;
-class ModuleList;
 class ModuleWidget;
 class QWidget;
 
@@ -21,19 +20,21 @@ class QWidget;
 class Module
 {
     public:
-    Module();
+    Module(std::string typeName);
     virtual ~Module() = default;
 
     /*
      * Definition
      */
     protected:
+    // Type name of module
+    const std::string typeName_;
     // Unique name of Module
     std::string uniqueName_;
 
     public:
     // Return type of Module
-    virtual std::string_view type() const = 0;
+    const std::string_view type() const;
     // Set unique name of Module
     void setUniqueName(std::string_view uniqueName);
     // Return unique name of Module

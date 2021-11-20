@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/md/md.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/speciesvector.h"
-#include "modules/md/md.h"
 
-MDModule::MDModule() : Module()
+MDModule::MDModule() : Module("MD")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -38,6 +38,3 @@ MDModule::MDModule() : Module()
     keywords_.add<IntegerKeyword>("Output", "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)",
                                   trajectoryFrequency_, 0);
 }
-
-// Return type of module
-std::string_view MDModule::type() const { return "MD"; }

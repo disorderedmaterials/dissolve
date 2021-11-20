@@ -51,10 +51,6 @@ class IntraShakeModule : public Module
     // Maximum step size for torsion adjustments (degrees)
     double torsionStepSizeMax_{45.0};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

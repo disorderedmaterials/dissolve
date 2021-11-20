@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/datatest/datatest.h"
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
 #include "keywords/double.h"
@@ -8,9 +9,8 @@
 #include "keywords/valuestore.h"
 #include "keywords/vector_stringdouble.h"
 #include "keywords/vector_stringpair.h"
-#include "modules/datatest/datatest.h"
 
-DataTestModule::DataTestModule() : Module()
+DataTestModule::DataTestModule() : Module("DataTest")
 {
     // Test
     keywords_.add<Data1DStoreKeyword>("Test", "Data1D", "Specify one-dimensional test reference data", test1DData_);
@@ -25,6 +25,3 @@ DataTestModule::DataTestModule() : Module()
                                      testSampledVectorData_);
     keywords_.add<DoubleKeyword>("Test", "Threshold", "Threshold for error metric above which test fails", threshold_, 1.0e-15);
 }
-
-// Return type of module
-std::string_view DataTestModule::type() const { return "DataTest"; }

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/checks/checks.h"
 #include "keywords/configurationvector.h"
 #include "keywords/double.h"
 #include "keywords/geometrylist.h"
-#include "modules/checks/checks.h"
 
-ChecksModule::ChecksModule() : Module()
+ChecksModule::ChecksModule() : Module("Checks")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -24,6 +24,3 @@ ChecksModule::ChecksModule() : Module()
     keywords_.add<DoubleKeyword>("Angle", "AngleThreshold", "Threshold at which angle checks will fail", angleThreshold_,
                                  1.0e-5);
 }
-
-// Return type of module
-std::string_view ChecksModule::type() const { return "Checks"; }

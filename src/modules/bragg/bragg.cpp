@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/bragg/bragg.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/stdstring.h"
 #include "keywords/vec3integer.h"
-#include "modules/bragg/bragg.h"
 
-BraggModule::BraggModule() : Module()
+BraggModule::BraggModule() : Module("Bragg")
 {
     // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
@@ -35,6 +35,3 @@ BraggModule::BraggModule() : Module()
     keywords_.addKeyword<StringKeyword>(
         "TestReflections", "Whether to test calculated reflection data against that in specified file", testReflectionsFile_);
 }
-
-// Return type of module
-std::string_view BraggModule::type() const { return "Bragg"; }

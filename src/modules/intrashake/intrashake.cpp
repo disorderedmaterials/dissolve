@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/intrashake/intrashake.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "modules/intrashake/intrashake.h"
 
-IntraShakeModule::IntraShakeModule() : Module()
+IntraShakeModule::IntraShakeModule() : Module("IntraShake")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -53,6 +53,3 @@ IntraShakeModule::IntraShakeModule() : Module()
     keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMax", "Maximum step size for Torsion adjustments (degrees)",
                                  torsionStepSizeMax_, 0.01, 45.0);
 }
-
-// Return type of module
-std::string_view IntraShakeModule::type() const { return "IntraShake"; }

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/calculate_rdf/rdf.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileandformat.h"
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
-#include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/operatenumberdensitynormalise.h"
@@ -15,7 +15,7 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(ProcedureNode::AnalysisContext)
 {
     /*
      * Assemble the following Procedure:
@@ -116,6 +116,3 @@ CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::An
     keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save calculated RDF data",
                                         processDistance_->exportFileAndFormat(), "EndExport");
 }
-
-// Return type of module
-std::string_view CalculateRDFModule::type() const { return "CalculateRDF"; }

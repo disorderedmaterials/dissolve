@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/xraysq/xraysq.h"
 #include "keywords/atomtypevector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/fileandformat.h"
 #include "keywords/module.h"
 #include "modules/sq/sq.h"
-#include "modules/xraysq/xraysq.h"
 
-XRaySQModule::XRaySQModule() : Module()
+XRaySQModule::XRaySQModule() : Module("XRaySQ")
 {
     // Targets
     keywords_.addTarget<ModuleKeyword<const SQModule>>(
@@ -59,6 +59,3 @@ XRaySQModule::XRaySQModule() : Module()
 
 // Return file and format for reference total F(Q)
 const Data1DImportFileFormat &XRaySQModule::referenceFQFileAndFormat() { return referenceFQ_; }
-
-// Return type of module
-std::string_view XRaySQModule::type() const { return "XRaySQ"; }

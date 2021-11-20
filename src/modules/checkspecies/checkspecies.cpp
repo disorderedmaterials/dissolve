@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/checkspecies/checkspecies.h"
 #include "keywords/double.h"
 #include "keywords/species.h"
 #include "keywords/vector_intdouble.h"
 #include "keywords/vector_intstring.h"
-#include "modules/checkspecies/checkspecies.h"
 
-CheckSpeciesModule::CheckSpeciesModule() : Module()
+CheckSpeciesModule::CheckSpeciesModule() : Module("CheckSpecies")
 {
     // Target Species
     keywords_.addTarget<SpeciesKeyword>("Species", "Target species to check", targetSpecies_);
@@ -32,6 +32,3 @@ CheckSpeciesModule::CheckSpeciesModule() : Module()
     keywords_.add<DoubleKeyword>("Intramolecular", "Tolerance", "Tolerance beyond which parameters are said to differ",
                                  tolerance_, 1.0e-5);
 }
-
-// Return type of module
-std::string_view CheckSpeciesModule::type() const { return "CheckSpecies"; }

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/calculate_sdf/sdf.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileandformat.h"
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
-#include "modules/calculate_sdf/sdf.h"
 #include "procedure/nodes/calculatevector.h"
 #include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/operategridnormalise.h"
@@ -14,7 +14,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
-CalculateSDFModule::CalculateSDFModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateSDFModule::CalculateSDFModule() : Module("CalculateSDF"), analyser_(ProcedureNode::AnalysisContext)
 {
     /*
      * Assemble the following Procedure:
@@ -121,6 +121,3 @@ CalculateSDFModule::CalculateSDFModule() : Module(), analyser_(ProcedureNode::An
     keywords_.add<FileAndFormatKeyword>("Export", "ExportSDF", "Save the SDF to the specified file / format", sdfFileAndFormat_,
                                         "EndExportSDF");
 }
-
-// Return type of module
-std::string_view CalculateSDFModule::type() const { return "CalculateSDF"; }

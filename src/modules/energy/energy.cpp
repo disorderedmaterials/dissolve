@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/energy/energy.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "modules/energy/energy.h"
 
-EnergyModule::EnergyModule() : Module()
+EnergyModule::EnergyModule() : Module("Energy")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -39,6 +39,3 @@ EnergyModule::EnergyModule() : Module()
     keywords_.add<BoolKeyword>("Export", "Save", "Save calculated energies to disk, one file per targetted configuration",
                                save_);
 }
-
-// Return type of module
-std::string_view EnergyModule::type() const { return "Energy"; }

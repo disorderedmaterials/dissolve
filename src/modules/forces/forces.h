@@ -40,10 +40,6 @@ class ForcesModule : public Module
     // Force export file and format
     ForceExportFileFormat exportedForces_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

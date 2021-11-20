@@ -38,10 +38,6 @@ class EnergyModule : public Module
     // Threshold of energy at which test comparison will fail
     double testThreshold_{0.1};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Functions
      */

@@ -23,8 +23,6 @@ class AnalyseModule : public Module
     Procedure analyser_;
 
     public:
-    // Return type of module
-    std::string_view type() const override;
     // Return the analyser
     Procedure &analyser();
 

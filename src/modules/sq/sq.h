@@ -52,8 +52,6 @@ class SQModule : public Module
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 
     public:
-    // Return type of module
-    std::string_view type() const override;
     // Return source module for main calculation
     const RDFModule *sourceRDF() const;
 

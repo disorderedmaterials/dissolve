@@ -40,10 +40,6 @@ class CheckSpeciesModule : public Module
     // Tolerance beyond which parameters are said to differ
     double tolerance_{1.0e-3};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Functions
      */

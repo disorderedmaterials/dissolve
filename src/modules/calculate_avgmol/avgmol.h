@@ -27,10 +27,6 @@ class CalculateAvgMolModule : public Module
     // Local Species representing average of targeted Species
     Species averageSpecies_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Functions
      */

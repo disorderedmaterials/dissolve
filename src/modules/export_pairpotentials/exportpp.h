@@ -20,10 +20,6 @@ class ExportPairPotentialsModule : public Module
     // Basename and format for PairPotential export
     PairPotentialExportFileFormat pairPotentialFormat_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

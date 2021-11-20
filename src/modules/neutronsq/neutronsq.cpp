@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/neutronsq/neutronsq.h"
 #include "keywords/atomtypevector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/fileandformat.h"
 #include "keywords/isotopologueset.h"
 #include "keywords/module.h"
-#include "modules/neutronsq/neutronsq.h"
 #include "modules/sq/sq.h"
 
-NeutronSQModule::NeutronSQModule() : Module()
+NeutronSQModule::NeutronSQModule() : Module("NeutronSQ")
 {
     // Targets
     keywords_.addTarget<ModuleKeyword<const SQModule>>(
@@ -58,6 +58,3 @@ NeutronSQModule::NeutronSQModule() : Module()
 
 // Return file and format for reference total F(Q)
 const Data1DImportFileFormat &NeutronSQModule::referenceFQFileAndFormat() { return referenceFQ_; }
-
-// Return type of module
-std::string_view NeutronSQModule::type() const { return "NeutronSQ"; }

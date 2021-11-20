@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/calculate_cn/cn.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/module.h"
 #include "keywords/range.h"
-#include "modules/calculate_cn/cn.h"
 #include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/sum1d.h"
 
-CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(ProcedureNode::AnalysisContext)
 {
     /*
      * Assemble the following Procedure:
@@ -67,6 +67,3 @@ CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::Anal
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold difference at which test comparisons will fail",
                                  testThreshold_, 1.0e-5);
 }
-
-// Return type of module
-std::string_view CalculateCNModule::type() const { return "CalculateCN"; }

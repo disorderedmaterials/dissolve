@@ -54,10 +54,6 @@ class CalculateDAngleModule : public Module
     // Process2DNode for distance-angle data
     std::shared_ptr<Process2DProcedureNode> processDAngle_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

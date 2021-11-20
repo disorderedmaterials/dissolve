@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/geomopt/geomopt.h"
 #include "keywords/configurationvector.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "modules/geomopt/geomopt.h"
 
-GeometryOptimisationModule::GeometryOptimisationModule() : Module()
+GeometryOptimisationModule::GeometryOptimisationModule() : Module("GeometryOptimisation")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -18,6 +18,3 @@ GeometryOptimisationModule::GeometryOptimisationModule() : Module()
     keywords_.add<DoubleKeyword>("Control", "Tolerance", "Tolerance controlling convergence of algorithm)", tolerance_,
                                  1.0e-10);
 }
-
-// Return type of module
-std::string_view GeometryOptimisationModule::type() const { return "GeometryOptimisation"; }

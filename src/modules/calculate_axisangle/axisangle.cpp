@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/calculate_axisangle/axisangle.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileandformat.h"
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
-#include "modules/calculate_axisangle/axisangle.h"
 #include "procedure/nodes/calculateaxisangle.h"
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
@@ -20,7 +20,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/select.h"
 
-CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngle"), analyser_(ProcedureNode::AnalysisContext)
 {
     /*
      * Assemble the following Procedure:
@@ -28,6 +28,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(Proce
      * Select  'A'
      *   Site  ...
      *   ForEach
+     *     Select  'B'
      *     Select  'B'
      *       Site  ...
      *       SameMoleculeAsSite  'A'
@@ -186,6 +187,3 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(Proce
                                         "File format and file name under which to save calculated A-B...C angle map to disk",
                                         processDAngle_->exportFileAndFormat(), "EndExportDAngle");
 }
-
-// Return type of module
-std::string_view CalculateAxisAngleModule::type() const { return "CalculateAxisAngle"; }

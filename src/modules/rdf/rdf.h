@@ -61,10 +61,6 @@ class RDFModule : public Module
     // Whether to use the maximal RDF range possible that avoids periodic images
     bool useHalfCellRange_{true};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Functions
      */

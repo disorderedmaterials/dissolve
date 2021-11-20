@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/calculate_angle/angle.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileandformat.h"
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
 #include "keywords/vec3integer.h"
-#include "modules/calculate_angle/angle.h"
 #include "procedure/nodes/calculateangle.h"
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
@@ -23,7 +23,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
-CalculateAngleModule::CalculateAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateAngleModule::CalculateAngleModule() : Module("CalculateAngle"), analyser_(ProcedureNode::AnalysisContext)
 {
     /*
      * Assemble the following Procedure:
@@ -304,6 +304,3 @@ CalculateAngleModule::CalculateAngleModule() : Module(), analyser_(ProcedureNode
                                         "File format and file name under which to save calculated A-(B-C) distance-angle map",
                                         processDAngleBC_->exportFileAndFormat(), "EndExportDAngleBC");
 }
-
-// Return type of module
-std::string_view CalculateAngleModule::type() const { return "CalculateAngle"; }

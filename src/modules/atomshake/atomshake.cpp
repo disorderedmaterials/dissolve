@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/atomshake/atomshake.h"
 #include "keywords/bool.h"
 #include "keywords/configurationvector.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "modules/atomshake/atomshake.h"
 
-AtomShakeModule::AtomShakeModule() : Module()
+AtomShakeModule::AtomShakeModule() : Module("AtomShake")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -26,6 +26,3 @@ AtomShakeModule::AtomShakeModule() : Module()
     keywords_.add<DoubleKeyword>("Control", "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves",
                                  targetAcceptanceRate_, 0.01, 1.0);
 }
-
-// Return type of module
-std::string_view AtomShakeModule::type() const { return "AtomShake"; }

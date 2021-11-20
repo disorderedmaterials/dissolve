@@ -22,10 +22,6 @@ class ExportTrajectoryModule : public Module
     // Filename and format for trajectory export
     TrajectoryExportFileFormat trajectoryFormat_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

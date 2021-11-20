@@ -19,9 +19,6 @@ class TestModule : public Module
     // Target configuration
     std::vector<Configuration *> targetConfigurations_;
 
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

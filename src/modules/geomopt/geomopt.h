@@ -38,10 +38,6 @@ class GeometryOptimisationModule : public Module
     // Current forces
     std::vector<Vec3<double>> f_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Functions
      */

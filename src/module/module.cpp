@@ -4,15 +4,15 @@
 #include "module/module.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "classes/configuration.h"
-#include "keywords/configurationvector.h"
-#include "main/dissolve.h"
 
-Module::Module() : frequency_(1), enabled_(true) {}
+Module::Module(std::string typeName) : typeName_(typeName), frequency_(1), enabled_(true) {}
 
 /*
  * Definition
  */
+
+// Return type of Module
+const std::string_view Module::type() const { return typeName_; }
 
 // Set unique name of Module
 void Module::setUniqueName(std::string_view uniqueName) { uniqueName_ = uniqueName; }

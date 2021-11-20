@@ -28,10 +28,6 @@ class ChecksModule : public Module
     // Threshold at which angle checks will fail (degrees)
     double angleThreshold_{0.05};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

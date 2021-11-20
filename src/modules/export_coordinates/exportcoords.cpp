@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/export_coordinates/exportcoords.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileandformat.h"
-#include "modules/export_coordinates/exportcoords.h"
 
-ExportCoordinatesModule::ExportCoordinatesModule() : Module()
+ExportCoordinatesModule::ExportCoordinatesModule() : Module("ExportCoordinates")
 {
     // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
@@ -16,6 +16,3 @@ ExportCoordinatesModule::ExportCoordinatesModule() : Module()
     keywords_.add<BoolKeyword>("Format", "TagWithIteration",
                                "Whether to tag (suffix) the filename with the current iteration index", tagWithIteration_);
 }
-
-// Return type of module
-std::string_view ExportCoordinatesModule::type() const { return "ExportCoordinates"; }

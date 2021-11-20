@@ -31,10 +31,6 @@ class AtomShakeModule : public Module
     // Target acceptance rate for Monte Carlo moves
     double targetAcceptanceRate_{0.33};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

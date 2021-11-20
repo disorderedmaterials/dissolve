@@ -92,8 +92,6 @@ class EPSRModule : public Module
     double testThreshold_{0.1};
 
     public:
-    // Return type of module
-    std::string_view type() const override;
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;
 

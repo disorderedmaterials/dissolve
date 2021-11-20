@@ -47,10 +47,6 @@ class CalculateSDFModule : public Module
     // Export file and format for SDF
     Data3DExportFileFormat sdfFileAndFormat_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

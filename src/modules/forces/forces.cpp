@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/forces/forces.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/fileandformat.h"
-#include "modules/forces/forces.h"
 
-ForcesModule::ForcesModule() : Module()
+ForcesModule::ForcesModule() : Module("Forces")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -30,6 +30,3 @@ ForcesModule::ForcesModule() : Module()
     keywords_.add<FileAndFormatKeyword>("Export", "SaveForces", "Save calculated energies to the specified file / format",
                                         exportedForces_, "EndSaveForces");
 }
-
-// Return type of module
-std::string_view ForcesModule::type() const { return "Forces"; }

@@ -39,10 +39,6 @@ class MolShakeModule : public Module
     // Maximum step size for translations (Angstroms)
     double translationStepSizeMax_{3.0};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

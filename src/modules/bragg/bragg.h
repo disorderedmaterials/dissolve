@@ -37,10 +37,6 @@ class BraggModule : public Module
     // File containing reflection data to test against
     std::string testReflectionsFile_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Functions
      */

@@ -74,10 +74,6 @@ class CalculateAngleModule : public Module
     // Process3DNode for A-B vs B-C vs A-B-C distance-distance-angle data
     std::shared_ptr<Process3DProcedureNode> processDDA_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

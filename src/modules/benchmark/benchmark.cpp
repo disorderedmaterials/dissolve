@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/benchmark/benchmark.h"
 #include "keywords/bool.h"
 #include "keywords/integer.h"
-#include "modules/benchmark/benchmark.h"
 
-BenchmarkModule::BenchmarkModule() : Module()
+BenchmarkModule::BenchmarkModule() : Module("Benchmark")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -26,6 +26,3 @@ BenchmarkModule::BenchmarkModule() : Module()
                                testRDFSimple_);
     keywords_.add<BoolKeyword>("Tests", "TestDistributors", "Whether to benchmark molecule distributors", testDistributors_);
 }
-
-// Return type of module
-std::string_view BenchmarkModule::type() const { return "Benchmark"; }

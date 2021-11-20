@@ -34,10 +34,6 @@ class AccumulateModule : public Module
     // Whether to save the accumulated partials to disk
     bool save_{false};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

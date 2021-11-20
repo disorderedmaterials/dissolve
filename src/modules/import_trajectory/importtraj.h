@@ -22,10 +22,6 @@ class ImportTrajectoryModule : public Module
     // Trajectory file source
     TrajectoryImportFileFormat trajectoryFormat_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

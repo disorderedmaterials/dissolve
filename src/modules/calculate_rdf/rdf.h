@@ -41,8 +41,6 @@ class CalculateRDFModule : public Module
     std::shared_ptr<Process1DProcedureNode> processDistance_;
 
     public:
-    // Return type of module
-    std::string_view type() const override;
     // Return Collect1DNode for A-B RDF
     std::shared_ptr<Collect1DProcedureNode> collectDistanceNode() const;
     // Return SelectNode for site A

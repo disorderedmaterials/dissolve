@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/sq/sq.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/function1d.h"
@@ -8,9 +9,8 @@
 #include "keywords/module.h"
 #include "modules/bragg/bragg.h"
 #include "modules/rdf/rdf.h"
-#include "modules/sq/sq.h"
 
-SQModule::SQModule() : Module()
+SQModule::SQModule() : Module("SQ")
 {
     // Targets
     keywords_.addTarget<ModuleKeyword<const RDFModule>>("SourceRDFs", "Source RDFs to transform into S(Q)", sourceRDF_, "RDF");
@@ -43,6 +43,3 @@ SQModule::SQModule() : Module()
 
 // Return source module for main calculation
 const RDFModule *SQModule::sourceRDF() const { return sourceRDF_; }
-
-// Return type of module
-std::string_view SQModule::type() const { return "SQ"; }

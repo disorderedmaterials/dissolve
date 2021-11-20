@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/rdf/rdf.h"
 #include "keywords/atomtypevector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/function1d.h"
 #include "keywords/integer.h"
 #include "keywords/module.h"
-#include "modules/rdf/rdf.h"
 
-RDFModule::RDFModule() : Module()
+RDFModule::RDFModule() : Module("RDF")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -55,6 +55,3 @@ EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
                                                                      {RDFModule::SimpleMethod, "Simple"},
                                                                      {RDFModule::TestMethod, "TestSquaredAverage"}});
 }
-
-// Return type of module
-std::string_view RDFModule::type() const { return "RDF"; }

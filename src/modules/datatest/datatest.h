@@ -40,10 +40,6 @@ class DataTestModule : public Module
     // Threshold for error metric above which test fails
     double threshold_{5.0e-3};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */

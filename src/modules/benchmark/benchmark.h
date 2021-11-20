@@ -35,10 +35,6 @@ class BenchmarkModule : public Module
     // Whether to benchmark molecule distributors
     bool testDistributors_{true};
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Functions
      */

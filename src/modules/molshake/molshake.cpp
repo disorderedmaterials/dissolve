@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "modules/molshake/molshake.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/speciesvector.h"
-#include "modules/molshake/molshake.h"
 
-MolShakeModule::MolShakeModule() : Module()
+MolShakeModule::MolShakeModule() : Module("MolShake")
 {
     // Targets
     keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
@@ -41,6 +41,3 @@ MolShakeModule::MolShakeModule() : Module()
     keywords_.add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 }
-
-// Return type of module
-std::string_view MolShakeModule::type() const { return "MolShake"; }

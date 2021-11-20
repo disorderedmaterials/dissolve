@@ -43,8 +43,6 @@ class CalculateCNModule : public Module
     std::shared_ptr<OperateSitePopulationNormaliseProcedureNode> siteNormaliser_;
 
     public:
-    // Return type of module
-    std::string_view type() const override;
     // Return whether range B is enabled
     bool isRangeBEnabled() const;
     // Return whether range C is enabled

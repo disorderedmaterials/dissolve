@@ -19,10 +19,6 @@ class SkeletonModule : public Module
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
 
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
     /*
      * Processing
      */
