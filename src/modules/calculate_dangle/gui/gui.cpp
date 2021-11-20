@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/calculate_dangle/dangle.h"
-#include "modules/calculate_dangle/gui/modulewidget.h"
+#include "modules/calculate_dangle/gui/calculatedanglewidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *CalculateDAngleModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new CalculateDAngleModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new CalculateDAngleModuleWidget(parent, this, dissolve);
 }

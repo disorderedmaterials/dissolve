@@ -5,9 +5,9 @@
 #include "gui/charts/modulelistmetrics.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/configurationvector.h"
-#include "gui/modulewidget.h"
 #include "main/dissolve.h"
 #include "module/module.h"
+#include "modules/widget.h"
 #include <QFile>
 #include <QPainter>
 #include <QPainterPath>

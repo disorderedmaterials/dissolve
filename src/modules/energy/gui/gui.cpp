@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
-#include "modules/energy/gui/modulewidget.h"
+#include "modules/energy/gui/energywidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *EnergyModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new EnergyModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new EnergyModuleWidget(parent, this, dissolve);
 }

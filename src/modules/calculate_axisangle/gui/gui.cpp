@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/calculate_axisangle/axisangle.h"
-#include "modules/calculate_axisangle/gui/modulewidget.h"
+#include "modules/calculate_axisangle/gui/calculateaxisanglewidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *CalculateAxisAngleModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new CalculateAxisAngleModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new CalculateAxisAngleModuleWidget(parent, this, dissolve);
 }

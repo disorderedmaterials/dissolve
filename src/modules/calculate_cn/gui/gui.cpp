@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/calculate_cn/cn.h"
-#include "modules/calculate_cn/gui/modulewidget.h"
+#include "modules/calculate_cn/gui/calculatecnwidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *CalculateCNModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new CalculateCNModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new CalculateCNModuleWidget(parent, this, dissolve);
 }

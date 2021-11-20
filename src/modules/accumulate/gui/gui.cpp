@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/accumulate/accumulate.h"
-#include "modules/accumulate/gui/modulewidget.h"
+#include "modules/accumulate/gui/accumulatewidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *AccumulateModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new AccumulateModuleWidget(parent, dissolve.processingModuleData(), this, dissolve);
+    return new AccumulateModuleWidget(parent, this, dissolve);
 }

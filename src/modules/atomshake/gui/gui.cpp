@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/atomshake/atomshake.h"
-#include "modules/atomshake/gui/modulewidget.h"
+#include "modules/atomshake/gui/atomshakewidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *AtomShakeModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new AtomShakeModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new AtomShakeModuleWidget(parent, this, dissolve);
 }

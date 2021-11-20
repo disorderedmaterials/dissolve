@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
-#include "modules/analyse/gui/modulewidget.h"
+#include "modules/analyse/gui/analysewidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *AnalyseModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new AnalyseModuleWidget(parent, dissolve.processingModuleData(), this, dissolve.coreData());
+    return new AnalyseModuleWidget(parent, this, dissolve);
 }

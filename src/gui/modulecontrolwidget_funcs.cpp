@@ -6,9 +6,10 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/producers.h"
 #include "gui/modulecontrolwidget.h"
-#include "gui/modulewidget.h"
 #include "main/dissolve.h"
 #include "module/module.h"
+#include "modules/widget.h"
+#include "modules/widgetproducer.h"
 
 ModuleControlWidget::ModuleControlWidget(QWidget *parent)
 {
@@ -75,7 +76,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->coreData());
 
     // Create any additional controls offered by the Module
-    moduleWidget_ = module->createWidget(nullptr, *dissolve_);
+    moduleWidget_ = ModuleWidgetProducer::create(module_, *dissolve_);
     if (moduleWidget_ == nullptr)
         Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
     else

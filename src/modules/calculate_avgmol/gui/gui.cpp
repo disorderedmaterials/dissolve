@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/calculate_avgmol/avgmol.h"
-#include "modules/calculate_avgmol/gui/modulewidget.h"
+#include "modules/calculate_avgmol/gui/calculateavgmolwidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *CalculateAvgMolModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new CalculateAvgMolModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new CalculateAvgMolModuleWidget(parent, this, dissolve);
 }

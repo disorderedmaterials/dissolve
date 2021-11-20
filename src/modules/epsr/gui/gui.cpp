@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/epsr/epsr.h"
-#include "modules/epsr/gui/modulewidget.h"
+#include "modules/epsr/gui/epsrwidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *EPSRModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new EPSRModuleWidget(parent, dissolve.processingModuleData(), this, dissolve);
+    return new EPSRModuleWidget(parent, this, dissolve);
 }

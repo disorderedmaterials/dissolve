@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/bragg/bragg.h"
-#include "modules/bragg/gui/modulewidget.h"
+#include "modules/bragg/gui/braggwidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *BraggModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new BraggModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new BraggModuleWidget(parent, this, dissolve);
 }

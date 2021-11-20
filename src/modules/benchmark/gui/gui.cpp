@@ -3,10 +3,10 @@
 
 #include "main/dissolve.h"
 #include "modules/benchmark/benchmark.h"
-#include "modules/benchmark/gui/modulewidget.h"
+#include "modules/benchmark/gui/benchmarkwidget.h"
 
 // Return a new widget controlling this Module
 ModuleWidget *BenchmarkModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new BenchmarkModuleWidget(parent, dissolve.processingModuleData(), this);
+    return new BenchmarkModuleWidget(parent, this, dissolve);
 }
