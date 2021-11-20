@@ -89,3 +89,6 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 
 // Return list of target Modules / data for refinement
 const std::vector<Module *> &EPSRModule::targets() const { return targets_; }
+
+// Return type of module
+std::string_view EPSRModule::type() const { return "EPSR"; }

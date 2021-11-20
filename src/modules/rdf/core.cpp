@@ -55,3 +55,6 @@ EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
                                                                      {RDFModule::SimpleMethod, "Simple"},
                                                                      {RDFModule::TestMethod, "TestSquaredAverage"}});
 }
+
+// Return type of module
+std::string_view RDFModule::type() const { return "RDF"; }

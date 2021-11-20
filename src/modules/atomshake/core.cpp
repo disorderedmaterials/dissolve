@@ -26,3 +26,6 @@ AtomShakeModule::AtomShakeModule() : Module()
     keywords_.add<DoubleKeyword>("Control", "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves",
                                  targetAcceptanceRate_, 0.01, 1.0);
 }
+
+// Return type of module
+std::string_view AtomShakeModule::type() const { return "AtomShake"; }

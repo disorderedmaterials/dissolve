@@ -26,3 +26,6 @@ BenchmarkModule::BenchmarkModule() : Module()
                                testRDFSimple_);
     keywords_.add<BoolKeyword>("Tests", "TestDistributors", "Whether to benchmark molecule distributors", testDistributors_);
 }
+
+// Return type of module
+std::string_view BenchmarkModule::type() const { return "Benchmark"; }

@@ -18,3 +18,6 @@ GeometryOptimisationModule::GeometryOptimisationModule() : Module()
     keywords_.add<DoubleKeyword>("Control", "Tolerance", "Tolerance controlling convergence of algorithm)", tolerance_,
                                  1.0e-10);
 }
+
+// Return type of module
+std::string_view GeometryOptimisationModule::type() const { return "GeometryOptimisation"; }

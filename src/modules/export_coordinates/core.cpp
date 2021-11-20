@@ -16,3 +16,6 @@ ExportCoordinatesModule::ExportCoordinatesModule() : Module()
     keywords_.add<BoolKeyword>("Format", "TagWithIteration",
                                "Whether to tag (suffix) the filename with the current iteration index", tagWithIteration_);
 }
+
+// Return type of module
+std::string_view ExportCoordinatesModule::type() const { return "ExportCoordinates"; }

@@ -186,3 +186,6 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(Proce
                                         "File format and file name under which to save calculated A-B...C angle map to disk",
                                         processDAngle_->exportFileAndFormat(), "EndExportDAngle");
 }
+
+// Return type of module
+std::string_view CalculateAxisAngleModule::type() const { return "CalculateAxisAngle"; }

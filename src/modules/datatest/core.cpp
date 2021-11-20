@@ -25,3 +25,6 @@ DataTestModule::DataTestModule() : Module()
                                      testSampledVectorData_);
     keywords_.add<DoubleKeyword>("Test", "Threshold", "Threshold for error metric above which test fails", threshold_, 1.0e-15);
 }
+
+// Return type of module
+std::string_view DataTestModule::type() const { return "DataTest"; }

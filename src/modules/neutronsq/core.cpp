@@ -58,3 +58,6 @@ NeutronSQModule::NeutronSQModule() : Module()
 
 // Return file and format for reference total F(Q)
 const Data1DImportFileFormat &NeutronSQModule::referenceFQFileAndFormat() { return referenceFQ_; }
+
+// Return type of module
+std::string_view NeutronSQModule::type() const { return "NeutronSQ"; }

@@ -32,3 +32,6 @@ CheckSpeciesModule::CheckSpeciesModule() : Module()
     keywords_.add<DoubleKeyword>("Intramolecular", "Tolerance", "Tolerance beyond which parameters are said to differ",
                                  tolerance_, 1.0e-5);
 }
+
+// Return type of module
+std::string_view CheckSpeciesModule::type() const { return "CheckSpecies"; }

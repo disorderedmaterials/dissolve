@@ -216,3 +216,6 @@ CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNo
                                         "File format and file name under which to save calculated A-B...C angle map",
                                         processDAngle_->exportFileAndFormat(), "EndExportDAngle");
 }
+
+// Return type of module
+std::string_view CalculateDAngleModule::type() const { return "CalculateDAngle"; }

@@ -30,3 +30,6 @@ ForcesModule::ForcesModule() : Module()
     keywords_.add<FileAndFormatKeyword>("Export", "SaveForces", "Save calculated energies to the specified file / format",
                                         exportedForces_, "EndSaveForces");
 }
+
+// Return type of module
+std::string_view ForcesModule::type() const { return "Forces"; }

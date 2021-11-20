@@ -13,3 +13,6 @@ ImportTrajectoryModule::ImportTrajectoryModule() : Module()
     // Format
     keywords_.add<FileAndFormatKeyword>("Format", "Format", "File / format for trajectory", trajectoryFormat_, "EndFormat");
 }
+
+// Return type of module
+std::string_view ImportTrajectoryModule::type() const { return "ImportTrajectory"; }

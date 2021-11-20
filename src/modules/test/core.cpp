@@ -4,3 +4,6 @@
 #include "modules/test/test.h"
 
 TestModule::TestModule() : Module() {}
+
+// Return type of module
+std::string_view TestModule::type() const { return "Test"; }

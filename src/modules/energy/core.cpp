@@ -39,3 +39,6 @@ EnergyModule::EnergyModule() : Module()
     keywords_.add<BoolKeyword>("Export", "Save", "Save calculated energies to disk, one file per targetted configuration",
                                save_);
 }
+
+// Return type of module
+std::string_view EnergyModule::type() const { return "Energy"; }

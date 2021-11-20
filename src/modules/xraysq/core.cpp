@@ -59,3 +59,6 @@ XRaySQModule::XRaySQModule() : Module()
 
 // Return file and format for reference total F(Q)
 const Data1DImportFileFormat &XRaySQModule::referenceFQFileAndFormat() { return referenceFQ_; }
+
+// Return type of module
+std::string_view XRaySQModule::type() const { return "XRaySQ"; }

@@ -121,3 +121,6 @@ CalculateSDFModule::CalculateSDFModule() : Module(), analyser_(ProcedureNode::An
     keywords_.add<FileAndFormatKeyword>("Export", "ExportSDF", "Save the SDF to the specified file / format", sdfFileAndFormat_,
                                         "EndExportSDF");
 }
+
+// Return type of module
+std::string_view CalculateSDFModule::type() const { return "CalculateSDF"; }

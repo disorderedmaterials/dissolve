@@ -67,3 +67,6 @@ CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::Anal
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold difference at which test comparisons will fail",
                                  testThreshold_, 1.0e-5);
 }
+
+// Return type of module
+std::string_view CalculateCNModule::type() const { return "CalculateCN"; }

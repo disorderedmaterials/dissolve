@@ -16,3 +16,6 @@ CalculateAvgMolModule::CalculateAvgMolModule() : Module()
 
     targetSpecies_ = nullptr;
 }
+
+// Return type of module
+std::string_view CalculateAvgMolModule::type() const { return "CalculateAvgMol"; }

@@ -12,3 +12,6 @@ AnalyseModule::AnalyseModule() : Module(), analyser_(ProcedureNode::AnalysisCont
 
     keywords_.addKeyword<ProcedureKeyword>("Analyser", "Analysis procedure to run", analyser_);
 }
+
+// Return type of module
+std::string_view AnalyseModule::type() const { return "Analyse"; }

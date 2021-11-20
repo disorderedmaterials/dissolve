@@ -10,3 +10,6 @@ ExportPairPotentialsModule::ExportPairPotentialsModule() : Module()
     keywords_.add<FileAndFormatKeyword>("Format", "Format", "Basename and format in which to write potentials",
                                         pairPotentialFormat_, "EndFormat");
 }
+
+// Return type of module
+std::string_view ExportPairPotentialsModule::type() const { return "ExportPairPotentials"; }

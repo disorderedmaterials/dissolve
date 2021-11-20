@@ -304,3 +304,6 @@ CalculateAngleModule::CalculateAngleModule() : Module(), analyser_(ProcedureNode
                                         "File format and file name under which to save calculated A-(B-C) distance-angle map",
                                         processDAngleBC_->exportFileAndFormat(), "EndExportDAngleBC");
 }
+
+// Return type of module
+std::string_view CalculateAngleModule::type() const { return "CalculateAngle"; }

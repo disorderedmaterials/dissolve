@@ -17,3 +17,6 @@ AccumulateModule::AccumulateModule() : Module()
     // Export
     keywords_.add<BoolKeyword>("Export", "Save", "Whether to save the accumulated partials to disk", save_);
 }
+
+// Return type of module
+std::string_view AccumulateModule::type() const { return "Accumulate"; }

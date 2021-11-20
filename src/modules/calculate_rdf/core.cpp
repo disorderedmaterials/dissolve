@@ -116,3 +116,6 @@ CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::An
     keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save calculated RDF data",
                                         processDistance_->exportFileAndFormat(), "EndExport");
 }
+
+// Return type of module
+std::string_view CalculateRDFModule::type() const { return "CalculateRDF"; }

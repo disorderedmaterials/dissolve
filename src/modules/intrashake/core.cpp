@@ -53,3 +53,6 @@ IntraShakeModule::IntraShakeModule() : Module()
     keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMax", "Maximum step size for Torsion adjustments (degrees)",
                                  torsionStepSizeMax_, 0.01, 45.0);
 }
+
+// Return type of module
+std::string_view IntraShakeModule::type() const { return "IntraShake"; }

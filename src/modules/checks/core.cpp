@@ -24,3 +24,6 @@ ChecksModule::ChecksModule() : Module()
     keywords_.add<DoubleKeyword>("Angle", "AngleThreshold", "Threshold at which angle checks will fail", angleThreshold_,
                                  1.0e-5);
 }
+
+// Return type of module
+std::string_view ChecksModule::type() const { return "Checks"; }

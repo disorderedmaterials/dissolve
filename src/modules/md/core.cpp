@@ -38,3 +38,6 @@ MDModule::MDModule() : Module()
     keywords_.add<IntegerKeyword>("Output", "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)",
                                   trajectoryFrequency_, 0);
 }
+
+// Return type of module
+std::string_view MDModule::type() const { return "MD"; }

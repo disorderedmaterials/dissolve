@@ -41,3 +41,6 @@ MolShakeModule::MolShakeModule() : Module()
     keywords_.add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 }
+
+// Return type of module
+std::string_view MolShakeModule::type() const { return "MolShake"; }

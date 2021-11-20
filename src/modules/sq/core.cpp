@@ -43,3 +43,6 @@ SQModule::SQModule() : Module()
 
 // Return source module for main calculation
 const RDFModule *SQModule::sourceRDF() const { return sourceRDF_; }
+
+// Return type of module
+std::string_view SQModule::type() const { return "SQ"; }

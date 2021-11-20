@@ -35,3 +35,6 @@ BraggModule::BraggModule() : Module()
     keywords_.addKeyword<StringKeyword>(
         "TestReflections", "Whether to test calculated reflection data against that in specified file", testReflectionsFile_);
 }
+
+// Return type of module
+std::string_view BraggModule::type() const { return "Bragg"; }
