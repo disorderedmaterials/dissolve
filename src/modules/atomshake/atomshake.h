@@ -15,13 +15,6 @@ class AtomShakeModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
@@ -37,6 +30,10 @@ class AtomShakeModule : public Module
     double stepSizeMin_{0.001};
     // Target acceptance rate for Monte Carlo moves
     double targetAcceptanceRate_{0.33};
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

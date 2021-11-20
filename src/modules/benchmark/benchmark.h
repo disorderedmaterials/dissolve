@@ -15,13 +15,6 @@ class BenchmarkModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
@@ -42,12 +35,9 @@ class BenchmarkModule : public Module
     // Whether to benchmark molecule distributors
     bool testDistributors_{true};
 
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Functions
@@ -56,6 +46,13 @@ class BenchmarkModule : public Module
     // Print timing information, assessing it against last value in existing timings (if found)
     void printTimingResult(std::string_view testFile, std::string_view testDescription, const SampledDouble &timing,
                            bool storeNewTiming);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

@@ -22,13 +22,6 @@ class GeometryOptimisationModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
@@ -38,18 +31,6 @@ class GeometryOptimisationModule : public Module
     int maxCycles_{1000};
     // Tolerance controlling convergence of algorithm
     double tolerance_{1.0e-4};
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions
-     */
-    private:
     // Current (reference) coordinates
     std::vector<Vec3<double>> rRef_;
     // Temporary test coordinates
@@ -57,6 +38,13 @@ class GeometryOptimisationModule : public Module
     // Current forces
     std::vector<Vec3<double>> f_;
 
+    public:
+    // Return type of module
+    std::string_view type() const override;
+
+    /*
+     * Functions
+     */
     private:
     // Copy coordinates from supplied target into reference arrays
     template <class T> void setReferenceCoordinates(T *target);
@@ -278,6 +266,13 @@ class GeometryOptimisationModule : public Module
     public:
     // Geometry optimise supplied Species
     bool optimiseSpecies(const PotentialMap &potentialMap, ProcessPool &procPool, Species *sp);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

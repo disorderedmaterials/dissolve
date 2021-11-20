@@ -15,16 +15,13 @@ class SkeletonModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

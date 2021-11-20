@@ -25,13 +25,6 @@ class EPSRModule : public Module
      * Definition
      */
     public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
-    public:
     // Expansion Function Type Enum
     enum ExpansionFunctionType
     {
@@ -99,19 +92,10 @@ class EPSRModule : public Module
     double testThreshold_{0.1};
 
     public:
+    // Return type of module
+    std::string_view type() const override;
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    public:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * Functions
@@ -173,6 +157,17 @@ class EPSRModule : public Module
     public:
     // Read data from supplied pcof file
     bool readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string_view filename);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+
+    public:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

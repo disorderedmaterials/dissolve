@@ -24,13 +24,6 @@ class CalculateAxisAngleModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
@@ -40,20 +33,6 @@ class CalculateAxisAngleModule : public Module
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of angle axis
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
-
-    /*
-     * Processing
-     */
-    private:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
-     */
-    private:
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
@@ -72,6 +51,19 @@ class CalculateAxisAngleModule : public Module
     std::shared_ptr<Process1DProcedureNode> processAngle_;
     // Process2DNode for distance-angle data
     std::shared_ptr<Process2DProcedureNode> processDAngle_;
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
+
+    /*
+     * Processing
+     */
+    private:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

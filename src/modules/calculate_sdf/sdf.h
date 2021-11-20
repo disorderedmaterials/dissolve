@@ -23,13 +23,6 @@ class CalculateSDFModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
@@ -41,18 +34,6 @@ class CalculateSDFModule : public Module
     Vec3<double> rangeY_{-10.0, 10.0, 0.5};
     // Range along Z axis
     Vec3<double> rangeZ_{-10.0, 10.0, 0.5};
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
-     */
-    private:
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A (origin)
@@ -65,6 +46,17 @@ class CalculateSDFModule : public Module
     std::shared_ptr<Process3DProcedureNode> processPosition_;
     // Export file and format for SDF
     Data3DExportFileFormat sdfFileAndFormat_;
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

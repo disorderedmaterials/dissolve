@@ -16,18 +16,15 @@ class ImportTrajectoryModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Data
-     */
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Trajectory file source
     TrajectoryImportFileFormat trajectoryFormat_;
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

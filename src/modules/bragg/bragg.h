@@ -17,13 +17,6 @@ class BraggModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
@@ -44,15 +37,12 @@ class BraggModule : public Module
     // File containing reflection data to test against
     std::string testReflectionsFile_;
 
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
-     * Members / Functions
+     * Functions
      */
     public:
     // Calculate Bragg terms for specified Configuration
@@ -63,6 +53,13 @@ class BraggModule : public Module
                                  const double qDelta, const double qMax);
     // Re-bin reflection data into supplied arrays
     bool reBinReflections(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg, Array2D<Data1D> &braggPartials);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

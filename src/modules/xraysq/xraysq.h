@@ -27,13 +27,6 @@ class XRaySQModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Atomic form factors to use for weighting
     XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::WaasmaierKirfel1995};
@@ -41,11 +34,11 @@ class XRaySQModule : public Module
     StructureFactors::NormalisationType normalisation_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
-    // Set the minimum Q value to use when Fourier-transforming the data
+    // Minimum Q value to use when Fourier-transforming the data
     double referenceFTQMin_{0.0};
-    // Set the maximum Q value to use when Fourier-transforming the data
+    // Maximum Q value to use when Fourier-transforming the data
     double referenceFTQMax_{0.0};
-    // Set the spacing in r to use when generating the Fourier-transformed data
+    // Spacing in r to use when generating the Fourier-transformed data
     double referenceFTDeltaR_{0.05};
     // Normalisation to remove from reference total F(Q)
     StructureFactors::NormalisationType referenceNormalisation_{StructureFactors::NoNormalisation};
@@ -57,16 +50,34 @@ class XRaySQModule : public Module
     bool saveGR_{false};
     // Whether to save the reference data and its Fourier transform
     bool saveReference_{false};
-    // Save representative G(r), obtained from Fourier transform of the calculated F(Q)
+    // Whether to save representative G(r), obtained from Fourier transform of the calculated F(Q)
     bool saveRepresentativeGR_{false};
     // Whether to save weighted S(Q) and F(Q) to disk after calculation
     bool saveSQ_{false};
     // Source module for calculation
     const SQModule *sourceSQ_{nullptr};
+    // Test data
+    Data1DStore testData_;
 
     public:
+    // Return type of module
+    std::string_view type() const override;
     // Return file and format for reference total F(Q)
     const Data1DImportFileFormat &referenceFQFileAndFormat();
+
+    /*
+     * Functions
+     */
+    public:
+    // Calculate weighted g(r) from supplied unweighted g(r) and Weights
+    bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
+    // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
+    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
+    // Calculate xray weights for relevant Configuration targets
+    void calculateWeights(const RDFModule *rdfModule, XRayWeights &weights,
+                          XRayFormFactors::XRayFormFactorData formFactors) const;
 
     /*
      * Processing
@@ -78,24 +89,6 @@ class XRaySQModule : public Module
     public:
     // Run set-up stage
     bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Members / Functions
-     */
-    private:
-    // Test data
-    Data1DStore testData_;
-
-    public:
-    // Calculate weighted g(r) from supplied unweighted g(r) and Weights
-    bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
-                             StructureFactors::NormalisationType normalisation);
-    // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
-                             StructureFactors::NormalisationType normalisation);
-    // Calculate xray weights for relevant Configuration targets
-    void calculateWeights(const RDFModule *rdfModule, XRayWeights &weights,
-                          XRayFormFactors::XRayFormFactorData formFactors) const;
 
     /*
      * GUI Widget

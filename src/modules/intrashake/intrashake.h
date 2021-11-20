@@ -15,13 +15,6 @@ class IntraShakeModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
@@ -57,6 +50,10 @@ class IntraShakeModule : public Module
     double torsionStepSizeMin_{0.5};
     // Maximum step size for torsion adjustments (degrees)
     double torsionStepSizeMax_{45.0};
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

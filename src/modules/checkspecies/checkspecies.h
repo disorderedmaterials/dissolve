@@ -20,13 +20,6 @@ class CheckSpeciesModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Atom types to check against indices
     std::vector<std::tuple<std::vector<int>, std::vector<std::string>>> atomTypes_;
@@ -47,15 +40,12 @@ class CheckSpeciesModule : public Module
     // Tolerance beyond which parameters are said to differ
     double tolerance_{1.0e-3};
 
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
-     * Functions / Data
+     * Functions
      */
     private:
     // Check parameters for the supplied intramolecular term against those supplied
@@ -100,4 +90,11 @@ class CheckSpeciesModule : public Module
 
         return !result;
     }
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 };

@@ -16,13 +16,6 @@ class AccumulateModule : public Module
      * Definition
      */
     public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
-    public:
     // Target PartialSet Enum
     enum TargetPartialSet
     {
@@ -40,6 +33,10 @@ class AccumulateModule : public Module
     std::vector<Module *> targetModule_;
     // Whether to save the accumulated partials to disk
     bool save_{false};
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

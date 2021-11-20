@@ -17,22 +17,6 @@ class CalculateAvgMolModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
-     */
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
@@ -43,6 +27,13 @@ class CalculateAvgMolModule : public Module
     // Local Species representing average of targeted Species
     Species averageSpecies_;
 
+    public:
+    // Return type of module
+    std::string_view type() const override;
+
+    /*
+     * Functions
+     */
     private:
     // Ensure arrays are the correct size for the current target Species
     void updateArrays(Dissolve &dissolve);
@@ -54,6 +45,15 @@ class CalculateAvgMolModule : public Module
     void updateSpecies(const GenericList &moduleData);
     // Return average Species
     Species &averageSpecies();
+
+    /*
+     * Processing
+     */
+    private:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

@@ -18,13 +18,6 @@ class MDModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
@@ -53,12 +46,9 @@ class MDModule : public Module
     // Whether a variable timestep should be used, determined from the maximal force vector
     bool variableTimestep_{true};
 
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Functions
@@ -68,4 +58,11 @@ class MDModule : public Module
     int capForces(double maxForceSq, std::vector<Vec3<double>> &f);
     // Determine timestep based on maximal force component
     double determineTimeStep(const std::vector<Vec3<double>> &f);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 };

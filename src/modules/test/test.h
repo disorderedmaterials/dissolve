@@ -8,10 +8,6 @@
 // Test Module
 class TestModule : public Module
 {
-    /*
-     * Module for testing various functions
-     */
-
     public:
     TestModule();
     ~TestModule() override = default;
@@ -19,16 +15,12 @@ class TestModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configuration
     std::vector<Configuration *> targetConfigurations_;
+
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

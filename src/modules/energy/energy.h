@@ -18,13 +18,6 @@ class EnergyModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configuration
     std::vector<Configuration *> targetConfigurations_;
@@ -45,16 +38,9 @@ class EnergyModule : public Module
     // Threshold of energy at which test comparison will fail
     double testThreshold_{0.1};
 
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
     public:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Functions
@@ -92,6 +78,17 @@ class EnergyModule : public Module
     static EnergyStability checkStability(GenericList &processingData, const Configuration *cfg);
     // Check energy stability of specified Configurations, returning the number that are unstable
     static int nUnstable(GenericList &processingData, const std::vector<Configuration *> &configurations);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+
+    public:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

@@ -22,13 +22,6 @@ class CalculateRDFModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
@@ -36,20 +29,6 @@ class CalculateRDFModule : public Module
     bool excludeSameMolecule_{false};
     // Range (min, max, delta) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
-
-    /*
-     * Processing
-     */
-    private:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
-     */
-    private:
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
@@ -62,12 +41,23 @@ class CalculateRDFModule : public Module
     std::shared_ptr<Process1DProcedureNode> processDistance_;
 
     public:
+    // Return type of module
+    std::string_view type() const override;
     // Return Collect1DNode for A-B RDF
     std::shared_ptr<Collect1DProcedureNode> collectDistanceNode() const;
     // Return SelectNode for site A
     std::shared_ptr<SelectProcedureNode> selectANode() const;
     // Return Process1DNode result (i.e. RDF)
     std::shared_ptr<Process1DProcedureNode> rdfResult() const;
+
+    /*
+     * Processing
+     */
+    private:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

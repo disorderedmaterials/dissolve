@@ -22,13 +22,6 @@ class ForcesModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
@@ -42,15 +35,14 @@ class ForcesModule : public Module
     bool testIntra_{true};
     // Threshold of force (%) at which test comparison will fail
     double testThreshold_{0.1};
-
-    /*
-     * Data
-     */
-    private:
     // Reference forces for test
     ForceImportFileFormat referenceForces_;
     // Force export file and format
     ForceExportFileFormat exportedForces_;
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

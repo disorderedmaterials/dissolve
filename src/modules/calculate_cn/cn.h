@@ -22,13 +22,6 @@ class CalculateCNModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Source module for calculation
     const CalculateRDFModule *sourceRDF_{nullptr};
@@ -40,18 +33,6 @@ class CalculateCNModule : public Module
     double testRangeC_{0.0};
     // Threshold difference at which test comparisons will fail
     double testThreshold_{0.1};
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
-     */
-    private:
     // Analysis procedure to be run
     Procedure analyser_;
     // Sum1D node
@@ -62,10 +43,19 @@ class CalculateCNModule : public Module
     std::shared_ptr<OperateSitePopulationNormaliseProcedureNode> siteNormaliser_;
 
     public:
+    // Return type of module
+    std::string_view type() const override;
     // Return whether range B is enabled
     bool isRangeBEnabled() const;
     // Return whether range C is enabled
     bool isRangeCEnabled() const;
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

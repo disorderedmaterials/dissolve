@@ -22,13 +22,6 @@ class DataTestModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Method of error calculation to use
     Error::ErrorType errorType_{Error::EuclideanError};
@@ -46,6 +39,10 @@ class DataTestModule : public Module
     ValueStore testSampledVectorData_;
     // Threshold for error metric above which test fails
     double threshold_{5.0e-3};
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

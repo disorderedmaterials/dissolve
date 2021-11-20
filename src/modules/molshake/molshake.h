@@ -15,13 +15,6 @@ class MolShakeModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Initialisation
-     */
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
@@ -45,6 +38,10 @@ class MolShakeModule : public Module
     double translationStepSizeMin_{0.001};
     // Maximum step size for translations (Angstroms)
     double translationStepSizeMax_{3.0};
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing

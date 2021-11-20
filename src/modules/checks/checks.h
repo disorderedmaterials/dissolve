@@ -16,13 +16,6 @@ class ChecksModule : public Module
     /*
      * Definition
      */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-
-    /*
-     * Control
-     */
     private:
     // Target configuration
     std::vector<Configuration *> targetConfigurations_;
@@ -34,6 +27,10 @@ class ChecksModule : public Module
     std::vector<Geometry> angles_;
     // Threshold at which angle checks will fail (degrees)
     double angleThreshold_{0.05};
+
+    public:
+    // Return type of module
+    std::string_view type() const override;
 
     /*
      * Processing
