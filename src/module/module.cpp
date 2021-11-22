@@ -5,7 +5,12 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-Module::Module(std::string typeName) : typeName_(typeName), frequency_(1), enabled_(true) {}
+// Static Singletons
+std::vector<Module *> Module::instances_;
+
+Module::Module(std::string typeName) : typeName_(typeName), frequency_(1), enabled_(true) { instances_.push_back(this); }
+
+Module::~Module() { instances_.erase(std::remove(instances_.begin(), instances_.end(), this)); }
 
 /*
  * Definition
@@ -124,3 +129,52 @@ SampledDouble Module::processTimes() const { return processTimes_; }
 
 // Read timing information through specified parser
 bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deserialise(parser); }
+
+/*
+ * Management
+ */
+
+// Return vector of all existing Modules
+const std::vector<Module *> &Module::instances() { return instances_; }
+
+// Search for any instance of any module with the specified unique name
+Module *Module::find(std::string_view uniqueName)
+{
+    auto it = std::find_if(instances_.begin(), instances_.end(),
+                           [uniqueName](const auto *m) { return DissolveSys::sameString(m->uniqueName(), uniqueName); });
+    if (it != instances_.end())
+        return *it;
+
+    return nullptr;
+}
+
+// Search for and return any instance(s) of the specified Module type
+std::vector<Module *> Module::allOfType(std::string_view moduleType)
+{
+    return allOfType(std::vector<std::string>{std::string{moduleType}});
+}
+
+std::vector<Module *> Module::allOfType(std::vector<std::string> types)
+{
+    std::vector<Module *> modules;
+    std::copy_if(instances_.begin(), instances_.end(), std::back_inserter(modules),
+                 [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
+    return modules;
+}
+
+// Generate unique Module name with base name provided
+std::string Module::uniqueName(std::string_view name, Module *exclude)
+{
+    std::string newName{name};
+
+    // Find an unused name starting with the baseName provided
+    auto suffix = 0;
+    while (std::find_if(instances_.begin(), instances_.end(), [newName, exclude](const auto *m) {
+               return (m != exclude) && DissolveSys::sameString(m->uniqueName(), newName);
+           }) != instances_.end())
+    {
+        newName = fmt::format("{}{:02d}", name, ++suffix);
+    }
+
+    return newName;
+}

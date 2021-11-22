@@ -15,7 +15,6 @@ add_library(
   keywords_simulation.cpp
   layers.cpp
   masterterms.cpp
-  modules.cpp
   objects.cpp
   pairpotentials.cpp
   simulation.cpp

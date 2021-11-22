@@ -84,8 +84,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     {
         // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
         auto moduleType = value.toString().toStdString();
-        auto newModule = dissolve_createModuleInstance(moduleType);
-        moduleLayer_->modules()[index.row()] = ;
+        moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
 
         emit dataChanged(index, index);
 

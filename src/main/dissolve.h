@@ -170,27 +170,6 @@ class Dissolve
     Configuration *findConfigurationByNiceName(std::string_view name) const;
 
     /*
-     * Modules
-     */
-    private:
-    // List of all instances of all used Modules
-    RefList<Module> moduleInstances_;
-
-    public:
-    // Create a Module instance for the named Module type
-    std::unique_ptr<Module> createModuleInstance(std::string_view moduleType);
-    // Create a Module instance for the named Module type, and add it to the specified layer
-    Module *createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer);
-    // Search for any instance of any Module with the specified unique name
-    Module *findModuleInstance(std::string_view uniqueName);
-    // Search for any instance of any Module with the specified Module type
-    std::vector<Module *> findModuleInstances(std::string_view moduleType);
-    // Generate unique Module name with base name provided
-    std::string uniqueModuleName(std::string_view name, Module *excludeThis = nullptr);
-    // Delete specified Module instance
-    bool deleteModuleInstance(std::unique_ptr<Module> instance);
-
-    /*
      * Layers
      */
     private:

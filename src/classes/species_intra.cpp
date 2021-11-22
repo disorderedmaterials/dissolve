@@ -4,6 +4,8 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
+#include "classes/coredata.h"
+#include "classes/masterintra.h"
 #include "classes/species.h"
 #include "data/atomicradii.h"
 #include "templates/algorithms.h"

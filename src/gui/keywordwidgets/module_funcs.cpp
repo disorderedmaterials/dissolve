@@ -58,7 +58,7 @@ void ModuleKeywordWidget::updateValue()
     refreshing_ = true;
 
     // Get the list of available modules of the specified type
-    RefList<Module> availableModules = coreData_.findModules(keyword_->moduleType());
+    auto availableModules = Module::allOfType(keyword_->moduleType());
     ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->module(), this,
                                                                   &ModuleKeywordWidget::uniqueNameOfModule);
 

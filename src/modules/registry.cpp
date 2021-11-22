@@ -112,7 +112,7 @@ const ModuleRegistry &ModuleRegistry::instance()
 }
 
 /*
- * Static Functions
+ * Module Management
  */
 
 // Return category map
@@ -121,8 +121,24 @@ const std::vector<std::pair<std::string, std::vector<ModuleRegistry::ModuleInfoD
     return instance().categories();
 }
 
-// Create new item via template
+// Create a Module instance for the named Module type
 std::unique_ptr<Module> ModuleRegistry::create(std::string_view moduleType)
 {
-    return std::unique_ptr<Module>(instance().produce(std::string(moduleType)));
+    auto m = std::unique_ptr<Module>(instance().produce(std::string(moduleType)));
+    m->setUniqueName(Module::uniqueName(m->type(), m.get()));
+    return m;
+}
+
+// Create a Module instance for the named Module type, and add it to the specified layer
+Module *ModuleRegistry::create(std::string_view moduleType, ModuleLayer *destinationLayer)
+{
+    auto instance = create(moduleType);
+    if (!instance)
+        return nullptr;
+
+    // Add the new module instance to the specified destination layer
+    auto *m = instance.get();
+    destinationLayer->modules().emplace_back(std::move(instance));
+
+    return m;
 }

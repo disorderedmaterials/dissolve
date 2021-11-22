@@ -73,7 +73,7 @@ void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
     refreshing_ = true;
 
     // Get a list of current Modules that are of the correct type
-    RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
+    auto availableModules = Module::allOfType(keyword_->moduleTypes());
 
     // Update the list widget
     ListWidgetUpdater<ModuleVectorKeywordWidget, Module> listUpdater(ui_.SelectionList, availableModules, this,

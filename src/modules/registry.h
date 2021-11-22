@@ -68,11 +68,13 @@ class ModuleRegistry
     static const ModuleRegistry &instance();
 
     /*
-     * Static Functions
+     * Module Management
      */
     public:
     // Return category map
     static const std::vector<std::pair<std::string, std::vector<ModuleRegistry::ModuleInfoData>>> &categoryMap();
     // Create new item via template
     static std::unique_ptr<Module> create(std::string_view moduleType);
+    // Create a Module instance for the named Module type, and add it to the specified layer
+    static Module *create(std::string_view moduleType, ModuleLayer *destinationLayer);
 };

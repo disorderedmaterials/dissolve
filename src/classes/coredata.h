@@ -4,27 +4,25 @@
 #pragma once
 
 #include "base/version.h"
+#include "classes/configuration.h"
 #include "classes/masterintra.h"
+#include "classes/species.h"
 #include "data/elements.h"
 #include "templates/optionalref.h"
-#include "templates/reflist.h"
 #include <list>
 #include <memory>
 #include <optional>
 #include <vector>
 
 // Forward Declarations
-class AtomType;
-class Configuration;
-class Species;
 class Module;
 
 // Core Data Container
 class CoreData
 {
     public:
-    CoreData();
-    ~CoreData();
+    CoreData() = default;
+    ~CoreData() = default;
     // Clear all data
     void clear();
 
@@ -166,37 +164,6 @@ class CoreData
     std::string uniqueConfigurationName(std::string_view base) const;
     // Search for Configuration by name
     Configuration *findConfiguration(std::string_view name) const;
-
-    /*
-     * Module Instances
-     */
-    private:
-    // Pointer to Module instances list
-    const RefList<Module> *moduleInstances_;
-
-    public:
-    // Set target Module instances list
-    void setModuleInstances(RefList<Module> *moduleInstances);
-    // Search for any instance of any module with the specified unique name
-    Module *findModule(std::string_view uniqueName) const;
-    // Search for and return any instance(s) of the specified Module type
-    RefList<Module> findModules(std::string_view moduleType) const;
-    // Search for and return any instance(s) of the specified List of Module types
-    RefList<Module> findModules(const std::vector<std::string> &moduleTypes) const;
-    // Search for and return any instance(s) of the templated module class
-    template <class M> RefList<M> findModulesByClass() const
-    {
-        RefList<M> modules;
-
-        for (auto module : *moduleInstances_)
-        {
-            M *castModule = dynamic_cast<M *>(module);
-            if (castModule)
-                modules.append(castModule);
-        }
-
-        return modules;
-    }
 
     /*
      * Input Filename
