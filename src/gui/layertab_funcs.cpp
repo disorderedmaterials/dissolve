@@ -25,13 +25,15 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
-    if (moduleLayer_->nModules() >= 1)
+    if (moduleLayer_->modules().size() >= 1)
     {
         auto firstIndex = moduleLayerModel_.index(0, 0);
         ui_.ModulesList->selectionModel()->setCurrentIndex(firstIndex, QItemSelectionModel::ClearAndSelect);
     }
 
-    // Hide the module palette by default
+    // Set up the available modules tree
+    ui_.AvailableModulesTree->setModel(&modulePaletteModel_);
+    ui_.AvailableModulesTree->expandAll();
     ui_.AvailableModulesTree->setVisible(false);
 }
 

@@ -5,6 +5,7 @@
 
 #include "gui/maintab.h"
 #include "gui/models/moduleLayerModel.h"
+#include "gui/models/modulePaletteModel.h"
 #include "gui/ui_layertab.h"
 
 // Forward Declarations
@@ -31,6 +32,8 @@ class LayerTab : public QWidget, public MainTab
     ModuleLayer *moduleLayer_;
     // Model for module layer
     ModuleLayerModel moduleLayerModel_;
+    // Model for module palette
+    ModulePaletteModel modulePaletteModel_;
 
     public:
     // Return displayed ModuleLayer

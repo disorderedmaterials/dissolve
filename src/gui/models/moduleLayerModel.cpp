@@ -3,6 +3,7 @@
 
 #include "gui/models/moduleLayerModel.h"
 #include "module/module.h"
+#include "modules/registry.h"
 #include <QIODevice>
 #include <QIcon>
 #include <QMimeData>
@@ -28,7 +29,7 @@ Module *ModuleLayerModel::rawData(const QModelIndex &index) const
 int ModuleLayerModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return moduleLayer_ ? moduleLayer_->nModules() : 0;
+    return moduleLayer_ ? moduleLayer_->modules().size() : 0;
 }
 
 QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
@@ -79,6 +80,17 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
         return true;
     }
+    else if (role == ModuleLayerModelAction::CreateNew)
+    {
+        // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
+        auto moduleType = value.toString().toStdString();
+        auto newModule = dissolve_createModuleInstance(moduleType);
+        moduleLayer_->modules()[index.row()] = ;
+
+        emit dataChanged(index, index);
+
+        return true;
+    }
 
     return false;
 }
@@ -107,12 +119,13 @@ QVariant ModuleLayerModel::headerData(int section, Qt::Orientation orientation, 
 
 Qt::DropActions ModuleLayerModel::supportedDragActions() const { return Qt::MoveAction; }
 
-Qt::DropActions ModuleLayerModel::supportedDropActions() const { return Qt::MoveAction; }
+Qt::DropActions ModuleLayerModel::supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; }
 
 QStringList ModuleLayerModel::mimeTypes() const
 {
     QStringList types;
-    types << "application/dissolve.module.list";
+    types << "application/dissolve.module.move";
+    types << "application/dissolve.module.create";
     return types;
 }
 
@@ -135,13 +148,13 @@ bool ModuleLayerModel::canDropMimeData(const QMimeData *data, Qt::DropAction act
     Q_UNUSED(row);
     Q_UNUSED(parent);
 
-    if (!data->hasFormat("application/dissolve.module.move"))
-        return false;
-
     if (column > 0)
         return false;
 
-    return true;
+    if (data->hasFormat("application/dissolve.module.move") || data->hasFormat("application/dissolve.module.create"))
+        return true;
+
+    return false;
 }
 
 bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
@@ -152,7 +165,7 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     if (action == Qt::IgnoreAction)
         return true;
-    else if (action == Qt::MoveAction)
+    else if (action == Qt::MoveAction && data->hasFormat("application/dissolve.module.move"))
     {
         // Move an existing module around the list
         QByteArray encodedData = data->data("application/dissolve.module.move");
@@ -171,6 +184,28 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
         // Move the specified module name to its new index
         setData(idx, draggedModuleName, ModuleLayerModelAction::MoveInternal);
+
+        return true;
+    }
+    else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.module.create"))
+    {
+        // Create a new module in the list
+        QByteArray encodedData = data->data("application/dissolve.module.create");
+        QDataStream stream(&encodedData, QIODevice::ReadOnly);
+        QString moduleType;
+        stream >> moduleType;
+
+        // Get the new index of the dragged module in the vector
+        auto insertAtRow = parent.isValid() ? parent.row() : row;
+        if (insertAtRow == -1)
+            insertAtRow = rowCount();
+
+        // Create a new row to store the data (the soon-to-be-empty row will be deleted automatically by the model)
+        insertRows(insertAtRow, 1, QModelIndex());
+        auto idx = index(insertAtRow, 0, QModelIndex());
+
+        // Move the specified module name to its new index
+        setData(idx, moduleType, ModuleLayerModelAction::CreateNew);
 
         return true;
     }
