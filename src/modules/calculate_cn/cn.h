@@ -54,11 +54,4 @@ class CalculateCNModule : public Module
     private:
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * GUI Widget
-     */
-    public:
-    // Return a new widget controlling this Module
-    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve) override;
 };

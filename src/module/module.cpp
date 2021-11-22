@@ -124,10 +124,3 @@ SampledDouble Module::processTimes() const { return processTimes_; }
 
 // Read timing information through specified parser
 bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deserialise(parser); }
-
-/*
- * GUI Widget
- */
-
-// Return a new widget controlling this Module
-ModuleWidget *Module::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

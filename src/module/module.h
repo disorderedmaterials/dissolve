@@ -104,11 +104,4 @@ class Module
     SampledDouble processTimes() const;
     // Read timing information through specified parser
     bool readProcessTimes(LineParser &parser);
-
-    /*
-     * GUI Widget
-     */
-    public:
-    // Return a new widget controlling this Module
-    virtual ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

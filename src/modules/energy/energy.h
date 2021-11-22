@@ -85,11 +85,4 @@ class EnergyModule : public Module
     public:
     // Run set-up stage
     bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * GUI Widget
-     */
-    public:
-    // Return a new widget controlling this Module
-    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve) override;
 };
