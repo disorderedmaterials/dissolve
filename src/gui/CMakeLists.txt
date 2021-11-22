@@ -47,7 +47,6 @@ set(gui_MOC_HDRS
     selectspeciesdialog.h
     # Editors
     modulecontrolwidget.h
-    modulelisteditor.h
     procedureeditor.h
     # Main Tabs
     configurationtab.h
@@ -107,7 +106,6 @@ set(gui_UIS
     selectspeciesdialog.ui
     # Editors
     modulecontrolwidget.ui
-    modulelisteditor.ui
     procedureeditor.ui
     # Main Tabs
     configurationtab.ui
@@ -186,7 +184,6 @@ set(gui_SRCS
     selectspeciesdialog_funcs.cpp
     # Editors
     modulecontrolwidget_funcs.cpp
-    modulelisteditor_funcs.cpp
     procedureeditor_funcs.cpp
     # Main Tabs
     configurationtab_funcs.cpp

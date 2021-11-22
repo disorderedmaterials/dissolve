@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "gui/charts/moduleblock.h"
 #include "gui/gui.h"
 #include "gui/maintab.h"
 #include "gui/maintabsbar.hui"
