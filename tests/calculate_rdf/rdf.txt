@@ -286,12 +286,14 @@ Module DataTest
   Frequency  95
   Data1D  'RDF(COM-COM)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
   EndData1D
+  Threshold  5.0e-4
 EndModule
 
 Module DataTest
   Frequency  95
   Data1D  'RDF(COM-COM)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
   EndData1D
+  Threshold  5.0e-4
 EndModule
 
 EndLayer
