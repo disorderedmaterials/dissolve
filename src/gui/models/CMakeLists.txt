@@ -12,6 +12,7 @@ set(models_MOC_HDRS
     procedureNodeModel.h
     masterTermModel.h
     moduleLayerModel.h
+    moduleModel.h
     modulePaletteModel.h
     sitesFilterProxy.h
     sitesModel.h
@@ -48,6 +49,7 @@ set(models_SRCS
     isotopologueSetModel.cpp
     masterTermModel.cpp
     moduleLayerModel.cpp
+    moduleModel.cpp
     modulePaletteModel.cpp
     pairPotentialModel.cpp
     procedureNodeModel.cpp

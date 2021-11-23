@@ -5,6 +5,7 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_module.h"
+#include "gui/models/moduleModel.h"
 #include "keywords/module.h"
 #include <QWidget>
 
@@ -29,6 +30,10 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
     private:
     // Main form declaration
     Ui::ModuleWidget ui_;
+    // Vector of allowed module targets
+    std::vector<Module *> allowedModules_;
+    // Model for combo box
+    ModuleModel moduleModel_;
 
     private slots:
     // Value changed
@@ -41,10 +46,6 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
     /*
      * Update
      */
-    private:
-    // Return text (for ComboBox item) for supplied Module
-    QString uniqueNameOfModule(const Module *module);
-
     public:
     // Update value displayed in widget
     void updateValue() override;

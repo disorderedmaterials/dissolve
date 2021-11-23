@@ -6,6 +6,7 @@
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/ui_modulevector.h"
+#include "gui/models/moduleModel.h"
 #include "keywords/modulevector.h"
 #include <QWidget>
 
@@ -33,14 +34,13 @@ class ModuleVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
     private:
     // Main form declaration
     Ui::ModuleVectorWidget ui_;
-
-    private:
-    // Selection list update function
-    void updateSelectionRow(int row, Module *module, bool createItem);
+    // Vector of allowed module targets
+    std::vector<Module *> allowedModules_;
+    // Model for combo box
+    ModuleModel moduleModel_;
 
     private slots:
-    // List item changed
-    void itemChanged(QListWidgetItem *item);
+    void modelDataChanged(const QModelIndex &, const QModelIndex &);
 
     signals:
     // Keyword value changed

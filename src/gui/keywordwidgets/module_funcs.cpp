@@ -12,8 +12,11 @@ ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, ModuleKeywordBase *key
     ui_.setupUi(this);
 
     refreshing_ = true;
-
-    updateValue();
+    allowedModules_ = Module::allOfType(keyword->moduleType());
+    moduleModel_.setData(allowedModules_);
+    ui_.ModuleCombo->setModel(&moduleModel_);
+    auto it = std::find(allowedModules_.begin(), allowedModules_.end(), keyword->module());
+    ui_.ModuleCombo->setCurrentIndex(it == allowedModules_.end() ? -1 : it - allowedModules_.begin());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -33,8 +36,10 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
         return;
 
     // Get data from the selected item
-    Module *module = VariantPointer<Module>(ui_.ModuleCombo->itemData(index, Qt::UserRole));
-    keyword_->setData(module);
+    if (index == -1)
+        keyword_->setData(nullptr);
+    else
+        keyword_->setData(ui_.ModuleCombo->currentData(Qt::UserRole).value<Module *>());
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -43,24 +48,5 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
  * Update
  */
 
-// Return text (for ComboBox item) for supplied Module
-QString ModuleKeywordWidget::uniqueNameOfModule(const Module *module)
-{
-    if (module)
-        return QString::fromStdString(std::string(module->uniqueName()));
-    else
-        return "NULL";
-}
-
 // Update value displayed in widget
-void ModuleKeywordWidget::updateValue()
-{
-    refreshing_ = true;
-
-    // Get the list of available modules of the specified type
-    auto availableModules = Module::allOfType(keyword_->moduleType());
-    ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->module(), this,
-                                                                  &ModuleKeywordWidget::uniqueNameOfModule);
-
-    refreshing_ = false;
-}
+void ModuleKeywordWidget::updateValue() {}
