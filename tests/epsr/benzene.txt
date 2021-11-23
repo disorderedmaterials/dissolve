@@ -262,7 +262,7 @@ Module Energy
 EndModule
 
 # Refine potentials
-Module  EPSR
+Module  EPSR  'EPSR01'
   Target  'C6H6'
   Target  'C6D6'
   Target  '5050'

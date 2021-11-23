@@ -93,7 +93,7 @@ Module  ImportTrajectory
 EndModule
 
 # Average Water Molecule
-Module  CalculateAvgMol
+Module  CalculateAvgMol  'CalculateAvgMol01'
   Configuration  'Bulk'
   Site  Water  'origin'
 EndModule

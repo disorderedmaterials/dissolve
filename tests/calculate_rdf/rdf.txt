@@ -97,7 +97,7 @@ EndConfiguration
 Layer  'Processing'
 
 # Trajectory Processing
-Module  ImportTrajectory
+Module  ImportTrajectory  'ImportTrajectory01'
   Configuration  'Bulk'
 
   # Trajectory file contains 95 frames
