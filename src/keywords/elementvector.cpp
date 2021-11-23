@@ -4,6 +4,7 @@
 #include "keywords/elementvector.h"
 #include "base/lineparser.h"
 #include "data/elements.h"
+#include "templates/algorithms.h"
 
 ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data) : KeywordBase(typeid(this)), data_(data) {}
 
@@ -22,28 +23,25 @@ const std::vector<Elements::Element> &ElementVectorKeyword::data() const { retur
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ElementVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int ElementVectorKeyword::maxArguments() const { return 999; }
+std::optional<int> ElementVectorKeyword::maxArguments() const { return std::nullopt; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ElementVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ElementVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    // Loop over arguments (which are Element names) and add them to our list
+    // Loop over arguments which are Element names
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the Element?
         auto el = Elements::element(parser.argsv(n));
         if (el == Elements::Unknown)
-            return Messenger::error("Unrecognised Element '{}' found in list.\n", parser.argsv(n));
+            return Messenger::error("Unrecognised Element '{}' given to keyword '{}'.\n", parser.argsv(n), name());
 
-        // If the Element is in the list already, complain
+        // If the Element is already present, complain
         if (std::find(data_.begin(), data_.end(), el) != data_.end())
-            return Messenger::error("Element '{}' specified in list twice.\n", parser.argsv(n));
+            return Messenger::error("Element '{}' specified twice in keyword '{}'.\n", parser.argsv(n), name());
 
-        // All OK - add it to our selection list
+        // All OK - add it to our vector
         data_.push_back(el);
     }
 
@@ -52,20 +50,12 @@ bool ElementVectorKeyword::read(LineParser &parser, int startArg, const CoreData
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ElementVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ElementVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Don't write anything if there are no items in the list
-    if (data_.size() == 0)
+    if (data_.empty())
         return true;
 
-    // Loop over the Element list
-    std::string elements;
-    for (auto el : data_)
-        elements += fmt::format("  {}", Elements::symbol(el));
-
-    if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, elements))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}{}\n", prefix, keywordName,
+                             joinStrings(data_, "  ", [](const auto &el) { return Elements::symbol(el); }));
 }

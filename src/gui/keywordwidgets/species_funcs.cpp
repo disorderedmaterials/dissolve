@@ -14,7 +14,7 @@ SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, SpeciesKeyword *keyw
     updateValue();
 
     // Connect the
-    connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myIndexChanged(int)));
+    connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxIndexChanged(int)));
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -26,7 +26,7 @@ SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, SpeciesKeyword *keyw
  */
 
 // Combo box item changed
-void SpeciesKeywordWidget::myIndexChanged(int index)
+void SpeciesKeywordWidget::comboBoxIndexChanged(int index)
 {
     if (refreshing_)
         return;

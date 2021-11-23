@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
+#include "templates/algorithms.h"
 
 ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration *> &data, int maxListSize)
     : KeywordBase(typeid(this)), data_(data)
@@ -23,37 +24,34 @@ bool ConfigurationVectorKeyword::isDataEmpty() const { return data_.empty(); }
 std::vector<Configuration *> &ConfigurationVectorKeyword::data() { return data_; }
 const std::vector<Configuration *> &ConfigurationVectorKeyword::data() const { return data_; }
 
-// Return maximum number of Configurations to allow in the list
-int ConfigurationVectorKeyword::maxListSize() const { return maxListSize_; }
+// Return maximum number of Configurations to allow
+std::optional<int> ConfigurationVectorKeyword::maxListSize() const { return maxListSize_; }
 
 /*
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ConfigurationVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int ConfigurationVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> ConfigurationVectorKeyword::maxArguments() const { return std::nullopt; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ConfigurationVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ConfigurationVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    // Each argument is the name of a Configuration that we will add to our list
+    // Each argument is the name of a Configuration
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
-        Configuration *cfg = coreData.findConfiguration(parser.argsv(n));
+        auto *cfg = coreData.findConfiguration(parser.argsv(n));
         if (!cfg)
             return Messenger::error("Error defining Configuration targets - no Configuration named '{}' exists.\n",
                                     parser.argsv(n));
 
-        // Check maximum size of list
-        if ((maxListSize_ != -1) && (data_.size() >= maxListSize_))
-            return Messenger::error("Too many configurations given to keyword. Maximum allowed is {}.\n", maxListSize_);
+        // Check maximum size of vector
+        if (maxListSize_ && (data_.size() >= maxListSize_))
+            return Messenger::error("Too many configurations given to keyword. Maximum allowed is {}.\n", maxListSize_.value());
 
-        // Check that the configuration isn't already in the list
+        // Check that the configuration isn't already present
         if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
-            return Messenger::error("Configuration '{}' is already present in the list.\n", cfg->name());
+            return Messenger::error("Configuration '{}' has already been referenced.\n", cfg->name());
 
         data_.push_back(cfg);
     }
@@ -63,18 +61,14 @@ bool ConfigurationVectorKeyword::read(LineParser &parser, int startArg, const Co
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ConfigurationVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ConfigurationVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over list of Configuration
-    std::string configurationString;
-    for (Configuration *cfg : data_)
-        configurationString += fmt::format("{}'{}'", configurationString.empty() ? "" : "  ", cfg->name());
+    if (data_.empty())
+        return true;
 
-    if (!parser.writeLineF("{}{}  {}\n", prefix, keywordName, configurationString))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
+                             joinStrings(data_, "  ", [](const auto *cfg) { return fmt::format("{}", cfg->name()); }));
 }
 
 /*

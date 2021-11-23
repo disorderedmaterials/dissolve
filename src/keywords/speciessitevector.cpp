@@ -31,10 +31,10 @@ bool SpeciesSiteVectorKeyword::axesRequired() const { return axesRequired_; }
 int SpeciesSiteVectorKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> SpeciesSiteVectorKeyword::maxArguments() const { return std::nullopt; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool SpeciesSiteVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments
     for (int n = startArg; n < parser.nArgs() - 1; n += 2)
@@ -54,7 +54,7 @@ bool SpeciesSiteVectorKeyword::read(LineParser &parser, int startArg, const Core
                                     "specifications for all sites.\n",
                                     speciesSite->name(), name());
 
-        // Add site to the list
+        // Add site to the vector
         data_.push_back(speciesSite);
     }
 
@@ -63,14 +63,13 @@ bool SpeciesSiteVectorKeyword::read(LineParser &parser, int startArg, const Core
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool SpeciesSiteVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool SpeciesSiteVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // If there are no sites in the list, no need to write anything
+    // If there are no sites in the vector, no need to write anything
     if (data_.empty())
         return true;
 
-    // Loop over list of SpeciesSiteReferences
     std::string sites;
     for (auto *site : data_)
         sites += fmt::format("  '{}'  '{}'", site->parent()->name(), site->name());

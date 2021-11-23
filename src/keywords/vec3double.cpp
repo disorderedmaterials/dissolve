@@ -63,10 +63,10 @@ Vec3Labels::LabelType Vec3DoubleKeyword::labelType() const { return labelType_; 
 int Vec3DoubleKeyword::minArguments() const { return 3; }
 
 // Return maximum number of arguments accepted
-int Vec3DoubleKeyword::maxArguments() const { return 3; }
+std::optional<int> Vec3DoubleKeyword::maxArguments() const { return 3; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool Vec3DoubleKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg + 2))
     {
@@ -96,8 +96,8 @@ bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &c
     return false;
 }
 
-// Write keyword data to specified LineParser
-bool Vec3DoubleKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool Vec3DoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }

@@ -27,7 +27,7 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
      */
     private slots:
     // Combo box index changed
-    void myCurrentIndexChanged(int index);
+    void comboBoxIndexChanged(int index);
 
     signals:
     // Keyword value changed

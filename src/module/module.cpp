@@ -34,8 +34,8 @@ std::string_view Module::uniqueName() const { return uniqueName_; }
  */
 
 // Return list of recognised keywords
-KeywordList &Module::keywords() { return keywords_; }
-const KeywordList &Module::keywords() const { return keywords_; };
+KeywordStore &Module::keywords() { return keywords_; }
+const KeywordStore &Module::keywords() const { return keywords_; };
 
 // Print valid keywords
 void Module::printValidKeywords()

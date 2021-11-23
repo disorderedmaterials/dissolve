@@ -11,6 +11,7 @@
 #include <unordered_map>
 
 // Forward Declarations
+class KeywordWidgetBase;
 class QWidget;
 
 // KeywordWidget Producer

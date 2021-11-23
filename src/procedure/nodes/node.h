@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "keywords/list.h"
+#include "keywords/store.h"
 #include "templates/listitem.h"
 #include "templates/optionalref.h"
 
@@ -122,12 +122,12 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     protected:
     // Keywords for this node
-    KeywordList keywords_;
+    KeywordStore keywords_;
 
     public:
     // Return keywords for this node
-    KeywordList &keywords();
-    const KeywordList &keywords() const;
+    KeywordStore &keywords();
+    const KeywordStore &keywords() const;
 
     /*
      * Scope

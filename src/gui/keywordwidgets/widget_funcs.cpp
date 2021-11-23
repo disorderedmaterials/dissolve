@@ -41,8 +41,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     return w;
 }
 
-// Set up keyword controls for specified keyword list
-void KeywordsWidget::setUp(KeywordList &keywords, const CoreData &coreData)
+// Set up controls for specified keywords
+void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
 {
     // Clear existing item groups....
     while (count() > 0)

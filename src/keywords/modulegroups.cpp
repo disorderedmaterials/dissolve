@@ -15,9 +15,6 @@ ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups) : KeywordData<Mod
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ModuleGroupsKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
 int ModuleGroupsKeyword::maxArguments() const
 {
@@ -25,8 +22,8 @@ int ModuleGroupsKeyword::maxArguments() const
     return 2;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ModuleGroupsKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Module by its unique name
     Module *module = coreData.findModule(parser.argsv(startArg));
@@ -38,14 +35,8 @@ bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData 
 
     // Check the module's type
     if (!data_.moduleTypeIsAllowed(module->type()))
-    {
-        std::string allowedTypes;
-        for (const auto &s : data_.allowedModuleTypes())
-            allowedTypes += allowedTypes.empty() ? s : ", " + s;
-        Messenger::error("Module '{}' is of type '{}', and is not permitted in these groups (allowed types = {}).\n",
-                         parser.argsv(startArg), module->type(), allowedTypes);
-        return false;
-    }
+        return Messenger::error("Module '{}' is of type '{}', and is not permitted in these groups (allowed types = {}).\n",
+                         parser.argsv(startArg), module->type(), joinStrings(data_.allowedModuleTypes());
 
     // If a second argument was given, this is the name of the group we should add the Module to. Otherwise, use the default
     data_.addModule(module, parser.hasArg(startArg + 1) ? parser.argsv(startArg + 1) : "Default");
@@ -55,14 +46,12 @@ bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData 
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ModuleGroupsKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ModuleGroupsKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over defined groups
     for (auto &group : data_.groups())
     {
-        // Loop over list of referenced Modules in this group
-        for (Module *module : group->modules())
+        for (auto *module : group->modules())
         {
             if (!parser.writeLineF("{}{}  '{}'  '{}'\n", prefix, keywordName, module->uniqueName(), group->name()))
                 return false;

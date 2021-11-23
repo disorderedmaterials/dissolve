@@ -112,8 +112,8 @@ std::string_view ProcedureNode::niceName() const { return niceName_; }
  */
 
 // Return keywords for this node
-KeywordList &ProcedureNode::keywords() { return keywords_; }
-const KeywordList &ProcedureNode::keywords() const { return keywords_; }
+KeywordStore &ProcedureNode::keywords() { return keywords_; }
+const KeywordStore &ProcedureNode::keywords() const { return keywords_; }
 
 /*
  * Scope
@@ -279,7 +279,7 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
             return true;
 
         // Try to parse this line as a keyword
-        KeywordBase::ParseResult result = keywords_.parse(parser, coreData);
+        KeywordBase::ParseResult result = keywords_.deserialise(parser, coreData);
         if (result == KeywordBase::Failed)
             return Messenger::error("Failed to parse keyword '{}'.\n", parser.argsv(0));
         else if (result == KeywordBase::Success)
@@ -311,7 +311,7 @@ bool ProcedureNode::write(LineParser &parser, std::string_view prefix)
     std::string newPrefix = fmt::format("  {}", prefix);
 
     // Write keywords
-    if (!keywords_.write(parser, newPrefix, true))
+    if (!keywords_.serialise(parser, newPrefix, true))
         return false;
 
     // Block End

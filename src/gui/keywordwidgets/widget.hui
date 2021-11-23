@@ -12,7 +12,7 @@
 class Dissolve;
 class DissolveWindow;
 class KeywordBase;
-class KeywordList;
+class KeywordStore;
 
 // Keywords Widget
 class KeywordsWidget : public QToolBox
@@ -37,8 +37,8 @@ class KeywordsWidget : public QToolBox
     QWidget *createKeywordWidget(RefList<KeywordWidgetBase> &keywordWidgets, KeywordBase *keyword, const CoreData &coreData);
 
     public:
-    // Set up controls for specified keyword list
-    void setUp(KeywordList &keywords, const CoreData &coreData);
+    // Set up controls for specified keywords
+    void setUp(KeywordStore &keywords, const CoreData &coreData);
     // Update controls within widget
     void updateControls();
 

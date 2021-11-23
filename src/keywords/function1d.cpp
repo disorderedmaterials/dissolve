@@ -3,6 +3,7 @@
 
 #include "keywords/function1d.h"
 #include "base/lineparser.h"
+#include "templates/algorithms.h"
 
 Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties)
     : KeywordBase(typeid(this)), data_(data), functionProperties_(functionProperties)
@@ -24,14 +25,11 @@ int Function1DKeyword::functionProperties() const { return functionProperties_; 
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int Function1DKeyword::minArguments() const { return 0; }
-
 // Return maximum number of arguments accepted
-int Function1DKeyword::maxArguments() const { return 99; }
+std::optional<int> Function1DKeyword::maxArguments() const { return std::nullopt; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool Function1DKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Check function name
     if (!Functions::function1D().isValid(parser.argsv(startArg)))
@@ -52,11 +50,9 @@ bool Function1DKeyword::read(LineParser &parser, int startArg, const CoreData &c
     return result;
 }
 
-// Write keyword data to specified LineParser
-bool Function1DKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool Function1DKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    std::string params;
-    for (auto p : data_.parameters())
-        params += fmt::format("  {}", p);
-    return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, Functions::function1D().keyword(data_.type()), params);
+    return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, Functions::function1D().keyword(data_.type()),
+                             joinStrings(data_.parameters(), "  "));
 }

@@ -20,14 +20,8 @@ const Species *&SpeciesKeyword::data() const { return data_; }
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int SpeciesKeyword::minArguments() const { return 1; }
-
-// Return maximum number of arguments accepted
-int SpeciesKeyword::maxArguments() const { return 1; }
-
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool SpeciesKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Species (first argument)
     data_ = coreData.findSpecies(parser.argsv(startArg));
@@ -39,8 +33,8 @@ bool SpeciesKeyword::read(LineParser &parser, int startArg, const CoreData &core
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool SpeciesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool SpeciesKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (data_)
     {

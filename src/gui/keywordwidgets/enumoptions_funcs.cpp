@@ -22,7 +22,7 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, EnumOptionsB
     setEditable(false);
 
     // Connect the currentTextChanged signal to our own slot
-    connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myCurrentIndexChanged(int)));
+    connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxIndexChanged(int)));
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -34,7 +34,7 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, EnumOptionsB
  */
 
 // Combo box index changed
-void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
+void EnumOptionsKeywordWidget::comboBoxIndexChanged(int index)
 {
     if (refreshing_)
         return;

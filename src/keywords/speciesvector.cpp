@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
+#include "templates/algorithms.h"
 
 SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data) : KeywordBase(typeid(this)), data_(data) {}
 
@@ -23,16 +24,13 @@ const std::vector<const Species *> &SpeciesVectorKeyword::data() const { return 
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int SpeciesVectorKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
-int SpeciesVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> SpeciesVectorKeyword::maxArguments() const { return 99; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool SpeciesVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    // Each argument is the name of a Species that we will add to our list
+    // Each argument is the name of a Species
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         const auto *sp = coreData.findSpecies(parser.argsv(n));
@@ -47,21 +45,14 @@ bool SpeciesVectorKeyword::read(LineParser &parser, int startArg, const CoreData
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool SpeciesVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool SpeciesVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (isDataEmpty())
         return true;
 
-    // Loop over list of Species
-    std::string speciesString;
-    for (const auto *sp : data_)
-        speciesString += fmt::format("  '{}'", sp->name());
-
-    if (!parser.writeLineF("{}{}  {}\n", prefix, keywordName, speciesString))
-        return false;
-
-    return true;
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
+                             joinStrings(data_, "  ", [](const auto *sp) { return sp->name(); }));
 }
 
 /*

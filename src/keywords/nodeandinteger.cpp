@@ -20,14 +20,11 @@ NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, Procedur
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int NodeAndIntegerKeyword::minArguments() const { return 1; }
-
 // Return maximum number of arguments accepted
 int NodeAndIntegerKeyword::maxArguments() const { return 2; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeAndIntegerKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool NodeAndIntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode())
         return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
@@ -51,8 +48,8 @@ bool NodeAndIntegerKeyword::read(LineParser &parser, int startArg, const CoreDat
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool NodeAndIntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool NodeAndIntegerKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(), data_.first ? data_.first->name() : "???",
                              data_.second);

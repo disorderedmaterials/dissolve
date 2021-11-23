@@ -62,7 +62,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
         else
         {
             // Might be a keyword defined in the Module itself?
-            auto result = module->keywords().parse(parser, dissolve->coreData());
+            auto result = module->keywords().deserialise(parser, dissolve->coreData());
             if (result == KeywordBase::Unrecognised)
             {
                 Messenger::error("Unrecognised {} block keyword '{}' found, and the Module '{}' contains no "

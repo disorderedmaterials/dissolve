@@ -6,7 +6,7 @@
 #include "base/messenger.h"
 #include "genericitems/list.h"
 #include "keywords/configurationvector.h"
-#include "keywords/list.h"
+#include "keywords/store.h"
 #include "math/sampleddouble.h"
 #include "templates/reflist.h"
 
@@ -64,14 +64,14 @@ class Module
      */
     protected:
     // Keywords recognised by Module
-    KeywordList keywords_;
+    KeywordStore keywords_;
     // Target configurations keyword
     std::vector<Configuration *> targetConfigurations_;
 
     public:
     // Return list of recognised keywords
-    KeywordList &keywords();
-    const KeywordList &keywords() const;
+    KeywordStore &keywords();
+    const KeywordStore &keywords() const;
     // Print valid keywords
     void printValidKeywords();
 

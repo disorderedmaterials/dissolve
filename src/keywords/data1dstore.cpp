@@ -21,21 +21,17 @@ const Data1DStore &Data1DStoreKeyword::data() const { return data_; }
  */
 
 // Return minimum number of arguments accepted
-int Data1DStoreKeyword::minArguments() const
-{
-    // Must have reference data name and format as a minimum
-    return 2;
-}
+int Data1DStoreKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int Data1DStoreKeyword::maxArguments() const
+std::optional<int> Data1DStoreKeyword::maxArguments() const
 {
     // Filename, name of data, and other args
-    return 99;
+    return std::nullopt;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool Data1DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool Data1DStoreKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
                      parser.argsv(startArg + 2), parser.argsv(startArg + 1));
@@ -48,10 +44,9 @@ bool Data1DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool Data1DStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool Data1DStoreKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over list of one-dimensional data
     for (const auto &[data, format] : data_.data())
     {
         if (!format.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, data.tag())))

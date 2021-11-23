@@ -32,20 +32,14 @@ bool ExpressionKeyword::setData(std::string_view expressionText)
  * Arguments
  */
 
-// Return minimum number of arguments accepted
-int ExpressionKeyword::minArguments() const { return 1; }
-
-// Return maximum number of arguments accepted
-int ExpressionKeyword::maxArguments() const { return 1; }
-
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ExpressionKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     return setData(parser.argsv(startArg));
 }
 
-// Write keyword data to specified LineParser
-bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ExpressionKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_.expressionString()))
         return false;
