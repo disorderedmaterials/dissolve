@@ -84,4 +84,6 @@ class ModuleControlWidget : public QWidget
     signals:
     // Notify that the Module's data has been modified in some way
     void dataModified();
+    // Notify that the active status of a module has changed
+    void statusChanged();
 };

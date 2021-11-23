@@ -111,13 +111,7 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
     else
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
 
-    // Refresh the module list
-    std::optional<QModelIndex> selectedIndex;
-    if (!ui_.ModulesList->selectionModel()->selection().indexes().empty())
-        selectedIndex = ui_.ModulesList->selectionModel()->selection().indexes().front();
-    moduleLayerModel_.setData(moduleLayer_);
-    if (selectedIndex)
-        ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
+    updateModuleList();
 
     dissolveWindow_->setModified();
 }
@@ -168,6 +162,7 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
         mcw = new ModuleControlWidget;
         mcw->setModule(module, &dissolveWindow_->dissolve());
         connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+        connect(mcw, SIGNAL(statusChanged()), this, SLOT(updateModuleList()));
         ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));
     }
 }
@@ -180,6 +175,18 @@ void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const 
 /*
  * Update
  */
+
+// Update the module list
+void LayerTab::updateModuleList()
+{
+    // Refresh the module list
+    std::optional<QModelIndex> selectedIndex;
+    if (!ui_.ModulesList->selectionModel()->selection().indexes().empty())
+        selectedIndex = ui_.ModulesList->selectionModel()->selection().indexes().front();
+    moduleLayerModel_.setData(moduleLayer_);
+    if (selectedIndex)
+        ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
+}
 
 // Update controls in tab
 void LayerTab::updateControls()

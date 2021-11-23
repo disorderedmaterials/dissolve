@@ -61,6 +61,7 @@ class LayerTab : public QWidget, public MainTab
     void on_FrequencySpin_valueChanged(int value);
     void moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
+    void updateModuleList();
 
     /*
      * Update
