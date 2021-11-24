@@ -82,7 +82,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
-        ForcesModule::intraMolecularForces(procPool, cfg, potentialMap, forces);
+        ForcesModule::internalMoleculeForces(procPool, cfg, potentialMap, true, forces);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
@@ -96,7 +96,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     for (auto _ : state)
     {
         std::vector<Vec3<double>> forces(cfg->nAtoms());
-        ForcesModule::interAtomicForces(procPool, cfg, potentialMap, forces);
+        ForcesModule::pairPotentialForces(procPool, cfg, potentialMap, forces);
     }
 }
 

@@ -55,18 +55,13 @@ class ForcesModule : public Module
      * Functions
      */
     public:
-    // Calculate interatomic forces within the specified Configuration
-    static void interAtomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                  std::vector<Vec3<double>> &f);
-    // Calculate interatomic forces within the specified Species
-    static void interAtomicForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
-                                  std::vector<Vec3<double>> &f);
-    // Calculate total intramolecular forces in Configuration
-    static void intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                     std::vector<Vec3<double>> &f);
-    // Calculate total intramolecular forces in Species
-    static void intraMolecularForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
-                                     std::vector<Vec3<double>> &f);
+    // Calculate internal molecule forces, optionally only over the supplied molecules
+    static void internalMoleculeForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                       bool includePairPotentialTerms, std::vector<Vec3<double>> &f,
+                                       OptionalReferenceWrapper<std::vector<const Molecule *>> targetMolecules = std::nullopt);
+    // Calculate pair potential forces within the specified Configuration
+    static void pairPotentialForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                    std::vector<Vec3<double>> &f);
     // Calculate total forces within the specified Configuration
     static void totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                             std::vector<Vec3<double>> &f);

@@ -19,9 +19,68 @@ dissolve::CombinableContainer<std::vector<Vec3<double>>> createCombinableForces(
 }
 } // namespace
 
-// Calculate interatomic forces within the supplied Configuration
-void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                     std::vector<Vec3<double>> &f)
+// Calculate internal molecule forces, optionally only over the supplied molecules
+void ForcesModule::internalMoleculeForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                          bool includePairPotentialTerms, std::vector<Vec3<double>> &f,
+                                          OptionalReferenceWrapper<std::vector<const Molecule *>> targetMolecules)
+{
+    // Create a ForceKernel
+    ForceKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
+
+    // Molecule Force Operator
+    auto combinableForces = createCombinableForces(f);
+    auto moleculeForceOperator = [&combinableForces, &kernel, includePairPotentialTerms](const auto &mol) {
+        auto &fLocal = combinableForces.local();
+        // Loop over bonds
+        for (const auto &bond : mol->species()->bonds())
+            kernel.forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), fLocal);
+
+        // Loop over angles
+        for (const auto &angle : mol->species()->angles())
+            kernel.forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), fLocal);
+
+        // Loop over torsions
+        for (const auto &torsion : mol->species()->torsions())
+            kernel.forces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
+                          *mol->atom(torsion.indexL()), fLocal);
+
+        // Loop over impropers
+        for (const auto &imp : mol->species()->impropers())
+            kernel.forces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()),
+                          *mol->atom(imp.indexL()), fLocal);
+
+        // Pair potential interactions between atoms
+        if (includePairPotentialTerms)
+            dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
+                                    [&](int indexI, const auto &i, int indexJ, const auto &j) {
+                                        if (indexI == indexJ)
+                                            return;
+                                        auto scale = i->scaling(j);
+                                        if (scale >= 1.0e-3)
+                                            kernel.forcesWithMim(*i, *j, fLocal, scale);
+                                    });
+    };
+
+    // Set start/stride for parallel loop
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    if (targetMolecules)
+    {
+        auto [begin, end] = chop_range(targetMolecules->get().begin(), targetMolecules->get().end(), stride, start);
+        dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
+    }
+    else
+    {
+        auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+        dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
+    }
+
+    combinableForces.finalize();
+}
+
+// Calculate pair potential forces within the specified Configuration
+void ForcesModule::pairPotentialForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                       std::vector<Vec3<double>> &f)
 {
     /*
      * Calculates the interatomic forces in the supplied Configuration arising from contributions from PairPotential
@@ -57,117 +116,6 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     combinableForces.finalize();
 }
 
-// Calculate interatomic forces within the specified Species
-void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
-                                     std::vector<Vec3<double>> &f)
-{
-    double scale, r, magjisq;
-    const auto cutoffSq = potentialMap.range() * potentialMap.range();
-    Vec3<double> vecij;
-    // NOTE PR #334 : use for_each_pair
-    for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
-    {
-        auto &i = sp->atom(indexI);
-
-        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
-        {
-            auto &j = sp->atom(indexJ);
-
-            // Get intramolecular scaling of atom pair
-            scale = i.scaling(&j);
-            if (scale < 1.0e-3)
-                continue;
-
-            // Determine final forces
-            vecij = j.r() - i.r();
-            magjisq = vecij.magnitudeSq();
-            if (magjisq > cutoffSq)
-                continue;
-            r = sqrt(magjisq);
-            vecij /= r;
-
-            vecij *= potentialMap.force(&i, &j, r) * scale;
-            f[indexI] += vecij;
-            f[indexJ] -= vecij;
-        }
-    }
-}
-
-// Calculate total intramolecular forces in Configuration
-void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                        std::vector<Vec3<double>> &f)
-{
-    /*
-     * Calculate the total intramolecular forces within the supplied Configuration, arising from Bond, Angle, and Torsion
-     * terms in all molecules.
-     *
-     * Calculated forces are added in to the provided arrays. Assembly of the arrays over processes must be performed by the
-     * calling function.
-     *
-     * This is a parallel routine.
-     */
-
-    // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
-    auto combinableForces = createCombinableForces(f);
-
-    // Set start/stride for parallel loop
-    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
-    auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
-
-    // algorithm parameters
-    auto &molecules = cfg->molecules();
-    auto unaryOp = [&combinableForces, &kernel, &molecules, strategy](const auto &mol) {
-        auto &fLocal = combinableForces.local();
-        // Loop over bonds
-        for (const auto &bond : mol->species()->bonds())
-            kernel.forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), fLocal);
-
-        // Loop over angles
-        for (const auto &angle : mol->species()->angles())
-            kernel.forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), fLocal);
-
-        // Loop over torsions
-        for (const auto &torsion : mol->species()->torsions())
-            kernel.forces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
-                          *mol->atom(torsion.indexL()), fLocal);
-
-        // Loop over impropers
-        for (const auto &imp : mol->species()->impropers())
-            kernel.forces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()),
-                          *mol->atom(imp.indexL()), fLocal);
-    };
-    dissolve::for_each(ParallelPolicies::par, begin, end, unaryOp);
-    combinableForces.finalize();
-}
-
-// Calculate total intramolecular forces in Species
-void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
-                                        std::vector<Vec3<double>> &f)
-{
-    // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
-    CellArray dummyCellArray;
-    ForceKernel kernel(procPool, sp->box(), dummyCellArray, potentialMap);
-
-    // Loop over bonds
-    for (const auto &b : sp->bonds())
-        kernel.forces(b, f);
-
-    // Loop over angles
-    for (const auto &a : sp->angles())
-        kernel.forces(a, f);
-
-    // Loop over torsions
-    for (const auto &t : sp->torsions())
-        kernel.forces(t, f);
-
-    // Loop over impropers
-    for (const auto &imp : sp->impropers())
-        kernel.forces(imp, f);
-}
-
 // Calculate total forces within the supplied Configuration
 void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f)
@@ -185,17 +133,17 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     // Zero force arrays
     std::fill(f.begin(), f.end(), Vec3<double>());
 
-    // Calculate interatomic forces
+    // Calculate pair potential forces between all atoms (including within molecules)
     timer.start();
-    interAtomicForces(procPool, cfg, potentialMap, f);
+    pairPotentialForces(procPool, cfg, potentialMap, f);
     timer.stop();
-    Messenger::printVerbose("Time to do interatomic forces was {}.\n", timer.totalTimeString());
+    Messenger::printVerbose("Time to do pair potential forces was {}.\n", timer.totalTimeString());
 
-    // Calculate intramolecular forces
+    // Calculate internal molecule forces (excluding pair potential terms)
     timer.start();
-    intraMolecularForces(procPool, cfg, potentialMap, f);
+    internalMoleculeForces(procPool, cfg, potentialMap, false, f);
     timer.stop();
-    Messenger::printVerbose("Time to do intramolecular forces was {}.\n", timer.totalTimeString());
+    Messenger::printVerbose("Time to do internal molecule forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
     if (!procPool.allSum(f))
@@ -234,9 +182,57 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f)
 {
+    // Zero force array
     std::fill(f.begin(), f.end(), Vec3<double>());
 
-    interAtomicForces(procPool, sp, potentialMap, f);
+    double scale, r, magjisq;
+    const auto cutoffSq = potentialMap.range() * potentialMap.range();
+    Vec3<double> vecij;
+    // NOTE PR #334 : use for_each_pair
+    for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
+    {
+        auto &i = sp->atom(indexI);
 
-    intraMolecularForces(procPool, sp, potentialMap, f);
+        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        {
+            auto &j = sp->atom(indexJ);
+
+            // Get intramolecular scaling of atom pair
+            scale = i.scaling(&j);
+            if (scale < 1.0e-3)
+                continue;
+
+            // Determine final forces
+            vecij = j.r() - i.r();
+            magjisq = vecij.magnitudeSq();
+            if (magjisq > cutoffSq)
+                continue;
+            r = sqrt(magjisq);
+            vecij /= r;
+
+            vecij *= potentialMap.force(&i, &j, r) * scale;
+            f[indexI] += vecij;
+            f[indexJ] -= vecij;
+        }
+    }
+
+    // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
+    CellArray dummyCellArray;
+    ForceKernel kernel(procPool, sp->box(), dummyCellArray, potentialMap);
+
+    // Loop over bonds
+    for (const auto &b : sp->bonds())
+        kernel.forces(b, f);
+
+    // Loop over angles
+    for (const auto &a : sp->angles())
+        kernel.forces(a, f);
+
+    // Loop over torsions
+    for (const auto &t : sp->torsions())
+        kernel.forces(t, f);
+
+    // Loop over impropers
+    for (const auto &imp : sp->impropers())
+        kernel.forces(imp, f);
 }
