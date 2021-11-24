@@ -31,6 +31,8 @@ class MDModule : public Module
     double deltaT_{1.0e-4};
     // Frequency at which to calculate total system energy (or 0 to inhibit)
     int energyFrequency_{10};
+    // Whether to restrict force calculation to intramolecular contributions only
+    bool intramolecularForcesOnly_{false};
     // Number of steps to perform
     int nSteps_{50};
     // Only run MD when target Configuration energies are stable

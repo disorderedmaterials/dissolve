@@ -4,9 +4,6 @@
 #include "base/lineparser.h"
 #include "base/timer.h"
 #include "classes/box.h"
-#include "classes/cell.h"
-#include "classes/forcekernel.h"
-#include "classes/species.h"
 #include "data/atomicmasses.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
@@ -25,6 +22,11 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
     auto writeTraj = trajectoryFrequency_ > 0;
+
+    // Units
+    // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
+    // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
+    const auto kb = 0.8314462;
 
     // Print argument/parameter summary
     Messenger::print("MD: Cutoff distance is {}\n", rCut);
@@ -85,7 +87,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &atoms = targetConfiguration_->atoms();
     double tInstant, ke, tScale, peInter, peIntra;
 
-    // Determine target molecules from the restrictedSpecies vector (if any), and zero velocities for those atoms
+    // Determine target molecules from the restrictedSpecies vector (if any)
     std::vector<const Molecule *> targetMolecules;
     std::vector<int> free(targetConfiguration_->nAtoms(), 0);
     if (restrictToSpecies_.empty())
@@ -109,7 +111,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Read in or assign random velocities
     auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
         fmt::format("{}//Velocities", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
-    if (status == GenericItem::ItemStatus::Created || randomVelocities_)
+    if ((status == GenericItem::ItemStatus::Created || randomVelocities_) && !intramolecularForcesOnly_)
     {
         Messenger::print("Random initial velocities will be assigned.\n");
         velocities.resize(targetConfiguration_->nAtoms(), Vec3<double>());
@@ -121,6 +123,11 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 v.zero();
             v /= sqrt(TWOPI);
         }
+    }
+    else if (intramolecularForcesOnly_)
+    {
+        Messenger::print("Only intramolecular forces will be calculated, so velocities will be zeroes.\n");
+        std::fill(velocities.begin(), velocities.end(), Vec3<double>());
     }
     else
         Messenger::print("Existing velocities will be used.\n");
@@ -141,25 +148,26 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         massSum += m;
     }
 
-    // Remove any velocity shift, and re-zero velocities on fixed atoms
-    vCom /= massSum;
-    std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
-    for (auto &&[v, iFree] : zip(velocities, free))
-        if (!iFree)
-            v.zero();
+    // Finalise initial velocities (unless considering intramolecular forces only)
+    if (!intramolecularForcesOnly_)
+    {
+        // Remove any velocity shift, and re-zero velocities on fixed atoms
+        vCom /= massSum;
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
+        for (auto &&[v, iFree] : zip(velocities, free))
+            if (!iFree)
+                v.zero();
 
-    // Calculate instantaneous temperature
-    // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
-    // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
-    const auto kb = 0.8314462;
-    ke = 0.0;
-    for (auto &&[m, v] : zip(mass, velocities))
-        ke += 0.5 * m * v.dp(v);
-    tInstant = ke * 2.0 / (3.0 * atoms.size() * kb);
+        // Calculate instantaneous temperature
+        ke = 0.0;
+        for (auto &&[m, v] : zip(mass, velocities))
+            ke += 0.5 * m * v.dp(v);
+        tInstant = ke * 2.0 / (3.0 * atoms.size() * kb);
 
-    // Rescale velocities for desired temperature
-    tScale = sqrt(temperature / tInstant);
-    std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
+        // Rescale velocities for desired temperature
+        tScale = sqrt(temperature / tInstant);
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
+    }
 
     // Open trajectory file (if requested)
     LineParser trajParser;
@@ -196,10 +204,18 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Variable timestep requires forces to be available immediately
     if (variableTimestep_)
     {
+        // Zero force arrays
+        std::fill(forces.begin(), forces.end(), Vec3<double>());
+
         if (targetMolecules.empty())
-            ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces);
+            intramolecularForcesOnly_
+                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces)
+                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces);
         else
-            ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces);
+            intramolecularForcesOnly_
+                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces,
+                                                       targetMolecules)
+                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         std::transform(forces.begin(), forces.end(), forces.begin(), [](auto f) { return f * 100.0; });
@@ -229,11 +245,19 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Update Cell contents / Atom locations
         targetConfiguration_->updateCellContents();
 
+        // Zero force arrays
+        std::fill(forces.begin(), forces.end(), Vec3<double>());
+
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
-            ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces);
+            intramolecularForcesOnly_
+                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces)
+                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces);
         else
-            ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces);
+            intramolecularForcesOnly_
+                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces,
+                                                       targetMolecules)
+                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces);
         std::transform(forces.begin(), forces.end(), forces.begin(), [](auto &f) { return f * 100.0; });
 
         // Cap forces
