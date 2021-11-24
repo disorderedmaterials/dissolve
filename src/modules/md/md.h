@@ -28,7 +28,7 @@ class MDModule : public Module
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
     // Timestep (ps) to use in MD simulation
-    double deltaT_{1.0e-4};
+    double deltaT_{5.0e-4};
     // Frequency at which to calculate total system energy (or 0 to inhibit)
     int energyFrequency_{10};
     // Whether to restrict force calculation to intramolecular contributions only
@@ -46,7 +46,7 @@ class MDModule : public Module
     // Write frequency for trajectory file (or 0 to inhibit)
     int trajectoryFrequency_{0};
     // Whether a variable timestep should be used, determined from the maximal force vector
-    bool variableTimestep_{true};
+    bool variableTimestep_{false};
 
     /*
      * Functions
