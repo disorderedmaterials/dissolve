@@ -21,6 +21,7 @@ class SpeciesBondModel : public QAbstractTableModel
 
     public:
     SpeciesBondModel(std::vector<SpeciesBond> &bonds, const CoreData &coreData);
+    void reset();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

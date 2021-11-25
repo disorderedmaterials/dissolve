@@ -9,6 +9,12 @@ SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &imprope
 {
 }
 
+void SpeciesImproperModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int SpeciesImproperModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

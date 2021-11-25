@@ -9,6 +9,12 @@ SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, 
 {
 }
 
+void SpeciesTorsionModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int SpeciesTorsionModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

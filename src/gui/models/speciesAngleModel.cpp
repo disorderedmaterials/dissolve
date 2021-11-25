@@ -9,6 +9,12 @@ SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles, const Co
 {
 }
 
+void SpeciesAngleModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int SpeciesAngleModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

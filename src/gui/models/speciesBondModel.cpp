@@ -8,6 +8,12 @@ SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, const CoreDa
 {
 }
 
+void SpeciesBondModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int SpeciesBondModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

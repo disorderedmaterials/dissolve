@@ -120,6 +120,14 @@ void SpeciesTab::updateTotalCharges()
 // Update Geometry tables
 void SpeciesTab::updateGeometryTables()
 {
+    // If the Species version has changed, re-set the model data
+    if (speciesVersion_ != species_->version())
+    {
+        bonds_.reset();
+        angles_.reset();
+        torsions_.reset();
+        impropers_.reset();
+    }
     ui_.BondTable->resizeColumnsToContents();
     ui_.AngleTable->resizeColumnsToContents();
     ui_.TorsionTable->resizeColumnsToContents();

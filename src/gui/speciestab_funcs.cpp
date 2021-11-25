@@ -138,6 +138,8 @@ void SpeciesTab::updateControls()
 
     // Sites Tab
     updateSitesTab();
+
+    speciesVersion_ = species_->version();
 }
 
 // Disable sensitive controls within tab
