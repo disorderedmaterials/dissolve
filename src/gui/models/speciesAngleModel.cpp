@@ -1,10 +1,11 @@
 #include "gui/models/speciesAngleModel.h"
+#include "classes/coredata.h"
 #include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
 #include "templates/algorithms.h"
 
-SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles, Dissolve &dissolve)
-    : angles_(angles), dissolve_(dissolve)
+SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles, const CoreData &coreData)
+    : angles_(angles), coreData_(coreData)
 {
 }
 
@@ -92,7 +93,7 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
         case 3:
             if (value.toString().at(0) == '@')
             {
-                auto master = dissolve_.coreData().getMasterAngle(value.toString().toStdString());
+                auto master = coreData_.getMasterAngle(value.toString().toStdString());
                 if (master)
                     item.setMasterParameters(&master->get());
                 else
@@ -102,9 +103,9 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
             {
                 try
                 {
-                    SpeciesAngle::AngleFunction bf = SpeciesAngle::angleFunctions().enumeration(value.toString().toStdString());
+                    auto af = SpeciesAngle::angleFunctions().enumeration(value.toString().toStdString());
                     item.detachFromMasterIntra();
-                    item.setForm(bf);
+                    item.setForm(af);
                     return true;
                 }
                 catch (std::runtime_error &e)
