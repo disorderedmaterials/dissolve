@@ -366,6 +366,11 @@ class Species
         Forcefield,     /* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
         Improper,       /* 'Improper' - Define an Improper interaction between four atoms */
         Isotopologue,   /* 'Isotopologue' - Add an isotopologue to the Species */
+        NAngles,        /* 'NAngles' - Hint at the total number of angles in the Species */
+        NAtoms,         /* 'NAtoms' - Hint at the total number of atoms in the Species */
+        NBonds,         /* 'NBonds' - Hint at the total number of bonds in the Species */
+        NImpropers,     /* 'NImpropers' - Hint at the total number of impropers in the Species */
+        NTorsions,      /* 'NTorsions' - Hint at the total number of torsions in the Species */
         Site,           /* 'Site' - Define an analysis site within the Species */
         Torsion         /* 'Torsion' - Define a Torsion interaction between four atoms */
     };

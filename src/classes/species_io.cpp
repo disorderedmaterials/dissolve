@@ -86,6 +86,11 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
                            {Species::SpeciesKeyword::Forcefield, "Forcefield", 1},
                            {Species::SpeciesKeyword::Improper, "Improper", 5, OptionArguments::AnyNumber},
                            {Species::SpeciesKeyword::Isotopologue, "Isotopologue", OptionArguments::OneOrMore},
+                           {Species::SpeciesKeyword::NAngles, "NAngles", 1},
+                           {Species::SpeciesKeyword::NAtoms, "NAtoms", 1},
+                           {Species::SpeciesKeyword::NBonds, "NBonds", 1},
+                           {Species::SpeciesKeyword::NImpropers, "NImpropers", 1},
+                           {Species::SpeciesKeyword::NTorsions, "NTorsions", 1},
                            {Species::SpeciesKeyword::Site, "Site", 1},
                            {Species::SpeciesKeyword::Torsion, "Torsion", 4, OptionArguments::AnyNumber}});
 }
@@ -111,6 +116,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     Vec3<double> boxAngles(90.0, 90.0, 90.0);
     std::optional<Vec3<double>> boxLengths;
     auto blockDone = false, error = false;
+    auto atomVectorFixed = false, bondVectorFixed = false, angleVectorFixed = false, torsionVectorFixed = false,
+         improperVectorFixed = false;
+    auto atomIndex = 0, bondIndex = 0, angleIndex = 0, torsionIndex = 0, improperIndex = 0;
 
     while (!parser.eofOrBlank())
     {
@@ -130,7 +138,14 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         {
             case (Species::SpeciesKeyword::Angle):
                 // Create a new angle definition between the specified atoms
-                a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
+                if (angleVectorFixed && angleIndex < angles_.size())
+                {
+                    angles_[angleIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                               &atoms_[parser.argi(3) - 1]);
+                    a = angles_[angleIndex++];
+                }
+                else
+                    a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
                 if (!a)
                 {
                     error = true;
@@ -185,7 +200,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 a->get().setUp();
                 break;
             case (Species::SpeciesKeyword::Atom):
-            {
                 Z = Elements::element(parser.argsv(2));
                 if (Z == Elements::Unknown)
                 {
@@ -194,7 +208,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     error = true;
                     break;
                 }
-                auto id = addAtom(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                if (atomVectorFixed && atomIndex < atoms_.size())
+                    atoms_[atomIndex].set(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                else
+                    atomIndex = addAtom(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
 
                 // Locate the AtomType assigned to the Atom
                 if (DissolveSys::sameString("None", parser.argsv(6)))
@@ -211,12 +228,17 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
 
                 // Finally, set AtomType for the Atom
-                atoms_[id].setAtomType(at);
+                atoms_[atomIndex++].setAtomType(at);
                 break;
-            }
             case (Species::SpeciesKeyword::Bond):
                 // Create a new bond definition between the specified atoms
-                b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
+                if (bondVectorFixed && bondIndex < bonds_.size())
+                {
+                    bonds_[bondIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]);
+                    b = bonds_[bondIndex++];
+                }
+                else
+                    b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
                 if (!b)
                 {
                     error = true;
@@ -375,6 +397,21 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 break;
             case (Species::SpeciesKeyword::Improper):
+                // Create a new improper definition
+                if (improperVectorFixed && improperIndex < impropers_.size())
+                {
+                    impropers_[improperIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                     &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
+                    imp = impropers_[improperIndex++];
+                }
+                else
+                    imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+                if (!imp)
+                {
+                    error = true;
+                    break;
+                }
+
                 // Check the functional form specified - if it starts with '@' it is a reference to master
                 // parameters
                 if (parser.argsv(5)[0] == '@')
@@ -388,13 +425,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    // Create a new improper definition
-                    imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-                    if (!imp)
-                    {
-                        error = true;
-                        break;
-                    }
                     imp->get().setMasterParameters(&master->get());
                 }
                 else
@@ -407,14 +437,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
                     tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argsv(5));
-
-                    // Create a new improper definition
-                    imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-                    if (!imp)
-                    {
-                        error = true;
-                        break;
-                    }
                     imp->get().setForm(tf);
 
                     // Check number of args provided
@@ -467,6 +489,61 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
                 }
                 break;
+            case (Species::SpeciesKeyword::NAngles):
+                if (angleVectorFixed)
+                    return Messenger::error("{} keyword can't be specified more than once.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NAngles));
+                if (angleIndex != 0)
+                    return Messenger::error("{} keyword must specified before the first angle definition.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NAngles));
+                angleVectorFixed = true;
+                angles_.resize(parser.argi(1));
+                break;
+            case (Species::SpeciesKeyword::NAtoms):
+                if (atomVectorFixed)
+                    return Messenger::error("{} keyword can't be specified more than once.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NAtoms));
+                if (atomIndex != 0)
+                    return Messenger::error("{} keyword must specified before the first atom definition.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NAtoms));
+                atomVectorFixed = true;
+                atoms_.resize(parser.argi(1));
+                for (auto i = 0; i < atoms_.size(); ++i)
+                {
+                    atoms_[i].setSpecies(this);
+                    atoms_[i].setIndex(i);
+                }
+                break;
+            case (Species::SpeciesKeyword::NBonds):
+                if (bondVectorFixed)
+                    return Messenger::error("{} keyword can't be specified more than once.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NBonds));
+                if (bondIndex != 0)
+                    return Messenger::error("{} keyword must specified before the first bond definition.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NBonds));
+                bondVectorFixed = true;
+                bonds_.resize(parser.argi(1));
+                break;
+            case (Species::SpeciesKeyword::NImpropers):
+                if (improperVectorFixed)
+                    return Messenger::error("{} keyword can't be specified more than once.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NImpropers));
+                if (improperIndex != 0)
+                    return Messenger::error("{} keyword must specified before the first improper definition.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NImpropers));
+                improperVectorFixed = true;
+                impropers_.resize(parser.argi(1));
+                break;
+            case (Species::SpeciesKeyword::NTorsions):
+                if (torsionVectorFixed)
+                    return Messenger::error("{} keyword can't be specified more than once.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NTorsions));
+                if (torsionIndex != 0)
+                    return Messenger::error("{} keyword must specified before the first torsion definition.\n",
+                                            keywords().keyword(Species::SpeciesKeyword::NTorsions));
+                torsionVectorFixed = true;
+                torsions_.resize(parser.argi(1));
+                break;
             case (Species::SpeciesKeyword::Site):
                 // First argument is the name of the site to create - make sure it doesn't exist already
                 site = findSite(parser.argsv(1));
@@ -484,7 +561,14 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::SpeciesKeyword::Torsion):
                 // Create a new angle definition between the specified atoms
-                torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+                if (torsionVectorFixed && torsionIndex < torsions_.size())
+                {
+                    torsions_[torsionIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                   &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
+                    torsion = torsions_[torsionIndex++];
+                }
+                else
+                    torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
                 if (!torsion)
                 {
                     error = true;
@@ -574,7 +658,10 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     std::string newPrefix = fmt::format("{}  ", prefix);
 
     // Atoms
-    parser.writeLineF("{}# Atoms\n", newPrefix);
+    if (!parser.writeLineF("{}# Atoms\n", newPrefix))
+        return false;
+    if (!parser.writeLineF("{}{}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::NAtoms), atoms_.size()))
+        return false;
     auto count = 0;
     for (const auto &i : atoms_)
     {
@@ -589,6 +676,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     if (!bonds_.empty())
     {
         if (!parser.writeLineF("\n{}# Bonds\n", newPrefix))
+            return false;
+        if (!parser.writeLineF("{}{}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::NBonds), bonds_.size()))
             return false;
         for (const auto &bond : bonds_)
         {
@@ -647,6 +736,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     {
         if (!parser.writeLineF("\n{}# Angles\n", newPrefix))
             return false;
+        if (!parser.writeLineF("{}{}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::NAngles), angles_.size()))
+            return false;
         for (const auto &angle : angles())
         {
             if (angle.form() == SpeciesAngle::NoForm)
@@ -681,6 +772,9 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     if (nTorsions() > 0)
     {
         if (!parser.writeLineF("\n{}# Torsions\n", newPrefix))
+            return false;
+        if (!parser.writeLineF("{}{}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::NTorsions),
+                               torsions_.size()))
             return false;
         for (const auto &torsion : torsions())
         {
@@ -717,6 +811,9 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     if (nImpropers() > 0)
     {
         if (!parser.writeLineF("\n{}# Impropers\n", newPrefix))
+            return false;
+        if (!parser.writeLineF("{}{}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::NImpropers),
+                               impropers_.size()))
             return false;
         for (auto &imp : impropers())
         {
