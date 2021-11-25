@@ -6,14 +6,7 @@
 #include "classes/masterintra.h"
 #include "classes/speciesatom.h"
 
-SpeciesIntra::SpeciesIntra()
-{
-    masterParameters_ = nullptr;
-
-    attached_[0] = {};
-    attached_[1] = {};
-    inCycle_ = false;
-}
+SpeciesIntra::SpeciesIntra(int form) : form_(form) {}
 
 SpeciesIntra::SpeciesIntra(const SpeciesIntra &source) { (*this) = source; }
 

@@ -4,13 +4,15 @@
 #include "classes/speciestorsion.h"
 #include "classes/speciesatom.h"
 
-SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
+SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(SpeciesTorsion::NoForm) {}
+
+SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+    : SpeciesIntra(SpeciesTorsion::NoForm)
 {
     assign(i, j, k, l);
-    form_ = SpeciesTorsion::NoForm;
 }
 
-SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) { this->operator=(source); }
+SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) : SpeciesIntra(source) { this->operator=(source); }
 
 SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(source)
 {

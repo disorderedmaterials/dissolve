@@ -5,13 +5,15 @@
 #include "classes/speciesatom.h"
 #include "classes/speciestorsion.h"
 
-SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
+SpeciesImproper::SpeciesImproper() : SpeciesIntra(SpeciesTorsion::NoForm) {}
+
+SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+    : SpeciesIntra(SpeciesTorsion::NoForm)
 {
     assign(i, j, k, l);
-    form_ = SpeciesTorsion::NoForm;
 }
 
-SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
+SpeciesImproper::SpeciesImproper(SpeciesImproper &source) : SpeciesIntra(source) { this->operator=(source); }
 
 SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) noexcept : SpeciesIntra(source)
 {

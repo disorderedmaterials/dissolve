@@ -6,12 +6,9 @@
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
 
-SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
-{
-    assign(i, j);
-    bondType_ = SpeciesBond::SingleBond;
-    form_ = SpeciesBond::NoForm;
-}
+SpeciesBond::SpeciesBond() : SpeciesIntra(SpeciesBond::NoForm) {}
+
+SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(SpeciesBond::NoForm) { assign(i, j); }
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 

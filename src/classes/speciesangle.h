@@ -14,11 +14,12 @@ class Species;
 class SpeciesAngle : public SpeciesIntra
 {
     public:
-    SpeciesAngle(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr);
+    SpeciesAngle();
+    SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     ~SpeciesAngle() override = default;
     SpeciesAngle(SpeciesAngle &source);
     SpeciesAngle(SpeciesAngle &&source) noexcept;
-    SpeciesAngle &operator=(SpeciesAngle &source);
+    SpeciesAngle &operator=(const SpeciesAngle &source);
     SpeciesAngle &operator=(SpeciesAngle &&source) noexcept;
 
     /*
@@ -26,19 +27,19 @@ class SpeciesAngle : public SpeciesIntra
      */
     private:
     // First SpeciesAtom in interaction
-    SpeciesAtom *i_;
+    SpeciesAtom *i_{nullptr};
     // Second (central) SpeciesAtom in interaction
-    SpeciesAtom *j_;
+    SpeciesAtom *j_{nullptr};
     // Third SpeciesAtom in interaction
-    SpeciesAtom *k_;
+    SpeciesAtom *k_{nullptr};
 
     private:
-    // Assign the three atoms in the angle
-    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Detach from current atoms
     void detach();
 
     public:
+    // Assign the three atoms in the angle
+    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Rewrite SpeciesAtom pointer
     void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom

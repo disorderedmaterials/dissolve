@@ -4,10 +4,11 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 
-SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra()
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(SpeciesAngle::NoForm) {}
+
+SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(SpeciesAngle::NoForm)
 {
     assign(i, j, k);
-    form_ = SpeciesAngle::NoForm;
 }
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->operator=(source); }
@@ -32,7 +33,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) noexcept : SpeciesIntra(source
     source.k_ = nullptr;
 }
 
-SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &source)
+SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
 {
     // Copy data
     assign(source.i_, source.j_, source.k_);

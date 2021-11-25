@@ -15,7 +15,7 @@ class MasterIntra;
 class SpeciesIntra
 {
     public:
-    SpeciesIntra();
+    explicit SpeciesIntra(int form = 0);
     virtual ~SpeciesIntra() = default;
     SpeciesIntra(const SpeciesIntra &source);
     SpeciesIntra(SpeciesIntra &&source) = delete;
@@ -44,9 +44,9 @@ class SpeciesIntra
 
     protected:
     // Linked master from which parameters should be taken (if relevant)
-    const MasterIntra *masterParameters_;
+    const MasterIntra *masterParameters_{nullptr};
     // Index of functional form of interaction
-    int form_;
+    int form_{0};
     // Parameters for interaction
     std::vector<double> parameters_;
 
@@ -89,7 +89,7 @@ class SpeciesIntra
     // Number of SpeciesAtoms attached to termini (number of items stored in attached_ arrays)
     std::vector<int> attached_[2];
     // Whether the term is contained within a cycle
-    bool inCycle_;
+    bool inCycle_{false};
 
     public:
     // Set attached SpeciesAtoms for terminus specified
