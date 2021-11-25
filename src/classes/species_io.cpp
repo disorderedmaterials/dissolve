@@ -388,6 +388,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     error = true;
                     break;
                 }
+                updateIsotopologues();
                 Messenger::print("Found end of Species '{}'.\n", name());
                 blockDone = true;
                 break;
@@ -516,10 +517,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 atomVectorFixed = true;
                 atoms_.resize(parser.argi(1));
                 for (auto i = 0; i < atoms_.size(); ++i)
-                {
-                    atoms_[i].setSpecies(this);
                     atoms_[i].setIndex(i);
-                }
                 break;
             case (Species::SpeciesKeyword::NBonds):
                 if (bondVectorFixed)

@@ -99,14 +99,17 @@ int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
 // Remove any atom types that are unused across all species
 int CoreData::removeUnusedAtomTypes()
 {
+    // Create an AtomTypeMix over all species
+    AtomTypeMix mix;
+    for (auto &sp : species_)
+        mix.add(sp->atomTypes());
+
     auto nRemoved = atomTypes_.size();
-    atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
-                                    [&](const auto &atomType) {
-                                        return std::none_of(species_.begin(), species_.end(), [&atomType](const auto &sp) {
-                                            return sp->atomTypes().contains(atomType);
-                                        });
-                                    }),
-                     atomTypes_.end());
+    auto it =
+        std::remove_if(atomTypes_.begin(), atomTypes_.end(), [&](const auto &atomType) { return !mix.contains(atomType); });
+    if (it != atomTypes_.end())
+        atomTypes_.erase(it, atomTypes_.end());
+
     return nRemoved - atomTypes_.size();
 }
 

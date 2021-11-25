@@ -43,6 +43,10 @@ void SpeciesTab::atomTableDataChanged(const QModelIndex &topLeft, const QModelIn
     if (topLeft.column() == 5 || bottomRight.column() == 5)
         updateTotalCharges();
 
+    // Atom type changed?
+    if (topLeft.column() == 1 || bottomRight.column() == 1)
+        species_->updateIsotopologues();
+
     dissolveWindow_->setModified();
 }
 

@@ -61,8 +61,6 @@ class Species
     std::vector<SpeciesAtom> atoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
-    // AtomType mixture present in the Species
-    AtomTypeMix atomTypes_;
 
     private:
     // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
@@ -113,10 +111,8 @@ class Species
     int atomSelectionVersion() const;
     // Return total atomic mass of Species
     double mass() const;
-    // Update used atom types
-    void updateAtomTypes();
-    // Return used atom types
-    const AtomTypeMix &atomTypes() const;
+    // Calculate and return atom types used in the Species
+    AtomTypeMix atomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters

@@ -32,7 +32,7 @@ std::string_view Isotopologue::name() const { return name_; }
 void Isotopologue::update()
 {
     // Prune any types in our list that are not used in the parent species
-    const auto &atomTypes = parent_->atomTypes();
+    const auto atomTypes = parent_->atomTypes();
     isotopes_.erase(std::remove_if(isotopes_.begin(), isotopes_.end(),
                                    [&atomTypes](auto value) { return !atomTypes.contains(std::get<0>(value)); }),
                     isotopes_.end());

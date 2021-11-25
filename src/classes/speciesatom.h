@@ -15,7 +15,6 @@
 
 // Forward Declarations
 class AtomType;
-class Species;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
@@ -40,8 +39,6 @@ class SpeciesAtom
      * Properties
      */
     private:
-    // Parent Species
-    Species *parent_{nullptr};
     // Atomic element
     Elements::Element Z_{Elements::Unknown};
     // Coordinates
@@ -56,10 +53,6 @@ class SpeciesAtom
     bool selected_{false};
 
     public:
-    // Set Species parent
-    void setSpecies(Species *sp);
-    // Return species parent
-    const Species *species() const;
     // Set basic atom properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
     // Set basic atom properties
