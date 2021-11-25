@@ -91,16 +91,16 @@ void SpeciesTab::updateUnderlyingAtomSelection()
 // Update total charges
 void SpeciesTab::updateTotalCharges()
 {
-    auto warningPalette = palette();
-    warningPalette.setBrush(QPalette::WindowText, Qt::red);
+    auto errorPalette = palette();
+    errorPalette.setBrush(QPalette::WindowText, Qt::red);
     auto ppHaveCharges = dissolve_.pairPotentialsIncludeCoulomb();
 
     auto atomCharge = species_->totalCharge(false);
     auto atomChargeOK = fabs(atomCharge) < 1.0e-5;
     ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1").arg(atomCharge) : QString::number(atomCharge));
-    ui_.TotalAtomChargeLabel->setPalette(!ppHaveCharges && !atomChargeOK ? warningPalette : palette());
+    ui_.TotalAtomChargeLabel->setPalette(!ppHaveCharges && !atomChargeOK ? errorPalette : palette());
     ui_.TotalAtomChargeIndicator->setHidden(atomChargeOK);
-    if (ppHaveCharges)
+    if (!ppHaveCharges)
         ui_.TotalAtomChargeIndicator->setOK(atomChargeOK);
     else
         ui_.TotalAtomChargeIndicator->setWarning();
@@ -109,9 +109,9 @@ void SpeciesTab::updateTotalCharges()
     auto atomTypeChargeOK = fabs(atomTypeCharge) < 1.0e-5;
     ui_.TotalAtomTypeChargeLabel->setText(atomTypeCharge > 0.0 ? QString("+%1").arg(atomTypeCharge)
                                                                : QString::number(atomTypeCharge));
-    ui_.TotalAtomTypeChargeLabel->setPalette(ppHaveCharges && !atomTypeChargeOK ? warningPalette : palette());
+    ui_.TotalAtomTypeChargeLabel->setPalette(ppHaveCharges && !atomTypeChargeOK ? errorPalette : palette());
     ui_.TotalAtomTypeChargeIndicator->setHidden(atomTypeChargeOK);
-    if (!ppHaveCharges)
+    if (ppHaveCharges)
         ui_.TotalAtomTypeChargeIndicator->setOK(atomTypeChargeOK);
     else
         ui_.TotalAtomTypeChargeIndicator->setWarning();
