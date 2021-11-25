@@ -112,7 +112,6 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
                     auto af = SpeciesAngle::angleFunctions().enumeration(value.toString().toStdString());
                     item.detachFromMasterIntra();
                     item.setForm(af);
-                    return true;
                 }
                 catch (std::runtime_error &e)
                 {

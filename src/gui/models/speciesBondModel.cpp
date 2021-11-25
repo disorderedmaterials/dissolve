@@ -104,7 +104,6 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
                     SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
                     item.detachFromMasterIntra();
                     item.setForm(bf);
-                    return true;
                 }
                 catch (std::runtime_error &e)
                 {

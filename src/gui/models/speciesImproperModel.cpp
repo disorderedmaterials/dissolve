@@ -119,7 +119,6 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
                     auto tf = SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
                     item.detachFromMasterIntra();
                     item.setForm(tf);
-                    return true;
                 }
                 catch (std::runtime_error &e)
                 {
