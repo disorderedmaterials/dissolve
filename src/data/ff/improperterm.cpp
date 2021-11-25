@@ -27,12 +27,28 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::stri
 bool ForcefieldImproperTerm::isMatch(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
                                      const ForcefieldAtomType &l) const
 {
-    if (DissolveSys::sameWildString(typeI_, i.equivalentName()) && DissolveSys::sameWildString(typeJ_, j.equivalentName()) &&
-        DissolveSys::sameWildString(typeK_, k.equivalentName()) && DissolveSys::sameWildString(typeL_, l.equivalentName()))
-        return true;
-    if (DissolveSys::sameWildString(typeL_, i.equivalentName()) && DissolveSys::sameWildString(typeK_, j.equivalentName()) &&
-        DissolveSys::sameWildString(typeJ_, k.equivalentName()) && DissolveSys::sameWildString(typeI_, l.equivalentName()))
-        return true;
+    // 'i' is our central atom, so 'j', 'k', and 'l' can be specified in any order
+    if (!DissolveSys::sameWildString(typeI_, i.equivalentName()))
+        return false;
+    std::vector<std::string> typeNames = {typeJ_, typeK_, typeL_};
+    for (auto n = 0; n < 3; ++n)
+    {
+        // Check for jkl or lkj matches
+        if (DissolveSys::sameWildString(typeNames[1], k.equivalentName()))
+        {
+
+            if (DissolveSys::sameWildString(typeNames[0], j.equivalentName()) &&
+                DissolveSys::sameWildString(typeNames[2], l.equivalentName()))
+                return true;
+            if (DissolveSys::sameWildString(typeNames[2], j.equivalentName()) &&
+                DissolveSys::sameWildString(typeNames[0], l.equivalentName()))
+                return true;
+        }
+
+        // Shuffle the names
+        typeNames.push_back(typeNames[0]);
+        typeNames.erase(typeNames.begin());
+    }
 
     return false;
 }
