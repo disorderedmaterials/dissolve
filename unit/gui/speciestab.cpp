@@ -86,7 +86,7 @@ TEST_F(SpeciesTabTest, Bonds)
     dissolve.loadInput("restart/benzene.txt");
     auto &species = dissolve.species()[0];
 
-    SpeciesBondModel bond(species->bonds(), dissolve);
+    SpeciesBondModel bond(species->bonds(), coreData);
 
     // Test Bonds
     EXPECT_EQ(bond.columnCount(), 4);
@@ -127,7 +127,7 @@ TEST_F(SpeciesTabTest, Angles)
     dissolve.loadInput("restart/benzene.txt");
     auto &species = dissolve.species()[0];
 
-    SpeciesAngleModel angle(species->angles(), dissolve);
+    SpeciesAngleModel angle(species->angles(), coreData);
 
     // Test Angles
     EXPECT_EQ(angle.columnCount(), 5);
@@ -170,7 +170,7 @@ TEST_F(SpeciesTabTest, Torsions)
     dissolve.loadInput("restart/benzene.txt");
     auto &species = dissolve.species()[0];
 
-    SpeciesTorsionModel torsion(species->torsions(), dissolve);
+    SpeciesTorsionModel torsion(species->torsions(), coreData);
 
     // Test Torsions
     EXPECT_EQ(torsion.columnCount(), 6);
@@ -219,7 +219,7 @@ TEST_F(SpeciesTabTest, Impropers)
     dissolve.loadInput("energyforce4/py5-ntf2.txt");
     auto &species = dissolve.species()[0];
 
-    SpeciesImproperModel improper(species->impropers(), dissolve);
+    SpeciesImproperModel improper(species->impropers(), coreData);
 
     // Test Torsions
     EXPECT_EQ(improper.columnCount(), 6);

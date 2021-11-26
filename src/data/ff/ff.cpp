@@ -501,8 +501,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         // Loop over potential improper sites in the Species and see if any match terms in the forcefield
         for (auto &i : sp->atoms())
         {
-            // If we have less than three bonds to the central atom 'i', can continue now
-            if (i.nBonds() < 3)
+            // If we don't have exactly three bonds to the central atom 'i', move on
+            if (i.nBonds() != 3)
                 continue;
 
             if (selectionOnly && (!i.isSelected()))

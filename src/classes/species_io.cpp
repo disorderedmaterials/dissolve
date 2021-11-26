@@ -9,6 +9,7 @@
 #include "data/elements.h"
 #include "data/ff/library.h"
 #include "data/isotopes.h"
+#include "templates/algorithms.h"
 #include <string>
 
 // Load Species from file
@@ -585,47 +586,36 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Bonds
-    RefList<const SpeciesBond> bondTypes[SpeciesBond::nBondTypes];
+    std::vector<const SpeciesBond *> bondTypes[SpeciesBond::nBondTypes];
     if (!bonds_.empty())
     {
         if (!parser.writeLineF("\n{}# Bonds\n", newPrefix))
             return false;
         for (const auto &bond : bonds_)
         {
-            if (bond.form() == SpeciesBond::NoForm)
-            {
-                if (!parser.writeLineF("{}{}  {:3d}  {:3d}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Bond),
-                                       bond.indexI() + 1, bond.indexJ() + 1))
-                    return false;
-            }
-            else if (bond.masterParameters())
+            if (bond.masterParameters())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
                                        bond.masterParameters()->name()))
                     return false;
             }
-            else
-            {
-                std::string line =
-                    fmt::format("{}{}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::SpeciesKeyword::Bond),
-                                bond.indexI() + 1, bond.indexJ() + 1, SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
-                for (const auto param : bond.parameters())
-                    line += fmt::format("  {:.4f}", param);
-                if (!parser.writeLine(line))
-                    return false;
-            }
+            else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {} {}\n", newPrefix,
+                                        keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
+                                        SpeciesBond::bondFunctions().keywordFromInt(bond.form()),
+                                        joinStrings(bond.parameters(), "  ")))
+                return false;
 
-            // Add the bond to the reflist corresponding to its indicated bond type (unless it is a SingleBond,
+            // Add the bond to the reference vector based on its indicated bond type (unless it is a SingleBond,
             // which we will ignore as this is the default)
             if (bond.bondType() != SpeciesBond::SingleBond)
-                bondTypes[bond.bondType()].append(&bond);
+                bondTypes[bond.bondType()].push_back(&bond);
         }
 
         // Any bond type information to write?
         auto bondTypeHeaderWritten = false;
         for (auto bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
-            if (bondTypes[bt].nItems() > 0)
+            if (!bondTypes[bt].empty())
             {
                 // Write header if it hasn't been written already
                 if (!bondTypeHeaderWritten)
@@ -649,31 +639,18 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (const auto &angle : angles())
         {
-            if (angle.form() == SpeciesAngle::NoForm)
-            {
-                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}\n", newPrefix,
-                                       keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
-                                       angle.indexJ() + 1, angle.indexK() + 1))
-                    return false;
-            }
-            else if (angle.masterParameters())
+            if (angle.masterParameters())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
                                        angle.indexJ() + 1, angle.indexK() + 1, angle.masterParameters()->name()))
                     return false;
             }
-            else
-            {
-                std::string line =
-                    fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::SpeciesKeyword::Angle),
-                                angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
-                                SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
-                for (const auto param : angle.parameters())
-                    line += fmt::format("  {:.4f}", param);
-                if (!parser.writeLine(line))
-                    return false;
-            }
+            else if (!parser.writeLineF(
+                         "{}{}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Angle),
+                         angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
+                         SpeciesAngle::angleFunctions().keywordFromInt(angle.form()), joinStrings(angle.parameters(), "  ")))
+                return false;
         }
     }
 
@@ -684,14 +661,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (const auto &torsion : torsions())
         {
-            if (torsion.form() == SpeciesTorsion::NoForm)
-            {
-                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}\n", newPrefix,
-                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1))
-                    return false;
-            }
-            else if (torsion.masterParameters())
+            if (torsion.masterParameters())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
@@ -699,17 +669,12 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                                        torsion.masterParameters()->name()))
                     return false;
             }
-            else
-            {
-                std::string line = fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}", newPrefix,
-                                               keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                               torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                               SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
-                for (const auto param : torsion.parameters())
-                    line += fmt::format("  {:.4f}", param);
-                if (!parser.writeLine(line))
-                    return false;
-            }
+            else if (!parser.writeLineF(fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
+                                                    keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                                    torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                                    SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()),
+                                                    joinStrings(torsion.parameters(), "  "))))
+                return false;
         }
     }
 
@@ -727,17 +692,12 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                                        imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1, imp.masterParameters()->name()))
                     return false;
             }
-            else
-            {
-                std::string line = fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}", newPrefix,
-                                               keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
-                                               imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
-                                               SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
-                for (const auto param : imp.parameters())
-                    line += fmt::format("  {:.4f}", param);
-                if (!parser.writeLine(line))
-                    return false;
-            }
+            else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
+                                        keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
+                                        imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
+                                        SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()),
+                                        joinStrings(imp.parameters(), "  ")))
+                return false;
         }
     }
 

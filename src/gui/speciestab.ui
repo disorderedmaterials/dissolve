@@ -346,7 +346,7 @@
                    <item>
                     <widget class="QLabel" name="TotalAtomTypeChargeLabel">
                      <property name="toolTip">
-                      <string>Total charge on the species as calculated from indivdual charges on assigned atom typesatoms</string>
+                      <string>Total charge on the species as calculated from indivdual charges on assigned atom types</string>
                      </property>
                      <property name="text">
                       <string>0.0</string>

@@ -1,11 +1,18 @@
 #include "gui/models/speciesTorsionModel.h"
+#include "classes/coredata.h"
 #include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
 #include "templates/algorithms.h"
 
-SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, Dissolve &dissolve)
-    : torsions_(torsions), dissolve_(dissolve)
+SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, const CoreData &coreData)
+    : torsions_(torsions), coreData_(coreData)
 {
+}
+
+void SpeciesTorsionModel::reset()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 int SpeciesTorsionModel::rowCount(const QModelIndex &parent) const
@@ -99,7 +106,7 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
         case 4:
             if (value.toString().at(0) == '@')
             {
-                auto master = dissolve_.coreData().getMasterTorsion(value.toString().toStdString());
+                auto master = coreData_.getMasterTorsion(value.toString().toStdString());
                 if (master)
                     item.setMasterParameters(&master->get());
                 else
@@ -109,11 +116,9 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             {
                 try
                 {
-                    SpeciesTorsion::TorsionFunction bf =
-                        SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
+                    auto tf = SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
                     item.detachFromMasterIntra();
-                    item.setForm(bf);
-                    return true;
+                    item.setForm(tf);
                 }
                 catch (std::runtime_error &e)
                 {

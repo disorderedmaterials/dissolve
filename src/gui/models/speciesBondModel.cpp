@@ -1,8 +1,18 @@
 #include "gui/models/speciesBondModel.h"
+#include "classes/coredata.h"
 #include "gui/models/speciesModelUtils.h"
 #include "templates/algorithms.h"
 
-SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, Dissolve &dissolve) : bonds_(bonds), dissolve_(dissolve) {}
+SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, const CoreData &coreData)
+    : bonds_(bonds), coreData_(coreData)
+{
+}
+
+void SpeciesBondModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
 
 int SpeciesBondModel::rowCount(const QModelIndex &parent) const
 {
@@ -81,7 +91,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
         case 2:
             if (value.toString().at(0) == '@')
             {
-                auto master = dissolve_.coreData().getMasterBond(value.toString().toStdString());
+                auto master = coreData_.getMasterBond(value.toString().toStdString());
                 if (master)
                     item.setMasterParameters(&master->get());
                 else
@@ -94,7 +104,6 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
                     SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
                     item.detachFromMasterIntra();
                     item.setForm(bf);
-                    return true;
                 }
                 catch (std::runtime_error &e)
                 {
