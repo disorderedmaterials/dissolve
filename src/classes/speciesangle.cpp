@@ -140,13 +140,7 @@ int SpeciesAngle::index(int n) const
 // Return whether Atoms in Angle match those specified
 bool SpeciesAngle::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const
 {
-    if (j_ != j)
-        return false;
-    if ((i_ == i) && (k_ == k))
-        return true;
-    if ((i_ == k) && (k_ == i))
-        return true;
-    return false;
+    return (j_ == j) && ((i_ == i && k_ == k) || (i_ == k && k_ == i));
 }
 
 // Return whether all atoms in the interaction are currently selected

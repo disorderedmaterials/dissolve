@@ -179,24 +179,14 @@ int SpeciesImproper::index(int n) const
 // Return whether Atoms in Improper match those specified
 bool SpeciesImproper::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const
 {
-    if (i_ == i)
-    {
-        if (j_ != j)
-            return false;
-        if (k_ != k)
-            return false;
-        if (l_ == l)
-            return true;
-    }
-    else if (i_ == l)
-    {
-        if (j_ != k)
-            return false;
-        if (k_ != j)
-            return false;
-        if (l_ == i)
-            return true;
-    }
+    if (i_ != i)
+        return false;
+    if (j_ == j)
+        return (k_ == k && l_ == l) || (k_ == l && l_ == k);
+    else if (j_ == k)
+        return (k_ == j && l_ == l) || (k_ == l && l_ == j);
+    else if (j_ == l)
+        return (k_ == j && l_ == k) || (k_ == k && l_ == j);
 
     return false;
 }
