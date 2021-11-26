@@ -43,7 +43,10 @@ class KeywordTypeMap
         };
         directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
             auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
+            if (!k)
+                throw(std::runtime_error(
+                    fmt::format("Can't get data for keyword '{}' - mismatch between data ('{}') and keyword ('{}') types.\n",
+                                keyword->name(), typeid(D).name(), typeid(K).name())));
             return k->data();
         };
     }
@@ -102,8 +105,10 @@ class KeywordStore
     private:
     // Defined keywords
     std::map<std::string_view, KeywordBase *> keywords_;
+    // Targets group
+    std::vector<KeywordBase *> targetsGroup_;
     // Keyword group mappings
-    std::map<std::string_view, std::vector<std::string_view>> displayGroups_;
+    std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups_;
 
     public:
     // Add keyword (no group)
@@ -124,13 +129,28 @@ class KeywordStore
 
         return k;
     }
+    // Add target keyword
+    template <class K, typename... Args>
+    KeywordBase *addTarget(std::string_view name, std::string_view description, Args &&... args)
+    {
+        auto *k = addKeyword<K>(name, description, args...);
+
+        targetsGroup_.push_back(k);
+
+        return k;
+    }
     // Add keyword (displaying in named group)
     template <class K, typename... Args>
     KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&... args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        displayGroups_[displayGroup].push_back(name);
+        auto it = std::find_if(displayGroups_.begin(), displayGroups_.end(),
+                               [displayGroup](auto &group) { return group.first == displayGroup; });
+        if (it == displayGroups_.end())
+            displayGroups_.emplace_back(displayGroup, std::vector<KeywordBase *>{k});
+        else
+            it->second.push_back(k);
 
         return k;
     }
@@ -139,8 +159,10 @@ class KeywordStore
     const KeywordBase *find(std::string_view name) const;
     // Return keywords
     const std::map<std::string_view, KeywordBase *> keywords() const;
+    // Return "Target" group keywords
+    const std::vector<KeywordBase *> targetsGroup() const;
     // Return keyword group mappings
-    const std::map<std::string_view, std::vector<std::string_view>> displayGroups() const;
+    const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups() const;
     // Return whether the keyword has been set, and is not currently empty (if relevant)
     bool hasBeenSet(std::string_view name) const;
     // Flag that the specified keyword has been set by some external means

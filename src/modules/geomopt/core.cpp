@@ -3,7 +3,7 @@
 
 #include "modules/geomopt/geomopt.h"
 
-GeometryOptimisationModule::GeometryOptimisationModule() : Module(nRequiredTargets())
+GeometryOptimisationModule::GeometryOptimisationModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

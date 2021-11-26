@@ -24,15 +24,21 @@ KeywordTypeMap::KeywordTypeMap()
     registerDirectMapping<int, IntegerKeyword>(
         [](IntegerKeyword *keyword, const int value) { return keyword->setData(value); });
 
-    // Custom classes
+    // Core Objects
+    registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
+    registerDirectMapping<Configuration *, ConfigurationKeyword>();
+    registerDirectMapping<std::vector<Configuration *>, ConfigurationVectorKeyword>();
+
+    // STL / Common Classes
+    registerDirectMapping<std::string, StringKeyword>();
+    registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(
+        [](Vec3DoubleKeyword *keyword, const Vec3<double> value) { return keyword->setData(value); });
+
+    // Procedure Nodes
     registerDirectMapping<Collect1DProcedureNode *, NodeKeyword<Collect1DProcedureNode>>();
     registerDirectMapping<std::vector<const Collect1DProcedureNode *>, NodeVectorKeyword<Collect1DProcedureNode>>();
     registerDirectMapping<SelectProcedureNode *, NodeKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<const SelectProcedureNode *>, NodeVectorKeyword<SelectProcedureNode>>();
-    registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
-    registerDirectMapping<std::string, StringKeyword>();
-    registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(
-        [](Vec3DoubleKeyword *keyword, const Vec3<double> value) { return keyword->setData(value); });
 }
 
 // Set keyword data
@@ -70,8 +76,14 @@ const KeywordBase *KeywordStore::find(std::string_view name) const
 // Return keywords
 const std::map<std::string_view, KeywordBase *> KeywordStore::keywords() const { return keywords_; }
 
+// Return "Target" group keywords
+const std::vector<KeywordBase *> KeywordStore::targetsGroup() const { return targetsGroup_; }
+
 // Return keyword group mappings
-const std::map<std::string_view, std::vector<std::string_view>> KeywordStore::displayGroups() const { return displayGroups_; };
+const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> KeywordStore::displayGroups() const
+{
+    return displayGroups_;
+};
 
 // Return whether the keyword has been set, and is not currently empty (if relevant)
 bool KeywordStore::hasBeenSet(std::string_view name) const

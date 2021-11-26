@@ -10,9 +10,10 @@
 // Perform any necessary initialisation for the Module
 void SQModule::initialise()
 {
+    // Targets
+    keywords_.addTarget<ModuleKeyword<const RDFModule>>("SourceRDFs", "Source RDFs to transform into S(Q)", sourceRDF_, "RDF");
+
     // Control
-    keywords_.add<ModuleKeyword<const RDFModule>>("Control", "SourceRDFs", "Source RDFs to transform into S(Q)", sourceRDF_,
-                                                  "RDF");
     keywords_.add<DoubleKeyword>("Control", "QDelta", "Step size in Q for S(Q) calculation", qDelta_, 1.0e-5);
     keywords_.add<DoubleKeyword>("Control", "QMax", "Maximum Q for calculated S(Q)", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);

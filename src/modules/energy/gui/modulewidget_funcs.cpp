@@ -49,16 +49,18 @@ EnergyModuleWidget::~EnergyModuleWidget() {}
 // Update controls within widget
 void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
+    const auto cfgs = module_->keywords().get<std::vector<Configuration *>>("Configuration");
+
     // Update partial set (Configuration) targets
-    auto optConfig = combo_box_updater(ui_.ConfigurationTargetCombo, module_->targetConfigurations().begin(),
-                                       module_->targetConfigurations().end(), [](auto *item) { return item->name(); });
+    auto optConfig =
+        combo_box_updater(ui_.ConfigurationTargetCombo, cfgs.begin(), cfgs.end(), [](auto *item) { return item->name(); });
 
     // Set gradient and stability labels
     auto stabilityWindow = module_->keywords().get<int>("StabilityWindow");
     ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
     // Create / update renderables?
-    if (optConfig == module_->targetConfigurations().end())
+    if (optConfig == cfgs.end())
         energyGraph_->clearRenderables();
     else if (updateType == ModuleWidget::UpdateType::RecreateRenderables || energyGraph_->renderables().empty())
     {
@@ -87,7 +89,7 @@ void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 
     // Update labels
     QPalette labelPalette = ui_.StableLabel->palette();
-    if (optConfig != module_->targetConfigurations().end())
+    if (optConfig != cfgs.end())
     {
         auto cfg = *optConfig;
 

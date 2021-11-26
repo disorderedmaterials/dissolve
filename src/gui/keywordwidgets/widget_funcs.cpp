@@ -20,27 +20,6 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
  * Controls
  */
 
-// Create widget for specified keyword
-QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keywordWidgets, KeywordBase *keyword,
-                                             const CoreData &coreData)
-{
-    // Try to create a suitable widget
-    auto [w, base] = KeywordWidgetProducer::create(keyword, coreData);
-    if (!w || !base)
-        return nullptr;
-
-    // Connect signals
-    connect(w, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-
-    // Set tooltip on widget (using the description from the keyword pointer passed, rather than its base)
-    w->setToolTip(QString::fromStdString(std::string(keyword->description())));
-
-    // Add to the list of widgets
-    keywordWidgets.append(base);
-
-    return w;
-}
-
 // Set up controls for specified keywords
 void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
 {
@@ -49,34 +28,33 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
         removeItem(0);
     keywordWidgets_.clear();
 
-    for (auto &[groupName, keyNames] : keywords.displayGroups())
+    for (auto &[groupName, keywords] : keywords.displayGroups())
     {
         // Create a new QWidget and layout for our widgets
-        QWidget *groupWidget = new QWidget;
-        QFormLayout *groupLayout = new QFormLayout(groupWidget);
+        auto *groupWidget = new QWidget;
+        auto *groupLayout = new QFormLayout(groupWidget);
 
         // Loop over keywords in the group and add them to our groupbox
-        for (const auto &keyName : keyNames)
+        for (const auto &keyword : keywords)
         {
-            // Find the keyword in the main map
-            auto *keyword = keywords.find(keyName);
-            if (!keyword)
-                throw(std::runtime_error(
-                    fmt::format("Keyword '{}' is listed in group '{}', but it could not be found.\n", keyName, groupName)));
-
-            // Create / setup the keyword widget
-            auto *widget = createKeywordWidget(keywordWidgets_, keyword, coreData);
-
-            if (!widget)
+            // Try to create a suitable widget
+            auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);
+            if (!widget || !base)
             {
                 Messenger::printVerbose("No widget created for keyword '{}'.\n", keyword->name());
                 continue;
             }
 
+            // Connect signals
+            connect(widget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+
             // Create a label and add it and the widget to our layout
-            QLabel *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
+            auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
             nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             groupLayout->addRow(nameLabel, widget);
+
+            // Push onto our reference list
+            keywordWidgets_.push_back(base);
         }
 
         // Group is finished, so add the widget as a new tab in our QToolBox
@@ -90,7 +68,7 @@ void KeywordsWidget::updateControls()
     refreshing_ = true;
 
     // Update all our keyword widgets
-    for (KeywordWidgetBase *keywordWidget : keywordWidgets_)
+    for (auto *keywordWidget : keywordWidgets_)
         keywordWidget->updateValue();
 
     refreshing_ = false;

@@ -3,7 +3,7 @@
 
 #include "modules/epsr/epsr.h"
 
-EPSRModule::EPSRModule() : Module(nRequiredTargets())
+EPSRModule::EPSRModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

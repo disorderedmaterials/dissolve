@@ -32,19 +32,17 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
     ui_.TopLabel->setText(QString::fromStdString(std::string(module_->type())));
     ui_.ModuleIconLabel->setPixmap(modulePixmap(module_));
 
-    // Create a suitable keyword widget for our Configuration targets
-    auto *optCfgKeyword = module_->keywords().find("Configuration");
-    if (optCfgKeyword)
-    {
-        auto *cfgWidget = new ConfigurationVectorKeywordWidget(
-            nullptr, dynamic_cast<ConfigurationVectorKeyword *>(optCfgKeyword), dissolve.coreData());
-        connect(cfgWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
-        auto *layout = new QHBoxLayout;
-        layout->addWidget(cfgWidget);
-        ui_.ConfigurationsPlaceholderWidget->setLayout(layout);
-        if (module_->nRequiredTargets() == Module::ZeroTargets)
-            cfgWidget->setEnabled(false);
-    }
+    //    // Create a suitable keyword widget for our Configuration targets
+    //    auto *optCfgKeyword = module_->keywords().find("Configuration");
+    //    if (optCfgKeyword)
+    //    {
+    //        auto *cfgWidget = new ConfigurationVectorKeywordWidget(
+    //            nullptr, dynamic_cast<ConfigurationVectorKeyword *>(optCfgKeyword), dissolve.coreData());
+    //        connect(cfgWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
+    //        auto *layout = new QHBoxLayout;
+    //        layout->addWidget(cfgWidget);
+    //        ui_.ConfigurationsPlaceholderWidget->setLayout(layout);
+    //    }
 
     // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
     // will exist in a QScrollArea)
@@ -211,27 +209,27 @@ bool ModuleBlock::isDragPoint(QPoint point) const
 // Update configuration labels and tooltips
 void ModuleBlock::updateConfigurationLabels()
 {
-    // Construct the tooltip
-    QString toolTip;
-
-    if (module_->nRequiredTargets() == Module::OneOrMoreTargets)
-        toolTip = "This module may target any number of configurations.\n";
-    else
-        toolTip = QString("This module must target exactly %1 %2.\n")
-                      .arg(module_->nRequiredTargets())
-                      .arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
-
-    if (module_->nTargetConfigurations() == 0)
-        toolTip += "No configuration targets set.";
-    else
-    {
-        toolTip += "Current configuration targets:\n";
-        for (Configuration *cfg : module_->targetConfigurations())
-            toolTip += QString("- %1\n").arg(QString::fromStdString(std::string(cfg->name())));
-    }
-
-    ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));
-    ui_.ConfigurationsIconLabel->setToolTip(toolTip);
+    //    // Construct the tooltip
+    //    QString toolTip;
+    //
+    //    if (module_->nRequiredTargets() == Module::OneOrMoreTargets)
+    //        toolTip = "This module may target any number of configurations.\n";
+    //    else
+    //        toolTip = QString("This module must target exactly %1 %2.\n")
+    //                      .arg(module_->nRequiredTargets())
+    //                      .arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
+    //
+    //    if (module_->nTargetConfigurations() == 0)
+    //        toolTip += "No configuration targets set.";
+    //    else
+    //    {
+    //        toolTip += "Current configuration targets:\n";
+    //        for (Configuration *cfg : module_->targetConfigurations())
+    //            toolTip += QString("- %1\n").arg(QString::fromStdString(std::string(cfg->name())));
+    //    }
+    //
+    //    ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));
+    //    ui_.ConfigurationsIconLabel->setToolTip(toolTip);
 }
 
 // Configuration targets for the Module have been modified
@@ -260,13 +258,13 @@ void ModuleBlock::updateControls()
     ui_.FrequencySpin->setValue(module_->frequency());
 
     // Update Configuration label and icon tooltip
-    if (module_->nRequiredTargets() == Module::ZeroTargets)
-    {
-        ui_.ConfigurationsLabel->setText("-");
-        ui_.ConfigurationsIconLabel->setToolTip("This module does not accept configuration targets.");
-    }
-    else
-        updateConfigurationLabels();
+    //    if (module_->nRequiredTargets() == Module::ZeroTargets)
+    //    {
+    //        ui_.ConfigurationsLabel->setText("-");
+    //        ui_.ConfigurationsIconLabel->setToolTip("This module does not accept configuration targets.");
+    //    }
+    //    else
+    //        updateConfigurationLabels();
 
     refreshing_ = false;
 }
@@ -288,7 +286,4 @@ void ModuleBlock::enableSensitiveControls()
     ui_.NameEdit->setEnabled(true);
     ui_.EnabledButton->setEnabled(true);
     ui_.FrequencySpin->setEnabled(true);
-
-    if (module_ && (module_->nRequiredTargets() != Module::ZeroTargets))
-        ui_.ConfigurationsPlaceholderWidget->setEnabled(true);
 }

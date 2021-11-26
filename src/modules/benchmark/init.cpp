@@ -7,6 +7,11 @@
 // Perform any necessary initialisation for the Module
 void BenchmarkModule::initialise()
 {
+    // Targets
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
+
+    // Control
     keywords_.add<IntegerKeyword>("Control", "N", "Number of times to run each benchmark in order to form average", nRepeats_,
                                   1);
     keywords_.add<BoolKeyword>("Control", "Save", "Whether to save new timings to the restart file", save_);

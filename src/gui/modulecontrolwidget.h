@@ -24,7 +24,7 @@ class ModuleControlWidget : public QWidget
 
     public:
     ModuleControlWidget(QWidget *parent = nullptr);
-    ~ModuleControlWidget();
+    ~ModuleControlWidget() = default;
 
     private:
     // Lock for widget refresh
@@ -66,16 +66,20 @@ class ModuleControlWidget : public QWidget
     private:
     // Main form declaration
     Ui::ModuleControlWidget ui_;
-    // Keyword widget for Configuration editing
-    ConfigurationVectorKeywordWidget *configurationsWidget_;
+    // Reference vector of "Target" keywords
+    std::vector<KeywordWidgetBase *> targetKeywordWidgets_;
     // Additional controls widget for the Module (if any)
     ModuleWidget *moduleWidget_;
 
     private slots:
     void on_ModuleControlsButton_clicked(bool checked);
     void on_ModuleOutputButton_clicked(bool checked);
+    void on_EnabledButton_clicked(bool checked);
+    void on_FrequencySpin_valueChanged(int value);
     // Keyword data for Module has been modified
     void keywordDataModified();
+    // Target keyword data changed
+    void targetKeywordDataChanged(int flags);
 
     signals:
     // Notify that the Module's data has been modified in some way

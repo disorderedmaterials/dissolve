@@ -148,6 +148,9 @@ void CalculateAxisAngleModule::initialise()
      * Keywords (including those exposed from the ProcedureNodes)
      */
 
+    // Targets
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+
     // Control
     keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, binwidth) of distance axis", distanceRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);

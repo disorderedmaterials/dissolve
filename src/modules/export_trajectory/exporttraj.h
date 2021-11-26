@@ -34,8 +34,6 @@ class ExportTrajectoryModule : public Module
     std::string_view category() const override;
     // Return brief description of module
     std::string_view brief() const override;
-    // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const override;
 
     /*
      * Initialisation
@@ -48,6 +46,8 @@ class ExportTrajectoryModule : public Module
      * Data
      */
     private:
+    // Target configuration
+    Configuration *targetConfiguration_;
     // Filename and format for trajectory export
     TrajectoryExportFileFormat trajectoryFormat_;
 

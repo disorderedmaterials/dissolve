@@ -181,7 +181,7 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType)
 }
 
 // Create a Module instance for the named Module type, and add it to the specified layer
-Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer, bool configurationLocal)
+Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer)
 {
     Module *module = createModuleInstance(moduleType);
     if (!module)
@@ -189,8 +189,6 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer 
 
     // Add the new module instance to the specified destination layer
     destinationLayer->own(module);
-
-    module->setConfigurationLocal(configurationLocal);
 
     return module;
 }

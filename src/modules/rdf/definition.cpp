@@ -11,6 +11,3 @@ std::string_view RDFModule::category() const { return "Correlation Functions"; }
 
 // Return brief description of module
 std::string_view RDFModule::brief() const { return "Calculate partial and total g(r)"; }
-
-// Return the number of Configuration targets this Module requires
-int RDFModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

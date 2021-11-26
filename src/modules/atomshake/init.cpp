@@ -7,6 +7,10 @@
 // Perform any necessary initialisation for the Module
 void AtomShakeModule::initialise()
 {
+    // Targets
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
+
     // Control
     keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to use for energy calculation",
                                  cutoffDistance_, -1.0);

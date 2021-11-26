@@ -3,7 +3,7 @@
 
 #include "modules/sq/sq.h"
 
-SQModule::SQModule() : Module(nRequiredTargets())
+SQModule::SQModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

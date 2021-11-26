@@ -11,6 +11,3 @@ std::string_view CheckSpeciesModule::category() const { return "Checks & Tests";
 
 // Return brief description of module
 std::string_view CheckSpeciesModule::brief() const { return "Check the contents of a Species against reference values"; }
-
-// Return the number of Configuration targets this Module requires
-int CheckSpeciesModule::nRequiredTargets() const { return Module::ZeroTargets; }

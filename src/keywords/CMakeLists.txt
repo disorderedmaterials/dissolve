@@ -3,6 +3,7 @@ add_library(
   atomtypevector.cpp
   base.cpp
   bool.cpp
+  configuration.cpp
   configurationvector.cpp
   data1dstore.cpp
   data2dstore.cpp
@@ -40,6 +41,7 @@ add_library(
   atomtypevector.h
   base.h
   bool.h
+  configuration.h
   configurationvector.h
   data1dstore.h
   data2dstore.h

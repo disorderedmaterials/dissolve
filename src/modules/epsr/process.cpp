@@ -52,17 +52,18 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
                                     module->uniqueName());
 
         // Check for number of targets, or different target if there's only 1
-        if (rdfModule->nTargetConfigurations() != 1)
+        auto rdfConfigs = rdfModule->keywords().get<std::vector<Configuration *>>("Configuration");
+        if (rdfConfigs.size() != 1)
             return Messenger::error("RDF module '{}' targets multiple configurations, which is not permitted when using "
-                                    "it's data in the EPSR module.",
+                                    "its data in the EPSR module.",
                                     rdfModule->uniqueName());
 
-        if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfModule->targetConfigurations().front()))
+        if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfConfigs.front()))
             return Messenger::error("RDF module '{}' targets a configuration which is different from another target "
-                                    "module, and which is not permitted when using it's data in the EPSR module.",
+                                    "module, and which is not permitted when using its data in the EPSR module.",
                                     rdfModule->uniqueName());
         else
-            targetConfiguration_ = rdfModule->targetConfigurations().front();
+            targetConfiguration_ = rdfConfigs.front();
 
         rho = targetConfiguration_->atomicDensity();
     }

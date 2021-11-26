@@ -3,7 +3,7 @@
 
 #include "modules/accumulate/accumulate.h"
 
-AccumulateModule::AccumulateModule() : Module(Module::ZeroTargets)
+AccumulateModule::AccumulateModule() : Module()
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

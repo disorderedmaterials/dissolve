@@ -94,6 +94,9 @@ void CalculateSDFModule::initialise()
      * Keywords (including those exposed from the ProcedureNodes)
      */
 
+    // Targets
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+
     // Control
     keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                      Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);

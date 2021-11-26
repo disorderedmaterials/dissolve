@@ -11,6 +11,3 @@ std::string_view TestModule::category() const { return "HIDDEN"; }
 
 // Return brief description of module
 std::string_view TestModule::brief() const { return "Development Module"; }
-
-// Return the number of Configuration targets this Module requires
-int TestModule::nRequiredTargets() const { return Module::ZeroTargets; }

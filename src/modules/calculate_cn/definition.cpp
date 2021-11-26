@@ -14,6 +14,3 @@ std::string_view CalculateCNModule::brief() const
 {
     return "Calculate coordination numbers from an existing radial distribution function";
 }
-
-// Return the number of Configuration targets this Module requires
-int CalculateCNModule::nRequiredTargets() const { return Module::ZeroTargets; }

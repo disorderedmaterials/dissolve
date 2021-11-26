@@ -33,13 +33,13 @@ class AtomShakeModule : public Module
     std::string_view category() const override;
     // Return brief description of module
     std::string_view brief() const override;
-    // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const override;
 
     /*
      * Control
      */
     private:
+    // Target configurations
+    std::vector<Configuration *> targetConfigurations_;
     // Interatomic cutoff distance to use for energy calculation
     double cutoffDistance_{-1.0};
     // Number of shakes to attempt per atom

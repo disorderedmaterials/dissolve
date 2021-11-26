@@ -3,7 +3,7 @@
 
 #include "modules/atomshake/atomshake.h"
 
-AtomShakeModule::AtomShakeModule() : Module(nRequiredTargets())
+AtomShakeModule::AtomShakeModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

@@ -11,6 +11,3 @@ std::string_view ExportTrajectoryModule::category() const { return "Export"; }
 
 // Return brief description of module
 std::string_view ExportTrajectoryModule::brief() const { return "Export trajectory for a Configuration"; }
-
-// Return the number of Configuration targets this Module requires
-int ExportTrajectoryModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

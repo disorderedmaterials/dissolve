@@ -3,7 +3,7 @@
 
 #include "modules/test/test.h"
 
-TestModule::TestModule() : Module(nRequiredTargets())
+TestModule::TestModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

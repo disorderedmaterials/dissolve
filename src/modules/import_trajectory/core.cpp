@@ -3,7 +3,7 @@
 
 #include "modules/import_trajectory/importtraj.h"
 
-ImportTrajectoryModule::ImportTrajectoryModule() : Module(nRequiredTargets())
+ImportTrajectoryModule::ImportTrajectoryModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

@@ -3,7 +3,7 @@
 
 #include "modules/intrashake/intrashake.h"
 
-IntraShakeModule::IntraShakeModule() : Module(nRequiredTargets())
+IntraShakeModule::IntraShakeModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

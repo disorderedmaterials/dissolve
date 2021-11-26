@@ -15,6 +15,8 @@
 
 // Classes
 #include "keywords/atomtypevector.h"
+#include "keywords/configuration.h"
+#include "keywords/configurationvector.h"
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"

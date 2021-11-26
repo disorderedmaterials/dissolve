@@ -7,6 +7,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
+#include "modules/intrashake/intrashake.h"
 #include <cstdio>
 #include <numeric>
 
@@ -89,23 +90,14 @@ bool Dissolve::prepare()
     if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_))
         return false;
 
-    // Check Modules have suitable numbers of Configuration targets
-    for (auto *module : moduleInstances_)
-    {
-        if (module->isDisabled())
-            continue;
-
-        if (!module->hasValidNTargetConfigurations(true))
-            return false;
-    }
-
     // Generate attached atom lists if IntraShake modules are present and enabled
     auto intraShakeModules = findModuleInstances("IntraShake");
     if (!intraShakeModules.empty())
     {
         Messenger::print("Generating attached atom lists for required species...");
         for (auto *module : intraShakeModules)
-            for (auto *cfg : module->targetConfigurations())
+            for (auto *cfg :
+                 dynamic_cast<IntraShakeModule *>(module)->keywords().get<std::vector<Configuration *>>("Configuration"))
                 for (auto &sp : coreData_.species())
                     if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
                     {

@@ -3,7 +3,7 @@
 
 #include "modules/export_pairpotentials/exportpp.h"
 
-ExportPairPotentialsModule::ExportPairPotentialsModule() : Module(nRequiredTargets())
+ExportPairPotentialsModule::ExportPairPotentialsModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

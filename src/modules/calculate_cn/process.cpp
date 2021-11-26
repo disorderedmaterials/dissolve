@@ -22,12 +22,10 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
     process1D_->keywords().set("SourceData", sourceRDF_->collectDistanceNode());
     siteNormaliser_->keywords().set("Site", std::vector<const SelectProcedureNode *>{sourceRDF_->selectANode()});
 
-    // Execute the analysis on the Configurations targeted by the RDF module
-    for (Configuration *cfg : sourceRDF_->targetConfigurations())
-    {
-        if (!analyser_.execute(procPool, cfg, fmt::format("{}//Analyser", uniqueName()), dissolve.processingModuleData()))
-            return Messenger::error("CalculateCN experienced problems with its analysis.\n");
-    }
+    // Execute the analysis on the Configuration targeted by the RDF module
+    auto *cfg = sourceRDF_->keywords().get<Configuration *>("Configuration");
+    if (!analyser_.execute(procPool, cfg, fmt::format("{}//Analyser", uniqueName()), dissolve.processingModuleData()))
+        return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 
     // Test?
     if (keywords_.hasBeenSet("TestRangeA"))

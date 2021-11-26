@@ -2,14 +2,13 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/lineparser.h"
-#include "gui/charts/moduleblock.h"
 #include "gui/gui.h"
-#include "gui/keywordwidgets/configurationvector.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/producers.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/modulewidget.h"
 #include "main/dissolve.h"
 #include "module/module.h"
-#include <QGridLayout>
 
 ModuleControlWidget::ModuleControlWidget(QWidget *parent)
 {
@@ -18,15 +17,16 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
 
     dissolve_ = nullptr;
     module_ = nullptr;
-    configurationsWidget_ = nullptr;
     moduleWidget_ = nullptr;
 
     // Connect signals from keywords widget
     connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
     connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
-}
 
-ModuleControlWidget::~ModuleControlWidget() {}
+    // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
+    // will exist in a QScrollArea)
+    ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
+}
 
 /*
  * Module Target
@@ -41,7 +41,35 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         throw(std::runtime_error("Can't create a ModuleControlWidget without both Module and Dissolve pointers.\n"));
 
     // Set the icon label
-    ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
+    ui_.ModuleIconLabel->setPixmap(
+        QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module_->type())).toLower())));
+
+    // Set up any target keyword widgets
+    if (!module_->keywords().targetsGroup().empty())
+    {
+        ui_.NoTargetsLabel->setVisible(false);
+        for (auto *keyword : module_->keywords().targetsGroup())
+        {
+            // Try to create a suitable widget
+            auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_->coreData());
+            if (!widget || !base)
+                throw(std::runtime_error(fmt::format("No widget created for keyword '{}'.\n", keyword->name())));
+
+            // Connect it up
+            connect(widget, SIGNAL(keywordValueChanged(int)), this, SLOT(targetKeywordDataChanged(int)));
+
+            // Create the label
+            auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
+            nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
+            nameLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+
+            ui_.TargetsLayout->addWidget(nameLabel);
+            ui_.TargetsLayout->addWidget(widget);
+
+            targetKeywordWidgets_.push_back(base);
+        }
+        ui_.TargetsLayout->addStretch(2);
+    }
 
     // Set up our control widgets
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->coreData());
@@ -49,7 +77,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     // Create any additional controls offered by the Module
     moduleWidget_ = module->createWidget(nullptr, *dissolve_);
     if (moduleWidget_ == nullptr)
-        Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->type());
+        Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
     else
     {
         ui_.ModuleControlsStack->addWidget(moduleWidget_);
@@ -92,6 +120,17 @@ void ModuleControlWidget::updateControls()
     ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->uniqueName())),
                                                         QString::fromStdString(std::string(module_->type()))));
 
+    // Set 'enabled' button status
+    ui_.EnabledButton->setChecked(module_->isEnabled());
+    ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
+
+    // Set frequency spin
+    ui_.FrequencySpin->setValue(module_->frequency());
+
+    // Update tqrget keywords
+    for (auto w : targetKeywordWidgets_)
+        w->updateValue();
+
     // Update keywords
     ui_.ModuleKeywordsWidget->updateControls();
 
@@ -132,5 +171,38 @@ void ModuleControlWidget::on_ModuleOutputButton_clicked(bool checked)
         ui_.ModuleControlsStack->setCurrentIndex(1);
 }
 
+void ModuleControlWidget::on_EnabledButton_clicked(bool checked)
+{
+    if (refreshLock_.isLocked())
+        return;
+
+    module_->setEnabled(checked);
+
+    ui_.ModuleIconLabel->setEnabled(checked);
+
+    emit(dataModified());
+}
+
+void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
+{
+    if (refreshLock_.isLocked())
+        return;
+
+    module_->setFrequency(value);
+
+    emit(dataModified());
+}
+
 // Keyword data for Module has been modified
 void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }
+
+// Target keyword data changed
+void ModuleControlWidget::targetKeywordDataChanged(int flags)
+{
+    // Always emit the 'dataModified' signal
+    emit(dataModified());
+
+    // Set-up of encompassing class required?
+    if (flags & KeywordBase::ModificationRequiresSetUpOption)
+        setUpModule();
+}

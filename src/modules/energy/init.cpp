@@ -7,6 +7,10 @@
 // Perform any necessary initialisation for the Module
 void EnergyModule::initialise()
 {
+    // Targets
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
+
     // Control
     keywords_.add<DoubleKeyword>("Control", "StabilityThreshold",
                                  "Threshold value at which energy is deemed stable over the defined windowing period",

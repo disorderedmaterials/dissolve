@@ -34,8 +34,6 @@ class ExportPairPotentialsModule : public Module
     std::string_view category() const override;
     // Return brief description of module
     std::string_view brief() const override;
-    // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const override;
 
     /*
      * Initialisation

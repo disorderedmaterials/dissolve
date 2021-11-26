@@ -63,27 +63,28 @@ void CalculateAxisAngleModuleWidget::updateControls(ModuleWidget::UpdateType upd
     if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
         rdfGraph_->clearRenderables();
 
-    // Calculated A...B RDF
-    if (rdfGraph_->renderables().empty())
-        for (const auto *cfg : module_->targetConfigurations())
+    auto cfg = module_->keywords().get<Configuration *>("Configuration");
+    if (cfg)
+    {
+        // Calculated A...B RDF
+        if (rdfGraph_->renderables().empty())
             rdfGraph_
                 ->createRenderable<RenderableData1D>(
                     fmt::format("{}//Process1D//RDF(AB)", module_->uniqueName(), cfg->niceName()), "A...B g(r)")
                 ->setColour(StockColours::BlueStockColour);
 
-    // Calculated angle histogram
-    if (angleGraph_->renderables().empty())
-        for (const auto *cfg : module_->targetConfigurations())
+        // Calculated angle histogram
+        if (angleGraph_->renderables().empty())
             angleGraph_
                 ->createRenderable<RenderableData1D>(
                     fmt::format("{}//Process1D//AxisAngle(AB)", module_->uniqueName(), cfg->niceName()), "Axis Angle")
                 ->setColour(StockColours::RedStockColour);
 
-    // Calculated distance-angle map
-    if (dAngleGraph_->renderables().empty())
-        for (const auto *cfg : module_->targetConfigurations())
+        // Calculated distance-angle map
+        if (dAngleGraph_->renderables().empty())
             dAngleGraph_->createRenderable<RenderableData2D>(
                 fmt::format("{}//Process2D//DAxisAngle", module_->uniqueName(), cfg->niceName()), "A...B vs Axis Angle");
+    }
 
     // Validate renderables if they need it
     rdfGraph_->validateRenderables(processingData_);

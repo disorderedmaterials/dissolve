@@ -11,6 +11,3 @@ std::string_view GeometryOptimisationModule::category() const { return "Optimisa
 
 // Return brief description of module
 std::string_view GeometryOptimisationModule::brief() const { return "Optimise geometry with respect to energy (minimise)"; }
-
-// Return the number of Configuration targets this Module requires
-int GeometryOptimisationModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }
