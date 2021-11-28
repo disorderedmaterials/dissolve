@@ -9,9 +9,9 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, DoubleKeyword *keyword
 {
     // Set minimum and maximum values
     if (keyword_->validationMin())
-        setMinimumLimit(keyword_->validationMin().value());
+        setMinimum(keyword_->validationMin().value());
     if (keyword_->validationMax())
-        setMaximumLimit(keyword_->validationMax().value());
+        setMaximum(keyword_->validationMax().value());
 
     // Set current value
     setValue(keyword_->data());
