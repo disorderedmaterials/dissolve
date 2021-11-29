@@ -40,14 +40,6 @@ int main(int args, char **argv)
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
-    // Check module registration
-    if (!dissolve.registerMasterModules())
-    {
-        ProcessPool::finalise();
-        Messenger::ceaseRedirect();
-        return 1;
-    }
-
     // Load input file
     Messenger::banner("Parse Input File");
     if (!dissolve.loadInput(options.inputFile().value()))

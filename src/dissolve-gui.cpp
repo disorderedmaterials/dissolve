@@ -26,13 +26,6 @@ int main(int args, char **argv)
     if (options.parse(args, argv, true) != CLIOptions::Success)
         return 1;
 
-    // Register master Modules
-    if (!dissolve.registerMasterModules())
-    {
-        ProcessPool::finalise();
-        return 1;
-    }
-
     // Create the main QApplication
     QApplication app(args, argv);
     QCoreApplication::setOrganizationName("ProjectAten");

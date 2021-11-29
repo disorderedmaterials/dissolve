@@ -77,7 +77,6 @@ template <ProblemType problem, Population population> struct Problem
     Problem() : dissolve_(coredata_)
     {
         Messenger::setQuiet(true);
-        dissolve_.registerMasterModules();
         auto file = benchmarkFilePath<problem, population>();
         dissolve_.loadInput(file);
         dissolve_.prepare();

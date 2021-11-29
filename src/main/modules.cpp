@@ -2,168 +2,11 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "modules/accumulate/accumulate.h"
-#include "modules/analyse/analyse.h"
-#include "modules/atomshake/atomshake.h"
-#include "modules/benchmark/benchmark.h"
-#include "modules/bragg/bragg.h"
-#include "modules/calculate_angle/angle.h"
-#include "modules/calculate_avgmol/avgmol.h"
-#include "modules/calculate_axisangle/axisangle.h"
-#include "modules/calculate_cn/cn.h"
-#include "modules/calculate_dangle/dangle.h"
-#include "modules/calculate_rdf/rdf.h"
-#include "modules/calculate_sdf/sdf.h"
-#include "modules/checks/checks.h"
-#include "modules/checkspecies/checkspecies.h"
-#include "modules/datatest/datatest.h"
-#include "modules/energy/energy.h"
-#include "modules/epsr/epsr.h"
-#include "modules/export_coordinates/exportcoords.h"
-#include "modules/export_pairpotentials/exportpp.h"
-#include "modules/export_trajectory/exporttraj.h"
-#include "modules/forces/forces.h"
-#include "modules/geomopt/geomopt.h"
-#include "modules/import_trajectory/importtraj.h"
-#include "modules/intrashake/intrashake.h"
-#include "modules/md/md.h"
-#include "modules/molshake/molshake.h"
-#include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/rdf.h"
-#include "modules/sq/sq.h"
-#include "modules/test/test.h"
-#include "modules/xraysq/xraysq.h"
-
-/*
- * Module Registration
- * ===================
- * All modules to be registered for use in the code must be placed here.
- */
-
-// Register master Module
-bool Dissolve::registerMasterModule(Module *masterInstance)
-{
-    // Do sanity check on name
-    if (std::any_of(masterModules_.begin(), masterModules_.end(), [masterInstance](const auto &module) {
-            return DissolveSys::sameString(module->type(), masterInstance->type());
-        }))
-    {
-        Messenger::error("Two modules cannot have the same name ({}).\n", masterInstance->type());
-        return false;
-    }
-
-    // Set the unique name of the Module
-    masterInstance->setUniqueName(fmt::format("{}_MASTER", masterInstance->type()));
-
-    // Own the module into our master instances list
-    masterModules_.emplace_back(masterInstance);
-
-    return true;
-}
-
-// Register master instances for all Modules
-bool Dissolve::registerMasterModules()
-{
-    if (!registerMasterModule(new AccumulateModule))
-        return false;
-    if (!registerMasterModule(new AnalyseModule))
-        return false;
-    if (!registerMasterModule(new AtomShakeModule))
-        return false;
-    if (!registerMasterModule(new BenchmarkModule))
-        return false;
-    if (!registerMasterModule(new BraggModule))
-        return false;
-    if (!registerMasterModule(new CalculateAngleModule))
-        return false;
-    if (!registerMasterModule(new CalculateAvgMolModule))
-        return false;
-    if (!registerMasterModule(new CalculateAxisAngleModule))
-        return false;
-    if (!registerMasterModule(new CalculateCNModule))
-        return false;
-    if (!registerMasterModule(new CalculateDAngleModule))
-        return false;
-    if (!registerMasterModule(new CalculateRDFModule))
-        return false;
-    if (!registerMasterModule(new CalculateSDFModule))
-        return false;
-    if (!registerMasterModule(new ChecksModule))
-        return false;
-    if (!registerMasterModule(new CheckSpeciesModule))
-        return false;
-    if (!registerMasterModule(new DataTestModule))
-        return false;
-    if (!registerMasterModule(new EnergyModule))
-        return false;
-    if (!registerMasterModule(new EPSRModule))
-        return false;
-    if (!registerMasterModule(new ExportCoordinatesModule))
-        return false;
-    if (!registerMasterModule(new ExportPairPotentialsModule))
-        return false;
-    if (!registerMasterModule(new ExportTrajectoryModule))
-        return false;
-    if (!registerMasterModule(new ForcesModule))
-        return false;
-    if (!registerMasterModule(new GeometryOptimisationModule))
-        return false;
-    if (!registerMasterModule(new ImportTrajectoryModule))
-        return false;
-    if (!registerMasterModule(new IntraShakeModule))
-        return false;
-    if (!registerMasterModule(new MDModule))
-        return false;
-    if (!registerMasterModule(new MolShakeModule))
-        return false;
-    if (!registerMasterModule(new NeutronSQModule))
-        return false;
-    if (!registerMasterModule(new RDFModule))
-        return false;
-    if (!registerMasterModule(new SQModule))
-        return false;
-    if (!registerMasterModule(new TestModule))
-        return false;
-    if (!registerMasterModule(new XRaySQModule))
-        return false;
-
-    return true;
-}
-
-// Print information on all available modules
-void Dissolve::printModuleInformation() const
-{
-    Messenger::print("Module Information ({} available):\n", masterModules_.size());
-    for (const auto &module : masterModules_)
-    {
-        Messenger::print(" --> {}\n", module->type());
-        Messenger::print("     {}\n", module->brief());
-    }
-}
-
-// Search for master Module of the named type
-Module *Dissolve::findMasterModule(std::string_view moduleType) const
-{
-    auto it = std::find_if(masterModules_.begin(), masterModules_.end(),
-                           [moduleType](const auto &module) { return DissolveSys::sameString(module->type(), moduleType); });
-    if (it == masterModules_.end())
-        return nullptr;
-    return it->get();
-}
-
-// Return master Module instances
-const std::vector<std::unique_ptr<Module>> &Dissolve::masterModules() const { return masterModules_; }
+#include "modules/registry.h"
 
 // Create a Module instance for the named Module type
-Module *Dissolve::createModuleInstance(std::string_view moduleType)
+std::unique_ptr<Module> Dissolve::createModuleInstance(std::string_view moduleType)
 {
-    Module *masterModule = findMasterModule(moduleType);
-    if (!masterModule)
-    {
-        Messenger::error("No Module type '{}' exists.\n", moduleType);
-        return nullptr;
-    }
-
     // Find a suitable unique name for the Module
     auto instanceId = 1;
     std::string uniqueName;
@@ -173,8 +16,8 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType)
     } while (findModuleInstance(uniqueName));
 
     // Create a new instance of the specified Module and add it to our list
-    Module *instance = masterModule->createInstance();
-    moduleInstances_.append(instance);
+    auto instance = ModuleRegistry::create(moduleType);
+    moduleInstances_.append(instance.get());
     instance->setUniqueName(uniqueName);
 
     return instance;
@@ -183,14 +26,15 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType)
 // Create a Module instance for the named Module type, and add it to the specified layer
 Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer)
 {
-    Module *module = createModuleInstance(moduleType);
-    if (!module)
+    auto instance = createModuleInstance(moduleType);
+    if (!instance)
         return nullptr;
 
     // Add the new module instance to the specified destination layer
-    destinationLayer->own(module);
+    auto *m = instance.get();
+    destinationLayer->modules().emplace_back(std::move(instance));
 
-    return module;
+    return m;
 }
 
 // Search for any instance of any Module with the specified unique name

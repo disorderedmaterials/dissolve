@@ -9,7 +9,6 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
-#include "module/list.h"
 #include "module/module.h"
 
 CoreData::CoreData() { moduleInstances_ = nullptr; }

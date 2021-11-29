@@ -4,7 +4,6 @@
 #include "keywords/modulevector.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
-#include "module/list.h"
 #include "module/module.h"
 #include "templates/algorithms.h"
 #include <utility>

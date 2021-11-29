@@ -3,12 +3,10 @@ add_library(
   group.cpp
   groups.cpp
   layer.cpp
-  list.cpp
   module.cpp
   group.h
   groups.h
   layer.h
-  list.h
   module.h
 )
 

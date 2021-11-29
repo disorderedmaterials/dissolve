@@ -263,6 +263,7 @@ set(BASIC_LINK_LIBS
     main
     classes
     module
+    moduleregistry
     io
     export
     import

@@ -6,13 +6,6 @@
 #include "base/sysfunc.h"
 #include "module/module.h"
 
-ModuleLayer::ModuleLayer() : ModuleList()
-{
-    enabled_ = true;
-    frequency_ = 1;
-    name_ = "Untitled Layer";
-}
-
 /*
  * Layer Definition
  */
@@ -65,4 +58,46 @@ bool ModuleLayer::runThisIteration(int iteration) const
         return true;
     else
         return false;
+}
+
+/*
+ * Modules
+ */
+
+// Clear modules
+void ModuleLayer::clear() { modules_.clear(); }
+
+// Find associated Module by unique name
+Module *ModuleLayer::find(std::string_view uniqueName) const
+{
+    auto it = std::find_if(modules_.begin(), modules_.end(),
+                           [uniqueName](const auto &m) { return DissolveSys::sameString(m->uniqueName(), uniqueName); });
+    if (it != modules_.end())
+        return it->get();
+
+    return nullptr;
+}
+
+// Return whether specified Module is present in the layer
+bool ModuleLayer::contains(Module *searchModule) const
+{
+    return std::find_if(modules_.begin(), modules_.end(), [searchModule](const auto &m) { return searchModule == m.get(); }) !=
+           modules_.end();
+}
+
+// Return vector of Modules
+std::vector<std::unique_ptr<Module>> &ModuleLayer::modules() { return modules_; }
+
+/*
+ * General Actions
+ */
+
+// Run set-up stages for all modules
+bool ModuleLayer::setUpAll(Dissolve &dissolve, ProcessPool &procPool)
+{
+    for (auto &module : modules_)
+        if (!module->setUp(dissolve, procPool))
+            return false;
+
+    return true;
 }
