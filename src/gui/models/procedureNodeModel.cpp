@@ -3,7 +3,6 @@
 
 #include "gui/models/procedureNodeModel.h"
 
-Q_DECLARE_METATYPE(ConstNodeRef);
 
 // Set source Species data
 void ProcedureNodeModel::setData(const std::vector<ConstNodeRef> &nodes)
