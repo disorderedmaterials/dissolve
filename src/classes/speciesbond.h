@@ -14,7 +14,8 @@ class Species;
 class SpeciesBond : public SpeciesIntra
 {
     public:
-    SpeciesBond(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr);
+    SpeciesBond();
+    SpeciesBond(SpeciesAtom *i, SpeciesAtom *j);
     ~SpeciesBond() override = default;
     SpeciesBond(SpeciesBond &source);
     SpeciesBond(SpeciesBond &&source) noexcept;
@@ -26,15 +27,13 @@ class SpeciesBond : public SpeciesIntra
      */
     private:
     // First SpeciesAtom in interaction
-    SpeciesAtom *i_;
+    SpeciesAtom *i_{nullptr};
     // Second SpeciesAtom in interaction
-    SpeciesAtom *j_;
-
-    private:
-    // Assign the two atoms in the bond
-    void assign(SpeciesAtom *i, SpeciesAtom *j);
+    SpeciesAtom *j_{nullptr};
 
     public:
+    // Assign the two atoms in the bond
+    void assign(SpeciesAtom *i, SpeciesAtom *j);
     // Rewrite SpeciesAtom pointer
     void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom
@@ -81,7 +80,7 @@ class SpeciesBond : public SpeciesIntra
 
     private:
     // Bond type
-    BondType bondType_;
+    BondType bondType_{SpeciesBond::SingleBond};
 
     public:
     // Set bond type

@@ -31,7 +31,6 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
 int Species::addAtom(Elements::Element Z, Vec3<double> r, double q, std::shared_ptr<AtomType> atomType)
 {
     auto &i = atoms_.emplace_back();
-    i.setSpecies(this);
     i.set(Z, r.x, r.y, r.z, q);
     i.setIndex(atoms_.size() - 1);
     i.setAtomType(atomType);
@@ -258,20 +257,15 @@ double Species::mass() const
     return m;
 }
 
-// Update used atom types
-void Species::updateAtomTypes()
+// Calculate and return atom types used in the Species
+AtomTypeMix Species::atomTypes() const
 {
-    atomTypes_.clear();
+    AtomTypeMix mix;
     for (const auto &i : atoms_)
         if (i.atomType())
-            atomTypes_.add(i.atomType(), 1);
-
-    // Update our isotopologue definitions while we're here
-    updateIsotopologues();
+            mix.add(i.atomType(), 1);
+    return mix;
 }
-
-// Return used atom types list
-const AtomTypeMix &Species::atomTypes() const { return atomTypes_; }
 
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()
@@ -279,7 +273,7 @@ void Species::clearAtomTypes()
     for (auto &i : atoms_)
         i.setAtomType(nullptr);
 
-    atomTypes_.clear();
+    updateIsotopologues();
 }
 
 // Simplify atom types, merging together those with identical parameters
@@ -299,7 +293,7 @@ int Species::simplifyAtomTypes()
         ++nModified;
     }
 
-    updateAtomTypes();
+    updateIsotopologues();
 
     return nModified;
 }

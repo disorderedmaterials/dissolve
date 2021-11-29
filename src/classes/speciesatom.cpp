@@ -21,7 +21,6 @@ SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
 // Move all data from source to this
 void SpeciesAtom::move(SpeciesAtom &source)
 {
-    parent_ = source.parent_;
     Z_ = source.Z_;
     r_ = source.r_;
     charge_ = source.charge_;
@@ -45,7 +44,6 @@ void SpeciesAtom::move(SpeciesAtom &source)
         improper.get().switchAtom(&source, this);
 
     // Tidy old element
-    source.parent_ = nullptr;
     source.Z_ = Elements::Unknown;
     source.r_ = {};
     source.charge_ = 0.0;
@@ -61,11 +59,6 @@ void SpeciesAtom::move(SpeciesAtom &source)
 /*
  * Properties
  */
-// Set Species parent
-void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
-
-// Return Species parent
-const Species *SpeciesAtom::species() const { return parent_; }
 
 // Set basic SpeciesAtom properties
 void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q)
@@ -110,8 +103,6 @@ void SpeciesAtom::setAtomType(const std::shared_ptr<AtomType> &at)
     }
 
     atomType_ = at;
-    if (parent_)
-        parent_->updateAtomTypes();
 }
 
 // Return SpeciesAtomType of SpeciesAtom

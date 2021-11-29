@@ -4,10 +4,11 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 
-SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra()
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(SpeciesAngle::NoForm) {}
+
+SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(SpeciesAngle::NoForm)
 {
     assign(i, j, k);
-    form_ = SpeciesAngle::NoForm;
 }
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->operator=(source); }
@@ -32,7 +33,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) noexcept : SpeciesIntra(source
     source.k_ = nullptr;
 }
 
-SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &source)
+SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
 {
     // Copy data
     assign(source.i_, source.j_, source.k_);
@@ -139,13 +140,7 @@ int SpeciesAngle::index(int n) const
 // Return whether Atoms in Angle match those specified
 bool SpeciesAngle::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const
 {
-    if (j_ != j)
-        return false;
-    if ((i_ == i) && (k_ == k))
-        return true;
-    if ((i_ == k) && (k_ == i))
-        return true;
-    return false;
+    return (j_ == j) && ((i_ == i && k_ == k) || (i_ == k && k_ == i));
 }
 
 // Return whether all atoms in the interaction are currently selected

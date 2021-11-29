@@ -68,9 +68,7 @@ const std::vector<SpeciesBond> &Species::bonds() const { return bonds_; }
 // Return whether SpeciesBond between specified SpeciesAtoms exists
 bool Species::hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const
 {
-    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
-
-    return it != bonds_.cend();
+    return std::any_of(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
 }
 bool Species::hasBond(int i, int j) const { return hasBond(&atom(i), &atom(j)); }
 
@@ -239,9 +237,7 @@ const std::vector<SpeciesAngle> &Species::angles() const { return angles_; }
 // Return whether SpeciesAngle between SpeciesAtoms exists
 bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
 {
-    auto it = std::find_if(angles_.cbegin(), angles_.cend(), [i, j, k](const auto &angle) { return angle.matches(i, j, k); });
-
-    return it != angles_.cend();
+    return std::any_of(angles_.cbegin(), angles_.cend(), [i, j, k](const auto &angle) { return angle.matches(i, j, k); });
 }
 
 // Return the SpeciesAngle between the specified SpeciesAtoms
@@ -302,8 +298,7 @@ const std::vector<SpeciesTorsion> &Species::torsions() const { return torsions_;
 // Return whether SpeciesTorsion between SpeciesAtoms exists
 bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
 {
-    auto it = std::find_if(torsions_.cbegin(), torsions_.cend(), [&](const auto &t) { return t.matches(i, j, k, l); });
-    return it != torsions_.end();
+    return std::any_of(torsions_.cbegin(), torsions_.cend(), [&](const auto &t) { return t.matches(i, j, k, l); });
 }
 
 // Return the SpeciesTorsion between the specified SpeciesAtoms
@@ -372,12 +367,8 @@ const std::vector<SpeciesImproper> &Species::impropers() const { return improper
 // Return whether SpeciesImproper between SpeciesAtoms exists
 bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
 {
-    auto it = std::find_if(impropers_.begin(), impropers_.end(),
-                           [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
-    if (it == impropers_.end())
-        return false;
-
-    return true;
+    return std::any_of(impropers_.cbegin(), impropers_.cend(),
+                       [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
 }
 
 // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)

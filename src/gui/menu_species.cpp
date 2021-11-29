@@ -165,6 +165,9 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
     {
+        // Atom types will likely have changed, so make sure the Isotopologues in the species are up-to-date
+        species->updateIsotopologues();
+
         // Fully update GUI
         setModified();
         fullUpdate();
@@ -260,9 +263,10 @@ void DissolveWindow::on_SpeciesSetAtomTypesInSelectionAction_triggered(bool chec
     if (!at)
         return;
 
+    // Set atom types in selection - we also need to update Isotopologues afterwards
     for (auto *i : species->selectedAtoms())
         i->setAtomType(at);
-    species->updateAtomTypes();
+    species->updateIsotopologues();
 
     setModified();
 

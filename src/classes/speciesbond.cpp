@@ -6,12 +6,9 @@
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
 
-SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
-{
-    assign(i, j);
-    bondType_ = SpeciesBond::SingleBond;
-    form_ = SpeciesBond::NoForm;
-}
+SpeciesBond::SpeciesBond() : SpeciesIntra(SpeciesBond::NoForm) {}
+
+SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(SpeciesBond::NoForm) { assign(i, j); }
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 
@@ -131,11 +128,7 @@ int SpeciesBond::index(int n) const
 // Return whether SpeciesAtoms in Angle match those specified
 bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 {
-    if ((i_ == i) && (j_ == j))
-        return true;
-    if ((i_ == j) && (j_ == i))
-        return true;
-    return false;
+    return (i_ == i && j_ == j) || (i_ == j && j_ == i);
 }
 
 // Return whether all atoms in the interaction are currently selected

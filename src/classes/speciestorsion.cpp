@@ -4,13 +4,15 @@
 #include "classes/speciestorsion.h"
 #include "classes/speciesatom.h"
 
-SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
+SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(SpeciesTorsion::NoForm) {}
+
+SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+    : SpeciesIntra(SpeciesTorsion::NoForm)
 {
     assign(i, j, k, l);
-    form_ = SpeciesTorsion::NoForm;
 }
 
-SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) { this->operator=(source); }
+SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) : SpeciesIntra(source) { this->operator=(source); }
 
 SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(source)
 {
@@ -170,26 +172,7 @@ int SpeciesTorsion::index(int n) const
 // Return whether Atoms in Torsion match those specified
 bool SpeciesTorsion::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const
 {
-    if (i_ == i)
-    {
-        if (j_ != j)
-            return false;
-        if (k_ != k)
-            return false;
-        if (l_ == l)
-            return true;
-    }
-    else if (i_ == l)
-    {
-        if (j_ != k)
-            return false;
-        if (k_ != j)
-            return false;
-        if (l_ == i)
-            return true;
-    }
-
-    return false;
+    return (i_ == i && j_ == j && k_ == k && l_ == l) || (i_ == l && j_ == k && k_ == j && l_ == i);
 }
 
 // Return whether all atoms in the interaction are currently selected
