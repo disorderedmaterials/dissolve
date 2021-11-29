@@ -29,7 +29,6 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
      *   Site  ...
      *   ForEach
      *     Select  'B'
-     *     Select  'B'
      *       Site  ...
      *       SameMoleculeAsSite  'A'
      *       ForEach
