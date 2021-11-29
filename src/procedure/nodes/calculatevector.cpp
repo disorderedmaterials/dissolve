@@ -10,8 +10,8 @@
 #include "keywords/bool.h"
 #include "procedure/nodes/select.h"
 
-CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1,
-                                                           bool rotateIntoFrame)
+CalculateVectorProcedureNode::CalculateVectorProcedureNode(std::shared_ptr<SelectProcedureNode> site0,
+                                                           std::shared_ptr<SelectProcedureNode> site1, bool rotateIntoFrame)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateVector, site0, site1), rotateIntoFrame_(rotateIntoFrame)
 {
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that represents 'i' in the vector i->j", sites_[0],

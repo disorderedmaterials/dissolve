@@ -63,7 +63,7 @@ class AddProcedureNode : public ProcedureNode
     // Positioning type for individual molecules
     AddProcedureNode::PositioningType positioningType_{AddProcedureNode::PositioningType::Random};
     // Region into which we will add molecules (if any)
-    const RegionProcedureNodeBase *region_{nullptr};
+    std::shared_ptr<const RegionProcedureNodeBase> region_{nullptr};
     // Whether to rotate molecules on insertion
     bool rotate_{true};
     // Flags controlling box axis scaling

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/listitem.h"
 #include <QRect>
 
 // Forward Declarations

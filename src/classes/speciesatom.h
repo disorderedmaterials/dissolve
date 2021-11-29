@@ -5,8 +5,6 @@
 
 #include "base/enumoptions.h"
 #include "data/elements.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
 #include "templates/optionalref.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"

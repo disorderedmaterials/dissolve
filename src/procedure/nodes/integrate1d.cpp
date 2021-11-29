@@ -14,7 +14,7 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-Integrate1DProcedureNode::Integrate1DProcedureNode(Process1DProcedureNode *target)
+Integrate1DProcedureNode::Integrate1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Integrate1D), sourceData_(target)
 {
     keywords_.add<NodeKeyword<Process1DProcedureNode>>("Control", "SourceData",

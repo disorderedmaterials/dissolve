@@ -10,10 +10,11 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable,
-                                               CalculateProcedureNodeBase *zObservable, double xMin, double xMax,
-                                               double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
-                                               double zMax, double zBinWidth)
+Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable,
+                                               std::shared_ptr<CalculateProcedureNodeBase> yObservable,
+                                               std::shared_ptr<CalculateProcedureNodeBase> zObservable, double xMin,
+                                               double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth,
+                                               double zMin, double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xObservable, 0}, yObservable_{yObservable, 0},
       zObservable_{zObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
                                                                                                             zBinWidth}
@@ -39,9 +40,9 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
     // Initialise branch
     subCollectBranch_ = nullptr;
 }
-Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin, double xMax,
-                                               double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
-                                               double zMax, double zBinWidth)
+Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable, double xMin,
+                                               double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth,
+                                               double zMin, double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xyzObservable, 0}, yObservable_{xyzObservable, 1},
       zObservable_{xyzObservable, 2}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
                                                                                                               zBinWidth}
@@ -95,10 +96,10 @@ const Data3D &Collect3DProcedureNode::accumulatedData() const
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
     if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
+        subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
 
     return subCollectBranch_;
 }
@@ -106,7 +107,7 @@ SequenceProcedureNode *Collect3DProcedureNode::addSubCollectBranch(ProcedureNode
 // Return whether this node has a branch
 bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect3DProcedureNode::branch() { return subCollectBranch_; }
+std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute

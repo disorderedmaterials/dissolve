@@ -16,7 +16,7 @@ class NodeScopeStack;
 class Process2DProcedureNode : public ProcedureNode
 {
     public:
-    Process2DProcedureNode(Collect2DProcedureNode *target = nullptr);
+    Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target = nullptr);
     ~Process2DProcedureNode() override = default;
 
     /*
@@ -31,7 +31,7 @@ class Process2DProcedureNode : public ProcedureNode
      */
     private:
     // Collect2D node that we are processing
-    const Collect2DProcedureNode *sourceData_{nullptr};
+    std::shared_ptr<const Collect2DProcedureNode> sourceData_;
     // Export file and format for processed data
     Data2DExportFileFormat exportFileAndFormat_;
     // Label for the value axis
@@ -60,15 +60,15 @@ class Process2DProcedureNode : public ProcedureNode
      */
     private:
     // Branch for normalisation of data (if defined)
-    SequenceProcedureNode *normalisationBranch_;
+    std::shared_ptr<SequenceProcedureNode> normalisationBranch_;
 
     public:
     // Add and return normalisation sequence branch
-    SequenceProcedureNode *addNormalisationBranch();
+    std::shared_ptr<SequenceProcedureNode> addNormalisationBranch();
     // Return whether this node has a branch
     bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
+    std::shared_ptr<SequenceProcedureNode> branch() override;
 
     /*
      * Execute

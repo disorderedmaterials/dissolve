@@ -13,7 +13,7 @@
 #include "procedure/nodes/select.h"
 
 OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(
-    std::vector<const SelectProcedureNode *> nodes)
+    std::vector<std::shared_ptr<const SelectProcedureNode>> nodes)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise), normalisationSites_(std::move(nodes))
 {
     // Create keywords
@@ -29,7 +29,7 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
 // Operate on Data1D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto *node : normalisationSites_)
+    for (const auto node : normalisationSites_)
         (*targetData1D_) /= (node->nAverageSites() / cfg->box()->volume());
 
     return true;
@@ -38,7 +38,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool &proc
 // Operate on Data2D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto *node : normalisationSites_)
+    for (const auto node : normalisationSites_)
         (*targetData2D_) /= (node->nAverageSites() / cfg->box()->volume());
 
     return true;
@@ -47,7 +47,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool &proc
 // Operate on Data3D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto *node : normalisationSites_)
+    for (const auto node : normalisationSites_)
         (*targetData3D_) /= (node->nAverageSites() / cfg->box()->volume());
 
     return true;

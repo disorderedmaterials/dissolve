@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/ui_selectconfigurationdialog.h"
-#include "templates/list.h"
 #include <QDialog>
 
 // Forward Declarations

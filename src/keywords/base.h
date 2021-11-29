@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include "procedure/nodes/aliases.h"
 #include "templates/reflist.h"
+#include "templates/vector3.h"
 #include <memory>
 #include <optional>
 #include <typeindex>
@@ -123,5 +125,14 @@ class KeywordBase
     // Prune any references to the supplied SpeciesSite in the contained data
     virtual void removeReferencesTo(SpeciesSite *spSite);
     // Prune any references to the supplied ProcedureNode in the contained data
-    virtual void removeReferencesTo(ProcedureNode *node);
+    virtual void removeReferencesTo(NodeRef node);
+
+    public:
+    // Gracefully deal with the specified object no longer being valid
+    template <class O> static void objectNoLongerValid(O *object)
+    {
+        // Loop over all keyword objects and call their local functions
+        for (auto &kwd : allKeywords_)
+            kwd->removeReferencesTo(object);
+    }
 };

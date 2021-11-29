@@ -9,8 +9,9 @@
 #include "classes/species.h"
 #include "procedure/nodes/select.h"
 
-CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1,
-                                                         SelectProcedureNode *site2)
+CalculateAngleProcedureNode::CalculateAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0,
+                                                         std::shared_ptr<SelectProcedureNode> site1,
+                                                         std::shared_ptr<SelectProcedureNode> site2)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAngle, site0, site1, site2)
 {
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that represents 'i' in the angle i-j-k", sites_[0],

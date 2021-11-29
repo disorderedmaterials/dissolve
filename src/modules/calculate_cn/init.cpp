@@ -25,16 +25,17 @@ void CalculateCNModule::initialise()
      */
 
     // Process1D - targets Collect1D in source RDF module
-    process1D_ = new Process1DProcedureNode;
+    process1D_ = std::make_shared<Process1DProcedureNode>();
     process1D_->setName("HistogramNorm");
     process1D_->keywords().set("CurrentDataOnly", true);
-    SequenceProcedureNode *rdfNormalisation = process1D_->addNormalisationBranch();
-    siteNormaliser_ = new OperateSitePopulationNormaliseProcedureNode;
+    std::shared_ptr<SequenceProcedureNode> rdfNormalisation = process1D_->addNormalisationBranch();
+    siteNormaliser_ = std::make_shared<OperateSitePopulationNormaliseProcedureNode>(
+        std::vector<std::shared_ptr<const SelectProcedureNode>>());
     rdfNormalisation->addNode(siteNormaliser_);
     analyser_.addRootSequenceNode(process1D_);
 
     // Sum1D
-    sum1D_ = new Sum1DProcedureNode(process1D_);
+    sum1D_ = std::make_shared<Sum1DProcedureNode>(process1D_);
     sum1D_->setName("CN");
     analyser_.addRootSequenceNode(sum1D_);
 

@@ -6,7 +6,6 @@
 #include "base/enumoptions.h"
 #include "base/lock.h"
 #include "module/module.h"
-#include "templates/list.h"
 #include "templates/reflist.h"
 #include <QString>
 

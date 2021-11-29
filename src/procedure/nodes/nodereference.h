@@ -4,17 +4,16 @@
 #pragma once
 
 #include "procedure/nodes/node.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 class CoreData;
 class AnalyseModule;
 
 // Procedure Node Reference
-class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
+class ProcedureNodeReference
 {
     public:
-    ProcedureNodeReference(const ProcedureNode *node = nullptr);
+    ProcedureNodeReference(ConstNodeRef node = nullptr);
     ~ProcedureNodeReference() = default;
 
     /*
@@ -22,7 +21,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
      */
     private:
     // Target node
-    const ProcedureNode *node_;
+    ConstNodeRef node_;
     // Parent AnalyseModule owning the node (if relevant)
     AnalyseModule *analyseModuleParent_;
     // Allowable node types (when reading / setting)
@@ -30,7 +29,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 
     public:
     // Return target node
-    const ProcedureNode *node();
+    ConstNodeRef node();
     // Return node type
     ProcedureNode::NodeType type() const;
     // Add allowable node type
@@ -42,7 +41,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
      * Operators
      */
     public:
-    void operator=(const ProcedureNode *node);
+    void operator=(ConstNodeRef node);
     void operator=(const ProcedureNodeReference &nodeRef);
 
     /*

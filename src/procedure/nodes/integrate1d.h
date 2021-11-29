@@ -15,7 +15,7 @@ class LineParser;
 class Integrate1DProcedureNode : public ProcedureNode
 {
     public:
-    Integrate1DProcedureNode(Process1DProcedureNode *target = nullptr);
+    Integrate1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target = nullptr);
     ~Integrate1DProcedureNode() override = default;
 
     /*
@@ -30,7 +30,7 @@ class Integrate1DProcedureNode : public ProcedureNode
      */
     private:
     // Process1D node that we are targetting
-    const Process1DProcedureNode *sourceData_;
+    std::shared_ptr<const Process1DProcedureNode> sourceData_;
     // Ranges for integration regions
     Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Calculated integral (stored in processing data list)

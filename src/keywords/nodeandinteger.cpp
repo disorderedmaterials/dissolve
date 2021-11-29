@@ -5,13 +5,13 @@
 #include "procedure/nodes/node.h"
 
 NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                                             const ProcedureNode *node, int index)
+                                             ConstNodeRef node, int index)
     : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>({node, index})
 {
 }
 
 NodeAndIntegerKeyword::NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                                             const ProcedureNode *node, int index)
+                                             ConstNodeRef node, int index)
     : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::pair<const ProcedureNode *, int>>({node, index})
 {
 }
@@ -31,7 +31,7 @@ bool NodeAndIntegerKeyword::deserialise(LineParser &parser, int startArg, const 
                                 KeywordBase::name());
 
     // Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-    auto *node =
+    auto node =
         onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg)) : parentNode()->nodeExists(parser.argsv(startArg));
     if (!node)
         return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg), KeywordBase::name());
@@ -41,9 +41,9 @@ bool NodeAndIntegerKeyword::deserialise(LineParser &parser, int startArg, const 
         return false;
 
     if (parser.hasArg(startArg + 1))
-        setData({node, parser.argi(startArg + 1)});
+        setData({node.get(), parser.argi(startArg + 1)});
     else
-        setData({node, 0});
+        setData({node.get(), 0});
 
     return true;
 }

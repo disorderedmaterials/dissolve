@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QPainterPath>
 
-ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData)
+ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, NodeRef node, const CoreData &coreData)
     : QWidget(parent), ChartBlock()
 {
     // Set up user interface
@@ -47,7 +47,7 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode 
  */
 
 // Return displayed node
-ProcedureNode *ProcedureChartNodeBlock::node() const { return node_; }
+NodeRef ProcedureChartNodeBlock::node() const { return node_; }
 
 /*
  * Controls

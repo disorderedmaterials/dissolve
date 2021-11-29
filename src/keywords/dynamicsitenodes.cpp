@@ -6,9 +6,10 @@
 #include "classes/coredata.h"
 #include "expression/variable.h"
 #include "procedure/nodes/dynamicsite.h"
+#include "procedure/nodes/select.h"
 
-DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedureNode *> &data, SelectProcedureNode *parentNode,
-                                                 bool axesRequired)
+DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data,
+                                                 SelectProcedureNode *parentNode, bool axesRequired)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), axesRequired_(axesRequired)
 {
 }
@@ -21,8 +22,8 @@ DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<DynamicSiteProcedur
 bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data
-std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() { return data_; }
-const std::vector<DynamicSiteProcedureNode *> &DynamicSiteNodesKeyword::data() const { return data_; }
+std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() { return data_; }
+const std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() const { return data_; }
 
 // Return parent SelectProcedureNode
 const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return parentNode_; }
@@ -43,8 +44,9 @@ bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, cons
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
 
-    // Create a new DynamicSite and add it to our vector
-    auto *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
+    // Create a new DynamicSite and add it to our data RefList
+    auto dynamicSite = std::make_shared<DynamicSiteProcedureNode>(
+        std::dynamic_pointer_cast<SelectProcedureNode>(parentNode_->shared_from_this()));
     data_.push_back(dynamicSite);
 
     // Attempt to read the DynamicSite data

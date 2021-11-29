@@ -7,13 +7,13 @@
 
 NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
                                      std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(nodes)
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::vector<ConstNodeRef>>(nodes)
 {
 }
 
 NodeVectorKeyword::NodeVectorKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
                                      std::vector<const ProcedureNode *> nodes)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<const ProcedureNode *>>(nodes)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<std::vector<ConstNodeRef>>(nodes)
 {
 }
 
@@ -34,14 +34,14 @@ bool NodeVectorKeyword::deserialise(LineParser &parser, int startArg, const Core
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Locate the named node - don't prune by type yet (we'll check that in setNode())
-        auto *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
+        auto node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
         if (!node)
             return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(n), name());
 
         if (!validNode(node, nodeType_, nodeClass_, name()))
             return false;
 
-        data_.push_back(node);
+        data_.push_back(node.get());
     }
 
     return true;
@@ -54,7 +54,7 @@ bool NodeVectorKeyword::serialise(LineParser &parser, std::string_view keywordNa
         return true;
 
     return parser.writeLineF("{}{}  {}\n", prefix, name(),
-                             joinStrings(data_, "  ", [](const auto *node) { return node->name(); }));
+                             joinStrings(data_, "  ", [](const auto node) { return node->name(); }));
 }
 
 /*

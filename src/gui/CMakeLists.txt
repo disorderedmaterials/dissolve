@@ -43,7 +43,6 @@ set(gui_MOC_HDRS
     selectatomtypedialog.h
     selectconfigurationdialog.h
     selectelementdialog.h
-    selectforcefielddialog.h
     selectgenericitemdialog.h
     selectspeciesdialog.h
     # Editors
@@ -105,7 +104,6 @@ set(gui_UIS
     selectatomtypedialog.ui
     selectconfigurationdialog.ui
     selectelementdialog.ui
-    selectforcefielddialog.ui
     selectgenericitemdialog.ui
     selectspeciesdialog.ui
     # Editors
@@ -185,7 +183,6 @@ set(gui_SRCS
     selectatomtypedialog_funcs.cpp
     selectconfigurationdialog_funcs.cpp
     selectelementdialog_funcs.cpp
-    selectforcefielddialog_funcs.cpp
     selectgenericitemdialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
     # Editors

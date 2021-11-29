@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/site.h"
 #include "data/elements.h"
 #include "procedure/nodes/node.h"
 #include "templates/refdatalist.h"
@@ -21,8 +22,7 @@ class NodeScopeStack;
 class DynamicSiteProcedureNode : public ProcedureNode
 {
     public:
-    DynamicSiteProcedureNode(SelectProcedureNode *parent);
-    ~DynamicSiteProcedureNode() override = default;
+    DynamicSiteProcedureNode(std::shared_ptr<SelectProcedureNode> parent);
 
     /*
      * Identity
@@ -38,7 +38,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
      */
     private:
     // Parent Select node for context
-    SelectProcedureNode *parent_;
+    std::shared_ptr<SelectProcedureNode> parent_;
     // Target atom types for selection as sites
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
     // Target Elements for selection as sites

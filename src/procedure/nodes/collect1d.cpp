@@ -10,7 +10,7 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax,
+Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable, double rMin, double rMax,
                                                double binWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect1D), xObservable_{observable, 0}, rangeX_{rMin, rMax, binWidth}
 {
@@ -61,10 +61,10 @@ const Data1D &Collect1DProcedureNode::accumulatedData() const
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
     if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
+        subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
 
     return subCollectBranch_;
 }
@@ -73,7 +73,7 @@ SequenceProcedureNode *Collect1DProcedureNode::addSubCollectBranch(ProcedureNode
 bool Collect1DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect1DProcedureNode::branch() { return subCollectBranch_; }
+std::shared_ptr<SequenceProcedureNode> Collect1DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute

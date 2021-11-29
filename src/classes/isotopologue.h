@@ -5,7 +5,6 @@
 
 #include "data/elements.h"
 #include "data/isotopes.h"
-#include "templates/list.h"
 #include <memory>
 #include <tuple>
 #include <vector>

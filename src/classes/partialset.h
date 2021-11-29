@@ -8,7 +8,6 @@
 #include "math/data1d.h"
 #include "math/histogram1d.h"
 #include "templates/array2d.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class Configuration;

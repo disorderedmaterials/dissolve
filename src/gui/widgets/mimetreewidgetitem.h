@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/widgets/mimestrings.h"
-#include "templates/list.h"
 #include <QTreeWidgetItem>
 
 // Mime Tree Widget Item

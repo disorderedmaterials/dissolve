@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "templates/list.h"
 #include <QComboBox>
 #include <QModelIndex>
 #include <QObject>
@@ -31,38 +30,6 @@ class ComboListItems
     virtual bool nextItem() = 0;
     // Return text entry for nth item
     virtual QString currentItemText() = 0;
-};
-
-// Templated Item Source for ComboList (utilising T's name())
-template <class T> class ComboNameListItems : public ComboListItems
-{
-    public:
-    ComboNameListItems(const List<T> &items) : items_(items), iterator_(items) {}
-
-    private:
-    // Associated item list
-    const List<T> &items_;
-    // List iterator
-    ListIterator<T> iterator_;
-    // Current iteration item
-    T *currentItem_;
-
-    /*
-     * Access
-     */
-    public:
-    // Return number of items in list
-    int nItems() { return items_.nItems(); }
-    // Restart list iteration
-    void restartIterator() { iterator_.restart(); }
-    // Move to next item in list
-    bool nextItem()
-    {
-        currentItem_ = iterator_.iterate();
-        return currentItem_;
-    }
-    // Return text entry for nth item
-    QString currentItemText() { return (currentItem_ ? QString::fromStdString(std::string(currentItem_->name())) : "NULL"); }
 };
 
 // Templated Item Source for ComboList (utilising T's name())

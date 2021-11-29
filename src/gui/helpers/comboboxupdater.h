@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "templates/list.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
@@ -16,26 +15,6 @@
 template <class I> class ComboBoxUpdater
 {
     public:
-    // Update QComboBox from supplied List, assuming that class I implements a name() function for the item
-    ComboBoxUpdater(QComboBox *comboBox, const List<I> &data, const I *currentItem, int startIndex = 0,
-                    int indexIfNoCurrentItem = -1)
-    {
-        comboBox_ = comboBox;
-        currentIndex_ = startIndex;
-
-        ListIterator<I> dataIterator(data);
-        while (I *dataItem = dataIterator.iterate())
-            updateItem(dataItem->name(), dataItem, dataItem == currentItem);
-
-        // If there are still rows remaining in the widget, delete them now
-        while (currentIndex_ < comboBox_->count())
-            comboBox_->removeItem(currentIndex_);
-
-        // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == nullptr)
-            comboBox->setCurrentIndex(indexIfNoCurrentItem);
-    }
-
     // Update QComboBox from supplied vector assuming that class I implements a name() function for the item
     ComboBoxUpdater(QComboBox *comboBox, const std::vector<std::unique_ptr<I>> &data, const I *currentItem, int startIndex = 0,
                     int indexIfNoCurrentItem = -1)

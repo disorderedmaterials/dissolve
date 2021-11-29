@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/list.h"
 #include "templates/reflist.h"
 #include "templates/vector4.h"
 #include <QColor>

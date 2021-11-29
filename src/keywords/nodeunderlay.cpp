@@ -19,7 +19,7 @@ NodeKeywordUnderlay::NodeKeywordUnderlay(ProcedureNode *parentNode, ProcedureNod
  */
 
 // Parent ProcedureNode
-ProcedureNode *NodeKeywordUnderlay::parentNode() const { return parentNode_; }
+NodeRef NodeKeywordUnderlay::parentNode() const { return parentNode_; }
 
 // Return optional target node type to allow
 std::optional<ProcedureNode::NodeType> NodeKeywordUnderlay::nodeType() const { return nodeType_; }
@@ -31,10 +31,10 @@ std::optional<ProcedureNode::NodeClass> NodeKeywordUnderlay::nodeClass() const {
 bool NodeKeywordUnderlay::onlyInScope() const { return onlyInScope_; }
 
 // Return vector of possible nodes allowed in the vector
-std::vector<const ProcedureNode *> NodeKeywordUnderlay::allowedNodes() const
+std::vector<ConstNodeRef> NodeKeywordUnderlay::allowedNodes() const
 {
     // Get vector of available nodes of the correct type and in the relevant scope
-    std::vector<const ProcedureNode *> nodes;
+    std::vector<ConstNodeRef> nodes;
     if (onlyInScope_)
         nodes = parentNode_->nodesInScope(nodeType_, nodeClass_);
     else if (parentNode_->procedure())
@@ -44,7 +44,7 @@ std::vector<const ProcedureNode *> NodeKeywordUnderlay::allowedNodes() const
 }
 
 // Find the named node, obeying scope
-const ProcedureNode *NodeKeywordUnderlay::findNode(std::string_view name) const
+ConstNodeRef NodeKeywordUnderlay::findNode(std::string_view name) const
 {
     assert(parentNode_);
     return onlyInScope_ ? parentNode_->nodeInScope(name) : parentNode_->nodeExists(name);

@@ -15,8 +15,8 @@ class LineParser;
 class Collect1DProcedureNode : public ProcedureNode
 {
     public:
-    Collect1DProcedureNode(CalculateProcedureNodeBase *observable = nullptr, double rMin = 0.0, double rMax = 10.0,
-                           double binWidth = 0.05);
+    Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable = nullptr, double rMin = 0.0,
+                           double rMax = 10.0, double binWidth = 0.05);
     ~Collect1DProcedureNode() override = default;
 
     /*
@@ -31,7 +31,7 @@ class Collect1DProcedureNode : public ProcedureNode
      */
     private:
     // Observable (and associated index thereof) to bin along x
-    std::pair<const CalculateProcedureNodeBase *, int> xObservable_{nullptr, 0};
+    std::pair<std::shared_ptr<const CalculateProcedureNodeBase>, int> xObservable_{nullptr, 0};
     // Histogram in which to accumulate data
     OptionalReferenceWrapper<Histogram1D> histogram_;
     // Range and binwidth of the histogram for QuantityX
@@ -48,15 +48,15 @@ class Collect1DProcedureNode : public ProcedureNode
      */
     private:
     // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    SequenceProcedureNode *subCollectBranch_{nullptr};
+    std::shared_ptr<SequenceProcedureNode> subCollectBranch_{nullptr};
 
     public:
     // Add and return subcollection sequence branch
-    SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
+    std::shared_ptr<SequenceProcedureNode> addSubCollectBranch(ProcedureNode::NodeContext context);
     // Return whether this node has a branch
     bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
-    SequenceProcedureNode *branch() override;
+    std::shared_ptr<SequenceProcedureNode> branch() override;
 
     /*
      * Execute

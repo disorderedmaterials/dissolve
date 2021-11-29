@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword)
-    : rootSequence_(context, this, nullptr, blockTerminationKeyword)
+    : rootSequence_(std::make_shared<SequenceProcedureNode>(context, this, nullptr, blockTerminationKeyword))
 {
     context_ = context;
 }
@@ -19,33 +19,33 @@ Procedure::~Procedure() = default;
  */
 
 // Clear all data
-void Procedure::clear() { rootSequence_.clear(); }
+void Procedure::clear() { rootSequence_->clear(); }
 
 // Add (own) specified node to root sequence
-void Procedure::addRootSequenceNode(ProcedureNode *node)
+void Procedure::addRootSequenceNode(NodeRef node)
 {
-    rootSequence_.addNode(node);
-    node->setScope(&rootSequence_);
+    rootSequence_->addNode(node);
+    node->setScope(std::dynamic_pointer_cast<SequenceProcedureNode>(rootSequence_->shared_from_this()));
 }
 
 // Return root sequence
-const SequenceProcedureNode &Procedure::rootSequence() const { return rootSequence_; }
+const SequenceProcedureNode &Procedure::rootSequence() const { return *rootSequence_; }
 
 // Return the block termination keyword for the Procedure
-std::string_view Procedure::blockTerminationKeyword() const { return rootSequence_.blockTerminationKeyword(); }
+std::string_view Procedure::blockTerminationKeyword() const { return rootSequence_->blockTerminationKeyword(); }
 
 // Return named node if present (and matches the type / class given)
-const ProcedureNode *Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
-                                     std::optional<ProcedureNode::NodeClass> optNodeClass) const
+ConstNodeRef Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+                             std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    return rootSequence_.node(name, optNodeType, optNodeClass);
+    return rootSequence_->node(name, optNodeType, optNodeClass);
 }
 
 // Return all nodes (matching the type / class given)
-std::vector<const ProcedureNode *> Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
-                                                    std::optional<ProcedureNode::NodeClass> optNodeClass) const
+std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
+                                           std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    return rootSequence_.nodes(optNodeType, optNodeClass);
+    return rootSequence_->nodes(optNodeType, optNodeClass);
 }
 
 /*
@@ -76,15 +76,15 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, std::string_v
     }
 
     // Prepare the nodes
-    if (!rootSequence_.prepare(cfg, prefix, targetList))
+    if (!rootSequence_->prepare(cfg, prefix, targetList))
         return Messenger::error("Failed to prepare procedure for execution.\n");
 
     // Execute the root sequence
-    if (!rootSequence_.execute(procPool, cfg, prefix, targetList))
+    if (!rootSequence_->execute(procPool, cfg, prefix, targetList))
         return Messenger::error("Failed to execute procedure.\n");
 
     // Finalise any nodes that need it
-    if (!rootSequence_.finalise(procPool, cfg, prefix, targetList))
+    if (!rootSequence_->finalise(procPool, cfg, prefix, targetList))
         return Messenger::error("Failed to finalise procedure after execution.\n");
 
     return true;
@@ -99,8 +99,8 @@ bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
-    return rootSequence_.deserialise(parser, coreData);
+    return rootSequence_->deserialise(parser, coreData);
 }
 
 // Write structure to specified LineParser
-bool Procedure::write(LineParser &parser, std::string_view prefix) { return rootSequence_.write(parser, prefix); }
+bool Procedure::write(LineParser &parser, std::string_view prefix) { return rootSequence_->write(parser, prefix); }

@@ -18,7 +18,7 @@ class NodeKeywordUnderlay
      */
     protected:
     // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    NodeRef parentNode_;
     // Optional target node type to allow
     std::optional<ProcedureNode::NodeType> nodeType_;
     // Optional target node class to allow
@@ -28,7 +28,7 @@ class NodeKeywordUnderlay
 
     public:
     // Return parent ProcedureNode
-    ProcedureNode *parentNode() const;
+    NodeRef parentNode() const;
     // Return optional target node type to allow
     std::optional<ProcedureNode::NodeType> nodeType() const;
     // Return optional target node class to allow
@@ -36,9 +36,9 @@ class NodeKeywordUnderlay
     // Return whether to accept nodes within scope only
     bool onlyInScope() const;
     // Return vector of possible nodes allowed based on class and type definitions
-    std::vector<const ProcedureNode *> allowedNodes() const;
+    std::vector<ConstNodeRef> allowedNodes() const;
     // Find the named node, obeying scope
-    const ProcedureNode *findNode(std::string_view name) const;
+    ConstNodeRef findNode(std::string_view name) const;
     // Return whether the supplied node has valid class or type
     bool validNode(const ProcedureNode *node, std::string_view keywordName) const;
 };

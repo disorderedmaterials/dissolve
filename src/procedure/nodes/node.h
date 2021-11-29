@@ -5,7 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "keywords/store.h"
-#include "templates/listitem.h"
+#include "procedure/nodes/aliases.h"
 #include "templates/optionalref.h"
 
 // Forward Declarations
@@ -21,7 +21,7 @@ class SequenceProcedureNode;
 class Site;
 
 // Procedure Node
-class ProcedureNode : public ListItem<ProcedureNode>
+class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
 {
     public:
     // Node Classes
@@ -134,31 +134,31 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     private:
     // Scope (SequenceNode) in which this node exists
-    SequenceProcedureNode *scope_;
+    std::shared_ptr<SequenceProcedureNode> scope_;
 
     public:
     // Set scope
-    void setScope(SequenceProcedureNode *scopeNode);
+    void setScope(std::shared_ptr<SequenceProcedureNode> scopeNode);
     // Return scope (SequenceNode) in which this node exists
-    SequenceProcedureNode *scope() const;
+    std::shared_ptr<SequenceProcedureNode> scope() const;
     // Return Procedure in which this node exists
     virtual const Procedure *procedure() const;
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node if it is currently in scope (and matches the type / class given)
-    const ProcedureNode *nodeInScope(std::string_view name, const ProcedureNode *excludeNode = nullptr,
-                                     std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                     std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    ConstNodeRef nodeInScope(std::string_view name, ConstNodeRef excludeNode = nullptr,
+                             std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes in this node's scope (and matches the type / class given)
-    std::vector<const ProcedureNode *> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    std::vector<ConstNodeRef> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                           std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-    const ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
-                                    std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    ConstNodeRef nodeExists(std::string_view name, NodeRef excludeNode = nullptr,
+                            std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                            std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes (of specified type / class) present in the Procedure
-    std::vector<const ProcedureNode *> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(std::string_view name,
                                                          std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
@@ -175,7 +175,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return whether this node has a branch
     virtual bool hasBranch() const;
     // Return SequenceNode for the branch (if it exists)
-    virtual SequenceProcedureNode *branch();
+    virtual std::shared_ptr<SequenceProcedureNode> branch();
 
     /*
      * Parameters

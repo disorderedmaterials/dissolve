@@ -53,37 +53,41 @@ void CalculateRDFModule::initialise()
      */
 
     // Select: Site 'A'
-    selectA_ = new SelectProcedureNode;
+    selectA_ = std::make_shared<SelectProcedureNode>();
     selectA_->setName("A");
-    SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+    std::shared_ptr<SequenceProcedureNode> forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
 
     // -- Select: Site 'B'
-    selectB_ = new SelectProcedureNode();
+    selectB_ = std::make_shared<SelectProcedureNode>();
     selectB_->setName("B");
-    selectB_->keywords().set("ExcludeSameSite", std::vector<const SelectProcedureNode *>{selectA_});
-    selectB_->keywords().set("ExcludeSameMolecule", std::vector<const SelectProcedureNode *>{selectA_});
-    SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+    selectB_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+    selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+    std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'rAB'
-    auto *calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
+    auto calcDistance = std::make_shared<CalculateDistanceProcedureNode>(selectA_, selectB_);
     forEachB->addNode(calcDistance);
 
     // -- -- Collect1D: 'RDF'
-    collectDistance_ = new Collect1DProcedureNode(calcDistance);
+    collectDistance_ = std::make_shared<Collect1DProcedureNode>(calcDistance);
     forEachB->addNode(collectDistance_);
 
     // Process1D: @dataName
-    processDistance_ = new Process1DProcedureNode(collectDistance_);
+    processDistance_ = std::make_shared<Process1DProcedureNode>(collectDistance_);
     processDistance_->setName("RDF");
     processDistance_->keywords().set("LabelValue", std::string("g(r)"));
     processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
-    SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
-    rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode({selectA_}));
-    rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode({selectB_}));
-    rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
+    std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
+    rdfNormalisation->addNode(
+        std::make_shared<OperateSitePopulationNormaliseProcedureNode>(std::vector<std::shared_ptr<const SelectProcedureNode>>(
+            {std::dynamic_pointer_cast<const SelectProcedureNode>(selectA_)})));
+    rdfNormalisation->addNode(
+        std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode>>>(
+            {selectB_}));
+    rdfNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processDistance_);
 
     /*

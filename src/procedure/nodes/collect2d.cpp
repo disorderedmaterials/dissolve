@@ -10,9 +10,9 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable,
-                                               double xMin, double xMax, double xBinWidth, double yMin, double yMax,
-                                               double yBinWidth)
+Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable,
+                                               std::shared_ptr<CalculateProcedureNodeBase> yObservable, double xMin,
+                                               double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect2D), xObservable_{xObservable, 0},
       yObservable_{yObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}
 {
@@ -60,10 +60,10 @@ const Data2D &Collect2DProcedureNode::accumulatedData() const
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Collect2DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> Collect2DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
     if (!subCollectBranch_)
-        subCollectBranch_ = new SequenceProcedureNode(context, procedure());
+        subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
 
     return subCollectBranch_;
 }
@@ -72,7 +72,7 @@ SequenceProcedureNode *Collect2DProcedureNode::addSubCollectBranch(ProcedureNode
 bool Collect2DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Collect2DProcedureNode::branch() { return subCollectBranch_; }
+std::shared_ptr<SequenceProcedureNode> Collect2DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute

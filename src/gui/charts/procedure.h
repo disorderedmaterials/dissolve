@@ -5,6 +5,7 @@
 
 #include "gui/charts/chart.hui"
 #include "gui/charts/proceduremetrics.h"
+#include "procedure/nodes/aliases.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -51,12 +52,12 @@ class ProcedureChart : public ChartBase
 
     private:
     // Create / own chart block widgets for the specified sequence
-    void updateContentBlocks(const SequenceProcedureNode *sequenceNode, RefList<ProcedureChartNodeBlock> &oldSequenceWidgets,
-                             int &indentLevel);
+    void updateContentBlocks(std::shared_ptr<const SequenceProcedureNode> sequenceNode,
+                             RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel);
     // Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
-    ProcedureChartNodeBlock *nodeBlock(ProcedureNode *node);
+    ProcedureChartNodeBlock *nodeBlock(NodeRef node);
     // Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
-    ProcedureChartNodeBlock *nodeBlock(ProcedureNode *node, const RefList<ProcedureChartNodeBlock> &list);
+    ProcedureChartNodeBlock *nodeBlock(NodeRef node, const RefList<ProcedureChartNodeBlock> &list);
 
     protected:
     // Update the content block widgets against the current target data

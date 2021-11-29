@@ -70,11 +70,11 @@ class CalculateCNModule : public Module
     // Analysis procedure to be run
     Procedure analyser_;
     // Sum1D node
-    Sum1DProcedureNode *sum1D_;
+    std::shared_ptr<Sum1DProcedureNode> sum1D_;
     // Process1D node
-    Process1DProcedureNode *process1D_;
+    std::shared_ptr<Process1DProcedureNode> process1D_;
     // Site normalisation node
-    OperateSitePopulationNormaliseProcedureNode *siteNormaliser_;
+    std::shared_ptr<OperateSitePopulationNormaliseProcedureNode> siteNormaliser_;
 
     public:
     // Return whether range B is enabled

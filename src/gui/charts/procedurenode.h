@@ -5,6 +5,7 @@
 
 #include "gui/charts/chartblock.h"
 #include "gui/charts/ui_procedurenode.h"
+#include "procedure/nodes/aliases.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -19,7 +20,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
     Q_OBJECT
 
     public:
-    ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData);
+    ProcedureChartNodeBlock(QWidget *parent, NodeRef node, const CoreData &coreData);
     ~ProcedureChartNodeBlock() = default;
 
     /*
@@ -27,14 +28,14 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
      */
     private:
     // Displayed node
-    ProcedureNode *node_;
+    NodeRef node_;
 
     // Widgets that exist in the branch of our Procedure node
     RefList<ProcedureChartNodeBlock> branchWidgets_;
 
     public:
     // Return displayed node
-    ProcedureNode *node() const;
+    NodeRef node() const;
     // Return RefList of widgets that exist in the branch of our Procedure node
     RefList<ProcedureChartNodeBlock> &branchWidgets();
 
@@ -65,7 +66,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 
     signals:
     void keywordsToggled();
-    void remove(void *nodePointer);
+    void remove(NodeRef nodePointer);
 
     /*
      * QWidget Reimplementations

@@ -13,7 +13,7 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process2DProcedureNode::Process2DProcedureNode(Collect2DProcedureNode *target)
+Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process2D), sourceData_(target)
 {
     keywords_.add<NodeKeyword<Collect2DProcedureNode>>("Control", "SourceData",
@@ -78,10 +78,10 @@ std::string Process2DProcedureNode::yAxisLabel() const { return labelY_; }
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode *Process2DProcedureNode::addNormalisationBranch()
+std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::addNormalisationBranch()
 {
     if (!normalisationBranch_)
-        normalisationBranch_ = new SequenceProcedureNode(ProcedureNode::OperateContext, procedure());
+        normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
 
     return normalisationBranch_;
 }
@@ -90,7 +90,7 @@ SequenceProcedureNode *Process2DProcedureNode::addNormalisationBranch()
 bool Process2DProcedureNode::hasBranch() const { return (normalisationBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *Process2DProcedureNode::branch() { return normalisationBranch_; }
+std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::branch() { return normalisationBranch_; }
 
 /*
  * Execute
@@ -124,14 +124,13 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     if (normalisationBranch_)
     {
         // Set data targets in the normalisation nodes  TODO Will not work for sub-branches, if they are ever required
-        ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
-        while (ProcedureNode *node = nodeIterator.iterate())
+        for (auto node : normalisationBranch_->sequence())
         {
             if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
                 continue;
 
             // Cast the node
-            auto *operateNode = dynamic_cast<OperateProcedureNodeBase *>(node);
+            auto operateNode = std::dynamic_pointer_cast<OperateProcedureNodeBase>(node);
             operateNode->setTarget(processedData_);
         }
 

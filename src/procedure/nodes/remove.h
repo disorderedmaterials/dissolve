@@ -32,7 +32,7 @@ class RemoveProcedureNode : public ProcedureNode
      */
     private:
     // Selection of molecules to remove
-    const PickProcedureNodeBase *selection_;
+    std::shared_ptr<const PickProcedureNodeBase> selection_;
     // Species to remove
     std::vector<const Species *> speciesToRemove_;
 

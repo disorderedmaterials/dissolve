@@ -12,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(
-    std::vector<const SelectProcedureNode *> sites)
+    std::vector<std::shared_ptr<const SelectProcedureNode>> sites)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateSitePopulationNormalise), normalisationSites_(std::move(sites))
 {
     // Create keywords - store the pointers to the superclasses for later use
@@ -28,7 +28,7 @@ OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProce
 // Operate on Data1D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto *node : normalisationSites_)
+    for (const auto node : normalisationSites_)
         (*targetData1D_) /= node->nAverageSites();
 
     return true;
@@ -37,7 +37,7 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool &pro
 // Operate on Data2D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto *node : normalisationSites_)
+    for (const auto node : normalisationSites_)
         (*targetData2D_) /= node->nAverageSites();
 
     return true;
@@ -46,7 +46,7 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool &pro
 // Operate on Data3D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto *node : normalisationSites_)
+    for (const auto node : normalisationSites_)
         (*targetData3D_) /= node->nAverageSites();
 
     return true;

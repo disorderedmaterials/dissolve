@@ -25,23 +25,23 @@ class Procedure
     // Context for the main Procedure
     ProcedureNode::NodeContext context_;
     // Sequence node from which the Procedure starts
-    SequenceProcedureNode rootSequence_;
+    std::shared_ptr<SequenceProcedureNode> rootSequence_;
 
     public:
     // Clear all data
     void clear();
     // Add (own) specified node to root sequence
-    void addRootSequenceNode(ProcedureNode *node);
+    void addRootSequenceNode(NodeRef node);
     // Return root sequence
     const SequenceProcedureNode &rootSequence() const;
     // Return the block termination keyword for the Procedure
     std::string_view blockTerminationKeyword() const;
     // Return named node if present (and matches the type / class given)
-    const ProcedureNode *node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                              std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    ConstNodeRef node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                      std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return all nodes (matching the type / class given)
-    std::vector<const ProcedureNode *> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
 
     /*
      * Execute

@@ -8,7 +8,7 @@
 #include "keywords/types.h"
 #include "procedure/nodes/regionbase.h"
 
-PickRegionProcedureNode::PickRegionProcedureNode(const RegionProcedureNodeBase *region)
+PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region)
     : PickProcedureNodeBase(ProcedureNode::NodeType::PickRegion), region_(region)
 {
     keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Control", "Region",

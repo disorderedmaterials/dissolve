@@ -71,13 +71,13 @@ class CalculateSDFModule : public Module
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A (origin)
-    SelectProcedureNode *selectA_;
+    std::shared_ptr<SelectProcedureNode> selectA_;
     // SelectNode for site B (surrounding)
-    SelectProcedureNode *selectB_;
+    std::shared_ptr<SelectProcedureNode> selectB_;
     // Collect3DNode for position of B around A SDF
-    Collect3DProcedureNode *collectVector_;
+    std::shared_ptr<Collect3DProcedureNode> collectVector_;
     // Process3DNode for B around A SDF
-    Process3DProcedureNode *processPosition_;
+    std::shared_ptr<Process3DProcedureNode> processPosition_;
     // Export file and format for SDF
     Data3DExportFileFormat sdfFileAndFormat_;
 

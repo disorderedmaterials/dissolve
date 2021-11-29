@@ -4,15 +4,13 @@
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
 
-NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
-                         const ProcedureNode *node)
-    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<const ProcedureNode *>(node)
+NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, ConstNodeRef node)
+    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<ConstNodeRef>(node)
 {
 }
 
-NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope,
-                         const ProcedureNode *node)
-    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<const ProcedureNode *>(node)
+NodeKeyword::NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope, ConstNodeRef node)
+    : NodeKeywordBase(parentNode, nodeClass, onlyInScope), KeywordData<ConstNodeRef>(node)
 {
 }
 
@@ -28,7 +26,7 @@ bool NodeKeyword::deserialise(LineParser &parser, int startArg, const CoreData &
                                 KeywordBase::name());
 
     // Locate the named node
-    auto *node =
+    auto node =
         onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg)) : parentNode()->nodeExists(parser.argsv(startArg));
     if (!node)
         return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg), KeywordBase::name());
@@ -37,7 +35,7 @@ bool NodeKeyword::deserialise(LineParser &parser, int startArg, const CoreData &
     if (!validNode(node, nodeType_, nodeClass_, name()))
         return false;
 
-    setData(node);
+    setData(node.get());
 
     return true;
 }

@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/ui_getmodulelayernamedialog.h"
-#include "templates/list.h"
 #include <QDialog>
 
 // Forward Declarations

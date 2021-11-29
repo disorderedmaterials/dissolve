@@ -6,8 +6,8 @@
 #include "base/sysfunc.h"
 #include "procedure/nodes/nodes.h"
 
-SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure,
-                                             ProcedureNode *parentNode, std::string_view blockTerminationKeyword)
+SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef parentNode,
+                                             std::string_view blockTerminationKeyword)
     : ProcedureNode(ProcedureNode::NodeType::Sequence)
 {
     context_ = context;
@@ -46,7 +46,7 @@ EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::s
 void SequenceProcedureNode::clear() { sequence_.clear(); }
 
 // Add (own) node into sequence, checking the context
-void SequenceProcedureNode::addNode(ProcedureNode *node)
+void SequenceProcedureNode::addNode(NodeRef node)
 {
     if (!node)
         return;
@@ -55,26 +55,25 @@ void SequenceProcedureNode::addNode(ProcedureNode *node)
         Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
                          ProcedureNode::nodeTypes().keyword(node->type()), ProcedureNode::nodeContexts().keyword(context_));
 
-    sequence_.own(node);
+    sequence_.push_back(node);
 }
 
 // Return sSequential node list
-const List<ProcedureNode> &SequenceProcedureNode::sequence() const { return sequence_; }
+const std::vector<NodeRef> &SequenceProcedureNode::sequence() const { return sequence_; }
 
 // Return number of nodes in sequence
-int SequenceProcedureNode::nNodes() const { return sequence_.nItems(); }
+int SequenceProcedureNode::nNodes() const { return sequence_.size(); }
 
 /*
  * Scope
  */
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, ProcedureNode *excludeNode,
-                                                  std::optional<ProcedureNode::NodeType> optNodeType,
-                                                  std::optional<ProcedureNode::NodeClass> optNodeClass) const
+NodeRef SequenceProcedureNode::searchNodes(std::string_view name, NodeRef excludeNode,
+                                           std::optional<ProcedureNode::NodeType> optNodeType,
+                                           std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         // Does this node match the supplied name?
         if (node != excludeNode)
@@ -91,7 +90,7 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
         // If the node has a branch, descend into it
         if (node->hasBranch())
         {
-            ProcedureNode *result = node->branch()->searchNodes(name, excludeNode, optNodeType, optNodeClass);
+            auto result = node->branch()->searchNodes(name, excludeNode, optNodeType, optNodeClass);
             if (result)
                 return result;
         }
@@ -105,8 +104,7 @@ std::shared_ptr<ExpressionVariable>
 SequenceProcedureNode::searchParameters(std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         // Does this node have a parameter by this name?
         auto result = node->hasParameter(name, excludeParameter);
@@ -132,11 +130,10 @@ const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const { return context_; }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-const ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
-                                                 std::optional<ProcedureNode::NodeClass> optNodeClass) const
+ConstNodeRef SequenceProcedureNode::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+                                         std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         if (DissolveSys::sameString(node->name(), name))
         {
@@ -149,7 +146,7 @@ const ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::opt
         // If the node has a branch, recurse in to that
         if (node->hasBranch())
         {
-            auto *branchNode = node->branch()->node(name, optNodeType, optNodeClass);
+            auto branchNode = node->branch()->node(name, optNodeType, optNodeClass);
             if (branchNode)
                 return branchNode;
         }
@@ -159,13 +156,12 @@ const ProcedureNode *SequenceProcedureNode::node(std::string_view name, std::opt
 }
 
 // Return list of nodes (of specified type / class) present in the Procedure
-std::vector<const ProcedureNode *> SequenceProcedureNode::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
-                                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
+std::vector<ConstNodeRef> SequenceProcedureNode::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
+                                                       std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    std::vector<const ProcedureNode *> matches;
+    std::vector<ConstNodeRef> matches;
 
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
     {
         // Check type / class
         if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
@@ -184,17 +180,17 @@ std::vector<const ProcedureNode *> SequenceProcedureNode::nodes(std::optional<Pr
 }
 
 // Return named node if it is currently in scope (and matches the type / class given)
-const ProcedureNode *SequenceProcedureNode::nodeInScope(const ProcedureNode *queryingNode, std::string_view name,
-                                                        const ProcedureNode *excludeNode,
-                                                        std::optional<ProcedureNode::NodeType> optNodeType,
-                                                        std::optional<ProcedureNode::NodeClass> optNodeClass) const
+ConstNodeRef SequenceProcedureNode::nodeInScope(ConstNodeRef queryingNode, std::string_view name, ConstNodeRef excludeNode,
+                                                std::optional<ProcedureNode::NodeType> optNodeType,
+                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     // If one was give, start from the querying node and work backwards...
     if (queryingNode)
     {
-        assert(sequence_.contains(queryingNode));
+        auto range = QueryRange(queryingNode, sequence_);
+        assert(!range.empty());
 
-        for (auto *node = queryingNode; node != nullptr; node = node->prev())
+        for (auto node : range)
         {
             if (node == excludeNode)
                 continue;
@@ -218,18 +214,20 @@ const ProcedureNode *SequenceProcedureNode::nodeInScope(const ProcedureNode *que
 }
 
 // Return list of nodes in scope (and matching the type / class given)
-std::vector<const ProcedureNode *>
-SequenceProcedureNode::nodesInScope(const ProcedureNode *queryingNode, std::optional<ProcedureNode::NodeType> optNodeType,
-                                    std::optional<ProcedureNode::NodeClass> optNodeClass) const
+std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef queryingNode,
+                                                              std::optional<ProcedureNode::NodeType> optNodeType,
+                                                              std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    std::vector<const ProcedureNode *> matches;
+    std::vector<ConstNodeRef> matches;
 
     // If one was give, start from the querying node and work backwards...
     if (queryingNode)
     {
-        assert(sequence_.contains(queryingNode));
 
-        for (auto *node = queryingNode->prev(); node != nullptr; node = node->prev())
+        auto range = QueryRange(queryingNode, sequence_);
+        assert(!range.empty());
+
+        for (auto node : range)
         {
             // Check type / class
             if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
@@ -249,9 +247,9 @@ SequenceProcedureNode::nodesInScope(const ProcedureNode *queryingNode, std::opti
 }
 
 // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-const ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
-                                                       std::optional<ProcedureNode::NodeType> optNodeType,
-                                                       std::optional<ProcedureNode::NodeClass> optNodeClass) const
+ConstNodeRef SequenceProcedureNode::nodeExists(std::string_view name, NodeRef excludeNode,
+                                               std::optional<ProcedureNode::NodeType> optNodeType,
+                                               std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)
@@ -263,14 +261,14 @@ const ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, Pr
 
 // Return the named parameter if it is currently in scope
 std::shared_ptr<ExpressionVariable>
-SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
+SequenceProcedureNode::parameterInScope(NodeRef queryingNode, std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter)
 {
+    auto range = QueryRange(queryingNode, sequence_);
     if (queryingNode)
-        assert(sequence_.contains(queryingNode));
+        assert(!range.empty());
 
-    // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != nullptr; node = node->prev())
+    for (auto node : range)
     {
         auto param = node->hasParameter(name, excludeParameter);
         if (param)
@@ -298,15 +296,16 @@ SequenceProcedureNode::parameterExists(std::string_view name, const std::shared_
 }
 
 // Create and return reference list of parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(const ProcedureNode *queryingNode)
+std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(ConstNodeRef queryingNode)
 {
+    auto range = QueryRange(queryingNode, sequence_);
     if (queryingNode)
-        assert(sequence_.contains(queryingNode));
+        assert(!range.empty());
 
     std::vector<std::shared_ptr<ExpressionVariable>> parameters;
 
     // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != nullptr; node = node->prev())
+    for (auto node : range)
     {
         auto optOtherParams = node->parameters();
         if (optOtherParams)
@@ -338,8 +337,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::paramete
 bool SequenceProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Loop over nodes in the list, preparing each in turn
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->prepare(cfg, prefix, targetList))
             return false;
 
@@ -350,12 +348,11 @@ bool SequenceProcedureNode::prepare(Configuration *cfg, std::string_view prefix,
 bool SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // If there are no nodes, just exit now
-    if (sequence_.nItems() == 0)
+    if (sequence_.empty())
         return true;
 
     // Loop over nodes in the list, executing each in turn
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->execute(procPool, cfg, prefix, targetList))
             return false;
 
@@ -367,8 +364,7 @@ bool SequenceProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, 
                                      GenericList &targetList)
 {
     // Loop over nodes in the list, finalising each in turn
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->finalise(procPool, cfg, prefix, targetList))
             return false;
 
@@ -411,99 +407,102 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Not a control keyword, so must be a node type
-        ProcedureNode *newNode = nullptr;
+        NodeRef newNode = nullptr;
         if (!ProcedureNode::nodeTypes().isValid(parser.argsv(0)))
             return Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
         ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argsv(0));
         switch (nt)
         {
             case (ProcedureNode::NodeType::Add):
-                newNode = new AddProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<AddProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Box):
-                newNode = new BoxProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<BoxProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::CalculateAngle):
-                newNode = new CalculateAngleProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CalculateAngleProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::CalculateDistance):
-                newNode = new CalculateDistanceProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CalculateDistanceProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::CalculateVector):
-                newNode = new CalculateVectorProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CalculateVectorProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Collect1D):
-                newNode = new Collect1DProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Collect1DProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Collect2D):
-                newNode = new Collect2DProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Collect2DProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Collect3D):
-                newNode = new Collect3DProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Collect3DProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::CylindricalRegion):
-                newNode = new CylindricalRegionProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CylindricalRegionProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Fit1D):
-                newNode = new Fit1DProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Fit1DProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::GeneralRegion):
-                newNode = new GeneralRegionProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<GeneralRegionProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::OperateDivide):
-                newNode = new OperateDivideProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateDivideProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::OperateExpression):
-                newNode = new OperateExpressionProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateExpressionProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::OperateMultiply):
-                newNode = new OperateMultiplyProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateMultiplyProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::OperateNormalise):
-                newNode = new OperateNormaliseProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateNormaliseProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::OperateNumberDensityNormalise):
-                newNode = new OperateNumberDensityNormaliseProcedureNode();
+                newNode =
+                    std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateNumberDensityNormaliseProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::OperateSitePopulationNormalise):
-                newNode = new OperateSitePopulationNormaliseProcedureNode();
+                newNode =
+                    std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateSitePopulationNormaliseProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::OperateSphericalShellNormalise):
-                newNode = new OperateSphericalShellNormaliseProcedureNode();
+                newNode =
+                    std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Parameters):
-                newNode = new ParametersProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<ParametersProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Pick):
-                newNode = new PickProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<PickProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::PickProximity):
-                newNode = new PickProximityProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<PickProximityProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::PickRegion):
-                newNode = new PickRegionProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<PickRegionProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Process1D):
-                newNode = new Process1DProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Process1DProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Process2D):
-                newNode = new Process2DProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Process2DProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Process3D):
-                newNode = new Process3DProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Process3DProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Remove):
-                newNode = new RemoveProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<RemoveProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Select):
-                newNode = new SelectProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<SelectProcedureNode>());
                 break;
             case (ProcedureNode::NodeType::Sequence):
                 /* This should never be called */
-                newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
+                newNode = std::make_shared<SequenceProcedureNode>(ProcedureNode::NoContext, procedure(), shared_from_this());
                 break;
             case (ProcedureNode::NodeType::Transmute):
-                newNode = new TransmuteProcedureNode();
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<TransmuteProcedureNode>());
                 break;
             default:
                 throw(std::runtime_error(
@@ -511,7 +510,7 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Check for clash of names with existing node in scope
-        if (nodeInScope(sequence_.last(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
+        if (!sequence_.empty() && nodeInScope(sequence_.back(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
         {
             return Messenger::error("A node named '{}' is already in scope.\n",
                                     parser.hasArg(1) ? parser.argsv(1) : newNode->name());
@@ -536,8 +535,8 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Add the new node to our list, and set ourself as its scope
-        sequence_.own(newNode);
-        newNode->setScope(this);
+        sequence_.push_back(newNode);
+        newNode->setScope(std::dynamic_pointer_cast<SequenceProcedureNode>(shared_from_this()));
 
         // Read the new node
         if (!newNode->deserialise(parser, coreData))
@@ -554,8 +553,7 @@ bool SequenceProcedureNode::write(LineParser &parser, std::string_view prefix)
     // to
 
     // Loop over nodes in this sequence
-    ListIterator<ProcedureNode> nodeIterator(sequence_);
-    while (ProcedureNode *node = nodeIterator.iterate())
+    for (auto node : sequence_)
         if (!node->write(parser, prefix))
             return false;
 
@@ -563,3 +561,13 @@ bool SequenceProcedureNode::write(LineParser &parser, std::string_view prefix)
 
     return true;
 }
+
+SequenceProcedureNode::QueryRange::QueryRange(ConstNodeRef queryingNode, const std::vector<NodeRef> &seq)
+{
+    start_ = std::find(seq.rbegin(), seq.rend(), queryingNode);
+    stop_ = seq.rend();
+}
+std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::begin() { return start_; }
+std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::end() { return stop_; }
+bool SequenceProcedureNode::QueryRange::empty() { return start_ == stop_; }
+void SequenceProcedureNode::QueryRange::next() { start_++; }

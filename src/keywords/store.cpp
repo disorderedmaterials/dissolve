@@ -24,7 +24,12 @@ KeywordTypeMap::KeywordTypeMap()
     registerDirectMapping<int, IntegerKeyword>(
         [](IntegerKeyword *keyword, const int value) { return keyword->setData(value); });
 
-    // Core Objects
+    // Custom classes
+    registerDirectMapping<std::shared_ptr<Collect1DProcedureNode>, NodeKeyword<Collect1DProcedureNode>>();
+    registerDirectMapping<std::vector<std::shared_ptr<const Collect1DProcedureNode>>,
+                          NodeVectorKeyword<Collect1DProcedureNode>>();
+    registerDirectMapping<std::shared_ptr<SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>();
+    registerDirectMapping<std::vector<std::shared_ptr<const SelectProcedureNode>>, NodeVectorKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
     registerDirectMapping<Configuration *, ConfigurationKeyword>();
     registerDirectMapping<std::vector<Configuration *>, ConfigurationVectorKeyword>();
@@ -33,12 +38,6 @@ KeywordTypeMap::KeywordTypeMap()
     registerDirectMapping<std::string, StringKeyword>();
     registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(
         [](Vec3DoubleKeyword *keyword, const Vec3<double> value) { return keyword->setData(value); });
-
-    // Procedure Nodes
-    registerDirectMapping<Collect1DProcedureNode *, NodeKeyword<Collect1DProcedureNode>>();
-    registerDirectMapping<std::vector<const Collect1DProcedureNode *>, NodeVectorKeyword<Collect1DProcedureNode>>();
-    registerDirectMapping<SelectProcedureNode *, NodeKeyword<SelectProcedureNode>>();
-    registerDirectMapping<std::vector<const SelectProcedureNode *>, NodeVectorKeyword<SelectProcedureNode>>();
 }
 
 // Set keyword data

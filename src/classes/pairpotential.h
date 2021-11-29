@@ -6,7 +6,6 @@
 #include "data/ff/ff.h"
 #include "math/data1d.h"
 #include "math/interpolator.h"
-#include "templates/list.h"
 #include <memory>
 
 // Forward Declarations

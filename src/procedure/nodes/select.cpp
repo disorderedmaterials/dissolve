@@ -57,17 +57,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     distanceReferenceSite_ = nullptr;
 }
 
-SelectProcedureNode::~SelectProcedureNode()
-{
-    // Remove the forEach branch
-    if (forEachBranch_)
-        delete forEachBranch_;
-
-    // Delete any dynamic site nodes (as we are the owner)
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
-        delete dynamicNode;
-}
-
 /*
  * Identity
  */
@@ -93,13 +82,13 @@ bool SelectProcedureNode::axesRequired() { return axesRequired_; }
  */
 
 // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-void SelectProcedureNode::setSameMoleculeExclusions(std::vector<const SelectProcedureNode *> exclusions)
+void SelectProcedureNode::setSameMoleculeExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions)
 {
     sameMoleculeExclusions_ = std::move(exclusions);
 }
 
 // Set other sites (nodes) which will exclude one of our sites if it is the same site
-void SelectProcedureNode::setSameSiteExclusions(std::vector<const SelectProcedureNode *> exclusions)
+void SelectProcedureNode::setSameSiteExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions)
 {
     sameSiteExclusions_ = std::move(exclusions);
 }
@@ -127,7 +116,10 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 }
 
 // Set site to use for distance check
-void SelectProcedureNode::setDistanceReferenceSite(const SelectProcedureNode *site) { distanceReferenceSite_ = site; }
+void SelectProcedureNode::setDistanceReferenceSite(std::shared_ptr<const SelectProcedureNode> site)
+{
+    distanceReferenceSite_ = site;
+}
 
 // Set range of distance to allow from distance reference site
 void SelectProcedureNode::setInclusiveDistanceRange(Range range) { inclusiveDistanceRange_ = range; }
@@ -159,13 +151,13 @@ const Site *SelectProcedureNode::currentSite() const
 bool SelectProcedureNode::hasBranch() const { return (forEachBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *SelectProcedureNode::branch() { return forEachBranch_; }
+std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::branch() { return forEachBranch_; }
 
 // Add and return ForEach sequence
-SequenceProcedureNode *SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
+std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
 {
     if (!forEachBranch_)
-        forEachBranch_ = new SequenceProcedureNode(context, procedure(), this);
+        forEachBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this());
 
     return forEachBranch_;
 }
@@ -190,7 +182,7 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
         return false;
 
     // Prepare any dynamic site nodes
-    for (auto *dynamicNode : dynamicSites_)
+    for (auto dynamicNode : dynamicSites_)
         if (!dynamicNode->prepare(cfg, prefix, targetList))
             return false;
 
@@ -205,12 +197,12 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
 
     // Update our exclusion lists
     excludedMolecules_.clear();
-    for (auto *node : sameMoleculeExclusions_)
+    for (auto node : sameMoleculeExclusions_)
         if (node->currentSite())
             excludedMolecules_.emplace_back(node->currentSite()->molecule());
 
     excludedSites_.clear();
-    for (auto *node : sameSiteExclusions_)
+    for (auto node : sameSiteExclusions_)
         if (node->currentSite())
             excludedSites_.addUnique(node->currentSite());
 
@@ -265,7 +257,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
      * Call each DynamicSiteProcedureNode's execute function in turn, adding any generated sites to our reference array
      * afterwards.
      */
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
+    for (auto dynamicNode : dynamicSites_)
     {
         if (!dynamicNode->execute(procPool, cfg, prefix, targetList))
             return false;
@@ -302,7 +294,7 @@ bool SelectProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, st
         return false;
 
     // Finalise any dynamic site nodes
-    for (DynamicSiteProcedureNode *dynamicNode : dynamicSites_)
+    for (auto dynamicNode : dynamicSites_)
         if (!dynamicNode->finalise(procPool, cfg, prefix, targetList))
             return false;
 

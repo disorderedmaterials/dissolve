@@ -3,7 +3,6 @@
 
 #include "data/isotopes.h"
 #include "gui/delegates/isotopecombo.hui"
-#include "templates/list.h"
 #include "templates/variantpointer.h"
 
 Q_DECLARE_METATYPE(Sears91::Isotope);
