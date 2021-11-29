@@ -23,25 +23,7 @@ class SQModule : public Module
     ~SQModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Number of historical partial sets to combine into final partials
@@ -64,16 +46,23 @@ class SQModule : public Module
     const BraggModule *sourceBragg_{nullptr};
     // Source module for main calculation
     const RDFModule *sourceRDF_{nullptr};
+    // Test data
+    Data1DStore testData_;
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
 
     public:
     // Return source module for main calculation
     const RDFModule *sourceRDF() const;
+
+    /*
+     * Functions
+     */
+    public:
+    // Calculate unweighted S(Q) from unweighted g(r)
+    static bool calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
+                                      double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
+                                      Functions::Function1DWrapper broadening);
 
     /*
      * Processing
@@ -81,19 +70,6 @@ class SQModule : public Module
     private:
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Members / Functions
-     */
-    private:
-    // Test data
-    Data1DStore testData_;
-
-    public:
-    // Calculate unweighted S(Q) from unweighted g(r)
-    static bool calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
-                                      double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
-                                      Functions::Function1DWrapper broadening);
 
     /*
      * GUI Widget

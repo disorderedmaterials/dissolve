@@ -17,34 +17,12 @@ class PartialSet;
 // EPSR Module
 class EPSRModule : public Module
 {
-    /*
-     * Generates interatomic potentials using methodology mimicking EPSR as closely as possible.
-     */
-
     public:
     EPSRModule();
     ~EPSRModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     public:
     // Expansion Function Type Enum
@@ -113,31 +91,16 @@ class EPSRModule : public Module
     // Test threshold (%error) above which test fails
     double testThreshold_{0.1};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     public:
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    public:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * Functions
      */
     private:
     // Target Configuration (determined from target modules)
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
 
     private:
     // Create / update delta S(Q) information
@@ -192,6 +155,17 @@ class EPSRModule : public Module
     public:
     // Read data from supplied pcof file
     bool readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string_view filename);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+
+    public:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

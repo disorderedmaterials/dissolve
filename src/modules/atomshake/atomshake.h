@@ -8,34 +8,12 @@
 // AtomShake Module
 class AtomShakeModule : public Module
 {
-    /*
-     * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in a configuration
-     */
-
     public:
     AtomShakeModule();
     ~AtomShakeModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Target configurations
@@ -52,10 +30,6 @@ class AtomShakeModule : public Module
     double stepSizeMin_{0.001};
     // Target acceptance rate for Monte Carlo moves
     double targetAcceptanceRate_{0.33};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
 
     /*
      * Processing

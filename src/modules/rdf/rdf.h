@@ -22,25 +22,7 @@ class RDFModule : public Module
     ~RDFModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     public:
     // Partial Calculation Method enum
@@ -79,19 +61,8 @@ class RDFModule : public Module
     // Whether to use the maximal RDF range possible that avoids periodic images
     bool useHalfCellRange_{true};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Members / Functions
+     * Functions
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
@@ -128,6 +99,13 @@ class RDFModule : public Module
     // Test calculated vs reference data (two source sets)
     static bool testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA,
                                       std::string_view prefixA, const PartialSet &partialsB, std::string_view prefixB);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

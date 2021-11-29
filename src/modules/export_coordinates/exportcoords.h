@@ -9,49 +9,18 @@
 // Export Coordinates Module
 class ExportCoordinatesModule : public Module
 {
-    /*
-     * Export data in various formats
-     */
-
     public:
     ExportCoordinatesModule();
     ~ExportCoordinatesModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether to tag (suffix) the filename with the current iteration index
     bool tagWithIteration_{false};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Data
-     */
-    private:
     // Filename and format for coordinate export
     CoordinateExportFileFormat coordinatesFormat_;
 

@@ -15,34 +15,12 @@ class PotentialMap;
 // Forces Module
 class ForcesModule : public Module
 {
-    /*
-     * Calculates the total forces in a system
-     */
-
     public:
     ForcesModule();
     ~ForcesModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Target configurations
@@ -57,15 +35,6 @@ class ForcesModule : public Module
     bool testIntra_{true};
     // Threshold of force (%) at which test comparison will fail
     double testThreshold_{0.1};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Data
-     */
-    private:
     // Reference forces for test
     ForceImportFileFormat referenceForces_;
     // Force export file and format

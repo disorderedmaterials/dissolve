@@ -21,29 +21,11 @@ class CalculateSDFModule : public Module
     ~CalculateSDFModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range along X axis
@@ -52,22 +34,6 @@ class CalculateSDFModule : public Module
     Vec3<double> rangeY_{-10.0, 10.0, 0.5};
     // Range along Z axis
     Vec3<double> rangeZ_{-10.0, 10.0, 0.5};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
-     */
-    private:
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A (origin)
@@ -80,6 +46,13 @@ class CalculateSDFModule : public Module
     std::shared_ptr<Process3DProcedureNode> processPosition_;
     // Export file and format for SDF
     Data3DExportFileFormat sdfFileAndFormat_;
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

@@ -13,25 +13,7 @@ class BenchmarkModule : public Module
     ~BenchmarkModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Target configurations
@@ -53,17 +35,6 @@ class BenchmarkModule : public Module
     // Whether to benchmark molecule distributors
     bool testDistributors_{true};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
     /*
      * Functions
      */
@@ -71,6 +42,13 @@ class BenchmarkModule : public Module
     // Print timing information, assessing it against last value in existing timings (if found)
     void printTimingResult(std::string_view testFile, std::string_view testDescription, const SampledDouble &timing,
                            bool storeNewTiming);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

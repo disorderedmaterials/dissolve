@@ -18,25 +18,7 @@ class CheckSpeciesModule : public Module
     ~CheckSpeciesModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Atom types to check against indices
@@ -52,25 +34,14 @@ class CheckSpeciesModule : public Module
     // Tolerance beyond which charges are said to differ
     double chargeTolerance_{1.0e-3};
     // Target species to check
-    const Species *targetSpecies_;
+    const Species *targetSpecies_{nullptr};
     // Check the total charge of the species against the specified value
     double totalCharge_{0.0};
     // Tolerance beyond which parameters are said to differ
     double tolerance_{1.0e-3};
 
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
     /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
+     * Functions
      */
     private:
     // Check parameters for the supplied intramolecular term against those supplied
@@ -115,4 +86,11 @@ class CheckSpeciesModule : public Module
 
         return !result;
     }
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 };

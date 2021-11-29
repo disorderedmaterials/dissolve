@@ -22,53 +22,17 @@ class CalculateAxisAngleModule : public Module
     ~CalculateAxisAngleModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether to exclude correlations between B and C sites on the same molecule
     bool excludeSameMolecule_{false};
     // Range (min, max, binwidth) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of angle axis
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
-     */
-    private:
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
@@ -87,6 +51,15 @@ class CalculateAxisAngleModule : public Module
     std::shared_ptr<Process1DProcedureNode> processAngle_;
     // Process2DNode for distance-angle data
     std::shared_ptr<Process2DProcedureNode> processDAngle_;
+
+    /*
+     * Processing
+     */
+    private:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

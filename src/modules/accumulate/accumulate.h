@@ -13,25 +13,7 @@ class AccumulateModule : public Module
     ~AccumulateModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     public:
     // Target PartialSet Enum
@@ -46,15 +28,11 @@ class AccumulateModule : public Module
 
     private:
     // Type of target PartialSet
-    AccumulateModule::TargetPartialSet targetPartialSet_;
+    AccumulateModule::TargetPartialSet targetPartialSet_{TargetPartialSet::GR};
     // Module containing the target partial set data to accumulate
     std::vector<Module *> targetModule_;
     // Whether to save the accumulated partials to disk
     bool save_{false};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
 
     /*
      * Processing

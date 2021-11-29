@@ -13,7 +13,6 @@
 // Forward Declarations
 class Dissolve;
 class Configuration;
-class ModuleList;
 class ModuleWidget;
 class QWidget;
 
@@ -21,34 +20,25 @@ class QWidget;
 class Module
 {
     public:
-    Module();
+    Module(std::string typeName);
     virtual ~Module() = default;
-
-    /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    virtual Module *createInstance() const = 0;
 
     /*
      * Definition
      */
     protected:
+    // Type name of module
+    const std::string typeName_;
     // Unique name of Module
     std::string uniqueName_;
 
     public:
     // Return type of Module
-    virtual std::string_view type() const = 0;
-    // Return category for Module
-    virtual std::string_view category() const = 0;
+    const std::string_view type() const;
     // Set unique name of Module
     void setUniqueName(std::string_view uniqueName);
     // Return unique name of Module
     std::string_view uniqueName() const;
-    // Return brief description of Module
-    virtual std::string_view brief() const = 0;
 
     /*
      * Keywords
@@ -63,13 +53,6 @@ class Module
     const KeywordStore &keywords() const;
     // Print valid keywords
     void printValidKeywords();
-
-    /*
-     * Initialisation
-     */
-    public:
-    // Perform any necessary initialisation for the Module
-    virtual void initialise() = 0;
 
     /*
      * Control

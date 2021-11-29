@@ -11,34 +11,12 @@ class PotentialMap;
 // Energy Module
 class EnergyModule : public Module
 {
-    /*
-     * Calculates the total energy of the system by one of several methods
-     */
-
     public:
     EnergyModule();
     ~EnergyModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Control
      */
     private:
     // Target configuration
@@ -59,21 +37,6 @@ class EnergyModule : public Module
     double testReferenceIntra_{0.0};
     // Threshold of energy at which test comparison will fail
     double testThreshold_{0.1};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    public:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * Functions
@@ -111,6 +74,17 @@ class EnergyModule : public Module
     static EnergyStability checkStability(GenericList &processingData, const Configuration *cfg);
     // Check energy stability of specified Configurations, returning the number that are unstable
     static int nUnstable(GenericList &processingData, const std::vector<Configuration *> &configurations);
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+
+    public:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

@@ -15,52 +15,21 @@ class CalculateAvgMolModule : public Module
     ~CalculateAvgMolModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Initialisation
-     */
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
-
-    /*
-     * Processing
-     */
-    private:
-    // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
-    // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * Functions / Data
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Target site
     const SpeciesSite *targetSite_;
     // Species targeted by module (derived from selected site)
-    const Species *targetSpecies_;
+    const Species *targetSpecies_{nullptr};
     // Local Species representing average of targeted Species
     Species averageSpecies_;
 
+    /*
+     * Functions
+     */
     private:
     // Ensure arrays are the correct size for the current target Species
     void updateArrays(Dissolve &dissolve);
@@ -72,6 +41,15 @@ class CalculateAvgMolModule : public Module
     void updateSpecies(const GenericList &moduleData);
     // Return average Species
     Species &averageSpecies();
+
+    /*
+     * Processing
+     */
+    private:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    // Run main processing
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * GUI Widget

@@ -8,34 +8,12 @@
 // MolShake Module
 class MolShakeModule : public Module
 {
-    /*
-     * Performs a molecular Monte Carlo cycle
-     */
-
     public:
     MolShakeModule();
     ~MolShakeModule() override = default;
 
     /*
-     * Instances
-     */
-    public:
-    // Create instance of this module
-    Module *createInstance() const override;
-
-    /*
      * Definition
-     */
-    public:
-    // Return type of module
-    std::string_view type() const override;
-    // Return category for module
-    std::string_view category() const override;
-    // Return brief description of module
-    std::string_view brief() const override;
-
-    /*
-     * Initialisation
      */
     private:
     // Target configurations
@@ -60,10 +38,6 @@ class MolShakeModule : public Module
     double translationStepSizeMin_{0.001};
     // Maximum step size for translations (Angstroms)
     double translationStepSizeMax_{3.0};
-
-    protected:
-    // Perform any necessary initialisation for the Module
-    void initialise() override;
 
     /*
      * Processing
