@@ -3,41 +3,70 @@
 
 #pragma once
 
-#include <QDoubleSpinBox>
+#include "math/doubleexp.h"
+#include <QAbstractSpinBox>
 
-// Real-Value Spinbox with Exponential Notation
-class ExponentialSpin : public QDoubleSpinBox
+// Spinbox with Exponential Notation
+class ExponentialSpin : public QAbstractSpinBox
 {
     Q_OBJECT
 
     public:
-    ExponentialSpin(QWidget *parent = 0);
+    explicit ExponentialSpin(QWidget *parent = 0);
 
     /*
      * Data
      */
     private:
+    // Current value
+    DoubleExp value_;
+    // Text representation of current value
+    QString valueText_;
+    // Threshold (10^[+/-]n) for switching to exponential notation
+    const int exponentFormatThreshold_{3};
+    // Value step size
+    double stepSize_{0.1};
+    // Number of decimals for text representation
+    int nDecimals_{3};
     // Validator for line edit
     QDoubleValidator validator_;
-    // Whether limits are enabled
-    bool limitMinValue_, limitMaxValue_;
+    // Limiting values
+    std::optional<double> minimumValue_, maximumValue_;
 
     public:
-    // Set minimum limit
-    void setMinimumLimit(double value);
-    // Set maximum limit
-    void setMaximumLimit(double value);
+    // Set value
+    void setValue(double value);
+    // Return current value
+    double value() const;
+    // Set value step size
+    void setSingleStep(double stepSize);
+    // Set number of decimals for text representation
+    void setDecimals(int n);
+    // Set minimum value
+    void setMinimum(double value);
+    // Set maximum value
+    void setMaximum(double value);
+    // Set allowed value range
+    void setRange(double minValue, double maxValue);
     // Remove range limits
     void removeLimits();
+
+    /*
+     * Signals / Slots
+     */
+    private slots:
+    // Line edit editing finished
+    void valueEditingFinished();
+
+    signals:
+    void valueChanged(double);
 
     /*
      * Reimplementations
      */
     public:
-    // Convert supplied value to text
-    QString textFromValue(double value) const;
-    // Validate supplied text
-    QValidator::State validate(QString &text, int &pos) const;
-    // Interpret text into value
-    double valueFromText(const QString &text) const;
+    // Step value by specified number of increments
+    void stepBy(int steps) override;
+    // Return whether stepping is currently available
+    QAbstractSpinBox::StepEnabled stepEnabled() const override;
 };
