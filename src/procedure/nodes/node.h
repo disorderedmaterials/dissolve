@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "procedure/nodes/aliases.h"
 #include "keywords/store.h"
+#include "procedure/nodes/aliases.h"
 #include "templates/optionalref.h"
 
 // Forward Declarations
