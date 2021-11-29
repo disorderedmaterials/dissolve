@@ -44,8 +44,9 @@ bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, cons
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
 
-    // Create a new DynamicSite and add it to our vector
-    auto dynamicSite = std::dynamic_pointer_cast<DynamicSiteProcedureNode>(parentNode_->shared_from_this());
+    // Create a new DynamicSite and add it to our data RefList
+    auto dynamicSite = std::make_shared<DynamicSiteProcedureNode>(
+        std::dynamic_pointer_cast<SelectProcedureNode>(parentNode_->shared_from_this()));
     data_.push_back(dynamicSite);
 
     // Attempt to read the DynamicSite data
