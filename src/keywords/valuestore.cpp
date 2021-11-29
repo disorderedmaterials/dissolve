@@ -20,21 +20,13 @@ const ValueStore &ValueStoreKeyword::data() const { return data_; }
  */
 
 // Return minimum number of arguments accepted
-int ValueStoreKeyword::minArguments() const
-{
-    // Must have reference data name and format as a minimum
-    return 2;
-}
+int ValueStoreKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int ValueStoreKeyword::maxArguments() const
-{
-    // Filename, name of data, and other args
-    return 99;
-}
+std::optional<int> ValueStoreKeyword::maxArguments() const { return std::nullopt; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool ValueStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool ValueStoreKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
                      parser.argsv(startArg + 2), parser.argsv(startArg + 1));
@@ -47,10 +39,9 @@ bool ValueStoreKeyword::read(LineParser &parser, int startArg, const CoreData &c
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool ValueStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool ValueStoreKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    // Loop over list of one-dimensional data
     for (const auto &[tag, data, format] : data_.data())
     {
         if (!format.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, tag)))

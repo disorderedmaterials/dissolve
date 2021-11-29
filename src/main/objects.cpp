@@ -7,26 +7,21 @@
 void Dissolve::removeReferencesTo(Configuration *cfg)
 {
     // Remove references in keywords
-    KeywordBase::objectNoLongerValid<Configuration>(cfg);
-
-    // Remove references (targets) in Modules
-    for (Module *module : moduleInstances_)
-        if (module->isTargetConfiguration(cfg))
-            module->removeTargetConfiguration(cfg);
+    KeywordStore::objectNoLongerValid<Configuration>(cfg);
 }
 
 // Remove all references to the specified Module
 void Dissolve::removeReferencesTo(Module *module)
 {
     // Remove references in keywords
-    KeywordBase::objectNoLongerValid<Module>(module);
+    KeywordStore::objectNoLongerValid<Module>(module);
 }
 
 // Remove all references to the specified Species
 void Dissolve::removeReferencesTo(Species *sp)
 {
     // Remove references in keywords
-    KeywordBase::objectNoLongerValid<Species>(sp);
+    KeywordStore::objectNoLongerValid<Species>(sp);
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
     for (auto &cfg : configurations())
@@ -38,5 +33,5 @@ void Dissolve::removeReferencesTo(Species *sp)
 void Dissolve::removeReferencesTo(SpeciesSite *site)
 {
     // Remove references in keywords
-    KeywordBase::objectNoLongerValid<SpeciesSite>(site);
+    KeywordStore::objectNoLongerValid<SpeciesSite>(site);
 }

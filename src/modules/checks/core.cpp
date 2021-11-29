@@ -3,7 +3,7 @@
 
 #include "modules/checks/checks.h"
 
-ChecksModule::ChecksModule() : Module(nRequiredTargets())
+ChecksModule::ChecksModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

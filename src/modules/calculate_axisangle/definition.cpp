@@ -11,6 +11,3 @@ std::string_view CalculateAxisAngleModule::category() const { return "Analysis";
 
 // Return brief description of module
 std::string_view CalculateAxisAngleModule::brief() const { return "Calculate distance/angle map between site axes"; }
-
-// Return the number of Configuration targets this Module requires
-int CalculateAxisAngleModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

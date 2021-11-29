@@ -33,7 +33,7 @@ bool NodeKeywordUnderlay::onlyInScope() const { return onlyInScope_; }
 // Return vector of possible nodes allowed in the vector
 std::vector<ConstNodeRef> NodeKeywordUnderlay::allowedNodes() const
 {
-    // Get list of available nodes of the correct type and in the relevant scope
+    // Get vector of available nodes of the correct type and in the relevant scope
     std::vector<ConstNodeRef> nodes;
     if (onlyInScope_)
         nodes = parentNode_->nodesInScope(nodeType_, nodeClass_);

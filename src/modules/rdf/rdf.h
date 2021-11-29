@@ -38,8 +38,6 @@ class RDFModule : public Module
     std::string_view category() const override;
     // Return brief description of module
     std::string_view brief() const override;
-    // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const override;
 
     /*
      * Control
@@ -58,6 +56,8 @@ class RDFModule : public Module
     EnumOptions<RDFModule::PartialsMethod> partialsMethods();
 
     private:
+    // Target configurations
+    std::vector<Configuration *> targetConfigurations_;
     // Number of historical partial sets to combine into final partials
     int averagingLength_{5};
     // Weighting scheme to use when averaging partials
@@ -114,11 +114,9 @@ class RDFModule : public Module
                                       PartialSet &weightedgr, const Functions::Function1DWrapper intraBroadening,
                                       int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
-    static bool sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, Module *parentModule,
-                                const RDFModule *rdfModule, PartialSet &summedUnweightedGR);
-    // Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup
-    static bool sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, Module *parentModule,
-                                ModuleGroup *moduleGroup, PartialSet &summedUnweightedGR);
+    static bool sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, std::string_view targetPrefix,
+                                std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
+                                PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
     static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data

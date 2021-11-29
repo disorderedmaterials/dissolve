@@ -1,11 +1,18 @@
 #include "gui/models/speciesImproperModel.h"
+#include "classes/coredata.h"
 #include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
 #include "templates/algorithms.h"
 
-SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, Dissolve &dissolve)
-    : impropers_(impropers), dissolve_(dissolve)
+SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, const CoreData &coreData)
+    : impropers_(impropers), coreData_(coreData)
 {
+}
+
+void SpeciesImproperModel::reset()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 int SpeciesImproperModel::rowCount(const QModelIndex &parent) const
@@ -99,7 +106,7 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
         case 4:
             if (value.toString().at(0) == '@')
             {
-                auto master = dissolve_.coreData().getMasterImproper(value.toString().toStdString());
+                auto master = coreData_.getMasterImproper(value.toString().toStdString());
                 if (master)
                     item.setMasterParameters(&master->get());
                 else
@@ -109,11 +116,9 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
             {
                 try
                 {
-                    SpeciesTorsion::TorsionFunction bf =
-                        SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
+                    auto tf = SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
                     item.detachFromMasterIntra();
-                    item.setForm(bf);
-                    return true;
+                    item.setForm(tf);
                 }
                 catch (std::runtime_error &e)
                 {

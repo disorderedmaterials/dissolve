@@ -13,13 +13,13 @@ class Dissolve;
 class Module;
 class ModuleBlock;
 class ModuleInsertionBlock;
-class ModuleList;
+class ModuleLayer;
 
 // ModuleList Chart - Manages display of a sequence of modules from a ModuleList
 class ModuleListChart : public ChartBase
 {
     public:
-    ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration = nullptr);
+    ModuleListChart(ModuleLayer *moduleList, Dissolve &dissolve, Configuration *localConfiguration = nullptr);
     ~ModuleListChart() = default;
 
     /*
@@ -34,7 +34,7 @@ class ModuleListChart : public ChartBase
      */
     private:
     // Target ModuleList for display
-    ModuleList *moduleList_;
+    ModuleLayer *moduleList_;
     // Configuration in which the layer exists (if any)
     Configuration *localConfiguration_;
 

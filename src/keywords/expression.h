@@ -9,7 +9,7 @@
 class Expression;
 class ExpressionVariable;
 
-// Keyword with Expression
+// Keyword managing Expression
 class ExpressionKeyword : public KeywordBase
 {
     public:
@@ -35,12 +35,8 @@ class ExpressionKeyword : public KeywordBase
      * Arguments
      */
     public:
-    // Return minimum number of arguments accepted
-    int minArguments() const override;
-    // Return maximum number of arguments accepted
-    int maxArguments() const override;
-    // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
-    // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Deserialise from supplied LineParser, starting at given argument offset
+    bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
+    // Serialise data to specified LineParser
+    bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
 };

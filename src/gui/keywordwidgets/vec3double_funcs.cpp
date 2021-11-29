@@ -16,15 +16,15 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget *parent, Vec3DoubleKeyw
     // Set minimum and maximum values for each component
     if (keyword_->validationMin())
     {
-        ui_.Spin1->setMinimumLimit(keyword_->validationMin().value().x);
-        ui_.Spin2->setMinimumLimit(keyword_->validationMin().value().y);
-        ui_.Spin3->setMinimumLimit(keyword_->validationMin().value().z);
+        ui_.Spin1->setMinimum(keyword_->validationMin().value().x);
+        ui_.Spin2->setMinimum(keyword_->validationMin().value().y);
+        ui_.Spin3->setMinimum(keyword_->validationMin().value().z);
     }
     if (keyword_->validationMax())
     {
-        ui_.Spin1->setMaximumLimit(keyword_->validationMax().value().x);
-        ui_.Spin2->setMaximumLimit(keyword_->validationMax().value().y);
-        ui_.Spin3->setMaximumLimit(keyword_->validationMax().value().z);
+        ui_.Spin1->setMaximum(keyword_->validationMax().value().x);
+        ui_.Spin2->setMaximum(keyword_->validationMax().value().y);
+        ui_.Spin3->setMaximum(keyword_->validationMax().value().z);
     }
 
     // Set current values

@@ -5,7 +5,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/coredata.h"
-#include "module/list.h"
 #include "modules/analyse/analyse.h"
 
 ProcedureNodeReference::ProcedureNodeReference(ConstNodeRef node)

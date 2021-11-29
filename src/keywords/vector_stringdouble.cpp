@@ -24,10 +24,10 @@ const StringDoubleVectorKeywordData &StringDoubleVectorKeyword::data() const { r
 int StringDoubleVectorKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int StringDoubleVectorKeyword::maxArguments() const { return 99; }
+std::optional<int> StringDoubleVectorKeyword::maxArguments() const { return std::nullopt; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool StringDoubleVectorKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool StringDoubleVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Read value pairs
     for (auto n = startArg; n < parser.nArgs(); n += 2)
@@ -38,8 +38,8 @@ bool StringDoubleVectorKeyword::read(LineParser &parser, int startArg, const Cor
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool StringDoubleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool StringDoubleVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (const auto &[s, d] : data_)
         if (!parser.writeLineF("{}{}  '{}'  '{}'\n", prefix, keywordName, s, d))

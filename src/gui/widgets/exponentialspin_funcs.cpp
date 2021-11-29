@@ -5,68 +5,98 @@
 #include "math/doubleexp.h"
 #include <QLineEdit>
 
-ExponentialSpin::ExponentialSpin(QWidget *parent) : QDoubleSpinBox(parent)
+ExponentialSpin::ExponentialSpin(QWidget *parent) : QAbstractSpinBox(parent)
 {
     // Set up validator
     validator_.setNotation(QDoubleValidator::ScientificNotation);
     lineEdit()->setValidator(&validator_);
 
-    // Set local values
-    limitMinValue_ = false;
-    limitMaxValue_ = false;
+    blockSignals(true);
+    setValue(value_.value());
+    blockSignals(false);
 
-    // Set QDoubleSpinBox limits to be present but effectively 'off', and number of decimals
-    setMinimum(-1.0e99);
-    setMaximum(1.0e99);
-    setDecimals(3);
+    connect(lineEdit(), SIGNAL(editingFinished()), this, SLOT(valueEditingFinished()));
+    connect(lineEdit(), SIGNAL(returnPressed()), this, SLOT(valueEditingFinished()));
 }
 
 /*
  * Data
  */
 
-// Set minimum limit
-void ExponentialSpin::setMinimumLimit(double value)
+// Set value
+void ExponentialSpin::setValue(double value)
 {
-    limitMinValue_ = true;
+    if (minimumValue_ && value < minimumValue_.value())
+        value_ = minimumValue_.value();
+    else if (maximumValue_ && value > maximumValue_)
+        value_ = maximumValue_.value();
+    else
+        value_ = value;
 
-    setMinimum(value);
+    valueText_ = QString::fromStdString(value_.asString(exponentFormatThreshold_, nDecimals_));
+
+    lineEdit()->setText(valueText_);
 }
 
-// Set minimum limit
-void ExponentialSpin::setMaximumLimit(double value)
-{
-    limitMaxValue_ = true;
+// Return current value
+double ExponentialSpin::value() const { return value_.value(); }
 
-    setMaximum(value);
+// Set value step size
+void ExponentialSpin::setSingleStep(double stepSize) { stepSize_ = stepSize; }
+
+// Set number of decimals for text representation
+void ExponentialSpin::setDecimals(int n) { nDecimals_ = n; }
+
+// Set minimum value
+void ExponentialSpin::setMinimum(double value) { minimumValue_ = value; }
+
+// Set minimum value
+void ExponentialSpin::setMaximum(double value) { maximumValue_ = value; }
+
+// Set allowed value range
+void ExponentialSpin::setRange(double minValue, double maxValue)
+{
+    minimumValue_ = minValue;
+    maximumValue_ = maxValue;
 }
 
-// Remove range limits
-void ExponentialSpin::removeLimits()
+/*
+ * Signals / Slots
+ */
+
+// Line edit editing finished
+void ExponentialSpin::valueEditingFinished()
 {
-    limitMinValue_ = false;
-    limitMaxValue_ = false;
+    if (lineEdit()->text() == valueText_)
+        return;
+
+    setValue(lineEdit()->text().toDouble());
+
+    emit(valueChanged(value_.value()));
 }
 
 /*
  * Reimplementations
  */
 
-// Convert supplied value to text
-QString ExponentialSpin::textFromValue(double value) const
+// Step value by specified number of increments
+void ExponentialSpin::stepBy(int steps)
 {
-    const auto exponentFormatThreshold = 3;
-    DoubleExp de(value);
-    return QString::fromStdString(de.asString(exponentFormatThreshold, decimals()));
+    setValue(value_.value() + steps * stepSize_);
+    emit(valueChanged(value_.value()));
 }
 
-// Validate supplied text
-QValidator::State ExponentialSpin::validate(QString &text, int &pos) const
+// Return whether stepping is currently available
+QAbstractSpinBox::StepEnabled ExponentialSpin::stepEnabled() const
 {
-    // Set validator
-    static QRegularExpression regExp("[-+]?[0-9]*[.]?[0-9]+([eE][-+]?[0-9]+)?");
-    return (regExp.match(text).hasMatch() ? QValidator::Acceptable : QValidator::Invalid);
-}
+    auto atMin = minimumValue_ && value_.value() <= minimumValue_.value(),
+         atMax = maximumValue_ && value_.value() >= maximumValue_.value();
+    if (atMin && atMax)
+        return QAbstractSpinBox::StepNone;
+    else if (atMin)
+        return QAbstractSpinBox::StepUpEnabled;
+    else if (atMax)
+        return QAbstractSpinBox::StepDownEnabled;
 
-// Interpret text into value
-double ExponentialSpin::valueFromText(const QString &text) const { return text.toDouble(); }
+    return QAbstractSpinBox::StepDownEnabled | QAbstractSpinBox::StepUpEnabled;
+}

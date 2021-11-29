@@ -11,6 +11,3 @@ std::string_view CalculateDAngleModule::category() const { return "Analysis"; }
 
 // Return brief description of module
 std::string_view CalculateDAngleModule::brief() const { return "Calculate distance/angle maps"; }
-
-// Return the number of Configuration targets this Module requires
-int CalculateDAngleModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

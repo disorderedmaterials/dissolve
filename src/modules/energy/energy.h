@@ -36,13 +36,13 @@ class EnergyModule : public Module
     std::string_view category() const override;
     // Return brief description of module
     std::string_view brief() const override;
-    // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const override;
 
     /*
      * Control
      */
     private:
+    // Target configuration
+    std::vector<Configuration *> targetConfigurations_;
     // Save calculated energies to disk, one file per targetted configuration
     bool save_{false};
     // Threshold value at which energy is deemed stable over the defined windowing period

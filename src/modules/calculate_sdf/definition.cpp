@@ -11,6 +11,3 @@ std::string_view CalculateSDFModule::category() const { return "Analysis"; }
 
 // Return brief description of module
 std::string_view CalculateSDFModule::brief() const { return "Calculate spatial density functions around oriented sites"; }
-
-// Return the number of Configuration targets this Module requires
-int CalculateSDFModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

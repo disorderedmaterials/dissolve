@@ -67,7 +67,7 @@ classDiagram
         - keywords_ : List~ModuleKeywordBase~
     }
     class Module {
-        # ModuleKeywordList keywords_
+        # ModuleKeywordStore keywords_
     }
 {{< /mermaid >}}
 

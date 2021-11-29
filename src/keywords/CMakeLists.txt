@@ -3,6 +3,7 @@ add_library(
   atomtypevector.cpp
   base.cpp
   bool.cpp
+  configuration.cpp
   configurationvector.cpp
   data1dstore.cpp
   data2dstore.cpp
@@ -17,7 +18,6 @@ add_library(
   geometrylist.cpp
   integer.cpp
   isotopologueset.cpp
-  list.cpp
   modulevector.cpp
   nodebranch.cpp
   nodeunderlay.cpp
@@ -29,6 +29,7 @@ add_library(
   speciessitevector.cpp
   speciesvector.cpp
   stdstring.cpp
+  store.cpp
   valuestore.cpp
   vec3double.cpp
   vec3integer.cpp
@@ -40,6 +41,7 @@ add_library(
   atomtypevector.h
   base.h
   bool.h
+  configuration.h
   configurationvector.h
   data1dstore.h
   data2dstore.h
@@ -55,7 +57,6 @@ add_library(
   geometrylist.h
   integer.h
   isotopologueset.h
-  list.h
   module.h
   modulevector.h
   node.h
@@ -72,6 +73,7 @@ add_library(
   speciessitevector.h
   speciesvector.h
   stdstring.h
+  store.h
   valuestore.h
   vec3double.h
   vec3integer.h

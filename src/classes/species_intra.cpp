@@ -203,6 +203,8 @@ void Species::updateIntramolecularTerms()
                                                 (!hasBond(improper.k(), improper.l())));
                                     }),
                      impropers_.end());
+
+    ++version_;
 }
 
 // Add new SpeciesAngle definition

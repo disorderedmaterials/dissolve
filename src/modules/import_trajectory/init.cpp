@@ -7,5 +7,9 @@
 // Perform any necessary initialisation for the Module
 void ImportTrajectoryModule::initialise()
 {
+    // Targets
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+
+    // Format
     keywords_.add<FileAndFormatKeyword>("Format", "Format", "File / format for trajectory", trajectoryFormat_, "EndFormat");
 }

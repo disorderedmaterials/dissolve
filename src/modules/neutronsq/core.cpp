@@ -3,7 +3,7 @@
 
 #include "modules/neutronsq/neutronsq.h"
 
-NeutronSQModule::NeutronSQModule() : Module(nRequiredTargets())
+NeutronSQModule::NeutronSQModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

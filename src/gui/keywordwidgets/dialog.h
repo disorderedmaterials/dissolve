@@ -8,7 +8,7 @@
 
 // Forward Declarations
 class CoreData;
-class KeywordList;
+class KeywordStore;
 
 // Keywords Dialog
 class KeywordsDialog : public QDialog
@@ -16,7 +16,7 @@ class KeywordsDialog : public QDialog
     Q_OBJECT
 
     public:
-    KeywordsDialog(QWidget *parent, KeywordList &keywords, const CoreData &coreData);
+    KeywordsDialog(QWidget *parent, KeywordStore &keywords, const CoreData &coreData);
     ~KeywordsDialog();
 
     private:

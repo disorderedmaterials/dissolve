@@ -41,7 +41,7 @@ class Process2DProcedureNode : public ProcedureNode
     // Label for the y axis
     std::string labelY_{"Y"};
     // Pointer to processed data (stored in processing data list)
-    Data2D *processedData_;
+    Data2D *processedData_{nullptr};
 
     public:
     // Return processed data

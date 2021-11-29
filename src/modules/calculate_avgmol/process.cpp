@@ -52,15 +52,14 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    if (!targetConfiguration_)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
-    // Grab Configuration and Box pointers
-    auto *cfg = targetConfigurations_.front();
-    const auto *box = cfg->box();
+    // Grab Box pointer
+    const auto *box = targetConfiguration_->box();
 
     // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(cfg->processPool());
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Get the target site
     if (!targetSite_)
@@ -75,7 +74,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     updateArrays(dissolve);
 
     // Get the site stack
-    const auto *stack = cfg->siteStack(targetSite_);
+    const auto *stack = targetConfiguration_->siteStack(targetSite_);
 
     // Retrieve data arrays
     auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", uniqueName());

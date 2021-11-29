@@ -6,6 +6,7 @@
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/ui_configurationvector.h"
+#include "gui/models/configurationModel.h"
 #include "keywords/configurationvector.h"
 #include <QWidget>
 
@@ -32,15 +33,12 @@ class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordW
      */
     private:
     // Main form declaration
-    Ui::ConfigurationRefListWidget ui_;
-
-    private:
-    // Selection list update function
-    void updateSelectionRow(int row, Configuration *cfg, bool createItem);
+    Ui::ConfigurationVectorWidget ui_;
+    // Model for Configuration
+    ConfigurationModel configurationModel_;
 
     private slots:
-    // List item changed
-    void itemChanged(QListWidgetItem *item);
+    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
     // Keyword value changed

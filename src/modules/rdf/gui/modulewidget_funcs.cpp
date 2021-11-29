@@ -88,9 +88,11 @@ void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     refreshing_ = true;
 
+    const auto cfgs = module_->keywords().get<std::vector<Configuration *>>("Configuration");
+
     // Update partial set (Configuration) targets
-    auto optConfig = combo_box_updater(ui_.ConfigurationTargetCombo, module_->targetConfigurations().begin(),
-                                       module_->targetConfigurations().end(), [](auto *item) { return item->name(); });
+    auto optConfig =
+        combo_box_updater(ui_.ConfigurationTargetCombo, cfgs.begin(), cfgs.end(), [](auto *item) { return item->name(); });
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
@@ -110,7 +112,7 @@ void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             createPartialSetRenderables(targetPrefix);
         }
         else
-            for (auto *cfg : module_->targetConfigurations())
+            for (auto *cfg : cfgs)
                 rdfGraph_->createRenderable<RenderableData1D>(
                     fmt::format("{}//{}//UnweightedGR//Total", module_->uniqueName(), cfg->niceName()), cfg->niceName(),
                     "Total");

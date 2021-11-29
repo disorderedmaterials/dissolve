@@ -82,8 +82,6 @@ std::shared_ptr<SequenceProcedureNode> Collect1DProcedureNode::branch() { return
 // Prepare any necessary data, ready for execution
 bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
-    printf("IN PREPARE:\n");
-    rangeX_.print();
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
     auto [target, status] = targetList.realiseIf<Histogram1D>(dataName, prefix, GenericItem::InRestartFileFlag);

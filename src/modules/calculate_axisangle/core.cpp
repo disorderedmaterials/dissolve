@@ -3,7 +3,7 @@
 
 #include "modules/calculate_axisangle/axisangle.h"
 
-CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
+CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

@@ -24,10 +24,10 @@ const IsotopologueSet &IsotopologueSetKeyword::data() const { return data_; }
 int IsotopologueSetKeyword::minArguments() const { return 3; }
 
 // Return maximum number of arguments accepted
-int IsotopologueSetKeyword::maxArguments() const { return 3; }
+std::optional<int> IsotopologueSetKeyword::maxArguments() const { return 3; }
 
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool IsotopologueSetKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+// Deserialise from supplied LineParser, starting at given argument offset
+bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Species (first argument)
     Species *sp = coreData.findSpecies(parser.argsv(startArg));
@@ -49,8 +49,8 @@ bool IsotopologueSetKeyword::read(LineParser &parser, int startArg, const CoreDa
     return true;
 }
 
-// Write keyword data to specified LineParser
-bool IsotopologueSetKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+// Serialise data to specified LineParser
+bool IsotopologueSetKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (auto topes : data_.isotopologues())
         for (const auto &isoWeight : topes.mix())

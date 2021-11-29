@@ -3,7 +3,7 @@
 
 #include "modules/calculate_cn/cn.h"
 
-CalculateCNModule::CalculateCNModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
+CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

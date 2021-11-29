@@ -7,6 +7,9 @@
 // Perform any necessary initialisation for the Module
 void ExportCoordinatesModule::initialise()
 {
+    // Targets
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+
     // Format
     keywords_.add<FileAndFormatKeyword>("Format", "Format", "File / format for coordinates", coordinatesFormat_, "EndFormat");
     keywords_.add<BoolKeyword>("Format", "TagWithIteration",

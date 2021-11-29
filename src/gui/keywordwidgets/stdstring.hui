@@ -27,7 +27,7 @@ class StringKeywordWidget : public QLineEdit, public KeywordWidgetBase
      */
     private slots:
     // Line edit text changed
-    void myTextChanged(const QString &text);
+    void lineEditTextChanged(const QString &text);
 
     signals:
     // Keyword value changed

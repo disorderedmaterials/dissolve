@@ -43,7 +43,10 @@ class KeywordTypeMap
         };
         directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
             auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
+            if (!k)
+                throw(std::runtime_error(
+                    fmt::format("Can't get data for keyword '{}' - mismatch between data ('{}') and keyword ('{}') types.\n",
+                                keyword->name(), typeid(D).name(), typeid(K).name())));
             return k->data();
         };
     }
@@ -54,6 +57,11 @@ class KeywordTypeMap
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
             return setFunction(k, std::any_cast<D>(data));
+        };
+        directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
+            auto *k = dynamic_cast<K *>(keyword);
+            assert(k);
+            return k->data();
         };
     }
 
@@ -74,12 +82,22 @@ class KeywordTypeMap
     }
 };
 
-// Keyword List
-class KeywordList
+// Keyword Store
+class KeywordStore
 {
     public:
-    KeywordList() = default;
-    ~KeywordList() = default;
+    KeywordStore() = default;
+    ~KeywordStore()
+    {
+        // Remove keywords in this store from the global reference
+        auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(), [&](const auto *k) {
+            for (auto &[name, keyword] : keywords_)
+                if (k == keyword)
+                    return true;
+            return false;
+        });
+        allKeywords_.erase(it, allKeywords_.end());
+    }
 
     /*
      * Keyword Data
@@ -87,8 +105,10 @@ class KeywordList
     private:
     // Defined keywords
     std::map<std::string_view, KeywordBase *> keywords_;
+    // Targets group
+    std::vector<KeywordBase *> targetsGroup_;
     // Keyword group mappings
-    std::map<std::string_view, std::vector<std::string_view>> displayGroups_;
+    std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups_;
 
     public:
     // Add keyword (no group)
@@ -103,7 +123,20 @@ class KeywordList
         K *k = new K(std::forward<Args>(args)...);
         k->setBaseInfo(name, description);
 
+        // Add ourselves to both the local map and the global reference vector
         keywords_.emplace(name, k);
+        allKeywords_.push_back(k);
+
+        return k;
+    }
+    // Add target keyword
+    template <class K, typename... Args>
+    KeywordBase *addTarget(std::string_view name, std::string_view description, Args &&... args)
+    {
+        auto *k = addKeyword<K>(name, description, args...);
+
+        targetsGroup_.push_back(k);
+
         return k;
     }
     // Add keyword (displaying in named group)
@@ -112,7 +145,12 @@ class KeywordList
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        displayGroups_[displayGroup].push_back(name);
+        auto it = std::find_if(displayGroups_.begin(), displayGroups_.end(),
+                               [displayGroup](auto &group) { return group.first == displayGroup; });
+        if (it == displayGroups_.end())
+            displayGroups_.emplace_back(displayGroup, std::vector<KeywordBase *>{k});
+        else
+            it->second.push_back(k);
 
         return k;
     }
@@ -121,8 +159,10 @@ class KeywordList
     const KeywordBase *find(std::string_view name) const;
     // Return keywords
     const std::map<std::string_view, KeywordBase *> keywords() const;
+    // Return "Target" group keywords
+    const std::vector<KeywordBase *> targetsGroup() const;
     // Return keyword group mappings
-    const std::map<std::string_view, std::vector<std::string_view>> displayGroups() const;
+    const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups() const;
     // Return whether the keyword has been set, and is not currently empty (if relevant)
     bool hasBeenSet(std::string_view name) const;
     // Flag that the specified keyword has been set by some external means
@@ -205,8 +245,24 @@ class KeywordList
      * Read / Write
      */
     public:
-    // Try to parse a single keyword through the specified LineParser
-    KeywordBase::ParseResult parse(LineParser &parser, const CoreData &coreData, int startArg = 0);
+    // Try to deserialise a single keyword through the specified LineParser
+    KeywordBase::ParseResult deserialise(LineParser &parser, const CoreData &coreData, int startArg = 0);
     // Write all keywords to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
+    bool serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
+
+    /*
+     * Object Management
+     */
+    private:
+    // Vector of all keywords globally
+    static std::vector<KeywordBase *> allKeywords_;
+
+    public:
+    // Gracefully deal with the specified object no longer being valid
+    template <class O> static void objectNoLongerValid(O *object)
+    {
+        // Loop over all keyword objects and call their local functions
+        for (auto *kwd : allKeywords_)
+            kwd->removeReferencesTo(object);
+    }
 };

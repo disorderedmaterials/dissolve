@@ -32,7 +32,7 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual bool setData(ConstNodeRef node) = 0;
 };
 
-// Keyword with ProcedureNode
+// Keyword managing ProcedureNode
 template <class N> class NodeKeyword : public NodeKeywordBase
 {
     public:
@@ -81,12 +81,8 @@ template <class N> class NodeKeyword : public NodeKeywordBase
      * Arguments
      */
     public:
-    // Return minimum number of arguments accepted
-    int minArguments() const override { return 1; }
-    // Return maximum number of arguments accepted
-    int maxArguments() const override { return 1; }
-    // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override
+    // Deserialise from supplied LineParser, starting at given argument offset
+    bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Locate the named node
         auto node = findNode(parser.argsv(startArg));
@@ -96,8 +92,8 @@ template <class N> class NodeKeyword : public NodeKeywordBase
 
         return setData(node);
     }
-    // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
+    // Serialise data to specified LineParser
+    bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
         // No need to write the keyword if the node pointer is null
         if (data_ == nullptr)

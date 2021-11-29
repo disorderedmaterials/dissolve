@@ -17,22 +17,20 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (tagWithIteration_)
         coordinatesFormat_.setFilename(fmt::format("{}.{}", coordinatesFormat_.filename(), dissolve.iteration()));
 
-    // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    // Check for Configuration target
+    if (!targetConfiguration_)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
-    auto *cfg = targetConfigurations_.front();
-
     // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(cfg->processPool());
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Only the pool master saves the data
     if (procPool.isMaster())
     {
         Messenger::print("Export: Writing coordinates file ({}) for Configuration '{}'...\n", coordinatesFormat_.description(),
-                         cfg->name());
+                         targetConfiguration_->name());
 
-        if (!coordinatesFormat_.exportData(cfg))
+        if (!coordinatesFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to export coordinates file '{}'.\n", coordinatesFormat_.filename());
             procPool.decideFalse();

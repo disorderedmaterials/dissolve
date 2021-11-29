@@ -4,20 +4,7 @@
 #include "keywords/base.h"
 #include "base/messenger.h"
 
-// Static Singletons
-RefList<KeywordBase> KeywordBase::allKeywords_;
-
-KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false)
-{
-    // Add ourselves to the master reference list of keywords
-    allKeywords_.append(this);
-}
-
-KeywordBase::~KeywordBase()
-{
-    // Remove ourselves from the master reference list of keywords
-    allKeywords_.remove(this);
-}
+KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false) {}
 
 /*
  * Keyword Description
@@ -61,19 +48,19 @@ bool KeywordBase::hasBeenSet() const { return set_ && !isDataEmpty(); }
  * Arguments
  */
 
+// Return minimum number of arguments accepted
+int KeywordBase::minArguments() const { return 1; }
+
+// Return maximum number of arguments accepted
+std::optional<int> KeywordBase::maxArguments() const { return 1; }
+
 // Check number of arguments provided to keyword
 bool KeywordBase::validNArgs(int nArgsProvided) const
 {
     if (nArgsProvided < minArguments())
-    {
-        Messenger::error("Not enough arguments given to keyword '{}'.\n", name());
-        return false;
-    }
-    if ((maxArguments() >= 0) && (nArgsProvided > maxArguments()))
-    {
-        Messenger::error("Too many arguments given to keyword '{}'.\n", name());
-        return false;
-    }
+        return Messenger::error("Not enough arguments given to keyword '{}'.\n", name());
+    if (maxArguments() && (nArgsProvided > maxArguments().value()))
+        return Messenger::error("Too many arguments given to keyword '{}'.\n", name());
 
     return true;
 }

@@ -59,7 +59,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (auto n = 0; n < nRepeats_; ++n)
             {
                 RDFModule rdfModule;
-                rdfModule.addTargetConfiguration(cfg);
+                rdfModule.keywords().set("Configuration", cfg);
                 cfg->incrementContentsVersion();
                 srand(dissolve.seed());
 
@@ -85,7 +85,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (auto n = 0; n < nRepeats_; ++n)
             {
                 RDFModule rdfModule;
-                rdfModule.addTargetConfiguration(cfg);
+                rdfModule.keywords().set("Configuration", cfg);
                 cfg->incrementContentsVersion();
                 srand(dissolve.seed());
 

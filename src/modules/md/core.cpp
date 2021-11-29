@@ -3,7 +3,7 @@
 
 #include "modules/md/md.h"
 
-MDModule::MDModule() : Module(nRequiredTargets())
+MDModule::MDModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

@@ -8,6 +8,7 @@
 #include "gui/modulelisteditor.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "modules/registry.h"
 #include "templates/variantpointer.h"
 
 ModuleListEditor::ModuleListEditor(QWidget *parent) : QWidget(parent)
@@ -46,42 +47,26 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
     connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString &)), this, SLOT(moduleSelectionChanged(const QString &)));
 
     // Add MimeTreeWidgetItems for each Module, adding them to a parent category item
-    moduleCategories_.clear();
-    for (const auto &module : dissolveWindow->dissolve().masterModules())
+    for (const auto &[categoryName, modules] : ModuleRegistry::categoryMap())
     {
-        // Check that the category is not 'HIDDEN' (in which case we don't show it)
-        if (DissolveSys::sameString("HIDDEN", module->category()))
-            continue;
+        // Create a top-level category item
+        auto *categoryItem = new MimeTreeWidgetItem(ui_.AvailableModulesTree, 1000);
+        categoryItem->setText(0, QString::fromStdString(std::string(categoryName)));
+        categoryItem->setFlags(Qt::ItemIsEnabled);
 
-        // Find category for this Module (if it exists) or create a new one
-        MimeTreeWidgetItem *categoryItem = nullptr;
-        RefDataListIterator<MimeTreeWidgetItem, QString> categoryIterator(moduleCategories_);
-        while ((categoryItem = categoryIterator.iterate()))
-            if (DissolveSys::sameString(module->category(), qPrintable(categoryIterator.currentData())))
-                break;
-        if (categoryItem == nullptr)
+        // Create items for the Modules
+        for (auto &[moduleType, moduleBrief] : modules)
         {
-            categoryItem = new MimeTreeWidgetItem((QTreeWidget *)nullptr, 1000);
-            categoryItem->setText(0, QString::fromStdString(std::string(module->category())));
-            categoryItem->setFlags(Qt::ItemIsEnabled);
-            moduleCategories_.append(categoryItem, QString::fromStdString(std::string(module->category())));
-        }
 
-        // Create item for the Module
-        MimeTreeWidgetItem *item = new MimeTreeWidgetItem(categoryItem, 1000);
-        item->setIcon(0, ModuleBlock::modulePixmap(module.get()));
-        item->setText(0, QString::fromStdString(std::string(module->type())));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
-        item->setData(0, Qt::UserRole, VariantPointer<const Module>(module.get()));
-        item->setToolTip(0, QString::fromStdString(std::string(module->brief())));
-        item->addMimeString(MimeString::ModuleType, module->type());
+            auto *item = new MimeTreeWidgetItem(categoryItem, 1000);
+            item->setIcon(0, ModuleBlock::modulePixmap(QString::fromStdString(std::string(moduleType))));
+            item->setText(0, QString::fromStdString(std::string(moduleType)));
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
+            item->setToolTip(0, QString::fromStdString(std::string(moduleBrief)));
+            item->addMimeString(MimeString::ModuleType, moduleType);
+        }
     }
 
-    // Populate the available Modules tree with the categories we now have
-    ui_.AvailableModulesTree->clear();
-    RefDataListIterator<MimeTreeWidgetItem, QString> categoryIterator(moduleCategories_);
-    while (MimeTreeWidgetItem *categoryItem = categoryIterator.iterate())
-        ui_.AvailableModulesTree->addTopLevelItem(categoryItem);
     ui_.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
     ui_.AvailableModulesTree->expandAll();
     ui_.AvailableModulesTree->resizeColumnToContents(0);
@@ -234,33 +219,8 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
     if (!moduleLayer_)
         return;
 
-    // Get the Module associated to the double-clicked item
-    const Module *module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
-    if (!module)
-        return;
-
     // Create a new instance of the Module
-    Module *newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
-    newInstance->setConfigurationLocal(localConfiguration_);
-
-    // Set Configuration targets as appropriate
-    if (newInstance->nRequiredTargets() != Module::ZeroTargets)
-    {
-        if (localConfiguration_)
-            newInstance->addTargetConfiguration(localConfiguration_);
-        else
-        {
-            for (auto &cfg : dissolveWindow_->dissolve().configurations())
-            {
-                newInstance->addTargetConfiguration(cfg.get());
-                if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) &&
-                    (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations()))
-                    break;
-            }
-        }
-    }
-
-    moduleLayer_->own(newInstance);
+    dissolveWindow_->dissolve().createModuleInstance(item->text(0).toStdString(), moduleLayer_);
 
     updateControls();
 

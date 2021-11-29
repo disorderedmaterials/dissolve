@@ -58,8 +58,6 @@ class ModuleListEditor : public QWidget
     ModuleLayer *moduleLayer_;
     // Parent Configuration (if we are local to one)
     Configuration *localConfiguration_;
-    // Module categories and their associated MimeTreeWidgetItems
-    RefDataList<MimeTreeWidgetItem, QString> moduleCategories_;
 
     public:
     // Set up the ModuleListEditor for the specified ModuleLayer

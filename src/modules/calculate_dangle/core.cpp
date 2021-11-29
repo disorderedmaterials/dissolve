@@ -3,7 +3,7 @@
 
 #include "modules/calculate_dangle/dangle.h"
 
-CalculateDAngleModule::CalculateDAngleModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
+CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

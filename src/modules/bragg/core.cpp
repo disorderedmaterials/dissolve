@@ -3,7 +3,7 @@
 
 #include "modules/bragg/bragg.h"
 
-BraggModule::BraggModule() : Module(nRequiredTargets())
+BraggModule::BraggModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

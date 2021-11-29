@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "keywords/list.h"
+#include "keywords/store.h"
 
 // Forward Declarations
 class CoreData;
@@ -64,11 +64,11 @@ class FileAndFormat
      */
     protected:
     // Available keywords options
-    KeywordList keywords_;
+    KeywordStore keywords_;
 
     public:
     // Return available keywords
-    KeywordList &keywords();
+    KeywordStore &keywords();
 
     /*
      * Read / Write

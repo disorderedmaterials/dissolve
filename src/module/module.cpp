@@ -8,16 +8,7 @@
 #include "keywords/configurationvector.h"
 #include "main/dissolve.h"
 
-Module::Module(int nTargetConfiguration)
-{
-    frequency_ = 1;
-    enabled_ = true;
-    configurationLocal_ = true;
-
-    // Set up basic keywords for the Module
-    keywords_.addKeyword<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
-                                                     targetConfigurations_, nTargetConfiguration);
-}
+Module::Module() : frequency_(1), enabled_(true) {}
 
 /*
  * Definition
@@ -34,8 +25,8 @@ std::string_view Module::uniqueName() const { return uniqueName_; }
  */
 
 // Return list of recognised keywords
-KeywordList &Module::keywords() { return keywords_; }
-const KeywordList &Module::keywords() const { return keywords_; };
+KeywordStore &Module::keywords() { return keywords_; }
+const KeywordStore &Module::keywords() const { return keywords_; };
 
 // Print valid keywords
 void Module::printValidKeywords()
@@ -96,142 +87,6 @@ bool Module::isEnabled() const { return enabled_; }
 
 // Return whether the Module is disabled
 bool Module::isDisabled() const { return !enabled_; }
-
-/*
- * Targets
- */
-
-// Add Configuration target
-bool Module::addTargetConfiguration(Configuration *cfg)
-{
-    // Check how many Configurations we accept before we do anything else
-    if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.size() < nRequiredTargets()))
-    {
-        targetConfigurations_.push_back(cfg);
-        keywords_.setAsModified("Configuration");
-        return true;
-    }
-    else
-    {
-        if (nRequiredTargets() == Module::ZeroTargets)
-            Messenger::error("Can't add Configuration '{}' as a target to Module '{}' since it doesn't accept any "
-                             "such targets.\n",
-                             cfg->name(), type());
-        else
-            Messenger::warn("Can't add Configuration '{}' as a target to Module '{}' since the maximum number ({}) "
-                            "has already been reached.\n",
-                            cfg->name(), type(), nRequiredTargets());
-    }
-
-    return false;
-}
-
-// Add Configuration targets
-bool Module::addTargetConfigurations(const std::vector<std::unique_ptr<Configuration>> &configs)
-{
-    if (nRequiredTargets() == Module::ZeroTargets)
-        return Messenger::error("Module targets no configurations, so none will be set from the {} provided.\n",
-                                configs.size());
-    else if (nRequiredTargets() == Module::OneOrMoreTargets)
-    {
-        Messenger::print("Adding {} configurations as targets for module '{}'...\n", configs.size(), uniqueName());
-
-        for (auto &cfg : configs)
-            if (!addTargetConfiguration(cfg.get()))
-                return Messenger::error("Failed to add configuration '{}' to module '{}'.\n", cfg->name(), uniqueName());
-    }
-    else if (nTargetConfigurations() == nRequiredTargets())
-        return Messenger::error("Refusing to add any of the {} provided configurations as targets for the module '{}' "
-                                "as it already has it's specified number ({}).\n",
-                                configs.size(), uniqueName(), nRequiredTargets());
-    else
-    {
-        auto spaces = nRequiredTargets() - nTargetConfigurations();
-        Messenger::print("Adding up to {} configurations from the {} provided as targets for module '{}'...\n", spaces,
-                         configs.size(), uniqueName());
-
-        for (auto &cfg : configs)
-            if (!addTargetConfiguration(cfg.get()))
-                return Messenger::error("Failed to add configuration '{}' to module '{}'.\n", cfg->name(), uniqueName());
-    }
-
-    return true;
-}
-
-// Remove Configuration target
-bool Module::removeTargetConfiguration(Configuration *cfg)
-{
-    auto it = std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg);
-    if (it == targetConfigurations_.end())
-        return Messenger::error("Can't remove Configuration '{}' from Module '{}' as it isn't currently a target.\n",
-                                cfg->name(), uniqueName());
-
-    targetConfigurations_.erase(it);
-
-    return true;
-}
-
-// Return number of targeted Configurations
-int Module::nTargetConfigurations() const { return targetConfigurations_.size(); }
-
-// Return whether the number of targeted Configurations is valid
-bool Module::hasValidNTargetConfigurations(bool reportError) const
-{
-    if (nRequiredTargets() == Module::OneOrMoreTargets)
-    {
-        auto valid = nTargetConfigurations() > 0;
-        if (reportError && (!valid))
-            Messenger::error("Module '{}' expects one or more configuration targets, but none have been provided.\n",
-                             uniqueName());
-        return valid;
-    }
-    else if (nRequiredTargets() == Module::ZeroTargets)
-    {
-        auto valid = (nTargetConfigurations() == 0);
-        if (reportError && (!valid))
-            Messenger::error("Module '{}' expects zero configuration targets, but {} ha{} been provided.\n", uniqueName(),
-                             nTargetConfigurations(), nRequiredTargets() == 1 ? "s" : "ve");
-        return valid;
-    }
-    else
-    {
-        auto valid = (nRequiredTargets() == nTargetConfigurations());
-        if (reportError && (!valid))
-            Messenger::error("Module '{}' expects exactly {} configuration {}, but {} ha{} been provided.\n", uniqueName(),
-                             nRequiredTargets(), nRequiredTargets() == 1 ? "target" : "targets", nTargetConfigurations(),
-                             nTargetConfigurations() == 1 ? "s" : "ve");
-        return valid;
-    }
-}
-
-// Return first targeted Configuration
-const std::vector<Configuration *> &Module::targetConfigurations() const { return targetConfigurations_; }
-
-// Return if the specified Configuration is in the targets list
-bool Module::isTargetConfiguration(Configuration *cfg) const
-{
-    return std::find(targetConfigurations_.begin(), targetConfigurations_.end(), cfg) != targetConfigurations_.end();
-}
-
-// Copy Configuration targets from specified Module
-void Module::copyTargetConfigurations(Module *sourceModule)
-{
-    // First, check if this module actually accepts target Configurations
-    if ((nRequiredTargets() < sourceModule->nTargetConfigurations()) && (nRequiredTargets() != Module::OneOrMoreTargets))
-    {
-        Messenger::warn("Dependent Module '{}' does not accept Configuration targets, but the source Module '{}' lists {}.\n",
-                        type(), sourceModule->type());
-        return;
-    }
-    for (auto cfg : sourceModule->targetConfigurations())
-        addTargetConfiguration(cfg);
-}
-
-// Set whether this module is a local Module in a Configuration
-void Module::setConfigurationLocal(bool b) { configurationLocal_ = b; }
-
-// Return whether this module is a local Module in a Configuration
-bool Module::configurationLocal() const { return configurationLocal_; }
 
 /*
  * Processing

@@ -3,7 +3,7 @@
 
 #include "modules/benchmark/benchmark.h"
 
-BenchmarkModule::BenchmarkModule() : Module(nRequiredTargets())
+BenchmarkModule::BenchmarkModule() : Module()
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

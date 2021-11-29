@@ -58,7 +58,7 @@ bool FileAndFormat::hasFilename() const { return (!filename_.empty()); }
  */
 
 // Return available keywords
-KeywordList &FileAndFormat::keywords() { return keywords_; }
+KeywordStore &FileAndFormat::keywords() { return keywords_; }
 
 /*
  * Read / Write
@@ -101,7 +101,7 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
             break;
 
         // Can we parse the keyword?
-        auto result = keywords_.parse(parser, coreData);
+        auto result = keywords_.deserialise(parser, coreData);
         if (result == KeywordBase::Unrecognised)
             return Messenger::error("Unrecognised option '{}' found in file and format block.\n", parser.argsv(0));
         else if (result == KeywordBase::Failed)
@@ -120,5 +120,5 @@ bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view 
 // Write options and end block
 bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) const
 {
-    return keywords_.write(parser, fmt::format("{}  ", prefix));
+    return keywords_.serialise(parser, fmt::format("{}  ", prefix));
 }

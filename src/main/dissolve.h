@@ -175,26 +175,12 @@ class Dissolve
     private:
     // List of all instances of all used Modules
     RefList<Module> moduleInstances_;
-    // List of master Module instances
-    std::vector<std::unique_ptr<Module>> masterModules_;
-
-    private:
-    // Register master Module
-    bool registerMasterModule(Module *masterInstance);
 
     public:
-    // Register master instances for all Modules
-    bool registerMasterModules();
-    // Print information on all available modules
-    void printModuleInformation() const;
-    // Return master Module instances
-    const std::vector<std::unique_ptr<Module>> &masterModules() const;
-    // Search for master Module of the named type
-    Module *findMasterModule(std::string_view moduleType) const;
     // Create a Module instance for the named Module type
-    Module *createModuleInstance(std::string_view moduleType);
+    std::unique_ptr<Module> createModuleInstance(std::string_view moduleType);
     // Create a Module instance for the named Module type, and add it to the specified layer
-    Module *createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer, bool configurationLocal = false);
+    Module *createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer);
     // Search for any instance of any Module with the specified unique name
     Module *findModuleInstance(std::string_view uniqueName);
     // Search for any instance of any Module with the specified Module type
@@ -230,8 +216,6 @@ class Dissolve
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
-    // Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
-    Module *createModuleInLayer(std::string_view moduleType, std::string_view layerName, Configuration *cfg = nullptr);
 
     /*
      * Simulation

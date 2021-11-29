@@ -15,23 +15,20 @@ bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!trajectoryFormat_.hasFilename())
         Messenger::error("No valid file/format set for trajectory export.\n");
 
-    // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
+    // Check for Configuration target
+    if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
-    // Loop over target Configurations
-    auto *cfg = targetConfigurations_.front();
-
     // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(cfg->processPool());
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Only the pool master saves the data
     if (procPool.isMaster())
     {
         Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n", trajectoryFormat_.description(),
-                         cfg->name());
+                         targetConfiguration_->name());
 
-        if (!trajectoryFormat_.exportData(cfg))
+        if (!trajectoryFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to append trajectory file '{}'.\n", trajectoryFormat_.filename());
             procPool.decideFalse();

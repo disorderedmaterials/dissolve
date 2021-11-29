@@ -241,7 +241,6 @@ void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(b
     species->updateIntramolecularTerms();
 
     setModified();
-    updateWindowTitle();
     ui_.MainTabs->currentTab()->updateControls();
 }
 

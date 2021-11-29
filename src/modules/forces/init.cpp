@@ -7,6 +7,10 @@
 // Perform any necessary initialisation for the Module
 void ForcesModule::initialise()
 {
+    // Targets
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+                                                    targetConfigurations_);
+
     // Test
     keywords_.add<BoolKeyword>(
         "Test", "Test",

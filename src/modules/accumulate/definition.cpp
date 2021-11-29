@@ -11,6 +11,3 @@ std::string_view AccumulateModule::category() const { return "NO CATEGORY ASSIGN
 
 // Return brief description of module
 std::string_view AccumulateModule::brief() const { return "Accumulate partials data to form an average"; }
-
-// Return the number of Configuration targets this Module requires
-int AccumulateModule::nRequiredTargets() const { return Module::ZeroTargets; }

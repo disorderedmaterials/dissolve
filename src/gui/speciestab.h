@@ -74,6 +74,8 @@ class SpeciesTab : public QWidget, public MainTab
     private:
     // Species data to display
     Species *species_;
+    // Version of the Species at which the UI was last updated
+    int speciesVersion_{-1};
 
     public:
     // Return displayed Species

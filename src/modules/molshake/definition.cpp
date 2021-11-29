@@ -11,6 +11,3 @@ std::string_view MolShakeModule::category() const { return "Evolution"; }
 
 // Return brief description of module
 std::string_view MolShakeModule::brief() const { return "Perform molecular Monte Carlo moves"; }
-
-// Return the number of Configuration targets this Module requires
-int MolShakeModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

@@ -22,6 +22,7 @@
 #include "data/ff/uff/uff.h"
 #include "data/ff/uff/uff4mof.h"
 #include "data/ff/xml/base.h"
+#include "data/ff/zhang2013/zhang2013.h"
 #include <utility>
 
 // Static Members
@@ -44,12 +45,13 @@ bool ForcefieldLibrary::registerForcefield_(const std::shared_ptr<Forcefield> &f
 {
     // Set up the forcefield, returning if not successful
     if (!ff->prepare())
-        return Messenger::error("Failed to prepare and set up forcefield '{}' - it will not be registered.\n", ff->name());
+        throw(std::runtime_error(
+            fmt::format("Failed to prepare and set up forcefield '{}' - it will not be registered.\n", ff->name())));
 
     // Generate NETA definitions for all atom types in the forcefield
     if (!ff->createNETADefinitions())
-        return Messenger::error("Failed to generate NETA definitions for forcefield '{}' - it will not be registered.\n",
-                                ff->name());
+        throw(std::runtime_error(
+            fmt::format("Failed to generate NETA definitions for forcefield '{}' - it will not be registered.\n", ff->name())));
 
     forcefields_.push_back(ff);
 
@@ -76,6 +78,7 @@ void ForcefieldLibrary::registerForcefields()
     registerForcefield_(std::make_shared<Forcefield_Strader2002>());
     registerForcefield_(std::make_shared<Forcefield_UFF>());
     registerForcefield_(std::make_shared<Forcefield_UFF4MOF>());
+    registerForcefield_(std::make_shared<Forcefield_Zhang2013>());
 }
 
 /*

@@ -9,7 +9,7 @@ StringKeywordWidget::StringKeywordWidget(QWidget *parent, StringKeyword *keyword
     setText(QString::fromStdString(keyword_->data()));
 
     // Connect the currentTextChanged signal to our own slot
-    connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));
+    connect(this, SIGNAL(textChanged(QString)), this, SLOT(lineEditTextChanged(QString)));
 }
 
 /*
@@ -17,7 +17,7 @@ StringKeywordWidget::StringKeywordWidget(QWidget *parent, StringKeyword *keyword
  */
 
 // Line edit text changed
-void StringKeywordWidget::myTextChanged(const QString &text)
+void StringKeywordWidget::lineEditTextChanged(const QString &text)
 {
     if (refreshing_)
         return;

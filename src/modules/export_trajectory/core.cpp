@@ -3,7 +3,7 @@
 
 #include "modules/export_trajectory/exporttraj.h"
 
-ExportTrajectoryModule::ExportTrajectoryModule() : Module(nRequiredTargets())
+ExportTrajectoryModule::ExportTrajectoryModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

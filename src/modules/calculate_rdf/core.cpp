@@ -3,7 +3,7 @@
 
 #include "modules/calculate_rdf/rdf.h"
 
-CalculateRDFModule::CalculateRDFModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
+CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

@@ -8,12 +8,13 @@
 // Forward Declarations
 class Module;
 
-// Keyword with Module RefList data
+// Keyword managing Module
 class ModuleVectorKeyword : public KeywordBase
 {
     public:
-    ModuleVectorKeyword(std::vector<Module *> &data, int maxModules = -1);
-    ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes, int maxModules = -1);
+    ModuleVectorKeyword(std::vector<Module *> &data, std::optional<int> maxModules = std::nullopt);
+    ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes,
+                        std::optional<int> maxModules = std::nullopt);
     ~ModuleVectorKeyword() override = default;
 
     /*
@@ -24,8 +25,8 @@ class ModuleVectorKeyword : public KeywordBase
     std::vector<Module *> &data_;
     // Module type(s) to allow
     std::vector<std::string> moduleTypes_;
-    // Maximum number of modules to allow in list (-1 for any number)
-    int maxModules_;
+    // Maximum number of modules to allow
+    std::optional<int> maxModules_;
 
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
@@ -37,21 +38,19 @@ class ModuleVectorKeyword : public KeywordBase
     const std::vector<Module *> &data() const;
     // Return the Module type(s) to allow
     const std::vector<std::string> &moduleTypes() const;
-    // Return maximum number of Modules to allow in the list
-    int maxModules() const;
+    // Return maximum number of Modules to allow
+    std::optional<int> maxModules() const;
 
     /*
      * Arguments
      */
     public:
-    // Return minimum number of arguments accepted
-    int minArguments() const override;
     // Return maximum number of arguments accepted
-    int maxArguments() const override;
-    // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData) override;
-    // Write keyword data to specified LineParser
-    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    std::optional<int> maxArguments() const override;
+    // Deserialise from supplied LineParser, starting at given argument offset
+    bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
+    // Serialise data to specified LineParser
+    bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
 
     /*
      * Object Management

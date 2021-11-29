@@ -24,9 +24,6 @@ Dissolve::~Dissolve()
 {
     // Clear main data
     clear();
-
-    // Delete all master Modules
-    masterModules_.clear();
 }
 
 /*

@@ -13,7 +13,6 @@ TEST(IsotopologueSetModelTest, Basic)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
-    dissolve.registerMasterModules();
     EXPECT_TRUE(dissolve.loadInput("watermeth.txt"));
 
     // Find the 'H5H' NeutronSQ module and grab the relevant IsotopologueSet

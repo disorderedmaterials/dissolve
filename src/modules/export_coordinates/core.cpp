@@ -3,7 +3,7 @@
 
 #include "modules/export_coordinates/exportcoords.h"
 
-ExportCoordinatesModule::ExportCoordinatesModule() : Module(nRequiredTargets())
+ExportCoordinatesModule::ExportCoordinatesModule() : Module()
 {
     // Initialise Module - set up keywords etc.
     initialise();

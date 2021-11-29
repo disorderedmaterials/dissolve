@@ -11,6 +11,3 @@ std::string_view XRaySQModule::category() const { return "Correlation Functions"
 
 // Return brief description of module
 std::string_view XRaySQModule::brief() const { return "Calculate x-ray-weighted S(Q)"; }
-
-// Return the number of Configuration targets this Module requires
-int XRaySQModule::nRequiredTargets() const { return Module::ZeroTargets; }

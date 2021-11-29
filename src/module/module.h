@@ -6,7 +6,7 @@
 #include "base/messenger.h"
 #include "genericitems/list.h"
 #include "keywords/configurationvector.h"
-#include "keywords/list.h"
+#include "keywords/store.h"
 #include "math/sampleddouble.h"
 #include "templates/reflist.h"
 
@@ -21,7 +21,7 @@ class QWidget;
 class Module
 {
     public:
-    Module(int nTargetConfigurations);
+    Module();
     virtual ~Module() = default;
 
     /*
@@ -39,13 +39,6 @@ class Module
     std::string uniqueName_;
 
     public:
-    // Target Configurations Enum
-    enum TargetConfigurationNumber
-    {
-        OneOrMoreTargets = -1,
-        ZeroTargets = 0,
-        ExactlyOneTarget = 1
-    };
     // Return type of Module
     virtual std::string_view type() const = 0;
     // Return category for Module
@@ -56,22 +49,18 @@ class Module
     std::string_view uniqueName() const;
     // Return brief description of Module
     virtual std::string_view brief() const = 0;
-    // Return the number of Configuration targets this Module requires
-    virtual int nRequiredTargets() const = 0;
 
     /*
      * Keywords
      */
     protected:
     // Keywords recognised by Module
-    KeywordList keywords_;
-    // Target configurations keyword
-    std::vector<Configuration *> targetConfigurations_;
+    KeywordStore keywords_;
 
     public:
     // Return list of recognised keywords
-    KeywordList &keywords();
-    const KeywordList &keywords() const;
+    KeywordStore &keywords();
+    const KeywordStore &keywords() const;
     // Print valid keywords
     void printValidKeywords();
 
@@ -106,35 +95,6 @@ class Module
     bool isEnabled() const;
     // Return whether the Module is disabled
     bool isDisabled() const;
-
-    /*
-     * Targets
-     */
-    protected:
-    // Whether this module is a local Module in a Configuration
-    bool configurationLocal_;
-
-    public:
-    // Add Configuration target
-    bool addTargetConfiguration(Configuration *cfg);
-    // Add Configuration targets
-    bool addTargetConfigurations(const std::vector<std::unique_ptr<Configuration>> &configs);
-    // Remove Configuration target
-    bool removeTargetConfiguration(Configuration *cfg);
-    // Return number of targeted Configurations
-    int nTargetConfigurations() const;
-    // Return whether the number of targeted Configurations is valid
-    bool hasValidNTargetConfigurations(bool reportError = false) const;
-    // Return targeted Configurations
-    const std::vector<Configuration *> &targetConfigurations() const;
-    // Return if the specified Configuration is in the targets list
-    bool isTargetConfiguration(Configuration *cfg) const;
-    // Copy Configuration targets from specified Module
-    void copyTargetConfigurations(Module *sourceModule);
-    // Set whether this module is a local Module in a Configuration
-    void setConfigurationLocal(bool b);
-    // Return whether this module is a local Module in a Configuration
-    bool configurationLocal() const;
 
     /*
      * Processing

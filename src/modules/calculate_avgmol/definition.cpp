@@ -14,6 +14,3 @@ std::string_view CalculateAvgMolModule::brief() const
 {
     return "Calculate average atomic positions of a species around an oriented site";
 }
-
-// Return the number of Configuration targets this Module requires
-int CalculateAvgMolModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }
