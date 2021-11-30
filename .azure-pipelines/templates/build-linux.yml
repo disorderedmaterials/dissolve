@@ -3,8 +3,14 @@ parameters:
     default : "dissolve-gui"
   - name: export
     default : false
+  - name: exportExe
+    default : true
+  - name: exportSingularity
+    default : true
   - name: docker
     default: "docker-gui"
+  - name: singularity
+    default: "singularity-gui"
   - name: nix_version
     default: 2.4
 
@@ -21,10 +27,12 @@ steps:
       sh ./install-nix${{ parameters.nix_version }}
       mkdir -p ~/.config/nix/
       echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+      echo "system-features = kvm" >> ~/.config/nix/nix.conf
     displayName: 'Install nix'
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
+      mkdir -p .config/cachix
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       cachix use dissolve-nix
     displayName: 'Install Cachix'
@@ -32,21 +40,33 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       nix build -L .#${{ parameters.package }}
-      nix build -L .#${{ parameters.package }} | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
-    env:
-      CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
+      nix build --json .#${{ parameters.package }} > archive.json
     displayName: 'Build'
+    env:
+      CACHIX_AUTH_TOKEN: $(cachix_token)
+  - bash: |
+      set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      cat archive.json | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+    displayName: 'Push to Cachix'
+    condition: eq('${{ parameters.export }}', 'true')
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
       nix bundle -L .#${{ parameters.package }}
       mkdir -p packages
-      cp ${{ parameters.package }} packages
-      nix build .#${{ parameters.docker }}
-      mkdir -p docker
-      cp result docker
-    env:
-      CACHIX_AUTH_TOKEN: $(CACHIX_AUTH_TOKEN)
-    displayName: 'Package'
-    condition: eq( '${{ parameters.export }}', 'true' )
+      cp ${{ parameters.package }} packages/${{ parameters.package }}
+      rm ${{ parameters.package }}
+    displayName: 'Package Executable'
+    condition: and(eq( '${{ parameters.export }}', 'true' ), eq( '${{ parameters.exportExe }}', 'true' ))
+  - bash: |
+      set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      cachix use dissolve-nix
+      nix-collect-garbage -d
+      nix build -L .#${{ parameters.singularity }}
+      mkdir -p singularity
+      cp result singularity/${{ parameters.package }}.sif
+    displayName: 'Package Singularity'
+    condition: and(eq( '${{ parameters.export }}', 'true' ), eq( '${{ parameters.exportSingularity }}', 'true' ))

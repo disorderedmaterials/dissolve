@@ -1,0 +1,45 @@
+jobs:
+  - job: "release_linux_mpi"
+    displayName: "Release MPI, CLI"
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - template: set-short-hash.yml
+      - template: build-linux.yml
+        parameters:
+          package: "dissolve-mpi"
+  - job: "release_linux_gui"
+    displayName: "Release GUI"
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - template: set-short-hash.yml
+      - template: build-linux.yml
+        parameters:
+          package: "dissolve-gui"
+  - job: "release_linux"
+    displayName: "Release CLI"
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - template: set-short-hash.yml
+      - template: build-linux.yml
+        parameters:
+          package: "dissolve"
+  - job: "release_linux_threadless"
+    displayName: "Release Threadless"
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - template: set-short-hash.yml
+      - template: build-linux.yml
+        parameters:
+          package: "dissolve-threadless"

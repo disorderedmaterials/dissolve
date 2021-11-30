@@ -20,7 +20,7 @@ jobs:
           buildType: 'current'
           specificBuildWithTriggering: true
           downloadType: 'single'
-          artifactName: 'linux-artifacts'
+          artifactName: 'linux-GUI-artifacts'
         displayName: 'Download Linux Artifacts'
       - task: DownloadBuildArtifacts@0
         inputs:
