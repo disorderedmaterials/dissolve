@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
+#include "classes/coredata.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include <algorithm>

@@ -9,9 +9,6 @@
 
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
-    // Set Module instances list in our core data
-    coreData_.setModuleInstances(&moduleInstances_);
-
     // Set core simulation variables
     seed_ = -1;
     restartFileFrequency_ = 10;
@@ -51,10 +48,6 @@ void Dissolve::clear()
     pairPotentials_.clear();
     potentialMap_.clear();
     pairPotentialAtomTypeVersion_ = -1;
-
-    // Modules
-    Messenger::printVerbose("Clearing Modules...\n");
-    moduleInstances_.clear();
 
     // Simulation
     Messenger::printVerbose("Clearing Simulation...\n");

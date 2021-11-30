@@ -11,10 +11,6 @@
 #include "classes/speciestorsion.h"
 #include "module/module.h"
 
-CoreData::CoreData() { moduleInstances_ = nullptr; }
-
-CoreData::~CoreData() = default;
-
 // Clear all data
 void CoreData::clear()
 {
@@ -443,51 +439,6 @@ Configuration *CoreData::findConfiguration(std::string_view name) const
     if (it == configurations_.end())
         return nullptr;
     return it->get();
-}
-
-/*
- * Module List
- */
-
-// Set target Module instances list
-void CoreData::setModuleInstances(RefList<Module> *moduleInstances) { moduleInstances_ = moduleInstances; }
-
-// Search for any instance of any module with the specified unique name
-Module *CoreData::findModule(std::string_view uniqueName) const
-{
-    if (!moduleInstances_)
-        return nullptr;
-
-    for (auto module : *moduleInstances_)
-        if (DissolveSys::sameString(module->uniqueName(), uniqueName))
-            return module;
-
-    return nullptr;
-}
-
-// Search for and return any instance(s) of the specified Module type
-RefList<Module> CoreData::findModules(std::string_view moduleType) const
-{
-    RefList<Module> modules;
-
-    for (auto module : *moduleInstances_)
-        if (DissolveSys::sameString(module->type(), moduleType))
-            modules.append(module);
-
-    return modules;
-}
-
-// Search for and return any instance(s) of the specified Module type
-RefList<Module> CoreData::findModules(const std::vector<std::string> &moduleTypes) const
-{
-    RefList<Module> modules;
-
-    for (auto module : *moduleInstances_)
-        if (std::find_if(moduleTypes.cbegin(), moduleTypes.cend(), [module](const auto &s) { return s == module->type(); }) !=
-            moduleTypes.cend())
-            modules.append(module);
-
-    return modules;
 }
 
 /*

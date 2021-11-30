@@ -63,7 +63,7 @@ bool AtomTypeVectorKeyword::serialise(LineParser &parser, std::string_view keywo
     if (data_.empty())
         return true;
 
-    return parser.writeLineF("{}{}{}\n", prefix, keywordName,
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
                              joinStrings(data_, "  ", [](const auto &at) { return at->name(); }));
 }
 

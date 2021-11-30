@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/models/masterTermModel.h"
+#include "classes/masterintra.h"
 #include "templates/algorithms.h"
 
 Q_DECLARE_METATYPE(MasterIntra *);

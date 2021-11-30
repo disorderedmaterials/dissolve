@@ -91,7 +91,7 @@ bool Dissolve::prepare()
         return false;
 
     // Generate attached atom lists if IntraShake modules are present and enabled
-    auto intraShakeModules = findModuleInstances("IntraShake");
+    auto intraShakeModules = Module::allOfType("IntraShake");
     if (!intraShakeModules.empty())
     {
         Messenger::print("Generating attached atom lists for required species...");
@@ -143,7 +143,7 @@ bool Dissolve::iterate(int nIterations)
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
-            if (!layer->enabled())
+            if (!layer->isEnabled())
                 continue;
 
             auto layerExecutionCount = iteration_ / layer->frequency();
@@ -317,7 +317,7 @@ void Dissolve::printTiming()
 
     // Determine format for timing information output, accounting for the longest Module name we have
     auto maxLength = 0;
-    for (Module *module : moduleInstances_)
+    for (const auto *module : Module::instances())
     {
         const auto length = module->uniqueName().size();
         if (length > maxLength)

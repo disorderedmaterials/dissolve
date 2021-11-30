@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "classes/coredata.h"
 #include "gui/selectatomtypedialog.h"
 #include "gui/selectatomtypewidget.h"
-#include "templates/variantpointer.h"
 
 SelectAtomTypeDialog::SelectAtomTypeDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)
 {

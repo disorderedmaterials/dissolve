@@ -4,11 +4,12 @@
 #pragma once
 
 #include "gui/maintab.h"
+#include "gui/models/moduleLayerModel.h"
+#include "gui/models/modulePaletteModel.h"
 #include "gui/ui_layertab.h"
 
 // Forward Declarations
-class ModuleChart;
-class ModulePalette;
+class ModuleLayer;
 
 // Layer Tab
 class LayerTab : public QWidget, public MainTab
@@ -27,6 +28,16 @@ class LayerTab : public QWidget, public MainTab
     private:
     // Main form declaration
     Ui::LayerTab ui_;
+    // ModuleLayer data to display
+    ModuleLayer *moduleLayer_;
+    // Model for module layer
+    ModuleLayerModel moduleLayerModel_;
+    // Model for module palette
+    ModulePaletteModel modulePaletteModel_;
+
+    public:
+    // Return displayed ModuleLayer
+    ModuleLayer *moduleLayer() const;
 
     /*
      * MainTab Reimplementations
@@ -42,23 +53,15 @@ class LayerTab : public QWidget, public MainTab
     bool canClose() const;
 
     /*
-     * ModuleLayer Target
-     */
-    private:
-    // ModuleLayer data to display
-    ModuleLayer *moduleLayer_;
-
-    public:
-    // Return displayed ModuleLayer
-    ModuleLayer *moduleLayer() const;
-
-    /*
      * Widgets
      */
-    public slots:
-    void on_ShowPaletteButton_clicked(bool checked);
+    private slots:
+    void on_ShowAvailableModulesButton_clicked(bool checked);
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
+    void moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+    void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
+    void updateModuleList();
 
     /*
      * Update

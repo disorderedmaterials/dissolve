@@ -10,6 +10,7 @@
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/epsr/epsr.h"
 #include "modules/rdf/rdf.h"
+#include "modules/registry.h"
 #include "modules/sq/sq.h"
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
@@ -31,11 +32,11 @@ void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checke
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add some Monte Carlo
-    module = dissolve_.createModuleInstance("AtomShake", newLayer);
+    module = ModuleRegistry::create("AtomShake", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add energy calculation
-    module = dissolve_.createModuleInstance("Energy", newLayer);
+    module = ModuleRegistry::create("Energy", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -56,16 +57,16 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add some Monte Carlo
-    module = dissolve_.createModuleInstance("AtomShake", newLayer);
+    module = ModuleRegistry::create("AtomShake", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add some MD
-    module = dissolve_.createModuleInstance("MD", newLayer);
+    module = ModuleRegistry::create("MD", newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->setFrequency(5);
 
     // Add energy calculation
-    module = dissolve_.createModuleInstance("Energy", newLayer);
+    module = ModuleRegistry::create("Energy", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -86,16 +87,16 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add a Monte Carlo shake (MolShake) module
-    module = dissolve_.createModuleInstance("MolShake", newLayer);
+    module = ModuleRegistry::create("MolShake", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add some MD
-    module = dissolve_.createModuleInstance("MD", newLayer);
+    module = ModuleRegistry::create("MD", newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->setFrequency(5);
 
     // Add energy calculation
-    module = dissolve_.createModuleInstance("Energy", newLayer);
+    module = ModuleRegistry::create("Energy", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -116,15 +117,15 @@ void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add some Monte Carlo
-    module = dissolve_.createModuleInstance("MolShake", newLayer);
+    module = ModuleRegistry::create("MolShake", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add an intramolecular shake
-    module = dissolve_.createModuleInstance("IntraShake", newLayer);
+    module = ModuleRegistry::create("IntraShake", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add energy calculation
-    module = dissolve_.createModuleInstance("Energy", newLayer);
+    module = ModuleRegistry::create("Energy", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -142,10 +143,10 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
     newLayer->setFrequency(5);
 
     // Add the EPSR module
-    auto *epsr = dynamic_cast<EPSRModule *>(dissolve_.createModuleInstance("EPSR", newLayer));
+    auto *epsr = dynamic_cast<EPSRModule *>(ModuleRegistry::create("EPSR", newLayer));
 
     // Set any suitable module targets
-    epsr->keywords().set("Target", dissolve_.findModuleInstances("NeutronSQ"));
+    epsr->keywords().set("Target", Module::allOfType("NeutronSQ"));
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -165,7 +166,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the RDF module
-    auto *module = dissolve_.createModuleInstance("RDF", newLayer);
+    auto *module = ModuleRegistry::create("RDF", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -186,11 +187,11 @@ void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(b
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the RDF module
-    auto *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
+    auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
     rdfModule->keywords().set("Configuration", firstCfg);
 
     // Add a plain structure factor module
-    auto *module = dissolve_.createModuleInstance("SQ", newLayer);
+    auto *module = ModuleRegistry::create("SQ", newLayer);
     module->keywords().set<const Module *>("SourceRDFs", rdfModule);
 
     // Run set-up stages for modules
@@ -211,15 +212,15 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the RDF module
-    auto *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
+    auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
     rdfModule->keywords().set("Configuration", firstCfg);
 
     // Add a plain structure factor module
-    auto *sqModule = dynamic_cast<SQModule *>(dissolve_.createModuleInstance("SQ", newLayer));
+    auto *sqModule = dynamic_cast<SQModule *>(ModuleRegistry::create("SQ", newLayer));
     sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
-    Module *module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
+    Module *module = ModuleRegistry::create("NeutronSQ", newLayer);
     module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
@@ -240,19 +241,19 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the RDF module
-    auto *rdfModule = dynamic_cast<RDFModule *>(dissolve_.createModuleInstance("RDF", newLayer));
+    auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
     rdfModule->keywords().set("Configuration", firstCfg);
 
     // Add a plain structure factor module
-    auto *sqModule = dynamic_cast<SQModule *>(dissolve_.createModuleInstance("SQ", newLayer));
+    auto *sqModule = dynamic_cast<SQModule *>(ModuleRegistry::create("SQ", newLayer));
     sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
-    Module *module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
+    Module *module = ModuleRegistry::create("NeutronSQ", newLayer);
     module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Add an XRaySQ module
-    module = dissolve_.createModuleInstance("XRaySQ", newLayer);
+    module = ModuleRegistry::create("XRaySQ", newLayer);
     module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
@@ -273,11 +274,11 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the CalculateRDF module
-    auto *calcRDFModule = dynamic_cast<CalculateRDFModule *>(dissolve_.createModuleInstance("CalculateRDF", newLayer));
+    auto *calcRDFModule = dynamic_cast<CalculateRDFModule *>(ModuleRegistry::create("CalculateRDF", newLayer));
     calcRDFModule->keywords().set("Configuration", firstCfg);
 
     // Add a CalculateCN module
-    module = dissolve_.createModuleInstance("CalculateCN", newLayer);
+    module = ModuleRegistry::create("CalculateCN", newLayer);
     module->keywords().set<const CalculateRDFModule *>("SourceRDF", calcRDFModule);
 
     // Run set-up stages for modules
@@ -298,11 +299,11 @@ void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the CalculateAvgMol module
-    module = dissolve_.createModuleInstance("CalculateAvgMol", newLayer);
+    module = ModuleRegistry::create("CalculateAvgMol", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add a CalculateSDF module
-    module = dissolve_.createModuleInstance("CalculateSDF", newLayer);
+    module = ModuleRegistry::create("CalculateSDF", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules

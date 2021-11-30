@@ -61,7 +61,7 @@ void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateTyp
     // Update available reference molecule combo
     RefDataList<Species, std::string> refMolecules;
     // -- Find available AvgMol results
-    RefList<CalculateAvgMolModule> avgMolModules = dissolve_.coreData().findModulesByClass<CalculateAvgMolModule>();
+    auto avgMolModules = Module::allOfType<CalculateAvgMolModule>();
     for (CalculateAvgMolModule *module : avgMolModules)
         refMolecules.append(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species

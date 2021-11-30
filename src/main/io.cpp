@@ -340,7 +340,7 @@ bool Dissolve::saveInput(std::string_view filename)
         // Write frequency and disabled lines
         if (!parser.writeLineF("  Frequency  {}\n", layer->frequency()))
             return false;
-        if (!layer->enabled() && (!parser.writeLineF("  Disabled\n")))
+        if (!layer->isEnabled() && (!parser.writeLineF("  Disabled\n")))
             return false;
 
         for (auto &module : layer->modules())
@@ -409,7 +409,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading keyword '{}' into Module '{}'...\n", parser.argsv(2), parser.argsv(1));
 
             // Find the referenced Module
-            Module *module = findModuleInstance(parser.argsv(1));
+            auto *module = Module::find(parser.argsv(1));
             if (!module)
             {
                 Messenger::error("No Module named '{}' exists.\n", parser.argsv(1));
@@ -462,7 +462,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             // Let the user know what we are doing
             Messenger::print("Reading timing information for Module '{}'...\n", parser.argsv(1));
 
-            module = findModuleInstance(parser.argsv(1));
+            module = Module::find(parser.argsv(1));
             if (!module)
             {
                 Messenger::warn("Timing information for Module '{}' found, but no Module with this unique name "
@@ -600,7 +600,7 @@ bool Dissolve::saveRestart(std::string_view filename)
         return false;
 
     // Module Keyword Data
-    for (Module *module : moduleInstances_)
+    for (const auto *module : Module::instances())
     {
         for (auto &[name, keyword] : module->keywords().keywords())
         {
@@ -627,7 +627,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Module timing information
-    for (Module *module : moduleInstances_)
+    for (const auto *module : Module::instances())
     {
         if (!parser.writeLineF("Timing  {}\n", module->uniqueName()))
             return false;

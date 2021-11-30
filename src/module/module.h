@@ -20,8 +20,8 @@ class QWidget;
 class Module
 {
     public:
-    Module(std::string typeName);
-    virtual ~Module() = default;
+    explicit Module(std::string typeName);
+    virtual ~Module();
 
     /*
      * Definition
@@ -104,4 +104,35 @@ class Module
     SampledDouble processTimes() const;
     // Read timing information through specified parser
     bool readProcessTimes(LineParser &parser);
+
+    /*
+     * Management
+     */
+    private:
+    // Vector of all existing Modules
+    static std::vector<Module *> instances_;
+
+    public:
+    // Return vector of all existing Modules
+    const static std::vector<Module *> &instances();
+    // Search for any instance of any module with the specified unique name
+    static Module *find(std::string_view uniqueName);
+    // Search for and return any instance(s) of the specified Module type
+    static std::vector<Module *> allOfType(std::string_view moduleType);
+    static std::vector<Module *> allOfType(std::vector<std::string> types);
+    template <class M> static std::vector<M *> allOfType()
+    {
+        std::vector<M *> results;
+
+        for (auto *module : instances_)
+        {
+            M *castModule = dynamic_cast<M *>(module);
+            if (castModule)
+                results.push_back(castModule);
+        }
+
+        return results;
+    }
+    // Generate unique name with base name provided
+    static std::string uniqueName(std::string_view name, Module *exclude = nullptr);
 };

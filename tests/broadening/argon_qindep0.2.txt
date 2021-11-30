@@ -38,7 +38,7 @@ Module  SQ  'SQ01'
   WindowFunction  None
 EndModule
 
-Module  NeutronSQ
+Module  NeutronSQ  'NeutronSQ01'
   Isotopologue  'Argon'  'Ar36'  1.0
   SourceSQs  'SQ01'
   Frequency  1

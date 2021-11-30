@@ -4,13 +4,14 @@
 #pragma once
 
 #include "classes/atomtypedata.h"
-#include "classes/coredata.h"
 #include "templates/optionalref.h"
 #include <tuple>
 #include <vector>
 
 // Forward Declarations
 class AtomType;
+class CoreData;
+class LineParser;
 
 // AtomTypeMix
 class AtomTypeMix

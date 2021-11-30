@@ -35,7 +35,7 @@
     <number>4</number>
    </property>
    <item row="0" column="0">
-    <widget class="QListWidget" name="SelectionList"/>
+    <widget class="QListView" name="ModuleList"/>
    </item>
   </layout>
  </widget>

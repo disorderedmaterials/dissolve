@@ -16,7 +16,7 @@ TEST(IsotopologueSetModelTest, Basic)
     EXPECT_TRUE(dissolve.loadInput("watermeth.txt"));
 
     // Find the 'H5H' NeutronSQ module and grab the relevant IsotopologueSet
-    auto *h5h = dynamic_cast<NeutronSQModule *>(dissolve.findModuleInstance("H5H"));
+    auto *h5h = dynamic_cast<NeutronSQModule *>(Module::find("H5H"));
     assert(h5h);
     auto optH5hSet = h5h->keywords().get<IsotopologueSet, IsotopologueSetKeyword>("Isotopologue");
     ASSERT_TRUE(optH5hSet.has_value());

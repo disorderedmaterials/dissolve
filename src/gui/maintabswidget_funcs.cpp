@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "gui/charts/moduleblock.h"
 #include "gui/gui.h"
 #include "gui/maintab.h"
 #include "gui/maintabsbar.hui"
@@ -295,7 +294,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             allTabs_.push_back(layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
-            if (layer->enabled())
+            if (layer->isEnabled())
                 setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
             else
                 setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));

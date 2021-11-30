@@ -181,6 +181,7 @@ void ModuleControlWidget::on_EnabledButton_clicked(bool checked)
 
     ui_.ModuleIconLabel->setEnabled(checked);
 
+    emit(statusChanged());
     emit(dataModified());
 }
 

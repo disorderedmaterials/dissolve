@@ -6,6 +6,7 @@
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "module/layer.h"
+#include "modules/registry.h"
 
 // Return enum option info for LayerKeyword
 EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
@@ -57,22 +58,21 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
             case (LayerBlock::ModuleKeyword):
                 // The argument following the keyword is the module name, so try to create an instance of that
                 // Module
-                module = dissolve->createModuleInstance(parser.argsv(1), layer);
+                module = ModuleRegistry::create(parser.argsv(1), layer);
                 if (!module)
                 {
                     error = true;
                     break;
                 }
 
-                // Set unique name, if it was provided - need to check if it has been used elsewhere (in any
-                // Module or instance of it)
+                // Set unique name, if it was provided - need to check if it has been used elsewhere
                 if (parser.hasArg(2))
                 {
                     niceName = DissolveSys::niceName(parser.argsv(2));
-                    Module *existingModule = dissolve->findModuleInstance(niceName);
+                    auto *existingModule = Module::find(niceName);
                     if (existingModule && (existingModule != module))
                     {
-                        Messenger::error("A Module with the unique name '{}' already exist.\n", niceName);
+                        Messenger::error("A Module with the unique name '{}' already exists.\n", niceName);
                         error = true;
                         break;
                     }

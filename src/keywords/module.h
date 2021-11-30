@@ -78,7 +78,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
-        auto *module = coreData.findModule(parser.argsv(startArg));
+        auto *module = Module::find(parser.argsv(startArg));
         if (!module)
             return Messenger::error("Module '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());

@@ -39,7 +39,7 @@ class ModuleLayer
     // Set whether the layer is enabled
     void setEnabled(bool enabled);
     // Return whether the layer is enabled
-    bool enabled() const;
+    bool isEnabled() const;
     // Frequency, relative to the main iteration counter, at which to execute the layer
     void setFrequency(int frequency);
     // Return frequency, relative to the main iteration counter, at which to execute the layer
