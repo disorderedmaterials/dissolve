@@ -146,6 +146,8 @@ class MainTabsWidget : public QTabWidget
     void tabCloseButtonClicked(bool);
     // Tab bar double-clicked
     void tabBarDoubleClicked(int index);
+    // Update tab names
+    void updateTabNames();
 
     signals:
     void dataModified();

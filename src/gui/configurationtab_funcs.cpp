@@ -37,6 +37,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     // Set target for ProcedureEditor, and connect signals
     ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
     connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
+    connect(ui_.GeneratorRegenerateButton, SIGNAL(clicked()), parent, SLOT(updateTabNames()));
 }
 
 /*
