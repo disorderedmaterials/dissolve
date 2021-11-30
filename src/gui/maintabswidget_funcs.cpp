@@ -258,7 +258,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
                 configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow, dissolve, this, tabTitle, cfg.get()));
 
             allTabs_.push_back(cfgTab.data());
-            insertTab(baseIndex + currentTabIndex, cfgTab.data(), tabTitle);
+            insertTab(baseIndex + currentTabIndex, cfgTab.data(), cfgTab->title());
             addTabCloseButton(cfgTab->page());
             setTabIcon(cfgTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
         }

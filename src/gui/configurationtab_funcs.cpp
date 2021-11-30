@@ -67,6 +67,11 @@ QString ConfigurationTab::getNewTitle(bool &ok)
 // Return whether the title of the tab can be changed
 bool ConfigurationTab::canChangeTitle() const { return true; }
 
+// Return title of tab
+const QString ConfigurationTab::title() const {
+  return QString("%1 (%2/%3)").arg(title_).arg(configuration_->nMolecules()).arg(configuration_->nAtoms());
+}
+
 // Return whether the tab can be closed (after any necessary user querying, etc.)
 bool ConfigurationTab::canClose() const
 {

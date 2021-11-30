@@ -44,6 +44,8 @@ class ConfigurationTab : public QWidget, public MainTab
     bool canChangeTitle() const;
     // Return whether the tab can be closed (after any necessary user querying, etc.)
     bool canClose() const;
+    // Return title of tab
+    const QString title() const;
 
     /*
      * Configuration Target
