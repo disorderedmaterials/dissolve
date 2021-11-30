@@ -7,17 +7,20 @@
 #include <FTGL/ftgl.h>
 #include <QResource>
 #include <QString>
+#include <QColor>
 
 // Font Instance
 class FontInstance
 {
     public:
-    FontInstance();
+    FontInstance(QColor color);
 
     /*
      * Font Data
      */
     private:
+    // Text colour
+    QColor color_;
     // Font file last passed to setupFont()
     QString fontFile_;
     // Font data
