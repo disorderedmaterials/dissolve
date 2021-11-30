@@ -5,9 +5,9 @@
 
 #include "templates/vector3.h"
 #include <FTGL/ftgl.h>
+#include <QColor>
 #include <QResource>
 #include <QString>
-#include <QColor>
 
 // Font Instance
 class FontInstance

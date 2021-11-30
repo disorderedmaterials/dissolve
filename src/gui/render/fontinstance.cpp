@@ -120,7 +120,6 @@ bool FontInstance::renderText(std::string text) const
     if (!font_)
         return false;
 
-
     glColor4f(color_.redF(), color_.greenF(), color_.blueF(), color_.alphaF());
     font_->Render(text.c_str());
 
