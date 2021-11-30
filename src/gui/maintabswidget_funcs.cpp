@@ -45,15 +45,18 @@ void MainTabsWidget::setUp(DissolveWindow *dissolveWindow)
 }
 
 // Update tab names
-void MainTabsWidget::updateTabNames() {
-  for(int i=0; i < count(); ++i) {
-    // Currently, only the Configuration Tabs will need updates
-    auto *confTab = dynamic_cast<ConfigurationTab*>(widget(i));
-    if (confTab) {
-      setTabText(i, confTab->title());
-      continue;
+void MainTabsWidget::updateTabNames()
+{
+    for (int i = 0; i < count(); ++i)
+    {
+        // Currently, only the Configuration Tabs will need updates
+        auto *confTab = dynamic_cast<ConfigurationTab *>(widget(i));
+        if (confTab)
+        {
+            setTabText(i, confTab->title());
+            continue;
+        }
     }
-  }
 }
 
 /*
