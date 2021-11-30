@@ -82,11 +82,4 @@ class CalculateAngleModule : public Module
     bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
-
-    /*
-     * GUI Widget
-     */
-    public:
-    // Return a new widget controlling this Module
-    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve) override;
 };

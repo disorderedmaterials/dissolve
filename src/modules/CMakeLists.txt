@@ -16,19 +16,6 @@ macro(dissolve_add_module header modulename)
   # Add GUI component if requested and it exists
   if(GUI AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/gui)
     add_subdirectory(gui)
-
-    # Add dummy GUI target, so we can link both GUI and non-GUI versions of the code
-    list(REMOVE_ITEM MODULE_SRC nogui.cpp)
-    add_library(module_${modulename}_nogui nogui.cpp)
-    set(MODULENOGUI_LINK_LIBS
-        ${MODULENOGUI_LINK_LIBS} "module_${modulename}_nogui"
-        CACHE INTERNAL "" FORCE
-    )
-    target_link_libraries(
-      module_${modulename}_nogui
-      PRIVATE base
-      PUBLIC ${THREADING_LINK_LIBS}
-    )
   endif()
 
   # Add library target
@@ -59,7 +46,12 @@ macro(dissolve_add_module_gui modulename)
   message(STATUS "...    GUI component 'module_${modulename}_gui'")
 
   # Create source file lists
-  set(MODULEGUI_MOC_HDRS "modulewidget.h")
+  set(MODULEGUI_MOC_HDRS "")
+  file(
+    GLOB MODULEGUI_MOC_HDRS
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    "*.h"
+  )
   message(STATUS "...       ${MODULEGUI_MOC_HDRS}")
   set(MODULEGUI_UIS "")
   file(
@@ -140,3 +132,25 @@ include_directories(
   ${CMAKE_BINARY_DIR}/src
   ${CONAN_INCLUDE_DIRS}
 )
+
+if(GUI)
+  add_library(modulewidgetproducer widget.cpp widgetproducer.cpp widget.h widgetproducer.h)
+  add_dependencies(modulewidgetproducer ${MODULEGUI_LINK_LIBS})
+
+  include_directories(
+    modulewidgetproducer
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_BINARY_DIR}/src
+    ${PROJECT_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/src
+    ${Qt6Core_INCLUDE_DIRS}
+    ${Qt6Gui_INCLUDE_DIRS}
+    ${Qt6Widgets_INCLUDE_DIRS}
+    ${Qt6OpenGL_INCLUDE_DIRS}
+    ${Qt6OpenGLWidgets_INCLUDE_DIRS}
+    ${FREETYPE_INCLUDE_DIRS}
+    ${CONAN_INCLUDE_DIRS}
+  )
+endif(GUI)

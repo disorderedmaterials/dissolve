@@ -323,9 +323,7 @@ endif(BUILD_BENCHMARKS)
 # Build CLI target executable
 target_link_libraries(
   ${target_name}
-  PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
-         # Module 'nogui' libs
-         ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
+  PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
   PRIVATE # External libs
           antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
 )
@@ -340,6 +338,7 @@ if(GUI)
            ${BASIC_LINK_LIBS}
            # Module gui libs
            ${MODULEGUI_LINK_LIBS}
+           modulewidgetproducer
            # Main gui libs
            render
            widgets

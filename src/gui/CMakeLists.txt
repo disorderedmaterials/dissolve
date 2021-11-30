@@ -48,7 +48,6 @@ set(gui_MOC_HDRS
     # Editors
     modulecontrolwidget.h
     modulelisteditor.h
-    modulewidget.h
     procedureeditor.h
     # Main Tabs
     configurationtab.h
@@ -188,7 +187,6 @@ set(gui_SRCS
     # Editors
     modulecontrolwidget_funcs.cpp
     modulelisteditor_funcs.cpp
-    modulewidget.cpp
     procedureeditor_funcs.cpp
     # Main Tabs
     configurationtab_funcs.cpp

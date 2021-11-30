@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "modules/atomshake/atomshake.h"
-#include "keywords/bool.h"
 #include "keywords/configurationvector.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
