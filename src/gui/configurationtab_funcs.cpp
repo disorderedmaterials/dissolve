@@ -118,6 +118,10 @@ void ConfigurationTab::updateControls()
     // Temperature
     ui_.TemperatureSpin->setValue(configuration_->temperature());
 
+    // Populations
+    ui_.AtomPopulation->setText(QString::number(configuration_->nAtoms()));
+    ui_.MolPopulation->setText(QString::number(configuration_->nMolecules()));
+
     // Current Box
     const auto *box = configuration_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));

@@ -402,6 +402,46 @@
           </property>
          </widget>
         </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_atom_pop">
+          <property name="text">
+           <string>Atoms</string>
+          </property>
+	  <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+	 </widget>
+	</item>
+        <item row="5" column="1">
+         <widget class="QLabel" name="AtomPopulation">
+          <property name="text">
+           <string>0</string>
+          </property>
+	 </widget>
+	</item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_mol_pop">
+          <property name="text">
+	    <string>Molecules</string>
+	  </property>
+	  <property name="font">
+	   <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+	 </widget>
+	</item>
+        <item row="6" column="1">
+         <widget class="QLabel" name="MolPopulation">
+          <property name="text">
+           <string>0</string>
+          </property>
+	 </widget>
+	</item>
        </layout>
       </widget>
      </item>
