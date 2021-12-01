@@ -5,7 +5,7 @@
 #include "base/messenger.h"
 #include <QtGui/qopengl.h>
 
-FontInstance::FontInstance(QColor color) : color_(color)
+FontInstance::FontInstance(QColor colour) : colour_(colour)
 {
     fontData_ = nullptr;
     font_ = nullptr;
@@ -99,6 +99,9 @@ void FontInstance::setScaleFactor(double scaleFactor) { scaleFactor_ = scaleFact
 // Return general scaling factor for primitives rendered with this font instance
 double FontInstance::scaleFactor() const { return scaleFactor_; }
 
+// Return text colour
+QColor FontInstance::colour() const { return colour_; }
+
 /*
  * Rendering
  */
@@ -120,7 +123,7 @@ bool FontInstance::renderText(std::string text) const
     if (!font_)
         return false;
 
-    glColor4f(color_.redF(), color_.greenF(), color_.blueF(), color_.alphaF());
+    glColor4f(colour_.redF(), colour_.greenF(), colour_.blueF(), colour_.alphaF());
     font_->Render(text.c_str());
 
     return true;

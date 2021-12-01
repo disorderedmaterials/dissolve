@@ -13,14 +13,14 @@
 class FontInstance
 {
     public:
-    FontInstance(QColor color);
+    FontInstance(QColor colour);
 
     /*
      * Font Data
      */
     private:
     // Text colour
-    QColor color_;
+    QColor colour_;
     // Font file last passed to setupFont()
     QString fontFile_;
     // Font data
@@ -49,6 +49,8 @@ class FontInstance
     void setScaleFactor(double scaleFactor);
     // Return general scaling factor for primitives rendered with this font instance
     double scaleFactor() const;
+    // Return the text colour
+    QColor colour() const;
 
     /*
      * Rendering
