@@ -362,21 +362,17 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     // This is GitHub issue #562
     for (auto it = cfg->molecules().begin() + offset; it < cfg->molecules().end(); it += nChunks)
     {
-        auto &atoms = (*it)->atoms();
+        const auto &atoms = (*it)->atoms();
 
-        dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
-                                [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
-                                    // Ignore atom on itself
-                                    if (index == jndex)
-                                        return;
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, atoms.begin(), atoms.end(),
+            [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
+                // Ignore atom on itself
+                if (index == jndex)
+                    return;
 
-                                    double distance;
-                                    if (cells.minimumImageRequired(*i->cell(), *j->cell()))
-                                        distance = box->minimumDistance(i->r(), j->r());
-                                    else
-                                        distance = (i->r() - j->r()).magnitude();
-                                    originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-                                });
+                originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(box->minimumDistance(i->r(), j->r()));
+            });
     }
 
     timer.stop();
