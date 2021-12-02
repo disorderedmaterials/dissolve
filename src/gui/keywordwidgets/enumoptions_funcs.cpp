@@ -10,13 +10,14 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, EnumOptionsB
     // Get the underlying EnumOptionsBase
     const EnumOptionsBase &options = keyword_->baseOptions();
 
+    refreshing_ = true;
+
     // Populate the combo with the available keywords
-    for (int n = 0; n < options.nOptions(); ++n)
-    {
+    for (auto n = 0; n < options.nOptions(); ++n)
         addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
-        if (options.index() == n)
-            setCurrentIndex(n);
-    }
+    setCurrentIndex(keyword_->enumerationByIndex());
+
+    refreshing_ = false;
 
     // Turn off editability
     setEditable(false);
@@ -56,7 +57,7 @@ void EnumOptionsKeywordWidget::updateValue()
     refreshing_ = true;
 
     // Set the combo box index
-    setCurrentIndex(keyword_->baseOptions().index());
+    setCurrentIndex(keyword_->enumerationByIndex());
 
     refreshing_ = false;
 }

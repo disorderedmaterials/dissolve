@@ -28,6 +28,8 @@ class EnumOptionsBaseKeyword : public KeywordBase
      * Set
      */
     public:
+    // Return data as integer index
+    virtual int enumerationByIndex() const = 0;
     // Set new option index, informing KeywordBase
     virtual void setEnumerationByIndex(int optionIndex) = 0;
 
@@ -101,7 +103,15 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
      * Set (implementing pure virtual from EnumOptionsBaseKeyword)
      */
     public:
-    // Set new option index, informing KeywordBase
+    // Return data as integer index
+    int enumerationByIndex() const override
+    {
+        for (auto n = 0; n < optionData_.nOptions(); ++n)
+            if (optionData_.enumerationByIndex(n) == data_)
+                return n;
+        throw(std::runtime_error("Couldn't retrieve index for enumeration as it doesn't exist.\n"));
+    };
+    // Set new option index
     void setEnumerationByIndex(int optionIndex) override
     {
         data_ = optionData_.enumerationByIndex(optionIndex);
