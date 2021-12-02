@@ -53,6 +53,6 @@ bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const Core
 // Serialise data to specified LineParser
 bool Function1DKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, Functions::function1D().keyword(data_.type()),
+    return parser.writeLineF("{}{}  '{}'  {}\n", prefix, keywordName, Functions::function1D().keyword(data_.type()),
                              joinStrings(data_.parameters(), "  "));
 }
