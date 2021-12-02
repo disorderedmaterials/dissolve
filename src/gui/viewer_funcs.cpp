@@ -4,7 +4,8 @@
 #include "base/messenger.h"
 #include "gui/viewer.hui"
 
-BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderables_, fontInstance_)
+BaseViewer::BaseViewer(QWidget *parent)
+    : QOpenGLWidget(parent), fontInstance_(parent->palette().text().color()), view_(renderables_, fontInstance_)
 {
     // Character / Setup
     contextWidth_ = 0;

@@ -77,7 +77,7 @@ Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), font
     // GL
     for (auto n = 0; n < 3; ++n)
     {
-        axisPrimitives_[n].initialise(GL_LINES, false);
+        axisPrimitives_[n].initialise(GL_LINES, true);
         axisPrimitives_[n].setNoInstances();
         gridLineMajorPrimitives_[n].initialise(GL_LINES, false);
         gridLineMajorPrimitives_[n].setNoInstances();
@@ -1040,6 +1040,9 @@ void Axes::updateAxisPrimitives()
         }
     }
 
+    auto textColour = fontInstance_.colour();
+    GLfloat colour[4] = {textColour.redF(), textColour.greenF(), textColour.blueF(), textColour.alphaF()};
+
     // Construct axes
     for (auto axis = 0; axis < 3; ++axis)
     {
@@ -1085,7 +1088,7 @@ void Axes::updateAxisPrimitives()
             }
 
             // Draw a line from min to max range, passing through the defined position
-            axisPrimitives_[axis].line(coordMin_[axis], coordMax_[axis]);
+            axisPrimitives_[axis].line(coordMin_[axis], coordMax_[axis], colour);
 
             // Grab logged min/max values for convenience, enforcing sensible minimum
             double min = log10(min_[axis] <= 0.0 ? 1.0e-10 : min_[axis]);
@@ -1103,7 +1106,7 @@ void Axes::updateAxisPrimitives()
                 if (log10(value) >= min)
                 {
                     // Tick mark
-                    axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * (count == 0 ? 1.0 : 0.5));
+                    axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * (count == 0 ? 1.0 : 0.5), colour);
                     tickPositions[axis].push_back(u[axis]);
                     tickIsMajor[axis].push_back(count == 0);
 
@@ -1143,7 +1146,7 @@ void Axes::updateAxisPrimitives()
                 determineLabelFormat(axis);
 
             // Draw a line from min to max limits, passing through the defined position
-            axisPrimitives_[axis].line(coordMin_[axis], coordMax_[axis]);
+            axisPrimitives_[axis].line(coordMin_[axis], coordMax_[axis], colour);
 
             // Check tickDelta
             if (((max_[axis] - min_[axis]) / tickDelta_[axis]) > 1e6)
@@ -1164,7 +1167,7 @@ void Axes::updateAxisPrimitives()
 
                     if (count % (minorTicks_[axis] + 1) == 0)
                     {
-                        axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis]);
+                        axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis], colour);
 
                         // Get formatted label text
                         s = numberFormat_[axis].format(value);
@@ -1180,7 +1183,7 @@ void Axes::updateAxisPrimitives()
                     }
                     else
                     {
-                        axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * 0.5);
+                        axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * 0.5, colour);
                         tickIsMajor[axis].push_back(false);
                     }
                 }
@@ -1295,10 +1298,10 @@ void Axes::updateAxisPrimitives()
                 if (tickIsMajor[ortho1][i1] && tickIsMajor[ortho2][i2])
                 {
                     if (gridLinesMajor_[axis])
-                        gridLineMajorPrimitives_[axis].line(v1, v2);
+                        gridLineMajorPrimitives_[axis].line(v1, v2, colour);
                 }
                 else if (gridLinesMinor_[axis])
-                    gridLineMinorPrimitives_[axis].line(v1, v2);
+                    gridLineMinorPrimitives_[axis].line(v1, v2, colour);
             }
         }
     }

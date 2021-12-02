@@ -249,12 +249,14 @@ void BaseViewer::postResizeGL() {}
 void BaseViewer::setupGL()
 {
     // Define colours etc.
-    GLfloat backgroundColour[4] = {1.0f, 1.0f, 1.0f, 1.0f};
     GLfloat spotlightAmbient[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     GLfloat spotlightDiffuse[4] = {0.8f, 0.8f, 0.8f, 1.0f};
     GLfloat spotlightSpecular[4] = {0.7f, 0.7f, 0.7f, 1.0f};
     GLfloat spotlightPosition[4] = {1.0f, 1.0f, 0.0f, 0.0f};
     GLfloat specularColour[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+
+    auto background = palette().base().color();
+    GLfloat backgroundColour[4] = {background.redF(), background.greenF(), background.blueF(), background.alphaF()};
 
     // Clear (background) colour
     glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3]);
