@@ -17,7 +17,7 @@ stages:
         displayName: 'OSX, Threads, CLI/GUI'
         timeoutInMinutes: 120
         pool:
-          vmImage: 'macos-latest'
+          vmImage: 'macOS-10.15'
         steps:
           - checkout: self
             fetchDepth: 1
