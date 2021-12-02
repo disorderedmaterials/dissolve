@@ -53,5 +53,5 @@ EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
     return EnumOptions<RDFModule::PartialsMethod>("PartialsMethod", {{RDFModule::AutoMethod, "Auto"},
                                                                      {RDFModule::CellsMethod, "Cells"},
                                                                      {RDFModule::SimpleMethod, "Simple"},
-                                                                     {RDFModule::TestMethod, "TestSquaredAverage"}});
+                                                                     {RDFModule::TestMethod, "Test"}});
 }
