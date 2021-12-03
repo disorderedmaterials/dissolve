@@ -64,6 +64,22 @@ class KeywordTypeMap
             return k->data();
         };
     }
+    // Register direct setter for specific keyword / data type pair, with specific data setter and getter on the keyword
+    template <class D, class K>
+    void registerDirectMapping(std::function<bool(K *keyword, const D data)> setFunction,
+                               std::function<const std::any(K *keyword)> getFunction)
+    {
+        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const std::any &data) {
+            auto *k = dynamic_cast<K *>(keyword);
+            assert(k);
+            return setFunction(k, std::any_cast<D>(data));
+        };
+        directMapGetter_[typeid(D)] = [getFunction](KeywordBase *keyword) {
+            auto *k = dynamic_cast<K *>(keyword);
+            assert(k);
+            return getFunction(k);
+        };
+    }
 
     public:
     // Set keyword data
