@@ -3,6 +3,7 @@
 
 #include "gui/widgets/exponentialspin.hui"
 #include "math/doubleexp.h"
+#include <QFocusEvent>
 #include <QLineEdit>
 
 ExponentialSpin::ExponentialSpin(QWidget *parent) : QAbstractSpinBox(parent)
@@ -16,7 +17,7 @@ ExponentialSpin::ExponentialSpin(QWidget *parent) : QAbstractSpinBox(parent)
     blockSignals(false);
 
     connect(lineEdit(), SIGNAL(editingFinished()), this, SLOT(valueEditingFinished()));
-    connect(lineEdit(), SIGNAL(returnPressed()), this, SLOT(valueEditingFinished()));
+    connect(lineEdit(), SIGNAL(returnPressed()), this, SLOT(returnPressed()));
 }
 
 /*
@@ -26,16 +27,46 @@ ExponentialSpin::ExponentialSpin(QWidget *parent) : QAbstractSpinBox(parent)
 // Set value
 void ExponentialSpin::setValue(double value)
 {
-    if (minimumValue_ && value < minimumValue_.value())
+    // Copy the existing value for comparison
+    auto previousValueText = valueText_;
+
+    if (minimumValue_ && value <= minimumValue_.value())
+    {
         value_ = minimumValue_.value();
-    else if (maximumValue_ && value > maximumValue_)
+        valueText_ = specialValueText().isEmpty()
+                         ? QString::fromStdString(value_.asString(exponentFormatThreshold_, nDecimals_))
+                         : specialValueText();
+    }
+    else if (maximumValue_ && value >= maximumValue_)
+    {
         value_ = maximumValue_.value();
+        valueText_ = QString::fromStdString(value_.asString(exponentFormatThreshold_, nDecimals_));
+    }
     else
+    {
         value_ = value;
+        valueText_ = QString::fromStdString(value_.asString(exponentFormatThreshold_, nDecimals_));
+    }
 
-    valueText_ = QString::fromStdString(value_.asString(exponentFormatThreshold_, nDecimals_));
-
+    // Set the line edit's text
     lineEdit()->setText(valueText_);
+
+    // If the new text is the same as the existing, don't emit any signals
+    if (previousValueText == valueText_)
+        return;
+
+    if (valueText_ == specialValueText())
+        emit(valueNullified());
+    else
+        emit(valueChanged(value_.value()));
+}
+
+void ExponentialSpin::setValue(std::optional<double> value)
+{
+    if (value)
+        setValue(value.value());
+    else
+        setValue(minimumValue_.value() - 1.0);
 }
 
 // Return current value
@@ -71,20 +102,23 @@ void ExponentialSpin::valueEditingFinished()
         return;
 
     setValue(lineEdit()->text().toDouble());
-
-    emit(valueChanged(value_.value()));
 }
+
+void ExponentialSpin::returnPressed() { lineEdit()->selectAll(); }
 
 /*
  * Reimplementations
  */
 
-// Step value by specified number of increments
-void ExponentialSpin::stepBy(int steps)
+void ExponentialSpin::focusInEvent(QFocusEvent *event)
 {
-    setValue(value_.value() + steps * stepSize_);
-    emit(valueChanged(value_.value()));
+    if (valueText_ == specialValueText())
+        lineEdit()->setText(QString::fromStdString(value_.asString(exponentFormatThreshold_, nDecimals_)));
+    QAbstractSpinBox::focusInEvent(event);
 }
+
+// Step value by specified number of increments
+void ExponentialSpin::stepBy(int steps) { setValue(value_.value() + steps * stepSize_); }
 
 // Return whether stepping is currently available
 QAbstractSpinBox::StepEnabled ExponentialSpin::stepEnabled() const

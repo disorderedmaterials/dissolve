@@ -31,6 +31,7 @@ set(keywordwidgets_MOC_HDRS
     dropwidget.hui
     enumoptions.hui
     integer.hui
+    optionaldouble.hui
     species.hui
     stdstring.hui
     widget.hui
@@ -88,6 +89,7 @@ set(keywordwidgets_SRCS
     nodevalue_funcs.cpp
     nodevalueenumoptions_funcs.cpp
     nodevector_funcs.cpp
+    optionaldouble_funcs.cpp
     producers.cpp
     range_funcs.cpp
     species_funcs.cpp

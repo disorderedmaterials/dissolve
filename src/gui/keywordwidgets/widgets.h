@@ -22,6 +22,7 @@
 #include "gui/keywordwidgets/nodevalue.h"
 #include "gui/keywordwidgets/nodevalueenumoptions.h"
 #include "gui/keywordwidgets/nodevector.h"
+#include "gui/keywordwidgets/optionaldouble.hui"
 #include "gui/keywordwidgets/range.h"
 #include "gui/keywordwidgets/species.hui"
 #include "gui/keywordwidgets/speciessite.h"

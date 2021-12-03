@@ -22,6 +22,7 @@ add_library(
   nodebranch.cpp
   nodeunderlay.cpp
   nodevalue.cpp
+  optionaldouble.cpp
   procedure.cpp
   range.cpp
   species.cpp
@@ -66,6 +67,7 @@ add_library(
   nodevalue.h
   nodevalueenumoptions.h
   nodevector.h
+  optionaldouble.h
   procedure.h
   range.h
   species.h

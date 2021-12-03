@@ -12,6 +12,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
 
 // Classes
 #include "keywords/atomtypevector.h"

@@ -25,6 +25,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<NodeKeywordBase, NodeKeywordWidget>();
     registerProducer<NodeValueEnumOptionsBaseKeyword, NodeValueEnumOptionsKeywordWidget>();
     registerProducer<NodeValueKeyword, NodeValueKeywordWidget>();
+    registerProducer<OptionalDoubleKeyword, OptionalDoubleKeywordWidget>();
     registerProducer<RangeKeyword, RangeKeywordWidget>();
     registerProducer<SpeciesKeyword, SpeciesKeywordWidget>();
     registerProducer<SpeciesSiteKeyword, SpeciesSiteKeywordWidget>();

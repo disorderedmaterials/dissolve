@@ -36,6 +36,7 @@ class ExponentialSpin : public QAbstractSpinBox
     public:
     // Set value
     void setValue(double value);
+    void setValue(std::optional<double> value);
     // Return current value
     double value() const;
     // Set value step size
@@ -55,16 +56,18 @@ class ExponentialSpin : public QAbstractSpinBox
      * Signals / Slots
      */
     private slots:
-    // Line edit editing finished
     void valueEditingFinished();
+    void returnPressed();
 
     signals:
     void valueChanged(double);
+    void valueNullified();
 
     /*
      * Reimplementations
      */
     public:
+    void focusInEvent(QFocusEvent *e) override;
     // Step value by specified number of increments
     void stepBy(int steps) override;
     // Return whether stepping is currently available
