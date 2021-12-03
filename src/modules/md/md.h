@@ -26,7 +26,7 @@ class MDModule : public Module
     // Set cap on allowable force (kJ/mol) per atom
     double capForcesAt_{1.0e7};
     // Interatomic cutoff distance to employ
-    double cutoffDistance_{-1.0};
+    std::optional<double> cutoffDistance_;
     // Timestep (ps) to use in MD simulation
     double deltaT_{1.0e-4};
     // Frequency at which to calculate total system energy (or 0 to inhibit)

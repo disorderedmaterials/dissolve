@@ -19,7 +19,7 @@ class AtomShakeModule : public Module
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
     // Interatomic cutoff distance to use for energy calculation
-    double cutoffDistance_{-1.0};
+    std::optional<double> cutoffDistance_;
     // Number of shakes to attempt per atom
     int nShakesPerAtom_{1};
     // Step size in Angstroms to use in Monte Carlo moves

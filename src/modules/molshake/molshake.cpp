@@ -5,6 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
 #include "keywords/speciesvector.h"
 
 MolShakeModule::MolShakeModule() : Module("MolShake")
@@ -14,8 +15,10 @@ MolShakeModule::MolShakeModule() : Module("MolShake")
                                                     targetConfigurations_);
 
     // Control
-    keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to use for energy calculation",
-                                 cutoffDistance_, -1.0);
+    keywords_.add<OptionalDoubleKeyword>(
+        "Control", "CutoffDistance",
+        "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)", cutoffDistance_, 0.0,
+        std::nullopt, 0.1, "Use PairPotential Range");
     keywords_.add<IntegerKeyword>("Control", "ShakesPerMolecule", "Number of shakes to attempt per molecule",
                                   nShakesPerMolecule_, 1);
     keywords_.add<DoubleKeyword>("Control", "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves",

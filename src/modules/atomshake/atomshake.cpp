@@ -5,6 +5,7 @@
 #include "keywords/configurationvector.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
 
 AtomShakeModule::AtomShakeModule() : Module("AtomShake")
 {
@@ -13,8 +14,10 @@ AtomShakeModule::AtomShakeModule() : Module("AtomShake")
                                                     targetConfigurations_);
 
     // Control
-    keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to use for energy calculation",
-                                 cutoffDistance_, -1.0);
+    keywords_.add<OptionalDoubleKeyword>(
+        "Control", "CutoffDistance",
+        "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)", cutoffDistance_, 0.0,
+        std::nullopt, 0.1, "Use PairPotential Range");
     keywords_.add<IntegerKeyword>("Control", "ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_, 1);
     keywords_.add<DoubleKeyword>("Control", "StepSize", "Step size in Angstroms to use in Monte Carlo moves", stepSize_, 0.001)
         ->setOptionMask(KeywordBase::InRestartFileOption);

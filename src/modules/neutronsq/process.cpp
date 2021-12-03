@@ -59,8 +59,8 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
-        auto ftQMin = keywords_.hasBeenSet("ReferenceFTQMin") ? referenceFTQMin_ : 0.0;
-        auto ftQMax = keywords_.hasBeenSet("ReferenceFTQMax") ? referenceFTQMax_ : referenceData.xAxis().back() + 1.0;
+        auto ftQMin = referenceFTQMin_.value_or(0.0);
+        auto ftQMax = referenceFTQMax_.value_or(referenceData.xAxis().back() + 1.0);
         if (referenceWindowFunction_ == WindowFunction::Form::None)
             Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
         else

@@ -29,7 +29,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
-    auto rCut = cutoffDistance_ < 0.0 ? dissolve.pairPotentialRange() : cutoffDistance_;
+    auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
     auto writeTraj = trajectoryFrequency_ > 0;
 
     // Print argument/parameter summary
