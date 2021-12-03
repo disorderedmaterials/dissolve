@@ -3,4 +3,4 @@
 
 #include "gui/keywordwidgets/base.h"
 
-KeywordWidgetBase::KeywordWidgetBase(const CoreData &coreData) : coreData_(coreData) { refreshing_ = false; }
+KeywordWidgetBase::KeywordWidgetBase(const CoreData &coreData) : coreData_(coreData), refreshing_(false) {}
