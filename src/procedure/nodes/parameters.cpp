@@ -2,10 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/parameters.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "expression/variable.h"
-#include "keywords/types.h"
+#include "keywords/expressionvariablevector.h"
 
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Parameters)
 {

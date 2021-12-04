@@ -4,7 +4,9 @@
 #include "io/import/data1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "keywords/types.h"
+#include "keywords/double.h"
+#include "keywords/integer.h"
+#include "math/data1d.h"
 #include "math/filters.h"
 
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format)

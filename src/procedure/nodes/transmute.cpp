@@ -2,14 +2,13 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/transmute.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "classes/atomchangetoken.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "keywords/types.h"
+#include "keywords/node.h"
+#include "keywords/species.h"
+#include "keywords/speciesvector.h"
 #include "procedure/nodes/pick.h"
 
 TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Transmute)

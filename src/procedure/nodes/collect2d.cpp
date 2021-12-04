@@ -2,10 +2,10 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/collect2d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "classes/configuration.h"
-#include "keywords/types.h"
+#include "keywords/nodeandinteger.h"
+#include "keywords/nodebranch.h"
+#include "keywords/vec3double.h"
 #include "math/data2d.h"
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"

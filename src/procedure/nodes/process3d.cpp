@@ -2,11 +2,11 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/process3d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "keywords/types.h"
+#include "keywords/fileandformat.h"
+#include "keywords/nodebranch.h"
+#include "keywords/stdstring.h"
 #include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"

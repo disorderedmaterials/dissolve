@@ -2,13 +2,11 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/remove.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "keywords/types.h"
+#include "keywords/node.h"
+#include "keywords/speciesvector.h"
 #include "procedure/nodes/pick.h"
 
 RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Remove)

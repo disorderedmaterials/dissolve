@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "keywords/types.h"
 #include "main/dissolve.h"
 #include "modules/epsr/epsr.h"
 

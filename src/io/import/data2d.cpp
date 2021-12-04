@@ -4,7 +4,7 @@
 #include "io/import/data2d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "keywords/types.h"
+#include "keywords/vec3double.h"
 
 Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2DImportFileFormat::Data2DImportFormat format)
     : FileAndFormat(formats_, filename)

@@ -2,16 +2,17 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/select.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/sitereference.h"
 #include "classes/species.h"
-#include "keywords/types.h"
+#include "keywords/dynamicsitenodes.h"
+#include "keywords/node.h"
+#include "keywords/nodebranch.h"
+#include "keywords/nodevector.h"
+#include "keywords/range.h"
+#include "keywords/speciessitevector.h"
 #include "procedure/nodes/dynamicsite.h"
-#include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)

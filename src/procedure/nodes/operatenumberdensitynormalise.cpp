@@ -2,12 +2,10 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/operatenumberdensitynormalise.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "keywords/types.h"
+#include "keywords/nodevector.h"
+#include "math/data1d.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
 #include "procedure/nodes/select.h"

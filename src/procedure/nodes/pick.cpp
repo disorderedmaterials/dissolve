@@ -2,11 +2,10 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/pick.h"
-#include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "keywords/types.h"
+#include "keywords/speciesvector.h"
 
 PickProcedureNode::PickProcedureNode(std::vector<const Species *> species)
     : PickProcedureNodeBase(ProcedureNode::NodeType::Pick), speciesToPick_(std::move(species))

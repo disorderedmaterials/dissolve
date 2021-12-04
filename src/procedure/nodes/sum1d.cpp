@@ -2,17 +2,14 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/sum1d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "io/export/data1d.h"
-#include "keywords/types.h"
+#include "keywords/bool.h"
+#include "keywords/range.h"
 #include "math/integrator.h"
 #include "modules/analyse/analyse.h"
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/process1d.h"
-#include "procedure/nodes/select.h"
 
 Sum1DProcedureNode::Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Sum1D), sourceData_(target)

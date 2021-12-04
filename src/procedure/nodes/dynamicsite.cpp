@@ -4,15 +4,13 @@
 #include "procedure/nodes/dynamicsite.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "classes/atom.h"
-#include "classes/atomtype.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "classes/species.h"
-#include "data/elements.h"
-#include "keywords/types.h"
+#include "keywords/atomtypevector.h"
+#include "keywords/elementvector.h"
 #include "procedure/nodes/select.h"
 
 DynamicSiteProcedureNode::DynamicSiteProcedureNode(std::shared_ptr<SelectProcedureNode> parent)
