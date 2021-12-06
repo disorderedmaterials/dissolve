@@ -59,8 +59,8 @@ TEST(OptionalDoubleTest, Clamped)
 TEST(OptionalDoubleTest, Widget)
 {
     char arg0[] = "OptionalDoubleTest";
-    char arg1[] =  "-platform";
-    char arg2[] =  "offscreen";
+    char arg1[] = "-platform";
+    char arg2[] = "offscreen";
     char *argv[] = {arg0, arg1, arg2};
     int argc{3};
     QApplication app(argc, argv);
