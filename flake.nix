@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
     flake-utils.url = "github:numtide/flake-utils";
     flake-utils.inputs.nixpkgs.follows = "nixpkgs";
     bundler.url = "github:matthewbauer/nix-bundle";
@@ -98,7 +98,8 @@
             Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
 
           } else
-            { }));
+            { }))
+          // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
         mkSingularity = { mpi ? false, gui ? false, threading ? true }:
           pkgs.singularity-tools.buildImage {
             name = "${exe-name mpi gui}-${version}";
