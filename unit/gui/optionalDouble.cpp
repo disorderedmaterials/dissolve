@@ -59,8 +59,10 @@ TEST(OptionalDoubleTest, Clamped)
 TEST(OptionalDoubleTest, Widget)
 {
     char arg0[] = "OptionalDoubleTest";
-    char *argv[] = {&arg0[0], nullptr};
-    int argc{1};
+    char arg1[] =  "-platform";
+    char arg2[] =  "offscreen";
+    char *argv[] = {arg0, arg1, arg2};
+    int argc{3};
     QApplication app(argc, argv);
 
     // Minimum at -50.0, maximum at 50.0
