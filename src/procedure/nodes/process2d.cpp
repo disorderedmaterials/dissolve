@@ -2,16 +2,14 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/process2d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "io/export/data2d.h"
-#include "keywords/types.h"
+#include "keywords/fileandformat.h"
+#include "keywords/nodebranch.h"
+#include "keywords/stdstring.h"
 #include "math/integrator.h"
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/operatebase.h"
-#include "procedure/nodes/select.h"
 
 Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process2D), sourceData_(target)

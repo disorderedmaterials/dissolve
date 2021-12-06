@@ -2,17 +2,16 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/process1d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "io/export/data1d.h"
-#include "keywords/types.h"
+#include "keywords/bool.h"
+#include "keywords/fileandformat.h"
+#include "keywords/nodebranch.h"
+#include "keywords/stdstring.h"
 #include "math/integrator.h"
 #include "modules/analyse/analyse.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/operatebase.h"
-#include "procedure/nodes/select.h"
 
 Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Process1D), sourceData_(target)

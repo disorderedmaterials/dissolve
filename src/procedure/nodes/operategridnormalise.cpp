@@ -5,7 +5,6 @@
 #include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "keywords/types.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
 #include "procedure/nodes/select.h"

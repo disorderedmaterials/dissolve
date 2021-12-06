@@ -36,9 +36,9 @@ class NeutronSQModule : public Module
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Minimum Q value to use when Fourier-transforming the data
-    double referenceFTQMin_{0.0};
+    std::optional<double> referenceFTQMin_{0.3};
     // Maximum Q value to use when Fourier-transforming the data
-    double referenceFTQMax_{0.0};
+    std::optional<double> referenceFTQMax_{30.0};
     // Spacing in r to use when generating the Fourier-transformed data
     double referenceFTDeltaR_{0.05};
     // Normalisation to remove from reference total F(Q)

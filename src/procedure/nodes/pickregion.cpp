@@ -5,7 +5,6 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "keywords/node.h"
-#include "keywords/types.h"
 #include "procedure/nodes/regionbase.h"
 
 PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region)

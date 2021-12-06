@@ -5,6 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
 
 IntraShakeModule::IntraShakeModule() : Module("IntraShake")
 {
@@ -13,7 +14,10 @@ IntraShakeModule::IntraShakeModule() : Module("IntraShake")
                                                     targetConfigurations_);
 
     // Control
-    keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to employ", cutoffDistance_, -1.0);
+    keywords_.add<OptionalDoubleKeyword>(
+        "Control", "CutoffDistance",
+        "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)", cutoffDistance_, 0.0,
+        std::nullopt, 0.1, "Use PairPotential Range");
     keywords_.add<IntegerKeyword>("Control", "ShakesPerTerm", "Number of shakes per term", nShakesPerTerm_, 1);
     keywords_.add<DoubleKeyword>("Control", "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves",
                                  targetAcceptanceRate_, 0.001, 1.0);

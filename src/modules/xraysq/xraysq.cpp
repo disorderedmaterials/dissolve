@@ -7,6 +7,7 @@
 #include "keywords/double.h"
 #include "keywords/fileandformat.h"
 #include "keywords/module.h"
+#include "keywords/optionaldouble.h"
 #include "modules/sq/sq.h"
 
 XRaySQModule::XRaySQModule() : Module("XRaySQ")
@@ -31,13 +32,15 @@ XRaySQModule::XRaySQModule() : Module("XRaySQ")
             "Reference Data", "ReferenceNormalisation", "Normalisation to remove from reference data before use",
             referenceNormalisation_, StructureFactors::normalisationTypes())
         ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
-    keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTQMin",
-                                 "Set the minimum Q value to use when Fourier-transforming the data", referenceFTQMin_);
-    keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTQMax",
-                                 "Set the maximum Q value to use when Fourier-transforming the data", referenceFTQMax_);
+    keywords_.add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMin",
+                                         "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
+                                         referenceFTQMin_, 0.0, std::nullopt, 0.01, "No Minimum Limit");
+    keywords_.add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMax",
+                                         "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
+                                         referenceFTQMax_, 0.0, std::nullopt, 0.01, "No Maximum Limit");
     keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTDeltaR",
-                                 "Set the spacing in r to use when generating the Fourier-transformed data",
-                                 referenceFTDeltaR_);
+                                 "Set the spacing in r to use when generating the Fourier-transformed data", referenceFTDeltaR_,
+                                 1.0e-4, 1.0);
     keywords_
         .add<EnumOptionsKeyword<WindowFunction::Form>>(
             "Reference Data", "ReferenceWindowFunction",

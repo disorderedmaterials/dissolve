@@ -2,10 +2,11 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/pickproximity.h"
-#include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "keywords/types.h"
+#include "keywords/double.h"
+#include "keywords/integer.h"
+#include "keywords/speciesvector.h"
 #include "templates/algorithms.h"
 
 PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase(ProcedureNode::NodeType::PickProximity)

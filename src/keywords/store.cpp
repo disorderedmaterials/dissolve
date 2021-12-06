@@ -4,7 +4,16 @@
 #include "keywords/store.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "keywords/types.h"
+#include "keywords/bool.h"
+#include "keywords/configuration.h"
+#include "keywords/configurationvector.h"
+#include "keywords/double.h"
+#include "keywords/integer.h"
+#include "keywords/module.h"
+#include "keywords/modulevector.h"
+#include "keywords/nodevector.h"
+#include "keywords/stdstring.h"
+#include "keywords/vec3double.h"
 #include "procedure/nodes/nodes.h"
 
 // Static Singletons

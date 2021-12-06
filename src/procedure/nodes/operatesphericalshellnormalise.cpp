@@ -7,7 +7,6 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
 OperateSphericalShellNormaliseProcedureNode::OperateSphericalShellNormaliseProcedureNode()

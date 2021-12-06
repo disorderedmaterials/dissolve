@@ -37,7 +37,7 @@ class IntraShakeModule : public Module
     // Maximum step size for bond adjustments (Angstroms)
     double bondStepSizeMax_{0.2};
     // Interatomic cutoff distance to employ
-    double cutoffDistance_{-1.0};
+    std::optional<double> cutoffDistance_;
     // Number of shakes per term
     int nShakesPerTerm_{1};
     // Target acceptance rate for Monte Carlo moves

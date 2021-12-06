@@ -9,7 +9,11 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "keywords/types.h"
+#include "keywords/bool.h"
+#include "keywords/node.h"
+#include "keywords/nodevalue.h"
+#include "keywords/nodevalueenumoptions.h"
+#include "keywords/species.h"
 #include "procedure/nodes/regionbase.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,

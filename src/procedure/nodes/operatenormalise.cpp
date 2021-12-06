@@ -2,9 +2,9 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "procedure/nodes/operatenormalise.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "keywords/types.h"
+#include "keywords/bool.h"
+#include "keywords/nodevalue.h"
+#include "math/data1d.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
 #include "math/integrator.h"

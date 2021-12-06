@@ -5,6 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
 #include "keywords/speciesvector.h"
 
 MDModule::MDModule() : Module("MD")
@@ -14,7 +15,10 @@ MDModule::MDModule() : Module("MD")
                                                     targetConfigurations_);
 
     // Control
-    keywords_.add<DoubleKeyword>("Control", "CutoffDistance", "Interatomic cutoff distance to employ", cutoffDistance_, -1.0);
+    keywords_.add<OptionalDoubleKeyword>(
+        "Control", "CutoffDistance",
+        "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)", cutoffDistance_, 0.0,
+        std::nullopt, 0.1, "Use PairPotential Range");
     keywords_.add<IntegerKeyword>("Control", "NSteps", "Number of MD steps to perform", nSteps_, 1);
     keywords_.add<BoolKeyword>("Control", "CapForces", "Control whether atomic forces are capped every step", capForces_);
     keywords_.add<DoubleKeyword>("Control", "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
