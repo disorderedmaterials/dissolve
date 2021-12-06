@@ -201,6 +201,9 @@ void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }
 // Target keyword data changed
 void ModuleControlWidget::targetKeywordDataChanged(int flags)
 {
+    if (refreshLock_.isLocked())
+        return;
+
     // Always emit the 'dataModified' signal
     emit(dataModified());
 

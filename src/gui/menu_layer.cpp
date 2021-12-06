@@ -212,16 +212,16 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the RDF module
-    auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
+    auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
     rdfModule->keywords().set("Configuration", firstCfg);
 
     // Add a plain structure factor module
     auto *sqModule = dynamic_cast<SQModule *>(ModuleRegistry::create("SQ", newLayer));
-    sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
+    sqModule->keywords().set<const Module *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
     Module *module = ModuleRegistry::create("NeutronSQ", newLayer);
-    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
+    module->keywords().set<const Module *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -241,20 +241,20 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
                                                        : std::vector<Configuration *>{dissolve_.configurations().front().get()};
 
     // Add the RDF module
-    auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
+    auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
     rdfModule->keywords().set("Configuration", firstCfg);
 
     // Add a plain structure factor module
-    auto *sqModule = dynamic_cast<SQModule *>(ModuleRegistry::create("SQ", newLayer));
-    sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
+    auto *sqModule = ModuleRegistry::create("SQ", newLayer);
+    sqModule->keywords().set<const Module *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
-    Module *module = ModuleRegistry::create("NeutronSQ", newLayer);
-    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
+    auto *module = ModuleRegistry::create("NeutronSQ", newLayer);
+    module->keywords().set<const Module *>("SourceSQs", sqModule);
 
     // Add an XRaySQ module
     module = ModuleRegistry::create("XRaySQ", newLayer);
-    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
+    module->keywords().set<const Module *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -269,17 +269,15 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(dissolve_.uniqueProcessingLayerName("Analyse RDF/CN"));
 
-    Module *module;
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the CalculateRDF module
-    auto *calcRDFModule = dynamic_cast<CalculateRDFModule *>(ModuleRegistry::create("CalculateRDF", newLayer));
+    auto *calcRDFModule = ModuleRegistry::create("CalculateRDF", newLayer);
     calcRDFModule->keywords().set("Configuration", firstCfg);
 
     // Add a CalculateCN module
-    module = ModuleRegistry::create("CalculateCN", newLayer);
-    module->keywords().set<const CalculateRDFModule *>("SourceRDF", calcRDFModule);
+    auto *module = ModuleRegistry::create("CalculateCN", newLayer);
+    module->keywords().set<const Module *>("SourceRDF", calcRDFModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -294,12 +292,10 @@ void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(dissolve_.uniqueProcessingLayerName("Analyse AvgMol/SDF"));
 
-    Module *module;
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the CalculateAvgMol module
-    module = ModuleRegistry::create("CalculateAvgMol", newLayer);
+    auto *module = ModuleRegistry::create("CalculateAvgMol", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add a CalculateSDF module
