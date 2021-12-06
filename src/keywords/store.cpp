@@ -9,6 +9,7 @@
 #include "keywords/configurationvector.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/module.h"
 #include "keywords/modulevector.h"
 #include "keywords/nodevector.h"
 #include "keywords/stdstring.h"
