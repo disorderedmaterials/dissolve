@@ -60,13 +60,20 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
 {
   if (role != Qt::DisplayRole) return {};
-  if (!index.parent().isValid())
-    return  "Node";
-  else if (!index.parent().parent().isValid())
-    return "Group";
-  else return "Param";
+  auto nodes = procedure_.nodes();
+  if (!index.parent().isValid()) {
+    return QString::fromStdString(std::string(nodes[index.row()]->name()));
+  }
+  else if (!index.parent().parent().isValid()) {
+    auto groups = nodes[index.parent().row()]->keywords().displayGroups();
 
-    auto nodes = procedure_.nodes();
+    return QString::fromStdString(std::string(groups[index.row()].first));
+  }
+  else {
+    auto groups = nodes[index.parent().parent().row()]->keywords().displayGroups();
+    auto keyword = groups[index.parent().row()].second[index.row()];
+    return QString::fromStdString(std::string(keyword->name()));
+  }
 
     if (!index.parent().isValid()) {
     if (role == Qt::DisplayRole)
