@@ -62,52 +62,33 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
   if (role != Qt::DisplayRole) return {};
   auto nodes = procedure_.nodes();
   if (!index.parent().isValid()) {
-    return QString::fromStdString(std::string(nodes[index.row()]->name()));
+    switch (index.column()) {
+    case 0:
+      return QString::fromStdString(std::string(nodes[index.row()]->name()));
+    default: return {};
+    }
   }
   else if (!index.parent().parent().isValid()) {
     auto groups = nodes[index.parent().row()]->keywords().displayGroups();
 
+    switch (index.column()) {
+    case 0:
     return QString::fromStdString(std::string(groups[index.row()].first));
+    default: return {};
+    }
   }
   else {
     auto groups = nodes[index.parent().parent().row()]->keywords().displayGroups();
     auto keyword = groups[index.parent().row()].second[index.row()];
+
+    switch (index.column()) {
+    case 0:
     return QString::fromStdString(std::string(keyword->name()));
+    case 1: return keyword->minArguments();
+    default: return {};
+    }
   }
 
-    if (!index.parent().isValid()) {
-    if (role == Qt::DisplayRole)
-      switch (index.column()) {
-      case 0:
-	return QString::fromStdString(std::string(nodes[index.row()]->name()));
-      case 1:
-	return QString::fromStdString("Type");
-      default:
-	return {};
-      }
-    else if (role == Qt::UserRole)
-      return QVariant::fromValue(nodes[index.row()]);
-    }
-
-    if (!index.parent().parent().isValid()) {
-      if (role == Qt::DisplayRole)
-	return "Quux";
-      return {};
-    }
-
-    Messenger::print("{}", index.parent().parent().row());
-    if (index.parent().parent().row() < 0) return {};
-
-    auto keywords = nodes[index.parent().parent().row()]->keywords().keywords();
-    if (role == Qt::DisplayRole)
-      switch (index.column()) {
-      case 0:
-	return QString::fromStdString(std::string((std::next(keywords.begin(), index.row())->first)));
-      case 1:
-	return QString::fromStdString("Type");
-      default:
-	return {};
-      }
 
     return {};
 }
