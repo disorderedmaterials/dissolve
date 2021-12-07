@@ -678,7 +678,7 @@
        </layout>
       </item>
       <item>
-       <widget class="ProcedureEditor" name="ProcedureWidget" native="true">
+       <widget class="QTreeView" name="ProcedureWidget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
           <horstretch>0</horstretch>

@@ -35,8 +35,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.ViewerWidget->setConfiguration(configuration_);
 
     // Set target for ProcedureEditor, and connect signals
-    ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
-    connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
+    nodeModel_.setData(configuration_->generator().nodes());
+    ui_.ProcedureWidget->setModel(&nodeModel_);
+    connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
 }
 
 /*
