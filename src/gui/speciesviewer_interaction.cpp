@@ -195,7 +195,7 @@ void SpeciesViewer::endInteraction()
                     idI = clickedAtomIndex_ ? clickedAtomIndex_.value() : species_->addAtom(drawElement_, drawCoordinateStart_);
 
                     // Get atom at current coordinates - if there isn't one, create one now
-                    currentAtomIndex = atomIndexAt(rMouseLast_.x, rMouseLast_.y).value_or(-1);
+                    currentAtomIndex = atomIndexAt(rMouseLast_.x, rMouseLast_.y);
                     idJ = currentAtomIndex ? currentAtomIndex.value() : species_->addAtom(drawElement_, drawCoordinateCurrent_);
 
                     // Create a bond between the two atoms, if one doesn't currently exist
