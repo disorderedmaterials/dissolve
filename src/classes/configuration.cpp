@@ -73,8 +73,7 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    if (cells_.nCells() == 0)
-        cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
+    cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
 
     // Make sure Cell contents / Atom locations are up-to-date
     updateCellContents();
