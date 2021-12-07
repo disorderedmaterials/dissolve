@@ -6,7 +6,7 @@
 #include "base/units.h"
 #include "gui/maintab.h"
 #include "gui/models/enumOptionsModel.h"
-#include "gui/models/procedureNodeModel.h"
+#include "gui/models/procedureModel.h"
 #include "gui/ui_configurationtab.h"
 
 // Forward Declarations
@@ -53,7 +53,7 @@ class ConfigurationTab : public QWidget, public MainTab
     // Configuration data to display
     Configuration *configuration_;
     // Procedure Model
-    ProcedureNodeModel nodeModel_;
+    ProcedureModel procedureModel_;
 
     public:
     // Return displayed Configuration

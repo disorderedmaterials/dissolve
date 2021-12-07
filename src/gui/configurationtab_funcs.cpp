@@ -16,7 +16,7 @@
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
-    : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this)
+  : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this), procedureModel_(cfg->generator())
 {
     ui_.setupUi(this);
 
@@ -35,9 +35,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.ViewerWidget->setConfiguration(configuration_);
 
     // Set target for ProcedureEditor, and connect signals
-    nodeModel_.setData(configuration_->generator().nodes());
-    ui_.ProcedureWidget->setModel(&nodeModel_);
-    connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
+    ui_.ProcedureWidget->setModel(&procedureModel_);
+    connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
 }
 
 /*
