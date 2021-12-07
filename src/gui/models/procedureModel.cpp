@@ -49,10 +49,12 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
     auto nodes = procedure_.nodes();
     if (!parent.isValid())
       return nodes.size();
-    if (!parent.parent().isValid())
-      return 1;
-    return 1;
-    return nodes[parent.parent().row()]->keywords().keywords().size();
+    if (!parent.parent().isValid()) {
+      auto groups = nodes[parent.row()]->keywords().displayGroups();
+      return groups.size();
+    }
+    auto groups = nodes[parent.parent().row()]->keywords().displayGroups();
+    return groups[parent.row()].second.size();
 }
 
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
