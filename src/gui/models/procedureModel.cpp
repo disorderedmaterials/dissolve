@@ -8,6 +8,7 @@
 /*
  * QAbstractItemModel overrides
  */
+const quintptr OFFSET = 0x10000;
 
 ProcedureModel::ProcedureModel(Procedure &procedure) : procedure_(procedure) {}
 
@@ -18,7 +19,7 @@ QModelIndex ProcedureModel::index(int row, int column, const QModelIndex& parent
     else if (!parent.parent().isValid())
         child = parent.row() + 1;
     else
-      child = 100 * (parent.row() + 1) + parent.parent().row() + 1;
+      child = OFFSET * (parent.row() + 1) + parent.parent().row() + 1;
 
     return createIndex(row, column, child);
 }
@@ -27,9 +28,9 @@ QModelIndex ProcedureModel::parent(const QModelIndex& index) const {
   quintptr root = 0;
   if (index.internalId() == 0)
         return {};
-  if (index.internalId() < 100)
+  if (index.internalId() < OFFSET)
     return createIndex(index.internalId() - 1, 0, root);
-  return createIndex(index.internalId() / 100 - 1, 0, index.internalId() % 100);
+  return createIndex(index.internalId() / OFFSET - 1, 0, index.internalId() % OFFSET);
 }
 
 bool ProcedureModel::hasChildren(const QModelIndex &parent) const {
