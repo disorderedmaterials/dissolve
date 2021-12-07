@@ -14,24 +14,26 @@ ProcedureModel::ProcedureModel(Procedure &procedure) : procedure_(procedure) {}
 QModelIndex ProcedureModel::index(int row, int column, const QModelIndex& parent) const {
     quintptr child;
     if (!parent.isValid())
-        child = 0;
-    else if (parent.internalId() == 0)
+      child = 0;
+    else if (!parent.parent().isValid())
         child = parent.row() + 1;
     else
-        return {};
+      child = 100 * (parent.row() + 1) + parent.parent().row() + 1;
 
     return createIndex(row, column, child);
 }
 
 QModelIndex ProcedureModel::parent(const QModelIndex& index) const {
-    quintptr root = 0;
-    if (index.internalId() == 0)
+  quintptr root = 0;
+  if (index.internalId() == 0)
         return {};
+  if (index.internalId() < 100)
     return createIndex(index.internalId() - 1, 0, root);
+  return createIndex(index.internalId() / 100 - 1, 0, index.internalId() % 100);
 }
 
 bool ProcedureModel::hasChildren(const QModelIndex &parent) const {
-  return !parent.internalId();
+  return !parent.internalId() || !parent.parent().internalId();
 }
 
 int ProcedureModel::columnCount(const QModelIndex &parent) const
@@ -46,11 +48,21 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
     auto nodes = procedure_.nodes();
     if (!parent.isValid())
       return nodes.size();
-    return nodes[parent.row()]->keywords().keywords().size();
+    if (!parent.parent().isValid())
+      return 1;
+    return 1;
+    return nodes[parent.parent().row()]->keywords().keywords().size();
 }
 
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
 {
+  if (role != Qt::DisplayRole) return {};
+  if (!index.parent().isValid())
+    return  "Node";
+  else if (!index.parent().parent().isValid())
+    return "Group";
+  else return "Param";
+
     auto nodes = procedure_.nodes();
 
     if (!index.parent().isValid()) {
@@ -67,9 +79,16 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
       return QVariant::fromValue(nodes[index.row()]);
     }
 
-    Messenger::print("{}", index.parent().row());
-    if (index.parent().row() < 0) return {};
-    auto keywords = nodes[index.parent().row()]->keywords().keywords();
+    if (!index.parent().parent().isValid()) {
+      if (role == Qt::DisplayRole)
+	return "Quux";
+      return {};
+    }
+
+    Messenger::print("{}", index.parent().parent().row());
+    if (index.parent().parent().row() < 0) return {};
+
+    auto keywords = nodes[index.parent().parent().row()]->keywords().keywords();
     if (role == Qt::DisplayRole)
       switch (index.column()) {
       case 0:
