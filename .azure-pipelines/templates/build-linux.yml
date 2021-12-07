@@ -42,13 +42,13 @@ steps:
       nix build -L .#${{ parameters.package }}
       nix build --json .#${{ parameters.package }} > archive.json
     displayName: 'Build'
-    env:
-      CACHIX_AUTH_TOKEN: $(cachix_token)
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cat archive.json | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
     displayName: 'Push to Cachix'
+    env:
+      CACHIX_AUTH_TOKEN: $(cachix_token)
     condition: eq('${{ parameters.export }}', 'true')
   - bash: |
       set -ex
