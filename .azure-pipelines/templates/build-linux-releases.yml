@@ -22,7 +22,7 @@ jobs:
         parameters:
           package: "dissolve-mpi"
           exportExe: false
-          exportSingulariry: true
+          exportSingularity: true
   - job: "release_linux_gui"
     displayName: "Release GUI, Exe"
     pool:
@@ -46,7 +46,7 @@ jobs:
         parameters:
           package: "dissolve-gui"
           exportExe: false
-          exportSingulariry: true
+          exportSingularity: true
   - job: "release_linux"
     displayName: "Release CLI, Exe"
     pool:
@@ -70,7 +70,7 @@ jobs:
         parameters:
           package: "dissolve"
           exportExe: false
-          exportSingulariry: true
+          exportSingularity: true
   - job: "release_linux_threadless"
     displayName: "Release Threadless"
     pool:
