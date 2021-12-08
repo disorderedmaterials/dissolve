@@ -25,7 +25,7 @@ class Data3DStoreKeyword : public KeywordBase
     public:
     // Return reference to data
     Data3DStore &data();
-    const Data3DStore &data() const;
+    std::any_ptr data() const override;
 
     /*
      * Arguments

@@ -29,7 +29,7 @@ class NodeValueKeyword : public KeywordBase
     public:
     // Return reference to data
     NodeValue &data();
-    const NodeValue &data() const;
+    std::any_ptr data() const override;
     // Set the value from supplied expression text
     bool setData(std::string_view expressionText);
     // Display in GUI

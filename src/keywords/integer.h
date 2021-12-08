@@ -26,7 +26,7 @@ class IntegerKeyword : public KeywordBase
     // Set data
     bool setData(int value);
     // Return data
-    int data() const;
+    std::any_ptr data() const override;
     // Return validation minimum limit
     std::optional<int> validationMin();
     // Return validation maximum limit

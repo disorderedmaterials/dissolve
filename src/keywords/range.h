@@ -26,7 +26,7 @@ class RangeKeyword : public KeywordBase
     public:
     // Return reference to data
     Range &data();
-    const Range &data() const;
+    std::any_ptr data() const override;
     // Label type to display in GUI
     Vec3Labels::LabelType labelType() const;
 

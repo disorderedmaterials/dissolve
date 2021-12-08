@@ -25,7 +25,7 @@ class Data2DStoreKeyword : public KeywordBase
     public:
     // Return reference to data
     Data2DStore &data();
-    const Data2DStore &data() const;
+    std::any_ptr data() const override;
 
     /*
      * Arguments

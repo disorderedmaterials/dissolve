@@ -25,7 +25,7 @@ class ValueStoreKeyword : public KeywordBase
     public:
     // Return reference to data
     ValueStore &data();
-    const ValueStore &data() const;
+    std::any_ptr data() const override;
 
     /*
      * Arguments

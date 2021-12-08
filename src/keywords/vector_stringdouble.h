@@ -26,7 +26,7 @@ class StringDoubleVectorKeyword : public KeywordBase
     public:
     // Return reference to data
     StringDoubleVectorKeywordData &data();
-    const StringDoubleVectorKeywordData &data() const;
+    std::any_ptr data() const override;
 
     /*
      * Arguments

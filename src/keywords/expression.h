@@ -27,7 +27,7 @@ class ExpressionKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    const Expression &data() const;
+    std::any_ptr data() const override;
     // Set data
     bool setData(std::string_view expressionText);
 

@@ -23,7 +23,7 @@ class ProcedureKeyword : public KeywordBase
     public:
     // Return reference to data
     Procedure &data();
-    const Procedure &data() const;
+    std::any_ptr data() const override;
 
     /*
      * Arguments

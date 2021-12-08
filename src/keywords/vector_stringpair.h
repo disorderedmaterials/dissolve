@@ -27,7 +27,7 @@ class StringPairVectorKeyword : public KeywordBase
     public:
     // Return reference to data
     StringPairVectorKeywordData &data();
-    const StringPairVectorKeywordData &data() const;
+    std::any_ptr data() const override;
 
     /*
      * Arguments

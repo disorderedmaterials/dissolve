@@ -25,7 +25,7 @@ class Data1DStoreKeyword : public KeywordBase
     public:
     // Return reference to data
     Data1DStore &data();
-    const Data1DStore &data() const;
+    std::any_ptr data() const override;
 
     /*
      * Arguments
