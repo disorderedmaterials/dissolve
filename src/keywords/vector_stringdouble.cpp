@@ -14,8 +14,8 @@ StringDoubleVectorKeyword::StringDoubleVectorKeyword(StringDoubleVectorKeywordDa
  */
 
 // Return reference to data
-StringDoubleVectorKeywordData &StringDoubleVectorKeyword::data() { return data_; }
-dissolve::any_ptr StringDoubleVectorKeyword::data() { return data_; }
+StringDoubleVectorKeywordData &StringDoubleVectorKeyword::data() const { return data_; }
+dissolve::any_ptr StringDoubleVectorKeyword::data() const { return data_; }
 
 /*
  * Arguments

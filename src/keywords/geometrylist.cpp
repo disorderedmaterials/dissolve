@@ -15,7 +15,7 @@ GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geomet
  */
 
 // Return reference to vector of data
-std::vector<Geometry> &GeometryListKeyword::data() { return data_; };
+std::vector<Geometry> &GeometryListKeyword::data() const { return data_; };
 const std::vector<Geometry> &GeometryListKeyword::data() const { return data_; }
 
 /*

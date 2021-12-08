@@ -32,7 +32,7 @@ class IntegerDoubleVectorKeyword : public KeywordBase
     public:
     // Return reference to data
     IntegerDoubleVectorKeywordData &data();
-    std::any_ptr data() const override;
+    dissolve::any_ptr data() const override;
 
     /*
      * Arguments

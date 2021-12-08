@@ -12,8 +12,7 @@ Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data) : KeywordBase(typeid(t
  */
 
 // Return reference to data
-Data3DStore &Data3DStoreKeyword::data() { return data_; }
-dissolve::any_ptr Data3DStoreKeyword::data() { return data_; }
+dissolve::any_ptr Data3DStoreKeyword::data() const { return data_; }
 
 /*
  * Arguments

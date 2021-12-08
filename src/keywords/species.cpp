@@ -13,7 +13,7 @@ SpeciesKeyword::SpeciesKeyword(const Species *&data) : KeywordBase(typeid(this))
  */
 
 // Return reference to data
-const Species *&SpeciesKeyword::data() { return data_; }
+const Species *&SpeciesKeyword::data() const { return data_; }
 const Species *&SpeciesKeyword::data() const { return data_; }
 std::string SpeciesKeyword::toString() const {
   return std::string(data_->name());

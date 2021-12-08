@@ -22,7 +22,7 @@ DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<std::shared_ptr<Dyn
 bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data
-std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() { return data_; }
+std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() const { return data_; }
 const std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() const { return data_; }
 
 // Return parent SelectProcedureNode

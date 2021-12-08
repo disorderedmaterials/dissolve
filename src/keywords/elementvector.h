@@ -26,8 +26,7 @@ class ElementVectorKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    std::vector<Elements::Element> &data();
-    const std::vector<Elements::Element> &data() const;
+  dissolve::any_ptr data() const;
 
     /*
      * Arguments

@@ -12,8 +12,8 @@ StringKeyword::StringKeyword(std::string &data) : KeywordBase(typeid(this)), dat
  */
 
 // Return reference to data
-std::string &StringKeyword::data() { return data_; }
-const std::dissolve::any_ptr StringKeyword::data() { return data_; }
+std::string &StringKeyword::data() const { return data_; }
+const std::dissolve::any_ptr StringKeyword::data() const { return data_; }
 std::string StringKeyword::toString() const { return data_;}
 
 /*

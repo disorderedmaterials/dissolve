@@ -13,8 +13,7 @@ Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data) : KeywordBase(typeid(t
  */
 
 // Return reference to data
-Data1DStore &Data1DStoreKeyword::data() { return data_; }
-dissolve::any_ptr Data1DStoreKeyword::data() { return data_; }
+dissolve::any_ptr Data1DStoreKeyword::data() const { return data_; }
 
 /*
  * Arguments

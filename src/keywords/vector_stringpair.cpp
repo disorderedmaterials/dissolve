@@ -11,8 +11,8 @@ StringPairVectorKeyword::StringPairVectorKeyword(StringPairVectorKeywordData &da
  */
 
 // Return reference to data
-StringPairVectorKeywordData &StringPairVectorKeyword::data() { return data_; }
-dissolve::any_ptr StringPairVectorKeyword::data() { return data_; }
+StringPairVectorKeywordData &StringPairVectorKeyword::data() const { return data_; }
+dissolve::any_ptr StringPairVectorKeyword::data() const { return data_; }
 
 /*
  * Arguments

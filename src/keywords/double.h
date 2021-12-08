@@ -27,7 +27,7 @@ class DoubleKeyword : public KeywordBase
     // Set data
     bool setData(double value);
     // Return data
-    std::any_ptr data() const override;
+    dissolve::any_ptr data() const override;
     // Return validation minimum limit
     std::optional<double> validationMin();
     // Return validation maximum limit

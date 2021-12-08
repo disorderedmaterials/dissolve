@@ -16,7 +16,7 @@ ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data)
 bool ElementVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data
-std::vector<Elements::Element> &ElementVectorKeyword::data() { return data_; }
+std::vector<Elements::Element> &ElementVectorKeyword::data() const { return data_; }
 const std::vector<Elements::Element> &ElementVectorKeyword::data() const { return data_; }
 
 /*

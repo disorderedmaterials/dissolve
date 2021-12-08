@@ -29,7 +29,7 @@ bool DoubleKeyword::setData(double value)
 }
 
 // Return data
-double DoubleKeyword::data() const { return data_; }
+dissolve::any_ptr DoubleKeyword::data() const { return data_; }
 
 // Return validation minimum limit
 std::optional<double> DoubleKeyword::validationMin() { return minimumLimit_; }

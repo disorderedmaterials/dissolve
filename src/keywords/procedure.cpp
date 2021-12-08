@@ -13,8 +13,8 @@ ProcedureKeyword::ProcedureKeyword(Procedure &data) : KeywordBase(typeid(this)),
  */
 
 // Return reference to data
-Procedure &ProcedureKeyword::data() { return data_; }
-dissolve::any_ptr ProcedureKeyword::data() { return data_; }
+Procedure &ProcedureKeyword::data() const { return data_; }
+dissolve::any_ptr ProcedureKeyword::data() const { return data_; }
 
 /*
  * Arguments

@@ -13,7 +13,7 @@ ConfigurationKeyword::ConfigurationKeyword(Configuration *&data) : KeywordBase(t
  */
 
 // Return reference to data
-Configuration *&ConfigurationKeyword::data() { return data_; }
+Configuration *&ConfigurationKeyword::data() const { return data_; }
 Configuration *&ConfigurationKeyword::data() const { return data_; }
 
 /*

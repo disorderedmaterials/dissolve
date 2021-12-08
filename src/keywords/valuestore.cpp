@@ -12,8 +12,8 @@ ValueStoreKeyword::ValueStoreKeyword(ValueStore &data) : KeywordBase(typeid(this
  */
 
 // Return reference to data
-ValueStore &ValueStoreKeyword::data() { return data_; }
-dissolve::any_ptr ValueStoreKeyword::data() { return data_; }
+ValueStore &ValueStoreKeyword::data() const { return data_; }
+dissolve::any_ptr ValueStoreKeyword::data() const { return data_; }
 
 /*
  * Arguments

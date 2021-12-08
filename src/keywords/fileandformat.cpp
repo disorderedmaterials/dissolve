@@ -15,8 +15,7 @@ FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &data, std::string_view
  */
 
 // Return reference to data
-FileAndFormat &FileAndFormatKeyword::data() { return data_; }
-dissolve::any_ptr FileAndFormatKeyword::data() { return data_; }
+dissolve::any_ptr FileAndFormatKeyword::data() const { return data_; }
 
 /*
  * Keyword Options
