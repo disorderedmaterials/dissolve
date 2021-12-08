@@ -15,12 +15,7 @@ NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
  */
 
 // Return reference to data
-NodeValue &NodeValueKeyword::data() const { return data_; }
 dissolve::any_ptr NodeValueKeyword::data() const { return data_; }
-
-std::string NodeValueKeyword::toString() const {
-  return data_.asString();
-}
 
 // Set the value from supplied expression text
 bool NodeValueKeyword::setData(std::string_view expressionText)

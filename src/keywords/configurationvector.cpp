@@ -20,8 +20,7 @@ ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration
 bool ConfigurationVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data vector
-std::vector<Configuration *> &ConfigurationVectorKeyword::data() const { return data_; }
-const std::vector<Configuration *> &ConfigurationVectorKeyword::data() const { return data_; }
+dissolve::any_ptr ConfigurationVectorKeyword::data() const { return data_; }
 
 /*
  * Arguments

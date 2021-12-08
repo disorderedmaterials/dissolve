@@ -35,8 +35,7 @@ class DynamicSiteNodesKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data();
-    const std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data() const;
+    dissolve::any_ptr data() const override;
     // Return parent SelectProcedureNode
     const SelectProcedureNode *parentNode() const;
 

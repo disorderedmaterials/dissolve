@@ -24,8 +24,7 @@ class GeometryListKeyword : public KeywordBase
 
     public:
     // Return reference to vector of data
-    std::vector<Geometry> &data();
-    const std::vector<Geometry> &data() const;
+  dissolve::any_ptr data() const;
 
     /*
      * Arguments

@@ -27,7 +27,7 @@ class SpeciesSiteKeyword : public KeywordBase
     public:
     // Return reference to data
     const SpeciesSite *&data();
-    const SpeciesSite *&data() const;
+    dissolve::any_ptr data() const override;
     // Return whether axes are required for the site
     bool axesRequired() const;
 

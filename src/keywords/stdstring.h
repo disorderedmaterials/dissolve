@@ -21,9 +21,7 @@ class StringKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    std::string &data();
-    const std::string &data() const;
-    std::string toString() const override;
+    dissolve::any_ptr data() const override;
 
     /*
      * Arguments

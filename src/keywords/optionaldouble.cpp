@@ -34,7 +34,7 @@ bool OptionalDoubleKeyword::setData(std::optional<double> value)
 }
 
 // Return data
-std::optional<double> OptionalDoubleKeyword::data() const { return data_; }
+dissolve::any_ptr OptionalDoubleKeyword::data() const { return data_; }
 
 // Return validation minimum limit
 double OptionalDoubleKeyword::validationMin() const { return minimumLimit_; }

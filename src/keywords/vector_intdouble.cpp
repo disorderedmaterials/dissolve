@@ -17,7 +17,6 @@ IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeywo
  */
 
 // Return reference to data
-IntegerDoubleVectorKeywordData &IntegerDoubleVectorKeyword::data() const { return data_; }
 dissolve::any_ptr IntegerDoubleVectorKeyword::data() const { return data_; }
 
 // Return minimum number of arguments accepted

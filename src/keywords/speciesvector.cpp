@@ -17,8 +17,7 @@ SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data) :
 bool SpeciesVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data vector
-std::vector<const Species *> &SpeciesVectorKeyword::data() const { return data_; }
-const std::vector<const Species *> &SpeciesVectorKeyword::data() const { return data_; }
+dissolve::any_ptr SpeciesVectorKeyword::data() const { return data_; }
 
 /*
  * Arguments

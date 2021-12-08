@@ -32,8 +32,6 @@ class NodeValueKeyword : public KeywordBase
     dissolve::any_ptr data() const override;
     // Set the value from supplied expression text
     bool setData(std::string_view expressionText);
-    // Display in GUI
-    std::string toString() const override;
 
     /*
      * Arguments

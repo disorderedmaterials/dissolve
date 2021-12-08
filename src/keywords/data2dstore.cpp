@@ -12,7 +12,6 @@ Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data) : KeywordBase(typeid(t
  */
 
 // Return reference to data
-Data2DStore &Data2DStoreKeyword::data() const { return data_; }
 dissolve::any_ptr Data2DStoreKeyword::data() const { return data_; }
 
 /*

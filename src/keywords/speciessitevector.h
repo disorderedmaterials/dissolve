@@ -26,8 +26,7 @@ class SpeciesSiteVectorKeyword : public KeywordBase
 
     public:
     // Return reference to data vector
-    std::vector<const SpeciesSite *> &data();
-    const std::vector<const SpeciesSite *> &data() const;
+    dissolve::any_ptr data() const;
     // Return whether axes are required for the site
     bool axesRequired() const;
 

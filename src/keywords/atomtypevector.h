@@ -22,8 +22,7 @@ class AtomTypeVectorKeyword : public KeywordBase
 
     public:
     // Return reference to data vector
-    std::vector<std::shared_ptr<AtomType>> &data();
-    const std::vector<std::shared_ptr<AtomType>> &data() const;
+  dissolve::any_ptr data() const override;
     // Determine whether current data is 'empty', and should be considered as 'not set'
     bool isDataEmpty() const override;
 

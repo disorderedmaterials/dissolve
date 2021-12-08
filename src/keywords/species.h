@@ -24,9 +24,7 @@ class SpeciesKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    const Species *&data();
-    const Species *&data() const;
-    std::string toString() const override;
+    dissolve::any_ptr data() const override;
 
     /*
      * Arguments

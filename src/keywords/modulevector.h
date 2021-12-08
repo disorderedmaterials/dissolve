@@ -34,8 +34,7 @@ class ModuleVectorKeyword : public KeywordBase
 
     public:
     // Return the data vector
-    std::vector<Module *> &data();
-    const std::vector<Module *> &data() const;
+    dissolve::any_ptr data() const override;
     // Return the Module type(s) to allow
     const std::vector<std::string> &moduleTypes() const;
     // Return maximum number of Modules to allow

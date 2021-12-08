@@ -17,8 +17,7 @@ SpeciesSiteVectorKeyword::SpeciesSiteVectorKeyword(std::vector<const SpeciesSite
  */
 
 // Return reference to data vector
-std::vector<const SpeciesSite *> &SpeciesSiteVectorKeyword::data() const { return data_; }
-const std::vector<const SpeciesSite *> &SpeciesSiteVectorKeyword::data() const { return data_; }
+dissolve::any_ptr SpeciesSiteVectorKeyword::data() const { return data_; }
 
 // Return whether axes are required for the site
 bool SpeciesSiteVectorKeyword::axesRequired() const { return axesRequired_; }

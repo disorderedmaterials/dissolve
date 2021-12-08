@@ -20,21 +20,13 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
  */
 
 // Return reference to vector of data
-const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
+dissolve::any_ptr ExpressionVariableVectorKeyword::data() const { return data_; }
 
 // Return parent ProcedureNode
 const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool ExpressionVariableVectorKeyword::isDataEmpty() const { return data_.empty(); }
-
-// Display in GUI
-std::string ExpressionVariableVectorKeyword::toString() const {
-  std::vector<std::string> names;
-  std::transform(data_.begin(), data_.end(), std::back_inserter(names),
-		 [](std::shared_ptr<ExpressionVariable> &x){return std::string(x->name());});
-  return joinStrings(names);
-}
 
 /*
  * Arguments

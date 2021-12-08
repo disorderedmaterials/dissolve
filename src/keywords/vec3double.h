@@ -32,13 +32,11 @@ class Vec3DoubleKeyword : public KeywordBase
     // Set data
     bool setData(Vec3<double> value);
     // Return data
-    const Vec3<double> &data() const;
+    dissolve::any_ptr data() const override;
     // Return validation minimum limit
     std::optional<Vec3<double>> validationMin();
     // Return validation maximum limit
     std::optional<Vec3<double>> validationMax();
-    // Display in GUI
-    std::string toString() const override;
 
     /*
      * Label Type

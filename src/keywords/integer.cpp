@@ -29,16 +29,13 @@ bool IntegerKeyword::setData(int value)
 }
 
 // Return data
-int IntegerKeyword::data() const { return data_; }
+dissolve::any_ptr IntegerKeyword::data() const { return data_; }
 
 // Return validation minimum limit
 std::optional<int> IntegerKeyword::validationMin() { return minimumLimit_; }
 
 // Return validation maximum limit
 std::optional<int> IntegerKeyword::validationMax() { return maximumLimit_; }
-
-// Display in GUI
-std::string IntegerKeyword::toString() const {return fmt::format("{}", data_);}
 
 /*
  * Arguments

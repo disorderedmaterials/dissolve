@@ -13,8 +13,7 @@ ConfigurationKeyword::ConfigurationKeyword(Configuration *&data) : KeywordBase(t
  */
 
 // Return reference to data
-Configuration *&ConfigurationKeyword::data() const { return data_; }
-Configuration *&ConfigurationKeyword::data() const { return data_; }
+dissolve::any_ptr ConfigurationKeyword::data() const { return data_; }
 
 /*
  * Arguments

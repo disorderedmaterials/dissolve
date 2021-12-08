@@ -67,9 +67,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
 
     public:
     // Return reference to data
-    E &data() { return data_; }
-    const E &data() const { return data_; }
-    std::string toString() const { return  optionData_.keyword(data_); }
+    dissolve::any_ptr data() const override { return data_; }
     // Validate supplied value
     bool isValid(std::string_view value) { return optionData_.isValid(value); }
 

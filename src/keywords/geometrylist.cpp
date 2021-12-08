@@ -15,8 +15,7 @@ GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geomet
  */
 
 // Return reference to vector of data
-std::vector<Geometry> &GeometryListKeyword::data() const { return data_; };
-const std::vector<Geometry> &GeometryListKeyword::data() const { return data_; }
+dissolve::any_ptr GeometryListKeyword::data() const { return data_; }
 
 /*
  * Arguments

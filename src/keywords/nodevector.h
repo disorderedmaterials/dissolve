@@ -62,8 +62,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 
     public:
     // Return reference to vector of data
-    std::vector<std::shared_ptr<const N>> &data() { return data_; }
-    const std::vector<std::shared_ptr<const N>> &data() const { return data_; }
+  dissolve::any_ptr data() const override { return data_; }
     // Add node to vector
     bool addNode(ConstNodeRef node) override
     {

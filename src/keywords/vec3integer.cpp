@@ -34,7 +34,7 @@ bool Vec3IntegerKeyword::setData(Vec3<int> value)
 }
 
 // Return data
-const Vec3<int> &Vec3IntegerKeyword::data() const { return data_; }
+dissolve::any_ptr Vec3IntegerKeyword::data() const { return data_; }
 
 // Return validation minimum limit
 std::optional<Vec3<int>> Vec3IntegerKeyword::validationMin() { return minimumLimit_; }

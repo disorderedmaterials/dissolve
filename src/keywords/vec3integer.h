@@ -30,7 +30,7 @@ class Vec3IntegerKeyword : public KeywordBase
     // Set data
     bool setData(Vec3<int> value);
     // Return data
-    const Vec3<int> &data() const;
+    dissolve::any_ptr data() const override;
     // Return validation minimum limit
     std::optional<Vec3<int>> validationMin();
     // Return validation maximum limit

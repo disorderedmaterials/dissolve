@@ -15,7 +15,7 @@ Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode 
  */
 
 // Return reference to data
-const Vec3<NodeValue> &Vec3NodeValueKeyword::data() const { return data_; }
+dissolve::any_ptr Vec3NodeValueKeyword::data() const { return data_; }
 
 // Return label type to display in GUI
 Vec3Labels::LabelType Vec3NodeValueKeyword::labelType() const { return labelType_; }

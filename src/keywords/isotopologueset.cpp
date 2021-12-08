@@ -13,7 +13,6 @@ IsotopologueSetKeyword::IsotopologueSetKeyword(IsotopologueSet &data) : KeywordB
  */
 
 // Return reference to data
-IsotopologueSet &IsotopologueSetKeyword::data() const { return data_; }
 dissolve::any_ptr IsotopologueSetKeyword::data() const { return data_; }
 
 /*

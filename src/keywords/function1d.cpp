@@ -15,8 +15,7 @@ Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int fun
  */
 
 // Return reference to data
-Functions::Function1DWrapper &Function1DKeyword::data() const { return data_; }
-const Functions::dissolve::any_ptr Function1DKeyword::data() const { return data_; }
+dissolve::any_ptr Function1DKeyword::data() const { return data_; }
 
 // Return requested function properties
 int Function1DKeyword::functionProperties() const { return functionProperties_; }

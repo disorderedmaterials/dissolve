@@ -24,8 +24,7 @@ class ConfigurationKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    Configuration *&data();
-    Configuration *&data() const;
+  dissolve::any_ptr data() const override;
 
     /*
      * Arguments

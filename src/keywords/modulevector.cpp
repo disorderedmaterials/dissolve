@@ -27,8 +27,7 @@ ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, std::vecto
 bool ModuleVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return the data vector
-std::vector<Module *> &ModuleVectorKeyword::data() const { return data_; }
-const std::vector<Module *> &ModuleVectorKeyword::data() const { return data_; }
+dissolve::any_ptr ModuleVectorKeyword::data() const { return data_; }
 
 // Return the Module type(s) to allow
 const std::vector<std::string> &ModuleVectorKeyword::moduleTypes() const { return moduleTypes_; }

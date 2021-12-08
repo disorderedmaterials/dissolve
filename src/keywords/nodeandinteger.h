@@ -60,8 +60,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 
     public:
     // Return reference to vector of data
-    std::pair<std::shared_ptr<const N>, int> &data() { return data_; }
-    const std::pair<std::shared_ptr<const N>, int> &data() const { return data_; }
+    dissolve::any_ptr data() const { return data_; }
     // Return base node data
     std::shared_ptr<const ProcedureNode> baseNode() override { return data_.first; }
     // Set node

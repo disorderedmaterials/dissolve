@@ -33,7 +33,7 @@ class OptionalDoubleKeyword : public KeywordBase
     // Set data
     bool setData(std::optional<double> value);
     // Return data
-    std::optional<double> data() const;
+  dissolve::any_ptr data() const override;
     // Return validation minimum limit
     double validationMin() const;
     // Return validation maximum limit

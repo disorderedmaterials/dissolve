@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <typeindex>
 
 namespace dissolve {
@@ -12,5 +13,9 @@ namespace dissolve {
     std::type_index type_;
   public:
     template <typename T> any_ptr(T &data) : ptr_(&data), type_(typeid(data)) {}
+    template <typename T> T& ref() {
+      assert(type_ == typeid(T));
+      return *static_cast<T*>(ptr_);
+    }
   };
 }

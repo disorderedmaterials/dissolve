@@ -17,8 +17,7 @@ AtomTypeVectorKeyword::AtomTypeVectorKeyword(std::vector<std::shared_ptr<AtomTyp
  */
 
 // Return reference to data vector
-std::vector<std::shared_ptr<AtomType>> &AtomTypeVectorKeyword::data() const { return data_; }
-const std::vector<std::shared_ptr<AtomType>> &AtomTypeVectorKeyword::data() const { return data_; }
+dissolve::any_ptr AtomTypeVectorKeyword::data() const { return data_; }
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool AtomTypeVectorKeyword::isDataEmpty() const { return data_.empty(); }

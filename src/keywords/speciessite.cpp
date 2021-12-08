@@ -16,8 +16,7 @@ SpeciesSiteKeyword::SpeciesSiteKeyword(const SpeciesSite *&data, bool axesRequir
  */
 
 // Return reference to data
-const SpeciesSite *&SpeciesSiteKeyword::data() const { return data_; }
-const SpeciesSite *&SpeciesSiteKeyword::data() const { return data_; }
+dissolve::any_ptr SpeciesSiteKeyword::data() const { return data_; }
 
 // Return whether axes are required for the site
 bool SpeciesSiteKeyword::axesRequired() const { return axesRequired_; }

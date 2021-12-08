@@ -24,8 +24,7 @@ class Function1DKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    Functions::Function1DWrapper &data();
-    const Functions::Function1DWrapper &data() const;
+    dissolve::any_ptr data() const override;
     // Return requested function properties
     int functionProperties() const;
 

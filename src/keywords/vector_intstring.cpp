@@ -16,7 +16,6 @@ IntegerStringVectorKeyword::IntegerStringVectorKeyword(IntegerStringVectorKeywor
  */
 
 // Return reference to data
-IntegerStringVectorKeywordData &IntegerStringVectorKeyword::data() const { return data_; }
 dissolve::any_ptr IntegerStringVectorKeyword::data() const { return data_; }
 
 /*

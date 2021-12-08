@@ -32,11 +32,9 @@ class ExpressionVariableVectorKeyword : public KeywordBase
 
     public:
     // Return reference to vector of data
-    const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
+    dissolve::any_ptr data() const;
     // Return parent ProcedureNode
     const ProcedureNode *parentNode() const;
-    // Display in GUI
-    std::string toString() const override;
 
     /*
      * Arguments

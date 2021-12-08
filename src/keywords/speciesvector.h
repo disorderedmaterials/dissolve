@@ -28,8 +28,7 @@ class SpeciesVectorKeyword : public KeywordBase
 
     public:
     // Return reference to data vector
-    std::vector<const Species *> &data();
-    const std::vector<const Species *> &data() const;
+  dissolve::any_ptr data() const override;
 
     /*
      * Arguments

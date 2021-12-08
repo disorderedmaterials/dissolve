@@ -21,8 +21,8 @@ class KeywordTypeMap
 
     private:
     // Function typedefs
-    using SetterFunction = std::function<bool(KeywordBase *keyword, const dissolve::any_ptr data)>;
-    using GetterFunction = std::function<const dissolve::any_ptr(KeywordBase *keyword)>;
+    using SetterFunction = std::function<bool(KeywordBase *keyword, const std::any data)>;
+    using GetterFunction = std::function<const std::any(KeywordBase *keyword)>;
     // Setter function map
     std::unordered_map<std::type_index, SetterFunction> directMapSetter_;
     // Getter function maps
@@ -34,10 +34,10 @@ class KeywordTypeMap
         if (directMapSetter_.find(typeid(D)) != directMapSetter_.end())
             throw(std::runtime_error(fmt::format("Duplicate mapping registered for type '{}'\n", typeid(D).name())));
 
-        directMapSetter_[typeid(D)] = [](KeywordBase *keyword, const dissolve::any_ptr data) {
+        directMapSetter_[typeid(D)] = [](KeywordBase *keyword, const std::any data) {
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
-            k->data() = std::any_cast<D>(data);
+	    k->data().template ref<D>() = std::any_cast<D>(data);
             k->setAsModified();
             return true;
         };
@@ -53,7 +53,7 @@ class KeywordTypeMap
     // Register direct setter for specific keyword / data type pair, with specific data setter on the keyword
     template <class D, class K> void registerDirectMapping(std::function<bool(K *keyword, const D data)> setFunction)
     {
-        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const dissolve::any_ptr &data) {
+        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const std::any &data) {
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
             return setFunction(k, std::any_cast<D>(data));
@@ -67,9 +67,9 @@ class KeywordTypeMap
     // Register direct setter for specific keyword / data type pair, with specific data setter and getter on the keyword
     template <class D, class K>
     void registerDirectMapping(std::function<bool(K *keyword, const D data)> setFunction,
-                               std::function<const dissolve::any_ptr(K *keyword)> getFunction)
+                               std::function<const std::any(K *keyword)> getFunction)
     {
-        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const dissolve::any_ptr &data) {
+        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const std::any &data) {
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
             return setFunction(k, std::any_cast<D>(data));
@@ -83,7 +83,7 @@ class KeywordTypeMap
 
     public:
     // Set keyword data
-    bool set(KeywordBase *keyword, const dissolve::any_ptr data) const;
+    bool set(KeywordBase *keyword, const std::any data) const;
     // Get keyword data
     template <class D> D get(KeywordBase *keyword) const
     {
@@ -193,7 +193,7 @@ class KeywordStore
 
     public:
     // Set specified keyword with supplied data
-    void set(std::string_view name, const dissolve::any_ptr value);
+    void set(std::string_view name, const std::any value);
     // Set specified keyword with supplied, template-guided data
     template <class D> bool set(std::string_view name, const D value)
     {
