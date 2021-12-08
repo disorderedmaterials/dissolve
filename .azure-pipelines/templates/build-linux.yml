@@ -6,7 +6,7 @@ parameters:
   - name: exportExe
     default : true
   - name: exportSingularity
-    default : true
+    default : false
   - name: docker
     default: "docker-gui"
   - name: singularity
