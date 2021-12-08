@@ -16,7 +16,7 @@ NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
 
 // Return reference to data
 NodeValue &NodeValueKeyword::data() { return data_; }
-const NodeValue &NodeValueKeyword::data() const { return data_; }
+std::any_ptr NodeValueKeyword::data() { return data_; }
 
 std::string NodeValueKeyword::toString() const {
   return data_.asString();

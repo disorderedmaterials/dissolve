@@ -18,7 +18,7 @@ IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeywo
 
 // Return reference to data
 IntegerDoubleVectorKeywordData &IntegerDoubleVectorKeyword::data() { return data_; }
-const IntegerDoubleVectorKeywordData &IntegerDoubleVectorKeyword::data() const { return data_; }
+std::any_ptr IntegerDoubleVectorKeyword::data() { return data_; }
 
 // Return minimum number of arguments accepted
 int IntegerDoubleVectorKeyword::minArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(1)); }

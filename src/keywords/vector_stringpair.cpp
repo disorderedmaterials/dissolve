@@ -12,7 +12,7 @@ StringPairVectorKeyword::StringPairVectorKeyword(StringPairVectorKeywordData &da
 
 // Return reference to data
 StringPairVectorKeywordData &StringPairVectorKeyword::data() { return data_; }
-const StringPairVectorKeywordData &StringPairVectorKeyword::data() const { return data_; }
+std::any_ptr StringPairVectorKeyword::data() { return data_; }
 
 /*
  * Arguments

@@ -15,7 +15,7 @@ ExpressionKeyword::ExpressionKeyword(Expression &data, const std::vector<std::sh
  */
 
 // Return reference to data
-const Expression &ExpressionKeyword::data() const { return data_; }
+std::any_ptr ExpressionKeyword::data() { return data_; }
 
 // Set data
 bool ExpressionKeyword::setData(std::string_view expressionText)

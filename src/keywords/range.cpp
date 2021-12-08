@@ -15,7 +15,7 @@ RangeKeyword::RangeKeyword(Range &data, Vec3Labels::LabelType labelType)
 
 // Return reference to data
 Range &RangeKeyword::data() { return data_; }
-const Range &RangeKeyword::data() const { return data_; }
+std::any_ptr RangeKeyword::data() { return data_; }
 
 // Label type to display in GUI
 Vec3Labels::LabelType RangeKeyword::labelType() const { return labelType_; }
