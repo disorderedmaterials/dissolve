@@ -4,8 +4,8 @@
 #include "io/import/data1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
 #include "math/data1d.h"
 #include "math/filters.h"
 
@@ -31,11 +31,13 @@ void Data1DImportFileFormat::setUpKeywords()
     keywords_.add<IntegerKeyword>("Columns", "X", "Column index to use for x values", xColumn_, 1);
     keywords_.add<IntegerKeyword>("Columns", "Y", "Column index to use for y values", yColumn_, 1);
     keywords_.add<IntegerKeyword>("Columns", "Error", "Column index to use for error values", errorColumn_, 0);
-    keywords_.add<DoubleKeyword>("Manipulations", "RemoveAverage",
-                                 "X axis value from which to form average value to subtract from data (-1 for no subtraction)",
-                                 removeAverageFromX_, -1.0);
-    keywords_.add<DoubleKeyword>("Manipulations", "XMin", "Set the minimum X value to allow when reading in the data", xMin_);
-    keywords_.add<DoubleKeyword>("Manipulations", "XMax", "Set the maximum X value to allow when reading in the data", xMax_);
+    keywords_.add<OptionalDoubleKeyword>("Manipulations", "RemoveAverage",
+                                         "X axis value from which to form average value to subtract from data",
+                                         removeAverageFromX_, 0.0, std::nullopt, 0.1, "Off");
+    keywords_.add<OptionalDoubleKeyword>("Manipulations", "XMin", "Minimum X value to allow when reading in the data", xMin_,
+                                         0.0, std::nullopt, 0.1, "No Minimum");
+    keywords_.add<OptionalDoubleKeyword>("Manipulations", "XMax", "Maximum X value to allow when reading in the data", xMax_,
+                                         0.0, std::nullopt, 0.1, "No Maximum");
     keywords_.add<IntegerKeyword>("Manipulations", "RemovePoints", "Remove a number of points from the start of the data",
                                   nPointsToRemove_, 0);
 }
@@ -89,17 +91,18 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
     for (auto n = 0; n < nPointsToRemove_; ++n)
         data.removeFirstPoint();
     // -- Trim range?
-    if (keywords_.hasBeenSet("XMin") || keywords_.hasBeenSet("XMax"))
+    if (xMin_ || xMax_)
     {
-        auto xMin = keywords_.hasBeenSet("XMin") ? xMin_ : data.xAxis().front() - 1.0;
-        auto xMax = keywords_.hasBeenSet("XMax") ? xMax_ : data.xAxis().back() + 1.0;
+        auto xMin = xMin_.value_or(data.xAxis().front() - 1.0);
+        auto xMax = xMax_.value_or(data.xAxis().back() + 1.0);
         Filters::trim(data, xMin, xMax);
     }
     // -- Subtract average level from data?
-    if (removeAverageFromX_ > 0.0)
+    if (removeAverageFromX_)
     {
-        double level = Filters::subtractAverage(data, removeAverageFromX_);
-        Messenger::print("Removed average level of {} from data, forming average over x >= {}.\n", level, removeAverageFromX_);
+        double level = Filters::subtractAverage(data, removeAverageFromX_.value());
+        Messenger::print("Removed average level of {} from data, forming average over x >= {}.\n", level,
+                         removeAverageFromX_.value());
     }
 
     return result;

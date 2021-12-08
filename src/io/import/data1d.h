@@ -28,11 +28,11 @@ class Data1DImportFileFormat : public FileAndFormat
      */
     private:
     // X value from which to calculate average Y and remove
-    double removeAverageFromX_{-1.0};
+    std::optional<double> removeAverageFromX_;
     // Minimum x value to permit when reading data
-    double xMin_{0.0};
+    std::optional<double> xMin_;
     // Maximum x value to permit when reading data
-    double xMax_{0.0};
+    std::optional<double> xMax_;
     // Column index to use for x values
     int xColumn_{1};
     // Column index to use for y values

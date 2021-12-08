@@ -340,7 +340,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 bondStepSize_ = bondStepSizeMin_;
             else if (bondStepSize_ > bondStepSizeMax_)
                 bondStepSize_ = bondStepSizeMax_;
-            keywords_.setAsModified("BondStepSize");
+            keywords_.set("BondStepSize", bondStepSize_);
 
             Messenger::print("IntraShake: Updated distance step size for bond adjustments is {:.5f} Angstroms.\n",
                              bondStepSize_);
@@ -357,7 +357,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 angleStepSize_ = angleStepSizeMin_;
             else if (angleStepSize_ > angleStepSizeMax_)
                 angleStepSize_ = angleStepSizeMax_;
-            keywords_.setAsModified("AngleStepSize");
+            keywords_.set("AngleStepSize", angleStepSize_);
 
             Messenger::print("IntraShake: Updated rotation step size for angle adjustments is {:.5f} degrees.\n",
                              angleStepSize_);
@@ -374,7 +374,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 torsionStepSize_ = torsionStepSizeMin_;
             else if (torsionStepSize_ > torsionStepSizeMax_)
                 torsionStepSize_ = torsionStepSizeMax_;
-            keywords_.setAsModified("TorsionStepSize");
+            keywords_.set("TorsionStepSize", torsionStepSize_);
 
             Messenger::print("IntraShake: Updated rotation step size for torsion adjustments is {:.5f} degrees.\n",
                              torsionStepSize_);

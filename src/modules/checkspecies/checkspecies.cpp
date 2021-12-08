@@ -3,6 +3,7 @@
 
 #include "modules/checkspecies/checkspecies.h"
 #include "keywords/double.h"
+#include "keywords/optionaldouble.h"
 #include "keywords/species.h"
 #include "keywords/vector_intdouble.h"
 #include "keywords/vector_intstring.h"
@@ -17,8 +18,9 @@ CheckSpeciesModule::CheckSpeciesModule() : Module("CheckSpecies")
                                               atomTypes_, 1, 1);
     keywords_.add<DoubleKeyword>("Atoms", "ChargeTolerance", "Tolerance beyond which charges are said to differ",
                                  chargeTolerance_, 1.0e-5);
-    keywords_.add<DoubleKeyword>("Atoms", "TotalCharge", "Check the total charge of the species against the specified value",
-                                 totalCharge_);
+    keywords_.add<OptionalDoubleKeyword>("Atoms", "TotalCharge",
+                                         "Check the total charge of the species against the specified value", totalCharge_,
+                                         -5.0, std::nullopt, 1.0, "Off");
     keywords_.add<IntegerDoubleVectorKeyword>("Intramolecular", "Bond",
                                               "Check that the bond <i>-<j> has the correct parameters", bondParameters_, 2);
     keywords_.add<IntegerDoubleVectorKeyword>(

@@ -5,6 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
 
 EnergyModule::EnergyModule() : Module("Energy")
 {
@@ -26,12 +27,12 @@ EnergyModule::EnergyModule() : Module("Energy")
     keywords_.add<BoolKeyword>("Test", "TestAnalytic",
                                "Use analytic interatomic energies rather than (production) tabulated potentials for tests",
                                testAnalytic_);
-    keywords_.add<DoubleKeyword>("Test", "TestReferenceInter",
-                                 "Reference value for interatomic energy against which to test calculated value",
-                                 testReferenceInter_);
-    keywords_.add<DoubleKeyword>("Test", "TestReferenceIntra",
-                                 "Reference value for intramolecular energy against which to test calculated value",
-                                 testReferenceIntra_);
+    keywords_.add<OptionalDoubleKeyword>("Test", "TestReferenceInter",
+                                         "Reference value for interatomic energy against which to test calculated value",
+                                         testReferenceInter_, -1.0e10, std::nullopt, 1.0e8, "Off");
+    keywords_.add<OptionalDoubleKeyword>("Test", "TestReferenceIntra",
+                                         "Reference value for intramolecular energy against which to test calculated value",
+                                         testReferenceIntra_, -1.0e10, std::nullopt, 1.0e8, "Off");
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold of energy at which test comparison will fail",
                                  testThreshold_);
 

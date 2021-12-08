@@ -5,6 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/module.h"
+#include "keywords/optionaldouble.h"
 #include "keywords/range.h"
 #include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
@@ -55,15 +56,15 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
     keywords_.add<RangeKeyword>("Ranges", "RangeC", "Distance range for third coordination number", sum1D_->range(2));
 
     // Test
-    keywords_.add<DoubleKeyword>("Test", "TestRangeA",
-                                 "Reference coordination number for range A against which calculated value should be tested",
-                                 testRangeA_);
-    keywords_.add<DoubleKeyword>("Test", "TestRangeB",
-                                 "Reference coordination number for range B against which calculated value should be tested",
-                                 testRangeB_);
-    keywords_.add<DoubleKeyword>("Test", "TestRangeC",
-                                 "Reference coordination number for range C against which calculated value should be tested",
-                                 testRangeC_);
+    keywords_.add<OptionalDoubleKeyword>(
+        "Test", "TestRangeA", "Reference coordination number for range A against which calculated value should be tested",
+        testRangeA_, 0.0, std::nullopt, 0.1, "Off");
+    keywords_.add<OptionalDoubleKeyword>(
+        "Test", "TestRangeB", "Reference coordination number for range B against which calculated value should be tested",
+        testRangeB_, 0.0, std::nullopt, 0.1, "Off");
+    keywords_.add<OptionalDoubleKeyword>(
+        "Test", "TestRangeC", "Reference coordination number for range C against which calculated value should be tested",
+        testRangeC_, 0.0, std::nullopt, 0.1, "Off");
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold difference at which test comparisons will fail",
                                  testThreshold_, 1.0e-5);
 }
