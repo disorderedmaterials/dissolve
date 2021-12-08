@@ -48,6 +48,10 @@ std::optional<Vec3<double>> Vec3DoubleKeyword::validationMin() { return minimumL
 // Return validation maximum limit
 std::optional<Vec3<double>> Vec3DoubleKeyword::validationMax() { return maximumLimit_; }
 
+std::string Vec3DoubleKeyword::toString() const {
+  return fmt::format("{},{},{}", data_.x, data_.y, data_.z);
+}
+
 /*
  * Label Type
  */

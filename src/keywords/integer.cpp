@@ -37,6 +37,9 @@ std::optional<int> IntegerKeyword::validationMin() { return minimumLimit_; }
 // Return validation maximum limit
 std::optional<int> IntegerKeyword::validationMax() { return maximumLimit_; }
 
+// Display in GUI
+std::string IntegerKeyword::toString() const {return fmt::format("{}", data_);}
+
 /*
  * Arguments
  */

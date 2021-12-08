@@ -23,6 +23,7 @@ bool BoolKeyword::setData(bool value)
 // Return data
 bool &BoolKeyword::data() { return data_; }
 const bool &BoolKeyword::data() const { return data_; }
+std::string BoolKeyword::toString() const { return fmt::format("{}", data_); }
 
 /*
  * Arguments

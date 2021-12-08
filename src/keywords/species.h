@@ -26,6 +26,7 @@ class SpeciesKeyword : public KeywordBase
     // Return reference to data
     const Species *&data();
     const Species *&data() const;
+    std::string toString() const override;
 
     /*
      * Arguments

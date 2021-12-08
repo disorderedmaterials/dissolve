@@ -96,6 +96,9 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 
         return true;
     }
+    std::string toString() const override {
+      return value().asString();
+    }
 
     /*
      * Arguments

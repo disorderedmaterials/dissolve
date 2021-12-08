@@ -37,6 +37,8 @@ class Vec3DoubleKeyword : public KeywordBase
     std::optional<Vec3<double>> validationMin();
     // Return validation maximum limit
     std::optional<Vec3<double>> validationMax();
+    // Display in GUI
+    std::string toString() const override;
 
     /*
      * Label Type
