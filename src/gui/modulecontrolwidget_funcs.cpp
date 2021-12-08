@@ -4,7 +4,6 @@
 #include "base/lineparser.h"
 #include "gui/gui.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
-#include "gui/keywordwidgets/producers.h"
 #include "gui/modulecontrolwidget.h"
 #include "main/dissolve.h"
 #include "module/module.h"
@@ -19,10 +18,6 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
     dissolve_ = nullptr;
     module_ = nullptr;
     moduleWidget_ = nullptr;
-
-    // Connect signals from keywords widget
-    connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
-    connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 
     // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
     // will exist in a QScrollArea)
@@ -51,29 +46,15 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         ui_.NoTargetsLabel->setVisible(false);
         for (auto *keyword : module_->keywords().targetsGroup())
         {
-            // Try to create a suitable widget
-            auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_->coreData());
-            if (!widget || !base)
-                throw(std::runtime_error(fmt::format("No widget created for keyword '{}'.\n", keyword->name())));
-
-            // Connect it up
-            connect(widget, SIGNAL(keywordValueChanged(int)), this, SLOT(targetKeywordDataChanged(int)));
-
             // Create the label
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
             nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             nameLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 
             ui_.TargetsLayout->addWidget(nameLabel);
-            ui_.TargetsLayout->addWidget(widget);
-
-            targetKeywordWidgets_.push_back(base);
         }
         ui_.TargetsLayout->addStretch(2);
     }
-
-    // Set up our control widgets
-    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->coreData());
 
     // Create any additional controls offered by the Module
     moduleWidget_ = ModuleWidgetProducer::create(module_, *dissolve_);
@@ -128,13 +109,6 @@ void ModuleControlWidget::updateControls()
     // Set frequency spin
     ui_.FrequencySpin->setValue(module_->frequency());
 
-    // Update tqrget keywords
-    for (auto w : targetKeywordWidgets_)
-        w->updateValue();
-
-    // Update keywords
-    ui_.ModuleKeywordsWidget->updateControls();
-
     // Update additional controls (if they exist)
     if (moduleWidget_)
         moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
@@ -143,7 +117,6 @@ void ModuleControlWidget::updateControls()
 // Disable sensitive controls
 void ModuleControlWidget::disableSensitiveControls()
 {
-    ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
         moduleWidget_->disableSensitiveControls();
 }
@@ -151,7 +124,6 @@ void ModuleControlWidget::disableSensitiveControls()
 // Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
-    ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
         moduleWidget_->enableSensitiveControls();
 }

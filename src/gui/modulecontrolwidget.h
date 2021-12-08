@@ -66,8 +66,6 @@ class ModuleControlWidget : public QWidget
     private:
     // Main form declaration
     Ui::ModuleControlWidget ui_;
-    // Reference vector of "Target" keywords
-    std::vector<KeywordWidgetBase *> targetKeywordWidgets_;
     // Additional controls widget for the Module (if any)
     ModuleWidget *moduleWidget_;
 

@@ -11,8 +11,5 @@ AnalyseModuleWidget::AnalyseModuleWidget(QWidget *parent, AnalyseModule *module,
     // Set up user interface
     ui_.setupUi(this);
 
-    // Set Procedure target
-    ui_.EditorWidget->setUp(&module_->analyser(), dissolve_.coreData());
-
     refreshing_ = false;
 }

@@ -142,7 +142,7 @@ void ConfigurationTab::updateControls()
     ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
 
     // Generator
-    ui_.ProcedureWidget->updateControls();
+    // ui_.ProcedureWidget->updateControls();
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
