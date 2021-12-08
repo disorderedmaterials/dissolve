@@ -1,6 +1,12 @@
+parameters:
+  - name: exportExe
+    default : false
+  - name: exportSingularity
+    default : false
+
 jobs:
   - job: "release_linux_mpi"
-    displayName: "Release MPI, CLI, Exe"
+    displayName: "Release MPI, CLI"
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -10,21 +16,10 @@ jobs:
       - template: build-linux.yml
         parameters:
           package: "dissolve-mpi"
-  - job: "release_linux_mpi_image"
-    displayName: "Release MPI, CLI, Singularity"
-    pool:
-      vmImage: "ubuntu-latest"
-    steps:
-      - checkout: self
-        fetchDepth: 1
-      - template: set-short-hash.yml
-      - template: build-linux.yml
-        parameters:
-          package: "dissolve-mpi"
-          exportExe: false
-          exportSingularity: true
+          exportExe: exportExe
+          exportSingularity: exportSingularity
   - job: "release_linux_gui"
-    displayName: "Release GUI, Exe"
+    displayName: "Release GUI"
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -34,21 +29,10 @@ jobs:
       - template: build-linux.yml
         parameters:
           package: "dissolve-gui"
-  - job: "release_linux_gui_image"
-    displayName: "Release GUI, Singularity"
-    pool:
-      vmImage: "ubuntu-latest"
-    steps:
-      - checkout: self
-        fetchDepth: 1
-      - template: set-short-hash.yml
-      - template: build-linux.yml
-        parameters:
-          package: "dissolve-gui"
-          exportExe: false
-          exportSingularity: true
+          exportExe: exportExe
+          exportSingularity: exportSingularity
   - job: "release_linux"
-    displayName: "Release CLI, Exe"
+    displayName: "Release CLI"
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -58,19 +42,8 @@ jobs:
       - template: build-linux.yml
         parameters:
           package: "dissolve"
-  - job: "release_linux_image"
-    displayName: "Release CLI, Singularity"
-    pool:
-      vmImage: "ubuntu-latest"
-    steps:
-      - checkout: self
-        fetchDepth: 1
-      - template: set-short-hash.yml
-      - template: build-linux.yml
-        parameters:
-          package: "dissolve"
-          exportExe: false
-          exportSingularity: true
+          exportExe: exportExe
+          exportSingularity: exportSingularity
   - job: "release_linux_threadless"
     displayName: "Release Threadless"
     pool:
