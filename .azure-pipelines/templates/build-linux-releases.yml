@@ -58,7 +58,7 @@ jobs:
       - template: build-linux.yml
         parameters:
           package: "dissolve"
-  - job: "release_linux"
+  - job: "release_linux_image"
     displayName: "Release CLI, Singularity"
     pool:
       vmImage: "ubuntu-latest"
