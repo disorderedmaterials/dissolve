@@ -22,7 +22,7 @@ bool BoolKeyword::setData(bool value)
 
 // Return data
 bool &BoolKeyword::data() { return data_; }
-std::any_ptr BoolKeyword::data() { return data_; }
+dissolve::any_ptr BoolKeyword::data() { return data_; }
 
 /*
  * Arguments

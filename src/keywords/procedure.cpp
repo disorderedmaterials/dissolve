@@ -14,7 +14,7 @@ ProcedureKeyword::ProcedureKeyword(Procedure &data) : KeywordBase(typeid(this)),
 
 // Return reference to data
 Procedure &ProcedureKeyword::data() { return data_; }
-std::any_ptr ProcedureKeyword::data() { return data_; }
+dissolve::any_ptr ProcedureKeyword::data() { return data_; }
 
 /*
  * Arguments
