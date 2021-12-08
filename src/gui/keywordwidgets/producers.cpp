@@ -23,6 +23,7 @@
 #include "gui/keywordwidgets/nodevalueenumoptions.h"
 #include "gui/keywordwidgets/nodevector.h"
 #include "gui/keywordwidgets/optionaldouble.hui"
+#include "gui/keywordwidgets/optionalint.hui"
 #include "gui/keywordwidgets/range.h"
 #include "gui/keywordwidgets/species.hui"
 #include "gui/keywordwidgets/speciessite.h"
@@ -68,6 +69,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<NodeValueEnumOptionsBaseKeyword, NodeValueEnumOptionsKeywordWidget>();
     registerProducer<NodeValueKeyword, NodeValueKeywordWidget>();
     registerProducer<OptionalDoubleKeyword, OptionalDoubleKeywordWidget>();
+    registerProducer<OptionalIntegerKeyword, OptionalIntegerKeywordWidget>();
     registerProducer<RangeKeyword, RangeKeywordWidget>();
     registerProducer<SpeciesKeyword, SpeciesKeywordWidget>();
     registerProducer<SpeciesSiteKeyword, SpeciesSiteKeywordWidget>();
