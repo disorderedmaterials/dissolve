@@ -41,8 +41,6 @@ void ModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMod
 
     updateSummaryText();
 
-    keyword_->setAsModified();
-
     emit(keywordValueChanged(keyword_->optionMask()));
 }
 

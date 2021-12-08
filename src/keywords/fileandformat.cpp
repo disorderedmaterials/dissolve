@@ -38,8 +38,6 @@ bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const C
     if (!data_.read(parser, startArg, endKeyword_, coreData))
         return Messenger::error("Failed to read file/format.\n");
 
-    set_ = true;
-
     return true;
 }
 

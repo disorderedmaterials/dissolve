@@ -58,8 +58,6 @@ bool SpeciesSiteVectorKeyword::deserialise(LineParser &parser, int startArg, con
         data_.push_back(speciesSite);
     }
 
-    set_ = true;
-
     return true;
 }
 

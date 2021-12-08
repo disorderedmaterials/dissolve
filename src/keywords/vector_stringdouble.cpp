@@ -33,8 +33,6 @@ bool StringDoubleVectorKeyword::deserialise(LineParser &parser, int startArg, co
     for (auto n = startArg; n < parser.nArgs(); n += 2)
         data_.emplace_back(parser.argsv(n), parser.argd(n + 1));
 
-    setAsModified();
-
     return true;
 }
 

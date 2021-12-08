@@ -12,9 +12,6 @@ ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data)
  * Data
  */
 
-// Return if the current data object is empty
-bool ElementVectorKeyword::isDataEmpty() const { return data_.empty(); }
-
 // Return reference to data
 std::vector<Elements::Element> &ElementVectorKeyword::data() { return data_; }
 const std::vector<Elements::Element> &ElementVectorKeyword::data() const { return data_; }
@@ -44,8 +41,6 @@ bool ElementVectorKeyword::deserialise(LineParser &parser, int startArg, const C
         // All OK - add it to our vector
         data_.push_back(el);
     }
-
-    set_ = true;
 
     return true;
 }

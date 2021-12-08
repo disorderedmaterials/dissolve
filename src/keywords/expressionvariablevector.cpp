@@ -24,9 +24,6 @@ const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVector
 // Return parent ProcedureNode
 const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
 
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool ExpressionVariableVectorKeyword::isDataEmpty() const { return data_.empty(); }
-
 /*
  * Arguments
  */
@@ -66,8 +63,6 @@ bool ExpressionVariableVectorKeyword::deserialise(LineParser &parser, int startA
     else
         return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n",
                                 parser.argsv(startArg + 1), parser.argsv(startArg));
-
-    set_ = true;
 
     return true;
 }

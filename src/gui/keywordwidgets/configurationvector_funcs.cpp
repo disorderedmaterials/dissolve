@@ -34,8 +34,6 @@ void ConfigurationVectorKeywordWidget::modelDataChanged(const QModelIndex &topLe
     if (refreshing_)
         return;
 
-    keyword_->setAsModified();
-
     updateSummaryText();
 
     emit(keywordValueChanged(keyword_->optionMask()));

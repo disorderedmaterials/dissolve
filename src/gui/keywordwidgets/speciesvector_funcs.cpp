@@ -32,8 +32,6 @@ void SpeciesVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, co
     if (refreshing_)
         return;
 
-    keyword_->setAsModified();
-
     updateSummaryText();
 
     emit(keywordValueChanged(keyword_->optionMask()));

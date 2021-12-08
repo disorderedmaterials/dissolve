@@ -26,12 +26,7 @@ bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
     assert(index >= 0 && index < 3);
     assert(parentNode_);
 
-    if (!data_[index].set(expressionText, parentNode_->parametersInScope()))
-        return false;
-
-    set_ = true;
-
-    return true;
+    return data_[index].set(expressionText, parentNode_->parametersInScope());
 }
 
 /*
@@ -61,8 +56,6 @@ bool Vec3NodeValueKeyword::deserialise(LineParser &parser, int startArg, const C
             return false;
         if (!data_.z.set(parser.argsv(startArg + 2), vars))
             return false;
-
-        setAsModified();
 
         return true;
     }

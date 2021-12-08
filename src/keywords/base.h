@@ -51,19 +51,13 @@ class KeywordBase
     // Keyword option mask
     int optionMask_{NoOptions};
 
-    protected:
-    // Whether the current data value has ever been set
-    bool set_{false};
-
     public:
     // Set base keyword information
     void setBaseInfo(std::string_view name, std::string_view description);
     // Return typeindex for the keyword
     const std::type_index typeIndex() const;
     // Set option mask
-    void setOptionMask(int opttionMask);
-    // Flag that data has been set by some other means
-    void setAsModified();
+    void setOptionMask(int optionMask);
     // Return keyword name
     std::string_view name() const;
     // Return keyword description
@@ -72,10 +66,6 @@ class KeywordBase
     int optionMask() const;
     // Return whether specified option is set
     bool isOptionSet(KeywordOption opt) const;
-    // Return if the current data object is empty
-    virtual bool isDataEmpty() const;
-    // Return whether the keyword has been set, and is not currently empty (if relevant)
-    bool hasBeenSet() const;
 
     /*
      * Arguments

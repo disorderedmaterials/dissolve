@@ -73,17 +73,10 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
         if (!data_.first.set(expressionText, parentNode_->parametersInScope()))
             return false;
 
-        setAsModified();
-
         return true;
     }
     // Set new option by index
-    void setEnumeration(int optionIndex) override
-    {
-        data_.second = optionData_.enumerationByIndex(optionIndex);
-
-        setAsModified();
-    }
+    void setEnumeration(int optionIndex) override { data_.second = optionData_.enumerationByIndex(optionIndex); }
     // Set new option by name
     bool setEnumeration(std::string_view keyword) override
     {
@@ -91,8 +84,6 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
             return optionData_.errorAndPrintValid(keyword);
 
         data_.second = optionData_.enumeration(keyword);
-
-        setAsModified();
 
         return true;
     }
@@ -117,12 +108,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
             return false;
 
         // Now the enum option
-        if (!setEnumeration(parser.argsv(startArg + 1)))
-            return false;
-
-        setAsModified();
-
-        return true;
+        return setEnumeration(parser.argsv(startArg + 1));
     }
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override

@@ -26,10 +26,6 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
 
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
-
     public:
     // Return reference to vector of data
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;

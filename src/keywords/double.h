@@ -22,6 +22,8 @@ class DoubleKeyword : public KeywordBase
     double &data_;
     // Validation limits to apply (if any)
     std::optional<double> minimumLimit_, maximumLimit_;
+    // Whether the data has been set
+    bool set_{false};
 
     public:
     // Set data

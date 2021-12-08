@@ -16,9 +16,6 @@ ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration
  * Data
  */
 
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool ConfigurationVectorKeyword::isDataEmpty() const { return data_.empty(); }
-
 // Return reference to data vector
 std::vector<Configuration *> &ConfigurationVectorKeyword::data() { return data_; }
 const std::vector<Configuration *> &ConfigurationVectorKeyword::data() const { return data_; }
@@ -47,8 +44,6 @@ bool ConfigurationVectorKeyword::deserialise(LineParser &parser, int startArg, c
 
         data_.push_back(cfg);
     }
-
-    set_ = true;
 
     return true;
 }

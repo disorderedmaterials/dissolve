@@ -39,8 +39,6 @@ bool Data1DStoreKeyword::deserialise(LineParser &parser, int startArg, const Cor
     if (!data_.addData(parser.argsv(startArg), parser, startArg + 1, fmt::format("End{}", name()), coreData))
         return Messenger::error("Failed to add data.\n");
 
-    set_ = true;
-
     return true;
 }
 

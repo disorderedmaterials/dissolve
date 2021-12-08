@@ -20,10 +20,6 @@ class ElementVectorKeyword : public KeywordBase
     // Reference to data
     std::vector<Elements::Element> &data_;
 
-    protected:
-    // Return if the current data object is empty
-    bool isDataEmpty() const override;
-
     public:
     // Return reference to data
     std::vector<Elements::Element> &data();

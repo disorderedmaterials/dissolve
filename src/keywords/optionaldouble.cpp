@@ -28,7 +28,6 @@ bool OptionalDoubleKeyword::setData(std::optional<double> value)
     }
 
     data_ = value;
-    set_ = data_.has_value();
 
     return true;
 }

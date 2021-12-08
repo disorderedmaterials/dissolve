@@ -38,8 +38,6 @@ void NodeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const
     if (refreshing_)
         return;
 
-    keyword_->setAsModified();
-
     updateSummaryText();
 
     emit(keywordValueChanged(keyword_->optionMask()));

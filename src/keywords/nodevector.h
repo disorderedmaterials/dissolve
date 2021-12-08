@@ -72,7 +72,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         if (std::find(data_.begin(), data_.end(), castNode) != data_.end())
             return false;
         data_.emplace_back(castNode);
-        setAsModified();
+
         return true;
     }
     // Remove node from vector
@@ -84,7 +84,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         if (it == data_.end())
             return false;
         data_.erase(it);
-        setAsModified();
+
         return true;
     }
     // Return whether specified node is currently in the vector

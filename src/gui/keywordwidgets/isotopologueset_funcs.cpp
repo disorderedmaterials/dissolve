@@ -65,8 +65,6 @@ std::vector<std::string> IsotopologueSetKeywordWidget::availableIsotopologueName
 
 void IsotopologueSetKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
-    keyword_->setAsModified();
-
     updateSummaryText();
 
     emit(keywordValueChanged(keyword_->optionMask()));

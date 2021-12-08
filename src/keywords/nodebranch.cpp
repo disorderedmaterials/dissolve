@@ -13,13 +13,6 @@ NodeBranchKeyword::NodeBranchKeyword(std::shared_ptr<SequenceProcedureNode> &dat
 }
 
 /*
- * Data
- */
-
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool NodeBranchKeyword::isDataEmpty() const { return data_ == nullptr || data_->nNodes() == 0; }
-
-/*
  * Arguments
  */
 
