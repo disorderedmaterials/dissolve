@@ -1,9 +1,3 @@
-parameters:
-  - name: exportExe
-    default : false
-  - name: exportSingularity
-    default : false
-
 jobs:
   - job: "release_linux_mpi"
     displayName: "Release MPI, CLI"
@@ -16,8 +10,6 @@ jobs:
       - template: build-linux.yml
         parameters:
           package: "dissolve-mpi"
-          exportExe: exportExe
-          exportSingularity: exportSingularity
   - job: "release_linux_gui"
     displayName: "Release GUI"
     pool:
@@ -29,8 +21,6 @@ jobs:
       - template: build-linux.yml
         parameters:
           package: "dissolve-gui"
-          exportExe: exportExe
-          exportSingularity: exportSingularity
   - job: "release_linux"
     displayName: "Release CLI"
     pool:
@@ -42,8 +32,6 @@ jobs:
       - template: build-linux.yml
         parameters:
           package: "dissolve"
-          exportExe: exportExe
-          exportSingularity: exportSingularity
   - job: "release_linux_threadless"
     displayName: "Release Threadless"
     pool:
