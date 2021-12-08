@@ -29,6 +29,8 @@ class CLIOptions
     std::optional<std::string> restartFilename_;
     // New input file to write (after reading supplied file)
     std::optional<std::string> writeInputFilename_;
+    // Whether to reload the file written to writeInputFilename_ and continue
+    bool writeInputAndReload_{false};
     // Whether to ignore restart file (if it exists)
     bool ignoreRestartFile_{false};
     // Whether to ignore GUI state file (if it exists)
@@ -56,6 +58,8 @@ class CLIOptions
     std::optional<std::string> restartFilename() const;
     // Return new input file to write (after reading supplied file)
     std::optional<std::string> writeInputFilename() const;
+    // Return whether to reload the file written to writeInputFilename_ and continue
+    bool writeInputAndReload() const;
     // Return whether to ignore restart file if it exists
     bool ignoreRestartFile() const;
     // Return whether to ignore GUI state file (if it exists)

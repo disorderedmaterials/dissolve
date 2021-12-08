@@ -66,9 +66,25 @@ int main(int args, char **argv)
             result = dissolve.worldPool().decision();
         if (!result)
             Messenger::error("Failed to save input file to '{}'.\n", options.writeInputFilename().value());
-        ProcessPool::finalise();
-        Messenger::ceaseRedirect();
-        return result ? 0 : 1;
+
+        // Reload the written file and continue?
+        if (options.writeInputAndReload())
+        {
+            dissolve.clear();
+            Messenger::banner("Reload Input File");
+            if (!dissolve.loadInput(options.writeInputFilename().value()))
+            {
+                ProcessPool::finalise();
+                Messenger::ceaseRedirect();
+                return 1;
+            }
+        }
+        else
+        {
+            ProcessPool::finalise();
+            Messenger::ceaseRedirect();
+            return result ? 0 : 1;
+        }
     }
 
     // Load restart file if it exists

@@ -18,7 +18,7 @@ function(dissolve_system_test test_name input_file count)
     set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
     add_test(
       NAME ${CMAKE_CURRENT_LIST_DIR}-${test_name}
-      COMMAND ${test_target_executable} -n ${count} -x ${input_file} ${ARGN}
+      COMMAND ${test_target_executable} -n ${count} -x ${input_file} -w ${input_file}.rewrite --reload-after-write ${ARGN}
       WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     )
     set_property(TEST ${CMAKE_CURRENT_LIST_DIR}-${test_name} PROPERTY LABELS ${CMAKE_CURRENT_LIST_DIR})

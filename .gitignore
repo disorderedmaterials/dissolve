@@ -37,4 +37,9 @@ changes
 *.restart.prev
 *.state
 
+# Test files
+*.gr
+*.sq
+*.rewrite
+
 .vscode/
