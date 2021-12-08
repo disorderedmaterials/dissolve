@@ -78,7 +78,7 @@ class KeywordBase
     // Return whether the keyword has been set, and is not currently empty (if relevant)
     bool hasBeenSet() const;
     // Convert to string for display in GUI
-    virtual dissolve::any_ptr data() const;
+    virtual dissolve::any_ptr data() const = 0;
 
     /*
      * Arguments

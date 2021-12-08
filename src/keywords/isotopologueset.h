@@ -22,7 +22,6 @@ class IsotopologueSetKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    IsotopologueSet &data();
     dissolve::any_ptr data() const override;
 
     /*

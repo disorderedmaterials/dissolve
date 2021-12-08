@@ -7,7 +7,7 @@ BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, BoolKeyword *keyword, cons
     : QCheckBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Set current state
-    setChecked(keyword_->data());
+    setChecked(keyword_->data().ref<bool>());
 
     // Connect the
     connect(this, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)));
@@ -37,7 +37,7 @@ void BoolKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setChecked(keyword_->data());
+    setChecked(keyword_->data().ref<bool>());
 
     refreshing_ = false;
 }

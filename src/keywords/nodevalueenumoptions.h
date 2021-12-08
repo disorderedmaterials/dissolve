@@ -101,6 +101,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
      * Arguments
      */
     public:
+  dissolve::any_ptr data() const override {return data_;}
     // Return minimum number of arguments accepted
     int minArguments() const override { return 2; }
     // Return maximum number of arguments accepted

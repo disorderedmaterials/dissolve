@@ -227,7 +227,6 @@ target_include_directories(
 )
 target_link_libraries(
   gui
-  keywordwidgets
   charts
   delegates
   widgets
@@ -238,7 +237,7 @@ target_link_libraries(
 )
 
 # Subdirectories
-add_subdirectory(keywordwidgets)
+# add_subdirectory(keywordwidgets)
 add_subdirectory(charts)
 add_subdirectory(delegates)
 add_subdirectory(render)

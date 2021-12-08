@@ -12,7 +12,7 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, IntegerKeyword *keyw
              keyword_->validationMax() ? keyword_->validationMax().value() : 1e6);
 
     // Set current value
-    setValue(keyword_->data());
+    setValue(keyword_->data().ref<int>());
 
     // Connect the
     connect(this, SIGNAL(valueChanged(int)), this, SLOT(spinBoxValueChanged(int)));
@@ -46,7 +46,7 @@ void IntegerKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setValue(keyword_->data());
+    setValue(keyword_->data().ref<int>());
 
     refreshing_ = false;
 }

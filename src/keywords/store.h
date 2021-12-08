@@ -239,7 +239,7 @@ class KeywordStore
         if (!keyword)
             throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
 
-        return keyword->data();
+        return keyword->data().template ref<D>();
     }
     // Get specified keyword enumeration, casting as necessary
     template <class E> std::optional<E> getEnumeration(std::string_view name) const
@@ -254,7 +254,7 @@ class KeywordStore
             throw(std::runtime_error(
                 fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
 
-        return keyword->data();
+        return keyword->data().template ref<E>();
     }
 
     /*

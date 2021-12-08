@@ -38,7 +38,7 @@ function(dissolve_unit_test src_file)
     target_include_directories(${TEST_NAME} PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
     target_link_libraries(
       ${TEST_NAME}
-      PUBLIC keywordwidgets models widgets
+      PUBLIC models widgets
       PRIVATE Qt6::Core Qt6::Widgets
     )
   endif(GUI)

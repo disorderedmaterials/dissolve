@@ -342,7 +342,6 @@ if(GUI)
            # Main gui libs
            render
            widgets
-           keywordwidgets
            delegates
            charts
            models

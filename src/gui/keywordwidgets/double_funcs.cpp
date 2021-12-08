@@ -14,7 +14,7 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, DoubleKeyword *keyword
         setMaximum(keyword_->validationMax().value());
 
     // Set current value
-    setValue(keyword_->data());
+    setValue(keyword_->data().ref<double>());
 
     // Connect the valueChanged signal to our own slot
     connect(this, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));
@@ -47,7 +47,7 @@ void DoubleKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setValue(keyword_->data());
+    setValue(keyword_->data().ref<bool>());
 
     refreshing_ = false;
 }

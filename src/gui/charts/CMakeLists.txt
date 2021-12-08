@@ -1,7 +1,7 @@
 # Don't forget to include output directory, otherwise the UI file won't be wrapped!
 
 # Meta-Objects
-set(charts_MOC_HDRS procedurenode.h chart.hui chartscrollarea.hui)
+set(charts_MOC_HDRS chart.hui chartscrollarea.hui)
 qt6_wrap_cpp(charts_MOC_SRCS ${charts_MOC_HDRS})
 
 # User Interface Files
@@ -14,11 +14,8 @@ set(charts_SRCS
     chartblock.cpp
     charthotspot.cpp
     chartscrollarea_funcs.cpp
-    procedure.cpp
-    procedurenode_funcs.cpp
     chartblock.h
     charthotspot.h
-    procedure.h
     proceduremetrics.h
 )
 

@@ -47,8 +47,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
 
     public:
     // Return reference to data
-    const M *&data() { return data_; }
-    const M *&data() const { return data_; }
+  dissolve::any_ptr data() const override { return data_; }
     // Return base module pointer
     const Module *module() const override { return data_; }
     // Set data

@@ -84,7 +84,7 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     switch (index.column()) {
     case 0:
     return QString::fromStdString(std::string(keyword->name()));
-    case 1: return QString::fromStdString(keyword->toString());
+    case 1: return "keyword->data()";
     default: return {};
     }
   }
