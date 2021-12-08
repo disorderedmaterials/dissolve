@@ -28,8 +28,7 @@ class ConfigurationVectorKeyword : public KeywordBase
 
     public:
     // Return reference to data vector
-    std::vector<Configuration *> &data();
-    const std::vector<Configuration *> &data() const;
+    dissolve::any_ptr data() const override;
 
     /*
      * Arguments

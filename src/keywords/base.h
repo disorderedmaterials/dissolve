@@ -4,6 +4,7 @@
 #pragma once
 
 #include "procedure/nodes/aliases.h"
+#include "templates/anyptr.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
@@ -77,7 +78,7 @@ class KeywordBase
     // Return whether the keyword has been set, and is not currently empty (if relevant)
     bool hasBeenSet() const;
     // Convert to string for display in GUI
-    virtual std::string toString() const;
+    virtual dissolve::any_ptr data() const;
 
     /*
      * Arguments

@@ -26,8 +26,7 @@ class FileAndFormatKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    FileAndFormat &data();
-    const FileAndFormat &data() const;
+    dissolve::any_ptr data() const override;
 
     /*
      * Keyword Options

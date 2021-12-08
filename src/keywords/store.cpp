@@ -53,7 +53,7 @@ KeywordTypeMap::KeywordTypeMap()
 }
 
 // Set keyword data
-bool KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
+bool KeywordTypeMap::set(KeywordBase *keyword, const dissolve::any_ptr data) const
 {
     // Find a suitable setter and call it
     auto it = directMapSetter_.find(data.type());
@@ -131,7 +131,7 @@ const KeywordTypeMap &KeywordStore::setters()
 }
 
 // Set specified keyword with supplied data
-void KeywordStore::set(std::string_view name, const std::any value)
+void KeywordStore::set(std::string_view name, const dissolve::any_ptr value)
 {
     auto it = keywords_.find(name);
     if (it == keywords_.end())

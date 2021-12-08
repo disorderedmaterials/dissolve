@@ -23,9 +23,7 @@ class BoolKeyword : public KeywordBase
     // Set data
     bool setData(bool value);
     // Return data
-    bool &data();
-    const bool &data() const;
-    std::string toString() const override;
+    dissolve::any_ptr data() const override;
 
     /*
      * Arguments

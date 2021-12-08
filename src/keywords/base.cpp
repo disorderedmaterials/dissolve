@@ -33,7 +33,7 @@ std::string_view KeywordBase::name() const { return name_; }
 std::string_view KeywordBase::description() const { return description_; }
 
 // Display value in the gui
-std::string KeywordBase::toString() const {
+dissolve::any_ptr KeywordBase::toAny() const {
   return fmt::format("{}", typeIndex_.name());
 }
 
