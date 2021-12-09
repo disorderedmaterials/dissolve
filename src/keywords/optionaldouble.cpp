@@ -77,5 +77,5 @@ bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywo
     if (!data_.has_value())
         return true;
 
-    return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_.value());
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value());
 }
