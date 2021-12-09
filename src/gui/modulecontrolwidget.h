@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/lock.h"
+#include "gui/keywordwidgets/base.h"
 #include "gui/ui_modulecontrolwidget.h"
 #include "templates/variantpointer.h"
 
