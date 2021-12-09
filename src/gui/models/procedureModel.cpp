@@ -2,10 +2,20 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/models/procedureModel.h"
+#include "classes/species.h"
+#include "expression/variable.h"
 #include "keywords/bool.h"
+#include "keywords/enumoptions.h"
+#include "keywords/expressionvariablevector.h"
 #include "keywords/integer.h"
+#include "keywords/node.h"
+#include "keywords/nodevalue.h"
+#include "keywords/nodevalueenumoptions.h"
+#include "keywords/species.h"
 #include "keywords/stdstring.h"
+#include "keywords/vec3nodevalue.h"
 #include "procedure/procedure.h"
+#include "templates/algorithms.h"
 
 Q_DECLARE_METATYPE(KeywordBase *);
 
@@ -16,19 +26,56 @@ const quintptr OFFSET = 0x10000;
 
 QString KeywordBaseToString(KeywordBase *k)
 {
-    if (BoolKeyword *b = dynamic_cast<BoolKeyword *>(k))
+    if (auto *b = dynamic_cast<BoolKeyword *>(k))
     {
         return b->data() ? "True" : "False";
     }
-    if (IntegerKeyword *i = dynamic_cast<IntegerKeyword *>(k))
+    if (auto *i = dynamic_cast<IntegerKeyword *>(k))
     {
         return QString::fromStdString(fmt::format("{}", i->data()));
     }
-    if (StringKeyword *s = dynamic_cast<StringKeyword *>(k))
+    if (auto *e = dynamic_cast<EnumOptionsBaseKeyword *>(k))
+    {
+        return "Enum Options Template Problem";
+    }
+    if (auto *e = dynamic_cast<ExpressionVariableVectorKeyword *>(k))
+    {
+        std::vector<std::string> names;
+        std::transform(e->data().begin(), e->data().end(), std::back_inserter(names),
+                       [](auto &x) { return std::string(x->name()); });
+        return QString::fromStdString(joinStrings(names));
+    }
+    if (auto *i = dynamic_cast<IntegerKeyword *>(k))
+    {
+        return QString::fromStdString(fmt::format("{}", i->data()));
+    }
+    if (auto *n = dynamic_cast<NodeKeywordBase *>(k))
+    {
+        return "Node Keyword Template Problem";
+    }
+    if (auto *n = dynamic_cast<NodeValueEnumOptionsBaseKeyword *>(k))
+    {
+        return "Node Value Enum Options Template Problem";
+    }
+    if (auto *n = dynamic_cast<NodeValueKeyword *>(k))
+    {
+        return QString::fromStdString(n->data().asString());
+    }
+    if (auto *s = dynamic_cast<SpeciesKeyword *>(k))
+    {
+        return QString::fromStdString(std::string(s->data()->name()));
+    }
+    if (auto *s = dynamic_cast<StringKeyword *>(k))
     {
         return QString::fromStdString(s->data());
     }
-    return "Unknown Keyword Type:";
+    if (auto *v = dynamic_cast<Vec3NodeValueKeyword *>(k))
+    {
+        return QString::fromStdString(
+            fmt::format("{},{},{}", v->data().x.asString(), v->data().y.asString(), v->data().z.asString()));
+    }
+
+    return k->typeIndex().name();
 }
 
 ProcedureModel::ProcedureModel(Procedure &procedure) : procedure_(procedure)
