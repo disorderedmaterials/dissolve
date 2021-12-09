@@ -18,9 +18,6 @@ NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
 NodeValue &NodeValueKeyword::data() { return data_; }
 const NodeValue &NodeValueKeyword::data() const { return data_; }
 
-std::string NodeValueKeyword::toString() const {
-  return data_.asString();
-}
 
 // Set the value from supplied expression text
 bool NodeValueKeyword::setData(std::string_view expressionText)

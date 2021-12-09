@@ -31,8 +31,6 @@ class IntegerKeyword : public KeywordBase
     std::optional<int> validationMin();
     // Return validation maximum limit
     std::optional<int> validationMax();
-    // Display in GUI
-    std::string toString() const override;
 
     /*
      * Arguments

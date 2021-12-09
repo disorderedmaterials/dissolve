@@ -32,11 +32,6 @@ std::string_view KeywordBase::name() const { return name_; }
 // Return keyword description
 std::string_view KeywordBase::description() const { return description_; }
 
-// Display value in the gui
-std::string KeywordBase::toString() const {
-  return fmt::format("{}", typeIndex_.name());
-}
-
 // Return keyword option mask
 int KeywordBase::optionMask() const { return optionMask_; }
 

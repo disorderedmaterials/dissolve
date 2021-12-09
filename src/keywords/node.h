@@ -57,11 +57,6 @@ template <class N> class NodeKeyword : public NodeKeywordBase
     // Return reference to data
     std::shared_ptr<const N> &data() { return data_; }
     std::shared_ptr<const N> &data() const { return data_; }
-    std::string toString() const override {
-      if (!data_)
-	return "Null Pointer";
-      return std::string(data_->name());
-    }
     // Return base node
     ConstNodeRef baseNode() { return parentNode_; }
     // Set data

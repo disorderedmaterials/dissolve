@@ -28,14 +28,6 @@ const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { retur
 // Determine whether current data is 'empty', and should be considered as 'not set'
 bool ExpressionVariableVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
-// Display in GUI
-std::string ExpressionVariableVectorKeyword::toString() const {
-  std::vector<std::string> names;
-  std::transform(data_.begin(), data_.end(), std::back_inserter(names),
-		 [](std::shared_ptr<ExpressionVariable> &x){return std::string(x->name());});
-  return joinStrings(names);
-}
-
 /*
  * Arguments
  */
