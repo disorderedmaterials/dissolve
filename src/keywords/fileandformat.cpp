@@ -44,6 +44,9 @@ bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const C
 // Serialise data to specified LineParser
 bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (!data_.hasFilename())
+        return true;
+
     if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
         return false;
     if (!data_.writeBlock(parser, prefix))
