@@ -55,7 +55,7 @@ bool ConfigurationVectorKeyword::serialise(LineParser &parser, std::string_view 
         return true;
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
-                             joinStrings(data_, "  ", [](const auto *cfg) { return fmt::format("{}", cfg->name()); }));
+                             joinStrings(data_, "  ", [](const auto *cfg) { return fmt::format("'{}'", cfg->name()); }));
 }
 
 /*
