@@ -38,14 +38,15 @@ bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const C
     if (!data_.read(parser, startArg, endKeyword_, coreData))
         return Messenger::error("Failed to read file/format.\n");
 
-    set_ = true;
-
     return true;
 }
 
 // Serialise data to specified LineParser
 bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (!data_.hasFilename())
+        return true;
+
     if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
         return false;
     if (!data_.writeBlock(parser, prefix))

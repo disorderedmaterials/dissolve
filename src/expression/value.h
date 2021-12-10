@@ -59,7 +59,7 @@ class ExpressionValue
     public:
     // Return whether the contained type is an integer
     bool isInteger() const;
-    // Return whether the contained type is an double
+    // Return whether the contained type is a double
     bool isDouble() const;
     // Return the supplied ExpressionValues both contain integer types
     static bool bothIntegers(const ExpressionValue &a, const ExpressionValue &b);

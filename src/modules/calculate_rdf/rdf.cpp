@@ -75,6 +75,7 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
 
     // -- -- Collect1D: 'RDF'
     collectDistance_ = std::make_shared<Collect1DProcedureNode>(calcDistance);
+    collectDistance_->setName("Histo-AB");
     forEachB->addNode(collectDistance_);
 
     // Process1D: @dataName

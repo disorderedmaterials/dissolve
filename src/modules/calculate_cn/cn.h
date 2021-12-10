@@ -26,11 +26,11 @@ class CalculateCNModule : public Module
     // Source module for calculation
     const CalculateRDFModule *sourceRDF_{nullptr};
     // Reference coordination number for range A against which calculated value should be tested
-    double testRangeA_{0.0};
+    std::optional<double> testRangeA_;
     // Reference coordination number for range B against which calculated value should be tested
-    double testRangeB_{0.0};
+    std::optional<double> testRangeB_;
     // Reference coordination number for range C against which calculated value should be tested
-    double testRangeC_{0.0};
+    std::optional<double> testRangeC_;
     // Threshold difference at which test comparisons will fail
     double testThreshold_{0.1};
     // Analysis procedure to be run

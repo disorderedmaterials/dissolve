@@ -42,7 +42,6 @@ void NodeKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QMode
         return;
 
     keyword_->setData(allowedNodes_[ui_.NodeCombo->currentIndex()]);
-    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }

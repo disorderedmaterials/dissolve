@@ -4,18 +4,21 @@
 #include "procedure/nodes/pickproximity.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "keywords/double.h"
 #include "keywords/integer.h"
+#include "keywords/optionaldouble.h"
+#include "keywords/optionalint.h"
 #include "keywords/speciesvector.h"
 #include "templates/algorithms.h"
 
 PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase(ProcedureNode::NodeType::PickProximity)
 {
     keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Species to count", speciesToPick_);
-    keywords_.add<IntegerKeyword>("Control", "MinCount", "Minimum number", minCount_, 0);
-    keywords_.add<IntegerKeyword>("Control", "MaxCount", "Maximum number", maxCount_, 0);
-    keywords_.add<DoubleKeyword>("Control", "MinDistance", "Minimum distance for picking (Angstroms)", minDistance_, 0.0);
-    keywords_.add<DoubleKeyword>("Control", "MaxDistance", "Maximum distance for picking (Angstroms)", maxDistance_, 0.0);
+    keywords_.add<OptionalIntegerKeyword>("Control", "MinCount", "Minimum number", minCount_, 0, std::nullopt, 1, "Off");
+    keywords_.add<OptionalIntegerKeyword>("Control", "MaxCount", "Maximum number", maxCount_, 0, std::nullopt, 1, "Off");
+    keywords_.add<OptionalDoubleKeyword>("Control", "MinDistance", "Minimum distance for picking (Angstroms)", minDistance_,
+                                         0.0, std::nullopt, 0.1, "Off");
+    keywords_.add<OptionalDoubleKeyword>("Control", "MaxDistance", "Maximum distance for picking (Angstroms)", maxDistance_,
+                                         0.0, std::nullopt, 0.1, "Off");
 }
 
 /*
@@ -32,26 +35,20 @@ bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *c
     pickedMolecules_.clear();
 
     // Retrieve control values
-    auto rMin = keywords_.hasBeenSet("MinDistance") ? minDistance_ : 0.0;
-    std::optional<double> rMax;
-    if (keywords_.hasBeenSet("MaxDistance"))
-        rMax = maxDistance_;
-    auto nMin = keywords_.hasBeenSet("MinCount") ? minCount_ : 0;
-    std::optional<int> nMax;
-    if (keywords_.hasBeenSet("MaxCount"))
-        nMax = maxCount_;
+    auto rMin = minDistance_.value_or(0.0);
+    auto nMin = minCount_.value_or(0);
 
     // Print info
     if (!speciesToPick_.empty())
         Messenger::print("[PickProximity] Proximal species are: {}.\n",
                          joinStrings(speciesToPick_, " ", [](const auto &sp) { return sp->name(); }));
-    if (rMax.has_value())
-        Messenger::print("[PickProximity] Allowed distance range is {} <= r <= {} Angstroms.\n", rMin, rMax.value());
+    if (maxDistance_)
+        Messenger::print("[PickProximity] Allowed distance range is {} <= r <= {} Angstroms.\n", rMin, maxDistance_.value());
     else
         Messenger::print("[PickProximity] Allowed distance range is r >= {} Angstroms.\n", rMin);
 
-    if (nMax.has_value())
-        Messenger::print("[PickProximity] Allowed coordination count is {} <= N <= {}.\n", nMin, nMax.value());
+    if (maxCount_.has_value())
+        Messenger::print("[PickProximity] Allowed coordination count is {} <= N <= {}.\n", nMin, maxCount_.value());
     else
         Messenger::print("[PickProximity] Allowed coordination count is N >= {}.\n", nMin);
 
@@ -78,13 +75,13 @@ bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *c
                 auto r = box->minimumDistance(iCog, jCog);
 
                 // Check distance criteria
-                if (r >= rMin && (!rMax.has_value() || r <= rMax.value()))
+                if (r >= rMin && (!maxDistance_.has_value() || r <= maxDistance_.value()))
                     ++count;
             }
         }
 
         // Check total count against criteria
-        if (count >= nMin && (!nMax.has_value() || count <= nMax.value()))
+        if (count >= nMin && (!maxCount_.has_value() || count <= maxCount_.value()))
             pickedMolecules_.push_back(molI);
     }
 

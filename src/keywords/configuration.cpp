@@ -28,8 +28,6 @@ bool ConfigurationKeyword::deserialise(LineParser &parser, int startArg, const C
     if (!data_)
         return Messenger::error("Error setting Configuration - no Configuration named '{}' exists.\n", parser.argsv(startArg));
 
-    set_ = true;
-
     return true;
 }
 

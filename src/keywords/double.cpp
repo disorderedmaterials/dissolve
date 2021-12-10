@@ -69,5 +69,8 @@ bool DoubleKeyword::deserialise(LineParser &parser, int startArg, const CoreData
 // Serialise data to specified LineParser
 bool DoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_);
+    if (!set_)
+        return true;
+
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }

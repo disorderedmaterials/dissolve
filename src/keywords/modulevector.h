@@ -28,10 +28,6 @@ class ModuleVectorKeyword : public KeywordBase
     // Maximum number of modules to allow
     std::optional<int> maxModules_;
 
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
-
     public:
     // Return the data vector
     std::vector<Module *> &data();

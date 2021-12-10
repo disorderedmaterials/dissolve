@@ -34,7 +34,6 @@ bool Vec3DoubleKeyword::setData(Vec3<double> value)
         return false;
 
     data_ = value;
-    set_ = true;
 
     return true;
 }

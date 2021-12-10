@@ -24,12 +24,7 @@ bool NodeValueKeyword::setData(std::string_view expressionText)
     // Get any variables currently in scope
     auto vars = parentNode_->parametersInScope();
 
-    if (!data_.set(expressionText, vars))
-        return false;
-
-    set_ = true;
-
-    return true;
+    return data_.set(expressionText, vars);
 }
 
 /*

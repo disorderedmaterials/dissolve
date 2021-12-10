@@ -19,6 +19,7 @@ void CoreData::clear()
     masterBonds_.clear();
     masterAngles_.clear();
     masterTorsions_.clear();
+    masterImpropers_.clear();
     atomTypes_.clear();
 }
 

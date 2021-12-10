@@ -31,8 +31,6 @@ bool StringPairVectorKeyword::deserialise(LineParser &parser, int startArg, cons
     for (auto n = startArg; n < parser.nArgs(); n += 2)
         data_.emplace_back(parser.argsv(n), parser.argsv(n + 1));
 
-    setAsModified();
-
     return true;
 }
 

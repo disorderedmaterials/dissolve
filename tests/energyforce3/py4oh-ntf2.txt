@@ -431,6 +431,7 @@ Layer  'Processing'
     TestAnalytic  On
     Configuration  'Py4OH-NTf2'
     TestReferenceIntra     51.050222   # (25.525111 per molecule) * 2 molecules
+    TestThreshold  5.0e-5
     EndModule
 
     Module Forces
@@ -450,4 +451,3 @@ EndLayer
 Simulation
   Seed  -1
 EndSimulation
-

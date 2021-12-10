@@ -34,7 +34,7 @@ class ForcesModule : public Module
     // Include intramolecular forces in test
     bool testIntra_{true};
     // Threshold of force (%) at which test comparison will fail
-    double testThreshold_{0.1};
+    double testThreshold_{1.0e-6};
     // Reference forces for test
     ForceImportFileFormat referenceForces_;
     // Force export file and format

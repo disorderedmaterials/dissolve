@@ -21,7 +21,6 @@ bool BoolKeyword::setData(bool value)
 }
 
 // Return data
-bool &BoolKeyword::data() { return data_; }
 const bool &BoolKeyword::data() const { return data_; }
 
 /*
@@ -44,5 +43,8 @@ bool BoolKeyword::deserialise(LineParser &parser, int startArg, const CoreData &
 // Serialise data to specified LineParser
 bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (!set_)
+        return true;
+
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }

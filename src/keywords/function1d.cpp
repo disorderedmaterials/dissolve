@@ -43,11 +43,7 @@ bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const Core
             Functions::function1D().keyword(func), name());
 
     // Set function and params
-    auto result = data_.setFunctionAndParameters(func, parser.argvd(startArg + 1));
-    if (result)
-        set_ = true;
-
-    return result;
+    return data_.setFunctionAndParameters(func, parser.argvd(startArg + 1));
 }
 
 // Serialise data to specified LineParser

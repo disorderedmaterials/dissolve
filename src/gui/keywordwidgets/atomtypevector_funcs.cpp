@@ -38,8 +38,6 @@ void AtomTypeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
     if (refreshing_)
         return;
 
-    keyword_->setAsModified();
-
     updateSummaryText();
 
     emit(keywordValueChanged(keyword_->optionMask()));

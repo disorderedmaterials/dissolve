@@ -13,9 +13,6 @@ SpeciesVectorKeyword::SpeciesVectorKeyword(std::vector<const Species *> &data) :
  * Data
  */
 
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool SpeciesVectorKeyword::isDataEmpty() const { return data_.empty(); }
-
 // Return reference to data vector
 std::vector<const Species *> &SpeciesVectorKeyword::data() { return data_; }
 const std::vector<const Species *> &SpeciesVectorKeyword::data() const { return data_; }
@@ -40,15 +37,13 @@ bool SpeciesVectorKeyword::deserialise(LineParser &parser, int startArg, const C
         data_.push_back(sp);
     }
 
-    set_ = true;
-
     return true;
 }
 
 // Serialise data to specified LineParser
 bool SpeciesVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    if (isDataEmpty())
+    if (data_.empty())
         return true;
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName,

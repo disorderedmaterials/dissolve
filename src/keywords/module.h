@@ -66,7 +66,6 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
             data_ = dynamic_cast<const M *>(module);
             assert(data_);
         }
-        setAsModified();
 
         return true;
     }

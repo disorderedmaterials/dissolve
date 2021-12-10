@@ -4,7 +4,7 @@
 #include "keywords/base.h"
 #include "base/messenger.h"
 
-KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false) {}
+KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex) {}
 
 /*
  * Keyword Description
@@ -23,9 +23,6 @@ const std::type_index KeywordBase::typeIndex() const { return typeIndex_; }
 // Set option mask
 void KeywordBase::setOptionMask(int optionMask) { optionMask_ = optionMask; }
 
-// Flag that data has been set by some other means
-void KeywordBase::setAsModified() { set_ = true; }
-
 // Return keyword name
 std::string_view KeywordBase::name() const { return name_; }
 
@@ -37,12 +34,6 @@ int KeywordBase::optionMask() const { return optionMask_; }
 
 // Return whether specified option is set
 bool KeywordBase::isOptionSet(KeywordOption opt) const { return (optionMask_ & opt); }
-
-// Return whether the data has ever been set
-bool KeywordBase::isDataEmpty() const { return !set_; }
-
-// Return whether the keyword has been set, and is not currently empty (if relevant)
-bool KeywordBase::hasBeenSet() const { return set_ && !isDataEmpty(); }
 
 /*
  * Arguments

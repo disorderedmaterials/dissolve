@@ -18,9 +18,6 @@ DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(std::vector<std::shared_ptr<Dyn
  * Data
  */
 
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.empty(); }
-
 // Return reference to data
 std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() { return data_; }
 const std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &DynamicSiteNodesKeyword::data() const { return data_; }
@@ -56,8 +53,6 @@ bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, cons
     // Check for required axes?
     if (axesRequired_ && (!dynamicSite->hasAxes()))
         return Messenger::error("Dynamic sites defined for keyword '{}' must have axes defined.\n", name());
-
-    set_ = true;
 
     return true;
 }

@@ -18,12 +18,13 @@ class BoolKeyword : public KeywordBase
     private:
     // Reference to target data
     bool &data_;
+    // Whether the data has been set
+    bool set_{false};
 
     public:
     // Set data
     bool setData(bool value);
     // Return data
-    bool &data();
     const bool &data() const;
 
     /*

@@ -345,7 +345,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Variable timestep?
         if (variableTimestep_)
-            keywords_.setAsModified("DeltaT");
+            keywords_.set("DeltaT", deltaT_);
 
         // Increment configuration changeCount
         cfg->incrementContentsVersion();

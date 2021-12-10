@@ -40,7 +40,6 @@ void RangeKeywordWidget::on_Spin1_valueChanged(double value)
         return;
 
     keyword_->data().setMinimum(value);
-    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -52,7 +51,6 @@ void RangeKeywordWidget::on_Spin2_valueChanged(double value)
         return;
 
     keyword_->data().setMaximum(value);
-    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }

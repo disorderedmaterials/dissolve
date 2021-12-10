@@ -261,7 +261,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             translationStepSize_ = translationStepSizeMin_;
         else if (translationStepSize_ > translationStepSizeMax_)
             translationStepSize_ = translationStepSizeMax_;
-        keywords_.setAsModified("TranslationStepSize");
+        keywords_.set("TranslationStepSize", translationStepSize_);
 
         Messenger::print("Updated step size for translations is {:.5f} Angstroms.\n", translationStepSize_);
 
@@ -271,7 +271,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             rotationStepSize_ = rotationStepSizeMin_;
         else if (rotationStepSize_ > rotationStepSizeMax_)
             rotationStepSize_ = rotationStepSizeMax_;
-        keywords_.setAsModified("RotationStepSize");
+        keywords_.set("RotationStepSize", rotationStepSize_);
 
         Messenger::print("Updated step size for rotations is {:.5f} degrees.\n", rotationStepSize_);
 

@@ -22,10 +22,6 @@ class SpeciesVectorKeyword : public KeywordBase
     // Reference to data vector
     std::vector<const Species *> &data_;
 
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
-
     public:
     // Return reference to data vector
     std::vector<const Species *> &data();

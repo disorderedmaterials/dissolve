@@ -57,16 +57,16 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check total charge
     auto nChargesFailed = 0;
-    if (keywords_.hasBeenSet("TotalCharge"))
+    if (totalCharge_)
     {
         Messenger::print("\nChecking total charge...\n");
 
         auto q = targetSpecies_->totalCharge(dissolve.pairPotentialsIncludeCoulomb());
-        auto qDiff = fabs(q - totalCharge_);
+        auto qDiff = fabs(q - totalCharge_.value());
         if (qDiff > chargeTolerance_)
         {
             ++nChargesFailed;
-            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q, totalCharge_);
+            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q, totalCharge_.value());
         }
         else
             Messenger::print("Total charge on species is {} e, which is within the tolerance ({:12.6e} e).\n", q,

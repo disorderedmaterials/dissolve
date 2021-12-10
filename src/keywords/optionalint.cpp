@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "keywords/optionaldouble.h"
+#include "keywords/optionalint.h"
 #include "base/lineparser.h"
 
-OptionalDoubleKeyword::OptionalDoubleKeyword(std::optional<double> &data, double minValue, std::optional<double> maxValue,
-                                             double valueDelta, std::string_view textWhenNull)
+OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,
+                                               int valueDelta, std::string_view textWhenNull)
     : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue},
       valueDelta_(valueDelta), textWhenNull_{textWhenNull}
 {
@@ -16,7 +16,7 @@ OptionalDoubleKeyword::OptionalDoubleKeyword(std::optional<double> &data, double
  */
 
 // Set data
-bool OptionalDoubleKeyword::setData(std::optional<double> value)
+bool OptionalIntegerKeyword::setData(std::optional<int> value)
 {
     // Check limits if a value was supplied
     if (value)
@@ -33,26 +33,26 @@ bool OptionalDoubleKeyword::setData(std::optional<double> value)
 }
 
 // Return data
-std::optional<double> OptionalDoubleKeyword::data() const { return data_; }
+std::optional<int> OptionalIntegerKeyword::data() const { return data_; }
 
 // Return validation minimum limit
-double OptionalDoubleKeyword::validationMin() const { return minimumLimit_; }
+int OptionalIntegerKeyword::validationMin() const { return minimumLimit_; }
 
 // Return validation maximum limit
-std::optional<double> OptionalDoubleKeyword::validationMax() const { return maximumLimit_; }
+std::optional<int> OptionalIntegerKeyword::validationMax() const { return maximumLimit_; }
 
 // Return step size for widget
-double OptionalDoubleKeyword::valueDelta() const { return valueDelta_; }
+int OptionalIntegerKeyword::valueDelta() const { return valueDelta_; }
 
 // Return text to display in widget  when value is null
-std::string OptionalDoubleKeyword::textWhenNull() const { return textWhenNull_; }
+std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_; }
 
 /*
  * Arguments
  */
 
 // Deserialise from supplied LineParser, starting at given argument offset
-bool OptionalDoubleKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
+bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {
@@ -72,10 +72,10 @@ bool OptionalDoubleKeyword::deserialise(LineParser &parser, int startArg, const 
 }
 
 // Serialise data to specified LineParser
-bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+bool OptionalIntegerKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     if (!data_.has_value())
         return true;
 
-    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value());
+    return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_.value());
 }

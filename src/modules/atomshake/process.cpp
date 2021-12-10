@@ -182,7 +182,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             stepSize_ = stepSizeMin_;
         else if (stepSize_ > stepSizeMax_)
             stepSize_ = stepSizeMax_;
-        keywords_.setAsModified("StepSize");
+        keywords_.set("StepSize", stepSize_);
 
         Messenger::print("Updated step size is {} Angstroms.\n", stepSize_);
 

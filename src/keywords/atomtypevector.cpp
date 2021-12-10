@@ -20,9 +20,6 @@ AtomTypeVectorKeyword::AtomTypeVectorKeyword(std::vector<std::shared_ptr<AtomTyp
 std::vector<std::shared_ptr<AtomType>> &AtomTypeVectorKeyword::data() { return data_; }
 const std::vector<std::shared_ptr<AtomType>> &AtomTypeVectorKeyword::data() const { return data_; }
 
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool AtomTypeVectorKeyword::isDataEmpty() const { return data_.empty(); }
-
 /*
  * Arguments
  */
@@ -51,8 +48,6 @@ bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const 
         // All OK - add it to our vector
         data_.push_back(atomType);
     }
-
-    set_ = true;
 
     return true;
 }

@@ -36,7 +36,6 @@ bool RangeKeyword::deserialise(LineParser &parser, int startArg, const CoreData 
     if (parser.hasArg(startArg + 1))
     {
         data_.set(parser.argd(startArg), parser.argd(startArg + 1));
-        set_ = true;
 
         return true;
     }

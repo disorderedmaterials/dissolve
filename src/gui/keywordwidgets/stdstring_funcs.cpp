@@ -23,7 +23,6 @@ void StringKeywordWidget::lineEditTextChanged(const QString &text)
         return;
 
     keyword_->data() = qPrintable(text);
-    keyword_->setAsModified();
 
     emit(keywordValueChanged(keyword_->optionMask()));
 }

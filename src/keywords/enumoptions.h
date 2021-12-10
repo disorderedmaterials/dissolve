@@ -86,7 +86,6 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
                 return optionData_.errorAndPrintValid(parser.argsv(startArg));
 
             data_ = optionData_.enumeration(parser.argsv(startArg));
-            setAsModified();
 
             return true;
         }
@@ -112,11 +111,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
         throw(std::runtime_error("Couldn't retrieve index for enumeration as it doesn't exist.\n"));
     };
     // Set new option index
-    void setEnumerationByIndex(int optionIndex) override
-    {
-        data_ = optionData_.enumerationByIndex(optionIndex);
-        setAsModified();
-    }
+    void setEnumerationByIndex(int optionIndex) override { data_ = optionData_.enumerationByIndex(optionIndex); }
 
     /*
      * Access to KeywordBase

@@ -1,7 +1,7 @@
-# Restart file written by Dissolve v0.9.0 at 12:25:00 on 22-11-2021.
-Processing  Dissolve//Iteration  int  72  1
+# Restart file written by Dissolve v0.9.0 at 09:56:15 on 10-12-2021.
+Processing  Dissolve//Iteration  int  0  1
 73
-Processing  Dissolve//Potential_HW-HW_Additional  Data1D  72  1
+Processing  Dissolve//Potential_HW-HW_Additional  Data1D  0  1
 HW-HW (Orig)
 180 False
 0.0  0.0
@@ -184,7 +184,7 @@ HW-HW (Orig)
 8.85  0.0
 8.9  0.0
 8.950000000000001  0.0
-Processing  Dissolve//Potential_HW-OW_Additional  Data1D  72  1
+Processing  Dissolve//Potential_HW-OW_Additional  Data1D  0  1
 HW-OW (Orig)
 180 False
 0.0  0.0
@@ -367,7 +367,7 @@ HW-OW (Orig)
 8.85  0.0
 8.9  0.0
 8.950000000000001  0.0
-Processing  Dissolve//Potential_OW-OW_Additional  Data1D  72  1
+Processing  Dissolve//Potential_OW-OW_Additional  Data1D  0  1
 OW-OW (Orig)
 180 False
 0.0  0.0
@@ -1358,7 +1358,7 @@ Processing  RDF(COM-COM)-Analyser//Process1D//RDF  Data1D  72  1
 19.87500000000015  0.0  0.0
 19.92500000000015  0.0  0.0
 19.97500000000015  0.0  0.0
-Processing  RDF(COM-COM)//Node0057_Bulk_Bins  Histogram1D  72  1
+Processing  RDF(COM-COM)//Histo-AB_Bulk_Bins  Histogram1D  72  1
 0.0 20.0 0.05
 71022  0
 0.0  73  0.0
@@ -6170,7 +6170,7 @@ Processing  RDF(H1-H2)-Analyser//Process1D//RDF  Data1D  72  1
 19.975000000000325  0.0  0.0
 19.985000000000326  0.0  0.0
 19.995000000000328  0.0  0.0
-Processing  RDF(H1-H2)//Node0033_Bulk_Bins  Histogram1D  72  1
+Processing  RDF(H1-H2)//Histo-AB_Bulk_Bins  Histogram1D  72  1
 0.0 20.0 0.01
 71022  0
 0.0  73  0.0
@@ -14182,7 +14182,7 @@ Processing  RDF(OW-OW)-Analyser//Process1D//RDF  Data1D  72  1
 19.975000000000325  0.0  0.0
 19.985000000000326  0.0  0.0
 19.995000000000328  0.0  0.0
-Processing  RDF(OW-OW)//Node0009_Bulk_Bins  Histogram1D  72  1
+Processing  RDF(OW-OW)//Histo-AB_Bulk_Bins  Histogram1D  72  1
 0.0 20.0 0.01
 71022  0
 0.0  73  0.0
@@ -18997,28 +18997,28 @@ Configuration  'Bulk'
 266 0.32885486 12.859196541181632 8.06210669
 266 0.7559082700000002 13.611609141181631 8.64577235
 Timing  ImportTrajectory01
-0.001140642753424658  73  1.4129066788956152e-07
+0.001267994712328767  73  2.5404423690329573e-06
 Timing  RDF(OW-OW)
-0.004852711150684931  73  1.1694339797473426e-06
+0.006339571054794518  73  6.171599236612778e-05
 Timing  RDF(OW-OW)-Analyser
-0.004151420547945203  73  7.139309274662604e-05
+0.006697037356164385  73  3.1282388197912736e-05
+Timing  DataTest
+0.0  0  0.0
 Timing  DataTest01
 0.0  0  0.0
+Timing  RDF(H1-H2)
+0.0063753023835616445  73  4.5602078188619257e-05
+Timing  RDF(H1-H2)-Analyser
+0.0062107753561643836  73  3.2904073297250744e-05
 Timing  DataTest02
 0.0  0  0.0
-Timing  RDF(H1-H2)
-0.003927335671232875  73  9.716285844301105e-07
-Timing  RDF(H1-H2)-Analyser
-0.0039918169178082205  73  1.106012046963151e-05
 Timing  DataTest03
 0.0  0  0.0
+Timing  RDF(COM-COM)
+0.006182024712328768  73  4.0279100943628976e-05
+Timing  RDF(COM-COM)-Analyser
+0.006720684698630137  73  5.680825785138137e-05
 Timing  DataTest04
 0.0  0  0.0
-Timing  RDF(COM-COM)
-0.0038609310684931506  73  2.2104311290150653e-05
-Timing  RDF(COM-COM)-Analyser
-0.003781784109589041  73  9.701735543167124e-06
 Timing  DataTest05
-0.0  0  0.0
-Timing  DataTest06
 0.0  0  0.0

@@ -160,6 +160,4 @@ void FileAndFormatKeywordWidget::updateKeywordData()
 
     fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
     fileAndFormat.formats().setIndex(ui_.FormatCombo->currentIndex());
-
-    keyword_->setAsModified();
 }

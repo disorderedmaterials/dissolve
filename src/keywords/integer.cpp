@@ -69,5 +69,8 @@ bool IntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreDat
 // Serialise data to specified LineParser
 bool IntegerKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (!set_)
+        return true;
+
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }

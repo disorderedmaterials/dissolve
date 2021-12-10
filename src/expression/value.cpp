@@ -102,7 +102,7 @@ double ExpressionValue::asDouble() const { return (type_ == ValueType::Integer ?
 // Return result as a string
 std::string ExpressionValue::asString() const
 {
-    return (type_ == ValueType::Integer ? fmt::format("{}", valueI_) : fmt::format("{:12.6e}", valueD_));
+    return (type_ == ValueType::Integer ? fmt::format("{}", valueI_) : fmt::format("{}", valueD_));
 }
 
 // Return pointer to integer value
@@ -118,7 +118,7 @@ double *ExpressionValue::doublePointer() { return &valueD_; }
 // Return whether the contained type is an integer
 bool ExpressionValue::isInteger() const { return (type_ == ValueType::Integer); }
 
-// Return whether the contained type is an double
+// Return whether the contained type is a double
 bool ExpressionValue::isDouble() const { return (type_ == ValueType::Double); }
 
 // Return the supplied ExpressionValues both contain integer types

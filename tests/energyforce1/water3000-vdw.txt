@@ -39,6 +39,7 @@ Layer  'Processing'
     Test on
     TestAnalytic on
     TestReferenceInter    1770.1666370083758
+    TestThreshold  6.0e-2
   EndModule
 
   # Test production forces against reference forces

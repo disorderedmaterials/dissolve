@@ -29,10 +29,6 @@ class NodeBranchKeyword : public KeywordBase
     // Context for the target branch
     ProcedureNode::NodeContext branchContext_;
 
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
-
     /*
      * Arguments
      */

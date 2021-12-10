@@ -122,7 +122,7 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
     if (type_ == IntegerNodeValue)
         return fmt::format("{}", valueI_);
     else if (type_ == DoubleNodeValue)
-        return fmt::format("{:12.6e}", valueD_);
+        return fmt::format("{}", valueD_);
     else
     {
         if (addQuotesIfRequired)

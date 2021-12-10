@@ -29,10 +29,6 @@ class DynamicSiteNodesKeyword : public KeywordBase
     // Whether sites in the vector must have a defined orientation
     bool axesRequired_;
 
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
-
     public:
     // Return reference to data
     std::vector<std::shared_ptr<DynamicSiteProcedureNode>> &data();

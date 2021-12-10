@@ -67,8 +67,6 @@ bool IntegerStringVectorKeyword::deserialise(LineParser &parser, int startArg, c
     // Add tuple to vector
     data_.emplace_back(i, s);
 
-    setAsModified();
-
     return true;
 }
 

@@ -28,7 +28,6 @@ bool Vec3IntegerKeyword::setData(Vec3<int> value)
         return false;
 
     data_ = value;
-    set_ = true;
 
     return true;
 }

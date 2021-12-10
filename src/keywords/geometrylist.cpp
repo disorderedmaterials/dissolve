@@ -55,8 +55,6 @@ bool GeometryListKeyword::deserialise(LineParser &parser, int startArg, const Co
         g.set(parser.argd(4 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
               parser.argi(2 + startArg) - 1, parser.argi(3 + startArg) - 1);
 
-    setAsModified();
-
     return true;
 }
 

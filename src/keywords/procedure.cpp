@@ -29,12 +29,7 @@ std::optional<int> ProcedureKeyword::maxArguments() const { return 0; }
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ProcedureKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    if (!data_.deserialise(parser, coreData))
-        return false;
-
-    set_ = true;
-
-    return true;
+    return data_.deserialise(parser, coreData);
 }
 
 // Serialise data to specified LineParser

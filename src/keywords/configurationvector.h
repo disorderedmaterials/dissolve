@@ -22,10 +22,6 @@ class ConfigurationVectorKeyword : public KeywordBase
     // Reference to data vector
     std::vector<Configuration *> &data_;
 
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
-
     public:
     // Return reference to data vector
     std::vector<Configuration *> &data();

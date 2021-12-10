@@ -23,8 +23,6 @@ bool ExpressionKeyword::setData(std::string_view expressionText)
     if (!data_.create(expressionText, variables_))
         return false;
 
-    set_ = true;
-
     return true;
 }
 

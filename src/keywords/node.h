@@ -72,7 +72,6 @@ template <class N> class NodeKeyword : public NodeKeywordBase
             data_ = std::dynamic_pointer_cast<const N>(node);
             assert(data_);
         }
-        setAsModified();
 
         return true;
     }

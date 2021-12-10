@@ -152,6 +152,7 @@ Module Energy
   Test  On
   Configuration  'Liquid'
   TestReferenceIntra  2.173978E+03
+  TestThreshold  1.0e-3
 EndModule
 
 Module Forces

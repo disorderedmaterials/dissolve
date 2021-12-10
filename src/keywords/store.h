@@ -38,7 +38,6 @@ class KeywordTypeMap
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);
             k->data() = std::any_cast<D>(data);
-            k->setAsModified();
             return true;
         };
         directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
@@ -179,10 +178,6 @@ class KeywordStore
     const std::vector<KeywordBase *> targetsGroup() const;
     // Return keyword group mappings
     const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups() const;
-    // Return whether the keyword has been set, and is not currently empty (if relevant)
-    bool hasBeenSet(std::string_view name) const;
-    // Flag that the specified keyword has been set by some external means
-    void setAsModified(std::string_view name) const;
 
     /*
      * Set / Get
