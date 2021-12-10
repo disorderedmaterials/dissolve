@@ -679,9 +679,12 @@
       </item>
       <item>
        <widget class="QTreeView" name="ProcedureWidget" native="true">
+        <property name="indentation">
+	  <number>10</number>
+	</property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-          <horstretch>0</horstretch>
+          <horstretch>1</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
