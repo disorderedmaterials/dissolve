@@ -139,10 +139,11 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     auto nodes = procedure_.nodes();
     if (!index.parent().isValid())
     {
+        auto node = nodes[index.row()];
         switch (index.column())
         {
             case 0:
-                return QString::fromStdString(std::string(nodes[index.row()]->name()));
+                return QString::fromStdString(node->nodeTypes().keyword(node->type()));
             default:
                 return {};
         }
