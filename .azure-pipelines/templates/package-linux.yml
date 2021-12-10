@@ -31,6 +31,7 @@ stages:
             parameters:
               export: true
               exportExe: false
+              exportSingularity: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"
@@ -50,6 +51,7 @@ stages:
               docker: "docker"
               singularity: "singularity"
               export: true
+              exportSingularity: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
@@ -74,6 +76,7 @@ stages:
               docker: "docker-mpi"
               singularity: "singularity-mpi"
               export: true
+              exportSingularity: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
