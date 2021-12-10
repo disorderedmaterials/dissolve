@@ -4,6 +4,7 @@
 #include "keywords/valuestore.h"
 #include "base/lineparser.h"
 #include "classes/valuestore.h"
+#include "io/export/values.h"
 
 ValueStoreKeyword::ValueStoreKeyword(ValueStore &data) : KeywordBase(typeid(this)), data_(data) {}
 
@@ -28,8 +29,12 @@ std::optional<int> ValueStoreKeyword::maxArguments() const { return std::nullopt
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ValueStoreKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
-                     parser.argsv(startArg + 2), parser.argsv(startArg + 1));
+    if (parser.argsv(startArg + 1) == "@")
+        Messenger::print("Reading inline test data '{}' (format={})...\n", parser.argsv(startArg), parser.argsv(startArg + 2),
+                         parser.argsv(startArg + 1));
+    else
+        Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
+                         parser.argsv(startArg + 2), parser.argsv(startArg + 1));
 
     if (!data_.addData(parser.argsv(startArg), parser, startArg + 1, fmt::format("End{}", name()), coreData))
         return Messenger::error("Failed to add data.\n");
@@ -48,6 +53,14 @@ bool ValueStoreKeyword::serialise(LineParser &parser, std::string_view keywordNa
             return false;
         if (!parser.writeLineF("{}End{}\n", prefix, name()))
             return false;
+
+        // If data was read "inline" from the input file, write it out now
+        if (format.filename() == "@")
+        {
+            ValueExportFileFormat exportFormat("@", ValueExportFileFormat::ValueExportFormat::Simple);
+            if (!exportFormat.exportData(data, parser))
+                return false;
+        }
     }
 
     return true;
