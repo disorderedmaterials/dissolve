@@ -36,7 +36,7 @@ class EnergyModule : public Module
     // Reference value for intramolecular energy against which to test calculated value
     std::optional<double> testReferenceIntra_;
     // Threshold of energy at which test comparison will fail
-    double testThreshold_{0.1};
+    double testThreshold_{1.0e-6};
 
     /*
      * Functions

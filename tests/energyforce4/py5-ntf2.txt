@@ -373,6 +373,7 @@ Layer  'Processing'
     TestAnalytic  On
     Configuration  'Py5-NTf2'
     TestReferenceIntra     0.34961  # (0.174805 per molecule) * 2 molecules
+    TestThreshold  5.0e-6
     EndModule
 
     Module Forces
@@ -392,4 +393,3 @@ EndLayer
 Simulation
   Seed  -1
 EndSimulation
-

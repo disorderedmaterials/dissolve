@@ -39,6 +39,7 @@ Layer  'Processing'
     Test on
     TestAnalytic on
     TestReferenceInter    -34173.942995962962   # Straight Coulomb sum (no truncation)
+    TestThreshold  1.0e-2
   EndModule
 
   # Test production forces against reference forces
@@ -48,6 +49,7 @@ Layer  'Processing'
     TestAnalytic  on
     TestReference  dlpoly  '../_data/dlpoly/water3000_coul/REVCON'
     EndTestReference
+    TestThreshold  1.0e-3
   EndModule
 
 EndLayer

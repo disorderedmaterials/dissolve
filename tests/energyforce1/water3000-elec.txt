@@ -39,6 +39,7 @@ Layer  'Processing'
     Test on
     TestAnalytic on
     TestReferenceInter    -29163.384451743802  # Shifted potential
+    TestThreshold  2.0e-2
   EndModule
 
   # Test production forces against reference forces
@@ -61,4 +62,3 @@ PairPotentials
   Parameters  'OW'  O	-0.82	LJGeometric  0.0        0.0
   Parameters  'HW'  H	0.41	LJGeometric  0.0        0.0
 EndPairPotentials
-

@@ -87,6 +87,7 @@ Layer  'Processing'
     TestAnalytic  On
     Configuration  'POE'
     TestReferenceIntra     183.4801   # (2.866876 per molecule) * 64 molecules
+    TestThreshold  1.0e-2
     EndModule
 
     Module Forces
@@ -106,4 +107,3 @@ EndLayer
 Simulation
   Seed  -1
 EndSimulation
-
