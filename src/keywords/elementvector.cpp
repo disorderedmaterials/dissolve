@@ -51,6 +51,6 @@ bool ElementVectorKeyword::serialise(LineParser &parser, std::string_view keywor
     if (data_.empty())
         return true;
 
-    return parser.writeLineF("{}{}{}\n", prefix, keywordName,
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
                              joinStrings(data_, "  ", [](const auto &el) { return Elements::symbol(el); }));
 }
