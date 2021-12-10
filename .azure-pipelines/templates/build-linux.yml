@@ -46,6 +46,7 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cat archive.json | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+      nix-collect-garbage -d
     displayName: 'Push to Cachix'
     env:
       CACHIX_AUTH_TOKEN: $(cachix_token)
@@ -64,7 +65,6 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
-      nix-collect-garbage -d
       nix build -L .#${{ parameters.singularity }}
       mkdir -p singularity
       cp result singularity/${{ parameters.package }}.sif
