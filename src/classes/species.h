@@ -247,6 +247,8 @@ class Species
     std::shared_ptr<Forcefield> forcefield() const;
     // Apply terms from source Forcefield
     bool applyForcefieldTerms(CoreData &coreData);
+    // Clear forcefield terms
+    void clearForcefieldTerms(bool nullifyAtomTypes = true);
 
     /*
      * Isotopologues
