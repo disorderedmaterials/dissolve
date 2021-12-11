@@ -392,7 +392,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
         // Draw the temporary bond between the atoms
         interactionAssembly_.createCylinderBond(bondPrimitive_, fromAtom->r(), j.r(), j.r() - fromAtom->r(),
-                                                ElementColours::colour(fromAtom->Z()), ElementColours::colour(j.Z()), true,
+                                                ElementColours::colour(j.Z()), ElementColours::colour(fromAtom->Z()), true,
                                                 spheresBondRadius_);
     }
 }
