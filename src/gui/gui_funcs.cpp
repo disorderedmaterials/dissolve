@@ -124,10 +124,10 @@ QLabel *DissolveWindow::addStatusBarLabel(QString text)
 // Add text label to status bar
 QLabel *DissolveWindow::addStatusBarIcon(QString resource)
 {
-
+    const auto iconSize = statusBar()->font().pointSize() * 1.75;
     auto *label = new QLabel;
     label->setPixmap(QPixmap(resource));
-    label->setMaximumSize(QSize(20, 20));
+    label->setMaximumSize(QSize(iconSize, iconSize));
     label->setScaledContents(true);
     statusBar()->addPermanentWidget(label);
     return label;
