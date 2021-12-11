@@ -4,10 +4,8 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "gui/configurationtab.h"
-#include "gui/forcefieldtab.h"
 #include "gui/gui.h"
 #include "gui/layertab.h"
-#include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
 #include "main/version.h"
@@ -16,7 +14,6 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QFontDatabase>
-#include <QLCDNumber>
 #include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QSettings>
@@ -49,26 +46,13 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     dissolveState_ = NoState;
 
     // Create statusbar widgets
-    localSimulationIndicator_ = new QLabel;
-    localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
-    localSimulationIndicator_->setMaximumSize(QSize(20, 20));
-    localSimulationIndicator_->setScaledContents(true);
-    restartFileIndicator_ = new QLabel;
-    restartFileIndicator_->setPixmap(QPixmap(":/general/icons/general_restartfile.svg"));
-    restartFileIndicator_->setMaximumSize(QSize(20, 20));
-    restartFileIndicator_->setScaledContents(true);
-    heartbeatFileIndicator_ = new QLabel;
-    heartbeatFileIndicator_->setPixmap(QPixmap(":/general/icons/general_heartbeat.svg"));
-    heartbeatFileIndicator_->setMaximumSize(QSize(20, 20));
-    heartbeatFileIndicator_->setScaledContents(true);
-    iterationLabel_ = new QLabel("00000");
-    etaLabel_ = new QLabel("ETA: --:--:--");
 
-    statusBar()->addPermanentWidget(iterationLabel_);
-    statusBar()->addPermanentWidget(etaLabel_);
-    statusBar()->addPermanentWidget(heartbeatFileIndicator_);
-    statusBar()->addPermanentWidget(restartFileIndicator_);
-    statusBar()->addPermanentWidget(localSimulationIndicator_);
+    iterationLabel_ = addStatusBarLabel("00000");
+    addStatusBarIcon(":/general/icons/general_clock.svg");
+    etaLabel_ = addStatusBarLabel("--:--:--");
+    heartbeatFileIndicator_ = addStatusBarIcon(":/general/icons/general_heartbeat.svg");
+    restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
+    localSimulationIndicator_ = addStatusBarIcon(":/general/icons/general_local.svg");
 
     updateWindowTitle();
     updateStatusBar();
@@ -124,6 +108,30 @@ void DissolveWindow::setModified()
 Dissolve &DissolveWindow::dissolve() { return dissolve_; }
 
 const Dissolve &DissolveWindow::dissolve() const { return dissolve_; }
+
+/*
+ * Statusbar
+ */
+
+// Add text label to status bar
+QLabel *DissolveWindow::addStatusBarLabel(QString text)
+{
+    auto *label = new QLabel(text);
+    statusBar()->addPermanentWidget(label);
+    return label;
+}
+
+// Add text label to status bar
+QLabel *DissolveWindow::addStatusBarIcon(QString resource)
+{
+
+    auto *label = new QLabel;
+    label->setPixmap(QPixmap(resource));
+    label->setMaximumSize(QSize(20, 20));
+    label->setScaledContents(true);
+    statusBar()->addPermanentWidget(label);
+    return label;
+}
 
 /*
  * File
