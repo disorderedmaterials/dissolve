@@ -422,10 +422,12 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 
     // Set ETA text if we can
     if (iterationsRemaining == -1)
-        etaLabel_->setText("ETA: --:--:--");
+        etaLabel_->setText("--:--:--");
     else
-        etaLabel_->setText(QStringLiteral("ETA: %1").arg(
-            QString::fromStdString(Timer::etaString(iterationsRemaining * dissolve_.iterationTime()))));
+    {
+        auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);
+        etaLabel_->setText(estimatedTime ? QString::fromStdString(Timer::etaString(estimatedTime.value())) : "??:??:??");
+    }
 
     // Enable data access in Renderables, and update all tabs.
     Renderable::setSourceDataAccessEnabled(true);

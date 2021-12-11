@@ -234,8 +234,8 @@ class Dissolve
     void resetIterationCounter();
     // Return current simulation step
     int iteration() const;
-    // Return per-iteration time in seconds
-    double iterationTime() const;
+    // Estimate time in seconds required to perform next n steps (if possible to determine)
+    std::optional<double> estimateRequiredTime(int nIterations);
     // Print timing information
     void printTiming();
 
