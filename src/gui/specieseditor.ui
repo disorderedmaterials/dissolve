@@ -103,7 +103,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>View mode</string>
+         <string>Rotate, translate, and zoom the view</string>
         </property>
         <property name="text">
          <string/>
@@ -158,7 +158,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Draw mode</string>
+         <string>Draw atoms and bonds</string>
         </property>
         <property name="text">
          <string/>
@@ -206,6 +206,9 @@
           <bold>true</bold>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Current draw element</string>
+        </property>
         <property name="text">
          <string>C</string>
         </property>
@@ -232,7 +235,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Delete mode</string>
+         <string>Delete atoms and bonds</string>
         </property>
         <property name="text">
          <string/>
@@ -515,7 +518,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Add missing bonds to the species</string>
+         <string>Detect bonds between atoms</string>
         </property>
         <property name="text">
          <string/>
@@ -556,7 +559,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Fix the geometry, minimising the energy of the current structure according to its forcefield</string>
+         <string>Clean the geometry of the species using the Universal ForceField</string>
         </property>
         <property name="text">
          <string/>
@@ -820,7 +823,7 @@
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
-  <include location="../main.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>
