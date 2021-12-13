@@ -259,6 +259,16 @@ class KeywordStore
 
         return keyword->data();
     }
+    template <class K> static void forAll(std::function<void(K *)> op)
+    {
+        for (auto &base : allKeywords_)
+        {
+            // Attempt to cast to derived class type
+            K *keyword = dynamic_cast<K *>(base);
+            if (keyword)
+                op(keyword);
+        }
+    }
 
     /*
      * Read / Write
