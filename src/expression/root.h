@@ -9,8 +9,15 @@
 class ExpressionRootNode : public ExpressionNode
 {
     public:
-    ExpressionRootNode();
+    explicit ExpressionRootNode(bool parenthesesEnclosed = false);
     ~ExpressionRootNode() override = default;
+
+    /*
+     * Data
+     */
+    private:
+    // Whether parentheses surround the nodes
+    bool parenthesesEnclosed_;
 
     /*
      * Nodes
@@ -25,4 +32,6 @@ class ExpressionRootNode : public ExpressionNode
     public:
     // Evaluate node
     std::optional<ExpressionValue> evaluate() const override;
+    // Return string representation of node
+    std::string asString() const override;
 };

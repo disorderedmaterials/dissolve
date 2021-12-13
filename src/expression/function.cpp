@@ -103,3 +103,24 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
 
     return result;
 }
+
+// Return string representation of node
+std::string ExpressionFunctionNode::asString() const
+{
+    // Number of required child nodes depends on the function
+    const auto nArgs = internalFunctions().minArgs(function_);
+    if (children_.size() != nArgs)
+        return "";
+
+    // Evaluate the arguments
+    std::vector<std::string> args;
+    for (auto n = 0; n < nArgs; ++n)
+    {
+        auto optArg = children_[n]->asString();
+        if (optArg.empty())
+            return "";
+        args.emplace_back(optArg);
+    }
+
+    return fmt::format("{}({})", internalFunctions().keyword(function_), args[0]);
+}
