@@ -19,6 +19,7 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
  */
 
 // Return reference to vector of data
+std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() { return data_; }
 const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
 
 // Return parent ProcedureNode
