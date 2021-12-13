@@ -81,7 +81,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_interaction.svg</pixmap>
+         <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_interaction.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -109,7 +109,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../main.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/viewer/icons/viewer_interact.svg</normaloff>
           <normalon>:/viewer/icons/viewer_interact_on.svg</normalon>:/viewer/icons/viewer_interact.svg</iconset>
         </property>
@@ -161,7 +161,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
+         <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -189,7 +189,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../main.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/viewer/icons/viewer_reset.svg</normaloff>:/viewer/icons/viewer_reset.svg</iconset>
         </property>
         <property name="iconSize">
@@ -230,7 +230,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../main.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/viewer/icons/viewer_spheres.svg</normaloff>
           <normalon>:/viewer/icons/viewer_spheres_on.svg</normalon>:/viewer/icons/viewer_spheres.svg</iconset>
         </property>
@@ -272,7 +272,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../main.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/viewer/icons/viewer_snapshot.svg</normaloff>:/viewer/icons/viewer_snapshot.svg</iconset>
         </property>
         <property name="iconSize">
@@ -323,7 +323,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_site.svg</pixmap>
+         <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_site.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -580,7 +580,7 @@
     <widget class="QFrame" name="InfoFrame">
      <property name="font">
       <font>
-       <pointsize>8</pointsize>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="frameShape">
@@ -644,7 +644,7 @@
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>10</pointsize>
           <bold>true</bold>
          </font>
         </property>
@@ -695,7 +695,7 @@
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>10</pointsize>
           <bold>true</bold>
          </font>
         </property>
@@ -737,6 +737,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="main.qrc"/>
   <include location="../main.qrc"/>
  </resources>
  <connections/>

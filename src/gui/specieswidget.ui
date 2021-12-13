@@ -411,7 +411,7 @@
     <widget class="QFrame" name="InfoFrame">
      <property name="font">
       <font>
-       <pointsize>8</pointsize>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="frameShape">
@@ -475,7 +475,7 @@
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>10</pointsize>
           <bold>true</bold>
          </font>
         </property>
@@ -526,7 +526,7 @@
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>10</pointsize>
           <bold>true</bold>
          </font>
         </property>
