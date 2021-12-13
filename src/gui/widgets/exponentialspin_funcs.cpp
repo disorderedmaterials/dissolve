@@ -104,7 +104,11 @@ void ExponentialSpin::valueEditingFinished()
     setValue(lineEdit()->text().toDouble());
 }
 
-void ExponentialSpin::returnPressed() { lineEdit()->selectAll(); }
+void ExponentialSpin::returnPressed()
+{
+    lineEdit()->selectAll();
+    valueEditingFinished();
+}
 
 /*
  * Reimplementations
