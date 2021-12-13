@@ -24,11 +24,12 @@ class ExpressionTest : public ::testing::Test
         variables.emplace_back(std::make_shared<ExpressionVariable>("bee", 100.0));
     }
 
-    void exprTest(std::string_view expr, const ExpressionValue &val, bool fail)
+    private:
+    void checkExpr(std::string_view expr, const ExpressionValue &val, bool shouldFail)
     {
         auto generationResult = expression.create(expr, variables);
-        ASSERT_NE(bool(generationResult), fail);
-        if (fail)
+        ASSERT_NE(bool(generationResult), shouldFail);
+        if (shouldFail)
             return;
         auto optResult = expression.evaluate();
         ASSERT_TRUE(optResult);
@@ -43,6 +44,20 @@ class ExpressionTest : public ::testing::Test
                 EXPECT_EQ(result.asInteger(), val.asInteger());
                 break;
         }
+    }
+
+    protected:
+    void exprTest(std::string_view expr, const ExpressionValue &val, bool shouldFail)
+    {
+        // Test expression
+        checkExpr(expr, val, shouldFail);
+        if (shouldFail)
+            return;
+
+        // Regenerate expression string from nodes and re-test
+        expression.setExpressionStringFromNodes();
+        EXPECT_EQ(expr, expression.expressionString());
+        checkExpr(expression.expressionString(), val, shouldFail);
     }
 
     std::vector<std::shared_ptr<ExpressionVariable>> variables;
@@ -78,8 +93,7 @@ TEST_F(ExpressionTest, Variables)
     auto a = variables[0];
     auto bee = variables[1];
     exprTest("a/5", a->value().asDouble() / 5, false);
-    exprTest("a + sqrt(bee)", a->value().asDouble() + sqrt(bee->value().asDouble()), false);
+    exprTest("a+sqrt(bee)", a->value().asDouble() + sqrt(bee->value().asDouble()), false);
     exprTest("1.8*wasp", 0, true);
-};
-
+}
 } // namespace UnitTest

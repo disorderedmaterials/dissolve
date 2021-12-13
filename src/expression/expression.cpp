@@ -113,6 +113,9 @@ bool Expression::create(std::string_view expressionString,
 // Return original generating string
 std::string_view Expression::expressionString() const { return expressionString_; }
 
+// Set generating string from current nodes
+void Expression::setExpressionStringFromNodes() { expressionString_ = rootNode_ ? rootNode_->asString() : ""; }
+
 // Return root node for the expression
 std::shared_ptr<ExpressionNode> Expression::rootNode() { return rootNode_; }
 

@@ -35,4 +35,6 @@ class ExpressionReferenceNode : public ExpressionNode
     public:
     // Evaluate node
     std::optional<ExpressionValue> evaluate() const override;
+    // Return string representation of node
+    std::string asString() const override;
 };
