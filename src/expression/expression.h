@@ -28,8 +28,8 @@ class Expression
     std::shared_ptr<ExpressionNode> rootNode_;
 
     public:
-    // Clear data
-    void clear();
+    // Clear node data
+    void clearNodes();
     // Return whether current expression is valid (contains at least one node)
     bool isValid() const;
     // Create expression from supplied string, with optional external variables
