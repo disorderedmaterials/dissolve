@@ -27,6 +27,7 @@ class NodeValueEnumOptionsBaseKeyword : public KeywordBase
 
     public:
     // Return data
+    virtual NodeValue &value() = 0;
     virtual const NodeValue &value() const = 0;
     virtual int enumerationIndex() const = 0;
     // Set the value from supplied expression text
@@ -63,6 +64,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     EnumOptions<E> optionData_;
 
     public:
+    NodeValue &value() override { return data_.first; }
     const NodeValue &value() const override { return data_.first; }
     int enumerationIndex() const override { return data_.second; }
     // Set node value from expression text

@@ -88,7 +88,15 @@ bool NodeValue::set(std::string_view expressionText, std::optional<std::vector<s
 }
 
 // Return whether value is currently valid
-bool NodeValue::isValid() const { return (type_ == ExpressionNodeValue ? expression_.isValid() : true); }
+bool NodeValue::isValid() const { return !(type_ == ExpressionNodeValue) || expression_.isValid(); }
+
+// Regenerate expression text from nodes
+void NodeValue::regenerateExpressionText()
+{
+    if (type_ != ExpressionNodeValue)
+        return;
+    expression_.setExpressionStringFromNodes();
+}
 
 /*
  * Value Retrieval

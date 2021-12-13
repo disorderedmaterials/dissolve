@@ -50,6 +50,8 @@ class NodeValue
              std::optional<std::vector<std::shared_ptr<ExpressionVariable>>> parameters = std::nullopt);
     // Return whether value is currently valid
     bool isValid() const;
+    // Regenerate expression text from nodes
+    void regenerateExpressionText();
 
     /*
      * Value Retrieval
