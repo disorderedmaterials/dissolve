@@ -21,8 +21,8 @@ class ForcefieldTab : public QWidget, public MainTab
     Q_OBJECT
 
     public:
-    ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title);
-    ~ForcefieldTab() = default;
+    ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, QString title);
+    ~ForcefieldTab() override = default;
 
     /*
      * UI
@@ -39,9 +39,9 @@ class ForcefieldTab : public QWidget, public MainTab
      */
     public:
     // Return tab type
-    MainTab::TabType type() const;
+    MainTab::TabType type() const override;
     // Return whether the tab can be closed
-    bool canClose() const;
+    bool canClose() const override;
 
     /*
      * Update
@@ -55,11 +55,11 @@ class ForcefieldTab : public QWidget, public MainTab
 
     protected:
     // Update controls in tab
-    void updateControls();
+    void updateControls() override;
     // Disable sensitive controls within tab
-    void disableSensitiveControls();
+    void disableSensitiveControls() override;
     // Enable sensitive controls within tab
-    void enableSensitiveControls();
+    void enableSensitiveControls() override;
 
     /*
      * Signals / Slots

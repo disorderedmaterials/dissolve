@@ -14,8 +14,8 @@ class MessagesTab : public QWidget, public MainTab
     Q_OBJECT
 
     public:
-    MessagesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title);
-    ~MessagesTab() = default;
+    MessagesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, QString title);
+    ~MessagesTab() override = default;
 
     /*
      * UI
@@ -36,16 +36,16 @@ class MessagesTab : public QWidget, public MainTab
      */
     public:
     // Return tab type
-    MainTab::TabType type() const;
+    MainTab::TabType type() const override;
 
     /*
      * Update
      */
     protected:
     // Update controls in tab
-    void updateControls();
+    void updateControls() override;
     // Disable sensitive controls within tab
-    void disableSensitiveControls();
+    void disableSensitiveControls() override;
     // Enable sensitive controls within tab
-    void enableSensitiveControls();
+    void enableSensitiveControls() override;
 };

@@ -26,18 +26,18 @@ class SiteViewer : public BaseViewer
      */
     private:
     // Perform post-initialisation operations
-    void postInitialiseGL();
+    void postInitialiseGL() override;
     // Perform post-resize operations
-    void postResizeGL();
+    void postResizeGL() override;
     // Render 2D overlay content
-    void render2DOverlay();
+    void render2DOverlay() override;
 
     /*
      * Mouse / Keyboard Input (BaseViewer virtuals)
      */
     protected:
     // Mouse moved
-    void mouseMoved(int dx, int dy);
+    void mouseMoved(int dx, int dy) override;
 
     /*
      * Interaction (BaseViewer virtuals)
@@ -72,11 +72,11 @@ class SiteViewer : public BaseViewer
 
     protected:
     // Start interaction at the specified screen coordinates
-    void startInteraction();
+    void startInteraction() override;
     // End interaction at the specified screen coordinates
-    void endInteraction();
+    void endInteraction() override;
     // Cancel current interaction
-    void cancelInteraction();
+    void cancelInteraction() override;
 
     public:
     // Set current interaction mode
@@ -84,7 +84,7 @@ class SiteViewer : public BaseViewer
     // Return current interaction mode
     InteractionMode interactionMode() const;
     // Return text describing current interaction mode
-    const QString interactionModeText() const;
+    const QString interactionModeText() const override;
 
     /*
      * Source Species and Site
