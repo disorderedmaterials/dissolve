@@ -49,8 +49,8 @@ class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidge
     void currentItemChanged();
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

@@ -30,8 +30,8 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
     void checkBoxClicked(bool checked);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

@@ -9,7 +9,7 @@
 #include "procedure/nodes/select.h"
 
 // Run set-up stage
-bool CalculateAxisAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool) { return true; }
+bool CalculateAxisAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
 
 // Run main processing
 bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)

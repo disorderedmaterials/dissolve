@@ -41,7 +41,7 @@ void ModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMod
 
     updateSummaryText();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

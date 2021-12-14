@@ -36,7 +36,7 @@ void ConfigurationVectorKeywordWidget::modelDataChanged(const QModelIndex &topLe
 
     updateSummaryText();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

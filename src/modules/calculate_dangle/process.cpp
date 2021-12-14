@@ -9,7 +9,7 @@
 #include "procedure/nodes/select.h"
 
 // Run set-up stage
-bool CalculateDAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool) { return true; }
+bool CalculateDAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
 
 // Run main processing
 bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)

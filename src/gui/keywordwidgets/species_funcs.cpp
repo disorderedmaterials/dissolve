@@ -34,7 +34,7 @@ void SpeciesKeywordWidget::comboBoxIndexChanged(int index)
     Species *sp = (index == -1 ? nullptr : VariantPointer<Species>(itemData(index, Qt::UserRole)));
     keyword_->data() = sp;
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

@@ -7,7 +7,7 @@
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
 {
     // Clear species
     averageSpecies_.clear();

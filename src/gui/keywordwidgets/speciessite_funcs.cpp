@@ -43,7 +43,7 @@ void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
 
     updateSummaryText();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

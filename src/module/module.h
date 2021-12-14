@@ -88,7 +88,7 @@ class Module
 
     public:
     // Run set-up stage
-    virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool);
+    virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals = {});
     // Run main processing stage
     bool executeProcessing(Dissolve &dissolve, ProcessPool &procPool);
 

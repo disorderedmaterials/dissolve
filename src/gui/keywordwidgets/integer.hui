@@ -30,8 +30,8 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
     void spinBoxValueChanged(int newValue);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

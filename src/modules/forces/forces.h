@@ -49,7 +49,7 @@ class ForcesModule : public Module
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) override;
 
     /*
      * Functions

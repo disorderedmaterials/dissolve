@@ -68,7 +68,7 @@ void Function1DKeywordWidget::functionCombo_currentIndexChanged(int index)
 
     updateWidgetValues(coreData_);
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Parameter value changed
@@ -81,7 +81,7 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
 
     updateSummaryText();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

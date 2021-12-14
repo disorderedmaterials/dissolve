@@ -48,6 +48,16 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
 }
 
 /*
+ * GUI Signalling
+ */
+
+// Set signals to be emitted (via Qt) when editing this keyword in the GUI
+void KeywordBase::setSignalMask(int mask) { signals_ = mask; }
+
+// Return signals to be emitted (via Qt) when editing this keyword in the GUI
+KeywordSignals KeywordBase::signalMask() const { return signals_; }
+
+/*
  * Object Management
  */
 
