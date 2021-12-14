@@ -41,8 +41,8 @@ class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordW
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

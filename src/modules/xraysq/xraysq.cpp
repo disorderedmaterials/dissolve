@@ -26,12 +26,12 @@ XRaySQModule::XRaySQModule() : Module("XRaySQ")
 
     // Reference Data
     keywords_.add<FileAndFormatKeyword>("Reference Data", "Reference", "F(Q) reference data", referenceFQ_, "EndReference")
-        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
+        ->setSignalMask(KeywordSignals::ReloadExternalData);
     keywords_
         .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
             "Reference Data", "ReferenceNormalisation", "Normalisation to remove from reference data before use",
             referenceNormalisation_, StructureFactors::normalisationTypes())
-        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
+        ->setSignalMask(KeywordSignals::ReloadExternalData);
     keywords_.add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMin",
                                          "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
                                          referenceFTQMin_, 0.0, std::nullopt, 0.01, "No Minimum Limit");
@@ -46,7 +46,7 @@ XRaySQModule::XRaySQModule() : Module("XRaySQ")
             "Reference Data", "ReferenceWindowFunction",
             "Window function to apply when Fourier-transforming reference S(Q) to g(r)", referenceWindowFunction_,
             WindowFunction::forms())
-        ->setOptionMask(KeywordBase::ModificationRequiresSetUpOption);
+        ->setSignalMask(KeywordSignals::ReloadExternalData);
 
     // Export
     keywords_.add<BoolKeyword>("Export", "SaveFormFactors",

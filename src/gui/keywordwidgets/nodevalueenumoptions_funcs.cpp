@@ -46,7 +46,7 @@ void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_editingFinished()
     keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
     ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_returnPressed()
@@ -57,7 +57,7 @@ void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_returnPressed()
     keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
     ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void NodeValueEnumOptionsKeywordWidget::on_OptionsCombo_currentIndexChanged(int index)
@@ -67,7 +67,7 @@ void NodeValueEnumOptionsKeywordWidget::on_OptionsCombo_currentIndexChanged(int 
 
     keyword_->setEnumeration(index);
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

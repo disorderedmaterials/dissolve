@@ -34,7 +34,7 @@ void ConfigurationKeywordWidget::comboIndexChanged(int index)
     Configuration *sp = (index == -1 ? nullptr : VariantPointer<Configuration>(itemData(index, Qt::UserRole)));
     keyword_->data() = sp;
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

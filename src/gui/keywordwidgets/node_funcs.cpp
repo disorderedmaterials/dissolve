@@ -43,7 +43,7 @@ void NodeKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QMode
 
     keyword_->setData(allowedNodes_[ui_.NodeCombo->currentIndex()]);
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

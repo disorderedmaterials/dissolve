@@ -41,7 +41,7 @@ void OptionalIntegerKeywordWidget::spinBoxValueChanged(int newValue)
         return;
 
     if (keyword_->setData(newValue))
-        emit(keywordValueChanged(keyword_->optionMask()));
+        emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Spin box value nullified
@@ -51,7 +51,7 @@ void OptionalIntegerKeywordWidget::spinBoxValueNullified()
         return;
 
     keyword_->setData(std::nullopt);
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

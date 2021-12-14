@@ -39,8 +39,8 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

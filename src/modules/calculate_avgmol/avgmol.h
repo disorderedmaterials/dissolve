@@ -47,7 +47,7 @@ class CalculateAvgMolModule : public Module
      */
     private:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) override;
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 };

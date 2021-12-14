@@ -40,8 +40,8 @@ class Function1DKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     void parameterSpin_valueChanged(double value);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

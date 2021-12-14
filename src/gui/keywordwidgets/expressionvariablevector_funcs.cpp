@@ -45,7 +45,7 @@ void ExpressionVariableVectorKeywordWidget::modelDataChanged(const QModelIndex &
     if (refreshing_)
         return;
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Update value displayed in widget

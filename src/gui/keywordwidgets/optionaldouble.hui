@@ -32,8 +32,8 @@ class OptionalDoubleKeywordWidget : public ExponentialSpin, public KeywordWidget
     void spinBoxValueNullified();
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

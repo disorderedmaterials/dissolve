@@ -45,7 +45,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
 
     checkFileValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
@@ -57,7 +57,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
 
     checkFileValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
@@ -88,7 +88,7 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
         ui_.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
         updateKeywordData();
         updateWidgetValues(coreData_);
-        emit(keywordValueChanged(keyword_->optionMask()));
+        emit(keywordDataChanged(keyword_->signalMask()));
     }
 }
 
@@ -99,7 +99,7 @@ void FileAndFormatKeywordWidget::on_FormatCombo_currentIndexChanged(int index)
 
     updateKeywordData();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
@@ -109,7 +109,7 @@ void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
     optionsDialog.showOptions();
 
     if (optionsDialog.keywordsModified())
-        emit(keywordValueChanged(keyword_->optionMask()));
+        emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

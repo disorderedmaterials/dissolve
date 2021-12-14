@@ -37,8 +37,8 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
     void on_OptionsCombo_currentIndexChanged(int index);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update
