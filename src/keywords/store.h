@@ -124,6 +124,8 @@ class KeywordStore
     std::vector<KeywordBase *> targetsGroup_;
     // Keyword group mappings
     std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups_;
+    // Keywords to be stored in the restart file
+    std::vector<KeywordBase *> restartables_;
 
     public:
     // Add keyword (no group)
@@ -145,14 +147,11 @@ class KeywordStore
         return k;
     }
     // Add target keyword
-    template <class K, typename... Args>
-    KeywordBase *addTarget(std::string_view name, std::string_view description, Args &&... args)
+    template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&... args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
         targetsGroup_.push_back(k);
-
-        return k;
     }
     // Add keyword (displaying in named group)
     template <class K, typename... Args>
@@ -169,15 +168,24 @@ class KeywordStore
 
         return k;
     }
+    // Add keyword (displaying in named group) and capture in restart file
+    template <class K, typename... Args>
+    KeywordBase *addRestartable(std::string_view displayGroup, std::string_view name, std::string_view description,
+                                Args &&... args)
+    {
+        return restartables_.emplace_back(add<K>(displayGroup, name, description, args...));
+    }
     // Find named keyword
     KeywordBase *find(std::string_view name);
     const KeywordBase *find(std::string_view name) const;
     // Return keywords
-    const std::map<std::string_view, KeywordBase *> keywords() const;
+    const std::map<std::string_view, KeywordBase *> &keywords() const;
     // Return "Target" group keywords
-    const std::vector<KeywordBase *> targetsGroup() const;
+    const std::vector<KeywordBase *> &targetsGroup() const;
+    // Return restartable keywords
+    const std::vector<KeywordBase *> &restartables() const;
     // Return keyword group mappings
-    const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups() const;
+    const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &displayGroups() const;
 
     /*
      * Set / Get

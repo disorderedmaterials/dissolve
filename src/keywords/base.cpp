@@ -20,20 +20,11 @@ void KeywordBase::setBaseInfo(std::string_view name, std::string_view descriptio
 // Return typeindex for the keyword
 const std::type_index KeywordBase::typeIndex() const { return typeIndex_; }
 
-// Set option mask
-void KeywordBase::setOptionMask(int optionMask) { optionMask_ = optionMask; }
-
 // Return keyword name
 std::string_view KeywordBase::name() const { return name_; }
 
 // Return keyword description
 std::string_view KeywordBase::description() const { return description_; }
-
-// Return keyword option mask
-int KeywordBase::optionMask() const { return optionMask_; }
-
-// Return whether specified option is set
-bool KeywordBase::isOptionSet(KeywordOption opt) const { return (optionMask_ & opt); }
 
 /*
  * Arguments

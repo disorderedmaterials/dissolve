@@ -19,8 +19,8 @@ AtomShakeModule::AtomShakeModule() : Module("AtomShake")
         "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)", cutoffDistance_, 0.0,
         std::nullopt, 0.1, "Use PairPotential Range");
     keywords_.add<IntegerKeyword>("Control", "ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_, 1);
-    keywords_.add<DoubleKeyword>("Control", "StepSize", "Step size in Angstroms to use in Monte Carlo moves", stepSize_, 0.001)
-        ->setOptionMask(KeywordBase::InRestartFileOption);
+    keywords_.addRestartable<DoubleKeyword>("Control", "StepSize", "Step size in Angstroms to use in Monte Carlo moves",
+                                            stepSize_, 0.001);
     keywords_.add<DoubleKeyword>("Control", "StepSizeMax", "Maximum allowed value for step size, in Angstroms", stepSizeMax_,
                                  0.01);
     keywords_.add<DoubleKeyword>("Control", "StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_,

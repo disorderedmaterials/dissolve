@@ -85,13 +85,16 @@ const KeywordBase *KeywordStore::find(std::string_view name) const
 }
 
 // Return keywords
-const std::map<std::string_view, KeywordBase *> KeywordStore::keywords() const { return keywords_; }
+const std::map<std::string_view, KeywordBase *> &KeywordStore::keywords() const { return keywords_; }
 
 // Return "Target" group keywords
-const std::vector<KeywordBase *> KeywordStore::targetsGroup() const { return targetsGroup_; }
+const std::vector<KeywordBase *> &KeywordStore::targetsGroup() const { return targetsGroup_; }
+
+// Return restartable keywords
+const std::vector<KeywordBase *> &KeywordStore::restartables() const { return restartables_; }
 
 // Return keyword group mappings
-const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> KeywordStore::displayGroups() const
+const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &KeywordStore::displayGroups() const
 {
     return displayGroups_;
 };
