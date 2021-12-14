@@ -32,13 +32,6 @@ class EnumOptionsBaseKeyword : public KeywordBase
     virtual int enumerationByIndex() const = 0;
     // Set new option index, informing KeywordBase
     virtual void setEnumerationByIndex(int optionIndex) = 0;
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    virtual int optionMask() const = 0;
 };
 
 // Keyword based on EnumOptions
@@ -112,11 +105,4 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     };
     // Set new option index
     void setEnumerationByIndex(int optionIndex) override { data_ = optionData_.enumerationByIndex(optionIndex); }
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    int optionMask() const override { return KeywordBase::optionMask(); }
 };

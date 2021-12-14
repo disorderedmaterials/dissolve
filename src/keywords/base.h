@@ -48,8 +48,6 @@ class KeywordBase
     std::string name_;
     // Description of keyword, if any
     std::string description_;
-    // Keyword option mask
-    int optionMask_{NoOptions};
 
     public:
     // Set base keyword information
@@ -62,10 +60,6 @@ class KeywordBase
     std::string_view name() const;
     // Return keyword description
     std::string_view description() const;
-    // Return keyword option mask
-    int optionMask() const;
-    // Return whether specified option is set
-    bool isOptionSet(KeywordOption opt) const;
 
     /*
      * Arguments

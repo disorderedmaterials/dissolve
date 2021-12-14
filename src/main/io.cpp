@@ -602,15 +602,9 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module Keyword Data
     for (const auto *module : Module::instances())
     {
-        for (auto &[name, keyword] : module->keywords().keywords())
-        {
-            // If the keyword is not flagged to be saved in the restart file, skip it
-            if (!keyword->isOptionSet(KeywordBase::InRestartFileOption))
-                continue;
-
-            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), name)))
+        for (auto &keyword : module->keywords().restartables())
+            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), keyword->name())))
                 return false;
-        }
     }
 
     // Processing Module Data
