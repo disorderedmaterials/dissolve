@@ -52,6 +52,11 @@ void XRaySQModuleWidget::createPartialSetRenderables(std::string_view targetPref
 
     const PartialSet &ps = *targetPartials_;
 
+    // Get the filter text (if there is any)
+    std::optional<std::string> filterText;
+    if (!ui_.FilterEdit->text().isEmpty())
+        filterText = ui_.FilterEdit->text().toStdString();
+
     PairIterator pairs(ps.atomTypeMix().nItems());
     for (auto [first, second] : pairs)
     {
@@ -186,5 +191,16 @@ void XRaySQModuleWidget::on_PartialGRButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "g(r)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
+
+void XRaySQModuleWidget::on_FilterEdit_textChanged(QString text)
+{
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
+
+void XRaySQModuleWidget::on_ClearFilterButton_clicked(bool checked)
+{
+    ui_.FilterEdit->setText("");
     updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }

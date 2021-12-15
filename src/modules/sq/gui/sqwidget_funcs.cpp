@@ -53,6 +53,11 @@ void SQModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 
     const PartialSet &ps = *targetPartials_;
 
+    // Get the filter text (if there is any)
+    std::optional<std::string> filterText;
+    if (!ui_.FilterEdit->text().isEmpty())
+        filterText = ui_.FilterEdit->text().toStdString();
+
     PairIterator pairs(ps.atomTypeMix().nItems());
     for (auto [first, second] : pairs)
     {
@@ -128,5 +133,13 @@ void SQModuleWidget::on_PartialsButton_clicked(bool checked)
     sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     sqGraph_->view().axes().setTitle(1, "S(Q)");
 
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
+
+void SQModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::UpdateType::RecreateRenderables); }
+
+void SQModuleWidget::on_ClearFilterButton_clicked(bool checked)
+{
+    ui_.FilterEdit->setText("");
     updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }
