@@ -97,22 +97,4 @@ class RenderableSpecies : public Renderable
     void setDisplayStyle(SpeciesDisplayStyle displayStyle);
     // Return display style for the renderable
     SpeciesDisplayStyle displayStyle() const;
-
-    /*
-     * Style I/O
-     */
-    public:
-    // SpeciesStyle Keywords Enum
-    enum SpeciesStyleKeyword
-    {
-        DisplayKeyword,  /* 'Display' - General display style for renderable */
-        EndStyleKeyword, /* 'EndStyle' - End of Style block */
-        nSpeciesStyleKeywords
-    };
-    // Return enum option info for RenderableKeyword
-    static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> speciesStyleKeywords();
-    // Write style information
-    bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
-    // Read style information
-    bool readStyleBlock(LineParser &parser);
 };

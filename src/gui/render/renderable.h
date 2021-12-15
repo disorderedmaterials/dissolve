@@ -179,15 +179,6 @@ class Renderable
     int styleVersion() const;
 
     /*
-     * Style I/O
-     */
-    public:
-    // Write style information
-    virtual bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const = 0;
-    // Read style information
-    virtual bool readStyleBlock(LineParser &parser) = 0;
-
-    /*
      * Rendering Primitives
      */
     private:
