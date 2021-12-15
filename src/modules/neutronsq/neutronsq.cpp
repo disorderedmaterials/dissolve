@@ -28,27 +28,32 @@ NeutronSQModule::NeutronSQModule() : Module("NeutronSQ")
 
     // Reference Data
     keywords_.add<FileAndFormatKeyword>("Reference Data", "Reference", "F(Q) reference data", referenceFQ_, "EndReference")
-        ->setSignalMask(KeywordSignals::ReloadExternalData);
+        ->setSignalMask(KeywordSignals::ReloadExternalData | KeywordSignals::RecreateRenderables);
     keywords_
         .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
             "Reference Data", "ReferenceNormalisation", "Normalisation to remove from reference data before use",
             referenceNormalisation_, StructureFactors::normalisationTypes())
-        ->setSignalMask(KeywordSignals::ReloadExternalData);
-    keywords_.add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMin",
-                                         "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
-                                         referenceFTQMin_, 0.0, std::nullopt, 0.1, "No Minimum Limit");
-    keywords_.add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMax",
-                                         "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
-                                         referenceFTQMax_, 0.0, std::nullopt, 0.1, "No Maximum Limit");
-    keywords_.add<DoubleKeyword>("Reference Data", "ReferenceFTDeltaR",
-                                 "Spacing in r to use when generating the Fourier-transformed data", referenceFTDeltaR_, 1.0e-4,
-                                 1.0);
+        ->setSignalMask(KeywordSignals::ReloadExternalData | KeywordSignals::RecreateRenderables);
+    keywords_
+        .add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMin",
+                                    "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
+                                    referenceFTQMin_, 0.0, std::nullopt, 0.1, "No Minimum Limit")
+        ->setSignalMask(KeywordSignals::ReloadExternalData | KeywordSignals::RecreateRenderables);
+    keywords_
+        .add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMax",
+                                    "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
+                                    referenceFTQMax_, 0.0, std::nullopt, 0.1, "No Maximum Limit")
+        ->setSignalMask(KeywordSignals::ReloadExternalData | KeywordSignals::RecreateRenderables);
+    keywords_
+        .add<DoubleKeyword>("Reference Data", "ReferenceFTDeltaR",
+                            "Spacing in r to use when generating the Fourier-transformed data", referenceFTDeltaR_, 1.0e-4, 1.0)
+        ->setSignalMask(KeywordSignals::ReloadExternalData | KeywordSignals::RecreateRenderables);
     keywords_
         .add<EnumOptionsKeyword<WindowFunction::Form>>(
             "Reference Data", "ReferenceWindowFunction",
             "Window function to apply when Fourier-transforming reference S(Q) to g(r)", referenceWindowFunction_,
             WindowFunction::forms())
-        ->setSignalMask(KeywordSignals::ReloadExternalData);
+        ->setSignalMask(KeywordSignals::ReloadExternalData | KeywordSignals::RecreateRenderables);
 
     // Export
     keywords_.add<BoolKeyword>("Export", "SaveGR", "Save weighted g(r) and G(r)", saveGR_);
