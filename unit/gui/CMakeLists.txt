@@ -1,6 +1,7 @@
 dissolve_unit_test(datamanager.cpp)
 dissolve_unit_test(forcefieldTab.cpp)
 dissolve_unit_test(isotopologeSetModel.cpp exchangeable)
+dissolve_unit_test(expressionVariableVectorModel.cpp)
 dissolve_unit_test(masterTerms.cpp)
 dissolve_unit_test(optionalDouble.cpp)
 dissolve_unit_test(speciestab.cpp)
