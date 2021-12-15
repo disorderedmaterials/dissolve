@@ -153,6 +153,7 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
         if (w && (w->module() == module))
         {
             ui_.ModuleControlsStack->setCurrentIndex(n);
+            mcw = w;
             break;
         }
     }
