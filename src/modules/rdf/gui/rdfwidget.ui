@@ -148,10 +148,17 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="FilterEdit"/>
+      <widget class="QLineEdit" name="FilterEdit">
+       <property name="toolTip">
+        <string>Filter displayed partials by text / atomtype</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QToolButton" name="ClearFilterButton">
+       <property name="toolTip">
+        <string>Clear partial filter</string>
+       </property>
        <property name="text">
         <string/>
        </property>
