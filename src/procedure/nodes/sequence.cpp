@@ -107,7 +107,7 @@ SequenceProcedureNode::searchParameters(std::string_view name,
     for (auto node : sequence_)
     {
         // Does this node have a parameter by this name?
-        auto result = node->hasParameter(name, excludeParameter);
+        auto result = node->getParameter(name, excludeParameter);
         if (result)
             return result;
 
@@ -270,7 +270,7 @@ SequenceProcedureNode::parameterInScope(NodeRef queryingNode, std::string_view n
 
     for (auto node : range)
     {
-        auto param = node->hasParameter(name, excludeParameter);
+        auto param = node->getParameter(name, excludeParameter);
         if (param)
             return param;
     }

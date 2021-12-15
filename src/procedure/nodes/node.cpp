@@ -228,8 +228,8 @@ std::shared_ptr<SequenceProcedureNode> ProcedureNode::branch() { return nullptr;
  * Parameters
  */
 
-// Return whether this node has the named parameter specified
-std::shared_ptr<ExpressionVariable> ProcedureNode::hasParameter(std::string_view name,
+// Return the named parameter (if it exists)
+std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name,
                                                                 std::shared_ptr<ExpressionVariable> excludeParameter)
 {
     return nullptr;
