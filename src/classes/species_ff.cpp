@@ -34,3 +34,21 @@ bool Species::applyForcefieldTerms(CoreData &coreData)
 
     return true;
 }
+
+// Clear forcefield terms
+void Species::clearForcefieldTerms(bool nullifyAtomTypes)
+{
+    if (nullifyAtomTypes)
+        clearAtomTypes();
+
+    for (auto &b : bonds_)
+        b.setFormAndParameters(SpeciesBond::BondFunction::NoForm, {});
+
+    for (auto &a : angles_)
+        a.setFormAndParameters(SpeciesAngle::AngleFunction::NoForm, {});
+
+    for (auto &t : torsions_)
+        t.setFormAndParameters(SpeciesTorsion::TorsionFunction::NoForm, {});
+
+    impropers_.clear();
+}

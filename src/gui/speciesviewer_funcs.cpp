@@ -15,7 +15,7 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
     // Interaction
     setInteractionMode(SpeciesViewer::InteractionMode::Select);
     transientInteractionMode_ = SpeciesViewer::TransientInteractionMode::None;
-    drawElement_ = Elements::H;
+    drawElement_ = Elements::C;
 
     // Set up the view
     view_.setViewType(View::NormalView);

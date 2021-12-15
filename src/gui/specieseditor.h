@@ -16,7 +16,7 @@ class SpeciesEditor : public QWidget
 
     public:
     SpeciesEditor(QWidget *parent = 0);
-    ~SpeciesEditor();
+    ~SpeciesEditor() = default;
 
     private:
     // Main Dissolve pointer
