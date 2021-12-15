@@ -7,6 +7,7 @@
 #include "procedure/nodes/aliases.h"
 #include <memory>
 #include <optional>
+#include <string>
 #include <typeindex>
 #include <vector>
 
