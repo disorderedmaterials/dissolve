@@ -42,8 +42,10 @@ bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const Core
             "1D function type {} can't be set in keyword '{}' as it does not have the correct properties.\n",
             Functions::function1D().keyword(func), name());
 
-    // Set function and params
-    return data_.setFunctionAndParameters(func, parser.argvd(startArg + 1));
+    // Get parameters if they were given
+    auto params = parser.hasArg(startArg + 1) ? parser.argvd(startArg + 1) : std::vector<double>();
+
+    return data_.setFunctionAndParameters(func, params);
 }
 
 // Serialise data to specified LineParser
