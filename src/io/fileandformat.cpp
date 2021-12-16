@@ -79,15 +79,8 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
     }
     formats_.setIndex(formatId.value());
 
-    // Set filename if present
-    if (parser.hasArg(startArg + 1))
-    {
-        filename_ = parser.argsv(startArg + 1);
-
-        // Check that the file exists?
-        if (fileMustExist() && (filename_ != "@") && (!DissolveSys::fileExists(filename_)))
-            return Messenger::error("Specified file '{}' does not exist.\n", filename_);
-    }
+    // Set filename
+    filename_ = parser.argsv(startArg + 1);
 
     // Parse any additional options until we find the end of the block
     while (!parser.eofOrBlank())
@@ -107,6 +100,10 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
         else if (result == KeywordBase::Failed)
             return Messenger::error("Error reading option '{}'.\n", parser.argsv(0));
     }
+
+    // Check that the file exists?
+    if (fileMustExist() && (filename_ != "@") && (!DissolveSys::fileExists(filename_)))
+        return Messenger::error("Specified file '{}' does not exist.\n", filename_);
 
     return true;
 }
