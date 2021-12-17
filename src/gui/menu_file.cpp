@@ -141,6 +141,9 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
     updateStatusBar();
 
     updateWindowTitle();
+
+    statusBar()->showMessage(
+        QString("Input file saved to '%1'.").arg(QString::fromStdString(std::string(dissolve_.inputFilename()))), 3000);
 }
 
 void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
@@ -170,6 +173,9 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
     updateStatusBar();
 
     updateWindowTitle();
+
+    statusBar()->showMessage(
+        QString("Input file saved to '%1'.").arg(QString::fromStdString(std::string(dissolve_.inputFilename()))), 3000);
 }
 
 void DissolveWindow::on_FileQuitAction_triggered(bool checked)

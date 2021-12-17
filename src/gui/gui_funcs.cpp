@@ -45,10 +45,15 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     dissolveIterating_ = false;
 
     // Create statusbar widgets
+    addStatusBarIcon(":/control/icons/control_step.svg")->setToolTip("Current step / iteration number");
     iterationLabel_ = addStatusBarLabel("00000");
-    addStatusBarIcon(":/general/icons/general_clock.svg");
+    iterationLabel_->setToolTip("Current step / iteration number");
+    addStatusBarIcon(":/general/icons/general_clock.svg")->setToolTip("Time remaining to completion");
     etaLabel_ = addStatusBarLabel("--:--:--");
+    etaLabel_->setToolTip("Time remaining to completion");
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
+    statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
+    statusLabel_ = addStatusBarLabel("Unknown", false);
 
     updateWindowTitle();
     updateStatusBar();
@@ -110,22 +115,28 @@ const Dissolve &DissolveWindow::dissolve() const { return dissolve_; }
  */
 
 // Add text label to status bar
-QLabel *DissolveWindow::addStatusBarLabel(QString text)
+QLabel *DissolveWindow::addStatusBarLabel(QString text, bool permanent)
 {
     auto *label = new QLabel(text);
-    statusBar()->addPermanentWidget(label);
+    if (permanent)
+        statusBar()->addPermanentWidget(label);
+    else
+        statusBar()->addWidget(label);
     return label;
 }
 
 // Add text label to status bar
-QLabel *DissolveWindow::addStatusBarIcon(QString resource)
+QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
 {
     const auto iconSize = statusBar()->font().pointSize() * 1.75;
     auto *label = new QLabel;
     label->setPixmap(QPixmap(resource));
     label->setMaximumSize(QSize(iconSize, iconSize));
     label->setScaledContents(true);
-    statusBar()->addPermanentWidget(label);
+    if (permanent)
+        statusBar()->addPermanentWidget(label);
+    else
+        statusBar()->addWidget(label);
     return label;
 }
 
@@ -326,6 +337,31 @@ void DissolveWindow::updateStatusBar()
                                           ? QStringLiteral("Current restart file is '%1'")
                                                 .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
                                           : "No restart file available");
+
+    // Set status
+    if (Messenger::nErrors() > 0)
+    {
+        statusLabel_->setText(QString("%1 %2 (see Messages)")
+                                  .arg(QString::number(Messenger::nErrors()), Messenger::nErrors() == 1 ? "Error" : "Errors"));
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_false.svg"));
+    }
+    else if (dissolveIterating_)
+    {
+        statusLabel_->setText("Running");
+        statusIndicator_->setPixmap(QPixmap(":/control/icons/control_play.svg"));
+    }
+    else
+    {
+        statusLabel_->setText("Idle");
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_true.svg"));
+    }
+
+    // Set restart file info
+    restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
+    restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename()
+                                          ? QStringLiteral("Current restart file is '%1'")
+                                                .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
+                                          : "No restart file available");
 }
 
 // Update menus
@@ -417,4 +453,8 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 }
 
 // Clear the messages window
-void DissolveWindow::clearMessages() { ui_.MainTabs->messagesTab()->clearMessages(); }
+void DissolveWindow::clearMessages()
+{
+    ui_.MainTabs->messagesTab()->clearMessages();
+    Messenger::clearErrorCounts();
+}

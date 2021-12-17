@@ -71,12 +71,14 @@ class DissolveWindow : public QMainWindow
     QLabel *iterationLabel_;
     // Label for simulation ETA (when using RunFor)
     QLabel *etaLabel_;
+    // General status indicator and label
+    QLabel *statusIndicator_, *statusLabel_;
 
     private:
     // Add text label to status bar
-    QLabel *addStatusBarLabel(QString text);
+    QLabel *addStatusBarLabel(QString text, bool permanent = true);
     // Add text label to status bar
-    QLabel *addStatusBarIcon(QString resource);
+    QLabel *addStatusBarIcon(QString resource, bool permanent = true);
 
     /*
      * File

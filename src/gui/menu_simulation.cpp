@@ -10,14 +10,20 @@
 
 void DissolveWindow::setupIteration(int count)
 {
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
-
     // Ensure that the simulation can run
     if (dissolve_.inputFilename().empty())
     {
         QMessageBox::warning(this, "No Input File", "You must save the file before running the simulation");
+        return;
+    }
+
+    // Clear the messages tab
+    clearMessages();
+
+    // Prepare the simulation
+    if (!dissolve_.prepare())
+    {
+        updateStatusBar();
         return;
     }
 

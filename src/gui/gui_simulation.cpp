@@ -52,6 +52,7 @@ void DissolveWindow::iterationsComplete()
     enableSensitiveControls();
     Renderable::setSourceDataAccessEnabled(true);
     dissolveIterating_ = false;
+
     fullUpdate();
 }
 
