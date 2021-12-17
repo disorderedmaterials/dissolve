@@ -44,9 +44,6 @@ void DissolveWindow::enableSensitiveControls()
 
     // Enable sensitive controls in all tabs
     ui_.MainTabs->enableSensitiveControls();
-
-    // Reset the state
-    dissolveState_ = EditingState;
 }
 
 // All iterations requested are complete
@@ -54,6 +51,8 @@ void DissolveWindow::iterationsComplete()
 {
     enableSensitiveControls();
     Renderable::setSourceDataAccessEnabled(true);
+    dissolveIterating_ = false;
+    fullUpdate();
 }
 
 /*

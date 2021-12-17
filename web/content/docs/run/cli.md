@@ -17,7 +17,7 @@ The following options are recognised by the serial and multithreaded codes, as w
 Run Dissolve for the specified number of iterations, and then quit. For the GUI version, the specified number of iterations will be run, and then the GUI launched. The default number of iterations if the `-n` flag is not specified is zero - in this case Dissolve will load the input file (and any associated restart file) and then quit, essentially corresponding to a sanity check of the input files.
 
 ### `-q`, `--quiet`
-Don't print any output to the console whatsoever. Output files such as the restart file, heartbeat, and any data output requested in individual modules will still be written. Use the [`-x`](#-x---no-files) flag to prevent the restart and heartbeat files being written.
+Don't print any output to the console whatsoever. Output files such as the restart file and any data output requested in individual modules will still be written. Use the [`-x`](#-x---no-restart-file) flag to prevent the restart and heartbeat files being written.
 
 ### `-v`, `--verbose`
 Print lots more output, mostly useful for debugging
@@ -40,8 +40,8 @@ Specify the frequency (in terms of main loop iterations) that the restart file s
 ### `--restart <filename>`
 Read restart file data from the file specified, rather than the default. Note that this only affects the initial target for reading the restart file - restart data written by the simulation will still be saved to the default restart file name.
 
-### `-x`, `--no-files`
-Inhibit writing of the restart and heartbeat files. Data exported from individual modules will still be written.
+### `-x`, `--no-restart-file`
+Inhibit writing of the restart file. Data exported from individual modules will still be written.
 
 * * *
 

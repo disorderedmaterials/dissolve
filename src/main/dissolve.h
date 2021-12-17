@@ -249,8 +249,6 @@ class Dissolve
     std::string restartFilename_;
     // Accumulated timing information for saving restart file
     SampledDouble saveRestartTimes_;
-    // Check if heartbeat file needs to be written or not
-    bool writeHeartBeat_;
 
     private:
     // Load input file through supplied parser
@@ -269,15 +267,9 @@ class Dissolve
     bool loadRestartAsReference(std::string_view filename, std::string_view dataSuffix);
     // Save restart file
     bool saveRestart(std::string_view filename);
-    // Save heartbeat file
-    bool saveHeartBeat(std::string_view filename, double estimatedNSecs);
-    // Set bool for heartbeat file to be written
-    void setWriteHeartBeat(bool b);
-    // write heartbeat file
-    bool writeHeartBeat() const;
     // Return whether an input filename has been set
     bool hasInputFilename() const;
-    // Set current input filenamea
+    // Set current input filename
     void setInputFilename(std::string_view filename);
     // Return current input filename
     std::string_view inputFilename() const;

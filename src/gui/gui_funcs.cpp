@@ -42,17 +42,13 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
 
     refreshing_ = false;
     modified_ = false;
-    localSimulation_ = true;
-    dissolveState_ = NoState;
+    dissolveIterating_ = false;
 
     // Create statusbar widgets
-
     iterationLabel_ = addStatusBarLabel("00000");
     addStatusBarIcon(":/general/icons/general_clock.svg");
     etaLabel_ = addStatusBarLabel("--:--:--");
-    heartbeatFileIndicator_ = addStatusBarIcon(":/general/icons/general_heartbeat.svg");
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
-    localSimulationIndicator_ = addStatusBarIcon(":/general/icons/general_local.svg");
 
     updateWindowTitle();
     updateStatusBar();
@@ -72,13 +68,13 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
     saveState();
 
     // If Dissolve is running, stop the thread now
-    if (dissolveState_ == RunningState)
+    if (dissolveIterating_)
     {
         // Send the signal to stop
         emit(stopIterating());
 
         // Wait for the thread to stop
-        while (dissolveState_ == RunningState)
+        while (dissolveIterating_)
             QApplication::processEvents();
     }
 
@@ -216,21 +212,12 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     if (QFile::exists(stateFilename_) && (!ignoreLayoutFile))
         loadState();
 
-    localSimulation_ = true;
     modified_ = false;
-
-    // Check the beat file
-    QString beatFile = QStringLiteral("%1.beat").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
-    if (QFile::exists(beatFile))
-    {
-        // TODO
-        // 		if (
-    }
-
-    dissolveState_ = EditingState;
+    dissolveIterating_ = false;
 
     // Fully update GUI
     fullUpdate();
+    ui_.MainStack->setCurrentIndex(1);
 
     return true;
 }
@@ -333,39 +320,31 @@ void DissolveWindow::updateStatusBar()
     // Set current iteration number
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
-    // Set relevant file locations
-    if (localSimulation_)
-    {
-        localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
-        restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
-        restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename()
-                                              ? QStringLiteral("Current restart file is '%1'")
-                                                    .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
-                                              : "No restart file available");
-        heartbeatFileIndicator_->setEnabled(false);
-        heartbeatFileIndicator_->setToolTip("Heartbeat file not monitored.");
-    }
-    else
-    {
-        localSimulationIndicator_->setPixmap(QPixmap(":/menu/icons/menu_connect.svg"));
-        // TODO!
-    }
+    // Set restart file locations
+    restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
+    restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename()
+                                          ? QStringLiteral("Current restart file is '%1'")
+                                                .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
+                                          : "No restart file available");
 }
 
 // Update menus
 void DissolveWindow::updateMenus()
 {
+    auto hasSimulation = ui_.MainStack->currentIndex() == 1;
+    auto allowEditing = hasSimulation && !dissolveIterating_;
+
     // File Menu - always active, but available items depends on state
-    ui_.FileSaveAction->setEnabled(dissolveState_ != NoState);
-    ui_.FileSaveAsAction->setEnabled(dissolveState_ != NoState);
-    ui_.FileCloseAction->setEnabled(dissolveState_ != NoState && dissolveState_ != RunningState);
+    ui_.FileSaveAction->setEnabled(hasSimulation && modified_);
+    ui_.FileSaveAsAction->setEnabled(allowEditing);
+    ui_.FileCloseAction->setEnabled(allowEditing);
 
     // Enable / disable other menu items as appropriate
-    ui_.SimulationMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.SpeciesMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.ConfigurationMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.LayerMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.WorkspaceMenu->setEnabled(dissolveState_ == EditingState);
+    ui_.SimulationMenu->setEnabled(allowEditing);
+    ui_.SpeciesMenu->setEnabled(allowEditing);
+    ui_.ConfigurationMenu->setEnabled(allowEditing);
+    ui_.LayerMenu->setEnabled(allowEditing);
+    ui_.WorkspaceMenu->setEnabled(allowEditing);
 
     auto activeTab = ui_.MainTabs->currentTab();
     if (!activeTab)
@@ -400,8 +379,6 @@ void DissolveWindow::fullUpdate()
 {
     refreshing_ = true;
 
-    // Make sure correct stack page is shown
-    ui_.MainStack->setCurrentIndex(dissolveState_ == NoState ? 0 : 1);
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();
     updateRecentActionList();

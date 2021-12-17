@@ -88,7 +88,7 @@
      <x>0</x>
      <y>0</y>
      <width>1146</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -107,8 +107,7 @@
     </widget>
     <addaction name="FileNewAction"/>
     <addaction name="separator"/>
-    <addaction name="FileOpenLocalAction"/>
-    <addaction name="FileConnectAction"/>
+    <addaction name="FileOpenAction"/>
     <addaction name="FileOpenRecentMenu"/>
     <addaction name="separator"/>
     <addaction name="FileCloseAction"/>
@@ -243,8 +242,8 @@
       <rect>
        <x>990</x>
        <y>290</y>
-       <width>211</width>
-       <height>172</height>
+       <width>218</width>
+       <height>195</height>
       </rect>
      </property>
      <property name="font">
@@ -377,13 +376,13 @@
    <addaction name="HelpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="FileOpenLocalAction">
+  <action name="FileOpenAction">
    <property name="icon">
     <iconset>
      <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Local...</string>
+    <string>&amp;Open...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>

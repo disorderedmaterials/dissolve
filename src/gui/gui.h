@@ -47,12 +47,6 @@ class DissolveWindow : public QMainWindow
     private:
     // Dissolve reference
     Dissolve &dissolve_;
-    // Whether any data has been modified
-    bool modified_;
-    // Whether window is currently refreshing
-    bool refreshing_;
-    // Whether the current simulation is on the local machine
-    bool localSimulation_;
 
     private:
     // Prepare the simulation and run for a set count
@@ -71,12 +65,8 @@ class DissolveWindow : public QMainWindow
      * StatusBar
      */
     private:
-    // Label for local / remote simulation indicator
-    QLabel *localSimulationIndicator_;
     // Label for restart file indicator
     QLabel *restartFileIndicator_;
-    // Label for heartbeat file indicator
-    QLabel *heartbeatFileIndicator_;
     // Label for iteration number
     QLabel *iterationLabel_;
     // Label for simulation ETA (when using RunFor)
@@ -148,8 +138,7 @@ class DissolveWindow : public QMainWindow
     public slots:
     // File
     void on_FileNewAction_triggered(bool checked);
-    void on_FileOpenLocalAction_triggered(bool checked);
-    void on_FileConnectAction_triggered(bool checked);
+    void on_FileOpenAction_triggered(bool checked);
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);
     void on_FileSaveAsAction_triggered(bool checked);
@@ -215,24 +204,17 @@ class DissolveWindow : public QMainWindow
     void currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow);
 
     /*
-     * Widgets / UI
+     * Simulation
      */
-    public:
-    // Dissolve State Enum
-    enum DissolveState
-    {
-        NoState,         /* Dissolve has no active simulation */
-        EditingState,    /* Dissolve is currently editing a file in the GUI */
-        RunningState,    /* Dissolve is currently running in the GUI */
-        MonitoringState, /* Dissolve is running in the background, and we are monitoring it via the restart file */
-        nDissolveStates
-    };
-
     private:
     // Thread controller
     DissolveThreadController threadController_;
-    // Current state of Dissolve
-    DissolveState dissolveState_;
+    // Whether the GUI is currently running a simulation
+    bool dissolveIterating_;
+    // Whether any data has been modified
+    bool modified_;
+    // Whether window is currently refreshing
+    bool refreshing_;
 
     private slots:
     void on_MainTabs_currentChanged(int index);

@@ -24,7 +24,7 @@ void DissolveWindow::setupIteration(int count)
     // Prepare the GUI
     disableSensitiveControls();
     Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
+    dissolveIterating_ = true;
 
     // Update the controls
     updateStatusBar();
