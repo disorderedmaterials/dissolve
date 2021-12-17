@@ -102,13 +102,15 @@ class DissolveWindow : public QMainWindow
     // List of ReferencePoints currently loaded
     std::vector<ReferencePoint> referencePoints_;
 
-    private:
-    QList<QAction *> recentFileActionList_;
-    const int recentFileNo_;
-
     /*
-     * OpenRecent Functions
+     * Recent Files
      */
+    private:
+    // Convenience list of recent file menu actions
+    QList<QAction *> recentFileActionList_;
+    // Maximum number of recent files to retain
+    const int recentFileLimit_;
+
     public slots:
     // Manage opening of recent files
     void openRecent();
