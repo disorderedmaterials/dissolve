@@ -379,6 +379,8 @@ PairPotentials
   Range  9.000000
   Delta  0.005000
   IncludeCoulomb  False
+  ManualChargeSource  True
+  ForceChargeSource  True
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
 EndPairPotentials

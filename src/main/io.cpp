@@ -266,9 +266,22 @@ bool Dissolve::saveInput(std::string_view filename)
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword),
                            pairPotentialDelta_))
         return false;
-    if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::IncludeCoulombKeyword),
-                           DissolveSys::btoa(pairPotentialsIncludeCoulomb_)))
-        return false;
+    if (!automaticChargeSource_)
+    {
+        if (!parser.writeLineF("  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ManualChargeSourceKeyword),
+                               DissolveSys::btoa(true)))
+            return false;
+        if (!parser.writeLineF("  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::IncludeCoulombKeyword),
+                               DissolveSys::btoa(atomTypeChargeSource_)))
+            return false;
+        if (forceChargeSource_ &&
+            !parser.writeLineF("  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ForceChargeSourceKeyword),
+                               DissolveSys::btoa(true)))
+            return false;
+    }
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::CoulombTruncationKeyword),
                            PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme())))
         return false;

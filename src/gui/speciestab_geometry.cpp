@@ -96,7 +96,7 @@ void SpeciesTab::updateTotalCharges()
 {
     auto errorPalette = palette();
     errorPalette.setBrush(QPalette::WindowText, Qt::red);
-    auto ppHaveCharges = dissolve_.pairPotentialsIncludeCoulomb();
+    auto ppHaveCharges = dissolve_.atomTypeChargeSource();
 
     auto atomCharge = species_->totalCharge(false);
     auto atomChargeOK = fabs(atomCharge) < 1.0e-5;

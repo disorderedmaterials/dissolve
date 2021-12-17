@@ -105,6 +105,8 @@ class Configuration
     const std::vector<std::pair<const Species *, int>> &speciesPopulations() const;
     // Return if the specified Species is present in the Configuration
     bool containsSpecies(const Species *sp);
+    // Return the total charge of the Configuration
+    double totalCharge(bool ppIncludeCoulomb) const;
     // Return the total atomic mass present in the Configuration
     double atomicMass() const;
     // Return the atomic density of the Configuration

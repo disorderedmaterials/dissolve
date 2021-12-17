@@ -59,6 +59,11 @@ Species 'N-MethylFormamide'
   Forcefield  'UFF'
 EndSpecies
 
+PairPotentials
+  ManualChargeSource  True
+  ForceChargeSource  True
+EndPairPotentials
+
 #==============================================================================#
 #                              Processing Layers                               #
 #==============================================================================#
