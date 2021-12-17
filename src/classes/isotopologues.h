@@ -25,18 +25,18 @@ class Isotopologues
     private:
     // Associated Species
     const Species *species_;
-    // Integer population of associated Species
-    int speciesPopulation_;
+    // Population of associated Species
+    double speciesPopulation_;
     // Weighted Isotopologue mixture
     std::vector<IsotopologueWeight> mix_;
 
     public:
     // Set associated Species and population
-    void setSpecies(const Species *sp, int population);
+    void setSpecies(const Species *sp, double population);
     // Return associated Species
     const Species *species() const;
     // Return associated Species population
-    int speciesPopulation() const;
+    double speciesPopulation() const;
     // Add specific Isotopologue to list
     void add(const Isotopologue *iso, double relativeWeight);
     // Set Isotopologue component in list
