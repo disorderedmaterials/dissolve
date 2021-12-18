@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/render/linestyle.h"
-#include <stdio.h>
 
 LineStyle::LineStyle(double width, LineStipple::StippleType stipple, double r, double g, double b, double a)
 {

@@ -5,7 +5,6 @@
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"
-#include "gui/delegates/integerspin.hui"
 #include "gui/delegates/intraformcombo.hui"
 #include "gui/delegates/isotopecombo.hui"
 #include "gui/delegates/null.h"

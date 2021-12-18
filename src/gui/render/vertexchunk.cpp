@@ -3,8 +3,6 @@
 
 #include "gui/render/vertexchunk.h"
 #include "base/messenger.h"
-#include <math.h>
-#include <stdio.h>
 
 VertexChunk::VertexChunk()
 {

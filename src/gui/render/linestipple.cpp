@@ -6,8 +6,6 @@
 #include <QComboBox>
 #include <QPainter>
 #include <QVector>
-#include <bitset>
-#include <stdio.h>
 
 // Static list of LineStipples
 LineStipple LineStipple::stipple[] = {{1, 0xffff, "Solid"},       {1, 0xaaaa, "Dots"},         {1, 0xcccc, "Fine Dash"},

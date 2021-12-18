@@ -5,17 +5,12 @@
 #include "gui/charts/proceduremetrics.h"
 #include "gui/charts/procedurenode.h"
 #include "gui/stockcolours.h"
-#include "gui/widgets/mimestrings.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/procedure.h"
-#include <QApplication>
 #include <QDrag>
-#include <QMessageBox>
-#include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPropertyAnimation>
-#include <QWidget>
 
 ProcedureChart::ProcedureChart(Procedure *procedure, const CoreData &coreData) : ChartBase(), coreData_(coreData)
 {
