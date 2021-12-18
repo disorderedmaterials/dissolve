@@ -12,9 +12,6 @@
 #include <QHBoxLayout>
 #include <QString>
 
-Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
-
 AtomTypeVectorKeywordWidget::AtomTypeVectorKeywordWidget(QWidget *parent, AtomTypeVectorKeyword *keyword,
                                                          const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)

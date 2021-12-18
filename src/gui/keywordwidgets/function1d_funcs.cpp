@@ -6,8 +6,6 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 
-Q_DECLARE_METATYPE(Functions::Function1D);
-
 #define MaxParams 6
 
 Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyword *keyword, const CoreData &coreData)

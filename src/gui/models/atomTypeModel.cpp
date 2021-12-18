@@ -6,8 +6,6 @@
 #include "classes/atomtype.h"
 #include "templates/algorithms.h"
 
-Q_DECLARE_METATYPE(AtomType *);
-
 // Set source AtomType data
 void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &species)
 {

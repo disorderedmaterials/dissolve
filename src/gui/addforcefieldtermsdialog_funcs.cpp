@@ -9,8 +9,6 @@
 #include "templates/algorithms.h"
 #include <QInputDialog>
 
-Q_DECLARE_METATYPE(AtomType *)
-
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp)
     : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_), targetSpecies_(sp),
       intramolecularTermsAssigned_(false)

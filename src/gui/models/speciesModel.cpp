@@ -3,8 +3,6 @@
 
 #include "gui/models/speciesModel.h"
 
-Q_DECLARE_METATYPE(const Species *);
-
 // Set source Species data
 void SpeciesModel::setData(const std::vector<std::unique_ptr<Species>> &species)
 {

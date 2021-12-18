@@ -7,9 +7,6 @@
 #include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
-#include <list>
-
-Q_DECLARE_METATYPE(SpeciesAtom *)
 
 class SpeciesAtomModel : public QAbstractTableModel
 {

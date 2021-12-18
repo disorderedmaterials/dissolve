@@ -11,9 +11,6 @@
 #include "gui/models/pairPotentialModel.h"
 #include "gui/ui_forcefieldtab.h"
 
-Q_DECLARE_METATYPE(const AtomType *)
-Q_DECLARE_METATYPE(const PairPotential *)
-
 // Forcefield Tab
 class ForcefieldTab : public QWidget, public MainTab
 {
