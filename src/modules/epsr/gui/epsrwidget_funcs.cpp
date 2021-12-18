@@ -50,6 +50,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     graph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
     graph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
     graph_->groupManager().setGroupColouring("Phi", RenderableGroup::AutomaticIndividualColouring);
+    graph_->groupManager().setGroupVerticalShifting("Phi", RenderableGroup::PreventVerticalShifting);
     graph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
 
     refreshing_ = false;
@@ -194,6 +195,8 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         }
         else if (ui_.RFactorButton->isChecked())
         {
+            graph_->groupManager().removeVerticalShifts();
+
             // Add total R-factor followed by those for each target
             graph_->createRenderable<RenderableData1D>(fmt::format("{}//RFactor", module_->uniqueName()), "Total", "Total")
                 ->lineStyle()
