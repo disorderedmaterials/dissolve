@@ -60,8 +60,6 @@ class ConfigurationTab : public QWidget, public MainTab
      * Update
      */
     private:
-    // Row update function for BondsTable
-    void updateSpeciesInfoTableRow(int row, SpeciesInfo *speciesInfo, bool createItems);
     // Update density label
     void updateDensityLabel();
 
