@@ -5,6 +5,7 @@
 #include "base/sysfunc.h"
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
+#include <map>
 
 // Return enum options for BondFunction
 EnumOptions<BondFunctions::Form> BondFunctions::forms()
@@ -12,6 +13,32 @@ EnumOptions<BondFunctions::Form> BondFunctions::forms()
     return EnumOptions<BondFunctions::Form>("BondFunction", {{BondFunctions::Form::None, "None"},
                                                              {BondFunctions::Form::Harmonic, "Harmonic", 2},
                                                              {BondFunctions::Form::EPSR, "EPSR", 2}});
+}
+
+// Return parameters for specified form
+const std::vector<std::string> &BondFunctions::parameters(Form form)
+{
+    static std::map<BondFunctions::Form, std::vector<std::string>> params_ = {{BondFunctions::Form::None, {}},
+                                                                              {BondFunctions::Form::Harmonic, {"k", "eq"}},
+                                                                              {BondFunctions::Form::EPSR, {"C/2", "eq"}}};
+    return params_[form];
+}
+
+// Return nth parameter for the given form
+std::string BondFunctions::parameter(Form form, int n)
+{
+    return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
+}
+
+// Return index of parameter in the given form
+std::optional<int> BondFunctions::parameterIndex(Form form, std::string_view name)
+{
+    auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
+                           [name](const auto &param) { return DissolveSys::sameString(name, param); });
+    if (it == parameters(form).end())
+        return {};
+
+    return it - parameters(form).begin();
 }
 
 SpeciesBond::SpeciesBond() : SpeciesIntra(BondFunctions::Form::None) {}
