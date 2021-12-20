@@ -157,9 +157,8 @@ void Species::print() const
         Messenger::print("    ---------------------------------------------------------------------------------\n");
         for (const auto &bond : bonds_)
         {
-            std::string line =
-                fmt::format("   {:4d}  {:4d}    {}{:<12}", bond.indexI() + 1, bond.indexJ() + 1,
-                            bond.masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
+            std::string line = fmt::format("   {:4d}  {:4d}    {}{:<12}", bond.indexI() + 1, bond.indexJ() + 1,
+                                           bond.masterTerm() ? '@' : ' ', BondFunctions::forms().keyword(bond.form()));
             for (const auto param : bond.parameters())
                 line += fmt::format("  {:12.4e}", param);
             Messenger::print(line);
@@ -175,7 +174,7 @@ void Species::print() const
         {
             std::string line =
                 fmt::format("   {:4d}  {:4d}  {:4d}    {}{:<12}", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
-                            angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
+                            angle.masterTerm() ? '@' : ' ', AngleFunctions::forms().keyword(angle.form()));
             for (const auto param : angle.parameters())
                 line += fmt::format("  {:12.4e}", param);
             Messenger::print(line);
@@ -190,10 +189,9 @@ void Species::print() const
         // Loop over Torsions
         for (const auto &torsion : torsions())
         {
-            std::string line =
-                fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", torsion.indexI() + 1, torsion.indexJ() + 1,
-                            torsion.indexK() + 1, torsion.indexL() + 1, torsion.masterParameters() ? '@' : ' ',
-                            SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
+            std::string line = fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", torsion.indexI() + 1,
+                                           torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                           torsion.masterTerm() ? '@' : ' ', TorsionFunctions::forms().keyword(torsion.form()));
             for (const auto param : torsion.parameters())
                 line += fmt::format("  {:12.4e}", param);
             Messenger::print(line);
@@ -210,8 +208,8 @@ void Species::print() const
         {
             std::string line =
                 fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", improper.indexI() + 1, improper.indexJ() + 1,
-                            improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
-                            SpeciesTorsion::torsionFunctions().keywordFromInt(improper.form()));
+                            improper.indexK() + 1, improper.indexL() + 1, improper.masterTerm() ? '@' : ' ',
+                            TorsionFunctions::forms().keyword(improper.form()));
             for (const auto param : improper.parameters())
                 line += fmt::format("  {:12.4e}", param);
             Messenger::print(line);

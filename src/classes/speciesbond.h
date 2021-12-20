@@ -10,8 +10,22 @@
 class SpeciesAtom;
 class Species;
 
+// Bond functional forms
+class BondFunctions
+{
+    public:
+    enum class Form
+    {
+        None,
+        Harmonic,
+        EPSR
+    };
+    // Return enum options for Form
+    static EnumOptions<Form> forms();
+}; // namespace BondFunctions
+
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra
+class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
@@ -94,23 +108,10 @@ class SpeciesBond : public SpeciesIntra
      * Interaction Parameters
      */
     public:
-    // Bond functional forms
-    enum BondFunction
-    {
-        NoForm,
-        HarmonicForm,
-        EPSRForm
-    };
-    // Return enum options for BondFunction
-    static EnumOptions<BondFunction> bondFunctions();
-
-    public:
     // Set up any necessary parameters
     void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
-    // Return type of this interaction
-    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified distance
     double energy(double distance) const;
     // Return force multiplier for specified distance

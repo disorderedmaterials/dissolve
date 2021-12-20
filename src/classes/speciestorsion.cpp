@@ -4,10 +4,25 @@
 #include "classes/speciestorsion.h"
 #include "classes/speciesatom.h"
 
-SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(SpeciesTorsion::NoForm) {}
+// Return enum options for TorsionFunction
+EnumOptions<TorsionFunctions::Form> TorsionFunctions::forms()
+{
+    return EnumOptions<TorsionFunctions::Form>("TorsionFunction",
+                                               {{TorsionFunctions::Form::None, "None"},
+                                                {TorsionFunctions::Form::Cosine, "Cos", 4},
+                                                {TorsionFunctions::Form::Cos3, "Cos3", 3},
+                                                {TorsionFunctions::Form::Cos3C, "Cos3C", 4},
+                                                {TorsionFunctions::Form::Cos4, "Cos4", 4},
+                                                {TorsionFunctions::Form::CosN, "CosN", 1, OptionArguments::AnyNumber},
+                                                {TorsionFunctions::Form::CosNC, "CosNC", 1, OptionArguments::AnyNumber},
+                                                {TorsionFunctions::Form::UFFCosine, "UFFCosine", 3},
+                                                {TorsionFunctions::Form::FourierN, "FourierN", 2, OptionArguments::AnyNumber}});
+}
+
+SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(TorsionFunctions::Form::None) {}
 
 SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(SpeciesTorsion::NoForm)
+    : SpeciesIntra(TorsionFunctions::Form::None)
 {
     assign(i, j, k, l);
 }
@@ -28,6 +43,7 @@ SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -42,6 +58,7 @@ SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
 {
     assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -55,6 +72,7 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source) noexcept
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -186,21 +204,6 @@ bool SpeciesTorsion::isSelected() const
  * Interaction Parameters
  */
 
-// Return enum options for TorsionFunction
-EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
-{
-    return EnumOptions<SpeciesTorsion::TorsionFunction>(
-        "TorsionFunction", {{SpeciesTorsion::NoForm, "None"},
-                            {SpeciesTorsion::CosineForm, "Cos", 4},
-                            {SpeciesTorsion::Cos3Form, "Cos3", 3},
-                            {SpeciesTorsion::Cos3CForm, "Cos3C", 4},
-                            {SpeciesTorsion::Cos4Form, "Cos4", 4},
-                            {SpeciesTorsion::CosNForm, "CosN", 1, OptionArguments::AnyNumber},
-                            {SpeciesTorsion::CosNCForm, "CosNC", 1, OptionArguments::AnyNumber},
-                            {SpeciesTorsion::UFFCosineForm, "UFFCosine", 3},
-                            {SpeciesTorsion::FourierNForm, "FourierN", 2, OptionArguments::AnyNumber}});
-}
-
 // Set up any necessary parameters
 void SpeciesTorsion::setUp() {}
 
@@ -211,18 +214,15 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
     return 0.0;
 }
 
-// Return type of this interaction
-SpeciesIntra::InteractionType SpeciesTorsion::type() const { return SpeciesIntra::InteractionType::Torsion; }
-
 // Return energy for specified angle and functional form, given supplied parameters
-double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector<double> &params)
+double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params)
 {
     // Convert torsion angle from degrees to radians
     const double phi = angleInDegrees / DEGRAD;
 
-    if (form == SpeciesTorsion::NoForm)
+    if (form == TorsionFunctions::Form::None)
         return 0.0;
-    else if (form == SpeciesTorsion::CosineForm)
+    else if (form == TorsionFunctions::Form::Cosine)
     {
         /*
          * U(phi) = k * (1 + s*cos(n*phi - eq))
@@ -235,7 +235,7 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          */
         return params[0] * (1.0 + params[3] * cos(params[1] * phi - (params[2] / DEGRAD)));
     }
-    else if (form == SpeciesTorsion::Cos3Form)
+    else if (form == TorsionFunctions::Form::Cos3)
     {
         /*
          * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
@@ -247,7 +247,7 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          */
         return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)));
     }
-    else if (form == SpeciesTorsion::Cos3CForm)
+    else if (form == TorsionFunctions::Form::Cos3C)
     {
         /*
          * U(phi) = k0 + 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
@@ -261,7 +261,7 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
         return params[0] +
                0.5 * (params[1] * (1.0 + cos(phi)) + params[2] * (1.0 - cos(2.0 * phi)) + params[3] * (1.0 + cos(3.0 * phi)));
     }
-    else if (form == SpeciesTorsion::Cos4Form)
+    else if (form == TorsionFunctions::Form::Cos4)
     {
         /*
          * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) )
@@ -275,7 +275,7 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
         return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
                       params[3] * (1.0 - cos(4.0 * phi)));
     }
-    else if (form == SpeciesTorsion::CosNForm)
+    else if (form == TorsionFunctions::Form::CosN)
     {
         /*
          *           1
@@ -294,7 +294,7 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
 
         return U;
     }
-    else if (form == SpeciesTorsion::CosNCForm)
+    else if (form == TorsionFunctions::Form::CosNC)
     {
         /*
          *           0
@@ -313,7 +313,7 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
 
         return U;
     }
-    else if (form == SpeciesTorsion::UFFCosineForm)
+    else if (form == TorsionFunctions::Form::UFFCosine)
     {
         /*
          * U(phi) = 0.5 * k * (1 - cos(n*eq) * cos(n*phi))
@@ -325,7 +325,7 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          */
         return 0.5 * params[0] * (1.0 - cos(params[1] * params[2] / DEGRAD) * cos(params[1] * phi));
     }
-    else if (form == SpeciesTorsion::FourierNForm)
+    else if (form == TorsionFunctions::Form::FourierN)
     {
         /*
          * U(phi) = k * (C0 + C1 cos(phi) + C2 cos(2*phi) ... Cn cos(n*phi))
@@ -352,7 +352,7 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 }
 
 // Return force multiplier for specified angle and functional form, given supplied parameters
-double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<double> &params)
+double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params)
 {
     /*
      * Force of any angle form is given via the chain rule:
@@ -373,9 +373,9 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
     // TODO Avoid singularities (#542)
     double dphi_dcosphi = -1.0 / DissolveMath::sgn(std::max(1.0e-8, fabs(sinPhi)), sinPhi);
 
-    if (form == SpeciesTorsion::NoForm)
+    if (form == TorsionFunctions::Form::None)
         return 0.0;
-    else if (form == SpeciesTorsion::CosineForm)
+    else if (form == TorsionFunctions::Form::Cosine)
     {
         /*
          * dU/dphi = -k * n * s * sin(n*phi - eq)
@@ -389,7 +389,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
 
         return params[0] * params[1] * params[3] * sin(params[1] * phi - (params[2] / DEGRAD)) * dphi_dcosphi;
     }
-    else if (form == SpeciesTorsion::Cos3Form)
+    else if (form == TorsionFunctions::Form::Cos3)
     {
         /*
          * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) )
@@ -402,7 +402,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
         return -0.5 * (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi)) *
                dphi_dcosphi;
     }
-    else if (form == SpeciesTorsion::Cos3CForm)
+    else if (form == TorsionFunctions::Form::Cos3C)
     {
         /*
          * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*(sin(4*phi)))
@@ -416,7 +416,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
         return -0.5 * (-params[1] * sin(phi) + 2.0 * params[2] * sin(2.0 * phi) - 3.0 * params[3] * sin(3.0 * phi)) *
                dphi_dcosphi;
     }
-    else if (form == SpeciesTorsion::Cos4Form)
+    else if (form == TorsionFunctions::Form::Cos4)
     {
         /*
          * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) )
@@ -432,7 +432,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
                 4.0 * params[3] * sin(4.0 * phi)) *
                dphi_dcosphi;
     }
-    else if (form == SpeciesTorsion::CosNForm)
+    else if (form == TorsionFunctions::Form::CosN)
     {
         /*
          *            1
@@ -454,7 +454,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
         }
         return -dU_dphi * dphi_dcosphi;
     }
-    else if (form == SpeciesTorsion::CosNCForm)
+    else if (form == TorsionFunctions::Form::CosNC)
     {
         /*
          *            0
@@ -473,7 +473,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
 
         return -dU_dphi * dphi_dcosphi;
     }
-    else if (form == SpeciesTorsion::UFFCosineForm)
+    else if (form == TorsionFunctions::Form::UFFCosine)
     {
         /*
          * dU/d(phi) = 0.5 * k * cos(n*eq) * n * sin(n*phi)
@@ -486,7 +486,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
 
         return -0.5 * params[0] * params[1] * cos(params[1] * params[2] / DEGRAD) * sin(params[1] * phi) * dphi_dcosphi;
     }
-    else if (form == SpeciesTorsion::FourierNForm)
+    else if (form == TorsionFunctions::Form::FourierN)
     {
         /*
          *            1

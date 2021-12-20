@@ -10,8 +10,23 @@
 class SpeciesAtom;
 class Species;
 
+// Angle functional forms
+class AngleFunctions
+{
+    public:
+    enum class Form
+    {
+        None,
+        Harmonic,
+        Cosine,
+        Cos2
+    };
+    // Return enum options for Form
+    static EnumOptions<Form> forms();
+};
+
 // SpeciesAngle Definition
-class SpeciesAngle : public SpeciesIntra
+class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
@@ -67,24 +82,10 @@ class SpeciesAngle : public SpeciesIntra
      * Interaction Parameters
      */
     public:
-    // Angle functional forms
-    enum AngleFunction
-    {
-        NoForm,
-        HarmonicForm,
-        CosineForm,
-        Cos2Form
-    };
-    // Return enum options for AngleFunction
-    static EnumOptions<AngleFunction> angleFunctions();
-
-    public:
     // Set up any necessary parameters
     void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
-    // Return type of this interaction
-    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle

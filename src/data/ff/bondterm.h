@@ -14,7 +14,7 @@ class ForcefieldBondTerm
 {
     public:
     ForcefieldBondTerm(std::string_view typeI = "", std::string_view typeJ = "",
-                       SpeciesBond::BondFunction form = SpeciesBond::NoForm, const std::vector<double> &parameters = {});
+                       BondFunctions::Form form = BondFunctions::Form::None, const std::vector<double> &parameters = {});
     ~ForcefieldBondTerm() = default;
 
     /*
@@ -24,7 +24,7 @@ class ForcefieldBondTerm
     // Type names involved in interaction
     std::string typeI_, typeJ_;
     // Functional form of interaction
-    SpeciesBond::BondFunction form_;
+    BondFunctions::Form form_;
     // Parameters for interaction
     std::vector<double> parameters_;
 
@@ -32,7 +32,7 @@ class ForcefieldBondTerm
     // Return if this term matches the atom types supplied
     bool isMatch(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
     // Return functional form index of interaction
-    SpeciesBond::BondFunction form() const;
+    BondFunctions::Form form() const;
     // Return array of parameters
     const std::vector<double> &parameters() const;
 };
