@@ -19,7 +19,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSi
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename() && actionSignals.setOrNull(KeywordSignals::ReloadExternalData))
+    if (referenceFQ_.hasFilename() && actionSignals.setOrNone(KeywordSignals::ReloadExternalData))
     {
         // Load the data
         Data1D referenceData;

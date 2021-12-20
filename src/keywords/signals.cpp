@@ -17,10 +17,13 @@ KeywordSignals &KeywordSignals::operator=(int signalMask)
 
 void KeywordSignals::operator+=(int signalMask) { signalMask_ |= signalMask; }
 
-KeywordSignals::operator int() const { return signalMask_; }
+KeywordSignals::operator int() const { return signalMask_.to_ulong(); }
 
 // Return true if the specified signal is set
-bool KeywordSignals::set(KeywordSignal keywordSignal) const { return signalMask_ & keywordSignal; }
+bool KeywordSignals::set(KeywordSignal keywordSignal) const { return signalMask_.test(keywordSignal); }
 
 // Return true if the specified signal is set, or if none are set at all
-bool KeywordSignals::setOrNull(KeywordSignal keywordSignal) const { return signalMask_ == 0 || (signalMask_ & keywordSignal); }
+bool KeywordSignals::setOrNone(KeywordSignal keywordSignal) const
+{
+    return signalMask_.none() || signalMask_.test(keywordSignal);
+}

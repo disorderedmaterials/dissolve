@@ -3,33 +3,36 @@
 
 #pragma once
 
+#include <bitset>
+
 // Keyword Signals
 class KeywordSignals
 {
     public:
     KeywordSignals();
+    ~KeywordSignals() = default;
     explicit KeywordSignals(int signalMask);
     KeywordSignals(const KeywordSignals &source);
     KeywordSignals &operator=(int signalMask);
     void operator+=(int signalMask);
     operator int() const;
-    ~KeywordSignals() = default;
 
     public:
     enum KeywordSignal
     {
-        ClearData = 1,
-        RecreateRenderables = 2,
-        ReloadExternalData = 4
+        ClearData,
+        RecreateRenderables,
+        ReloadExternalData,
+        nKeywordSignals
     };
 
     private:
     // Signals to be emitted (via Qt) when editing this keyword in the GUI
-    int signalMask_{0};
+    std::bitset<nKeywordSignals> signalMask_;
 
     public:
     // Return true if the specified signal is set
     bool set(KeywordSignal keywordSignal) const;
     // Return true if the specified signal is set, or if none are set at all
-    bool setOrNull(KeywordSignal keywordSignal) const;
+    bool setOrNone(KeywordSignal keywordSignal) const;
 };
