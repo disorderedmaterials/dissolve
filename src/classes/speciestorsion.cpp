@@ -204,9 +204,6 @@ bool SpeciesTorsion::isSelected() const
  * Interaction Parameters
  */
 
-// Set up any necessary parameters
-void SpeciesTorsion::setUp() {}
-
 // Calculate and return fundamental frequency for the interaction
 double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
 {

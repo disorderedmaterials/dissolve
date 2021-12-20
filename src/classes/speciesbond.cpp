@@ -197,27 +197,6 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
  * Interaction Parameters
  */
 
-// Set up any necessary parameters
-void SpeciesBond::setUp()
-{
-    // Get pointer to relevant parameters array
-    const auto &params = parameters();
-
-    /*
-     * Depending on the form, we may have other dependent parameters to set up
-     * These are always stored in the *local* SpeciesIntra array, rather than those in any associated master parameters
-     * This way, we can reference both general master parameters as well as others which depend on the atoms involved, for
-     * instance
-     */
-    if (form() == BondFunctions::Form::EPSR)
-    {
-        // Work out omega-squared(ab) from mass of natural isotopes
-        double massI = AtomicMass::mass(i_->Z());
-        double massJ = AtomicMass::mass(j_->Z());
-        parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
-    }
-}
-
 // Return fundamental frequency for the interaction
 double SpeciesBond::fundamentalFrequency(double reducedMass) const
 {
@@ -263,21 +242,25 @@ double SpeciesBond::energy(double distance) const
          * 0 : force constant
          * 1 : equilibrium distance
          */
-        double delta = distance - params[1];
+        auto delta = distance - params[1];
         return 0.5 * params[0] * delta * delta;
     }
     else if (form() == BondFunctions::Form::EPSR)
     {
         /*
-         * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
+         * Basically a harmonic oscillator metered by the mass of the atoms
          *
          * Parameters:
          * 0 : general force constant C / 2.0
          * 1 : equilibrium distance
-         * 2 : omega squared (LOCAL parameter)
+         *                        eq
+         * omegaSq = -----------------------------
+         *           sqrt( (mi + mj) / (mi * mj) )
          */
-        double delta = distance - params[1];
-        return params[0] * (delta * delta) / parameters_[2];
+        auto delta = distance - params[1];
+        auto massI = AtomicMass::mass(i_->Z());
+        auto massJ = AtomicMass::mass(j_->Z());
+        return params[0] * delta * delta / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
 
     Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate energy.\n");
@@ -306,14 +289,15 @@ double SpeciesBond::force(double distance) const
     else if (form() == BondFunctions::Form::EPSR)
     {
         /*
-         * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
+         * Basically a harmonic oscillator metered by the mass of the atoms
          *
          * Parameters:
          * 0 : general force constant C / 2.0
          * 1 : equilibrium distance
-         * 2 : omega squared (LOCAL parameter)
          */
-        return -2.0 * params[0] * (distance - params[1]) / params[2];
+        auto massI = AtomicMass::mass(i_->Z());
+        auto massJ = AtomicMass::mass(j_->Z());
+        return -2.0 * params[0] * (distance - params[1]) / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
 
     Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");

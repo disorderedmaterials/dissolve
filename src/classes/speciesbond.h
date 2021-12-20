@@ -108,8 +108,6 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
      * Interaction Parameters
      */
     public:
-    // Set up any necessary parameters
-    void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified distance

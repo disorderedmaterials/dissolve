@@ -180,9 +180,6 @@ void SpeciesAngle::detach()
  * Interaction Parameters
  */
 
-// Set up any necessary parameters
-void SpeciesAngle::setUp() {}
-
 // Calculate and return fundamental frequency for the interaction
 double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 {

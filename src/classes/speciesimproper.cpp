@@ -205,9 +205,6 @@ bool SpeciesImproper::isSelected() const
  * Interaction Parameters
  */
 
-// Set up any necessary parameters
-void SpeciesImproper::setUp() {}
-
 // Calculate and return fundamental frequency for the interaction
 double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 {

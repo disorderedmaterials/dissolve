@@ -94,8 +94,6 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
      * Interaction Parameters
      */
     public:
-    // Set up any necessary parameters
-    void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified angle and functional form, given supplied parameters

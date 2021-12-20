@@ -197,9 +197,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     for (auto n = 5; n < parser.nArgs(); ++n)
                         a->get().addParameter(parser.argd(n));
                 }
-
-                // Perform any final setup on the Angle
-                a->get().setUp();
                 break;
             case (Species::SpeciesKeyword::Atom):
                 Z = Elements::element(parser.argsv(2));
@@ -293,9 +290,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     for (auto n = 4; n < parser.nArgs(); ++n)
                         b->get().addParameter(parser.argd(n));
                 }
-
-                // Perform any final setup on the Bond
-                b->get().setUp();
                 break;
             case (Species::SpeciesKeyword::BondType):
                 // Find the specified bond
@@ -458,9 +452,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     for (auto n = 6; n < parser.nArgs(); ++n)
                         imp->get().addParameter(parser.argd(n));
                 }
-
-                // Perform any final setup on the Improper
-                imp->get().setUp();
                 break;
             case (Species::SpeciesKeyword::Isotopologue):
                 iso = addIsotopologue(uniqueIsotopologueName(parser.argsv(1)));
@@ -627,9 +618,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     for (auto n = 6; n < parser.nArgs(); ++n)
                         torsion->get().addParameter(parser.argd(n));
                 }
-
-                // Perform any final setup on the Torsion
-                torsion->get().setUp();
                 break;
             default:
                 Messenger::error("Species block keyword '{}' not accounted for.\n", keywords().keyword(kwd));

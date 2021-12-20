@@ -138,8 +138,6 @@ template <class Intra, class Functions> class SpeciesIntra
     double parameter(int id) const { return masterTerm_ ? masterTerm_->parameters_[id] : parameters_[id]; }
     // Return array of parameters
     const std::vector<double> &parameters() const { return masterTerm_ ? masterTerm_->parameters_ : parameters_; }
-    // Set up any necessary parameters
-    virtual void setUp() = 0;
     // Calculate and return fundamental frequency for the interaction
     virtual double fundamentalFrequency(double reducedMass) const = 0;
 
