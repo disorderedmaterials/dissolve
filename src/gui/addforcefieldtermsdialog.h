@@ -4,6 +4,7 @@
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
+#include "gui/models/masterTermModel.h"
 #include "gui/ui_addforcefieldtermsdialog.h"
 #include "gui/wizard.hui"
 #include "main/dissolve.h"
@@ -22,6 +23,8 @@ class AddForcefieldTermsDialog : public WizardDialog
     Ui::AddForcefieldTermsDialog ui_;
     // Model for atom type conflicts / renaming
     AtomTypeModel atomTypeModel_;
+    // Model for master terms (all)
+    MasterTermTreeModel masterTermModel_;
 
     /*
      * Data
@@ -105,17 +108,11 @@ class AddForcefieldTermsDialog : public WizardDialog
      * MasterTerms Page
      */
     private:
-    // Parental tree widgets for master terms
-    QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_, *masterImproperItemParent_;
-
-    private:
-    // Row update function for MasterTermsTree
-    void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra, bool createItem);
     void updateMasterTermsPage();
 
     private slots:
-    void on_MasterTermsTree_itemSelectionChanged();
-    void masterTermsTreeEdited(QWidget *lineEdit);
+    void masterTermDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void masterTermSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_MasterTermsPrefixButton_clicked(bool checked);
     void on_MasterTermsSuffixButton_clicked(bool checked);
 };

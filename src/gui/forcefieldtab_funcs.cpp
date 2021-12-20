@@ -19,8 +19,6 @@
 
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
-Q_DECLARE_METATYPE(std::shared_ptr<MasterIntra>)
-Q_DECLARE_METATYPE(MasterIntra *)
 Q_DECLARE_METATYPE(PairPotential *)
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
@@ -37,44 +35,41 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Set item delegates for tables
     // -- Functional Forms
     ui_.MasterBondsTable->setItemDelegateForColumn(
-        1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions())));
+        1, new ComboListDelegate(this, new ComboEnumOptionsItems<BondFunctions::Form>(BondFunctions::forms())));
     ui_.MasterAnglesTable->setItemDelegateForColumn(
-        1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions())));
+        1, new ComboListDelegate(this, new ComboEnumOptionsItems<AngleFunctions::Form>(AngleFunctions::forms())));
     ui_.MasterTorsionsTable->setItemDelegateForColumn(
-        1, new ComboListDelegate(
-               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
+        1, new ComboListDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms())));
     ui_.MasterImpropersTable->setItemDelegateForColumn(
-        1, new ComboListDelegate(
-               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
+        1, new ComboListDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms())));
 
-    // Ensure fonts for table headers are set correctly and the headers themselves are visible=
-    masterBondsTableModel_ = new MasterTermBondModel(dissolve_.coreData().masterBonds(), parent);
-    ui_.MasterBondsTable->setModel(masterBondsTableModel_);
+    // Set models for tables
+    masterBondsTableModel_.setSourceData(dissolve_.coreData().masterBonds());
+    ui_.MasterBondsTable->setModel(&masterBondsTableModel_);
+    masterAnglesTableModel_.setSourceData(dissolve_.coreData().masterAngles());
+    ui_.MasterAnglesTable->setModel(&masterAnglesTableModel_);
+    masterTorsionsTableModel_.setSourceData(dissolve_.coreData().masterTorsions());
+    ui_.MasterTorsionsTable->setModel(&masterTorsionsTableModel_);
+    masterImpropersTableModel_.setSourceData(dissolve_.coreData().masterImpropers());
+    ui_.MasterImpropersTable->setModel(&masterImpropersTableModel_);
+
+    // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.MasterBondsTable->horizontalHeader()->setFont(font());
     ui_.MasterBondsTable->horizontalHeader()->setVisible(true);
-
-    masterAnglesTableModel_ = new MasterTermAngleModel(dissolve_.coreData().masterAngles(), parent);
-    ui_.MasterAnglesTable->setModel(masterAnglesTableModel_);
     ui_.MasterAnglesTable->horizontalHeader()->setFont(font());
     ui_.MasterAnglesTable->horizontalHeader()->setVisible(true);
-
-    masterTorsionsTableModel_ = new MasterTermTorsionModel(dissolve_.coreData().masterTorsions(), parent);
-    ui_.MasterTorsionsTable->setModel(masterTorsionsTableModel_);
     ui_.MasterTorsionsTable->horizontalHeader()->setFont(font());
     ui_.MasterTorsionsTable->horizontalHeader()->setVisible(true);
-
-    masterImpropersTableModel_ = new MasterTermTorsionModel(dissolve_.coreData().masterImpropers(), parent);
-    ui_.MasterImpropersTable->setModel(masterImpropersTableModel_);
     ui_.MasterImpropersTable->horizontalHeader()->setFont(font());
     ui_.MasterImpropersTable->horizontalHeader()->setVisible(true);
 
-    connect(masterBondsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+    connect(&masterBondsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
             SLOT(setModified()));
-    connect(masterAnglesTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+    connect(&masterAnglesTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
             SLOT(setModified()));
-    connect(masterTorsionsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+    connect(&masterTorsionsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
             SLOT(setModified()));
-    connect(masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
+    connect(&masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
             SLOT(setModified()));
 
     /*
@@ -136,10 +131,10 @@ void ForcefieldTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    masterBondsTableModel_->reset(dissolve_.coreData().masterBonds());
-    masterAnglesTableModel_->reset(dissolve_.coreData().masterAngles());
-    masterTorsionsTableModel_->reset(dissolve_.coreData().masterTorsions());
-    masterImpropersTableModel_->reset(dissolve_.coreData().masterImpropers());
+    masterBondsTableModel_.setSourceData(dissolve_.coreData().masterBonds());
+    masterAnglesTableModel_.setSourceData(dissolve_.coreData().masterAngles());
+    masterTorsionsTableModel_.setSourceData(dissolve_.coreData().masterTorsions());
+    masterImpropersTableModel_.setSourceData(dissolve_.coreData().masterImpropers());
 
     // AtomTypes Table
     atoms_.setData(dissolve_.atomTypes());

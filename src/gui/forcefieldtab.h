@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/atomtype.h"
-#include "classes/masterintra.h"
 #include "classes/pairpotential.h"
 #include "gui/maintab.h"
 #include "gui/models/atomTypeModel.h"
@@ -12,7 +11,6 @@
 #include "gui/models/pairPotentialModel.h"
 #include "gui/ui_forcefieldtab.h"
 
-Q_DECLARE_METATYPE(const MasterIntra *)
 Q_DECLARE_METATYPE(const AtomType *)
 Q_DECLARE_METATYPE(const PairPotential *)
 
@@ -49,22 +47,11 @@ class ForcefieldTab : public QWidget, public MainTab
      * Update
      */
     private:
-    // Row update function for BondsTable
-    void updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems);
-    // Row update function for AnglesTable
-    void updateAnglesTableRow(int row, MasterIntra *masterAngle, bool createItems);
-    // Row update function for TorsionsTable
-    void updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems);
-    // Row update function for ImpropersTable
-    void updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems);
-    // Row update function for PairPotentialsTable
-    void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
-
     // Table models
-    MasterTermBondModel *masterBondsTableModel_;
-    MasterTermAngleModel *masterAnglesTableModel_;
-    MasterTermTorsionModel *masterTorsionsTableModel_;
-    MasterTermTorsionModel *masterImpropersTableModel_;
+    MasterTermBondModel masterBondsTableModel_;
+    MasterTermAngleModel masterAnglesTableModel_;
+    MasterTermTorsionModel masterTorsionsTableModel_;
+    MasterTermImproperModel masterImpropersTableModel_;
 
     protected:
     // Update controls in tab

@@ -63,7 +63,6 @@ set(models_SRCS
     speciesImproperModel.cpp
     speciesIsoModel.cpp
     speciesModel.cpp
-    speciesModelUtils.cpp
     speciesSiteFilterProxy.cpp
     speciesSiteModel.cpp
     speciesTorsionModel.cpp

@@ -1,6 +1,5 @@
 #include "gui/models/speciesAngleModel.h"
 #include "classes/coredata.h"
-#include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
 #include "templates/algorithms.h"
 
@@ -45,9 +44,8 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
             case 2:
                 return angle.index(index.column()) + 1;
             case 3:
-                return angle.masterParameters()
-                           ? QString::fromStdString("@" + std::string(angle.masterParameters()->name()))
-                           : QString::fromStdString(SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
+                return angle.masterTerm() ? QString::fromStdString("@" + std::string(angle.masterTerm()->name()))
+                                          : QString::fromStdString(AngleFunctions::forms().keyword(angle.form()));
             case 4:
                 return QString::fromStdString(joinStrings(angle.parameters()));
             default:
@@ -82,7 +80,7 @@ Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
 {
     if (index.column() < 3)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 3 && angles_[index.row()].masterParameters())
+    if (index.column() > 3 && angles_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -101,7 +99,7 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
             {
                 auto master = coreData_.getMasterAngle(value.toString().toStdString());
                 if (master)
-                    item.setMasterParameters(&master->get());
+                    item.setMasterTerm(&master->get());
                 else
                     return false;
             }
@@ -109,8 +107,8 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
             {
                 try
                 {
-                    auto af = SpeciesAngle::angleFunctions().enumeration(value.toString().toStdString());
-                    item.detachFromMasterIntra();
+                    auto af = AngleFunctions::forms().enumeration(value.toString().toStdString());
+                    item.detachFromMasterTerm();
                     item.setForm(af);
                 }
                 catch (std::runtime_error &e)
