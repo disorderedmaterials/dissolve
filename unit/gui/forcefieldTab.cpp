@@ -31,7 +31,7 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     Dissolve dissolve(coreData);
 
     dissolve.clear();
-    dissolve.loadInput("molshake/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("molshake/benzene.txt"));
     ASSERT_TRUE(dissolve.generatePairPotentials());
 
     PairPotentialModel pairs(dissolve.pairPotentials());
