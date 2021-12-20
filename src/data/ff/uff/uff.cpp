@@ -359,7 +359,7 @@ bool Forcefield_UFF::assignBondTermParameters(SpeciesBond &bond, bool determineT
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
     // Convert force constant from kcal to kJ
-    bond.setForm(SpeciesBond::HarmonicForm);
+    bond.setForm(BondFunctions::Form::Harmonic);
     bond.setParameters({k * 4.184, rij});
 
     return true;
@@ -421,14 +421,14 @@ bool Forcefield_UFF::assignAngleTermParameters(SpeciesAngle &angle, bool determi
         const auto c1 = -4.0 * c2 * cosTheta;
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
-        angle.setForm(SpeciesAngle::Cos2Form);
+        angle.setForm(AngleFunctions::Form::Cos2);
         angle.setParameters({kijk * 4.184, c0, c1, c2});
 
         return true;
     }
 
     // Set form for the specific case
-    angle.setForm(SpeciesAngle::CosineForm);
+    angle.setForm(AngleFunctions::Form::Cosine);
 
     return true;
 }
@@ -470,7 +470,7 @@ bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool d
     const auto geomK = k.name().back() == 'R' ? '2' : k.name().back();
     const auto geomL = l.name().back() == 'R' ? '2' : l.name().back();
 
-    torsion.setForm(SpeciesTorsion::UFFCosineForm);
+    torsion.setForm(TorsionFunctions::Form::UFFCosine);
 
     // Selection begins
     if (groupJ == 16 && groupK == 16 && geomJ == '3' && geomK == '3')
@@ -564,7 +564,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
             typeJ.name(),
             typeK.name(),
             typeL.name(),
-            SpeciesTorsion::FourierNForm,
+            TorsionFunctions::Form::FourierN,
             {4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0), 1.0, -1.0, 0.0}};
     }
     else if (typeI.name() == "N_2" || typeI.name() == "N_R" || typeI.name() == "N_amR")
@@ -572,7 +572,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeJ.name(),
                     typeK.name(),
                     typeL.name(),
-                    SpeciesTorsion::FourierNForm,
+                    TorsionFunctions::Form::FourierN,
                     {4.184 * 6.0, 1.0, -1.0, 0.0}};
     else if (groupI == 15)
     {
@@ -589,11 +589,11 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeJ.name(),
                     typeK.name(),
                     typeL.name(),
-                    SpeciesTorsion::FourierNForm,
+                    TorsionFunctions::Form::FourierN,
                     {4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0}};
     }
     else
-        improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), SpeciesTorsion::NoForm};
+        improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), TorsionFunctions::Form::None};
 
     return true;
 }

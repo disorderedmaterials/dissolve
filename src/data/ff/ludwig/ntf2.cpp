@@ -35,25 +35,25 @@ bool Forcefield_Ludwig_NTf2::setUp()
     addAtomType(Elements::N, 5, "N", "-S(-O(n=2),-C)", "Nitrogen", -0.69, "N");
 
     // Bond Terms
-    addBondTerm("C", "F", SpeciesBond::HarmonicForm, {3697.0, 1.323});
-    addBondTerm("C", "S", SpeciesBond::HarmonicForm, {1979.0, 1.818});
-    addBondTerm("S", "O", SpeciesBond::HarmonicForm, {5331.0, 1.442});
-    addBondTerm("N", "S", SpeciesBond::HarmonicForm, {3113.0, 1.570});
+    addBondTerm("C", "F", BondFunctions::Form::Harmonic, {3697.0, 1.323});
+    addBondTerm("C", "S", BondFunctions::Form::Harmonic, {1979.0, 1.818});
+    addBondTerm("S", "O", BondFunctions::Form::Harmonic, {5331.0, 1.442});
+    addBondTerm("N", "S", BondFunctions::Form::Harmonic, {3113.0, 1.570});
 
     // Angle Terms
-    addAngleTerm("F", "C", "F", SpeciesAngle::HarmonicForm, {781.0, 107.1});
-    addAngleTerm("S", "C", "F", SpeciesAngle::HarmonicForm, {694.0, 111.8});
-    addAngleTerm("C", "S", "O", SpeciesAngle::HarmonicForm, {870.0, 102.6});
-    addAngleTerm("O", "S", "O", SpeciesAngle::HarmonicForm, {969.0, 118.5});
-    addAngleTerm("O", "S", "N", SpeciesAngle::HarmonicForm, {789.0, 113.6});
-    addAngleTerm("C", "S", "N", SpeciesAngle::HarmonicForm, {816.0, 100.2});
-    addAngleTerm("S", "N", "S", SpeciesAngle::HarmonicForm, {671.0, 125.6});
+    addAngleTerm("F", "C", "F", AngleFunctions::Form::Harmonic, {781.0, 107.1});
+    addAngleTerm("S", "C", "F", AngleFunctions::Form::Harmonic, {694.0, 111.8});
+    addAngleTerm("C", "S", "O", AngleFunctions::Form::Harmonic, {870.0, 102.6});
+    addAngleTerm("O", "S", "O", AngleFunctions::Form::Harmonic, {969.0, 118.5});
+    addAngleTerm("O", "S", "N", AngleFunctions::Form::Harmonic, {789.0, 113.6});
+    addAngleTerm("C", "S", "N", AngleFunctions::Form::Harmonic, {816.0, 100.2});
+    addAngleTerm("S", "N", "S", AngleFunctions::Form::Harmonic, {671.0, 125.6});
 
     // Torsion Terms
-    addTorsionTerm("F", "C", "S", "N", SpeciesTorsion::CosineForm, {2.0401, 3.0, 0.0, 1});
-    addTorsionTerm("F", "C", "S", "O", SpeciesTorsion::NoForm);
-    addTorsionTerm("O", "S", "N", "S", SpeciesTorsion::NoForm);
-    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosNForm, {23.7647, 6.2081, -2.3684, -0.0298, 0.6905, 1.0165});
+    addTorsionTerm("F", "C", "S", "N", TorsionFunctions::Form::Cosine, {2.0401, 3.0, 0.0, 1});
+    addTorsionTerm("F", "C", "S", "O", TorsionFunctions::Form::None);
+    addTorsionTerm("O", "S", "N", "S", TorsionFunctions::Form::None);
+    addTorsionTerm("S", "N", "S", "C", TorsionFunctions::Form::CosN, {23.7647, 6.2081, -2.3684, -0.0298, 0.6905, 1.0165});
 
     return true;
 }

@@ -54,50 +54,50 @@ bool Forcefield_Ludwig_Py4OH::setUp()
     addAtomType(Elements::H, 17, "ho", "nbonds=1,-&16", "Hydrogen of Hydroxyl Group", 0.4370, "ho");
 
     // Bond Terms
-    addBondTerm("ha", "ca", SpeciesBond::HarmonicForm, {3071., 1.080});
-    addBondTerm("ca", "ca", SpeciesBond::HarmonicForm, {3925., 1.400});
-    addBondTerm("nc", "ca", SpeciesBond::HarmonicForm, {4042., 1.339});
-    addBondTerm("nc", "ct", SpeciesBond::HarmonicForm, {4042, 1.339});
-    addBondTerm("ct", "ct", SpeciesBond::HarmonicForm, {2244.1, 1.529});
-    addBondTerm("ct", "hc", SpeciesBond::HarmonicForm, {2847.0, 1.09});
-    addBondTerm("ct", "oh", SpeciesBond::HarmonicForm, {2679.6, 1.41});
-    addBondTerm("ho", "oh", SpeciesBond::HarmonicForm, {4630.6, 0.945});
+    addBondTerm("ha", "ca", BondFunctions::Form::Harmonic, {3071., 1.080});
+    addBondTerm("ca", "ca", BondFunctions::Form::Harmonic, {3925., 1.400});
+    addBondTerm("nc", "ca", BondFunctions::Form::Harmonic, {4042., 1.339});
+    addBondTerm("nc", "ct", BondFunctions::Form::Harmonic, {4042, 1.339});
+    addBondTerm("ct", "ct", BondFunctions::Form::Harmonic, {2244.1, 1.529});
+    addBondTerm("ct", "hc", BondFunctions::Form::Harmonic, {2847.0, 1.09});
+    addBondTerm("ct", "oh", BondFunctions::Form::Harmonic, {2679.6, 1.41});
+    addBondTerm("ho", "oh", BondFunctions::Form::Harmonic, {4630.6, 0.945});
 
     // Angle Terms
-    addAngleTerm("ca", "ca", "ca", SpeciesAngle::HarmonicForm, {527.2, 120.0});
-    addAngleTerm("ca", "ca", "nc", SpeciesAngle::HarmonicForm, {585.8, 124.0});
-    addAngleTerm("ca", "nc", "ca", SpeciesAngle::HarmonicForm, {585.8, 117.0});
-    addAngleTerm("ca", "ca", "ha", SpeciesAngle::HarmonicForm, {292.9, 120.0});
-    addAngleTerm("nc", "ca", "ha", SpeciesAngle::HarmonicForm, {292.9, 116.0});
-    addAngleTerm("ca", "nc", "ct", SpeciesAngle::HarmonicForm, {585.8, 121.5});
-    addAngleTerm("nc", "ct", "ct", SpeciesAngle::HarmonicForm, {487.43, 112.7});
-    addAngleTerm("hc", "ct", "nc", SpeciesAngle::HarmonicForm, {313.26, 110.7});
-    addAngleTerm("hc", "ct", "hc", SpeciesAngle::HarmonicForm, {275.7, 107.8});
-    addAngleTerm("hc", "ct", "ct", SpeciesAngle::HarmonicForm, {313.26, 110.7});
-    addAngleTerm("ct", "ct", "ct", SpeciesAngle::HarmonicForm, {487.43, 112.7});
-    addAngleTerm("ho", "oh", "ct", SpeciesAngle::HarmonicForm, {460.55, 108.5});
-    addAngleTerm("ct", "ct", "oh", SpeciesAngle::HarmonicForm, {418.68, 109.5});
-    addAngleTerm("hc", "ct", "oh", SpeciesAngle::HarmonicForm, {293.08, 109.5});
+    addAngleTerm("ca", "ca", "ca", AngleFunctions::Form::Harmonic, {527.2, 120.0});
+    addAngleTerm("ca", "ca", "nc", AngleFunctions::Form::Harmonic, {585.8, 124.0});
+    addAngleTerm("ca", "nc", "ca", AngleFunctions::Form::Harmonic, {585.8, 117.0});
+    addAngleTerm("ca", "ca", "ha", AngleFunctions::Form::Harmonic, {292.9, 120.0});
+    addAngleTerm("nc", "ca", "ha", AngleFunctions::Form::Harmonic, {292.9, 116.0});
+    addAngleTerm("ca", "nc", "ct", AngleFunctions::Form::Harmonic, {585.8, 121.5});
+    addAngleTerm("nc", "ct", "ct", AngleFunctions::Form::Harmonic, {487.43, 112.7});
+    addAngleTerm("hc", "ct", "nc", AngleFunctions::Form::Harmonic, {313.26, 110.7});
+    addAngleTerm("hc", "ct", "hc", AngleFunctions::Form::Harmonic, {275.7, 107.8});
+    addAngleTerm("hc", "ct", "ct", AngleFunctions::Form::Harmonic, {313.26, 110.7});
+    addAngleTerm("ct", "ct", "ct", AngleFunctions::Form::Harmonic, {487.43, 112.7});
+    addAngleTerm("ho", "oh", "ct", AngleFunctions::Form::Harmonic, {460.55, 108.5});
+    addAngleTerm("ct", "ct", "oh", AngleFunctions::Form::Harmonic, {418.68, 109.5});
+    addAngleTerm("hc", "ct", "oh", AngleFunctions::Form::Harmonic, {293.08, 109.5});
 
     // Torsion Terms
-    addTorsionTerm("*", "ca", "ca", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("*", "ca", "nc", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosNForm, {0.0, -0.3579, 0.0, -0.4037});
-    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-3.7014, 0.0, 6.9923});
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-0.2825, 0.6065, 4.6858, 0.7018, 0.4468, 0.4564});
-    addTorsionTerm("ct", "ct", "ct", "oh", SpeciesTorsion::CosNForm, {-2.3748, 0.0, 6.8089, 0.9531});
-    addTorsionTerm("ct", "ct", "oh", "ho", SpeciesTorsion::CosNForm, {-3.5552, 0.5886, 2.5272, 0.1504});
-    addTorsionTerm("hc", "ct", "ct", "hc", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "nc", "ca", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "nc", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "oh", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "oh", "ho", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("*", "ca", "ca", "*", TorsionFunctions::Form::Cosine, {15.178, 2.0, 180.0, 1});
+    addTorsionTerm("*", "ca", "nc", "*", TorsionFunctions::Form::Cosine, {15.178, 2.0, 180.0, 1});
+    addTorsionTerm("ca", "nc", "ct", "ct", TorsionFunctions::Form::CosN, {0.0, -0.3579, 0.0, -0.4037});
+    addTorsionTerm("nc", "ct", "ct", "ct", TorsionFunctions::Form::CosN, {-3.7014, 0.0, 6.9923});
+    addTorsionTerm("ct", "ct", "ct", "ct", TorsionFunctions::Form::CosN, {-0.2825, 0.6065, 4.6858, 0.7018, 0.4468, 0.4564});
+    addTorsionTerm("ct", "ct", "ct", "oh", TorsionFunctions::Form::CosN, {-2.3748, 0.0, 6.8089, 0.9531});
+    addTorsionTerm("ct", "ct", "oh", "ho", TorsionFunctions::Form::CosN, {-3.5552, 0.5886, 2.5272, 0.1504});
+    addTorsionTerm("hc", "ct", "ct", "hc", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "ct", "ct", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "nc", "ca", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "ct", "nc", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "ct", "oh", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "oh", "ho", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
 
     // Improper Terms
-    addImproperTerm("ca", "ca", "ca", "ha", SpeciesTorsion::CosineForm, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("ca", "nc", "ca", "ha", SpeciesTorsion::CosineForm, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("nc", "ca", "ca", "ct", SpeciesTorsion::CosineForm, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("ca", "ca", "ca", "ha", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("ca", "nc", "ca", "ha", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("nc", "ca", "ca", "ct", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
 
     return true;
 }
