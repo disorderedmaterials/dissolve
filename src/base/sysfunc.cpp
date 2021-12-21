@@ -301,12 +301,37 @@ std::string DissolveSys::replace(const std::string_view source, const std::strin
     return result;
 }
 
+// Split a string over a delimiter, returning a vector of elements
+std::vector<std::string> DissolveSys::splitString(std::string_view str, std::string_view delim)
+{
+    std::vector<std::string> parts;
+    auto index = 0;
+    while (true)
+    {
+        // Search for the next occurrence of the delimiter
+        auto found = str.find(delim, index);
+        if (found == std::string::npos)
+        {
+            if (index < str.size())
+                parts.emplace_back(str.substr(index));
+            break;
+        }
+
+        // Consume consecutive delimiters
+        if ((found - index) >= delim.size())
+            parts.emplace_back(str.substr(index, found - index));
+
+        index = found + delim.size();
+    }
+    return parts;
+}
+
 // Split a string over a delimiter, returning a vector of converted double values
-std::vector<double> DissolveSys::splitStringToDoubles(std::string str, std::string_view delim)
+std::vector<double> DissolveSys::splitStringToDoubles(std::string_view str, std::string_view delim)
 {
     std::vector<double> values;
-    std::vector<string> terms;
-    values.resize(splitString(str, std::back_inserter(terms), INT_MAX, std::string(delim)));
+    std::vector<string> terms{splitString(str, delim)};
+    values.resize(terms.size());
     std::transform(terms.begin(), terms.end(), values.begin(), [](const auto &term) { return std::stod(term); });
     return values;
 }
