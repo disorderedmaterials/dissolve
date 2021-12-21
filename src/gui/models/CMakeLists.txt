@@ -46,6 +46,7 @@ set(models_SRCS
     dataManagerReferencePointModel.cpp
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp
+    expressionVariableVectorModel.cpp
     isotopologueSetModel.cpp
     masterTermModel.cpp
     moduleLayerModel.cpp
@@ -82,6 +83,7 @@ qt_wrap_cpp(
   dataManagerReferencePointModel.h
   dataManagerSimulationModel.h
   enumOptionsModel.h
+  expressionVariableVectorModel.h
   isotopologueSetModel.h
   pairPotentialModel.h
   speciesModel.h

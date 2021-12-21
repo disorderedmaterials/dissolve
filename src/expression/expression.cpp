@@ -15,13 +15,13 @@
 
 Expression::Expression(std::string_view expressionText) : rootNode_(nullptr) { create(expressionText); }
 
-Expression::~Expression() { clear(); }
+Expression::~Expression() { clearNodes(); }
 
 Expression::Expression(const Expression &source) { (*this) = source; }
 
 void Expression::operator=(const Expression &source)
 {
-    clear();
+    clearNodes();
 
     expressionString_ = source.expressionString_;
 
@@ -33,11 +33,9 @@ void Expression::operator=(const Expression &source)
  * Data
  */
 
-// Clear data
-void Expression::clear()
+// Clear node data
+void Expression::clearNodes()
 {
-    expressionString_ = "";
-
     if (rootNode_)
         rootNode_->clear();
 
@@ -51,7 +49,7 @@ bool Expression::isValid() const { return rootNode_ != nullptr; }
 bool Expression::create(std::string_view expressionString,
                         OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables)
 {
-    clear();
+    clearNodes();
 
     expressionString_ = expressionString;
 
@@ -61,7 +59,7 @@ bool Expression::create(std::string_view expressionString,
 
     rootNode_ = std::make_shared<ExpressionRootNode>();
 
-    // Create string stream and set up ANTLR input strem
+    // Create string stream and set up ANTLR input stream
     std::stringstream stream;
     stream << expressionString_;
     antlr4::ANTLRInputStream input(stream);
@@ -75,7 +73,7 @@ bool Expression::create(std::string_view expressionString,
     // Generate tokens from input stream
     antlr4::CommonTokenStream tokens(&lexer);
 
-    // Create ANTLR parser and set-up error listenres
+    // Create ANTLR parser and set-up error listeners
     ExpressionParser parser(&tokens);
     ExpressionParserErrorListener parserErrorListener(*this);
     parser.removeErrorListeners();
@@ -92,6 +90,7 @@ bool Expression::create(std::string_view expressionString,
     catch (ExpressionExceptions::ExpressionSyntaxException &ex)
     {
         fmt::print(ex.what());
+        clearNodes();
         return Messenger::error(ex.what());
     };
 
@@ -104,6 +103,7 @@ bool Expression::create(std::string_view expressionString,
     catch (ExpressionExceptions::ExpressionSyntaxException &ex)
     {
         fmt::print(ex.what());
+        clearNodes();
         return Messenger::error(ex.what());
     }
 
@@ -112,6 +112,9 @@ bool Expression::create(std::string_view expressionString,
 
 // Return original generating string
 std::string_view Expression::expressionString() const { return expressionString_; }
+
+// Set generating string from current nodes
+void Expression::setExpressionStringFromNodes() { expressionString_ = rootNode_ ? rootNode_->asString() : ""; }
 
 // Return root node for the expression
 std::shared_ptr<ExpressionNode> Expression::rootNode() { return rootNode_; }

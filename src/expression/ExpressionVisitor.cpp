@@ -45,7 +45,7 @@ void ExpressionVisitor::create(
 
 antlrcpp::Any ExpressionVisitor::visitParentheses(ExpressionParser::ParenthesesContext *ctx)
 {
-    auto node = std::make_shared<ExpressionRootNode>();
+    auto node = std::make_shared<ExpressionRootNode>(true);
 
     currentContext()->addChild(node);
 

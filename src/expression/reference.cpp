@@ -28,9 +28,15 @@ std::shared_ptr<ExpressionNode> ExpressionReferenceNode::duplicate()
 // Evaluate node
 std::optional<ExpressionValue> ExpressionReferenceNode::evaluate() const
 {
-    // Must have a valid pointer
-    if (!variable_)
-        return std::nullopt;
+    assert(variable_);
 
     return (variable_->value());
+}
+
+// Return string representation of node
+std::string ExpressionReferenceNode::asString() const
+{
+    assert(variable_);
+
+    return std::string(variable_->name());
 }

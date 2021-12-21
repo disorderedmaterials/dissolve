@@ -29,3 +29,6 @@ std::optional<ExpressionValue> ExpressionNumberNode::evaluate() const
 
     return value_;
 }
+
+// Return string representation of node
+std::string ExpressionNumberNode::asString() const { return value_.asString(); }

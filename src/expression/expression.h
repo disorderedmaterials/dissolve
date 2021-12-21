@@ -28,8 +28,8 @@ class Expression
     std::shared_ptr<ExpressionNode> rootNode_;
 
     public:
-    // Clear data
-    void clear();
+    // Clear node data
+    void clearNodes();
     // Return whether current expression is valid (contains at least one node)
     bool isValid() const;
     // Create expression from supplied string, with optional external variables
@@ -38,6 +38,8 @@ class Expression
            OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables = std::nullopt);
     // Return original generating string
     std::string_view expressionString() const;
+    // Set generating string from current nodes
+    void setExpressionStringFromNodes();
     // Return root node for the expression
     std::shared_ptr<ExpressionNode> rootNode();
 
