@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2022 Team Dissolve and contributors
+
 #include "gui/models/speciesAngleModel.h"
 #include "classes/coredata.h"
-#include "gui/models/speciesModelUtils.h"
-#include "templates/algorithms.h"
 
 SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles, const CoreData &coreData)
     : angles_(angles), coreData_(coreData)
@@ -47,7 +48,7 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
                 return angle.masterTerm() ? QString::fromStdString("@" + std::string(angle.masterTerm()->name()))
                                           : QString::fromStdString(AngleFunctions::forms().keyword(angle.form()));
             case 4:
-                return QString::fromStdString(joinStrings(angle.parameters()));
+                return QString::fromStdString(angle.parametersAsString());
             default:
                 return {};
         }
@@ -87,7 +88,7 @@ Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
 
 bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    auto &item = angles_[index.row()];
+    auto &angle = angles_[index.row()];
     switch (index.column())
     {
         case 0:
@@ -99,7 +100,7 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
             {
                 auto master = coreData_.getMasterAngle(value.toString().toStdString());
                 if (master)
-                    item.setMasterTerm(&master->get());
+                    angle.setMasterTerm(&master->get());
                 else
                     return false;
             }
@@ -108,8 +109,8 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
                 try
                 {
                     auto af = AngleFunctions::forms().enumeration(value.toString().toStdString());
-                    item.detachFromMasterTerm();
-                    item.setForm(af);
+                    angle.detachFromMasterTerm();
+                    angle.setForm(af);
                 }
                 catch (std::runtime_error &e)
                 {
@@ -118,7 +119,7 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
             }
             break;
         case 4:
-            if (!splitParameters(value.toString(), item))
+            if (!angle.setParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
