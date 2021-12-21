@@ -38,8 +38,8 @@ class SpeciesSiteKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
     void siteRadioButton_clicked(bool checked);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

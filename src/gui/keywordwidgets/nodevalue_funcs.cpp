@@ -30,7 +30,7 @@ void NodeValueKeywordWidget::on_ValueEdit_editingFinished()
     keyword_->setData(qPrintable(ui_.ValueEdit->text()));
     checkValueValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void NodeValueKeywordWidget::on_ValueEdit_returnPressed()
@@ -41,7 +41,7 @@ void NodeValueKeywordWidget::on_ValueEdit_returnPressed()
     keyword_->setData(qPrintable(ui_.ValueEdit->text()));
     checkValueValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

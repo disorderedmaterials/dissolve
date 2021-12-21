@@ -27,9 +27,8 @@ IntraShakeModule::IntraShakeModule() : Module("IntraShake")
 
     // Bonds
     keywords_.add<BoolKeyword>("Bonds", "AdjustBonds", "Whether Bonds in the molecule should be shaken", adjustBonds_);
-    keywords_
-        .add<DoubleKeyword>("Bonds", "BondStepSize", "Step size for Bond adjustments (Angstroms)", bondStepSize_, 0.001, 1.0)
-        ->setOptionMask(KeywordBase::InRestartFileOption);
+    keywords_.addRestartable<DoubleKeyword>("Bonds", "BondStepSize", "Step size for Bond adjustments (Angstroms)",
+                                            bondStepSize_, 0.001, 1.0);
     keywords_.add<DoubleKeyword>("Bonds", "BondStepSizeMin", "Minimum step size for Bond adjustments (Angstroms)",
                                  bondStepSizeMin_, 0.001, 1.0);
     keywords_.add<DoubleKeyword>("Bonds", "BondStepSizeMax", "Maximum step size for Bond adjustments (Angstroms)",
@@ -37,9 +36,8 @@ IntraShakeModule::IntraShakeModule() : Module("IntraShake")
 
     // Angles
     keywords_.add<BoolKeyword>("Angles", "AdjustAngles", "Whether Angles in the molecule should be shaken", adjustAngles_);
-    keywords_
-        .add<DoubleKeyword>("Angles", "AngleStepSize", "Step size for Angle adjustments (degrees)", angleStepSize_, 0.01, 45.0)
-        ->setOptionMask(KeywordBase::InRestartFileOption);
+    keywords_.addRestartable<DoubleKeyword>("Angles", "AngleStepSize", "Step size for Angle adjustments (degrees)",
+                                            angleStepSize_, 0.01, 45.0);
     keywords_.add<DoubleKeyword>("Angles", "AngleStepSizeMin", "Minimum step size for Angle adjustments (degrees)",
                                  angleStepSizeMin_, 0.01, 45.0);
     keywords_.add<DoubleKeyword>("Angles", "AngleStepSizeMax", "Maximum step size for Angle adjustments (degrees)",
@@ -48,10 +46,8 @@ IntraShakeModule::IntraShakeModule() : Module("IntraShake")
     // Torsions
     keywords_.add<BoolKeyword>("Torsions", "AdjustTorsions", "Whether Torsions in the molecule should be shaken",
                                adjustTorsions_);
-    keywords_
-        .add<DoubleKeyword>("Torsions", "TorsionStepSize", "Step size for Torsion adjustments (degrees)", torsionStepSize_,
-                            0.01, 45.0)
-        ->setOptionMask(KeywordBase::InRestartFileOption);
+    keywords_.addRestartable<DoubleKeyword>("Torsions", "TorsionStepSize", "Step size for Torsion adjustments (degrees)",
+                                            torsionStepSize_, 0.01, 45.0);
     keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMin", "Minimum step size for Torsion adjustments (degrees)",
                                  torsionStepSizeMin_, 0.01, 45.0);
     keywords_.add<DoubleKeyword>("Torsions", "TorsionStepSizeMax", "Maximum step size for Torsion adjustments (degrees)",

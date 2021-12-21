@@ -5,6 +5,7 @@
 
 #include "keywords/base.h"
 #include <any>
+#include <cassert>
 #include <functional>
 #include <string>
 #include <typeindex>

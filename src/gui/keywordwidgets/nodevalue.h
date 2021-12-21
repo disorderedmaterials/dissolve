@@ -36,8 +36,8 @@ class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
     void on_ValueEdit_returnPressed();
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

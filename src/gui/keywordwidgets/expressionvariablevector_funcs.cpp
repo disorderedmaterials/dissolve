@@ -126,7 +126,7 @@ void ExpressionVariableVectorKeywordWidget::on_VariablesTable_itemChanged(QTable
             break;
     }
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

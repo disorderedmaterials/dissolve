@@ -44,8 +44,8 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     void on_VariablesTable_itemChanged(QTableWidgetItem *item);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

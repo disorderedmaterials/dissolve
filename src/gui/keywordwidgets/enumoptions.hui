@@ -30,8 +30,8 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
     void comboBoxIndexChanged(int index);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

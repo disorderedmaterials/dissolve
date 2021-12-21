@@ -3,12 +3,13 @@
 
 #pragma once
 
+#include "keywords/signals.h"
 #include "procedure/nodes/aliases.h"
-#include "templates/reflist.h"
-#include "templates/vector3.h"
 #include <memory>
 #include <optional>
+#include <string>
 #include <typeindex>
+#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -31,16 +32,6 @@ class KeywordBase
     /*
      * Keyword Description
      */
-    public:
-    // Keyword Options
-    enum KeywordOption
-    {
-        NoOptions = 0,           /* Keyword has no options set */
-        InRestartFileOption = 1, /* Keyword should have its data written to the restart file */
-        ModificationRequiresSetUpOption =
-            2 /* Modifying the keyword's data requires that the owning object requires setting up */
-    };
-
     private:
     // Type index of derived class
     const std::type_index typeIndex_;
@@ -48,8 +39,6 @@ class KeywordBase
     std::string name_;
     // Description of keyword, if any
     std::string description_;
-    // Keyword option mask
-    int optionMask_{NoOptions};
 
     public:
     // Set base keyword information
@@ -62,10 +51,6 @@ class KeywordBase
     std::string_view name() const;
     // Return keyword description
     std::string_view description() const;
-    // Return keyword option mask
-    int optionMask() const;
-    // Return whether specified option is set
-    bool isOptionSet(KeywordOption opt) const;
 
     /*
      * Arguments
@@ -93,6 +78,19 @@ class KeywordBase
         Failed = 0,
         Success = 1
     };
+
+    /*
+     * GUI Signalling
+     */
+    private:
+    // Signals to be emitted (via Qt) when editing this keyword in the GUI
+    KeywordSignals signals_;
+
+    public:
+    // Set signals to be emitted (via Qt) when editing this keyword in the GUI
+    void setSignalMask(int signalMask);
+    // Return signals to be emitted (via Qt) when editing this keyword in the GUI
+    KeywordSignals signalMask() const;
 
     /*
      * Object Management

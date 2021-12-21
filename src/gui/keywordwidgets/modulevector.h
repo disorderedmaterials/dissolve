@@ -43,8 +43,8 @@ class ModuleVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
     void modelDataChanged(const QModelIndex &, const QModelIndex &);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

@@ -14,12 +14,12 @@
 #include "modules/sq/sq.h"
 
 // Run set-up stage
-bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
+bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename())
+    if (referenceFQ_.hasFilename() && actionSignals.setOrNone(KeywordSignals::ReloadExternalData))
     {
         // Load the data
         Data1D referenceData;

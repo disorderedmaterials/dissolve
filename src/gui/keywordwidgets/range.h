@@ -35,8 +35,8 @@ class RangeKeywordWidget : public QWidget, public KeywordWidgetBase
     void on_Spin2_valueChanged(double value);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

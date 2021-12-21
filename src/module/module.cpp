@@ -101,7 +101,7 @@ bool Module::isDisabled() const { return !enabled_; }
 bool Module::process(Dissolve &dissolve, ProcessPool &procPool) { return false; }
 
 // Run set-up stage
-bool Module::setUp(Dissolve &dissolve, ProcessPool &procPool) { return true; }
+bool Module::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
 
 // Run main processing stage
 bool Module::executeProcessing(Dissolve &dissolve, ProcessPool &procPool)

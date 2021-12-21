@@ -40,8 +40,8 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
     void on_ModuleCombo_currentIndexChanged(int index);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

@@ -40,8 +40,8 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
     void on_ValueCEdit_returnPressed();
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

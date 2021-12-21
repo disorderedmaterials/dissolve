@@ -37,8 +37,8 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
     void on_Spin3_valueChanged(int value);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update
