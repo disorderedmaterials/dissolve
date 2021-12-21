@@ -171,8 +171,17 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.begin(), options_.end(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.end())
-            return std::nullopt;
+            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", enumeration)));
         return it->minArgs();
+    }
+    // Return maximum number of arguments for the specified enumeration
+    std::optional<int> maxArgs(E enumeration) const
+    {
+        auto it = std::find_if(options_.begin(), options_.end(),
+                               [enumeration](auto &option) { return enumeration == option.enumeration(); });
+        if (it == options_.end())
+            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", enumeration)));
+        return it->maxArgs();
     }
     // Check number of arguments provided to keyword
     bool validNArgs(E enumeration, int nArgsProvided) const
