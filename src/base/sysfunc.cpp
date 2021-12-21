@@ -68,7 +68,7 @@ bool DissolveSys::wildCardMatch(std::string_view::const_iterator wild, std::stri
     }
 
     // Not a wildcard, so do absolute character matching
-    if (caseSensitive)
+    if (!caseSensitive)
     {
         if (std::tolower(*wild) == std::tolower(*s2))
             return wildCardMatch(wild + 1, wildEnd, s2 + 1, s2End, caseSensitive);
