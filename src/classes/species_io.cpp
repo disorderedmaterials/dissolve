@@ -194,8 +194,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    for (auto n = 5; n < parser.nArgs(); ++n)
-                        a->get().addParameter(parser.argd(n));
+                    if (!a->get().setParameters(parser, 5))
+                    {
+                        error = true;
+                        break;
+                    }
                 }
                 break;
             case (Species::SpeciesKeyword::Atom):
@@ -287,8 +290,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    for (auto n = 4; n < parser.nArgs(); ++n)
-                        b->get().addParameter(parser.argd(n));
+                    if (!b->get().setParameters(parser, 4))
+                    {
+                        error = true;
+                        break;
+                    }
                 }
                 break;
             case (Species::SpeciesKeyword::BondType):
@@ -449,8 +455,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    for (auto n = 6; n < parser.nArgs(); ++n)
-                        imp->get().addParameter(parser.argd(n));
+                    if (!imp->get().setParameters(parser, 6))
+                    {
+                        error = true;
+                        break;
+                    }
                 }
                 break;
             case (Species::SpeciesKeyword::Isotopologue):
@@ -615,8 +624,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    for (auto n = 6; n < parser.nArgs(); ++n)
-                        torsion->get().addParameter(parser.argd(n));
+                    if (!torsion->get().setParameters(parser, 6))
+                    {
+                        error = true;
+                        break;
+                    }
                 }
                 break;
             default:
@@ -686,7 +698,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {} {}\n", newPrefix,
                                         keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
-                                        BondFunctions::forms().keyword(bond.form()), joinStrings(bond.parameters(), "  ")))
+                                        BondFunctions::forms().keyword(bond.form()), bond.parametersAsString()))
                 return false;
 
             // Add the bond to the reference vector based on its indicated bond type (unless it is a SingleBond,
@@ -734,7 +746,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
                                         keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
                                         angle.indexJ() + 1, angle.indexK() + 1, AngleFunctions::forms().keyword(angle.form()),
-                                        joinStrings(angle.parameters(), "  ")))
+                                        angle.parametersAsString()))
                 return false;
         }
     }
@@ -761,7 +773,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                                                     keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
                                                     torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
                                                     TorsionFunctions::forms().keyword(torsion.form()),
-                                                    joinStrings(torsion.parameters(), "  "))))
+                                                    torsion.parametersAsString())))
                 return false;
         }
     }
@@ -786,7 +798,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
                                         keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
                                         imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
-                                        TorsionFunctions::forms().keyword(imp.form()), joinStrings(imp.parameters(), "  ")))
+                                        TorsionFunctions::forms().keyword(imp.form()), imp.parametersAsString()))
                 return false;
         }
     }

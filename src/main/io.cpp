@@ -185,44 +185,24 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
         for (auto &b : coreData_.masterBonds())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::BondKeyword),
-                                           b->name(), BondFunctions::forms().keyword(b->form()));
-            for (auto p : b->parameters())
-                line += fmt::format("  {}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
+                                   BondFunctions::forms().keyword(b->form()), b->parametersAsString()))
                 return false;
-        }
 
         for (auto &a : coreData_.masterAngles())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
-                                           a->name(), AngleFunctions::forms().keyword(a->form()));
-            for (auto p : a->parameters())
-                line += fmt::format("  {}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
+                                   a->name(), AngleFunctions::forms().keyword(a->form()), a->parametersAsString()))
                 return false;
-        }
 
         for (auto &t : coreData_.masterTorsions())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
-                                           t->name(), TorsionFunctions::forms().keyword(t->form()));
-            for (auto p : t->parameters())
-                line += fmt::format("  {}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
+                                   t->name(), TorsionFunctions::forms().keyword(t->form()), t->parametersAsString()))
                 return false;
-        }
 
         for (auto &imp : coreData_.masterImpropers())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                           imp->name(), TorsionFunctions::forms().keyword(imp->form()));
-            for (auto p : imp->parameters())
-                line += fmt::format("  {}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
+                                   imp->name(), TorsionFunctions::forms().keyword(imp->form()), imp->parametersAsString()))
                 return false;
-        }
 
         // Done with the master terms
         if (!parser.writeLineF("{}\n", MasterBlock::keywords().keyword(MasterBlock::EndMasterKeyword)))
