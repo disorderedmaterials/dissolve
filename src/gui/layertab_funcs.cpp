@@ -25,6 +25,9 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
+    connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &)), this,
+            SLOT(moduleNameChanged(const QModelIndex &)));
+
     if (moduleLayer_->modules().size() >= 1)
     {
         auto firstIndex = moduleLayerModel_.index(0, 0);
@@ -90,6 +93,22 @@ bool LayerTab::canClose() const
  * Widgets
  */
 
+// Return ModuleControlWidget for the specified Module (if it exists)
+ModuleControlWidget *LayerTab::getControlWidget(const Module *module, bool setAsCurrent)
+{
+    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *w = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (w && (w->module() == module))
+        {
+            if (setAsCurrent)
+                ui_.ModuleControlsStack->setCurrentIndex(n);
+            return w;
+        }
+    }
+    return nullptr;
+}
+
 void LayerTab::on_ShowAvailableModulesButton_clicked(bool checked)
 {
     // Toggle the visibility of the available modules tree
@@ -146,17 +165,7 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
     }
 
     // See if our stack already contains a control widget for the module - if not, create one
-    ModuleControlWidget *mcw = nullptr;
-    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
-    {
-        auto *w = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
-        if (w && (w->module() == module))
-        {
-            ui_.ModuleControlsStack->setCurrentIndex(n);
-            mcw = w;
-            break;
-        }
-    }
+    auto *mcw = getControlWidget(module, true);
     if (!mcw)
     {
         // Create a new widget to display this Module
@@ -171,6 +180,17 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
 void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
 {
     dissolveWindow_->setModified();
+}
+
+void LayerTab::moduleNameChanged(const QModelIndex &index)
+{
+    auto *module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
+    assert(module);
+
+    // Find the control widget for the module and update it
+    auto *mcw = getControlWidget(module);
+    if (mcw)
+        mcw->updateControls();
 }
 
 /*

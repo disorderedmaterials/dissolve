@@ -9,6 +9,7 @@
 #include "gui/ui_layertab.h"
 
 // Forward Declarations
+class ModuleControlWidget;
 class ModuleLayer;
 
 // Layer Tab
@@ -54,11 +55,16 @@ class LayerTab : public QWidget, public MainTab
     /*
      * Widgets
      */
+    private:
+    // Return ModuleControlWidget for the specified Module (if it exists)
+    ModuleControlWidget *getControlWidget(const Module *module, bool setAsCurrent = false);
+
     private slots:
     void on_ShowAvailableModulesButton_clicked(bool checked);
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
     void moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+    void moduleNameChanged(const QModelIndex &);
     void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateModuleList();
 
