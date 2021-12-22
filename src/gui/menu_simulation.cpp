@@ -55,12 +55,7 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked) { setupIter
 
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked) { setupIteration(5); }
 
-void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
-{
-    emit(stopIterating());
-
-    Renderable::setSourceDataAccessEnabled(true);
-}
+void DissolveWindow::on_SimulationStopAction_triggered(bool checked) { emit(stopIterating()); }
 
 void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 {
@@ -71,9 +66,9 @@ void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
         return;
 
     if (dissolve_.saveRestart(qPrintable(filename)))
-        Messenger::print("Saved restart point to '{}'.\n", qPrintable(filename));
+        statusBar()->showMessage(QString("Saved restart point to '%1'.").arg(filename), 3000);
     else
-        Messenger::error("Failed to save restart point to '{}'.\n", qPrintable(filename));
+        statusBar()->showMessage(QString("ERROR: Failed to save restart point to '%1'.").arg(filename), 3000);
 }
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)

@@ -150,7 +150,7 @@ class DissolveWindow : public QMainWindow
     void on_SimulationRunForAction_triggered(bool checked);
     void on_SimulationStepAction_triggered(bool checked);
     void on_SimulationStepFiveAction_triggered(bool checked);
-    void on_SimulationPauseAction_triggered(bool checked);
+    void on_SimulationStopAction_triggered(bool checked);
     void on_SimulationSaveRestartPointAction_triggered(bool checked);
     void on_SimulationDataManagerAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);

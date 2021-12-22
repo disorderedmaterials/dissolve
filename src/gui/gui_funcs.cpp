@@ -347,7 +347,7 @@ void DissolveWindow::updateStatusBar()
     }
     else if (dissolveIterating_)
     {
-        statusLabel_->setText("Running");
+        statusLabel_->setText("Running (ESC to stop)");
         statusIndicator_->setPixmap(QPixmap(":/control/icons/control_play.svg"));
     }
     else

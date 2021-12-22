@@ -9,7 +9,7 @@ void DissolveWindow::disableSensitiveControls()
 {
     // Disable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(false);
-    ui_.SimulationPauseAction->setEnabled(true);
+    ui_.SimulationStopAction->setEnabled(true);
     ui_.SimulationStepAction->setEnabled(false);
     ui_.SimulationStepFiveAction->setEnabled(false);
     ui_.SimulationSaveRestartPointAction->setEnabled(false);
@@ -30,7 +30,7 @@ void DissolveWindow::enableSensitiveControls()
 {
     // Enable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(true);
-    ui_.SimulationPauseAction->setEnabled(false);
+    ui_.SimulationStopAction->setEnabled(false);
     ui_.SimulationStepAction->setEnabled(true);
     ui_.SimulationStepFiveAction->setEnabled(true);
     ui_.SimulationSaveRestartPointAction->setEnabled(true);
