@@ -93,8 +93,10 @@ void IsotopologueSetKeywordWidget::currentItemChanged()
     }
     else
     {
+        // Remove button is enabled regardless if we have any kind of selection
         ui_.RemoveButton->setEnabled(true);
 
+        // Add isotopologue button enabled based on number of isotopologues currently in the root index context
         const auto *topes =
             setModel_.data(index.parent().isValid() ? index.parent() : index, Qt::UserRole).value<const Isotopologues *>();
         assert(topes);

@@ -45,7 +45,7 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
     // Root item (IsotopologueSet)
     if (!index.parent().isValid())
     {
-        if (index.row() > set.isotopologues().size() || index.column() != 0)
+        if (index.row() > set.isotopologues().size())
             return {};
 
         const auto &tope = set.isotopologues()[index.row()];
@@ -54,7 +54,10 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
         {
             case Qt::DisplayRole:
             case Qt::EditRole:
-                return QString::fromStdString(std::string(tope.species()->name()));
+                if (index.column() == 0)
+                    return QString::fromStdString(std::string(tope.species()->name()));
+                else
+                    return {};
             case Qt::UserRole:
                 return QVariant::fromValue(&tope);
             default:
