@@ -117,3 +117,23 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     // Return force multiplier for specified distance
     double force(double distance) const;
 };
+
+// MasterBond Definition
+class MasterBond : public SpeciesBond
+{
+    public:
+    explicit MasterBond(std::string_view name) : SpeciesBond(), name_{name} {};
+
+    /*
+     * Identifying Name
+     */
+    private:
+    // Identifying name
+    std::string name_;
+
+    public:
+    // Set identifying name
+    void setName(std::string_view name) override { name_ = name; }
+    // Return identifying name
+    std::string_view name() const override { return name_; };
+};

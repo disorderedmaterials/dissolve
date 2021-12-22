@@ -28,7 +28,6 @@ template <class Intra, class Functions> class SpeciesIntra
         attached_[0] = source.attached_[0];
         attached_[1] = source.attached_[1];
         inCycle_ = source.inCycle_;
-        name_ = source.name_;
 
         return *this;
     }
@@ -170,15 +169,11 @@ template <class Intra, class Functions> class SpeciesIntra
     bool inCycle() const { return inCycle_; }
 
     /*
-     * Master Term Identification
+     * Identifying Name
      */
-    private:
-    // Identifying name (if a master term)
-    std::string name_;
-
     public:
     // Set identifying name (if a master term)
-    void setName(std::string_view name) { name_ = name; }
+    virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
     // Return identifying name (if a master term)
-    const std::string_view name() const { return name_; };
+    virtual std::string_view name() const { return ""; };
 };

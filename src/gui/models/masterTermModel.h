@@ -60,11 +60,11 @@ class MasterTermBondModel : public MasterTermModel
 {
     protected:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<SpeciesBond>>> bonds_;
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterBond>>> bonds_;
 
     public:
     MasterTermBondModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
-    void setSourceData(std::vector<std::shared_ptr<SpeciesBond>> &bonds);
+    void setSourceData(std::vector<std::shared_ptr<MasterBond>> &bonds);
     int nTerms() const;
     QVariant getTermData(int index, MasterTermModelData::DataType type) const;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
@@ -74,11 +74,11 @@ class MasterTermAngleModel : public MasterTermModel
 {
     protected:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<SpeciesAngle>>> angles_;
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterAngle>>> angles_;
 
     public:
     MasterTermAngleModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
-    void setSourceData(std::vector<std::shared_ptr<SpeciesAngle>> &angles);
+    void setSourceData(std::vector<std::shared_ptr<MasterAngle>> &angles);
     int nTerms() const;
     QVariant getTermData(int index, MasterTermModelData::DataType type) const;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
@@ -88,11 +88,11 @@ class MasterTermTorsionModel : public MasterTermModel
 {
     protected:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<SpeciesTorsion>>> torsions_;
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterTorsion>>> torsions_;
 
     public:
     MasterTermTorsionModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
-    void setSourceData(std::vector<std::shared_ptr<SpeciesTorsion>> &torsions);
+    void setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &torsions);
     int nTerms() const;
     QVariant getTermData(int index, MasterTermModelData::DataType type) const;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
@@ -102,11 +102,11 @@ class MasterTermImproperModel : public MasterTermModel
 {
     protected:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<SpeciesImproper>>> impropers_;
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterImproper>>> impropers_;
 
     public:
     MasterTermImproperModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
-    void setSourceData(std::vector<std::shared_ptr<SpeciesImproper>> &impropers);
+    void setSourceData(std::vector<std::shared_ptr<MasterImproper>> &impropers);
     int nTerms() const;
     QVariant getTermData(int index, MasterTermModelData::DataType type) const;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
@@ -128,9 +128,9 @@ class MasterTermTreeModel : public QAbstractItemModel
     MasterTermModel &modelForTopLevelRow(int row);
 
     public:
-    void setData(std::vector<std::shared_ptr<SpeciesBond>> &bonds, std::vector<std::shared_ptr<SpeciesAngle>> &angles,
-                 std::vector<std::shared_ptr<SpeciesTorsion>> &torsions,
-                 std::vector<std::shared_ptr<SpeciesImproper>> &impropers);
+    void setData(std::vector<std::shared_ptr<MasterBond>> &bonds, std::vector<std::shared_ptr<MasterAngle>> &angles,
+                 std::vector<std::shared_ptr<MasterTorsion>> &torsions,
+                 std::vector<std::shared_ptr<MasterImproper>> &impropers);
     void setBondIconFunction(std::function<QIcon(std::string_view termName)> func);
     void setAngleIconFunction(std::function<QIcon(std::string_view termName)> func);
     void setTorsionIconFunction(std::function<QIcon(std::string_view termName)> func);

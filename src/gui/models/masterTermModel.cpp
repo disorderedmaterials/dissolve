@@ -90,7 +90,7 @@ bool MasterTermModel::setData(const QModelIndex &index, const QVariant &value, i
  * MasterBond Model
  */
 
-void MasterTermBondModel::setSourceData(std::vector<std::shared_ptr<SpeciesBond>> &bonds)
+void MasterTermBondModel::setSourceData(std::vector<std::shared_ptr<MasterBond>> &bonds)
 {
     beginResetModel();
     bonds_ = bonds;
@@ -155,7 +155,7 @@ bool MasterTermBondModel::setTermData(int index, MasterTermModelData::DataType d
  * MasterAngle Model
  */
 
-void MasterTermAngleModel::setSourceData(std::vector<std::shared_ptr<SpeciesAngle>> &angles)
+void MasterTermAngleModel::setSourceData(std::vector<std::shared_ptr<MasterAngle>> &angles)
 {
     beginResetModel();
     angles_ = angles;
@@ -220,7 +220,7 @@ bool MasterTermAngleModel::setTermData(int index, MasterTermModelData::DataType 
  * MasterTorsion Model
  */
 
-void MasterTermTorsionModel::setSourceData(std::vector<std::shared_ptr<SpeciesTorsion>> &torsions)
+void MasterTermTorsionModel::setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &torsions)
 {
     beginResetModel();
     torsions_ = torsions;
@@ -286,7 +286,7 @@ bool MasterTermTorsionModel::setTermData(int index, MasterTermModelData::DataTyp
  * MasterImproper Model
  */
 
-void MasterTermImproperModel::setSourceData(std::vector<std::shared_ptr<SpeciesImproper>> &impropers)
+void MasterTermImproperModel::setSourceData(std::vector<std::shared_ptr<MasterImproper>> &impropers)
 {
     beginResetModel();
     impropers_ = impropers;
@@ -365,10 +365,10 @@ MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
     throw(std::runtime_error("Invalid row provided, so can't return top level model.\n"));
 }
 
-void MasterTermTreeModel::setData(std::vector<std::shared_ptr<SpeciesBond>> &bonds,
-                                  std::vector<std::shared_ptr<SpeciesAngle>> &angles,
-                                  std::vector<std::shared_ptr<SpeciesTorsion>> &torsions,
-                                  std::vector<std::shared_ptr<SpeciesImproper>> &impropers)
+void MasterTermTreeModel::setData(std::vector<std::shared_ptr<MasterBond>> &bonds,
+                                  std::vector<std::shared_ptr<MasterAngle>> &angles,
+                                  std::vector<std::shared_ptr<MasterTorsion>> &torsions,
+                                  std::vector<std::shared_ptr<MasterImproper>> &impropers)
 {
     beginResetModel();
     bondModel_.setSourceData(bonds);

@@ -107,3 +107,23 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 };
+
+// MasterTorsion Definition
+class MasterTorsion : public SpeciesTorsion
+{
+    public:
+    explicit MasterTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
+
+    /*
+     * Identifying Name
+     */
+    private:
+    // Identifying name
+    std::string name_;
+
+    public:
+    // Set identifying name
+    void setName(std::string_view name) override { name_ = name; }
+    // Return identifying name
+    std::string_view name() const override { return name_; };
+};

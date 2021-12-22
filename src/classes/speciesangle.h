@@ -91,3 +91,23 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 };
+
+// MasterAngle Definition
+class MasterAngle : public SpeciesAngle
+{
+    public:
+    explicit MasterAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
+
+    /*
+     * Identifying Name
+     */
+    private:
+    // Identifying name
+    std::string name_;
+
+    public:
+    // Set identifying name
+    void setName(std::string_view name) override { name_ = name; }
+    // Return identifying name
+    std::string_view name() const override { return name_; };
+};
