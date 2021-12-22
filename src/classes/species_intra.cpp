@@ -447,7 +447,9 @@ void Species::generateAttachedAtomLists()
         auto selection = fragment(angle.i()->index(), *ji, *jk);
 
         // Remove Atom 'j' from the list if it's there
-        selection.erase(std::remove(selection.begin(), selection.end(), angle.j()->index()));
+        auto jit = std::find(selection.begin(), selection.end(), angle.j()->index());
+        if (jit != selection.end())
+            selection.erase(jit);
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
@@ -469,7 +471,9 @@ void Species::generateAttachedAtomLists()
         selection = fragment(angle.k()->index(), *ji, jk);
 
         // Remove Atom 'j' from the list if it's there
-        selection.erase(std::remove(selection.begin(), selection.end(), angle.j()->index()));
+        jit = std::find(selection.begin(), selection.end(), angle.j()->index());
+        if (jit != selection.end())
+            selection.erase(jit);
 
         angle.setAttachedAtoms(1, selection);
     }
