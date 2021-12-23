@@ -230,6 +230,8 @@ void LayerTab::disableSensitiveControls()
 {
     ui_.EnabledButton->setEnabled(false);
     ui_.FrequencySpin->setEnabled(false);
+    ui_.ModulesList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui_.ModulesList->setDragDropMode(QAbstractItemView::NoDragDrop);
     ui_.AvailableModulesTree->setEnabled(false);
     for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
@@ -245,6 +247,8 @@ void LayerTab::enableSensitiveControls()
     ui_.EnabledButton->setEnabled(true);
     ui_.FrequencySpin->setEnabled(true);
     ui_.AvailableModulesTree->setEnabled(true);
+    ui_.ModulesList->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    ui_.ModulesList->setDragDropMode(QAbstractItemView::DragDrop);
     for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));

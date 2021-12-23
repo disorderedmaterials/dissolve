@@ -129,6 +129,9 @@ void ModuleControlWidget::updateControls()
 // Disable sensitive controls
 void ModuleControlWidget::disableSensitiveControls()
 {
+    ui_.FrequencySpin->setEnabled(false);
+    ui_.EnabledButton->setEnabled(false);
+    ui_.TargetsGroup->setEnabled(false);
     ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
         moduleWidget_->disableSensitiveControls();
@@ -137,6 +140,9 @@ void ModuleControlWidget::disableSensitiveControls()
 // Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
+    ui_.FrequencySpin->setEnabled(true);
+    ui_.EnabledButton->setEnabled(true);
+    ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
         moduleWidget_->enableSensitiveControls();
