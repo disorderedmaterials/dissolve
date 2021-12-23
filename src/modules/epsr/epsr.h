@@ -13,6 +13,7 @@
 // Forward Declarations
 class AtomType;
 class PartialSet;
+class ScatteringMatrix;
 
 // EPSR Module
 class EPSRModule : public Module
@@ -115,16 +116,19 @@ class EPSRModule : public Module
                        OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ = std::nullopt);
 
     public:
+    // Return target Configuration (determined from target modules)
+    const Configuration *targetConfiguration() const;
     // Create / retrieve arrays for storage of empirical potential coefficients
-    Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes,
+    Array2D<std::vector<double>> &potentialCoefficients(GenericList &moduleData, const int nAtomTypes,
                                                         std::optional<int> ncoeffp = std::nullopt);
     // Generate empirical potentials from current coefficients
-    bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho,
-                                     std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+    bool generateEmpiricalPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                                     EPSRModule::ExpansionFunctionType functionType, double rho, std::optional<int> ncoeffp,
+                                     double rminpt, double rmaxpt, double sigma1, double sigma2);
     // Generate and return single empirical potential function
     Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
     // Calculate absolute energy of empirical potentials
-    double absEnergyEP(Dissolve &dissolve);
+    double absEnergyEP(GenericList &moduleData, const ScatteringMatrix &matrix);
     // Test absolute energy of empirical potentials
     bool testAbsEnergyEP(Dissolve &dissolve);
     // Truncate the supplied data
