@@ -222,6 +222,8 @@ class DissolveWindow : public QMainWindow
     void on_MainTabs_currentChanged(int index);
 
     public:
+    // Return whether the GUI is currently running a simulation
+    bool dissolveIterating() const;
     // Return list of all current tabs
     const std::vector<MainTab *> allTabs() const;
 

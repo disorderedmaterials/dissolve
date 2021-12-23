@@ -164,6 +164,9 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
         connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
         connect(mcw, SIGNAL(statusChanged()), this, SLOT(updateModuleList()));
         ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));
+
+        if (dissolveWindow_->dissolveIterating())
+            mcw->disableSensitiveControls();
     }
 }
 

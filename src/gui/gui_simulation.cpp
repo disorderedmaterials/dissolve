@@ -81,6 +81,9 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
     updateMenus();
 }
 
+// Return whether the GUI is currently running a simulation
+bool DissolveWindow::dissolveIterating() const { return dissolveIterating_; }
+
 // Return list of all current tabs
 const std::vector<MainTab *> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
 
