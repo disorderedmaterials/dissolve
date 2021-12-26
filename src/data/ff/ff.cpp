@@ -379,8 +379,7 @@ bool Forcefield::assignBondTermParameters(SpeciesBond &bond, bool determineTypes
                                 atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName());
     const ForcefieldBondTerm &term = *optTerm;
 
-    bond.setForm(term.form());
-    bond.setParameters(term.parameters());
+    bond.setInteractionFormAndParameters(term.form(), term.parameters());
 
     return true;
 }
@@ -404,8 +403,7 @@ bool Forcefield::assignAngleTermParameters(SpeciesAngle &angle, bool determineTy
                                 atomTypes[2].get().equivalentName());
     const ForcefieldAngleTerm &term = *optTerm;
 
-    angle.setForm(term.form());
-    angle.setParameters(term.parameters());
+    angle.setInteractionFormAndParameters(term.form(), term.parameters());
 
     return true;
 }
@@ -431,8 +429,7 @@ bool Forcefield::assignTorsionTermParameters(SpeciesTorsion &torsion, bool deter
                                 atomTypes[3].get().equivalentName());
     const ForcefieldTorsionTerm &term = *optTerm;
 
-    torsion.setForm(term.form());
-    torsion.setParameters(term.parameters());
+    torsion.setInteractionFormAndParameters(term.form(), term.parameters());
 
     return true;
 }
@@ -547,8 +544,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                             optImproper = sp->addImproper(&i, j, k, l);
                         SpeciesImproper &improper = *optImproper;
 
-                        improper.setForm(improperTerm.form());
-                        improper.setParameters(improperTerm.parameters());
+                        improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
                     }
                 }
             }

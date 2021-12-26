@@ -28,7 +28,7 @@ SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) noexcept : SpeciesInt
 
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
 
     // Reset source data
@@ -43,7 +43,7 @@ SpeciesImproper::~SpeciesImproper() { detach(); }
 SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
     assign(source.i_, source.j_, source.k_, source.l_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
@@ -56,7 +56,7 @@ SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source) noexcept
         detach();
 
     assign(source.i_, source.j_, source.k_, source.l_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
@@ -215,11 +215,11 @@ double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const
 {
-    return SpeciesTorsion::energy(angleInDegrees, form(), parameters());
+    return SpeciesTorsion::energy(angleInDegrees, interactionForm(), interactionParameters());
 }
 
 // Return force multiplier for specified angle
 double SpeciesImproper::force(double angleInDegrees) const
 {
-    return SpeciesTorsion::force(angleInDegrees, form(), parameters());
+    return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }

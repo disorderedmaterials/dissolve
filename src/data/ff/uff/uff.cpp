@@ -359,7 +359,7 @@ bool Forcefield_UFF::assignBondTermParameters(SpeciesBond &bond, bool determineT
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
     // Convert force constant from kcal to kJ
-    bond.setFormAndParameters(BondFunctions::Form::Harmonic, std::vector<double>{k * 4.184, rij});
+    bond.setInteractionFormAndParameters(BondFunctions::Form::Harmonic, std::vector<double>{k * 4.184, rij});
 
     return true;
 }
@@ -406,13 +406,16 @@ bool Forcefield_UFF::assignAngleTermParameters(SpeciesAngle &angle, bool determi
     // except linear ('1') and tetrahedral cases where the equilibrium angle is 90 degrees
     const auto geom = j.name().back();
     if (geom == '1')
-        angle.setFormAndParameters(AngleFunctions::Form::Cosine, std::vector<double>{4.184 * kijk, 1.0, 0.0, 1.0});
+        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine, std::vector<double>{4.184 * kijk, 1.0, 0.0, 1.0});
     else if (geom == '2')
-        angle.setFormAndParameters(AngleFunctions::Form::Cosine, std::vector<double>{4.184 * kijk / 9.0, 3.0, 0.0, -1.0});
+        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine,
+                                              std::vector<double>{4.184 * kijk / 9.0, 3.0, 0.0, -1.0});
     else if (geom == '3' && fabs(90.0 - j.parameter(UFFAtomTypeData::Theta)) < 0.1)
-        angle.setFormAndParameters(AngleFunctions::Form::Cosine, std::vector<double>{4.184 * kijk / 4.0, 2.0, 0.0, 1.0});
+        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine,
+                                              std::vector<double>{4.184 * kijk / 4.0, 2.0, 0.0, 1.0});
     else if (geom == '4' || geom == '6')
-        angle.setFormAndParameters(AngleFunctions::Form::Cosine, std::vector<double>{4.184 * kijk / 16.0, 4.0, 0.0, -1.0});
+        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine,
+                                              std::vector<double>{4.184 * kijk / 16.0, 4.0, 0.0, -1.0});
     else
     {
         // General nonlinear case:  U(theta) = kijk * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
@@ -420,7 +423,7 @@ bool Forcefield_UFF::assignAngleTermParameters(SpeciesAngle &angle, bool determi
         const auto c1 = -4.0 * c2 * cosTheta;
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
-        angle.setFormAndParameters(AngleFunctions::Form::Cos2, std::vector<double>{kijk * 4.184, c0, c1, c2});
+        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cos2, std::vector<double>{kijk * 4.184, c0, c1, c2});
 
         return true;
     }
@@ -472,14 +475,15 @@ bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool d
         // V value is 2.0 kcal for oxygen, 6.8 kcal otherwise
         auto vj = j.Z() == Elements::O ? 2.0 : 6.8;
         auto vk = k.Z() == Elements::O ? 2.0 : 6.8;
-        torsion.setFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{4.184 * sqrt(vj * vk), 2.0, 90.0});
+        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine,
+                                                std::vector<double>{4.184 * sqrt(vj * vk), 2.0, 90.0});
     }
     else if ((groupK == 16 && geomK == '3' && groupJ != 16 && geomJ == '2') ||
              (groupK != 16 && geomK == '2' && groupJ == 16 && geomJ == '3'))
     {
         // Case b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
         // Use eq 17, but since the bond order is 1 (single bond) ln term in eq 17 is zero...
-        torsion.setFormAndParameters(
+        torsion.setInteractionFormAndParameters(
             TorsionFunctions::Form::UFFCosine,
             std::vector<double>{4.184 * 5.0 * sqrt(j.parameter(UFFAtomTypeData::U) * k.parameter(UFFAtomTypeData::U)) *
                                     (1.0 + 4.18 * log(bondOrder(j, k))),
@@ -488,7 +492,7 @@ bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool d
     else if (geomJ == '3' && geomK == '3')
     {
         // Case d) j and k are both sp3 centres
-        torsion.setFormAndParameters(
+        torsion.setInteractionFormAndParameters(
             TorsionFunctions::Form::UFFCosine,
             std::vector<double>{4.184 * sqrt(j.parameter(UFFAtomTypeData::V) * k.parameter(UFFAtomTypeData::V)), 3.0, 180.0});
     }
@@ -496,7 +500,7 @@ bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool d
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        torsion.setFormAndParameters(
+        torsion.setInteractionFormAndParameters(
             TorsionFunctions::Form::UFFCosine,
             std::vector<double>{4.184 * 5.0 * sqrt(j.parameter(UFFAtomTypeData::U) * k.parameter(UFFAtomTypeData::U)) *
                                     (1.0 + 4.18 * log(bondOrder(j, k))),
@@ -505,17 +509,18 @@ bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool d
     else if ((geomJ == '3' && geomK == '2') || (geomK == '3' && geomJ == '2'))
     {
         // Case f) j is sp2 and k is sp3 (or vice versa)
-        torsion.setFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{4.184, 6.0, 0.0});
+        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{4.184, 6.0, 0.0});
     }
     else if ((geomJ == '3' && geomK == '2' && geomL == '2') || (geomJ == '2' && geomK == '3' && geomI == '2'))
     {
         // Case c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
-        torsion.setFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{4.184 * 2.0, 3.0, 180.0});
+        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine,
+                                                std::vector<double>{4.184 * 2.0, 3.0, 180.0});
     }
     else
     {
         // Case g) everything else
-        torsion.setFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{0.0, 1.0, 0.0});
+        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{0.0, 1.0, 0.0});
     }
 
     return true;

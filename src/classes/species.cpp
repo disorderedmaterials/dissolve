@@ -157,8 +157,8 @@ void Species::print() const
         Messenger::print("    ---------------------------------------------------------------------------------\n");
         for (const auto &bond : bonds_)
             Messenger::print("   {:4d}  {:4d}    {}{:<12}  {}\n", bond.indexI() + 1, bond.indexJ() + 1,
-                             bond.masterTerm() ? '@' : ' ', BondFunctions::forms().keyword(bond.form()),
-                             bond.parametersAsString());
+                             bond.masterTerm() ? '@' : ' ', BondFunctions::forms().keyword(bond.interactionForm()),
+                             bond.interactionPotential().parametersAsString());
     }
 
     if (nAngles() > 0)
@@ -168,8 +168,9 @@ void Species::print() const
         Messenger::print("    ---------------------------------------------------------------------------------------\n");
         for (const auto &angle : angles_)
             Messenger::print("   {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", angle.indexI() + 1, angle.indexJ() + 1,
-                             angle.indexK() + 1, angle.masterTerm() ? '@' : ' ', AngleFunctions::forms().keyword(angle.form()),
-                             angle.parametersAsString());
+                             angle.indexK() + 1, angle.masterTerm() ? '@' : ' ',
+                             AngleFunctions::forms().keyword(angle.interactionForm()),
+                             angle.interactionPotential().parametersAsString());
     }
 
     if (nTorsions() > 0)
@@ -181,7 +182,8 @@ void Species::print() const
         for (const auto &torsion : torsions())
             Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", torsion.indexI() + 1, torsion.indexJ() + 1,
                              torsion.indexK() + 1, torsion.indexL() + 1, torsion.masterTerm() ? '@' : ' ',
-                             TorsionFunctions::forms().keyword(torsion.form()), torsion.parametersAsString());
+                             TorsionFunctions::forms().keyword(torsion.interactionForm()),
+                             torsion.interactionPotential().parametersAsString());
     }
 
     if (nImpropers() > 0)
@@ -193,7 +195,8 @@ void Species::print() const
         for (auto &improper : impropers())
             Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", improper.indexI() + 1, improper.indexJ() + 1,
                              improper.indexK() + 1, improper.indexL() + 1, improper.masterTerm() ? '@' : ' ',
-                             TorsionFunctions::forms().keyword(improper.form()), improper.parametersAsString());
+                             TorsionFunctions::forms().keyword(improper.interactionForm()),
+                             improper.interactionPotential().parametersAsString());
     }
 }
 

@@ -46,10 +46,11 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
             case 3:
                 return torsion.index(index.column()) + 1;
             case 4:
-                return torsion.masterTerm() ? QString::fromStdString("@" + std::string(torsion.masterTerm()->name()))
-                                            : QString::fromStdString(TorsionFunctions::forms().keyword(torsion.form()));
+                return torsion.masterTerm()
+                           ? QString::fromStdString("@" + std::string(torsion.masterTerm()->name()))
+                           : QString::fromStdString(TorsionFunctions::forms().keyword(torsion.interactionForm()));
             case 5:
-                return QString::fromStdString(torsion.parametersAsString());
+                return QString::fromStdString(torsion.interactionPotential().parametersAsString());
             default:
                 return {};
         }
@@ -117,7 +118,7 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
                 {
                     auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
                     torsion.detachFromMasterTerm();
-                    torsion.setForm(tf);
+                    torsion.setInteractionForm(tf);
                 }
                 catch (std::runtime_error &e)
                 {
@@ -126,7 +127,7 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             }
             break;
         case 5:
-            if (!torsion.setParameters(value.toString().toStdString()))
+            if (!torsion.setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
