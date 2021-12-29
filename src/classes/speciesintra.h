@@ -76,7 +76,6 @@ template <class Intra, class Functions> class SpeciesIntra
     }
     bool setInteractionParameters(LineParser &parser, int startArg)
     {
-        // Does this intramolecular interaction reference a set of master parameters?
         if (masterTerm_)
             return Messenger::error("Refused to set intramolecular parameters since master parameters are referenced.\n");
 
@@ -85,17 +84,17 @@ template <class Intra, class Functions> class SpeciesIntra
     // Set form and parameters
     void setInteractionFormAndParameters(typename Functions::Form form, const std::vector<double> &params)
     {
-        if (!masterTerm_)
-            interactionPotential_.setFormAndParameters(form, params);
-        else
+        if (masterTerm_)
             Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+
+        return interactionPotential_.setFormAndParameters(form, params);
     }
     bool setInteractionFormAndParameters(typename Functions::Form form, std::string params)
     {
-        if (!masterTerm_)
-            interactionPotential_.setFormAndParameters(form, params);
-        else
+        if (masterTerm_)
             return Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+
+        return interactionPotential_.setFormAndParameters(form, params);
     }
     // Return array of parameters
     const std::vector<double> &interactionParameters() const

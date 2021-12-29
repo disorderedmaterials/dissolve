@@ -41,20 +41,6 @@ bool Forcefield::prepare()
 }
 
 /*
- * Definition
- */
-
-// Return enum options for ShortRangeType
-EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
-{
-    return EnumOptions<Forcefield::ShortRangeType>("ShortRangeType",
-                                                   {{Forcefield::ShortRangeType::Undefined, "Undefined"},
-                                                    {Forcefield::ShortRangeType::NoInteraction, "None"},
-                                                    {Forcefield::ShortRangeType::LennardJones, "LJ", 2, 2},
-                                                    {Forcefield::ShortRangeType::LennardJonesGeometric, "LJGeometric", 2, 2}});
-}
-
-/*
  * Atom Type Data
  */
 
@@ -349,9 +335,8 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, C
     // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
     std::vector<double> params;
     params.insert(params.begin(), ffa.parameters().begin(),
-                  ffa.parameters().begin() + Forcefield::shortRangeTypes().minArgs(shortRangeType()).value_or(0));
-    at->setShortRangeParameters(params);
-    at->setShortRangeType(shortRangeType());
+                  ffa.parameters().begin() + ShortRangeFunctions::forms().minArgs(shortRangeForm()).value_or(0));
+    at->interactionPotential().setFormAndParameters(shortRangeForm(), params);
     at->setCharge(ffa.charge());
 
     // Set the charge on the SpeciesAtom if requested

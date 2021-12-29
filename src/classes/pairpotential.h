@@ -79,10 +79,8 @@ class PairPotential
     private:
     // Original source AtomTypes
     std::shared_ptr<AtomType> atomTypeI_, atomTypeJ_;
-    // Parameters for short-range potential
-    std::vector<double> parameters_;
-    // Short range type (determined from AtomTypes)
-    Forcefield::ShortRangeType shortRangeType_{Forcefield::ShortRangeType::Undefined};
+    // Interaction potential
+    InteractionPotential<ShortRangeFunctions> interactionPotential_;
     // Charge on I (taken from AtomType)
     double chargeI_{0.0};
     // Charge on J (taken from AtomType)
@@ -95,10 +93,9 @@ class PairPotential
     public:
     // Set up PairPotential parameters from specified AtomTypes
     bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ);
-    // Set short-ranged type
-    void setShortRangeType(Forcefield::ShortRangeType srType);
-    // Return short-ranged type
-    Forcefield::ShortRangeType shortRangeType() const;
+    // Return interaction potential
+    InteractionPotential<ShortRangeFunctions> &interactionPotential();
+    const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
     // Return first AtomType name
     std::string_view atomTypeNameI() const;
     // Return second AtomType name
@@ -107,14 +104,6 @@ class PairPotential
     std::shared_ptr<AtomType> atomTypeI() const;
     // Return second source AtomType
     std::shared_ptr<AtomType> atomTypeJ() const;
-    // Set parameter specified
-    void setParameter(int index, double value);
-    // Set parameters vector
-    void setParameters(std::vector<double> parameters);
-    // Return parameters vector
-    const std::vector<double> &parameters() const;
-    // Return short-range parameter specified
-    double parameter(int index) const;
     // Set charge I
     void setChargeI(double value);
     // Return charge I
@@ -150,11 +139,10 @@ class PairPotential
     private:
     // Return analytic short range potential energy
     double analyticShortRangeEnergy(
-        double r, Forcefield::ShortRangeType type,
-        PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
+        double r, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
     // Return analytic short range force
     double
-    analyticShortRangeForce(double r, Forcefield::ShortRangeType type,
+    analyticShortRangeForce(double r,
                             PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
     // Calculate full potential
     void calculateUFull();

@@ -16,17 +16,9 @@ template <class Functions> class InteractionPotential
     public:
     explicit InteractionPotential(typename Functions::Form form) : form_(form){};
     virtual ~InteractionPotential() = default;
-    InteractionPotential(const InteractionPotential &source) { (*this) = source; }
+    InteractionPotential(const InteractionPotential &source) = default;
     InteractionPotential(InteractionPotential &&source) = delete;
-    InteractionPotential &operator=(const InteractionPotential &source)
-    {
-        parameters_.clear();
-        parameters_.resize(source.parameters_.size());
-        std::copy(source.parameters_.begin(), source.parameters_.end(), parameters_.begin());
-        form_ = source.form_;
-
-        return *this;
-    }
+    InteractionPotential &operator=(const InteractionPotential &source) = default;
     InteractionPotential &operator=(InteractionPotential &&source) = delete;
 
     /*
@@ -92,6 +84,8 @@ template <class Functions> class InteractionPotential
 
         return true;
     }
+    // Parse parameters from specified string
+    bool parseParameters(std::string paramString) { return parseParameters(DissolveSys::splitString(paramString)); }
     // Parse parameters from current line
     bool parseParameters(const LineParser &parser, int startArg)
     {
@@ -110,8 +104,7 @@ template <class Functions> class InteractionPotential
     bool setFormAndParameters(typename Functions::Form form, std::string paramString)
     {
         form_ = form;
-        std::vector<std::string> terms{DissolveSys::splitString(paramString)};
-        return parseParameters(terms);
+        return parseParameters(paramString);
     }
     // Return number of parameters defined
     int nParameters() const { return parameters_.size(); }
