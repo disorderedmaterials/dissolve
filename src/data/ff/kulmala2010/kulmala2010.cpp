@@ -116,4 +116,4 @@ std::string_view Forcefield_Kulmala2010::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Kulmala2010::shortRangeType() const { return Forcefield::ShortRangeType::LennardJones; }
+ShortRangeFunctions::Form Forcefield_Kulmala2010::shortRangeForm() const { return ShortRangeFunctions::Form::LennardJones; }

@@ -119,4 +119,4 @@ std::string_view Forcefield_Ludwig_Py5::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Ludwig_Py5::shortRangeType() const { return Forcefield::ShortRangeType::LennardJones; }
+ShortRangeFunctions::Form Forcefield_Ludwig_Py5::shortRangeForm() const { return ShortRangeFunctions::Form::LennardJones; }
