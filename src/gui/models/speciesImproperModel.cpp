@@ -50,7 +50,9 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
                            ? QString::fromStdString("@" + std::string(improper.masterTerm()->name()))
                            : QString::fromStdString(TorsionFunctions::forms().keyword(improper.interactionForm()));
             case 5:
-                return QString::fromStdString(improper.interactionPotential().parametersAsString());
+                return improper.masterTerm()
+                           ? QString::fromStdString(improper.masterTerm()->interactionPotential().parametersAsString())
+                           : QString::fromStdString(improper.interactionPotential().parametersAsString());
             default:
                 return {};
         }

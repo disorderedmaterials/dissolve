@@ -45,7 +45,9 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
                            ? QString::fromStdString("@" + std::string(bond.masterTerm()->name()))
                            : QString::fromStdString(std::string(BondFunctions::forms().keyword(bond.interactionForm())));
             case 3:
-                return QString::fromStdString(bond.interactionPotential().parametersAsString());
+                return bond.masterTerm()
+                           ? QString::fromStdString(bond.masterTerm()->interactionPotential().parametersAsString())
+                           : QString::fromStdString(bond.interactionPotential().parametersAsString());
             default:
                 return {};
         }

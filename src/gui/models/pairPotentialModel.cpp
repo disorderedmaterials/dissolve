@@ -42,14 +42,14 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
             // Charge
             case (2):
                 return QString::fromStdString(
-                    std::string(Forcefield::shortRangeTypes().keyword(rawData(index)->shortRangeType())));
+                    ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
             // Short Range Parameters
             case (3):
                 return QString::number(rawData(index)->chargeI());
             case (4):
                 return QString::number(rawData(index)->chargeJ());
             case (5):
-                return QString::fromStdString(joinStrings(rawData(index)->parameters()));
+                return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
             default:
                 return {};
         }
@@ -85,14 +85,8 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
             break;
         // Short Range Parameters
         case (5):
-            values = DissolveSys::splitStringToDoubles(value.toString().toStdString());
-            if (values.size() != pair->parameters().size())
+            if (!pair->interactionPotential().parseParameters(value.toString().toStdString()))
                 return false;
-            {
-                int idx = 0;
-                for (auto v : values)
-                    pair->setParameter(idx++, v);
-            }
             break;
         default:
             return false;

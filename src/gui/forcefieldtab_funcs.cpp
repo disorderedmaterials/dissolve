@@ -75,7 +75,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Set item delegates for tables
     // -- Short Range Functional Forms
     ui_.AtomTypesTable->setItemDelegateForColumn(
-        3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
+        3, new ComboListDelegate(this, new ComboEnumOptionsItems<ShortRangeFunctions::Form>(ShortRangeFunctions::forms())));
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.AtomTypesTable->horizontalHeader()->setFont(font());

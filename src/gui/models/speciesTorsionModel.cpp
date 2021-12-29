@@ -50,7 +50,9 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
                            ? QString::fromStdString("@" + std::string(torsion.masterTerm()->name()))
                            : QString::fromStdString(TorsionFunctions::forms().keyword(torsion.interactionForm()));
             case 5:
-                return QString::fromStdString(torsion.interactionPotential().parametersAsString());
+                return torsion.masterTerm()
+                           ? QString::fromStdString(torsion.masterTerm()->interactionPotential().parametersAsString())
+                           : QString::fromStdString(torsion.interactionPotential().parametersAsString());
             default:
                 return {};
         }

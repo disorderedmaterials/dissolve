@@ -48,7 +48,9 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
                 return angle.masterTerm() ? QString::fromStdString("@" + std::string(angle.masterTerm()->name()))
                                           : QString::fromStdString(AngleFunctions::forms().keyword(angle.interactionForm()));
             case 4:
-                return QString::fromStdString(angle.interactionPotential().parametersAsString());
+                return angle.masterTerm()
+                           ? QString::fromStdString(angle.masterTerm()->interactionPotential().parametersAsString())
+                           : QString::fromStdString(angle.interactionPotential().parametersAsString());
             default:
                 return {};
         }
