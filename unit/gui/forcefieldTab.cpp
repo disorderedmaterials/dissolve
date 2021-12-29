@@ -46,14 +46,14 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     EXPECT_EQ(pairs.data(pairs.index(0, 2)).toString().toStdString(), "LJGeometric");
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 3)).toDouble(), -0.115);
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 4)).toDouble(), -0.115);
-    EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "0.29288, 3.55");
+    EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "epsilon=0.29288 sigma=3.55");
 
     EXPECT_EQ(pairs.data(pairs.index(2, 0)).toString().toStdString(), "HA");
     EXPECT_EQ(pairs.data(pairs.index(2, 1)).toString().toStdString(), "HA");
     EXPECT_EQ(pairs.data(pairs.index(2, 2)).toString().toStdString(), "LJGeometric");
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, 3)).toDouble(), 0.115);
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, 4)).toDouble(), 0.115);
-    EXPECT_EQ(pairs.data(pairs.index(2, 5)).toString().toStdString(), "0.12552, 2.42");
+    EXPECT_EQ(pairs.data(pairs.index(2, 5)).toString().toStdString(), "epsilon=0.12552 sigma=2.42");
 
     // Currently, we do not support the user changing the values, but
     // I've added the option for the future
@@ -66,6 +66,6 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 4)).toDouble(), -3);
     EXPECT_TRUE(pairs.setData(pairs.index(0, 5), "4.0, -5.0"));
     EXPECT_THAT(pairs.data(pairs.index(0, 5)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("4.0, -5.0"), testing::Eq("4, -5")));
+                testing::AnyOf(testing::Eq("epsilon=4.0 sigma=-5.0"), testing::Eq("epsilon=4 sigma=-5")));
 }
 } // namespace UnitTest

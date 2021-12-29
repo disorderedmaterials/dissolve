@@ -14,9 +14,9 @@ TEST(GeometryMinimisationTest, Water)
     // Set up CoreData
     CoreData coreData;
     auto atO = coreData.addAtomType(Elements::O);
-    atO->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
+    atO->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     auto atH = coreData.addAtomType(Elements::H);
-    atH->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
+    atH->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     std::vector<std::unique_ptr<PairPotential>> pairPotentials;
     pairPotentials.emplace_back(std::make_unique<PairPotential>())->setUp(atO, atO);
     pairPotentials.emplace_back(std::make_unique<PairPotential>())->setUp(atH, atH);
