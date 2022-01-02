@@ -292,8 +292,8 @@ double SpeciesBond::energy(double distance) const
         return params[0] * delta * delta / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
 
-    Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate energy.\n");
-    return 0.0;
+    throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate energy.\n",
+                                         BondFunctions::forms().keyword(bondForm))));
 }
 
 // Return force multiplier for specified distance
@@ -330,6 +330,6 @@ double SpeciesBond::force(double distance) const
         return -2.0 * params[0] * (distance - params[1]) / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
 
-    Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");
-    return 0.0;
+    throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate force.\n",
+                                         BondFunctions::forms().keyword(bondForm))));
 }
