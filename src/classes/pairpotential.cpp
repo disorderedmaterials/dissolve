@@ -219,7 +219,7 @@ double PairPotential::chargeJ() const { return chargeJ_; }
  */
 
 // Return analytic short range potential energy
-double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
     auto &params = interactionPotential_.parameters();
 
@@ -265,7 +265,7 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 }
 
 // Return analytic short range force
-double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
     auto &params = interactionPotential_.parameters();
 
@@ -455,7 +455,7 @@ double PairPotential::energy(double r)
 }
 
 // Return analytic potential at specified r, including Coulomb term from local atomtype charges
-double PairPotential::analyticEnergy(double r)
+double PairPotential::analyticEnergy(double r) const
 {
     if (r > range_)
         return 0.0;
@@ -470,7 +470,7 @@ double PairPotential::analyticEnergy(double r)
 }
 
 // Return analytic potential at specified r, including Coulomb term from supplied charge product
-double PairPotential::analyticEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     if (r > range_)
         return 0.0;
@@ -499,7 +499,7 @@ double PairPotential::force(double r)
 }
 
 // Return analytic force at specified r
-double PairPotential::analyticForce(double r)
+double PairPotential::analyticForce(double r) const
 {
     if (r > range_)
         return 0.0;
@@ -514,7 +514,7 @@ double PairPotential::analyticForce(double r)
 }
 
 // Return analytic force at specified r, including Coulomb term from supplied charge product
-double PairPotential::analyticForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     if (r > range_)
         return 0.0;
