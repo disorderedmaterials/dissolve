@@ -381,7 +381,7 @@ void PairPotential::calculateDUFull()
 
     // Set first and last points
     dUFull_.value(0) = 10.0 * dUFull_.value(1);
-    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2);
+    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2) + (dUFull_.value(nPoints_ - 2) - dUFull_.value(nPoints_ - 3));
 
     // Update interpolation
     dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);

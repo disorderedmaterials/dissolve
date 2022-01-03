@@ -57,7 +57,7 @@ EndLayer
 # Pair Potentials
 PairPotentials
   Range  15.000000
-  Delta 0.001
+  Delta 0.0001
   # IncludeCoulomb  False
   Parameters  'OW'  O	-0.82	LJGeometric  0.0        0.0
   Parameters  'HW'  H	0.41	LJGeometric  0.0        0.0
