@@ -36,8 +36,8 @@ steps:
       sudo rm -rf /usr/local*
       sudo rm -rf /usr/src*
       sudo rm -rf /usr/share*
-      mkdir -p /usr/bin
-      cp ./env /usr/bin/env
+      sudo mkdir -p /usr/bin
+      sudo cp ./env /usr/bin/env
     displayName: 'Remove redundant ubuntu executables'
   - bash: |
       set -ex
