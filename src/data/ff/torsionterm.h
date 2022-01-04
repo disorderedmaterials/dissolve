@@ -14,7 +14,7 @@ class ForcefieldTorsionTerm
 {
     public:
     ForcefieldTorsionTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
-                          std::string_view typeL = "", SpeciesTorsion::TorsionFunction form = SpeciesTorsion::NoForm,
+                          std::string_view typeL = "", TorsionFunctions::Form form = TorsionFunctions::Form::None,
                           const std::vector<double> &parameters = {});
     ~ForcefieldTorsionTerm() = default;
 
@@ -25,7 +25,7 @@ class ForcefieldTorsionTerm
     // Type names involved in interaction
     std::string typeI_, typeJ_, typeK_, typeL_;
     // Functional form of interaction
-    SpeciesTorsion::TorsionFunction form_;
+    TorsionFunctions::Form form_;
     // Parameters for interaction
     std::vector<double> parameters_;
 
@@ -34,7 +34,7 @@ class ForcefieldTorsionTerm
     bool isMatch(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
                  const ForcefieldAtomType &l) const;
     // Return functional form index of interaction
-    SpeciesTorsion::TorsionFunction form() const;
+    TorsionFunctions::Form form() const;
     // Return array of parameters
     const std::vector<double> &parameters() const;
 };

@@ -35,20 +35,17 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
     // -- Geometry tables
     ui_.BondTable->setItemDelegateForColumn(
-        2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions()),
-                                      dissolve.masterBonds()));
+        2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<BondFunctions::Form>(BondFunctions::forms()),
+                                      dissolve.coreData().masterBonds()));
     ui_.AngleTable->setItemDelegateForColumn(
-        3,
-        new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions()),
-                                   dissolve.masterAngles()));
+        3, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<AngleFunctions::Form>(AngleFunctions::forms()),
+                                      dissolve.coreData().masterAngles()));
     ui_.TorsionTable->setItemDelegateForColumn(
-        4, new IntraFormComboDelegate(
-               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()),
-               dissolve.masterTorsions()));
+        4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
+                                      dissolve.coreData().masterTorsions()));
     ui_.ImproperTable->setItemDelegateForColumn(
-        4, new IntraFormComboDelegate(
-               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()),
-               dissolve.masterImpropers()));
+        4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
+                                      dissolve.coreData().masterImpropers()));
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setModel(&isos_);
     connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,

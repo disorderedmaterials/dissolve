@@ -42,13 +42,13 @@ void Species::clearForcefieldTerms(bool nullifyAtomTypes)
         clearAtomTypes();
 
     for (auto &b : bonds_)
-        b.setFormAndParameters(SpeciesBond::BondFunction::NoForm, {});
+        b.setFormAndParameters(BondFunctions::Form::None, {});
 
     for (auto &a : angles_)
-        a.setFormAndParameters(SpeciesAngle::AngleFunction::NoForm, {});
+        a.setFormAndParameters(AngleFunctions::Form::None, {});
 
     for (auto &t : torsions_)
-        t.setFormAndParameters(SpeciesTorsion::TorsionFunction::NoForm, {});
+        t.setFormAndParameters(TorsionFunctions::Form::None, {});
 
     impropers_.clear();
 }

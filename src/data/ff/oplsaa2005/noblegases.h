@@ -5,15 +5,6 @@
 
 #include "data/ff/oplsaa2005/base.h"
 
-// Forward Declarations
-class CoreData;
-class Species;
-class SpeciesAngle;
-class SpeciesAtom;
-class SpeciesBond;
-class SpeciesIntra;
-class SpeciesTorsion;
-
 // OPLS-AA (2005) Noble Gases Forcefield
 class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
 {

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/masterintra.h"
 #include "classes/speciesbond.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>

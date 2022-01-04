@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/masterintra.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/helpers/combopopulator.h"
 #include <QComboBox>

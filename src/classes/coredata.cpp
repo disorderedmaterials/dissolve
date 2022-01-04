@@ -117,28 +117,25 @@ void CoreData::clearAtomTypes() { atomTypes_.clear(); }
  */
 
 // Add new master Bond parameters
-MasterIntra &CoreData::addMasterBond(std::string_view name)
+MasterBond &CoreData::addMasterBond(std::string_view name)
 {
     // Check for existence of master Bond already
     if (getMasterBond(name))
         throw(std::runtime_error(
             fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
-    // OK to add new master Bond
-    auto masterBond = std::make_shared<MasterIntra>(name, SpeciesIntra::InteractionType::Bond);
-    masterBonds_.push_back(masterBond);
-    return *masterBond;
+    return *masterBonds_.emplace_back(std::make_shared<MasterBond>(name));
 }
 
 // Return number of master Bond parameters in list
 int CoreData::nMasterBonds() const { return masterBonds_.size(); }
 
 // Return list of master Bond parameters
-std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterBonds() { return masterBonds_; }
-const std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterBonds() const { return masterBonds_; }
+std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() { return masterBonds_; }
+const std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() const { return masterBonds_; }
 
 // Return whether named master Bond parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterBond(std::string_view name) const
+OptionalReferenceWrapper<const MasterBond> CoreData::getMasterBond(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -150,7 +147,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterBond(std::string_
 }
 
 // Return whether named master Bond parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::getMasterBond(std::string_view name)
+OptionalReferenceWrapper<MasterBond> CoreData::getMasterBond(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -162,28 +159,25 @@ OptionalReferenceWrapper<MasterIntra> CoreData::getMasterBond(std::string_view n
 }
 
 // Add new master Angle parameters
-MasterIntra &CoreData::addMasterAngle(std::string_view name)
+MasterAngle &CoreData::addMasterAngle(std::string_view name)
 {
     // Check for existence of master Angle already
     if (getMasterAngle(name))
         throw(std::runtime_error(
             fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
-    // OK to add new master Angle
-    auto masterAngle = std::make_shared<MasterIntra>(name, SpeciesIntra::InteractionType::Angle);
-    masterAngles_.push_back(masterAngle);
-    return *masterAngle;
+    return *masterAngles_.emplace_back(std::make_shared<MasterAngle>(name));
 }
 
 // Return number of master Angle parameters in list
 int CoreData::nMasterAngles() const { return masterAngles_.size(); }
 
 // Return list of master Angle parameters
-std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterAngles() { return masterAngles_; }
-const std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterAngles() const { return masterAngles_; }
+std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() { return masterAngles_; }
+const std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() const { return masterAngles_; }
 
 // Return whether named master Angle parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::getMasterAngle(std::string_view name)
+OptionalReferenceWrapper<MasterAngle> CoreData::getMasterAngle(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -195,7 +189,7 @@ OptionalReferenceWrapper<MasterIntra> CoreData::getMasterAngle(std::string_view 
 }
 
 // Return whether named master Angle parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterAngle(std::string_view name) const
+OptionalReferenceWrapper<const MasterAngle> CoreData::getMasterAngle(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -207,28 +201,25 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterAngle(std::string
 }
 
 // Add new master Torsion parameters
-MasterIntra &CoreData::addMasterTorsion(std::string_view name)
+MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
 {
     // Check for existence of master Torsion already
     if (getMasterTorsion(name))
         throw(std::runtime_error(fmt::format(
             "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
 
-    // OK to add new master Torsion
-    auto masterTorsion = std::make_shared<MasterIntra>(name, SpeciesIntra::InteractionType::Torsion);
-    masterTorsions_.push_back(masterTorsion);
-    return *masterTorsion;
+    return *masterTorsions_.emplace_back(std::make_shared<MasterTorsion>(name));
 }
 
 // Return number of master Torsion parameters in list
 int CoreData::nMasterTorsions() const { return masterTorsions_.size(); }
 
 // Return list of master Torsion parameters
-std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterTorsions() { return masterTorsions_; }
-const std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterTorsions() const { return masterTorsions_; }
+std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() { return masterTorsions_; }
+const std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() const { return masterTorsions_; }
 
 // Return whether named master Torsion parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterTorsion(std::string_view name) const
+OptionalReferenceWrapper<const MasterTorsion> CoreData::getMasterTorsion(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -240,7 +231,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterTorsion(std::stri
 }
 
 // Return whether named master Torsion parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::getMasterTorsion(std::string_view name)
+OptionalReferenceWrapper<MasterTorsion> CoreData::getMasterTorsion(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -252,28 +243,25 @@ OptionalReferenceWrapper<MasterIntra> CoreData::getMasterTorsion(std::string_vie
 }
 
 // Add new master Improper parameters
-MasterIntra &CoreData::addMasterImproper(std::string_view name)
+MasterImproper &CoreData::addMasterImproper(std::string_view name)
 {
     // Check for existence of master Improper already
     if (getMasterImproper(name))
         throw(std::runtime_error(fmt::format(
             "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
 
-    // OK to add new master Improper
-    auto improper = std::make_shared<MasterIntra>(name, SpeciesIntra::InteractionType::Improper);
-    masterImpropers_.push_back(improper);
-    return *improper;
+    return *masterImpropers_.emplace_back(std::make_shared<MasterImproper>(name));
 }
 
 // Return number of master Improper parameters in list
 int CoreData::nMasterImpropers() const { return masterImpropers_.size(); }
 
 // Return list of master Improper parameters
-std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterImpropers() { return masterImpropers_; }
-const std::vector<std::shared_ptr<MasterIntra>> &CoreData::masterImpropers() const { return masterImpropers_; }
+std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() { return masterImpropers_; }
+const std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() const { return masterImpropers_; }
 
 // Return whether named master Improper parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterImproper(std::string_view name) const
+OptionalReferenceWrapper<const MasterImproper> CoreData::getMasterImproper(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -285,7 +273,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterImproper(std::str
 }
 
 // Return whether named master Improper parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::getMasterImproper(std::string_view name)
+OptionalReferenceWrapper<MasterImproper> CoreData::getMasterImproper(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -294,22 +282,6 @@ OptionalReferenceWrapper<MasterIntra> CoreData::getMasterImproper(std::string_vi
         if (DissolveSys::sameString(trimmedName, i->name()))
             return *i;
     return {};
-}
-
-// Return the named master term (of any form) if it exists
-OptionalReferenceWrapper<const MasterIntra> CoreData::findMasterTerm(std::string_view name) const
-{
-    OptionalReferenceWrapper<const MasterIntra> result;
-    result = getMasterBond(name);
-    if (result)
-        return result;
-    result = getMasterAngle(name);
-    if (result)
-        return result;
-    result = getMasterTorsion(name);
-    if (result)
-        return result;
-    return getMasterImproper(name);
 }
 
 // Clear all master terms

@@ -11,8 +11,28 @@
 class SpeciesAtom;
 class Species;
 
+// Torsion functional forms
+class TorsionFunctions
+{
+    public:
+    enum class Form
+    {
+        None,
+        Cosine,
+        Cos3,
+        Cos3C,
+        Cos4,
+        CosN,
+        CosNC,
+        UFFCosine,
+        FourierN
+    };
+    // Return enum options for Form
+    static EnumOptions<Form> forms();
+};
+
 // SpeciesTorsion Definition
-class SpeciesTorsion : public SpeciesIntra
+class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
@@ -74,35 +94,36 @@ class SpeciesTorsion : public SpeciesIntra
      * Interaction Parameters
      */
     public:
-    // Torsion functional forms
-    enum TorsionFunction
-    {
-        NoForm,
-        CosineForm,
-        Cos3Form,
-        Cos3CForm,
-        Cos4Form,
-        CosNForm,
-        CosNCForm,
-        UFFCosineForm,
-        FourierNForm
-    };
-    // Return enum options for TorsionFunction
-    static EnumOptions<TorsionFunction> torsionFunctions();
-
-    public:
     // Set up any necessary parameters
     void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
-    // Return type of this interaction
-    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified angle and functional form, given supplied parameters
-    static double energy(double angleInDegrees, int form, const std::vector<double> &params);
+    static double energy(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle and functional form, given supplied parameters
-    static double force(double angleInDegrees, int form, const std::vector<double> &params);
+    static double force(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
+};
+
+// MasterTorsion Definition
+class MasterTorsion : public SpeciesTorsion
+{
+    public:
+    explicit MasterTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
+
+    /*
+     * Identifying Name
+     */
+    private:
+    // Identifying name
+    std::string name_;
+
+    public:
+    // Set identifying name
+    void setName(std::string_view name) override { name_ = name; }
+    // Return identifying name
+    std::string_view name() const override { return name_; };
 };

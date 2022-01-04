@@ -40,9 +40,8 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
             case 1:
                 return bond.index(index.column()) + 1;
             case 2:
-                return bond.masterParameters()
-                           ? QString::fromStdString("@" + std::string(bond.masterParameters()->name()))
-                           : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(bond.form())));
+                return bond.masterTerm() ? QString::fromStdString("@" + std::string(bond.masterTerm()->name()))
+                                         : QString::fromStdString(std::string(BondFunctions::forms().keyword(bond.form())));
             case 3:
                 return QString::fromStdString(joinStrings(bond.parameters()));
             default:
@@ -75,7 +74,7 @@ Qt::ItemFlags SpeciesBondModel::flags(const QModelIndex &index) const
 {
     if (index.column() < 2)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 2 && bonds_[index.row()].masterParameters())
+    if (index.column() > 2 && bonds_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -93,7 +92,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             {
                 auto master = coreData_.getMasterBond(value.toString().toStdString());
                 if (master)
-                    item.setMasterParameters(&master->get());
+                    item.setMasterTerm(&master->get());
                 else
                     return false;
             }
@@ -101,8 +100,8 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             {
                 try
                 {
-                    SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(value.toString().toStdString());
-                    item.detachFromMasterIntra();
+                    auto bf = BondFunctions::forms().enumeration(value.toString().toStdString());
+                    item.detachFromMasterTerm();
                     item.setForm(bf);
                 }
                 catch (std::runtime_error &e)

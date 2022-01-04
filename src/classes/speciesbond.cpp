@@ -6,9 +6,17 @@
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
 
-SpeciesBond::SpeciesBond() : SpeciesIntra(SpeciesBond::NoForm) {}
+// Return enum options for BondFunction
+EnumOptions<BondFunctions::Form> BondFunctions::forms()
+{
+    return EnumOptions<BondFunctions::Form>("BondFunction", {{BondFunctions::Form::None, "None"},
+                                                             {BondFunctions::Form::Harmonic, "Harmonic", 2},
+                                                             {BondFunctions::Form::EPSR, "EPSR", 2}});
+}
 
-SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(SpeciesBond::NoForm) { assign(i, j); }
+SpeciesBond::SpeciesBond() : SpeciesIntra(BondFunctions::Form::None) {}
+
+SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(BondFunctions::Form::None) { assign(i, j); }
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 
@@ -25,6 +33,7 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -37,6 +46,7 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -52,6 +62,7 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     // Clean source
@@ -186,14 +197,6 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
  * Interaction Parameters
  */
 
-// Return enum options for BondFunction
-EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
-{
-    return EnumOptions<SpeciesBond::BondFunction>(
-        "BondFunction",
-        {{SpeciesBond::NoForm, "None"}, {SpeciesBond::HarmonicForm, "Harmonic", 2}, {SpeciesBond::EPSRForm, "EPSR", 2}});
-}
-
 // Set up any necessary parameters
 void SpeciesBond::setUp()
 {
@@ -206,7 +209,7 @@ void SpeciesBond::setUp()
      * This way, we can reference both general master parameters as well as others which depend on the atoms involved, for
      * instance
      */
-    if (form() == SpeciesBond::EPSRForm)
+    if (form() == BondFunctions::Form::EPSR)
     {
         // Work out omega-squared(ab) from mass of natural isotopes
         double massI = AtomicMass::mass(i_->Z());
@@ -222,9 +225,9 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
     const auto &params = parameters();
 
     double k = 0.0;
-    if (form() == SpeciesBond::HarmonicForm)
+    if (form() == BondFunctions::Form::Harmonic)
         k = params[0];
-    else if (form() == SpeciesBond::EPSRForm)
+    else if (form() == BondFunctions::Form::EPSR)
         k = params[0];
     else
     {
@@ -245,18 +248,15 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
     return v;
 }
 
-// Return type of this interaction
-SpeciesIntra::InteractionType SpeciesBond::type() const { return SpeciesIntra::InteractionType::Bond; }
-
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
     // Get pointer to relevant parameters array
     const auto &params = parameters();
 
-    if (form() == SpeciesBond::NoForm)
+    if (form() == BondFunctions::Form::None)
         return 0.0;
-    else if (form() == SpeciesBond::HarmonicForm)
+    else if (form() == BondFunctions::Form::Harmonic)
     {
         /*
          * Parameters:
@@ -266,7 +266,7 @@ double SpeciesBond::energy(double distance) const
         double delta = distance - params[1];
         return 0.5 * params[0] * delta * delta;
     }
-    else if (form() == SpeciesBond::EPSRForm)
+    else if (form() == BondFunctions::Form::EPSR)
     {
         /*
          * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
@@ -290,9 +290,9 @@ double SpeciesBond::force(double distance) const
     // Get pointer to relevant parameters array
     const auto &params = parameters();
 
-    if (form() == SpeciesBond::NoForm)
+    if (form() == BondFunctions::Form::None)
         return 0.0;
-    else if (form() == SpeciesBond::HarmonicForm)
+    else if (form() == BondFunctions::Form::Harmonic)
     {
         /*
          * V = -k * (r - eq)
@@ -303,7 +303,7 @@ double SpeciesBond::force(double distance) const
          */
         return -params[0] * (distance - params[1]);
     }
-    else if (form() == SpeciesBond::EPSRForm)
+    else if (form() == BondFunctions::Form::EPSR)
     {
         /*
          * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter

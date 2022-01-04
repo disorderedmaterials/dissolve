@@ -5,14 +5,14 @@
 #include "data/ff/atomtype.h"
 #include "data/ff/ff.h"
 
-ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, SpeciesBond::BondFunction form,
+ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
                                        const std::vector<double> &parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;
     form_ = form;
     parameters_ = parameters;
-    if (!SpeciesBond::bondFunctions().validNArgs(form, parameters_.size()))
+    if (!BondFunctions::forms().validNArgs(form, parameters_.size()))
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldBondTerm."));
 }
 
@@ -32,7 +32,7 @@ bool ForcefieldBondTerm::isMatch(const ForcefieldAtomType &i, const ForcefieldAt
 }
 
 // Return functional form index of interaction
-SpeciesBond::BondFunction ForcefieldBondTerm::form() const { return form_; }
+BondFunctions::Form ForcefieldBondTerm::form() const { return form_; }
 
 // Return array of parameters
 const std::vector<double> &ForcefieldBondTerm::parameters() const { return parameters_; }

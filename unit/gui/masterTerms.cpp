@@ -33,7 +33,8 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
 
     auto &masterBonds = dissolve.coreData().masterBonds();
 
-    MasterTermBondModel model(masterBonds);
+    MasterTermBondModel model;
+    model.setSourceData(masterBonds);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -75,7 +76,8 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
 
     auto &masterAngles = dissolve.coreData().masterAngles();
 
-    MasterTermAngleModel model(masterAngles);
+    MasterTermAngleModel model;
+    model.setSourceData(masterAngles);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -119,7 +121,8 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
 
     auto &masterTorsions = dissolve.coreData().masterTorsions();
 
-    MasterTermTorsionModel model(masterTorsions);
+    MasterTermTorsionModel model;
+    model.setSourceData(masterTorsions);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);

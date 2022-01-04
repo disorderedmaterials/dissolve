@@ -5,7 +5,6 @@
 
 #include "base/version.h"
 #include "classes/configuration.h"
-#include "classes/masterintra.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "templates/optionalref.h"
@@ -64,58 +63,56 @@ class CoreData
      * Master Intramolecular Terms
      */
     private:
-    // List of master Bond parameters for Species
-    std::vector<std::shared_ptr<MasterIntra>> masterBonds_;
-    // List of master Angles parameters for Species
-    std::vector<std::shared_ptr<MasterIntra>> masterAngles_;
-    // List of master Torsions parameters for Species
-    std::vector<std::shared_ptr<MasterIntra>> masterTorsions_;
-    // List of master Improper parameters for Species
-    std::vector<std::shared_ptr<MasterIntra>> masterImpropers_;
+    // Master Bond parameters for Species
+    std::vector<std::shared_ptr<MasterBond>> masterBonds_;
+    // Master Angles parameters for Species
+    std::vector<std::shared_ptr<MasterAngle>> masterAngles_;
+    // Master Torsions parameters for Species
+    std::vector<std::shared_ptr<MasterTorsion>> masterTorsions_;
+    // Master Improper parameters for Species
+    std::vector<std::shared_ptr<MasterImproper>> masterImpropers_;
 
     public:
     // Add new master Bond parameters
-    MasterIntra &addMasterBond(std::string_view name);
+    MasterBond &addMasterBond(std::string_view name);
     // Return number of master Bond parameters in list
     int nMasterBonds() const;
     // Return list of master Bond parameters
-    std::vector<std::shared_ptr<MasterIntra>> &masterBonds();
-    const std::vector<std::shared_ptr<MasterIntra>> &masterBonds() const;
+    std::vector<std::shared_ptr<MasterBond>> &masterBonds();
+    const std::vector<std::shared_ptr<MasterBond>> &masterBonds() const;
     // Return whether named master Bond parameters exist
-    OptionalReferenceWrapper<MasterIntra> getMasterBond(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> getMasterBond(std::string_view name) const;
+    OptionalReferenceWrapper<MasterBond> getMasterBond(std::string_view name);
+    OptionalReferenceWrapper<const MasterBond> getMasterBond(std::string_view name) const;
     // Add new master Angle parameters
-    MasterIntra &addMasterAngle(std::string_view name);
+    MasterAngle &addMasterAngle(std::string_view name);
     // Return number of master Angles parameters in list
     int nMasterAngles() const;
     // Return list of master Angle parameters
-    std::vector<std::shared_ptr<MasterIntra>> &masterAngles();
-    const std::vector<std::shared_ptr<MasterIntra>> &masterAngles() const;
+    std::vector<std::shared_ptr<MasterAngle>> &masterAngles();
+    const std::vector<std::shared_ptr<MasterAngle>> &masterAngles() const;
     // Return whether named master Angle parameters exist
-    OptionalReferenceWrapper<MasterIntra> getMasterAngle(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> getMasterAngle(std::string_view name) const;
+    OptionalReferenceWrapper<MasterAngle> getMasterAngle(std::string_view name);
+    OptionalReferenceWrapper<const MasterAngle> getMasterAngle(std::string_view name) const;
     // Add new master Torsion parameters
-    MasterIntra &addMasterTorsion(std::string_view name);
+    MasterTorsion &addMasterTorsion(std::string_view name);
     // Return number of master Torsions parameters in list
     int nMasterTorsions() const;
     // Return list of master Torsion parameters
-    std::vector<std::shared_ptr<MasterIntra>> &masterTorsions();
-    const std::vector<std::shared_ptr<MasterIntra>> &masterTorsions() const;
+    std::vector<std::shared_ptr<MasterTorsion>> &masterTorsions();
+    const std::vector<std::shared_ptr<MasterTorsion>> &masterTorsions() const;
     // Return whether named master Torsion parameters exist
-    OptionalReferenceWrapper<MasterIntra> getMasterTorsion(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> getMasterTorsion(std::string_view name) const;
+    OptionalReferenceWrapper<MasterTorsion> getMasterTorsion(std::string_view name);
+    OptionalReferenceWrapper<const MasterTorsion> getMasterTorsion(std::string_view name) const;
     // Add new master Improper parameters
-    MasterIntra &addMasterImproper(std::string_view name);
+    MasterImproper &addMasterImproper(std::string_view name);
     // Return number of master Impropers parameters in list
     int nMasterImpropers() const;
     // Return list of master Improper parameters
-    std::vector<std::shared_ptr<MasterIntra>> &masterImpropers();
-    const std::vector<std::shared_ptr<MasterIntra>> &masterImpropers() const;
+    std::vector<std::shared_ptr<MasterImproper>> &masterImpropers();
+    const std::vector<std::shared_ptr<MasterImproper>> &masterImpropers() const;
     // Return whether named master Improper parameters exist
-    OptionalReferenceWrapper<MasterIntra> getMasterImproper(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> getMasterImproper(std::string_view name) const;
-    // Return the named master term (of any form) if it exists
-    OptionalReferenceWrapper<const MasterIntra> findMasterTerm(std::string_view name) const;
+    OptionalReferenceWrapper<MasterImproper> getMasterImproper(std::string_view name);
+    OptionalReferenceWrapper<const MasterImproper> getMasterImproper(std::string_view name) const;
     // Clear all master terms
     void clearMasterTerms();
 

@@ -6,7 +6,7 @@
 #include "data/ff/ff.h"
 
 ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                                             std::string_view typeL, SpeciesTorsion::TorsionFunction form,
+                                             std::string_view typeL, TorsionFunctions::Form form,
                                              const std::vector<double> &parameters)
 {
     typeI_ = typeI;
@@ -15,7 +15,7 @@ ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string
     typeL_ = typeL;
     form_ = form;
     parameters_ = parameters;
-    if (!SpeciesTorsion::torsionFunctions().validNArgs(form, parameters_.size()))
+    if (!TorsionFunctions::forms().validNArgs(form, parameters_.size()))
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldTorsionTerm."));
 }
 
@@ -38,7 +38,7 @@ bool ForcefieldTorsionTerm::isMatch(const ForcefieldAtomType &i, const Forcefiel
 }
 
 // Return functional form index of interaction
-SpeciesTorsion::TorsionFunction ForcefieldTorsionTerm::form() const { return form_; }
+TorsionFunctions::Form ForcefieldTorsionTerm::form() const { return form_; }
 
 // Return array of parameters
 const std::vector<double> &ForcefieldTorsionTerm::parameters() const { return parameters_; }

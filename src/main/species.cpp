@@ -60,67 +60,66 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     destAtom->setAtomType(at);
 }
 
-// Copy intramolecular interaction parameters, adding MasterIntra if necessary
-void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &destIntra)
+// Copy intramolecular interaction parameters, adding master term if necessary
+void Dissolve::copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest)
 {
-    // Remove any existing master parameters link from the destination object
-    if (destIntra.masterParameters())
-        destIntra.detachFromMasterIntra();
-
-    // If sourceIntra references a MasterIntra, check if it already exists
-    if (sourceIntra.masterParameters())
+    if (source.masterTerm())
     {
-        // Search for MasterIntra by the same name in our main Dissolve instance
-        OptionalReferenceWrapper<MasterIntra> master = {};
-        if (sourceIntra.type() == SpeciesIntra::InteractionType::Bond)
+        auto master = coreData_.getMasterBond(source.masterTerm()->name());
+        if (!master)
         {
-            master = coreData_.getMasterBond(sourceIntra.masterParameters()->name());
-            if (!master)
-            {
-                master = coreData_.addMasterBond(sourceIntra.masterParameters()->name());
-                master->get().setParameters(sourceIntra.parameters());
-            }
+            master = coreData_.addMasterBond(source.masterTerm()->name());
+            master->get().setFormAndParameters(source.form(), source.parameters());
         }
-        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Angle)
-        {
-            master = coreData_.getMasterAngle(sourceIntra.masterParameters()->name());
-            if (!master)
-            {
-                master = coreData_.addMasterAngle(sourceIntra.masterParameters()->name());
-                master->get().setParameters(sourceIntra.parameters());
-            }
-        }
-        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Torsion)
-        {
-            master = coreData_.getMasterTorsion(sourceIntra.masterParameters()->name());
-            if (!master)
-            {
-                master = coreData_.addMasterTorsion(sourceIntra.masterParameters()->name());
-                master->get().setParameters(sourceIntra.parameters());
-            }
-        }
-        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Improper)
-        {
-            master = coreData_.getMasterImproper(sourceIntra.masterParameters()->name());
-            if (!master)
-            {
-                master = coreData_.addMasterImproper(sourceIntra.masterParameters()->name());
-                master->get().setParameters(sourceIntra.parameters());
-            }
-        }
-
-        // Copy the form of the parameters
-        master->get().setForm(sourceIntra.masterParameters()->form());
-
-        // Set the master pointer in the interaction
-        destIntra.setMasterParameters(&master->get());
+        dest.setMasterTerm(&master->get());
     }
     else
+        dest.setFormAndParameters(source.form(), source.parameters());
+}
+void Dissolve::copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest)
+{
+    if (source.masterTerm())
     {
-        // Just copy over form / parameters
-        destIntra.setForm(sourceIntra.form());
-        destIntra.setParameters(sourceIntra.parameters());
+        auto master = coreData_.getMasterAngle(source.masterTerm()->name());
+        if (!master)
+        {
+            master = coreData_.addMasterAngle(source.masterTerm()->name());
+            master->get().setFormAndParameters(source.form(), source.parameters());
+        }
+        dest.setMasterTerm(&master->get());
     }
+    else
+        dest.setFormAndParameters(source.form(), source.parameters());
+}
+void Dissolve::copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest)
+{
+    if (source.masterTerm())
+    {
+        auto master = coreData_.getMasterTorsion(source.masterTerm()->name());
+        if (!master)
+        {
+            master = coreData_.addMasterTorsion(source.masterTerm()->name());
+            master->get().setFormAndParameters(source.form(), source.parameters());
+        }
+        dest.setMasterTerm(&master->get());
+    }
+    else
+        dest.setFormAndParameters(source.form(), source.parameters());
+}
+void Dissolve::copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest)
+{
+    if (source.masterTerm())
+    {
+        auto master = coreData_.getMasterImproper(source.masterTerm()->name());
+        if (!master)
+        {
+            master = coreData_.addMasterImproper(source.masterTerm()->name());
+            master->get().setFormAndParameters(source.form(), source.parameters());
+        }
+        dest.setMasterTerm(&master->get());
+    }
+    else
+        dest.setFormAndParameters(source.form(), source.parameters());
 }
 
 // Copy Species from supplied instance
@@ -151,9 +150,7 @@ Species *Dissolve::copySpecies(const Species *species)
     {
         // Create the bond in the new Species
         auto &newBond = newSpecies->addBond(bond.indexI(), bond.indexJ());
-
-        // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(bond, newBond);
+        copySpeciesBond(bond, newBond);
     }
 
     // Duplicate angles
@@ -161,20 +158,15 @@ Species *Dissolve::copySpecies(const Species *species)
     {
         // Create the angle in the new Species
         auto &newAngle = newSpecies->addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
-
-        // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(angle, newAngle);
+        copySpeciesAngle(angle, newAngle);
     }
 
     // Duplicate torsions
     for (const auto &torsion : species->torsions())
     {
         // Create the torsion in the new Species
-        SpeciesTorsion &newTorsion =
-            newSpecies->addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
-
-        // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(torsion, newTorsion);
+        auto &newTorsion = newSpecies->addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
+        copySpeciesTorsion(torsion, newTorsion);
     }
 
     // Duplicate impropers
@@ -182,9 +174,7 @@ Species *Dissolve::copySpecies(const Species *species)
     {
         // Create the improper in the new Species
         auto &newImproper = newSpecies->addImproper(t.indexI(), t.indexJ(), t.indexK(), t.indexL());
-
-        // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(t, newImproper);
+        copySpeciesImproper(t, newImproper);
     }
 
     return newSpecies;

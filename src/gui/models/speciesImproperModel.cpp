@@ -1,6 +1,5 @@
 #include "gui/models/speciesImproperModel.h"
 #include "classes/coredata.h"
-#include "classes/masterintra.h"
 #include "gui/models/speciesModelUtils.h"
 #include "templates/algorithms.h"
 
@@ -46,9 +45,8 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
             case 3:
                 return item.index(index.column()) + 1;
             case 4:
-                return item.masterParameters()
-                           ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
-                           : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
+                return item.masterTerm() ? QString::fromStdString("@" + std::string(item.masterTerm()->name()))
+                                         : QString::fromStdString(TorsionFunctions::forms().keyword(item.form()));
             case 5:
                 return QString::fromStdString(joinStrings(item.parameters()));
             default:
@@ -88,7 +86,7 @@ Qt::ItemFlags SpeciesImproperModel::flags(const QModelIndex &index) const
 {
     if (index.column() < 4)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 4 && impropers_[index.row()].masterParameters())
+    if (index.column() > 4 && impropers_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -108,7 +106,7 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
             {
                 auto master = coreData_.getMasterImproper(value.toString().toStdString());
                 if (master)
-                    item.setMasterParameters(&master->get());
+                    item.setMasterTerm(&master->get());
                 else
                     return false;
             }
@@ -116,8 +114,8 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
             {
                 try
                 {
-                    auto tf = SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
-                    item.detachFromMasterIntra();
+                    auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
+                    item.detachFromMasterTerm();
                     item.setForm(tf);
                 }
                 catch (std::runtime_error &e)

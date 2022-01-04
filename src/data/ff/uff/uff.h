@@ -7,12 +7,9 @@
 #include "templates/optionalref.h"
 
 // Forward Declarations
-class CoreData;
-class Species;
 class SpeciesAngle;
 class SpeciesAtom;
 class SpeciesBond;
-class SpeciesIntra;
 class SpeciesTorsion;
 
 // Universal Forcefield

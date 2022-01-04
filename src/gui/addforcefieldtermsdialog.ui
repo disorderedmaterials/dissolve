@@ -718,7 +718,7 @@ Existing data will remain unchanged</string>
              <number>4</number>
             </property>
             <item>
-             <widget class="QTreeWidget" name="MasterTermsTree">
+             <widget class="QTreeView" name="MasterTermsTree">
               <property name="selectionMode">
                <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
@@ -731,14 +731,9 @@ Existing data will remain unchanged</string>
                 <height>20</height>
                </size>
               </property>
-              <attribute name="headerVisible">
-               <bool>false</bool>
+              <attribute name="headerDefaultSectionSize">
+               <number>26</number>
               </attribute>
-              <column>
-               <property name="text">
-                <string notr="true">1</string>
-               </property>
-              </column>
              </widget>
             </item>
             <item>

@@ -9,8 +9,18 @@
 #include <QIcon>
 #include <QModelIndex>
 #include <QObject>
-
 #include <vector>
+
+namespace MasterTermModelData
+{
+// Enumerated data items for terms
+enum DataType
+{
+    Name = 0,
+    Form = 1,
+    Parameters = 2
+};
+}; // namespace MasterTermModelData
 
 // Base master term model
 class MasterTermModel : public QAbstractTableModel
@@ -18,56 +28,127 @@ class MasterTermModel : public QAbstractTableModel
     Q_OBJECT
 
     public:
-    MasterTermModel(std::vector<std::shared_ptr<MasterIntra>> intras, QObject *parent = nullptr);
+    MasterTermModel(QObject *parent = nullptr);
+
+    private:
+    // Icon return function
+    std::function<QIcon(std::string_view termName)> iconFunction_;
+
+    public:
+    // Return number of terms in data
+    virtual int nTerms() const = 0;
+    // Return model data, by type, for specified term index
+    virtual QVariant getTermData(int index, MasterTermModelData::DataType dataType) const = 0;
+    // Set model data, by type, for specified term index
+    virtual bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) = 0;
+    // Set function to return QIcon for item
+    void setIconFunction(std::function<QIcon(std::string_view termName)> func);
+
     /*
      * QAbstractItemModel overrides
      */
+    public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-    void reset(std::vector<std::shared_ptr<MasterIntra>> &intras);
-
-    // Set function to return QIcon for item
-    void setIconFunction(std::function<QIcon(const MasterIntra *term)> func);
-
-    protected:
-    // Source MasterIntra data
-    std::vector<std::shared_ptr<MasterIntra>> intras_;
-
-    private:
-    // Icon return function
-    std::function<QIcon(const MasterIntra *term)> iconFunction_;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 };
 
 class MasterTermBondModel : public MasterTermModel
 {
+    protected:
+    // Source term data
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterBond>>> bonds_;
+
     public:
-    MasterTermBondModel(std::vector<std::shared_ptr<MasterIntra>> intras, QObject *parent = nullptr)
-        : MasterTermModel(std::move(intras), parent)
-    {
-    }
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    MasterTermBondModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
+    void setSourceData(std::vector<std::shared_ptr<MasterBond>> &bonds);
+    int nTerms() const;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
 };
+
 class MasterTermAngleModel : public MasterTermModel
 {
+    protected:
+    // Source term data
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterAngle>>> angles_;
+
     public:
-    MasterTermAngleModel(std::vector<std::shared_ptr<MasterIntra>> intras, QObject *parent = nullptr)
-        : MasterTermModel(std::move(intras), parent)
-    {
-    }
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    MasterTermAngleModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
+    void setSourceData(std::vector<std::shared_ptr<MasterAngle>> &angles);
+    int nTerms() const;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
 };
 
 class MasterTermTorsionModel : public MasterTermModel
 {
+    protected:
+    // Source term data
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterTorsion>>> torsions_;
+
     public:
-    MasterTermTorsionModel(std::vector<std::shared_ptr<MasterIntra>> intras, QObject *parent = nullptr)
-        : MasterTermModel(std::move(intras), parent)
-    {
-    }
+    MasterTermTorsionModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
+    void setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &torsions);
+    int nTerms() const;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
+};
+
+class MasterTermImproperModel : public MasterTermModel
+{
+    protected:
+    // Source term data
+    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterImproper>>> impropers_;
+
+    public:
+    MasterTermImproperModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
+    void setSourceData(std::vector<std::shared_ptr<MasterImproper>> &impropers);
+    int nTerms() const;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
+};
+
+// Master Terms Tree Model
+class MasterTermTreeModel : public QAbstractItemModel
+{
+    Q_OBJECT
+
+    private:
+    // Term models
+    MasterTermBondModel bondModel_;
+    MasterTermAngleModel angleModel_;
+    MasterTermTorsionModel torsionModel_;
+    MasterTermImproperModel improperModel_;
+
+    private:
+    MasterTermModel &modelForTopLevelRow(int row);
+
+    public:
+    void setData(std::vector<std::shared_ptr<MasterBond>> &bonds, std::vector<std::shared_ptr<MasterAngle>> &angles,
+                 std::vector<std::shared_ptr<MasterTorsion>> &torsions,
+                 std::vector<std::shared_ptr<MasterImproper>> &impropers);
+    void setBondIconFunction(std::function<QIcon(std::string_view termName)> func);
+    void setAngleIconFunction(std::function<QIcon(std::string_view termName)> func);
+    void setTorsionIconFunction(std::function<QIcon(std::string_view termName)> func);
+    void setImproperIconFunction(std::function<QIcon(std::string_view termName)> func);
+    void prefixNames(QList<QModelIndex> indices, QString prefix);
+    void suffixNames(QList<QModelIndex> indices, QString suffix);
+
+    /*
+     * QAbstractItemModel overrides
+     */
+    public:
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    bool hasChildren(const QModelIndex &parent) const override;
+    QModelIndex parent(const QModelIndex &index) const override;
+    QModelIndex index(int row, int column, const QModelIndex &parent) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 };

@@ -108,11 +108,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     OptionalReferenceWrapper<SpeciesBond> b;
     OptionalReferenceWrapper<SpeciesImproper> imp;
     OptionalReferenceWrapper<SpeciesTorsion> torsion;
-    OptionalReferenceWrapper<MasterIntra> master;
     SpeciesSite *site;
-    SpeciesBond::BondFunction bf;
-    SpeciesAngle::AngleFunction af;
-    SpeciesTorsion::TorsionFunction tf;
+    BondFunctions::Form bf;
+    AngleFunctions::Form af;
+    TorsionFunctions::Form tf;
     SpeciesBond::BondType bt;
     Vec3<double> boxAngles(90.0, 90.0, 90.0);
     std::optional<Vec3<double>> boxLengths;
@@ -162,11 +161,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * '@' it is a reference to master parameters
                  */
                 if (parser.nArgs() == 4)
-                    a->get().setForm(SpeciesAngle::NoForm);
+                    a->get().setForm(AngleFunctions::Form::None);
                 else if (parser.argsv(4)[0] == '@')
                 {
                     // Search through master Angle parameters to see if this name exists
-                    master = coreData.getMasterAngle(parser.argsv(4));
+                    auto master = coreData.getMasterAngle(parser.argsv(4));
                     if (!master)
                     {
                         Messenger::error("No master Angle parameters named '{}' exist.\n", &parser.argsv(4)[1]);
@@ -174,21 +173,21 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    a->get().setMasterParameters(&master->get());
+                    a->get().setMasterTerm(&master->get());
                 }
                 else
                 {
-                    if (!SpeciesAngle::angleFunctions().isValid(parser.argsv(4)))
+                    if (!AngleFunctions::forms().isValid(parser.argsv(4)))
                     {
                         Messenger::error("Functional form of Angle ({}) not recognised.\n", parser.argsv(4));
                         error = true;
                         break;
                     }
-                    af = SpeciesAngle::angleFunctions().enumeration(parser.argsv(4));
+                    af = AngleFunctions::forms().enumeration(parser.argsv(4));
                     a->get().setForm(af);
 
                     // Check number of args provided
-                    if (!SpeciesAngle::angleFunctions().validNArgs(af, parser.nArgs() - 5))
+                    if (!AngleFunctions::forms().validNArgs(af, parser.nArgs() - 5))
                     {
                         error = true;
                         break;
@@ -257,11 +256,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * '@' it is a reference to master parameters
                  */
                 if (parser.nArgs() == 3)
-                    b->get().setForm(SpeciesBond::NoForm);
+                    b->get().setForm(BondFunctions::Form::None);
                 else if (parser.argsv(3)[0] == '@')
                 {
                     // Search through master Bond parameters to see if this name exists
-                    master = coreData.getMasterBond(parser.argsv(3));
+                    auto master = coreData.getMasterBond(parser.argsv(3));
                     if (!master)
                     {
                         Messenger::error("No master Bond parameters named '{}' exist.\n", &parser.argsv(3)[1]);
@@ -269,22 +268,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    b->get().setMasterParameters(&master->get());
+                    b->get().setMasterTerm(&master->get());
                 }
                 else
                 {
                     // Check the functional form specified
-                    if (!SpeciesBond::bondFunctions().isValid(parser.argsv(3)))
+                    if (!BondFunctions::forms().isValid(parser.argsv(3)))
                     {
                         Messenger::error("Functional form of Bond ({}) not recognised.\n", parser.argsv(3));
                         error = true;
                         break;
                     }
-                    bf = SpeciesBond::bondFunctions().enumeration(parser.argsv(3));
+                    bf = BondFunctions::forms().enumeration(parser.argsv(3));
                     b->get().setForm(bf);
 
                     // Check number of args provided
-                    if (!SpeciesBond::bondFunctions().validNArgs(bf, parser.nArgs() - 4))
+                    if (!BondFunctions::forms().validNArgs(bf, parser.nArgs() - 4))
                     {
                         error = true;
                         break;
@@ -434,22 +433,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    imp->get().setMasterParameters(&master->get());
+                    imp->get().setMasterTerm(&master->get());
                 }
                 else
                 {
                     // Check the functional form specified
-                    if (!SpeciesTorsion::torsionFunctions().isValid(parser.argsv(5)))
+                    if (!TorsionFunctions::forms().isValid(parser.argsv(5)))
                     {
                         Messenger::error("Functional form of Improper ({}) not recognised.\n", parser.argsv(5));
                         error = true;
                         break;
                     }
-                    tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argsv(5));
+                    tf = TorsionFunctions::forms().enumeration(parser.argsv(5));
                     imp->get().setForm(tf);
 
                     // Check number of args provided
-                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 6))
+                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 6))
                     {
                         error = true;
                         break;
@@ -591,7 +590,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * '@' it is a reference to master parameters
                  */
                 if (parser.nArgs() == 5)
-                    torsion->get().setForm(SpeciesTorsion::NoForm);
+                    torsion->get().setForm(TorsionFunctions::Form::None);
                 else if (parser.argsv(5)[0] == '@')
                 {
                     // Search through master Torsion parameters to see if this name exists
@@ -603,22 +602,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    torsion->get().setMasterParameters(&master->get());
+                    torsion->get().setMasterTerm(&master->get());
                 }
                 else
                 {
                     // Check the functional form specified
-                    if (!SpeciesTorsion::torsionFunctions().isValid(parser.argsv(5)))
+                    if (!TorsionFunctions::forms().isValid(parser.argsv(5)))
                     {
                         Messenger::error("Functional form of Torsion ({}) not recognised.\n", parser.argsv(5));
                         error = true;
                         break;
                     }
-                    tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argsv(5));
+                    tf = TorsionFunctions::forms().enumeration(parser.argsv(5));
                     torsion->get().setForm(tf);
 
                     // Check number of args provided
-                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 6))
+                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 6))
                     {
                         error = true;
                         break;
@@ -690,17 +689,16 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (const auto &bond : bonds_)
         {
-            if (bond.masterParameters())
+            if (bond.masterTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
-                                       bond.masterParameters()->name()))
+                                       bond.masterTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {} {}\n", newPrefix,
                                         keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
-                                        SpeciesBond::bondFunctions().keywordFromInt(bond.form()),
-                                        joinStrings(bond.parameters(), "  ")))
+                                        BondFunctions::forms().keyword(bond.form()), joinStrings(bond.parameters(), "  ")))
                 return false;
 
             // Add the bond to the reference vector based on its indicated bond type (unless it is a SingleBond,
@@ -738,17 +736,17 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (const auto &angle : angles())
         {
-            if (angle.masterParameters())
+            if (angle.masterTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
-                                       angle.indexJ() + 1, angle.indexK() + 1, angle.masterParameters()->name()))
+                                       angle.indexJ() + 1, angle.indexK() + 1, angle.masterTerm()->name()))
                     return false;
             }
-            else if (!parser.writeLineF(
-                         "{}{}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Angle),
-                         angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
-                         SpeciesAngle::angleFunctions().keywordFromInt(angle.form()), joinStrings(angle.parameters(), "  ")))
+            else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
+                                        keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
+                                        angle.indexJ() + 1, angle.indexK() + 1, AngleFunctions::forms().keyword(angle.form()),
+                                        joinStrings(angle.parameters(), "  ")))
                 return false;
         }
     }
@@ -763,18 +761,18 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (const auto &torsion : torsions())
         {
-            if (torsion.masterParameters())
+            if (torsion.masterTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
                                        torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                       torsion.masterParameters()->name()))
+                                       torsion.masterTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF(fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
                                                     keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
                                                     torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                                    SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()),
+                                                    TorsionFunctions::forms().keyword(torsion.form()),
                                                     joinStrings(torsion.parameters(), "  "))))
                 return false;
         }
@@ -790,18 +788,17 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (auto &imp : impropers())
         {
-            if (imp.masterParameters())
+            if (imp.masterTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
-                                       imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1, imp.masterParameters()->name()))
+                                       imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1, imp.masterTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
                                         keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
                                         imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
-                                        SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()),
-                                        joinStrings(imp.parameters(), "  ")))
+                                        TorsionFunctions::forms().keyword(imp.form()), joinStrings(imp.parameters(), "  ")))
                 return false;
         }
     }

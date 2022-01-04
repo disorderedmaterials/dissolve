@@ -31,30 +31,31 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     connect(&atomTypeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(atomTypeConflictsDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 
+    // Set model and signals for the master terms tree
+    masterTermModel_.setBondIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
+                                                              : ":/general/icons/general_true.svg");
+    });
+    masterTermModel_.setAngleIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
+                                                               : ":/general/icons/general_true.svg");
+    });
+    masterTermModel_.setTorsionIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
+                                                                 : ":/general/icons/general_true.svg");
+    });
+    ui_.MasterTermsTree->setModel(&masterTermModel_);
+    connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+            SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(ui_.MasterTermsTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterTermSelectionChanged(const QItemSelection &, const QItemSelection &)));
+
     // Set initial state of controls
     if (!targetSpecies_->selectedAtoms().empty())
     {
         ui_.AtomTypesAssignSelectionRadio->setChecked(true);
         ui_.IntramolecularTermsAssignSelectionRadio->setChecked(true);
     }
-
-    // Create parent items for MasterTerms tree
-    masterBondItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
-    masterBondItemParent_->setFlags(Qt::ItemIsEnabled);
-    masterBondItemParent_->setExpanded(true);
-    masterBondItemParent_->setText(0, "Bonds");
-    masterAngleItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
-    masterAngleItemParent_->setFlags(Qt::ItemIsEnabled);
-    masterAngleItemParent_->setText(0, "Angles");
-    masterAngleItemParent_->setExpanded(true);
-    masterTorsionItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
-    masterTorsionItemParent_->setFlags(Qt::ItemIsEnabled);
-    masterTorsionItemParent_->setText(0, "Torsions");
-    masterTorsionItemParent_->setExpanded(true);
-    masterImproperItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
-    masterImproperItemParent_->setFlags(Qt::ItemIsEnabled);
-    masterImproperItemParent_->setText(0, "Impropers");
-    masterImproperItemParent_->setExpanded(true);
 
     // Register pages with the wizard
     registerPage(AddForcefieldTermsDialog::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsDialog::AtomTypesPage);
@@ -64,9 +65,6 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
                  AddForcefieldTermsDialog::IntramolecularPage);
     registerPage(AddForcefieldTermsDialog::IntramolecularPage, "Assign Intramolecular Terms");
     registerPage(AddForcefieldTermsDialog::MasterTermsPage, "Check Master Terms");
-
-    // Connect signals / slots
-    connect(ui_.MasterTermsTree->itemDelegate(), SIGNAL(commitData(QWidget *)), this, SLOT(masterTermsTreeEdited(QWidget *)));
 
     initialise(this, ui_.MainStack, AddForcefieldTermsDialog::SelectForcefieldPage);
 }
@@ -144,6 +142,12 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
         case (AddForcefieldTermsDialog::IntramolecularPage):
             if (!assignIntramolecularTerms(ff.get()))
                 return false;
+
+            masterTermModel_.setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(),
+                                     temporaryCoreData_.masterTorsions(), temporaryCoreData_.masterImpropers());
+            ui_.MasterTermsTree->expandAll();
+            ui_.MasterTermsTree->resizeColumnToContents(0);
+            ui_.MasterTermsTree->resizeColumnToContents(1);
 
             updateMasterTermsPage();
 
@@ -233,7 +237,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesIntra(*modifiedBond, originalBond);
+            dissolve_.copySpeciesBond(*modifiedBond, originalBond);
 
             ++modifiedBond;
         }
@@ -245,7 +249,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalAngle.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesIntra(*modifiedAngle, originalAngle);
+            dissolve_.copySpeciesAngle(*modifiedAngle, originalAngle);
 
             ++modifiedAngle;
         }
@@ -257,7 +261,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalTorsion.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesIntra(*modifiedTorsion, originalTorsion);
+            dissolve_.copySpeciesTorsion(*modifiedTorsion, originalTorsion);
 
             ++modifiedTorsion;
         }
@@ -272,12 +276,12 @@ void AddForcefieldTermsDialog::finalise()
             auto optImproper = targetSpecies_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                            modifiedImproper.indexK(), modifiedImproper.indexL());
             if (optImproper)
-                dissolve_.copySpeciesIntra(modifiedImproper, *optImproper);
+                dissolve_.copySpeciesImproper(modifiedImproper, *optImproper);
             else
             {
                 auto &improper = targetSpecies_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                              modifiedImproper.indexK(), modifiedImproper.indexL());
-                dissolve_.copySpeciesIntra(modifiedImproper, improper);
+                dissolve_.copySpeciesImproper(modifiedImproper, improper);
             }
         }
     }
@@ -409,64 +413,31 @@ bool AddForcefieldTermsDialog::assignIntramolecularTerms(const Forcefield *ff)
  * MasterTerms Page
  */
 
-// Row update function for MasterTermsList
-void AddForcefieldTermsDialog::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex,
-                                                          const MasterIntra *masterIntra, bool createItem)
-{
-    QTreeWidgetItem *item;
-    if (createItem)
-    {
-        item = new QTreeWidgetItem;
-        item->setData(0, Qt::UserRole, VariantPointer<MasterIntra>(masterIntra));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-        parent->insertChild(childIndex, item);
-    }
-    else
-        item = parent->child(childIndex);
-
-    // Set item data
-    item->setText(0, QString::fromStdString(std::string(masterIntra->name())));
-    item->setIcon(0, QIcon(dissolve_.coreData().findMasterTerm(masterIntra->name()) ? ":/general/icons/general_warn.svg"
-                                                                                    : ":/general/icons/general_true.svg"));
-}
-
 // Update page with MasterTerms in our temporary Dissolve reference
 void AddForcefieldTermsDialog::updateMasterTermsPage()
 {
-    // Update the list against the global MasterTerm tree
-    TreeWidgetUpdater<AddForcefieldTermsDialog, MasterIntra> bondUpdater(
-        masterBondItemParent_, temporaryCoreData_.masterBonds(), this, &AddForcefieldTermsDialog::updateMasterTermsTreeChild);
-    TreeWidgetUpdater<AddForcefieldTermsDialog, MasterIntra> angleUpdater(
-        masterAngleItemParent_, temporaryCoreData_.masterAngles(), this, &AddForcefieldTermsDialog::updateMasterTermsTreeChild);
-    TreeWidgetUpdater<AddForcefieldTermsDialog, MasterIntra> torsionUpdater(
-        masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this,
-        &AddForcefieldTermsDialog::updateMasterTermsTreeChild);
-    TreeWidgetUpdater<AddForcefieldTermsDialog, MasterIntra> improperUpdater(
-        masterImproperItemParent_, temporaryCoreData_.masterImpropers(), this,
-        &AddForcefieldTermsDialog::updateMasterTermsTreeChild);
-
     // Determine whether we have any naming conflicts
     auto conflicts = false;
     for (auto &intra : temporaryCoreData_.masterBonds())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterBond(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterAngles())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterAngle(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterTorsions())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterTorsion(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterImpropers())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterImproper(intra->name()))
         {
             conflicts = true;
             break;
@@ -478,47 +449,18 @@ void AddForcefieldTermsDialog::updateMasterTermsPage()
         ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
 }
 
-void AddForcefieldTermsDialog::on_MasterTermsTree_itemSelectionChanged()
+void AddForcefieldTermsDialog::masterTermDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
-    // Enable / disable prefix and suffix buttons as appropriate
-    auto isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
-    ui_.MasterTermsPrefixButton->setEnabled(isSelection);
-    ui_.MasterTermsSuffixButton->setEnabled(isSelection);
+    updateMasterTermsPage();
 }
 
-void AddForcefieldTermsDialog::masterTermsTreeEdited(QWidget *lineEdit)
+void AddForcefieldTermsDialog::masterTermSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
-    // Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here
-    // before updating the page
-    for (auto n = 0; n < masterBondItemParent_->childCount(); ++n)
-    {
-        QTreeWidgetItem *item = masterBondItemParent_->child(n);
-        MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
-        if (!intra)
-            continue;
-
-        intra->setName(qPrintable(item->text(0)));
-    }
-    for (auto n = 0; n < masterAngleItemParent_->childCount(); ++n)
-    {
-        QTreeWidgetItem *item = masterAngleItemParent_->child(n);
-        MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
-        if (!intra)
-            continue;
-
-        intra->setName(qPrintable(item->text(0)));
-    }
-    for (auto n = 0; n < masterTorsionItemParent_->childCount(); ++n)
-    {
-        QTreeWidgetItem *item = masterTorsionItemParent_->child(n);
-        MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
-        if (!intra)
-            continue;
-
-        intra->setName(qPrintable(item->text(0)));
-    }
-
-    updateMasterTermsPage();
+    // Enable / disable prefix and suffix buttons as appropriate
+    auto indices = current.indexes();
+    auto isSelection = std::any_of(indices.begin(), indices.end(), [](const auto &index) { return index.parent().isValid(); });
+    ui_.MasterTermsPrefixButton->setEnabled(isSelection);
+    ui_.MasterTermsSuffixButton->setEnabled(isSelection);
 }
 
 void AddForcefieldTermsDialog::on_MasterTermsPrefixButton_clicked(bool checked)
@@ -529,12 +471,7 @@ void AddForcefieldTermsDialog::on_MasterTermsPrefixButton_clicked(bool checked)
     if (!ok)
         return;
 
-    QList<QTreeWidgetItem *> selectedItems = ui_.MasterTermsTree->selectedItems();
-    for (auto &i : selectedItems)
-    {
-        MasterIntra *intra = VariantPointer<MasterIntra>(i->data(0, Qt::UserRole));
-        intra->setName(fmt::format("{}{}", qPrintable(prefix), intra->name()));
-    }
+    masterTermModel_.prefixNames(ui_.MasterTermsTree->selectionModel()->selection().indexes(), prefix);
 
     updateMasterTermsPage();
 }
@@ -547,12 +484,7 @@ void AddForcefieldTermsDialog::on_MasterTermsSuffixButton_clicked(bool checked)
     if (!ok)
         return;
 
-    QList<QTreeWidgetItem *> selectedItems = ui_.MasterTermsTree->selectedItems();
-    for (auto &i : selectedItems)
-    {
-        MasterIntra *intra = VariantPointer<MasterIntra>(i->data(0, Qt::UserRole));
-        intra->setName(fmt::format("{}{}", intra->name(), qPrintable(suffix)));
-    }
+    masterTermModel_.suffixNames(ui_.MasterTermsTree->selectionModel()->selection().indexes(), suffix);
 
     updateMasterTermsPage();
 }
