@@ -40,6 +40,8 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
+      nix-channel --add https://nixos.org/channels/nixos-21.11 nixos
+      nix-channel --update
       mkdir -p .config/cachix
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       nix-env -iA nixos.jq
