@@ -19,7 +19,7 @@ steps:
       set -ex
       # -- General
       sudo apt-get update -q
-      sudo apt-get install curl gpg jq
+      sudo apt-get install curl gpg
       curl -o install-nix${{ parameters.nix_version }} https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install
       curl -o install-nix${{ parameters.nix_version }}.asc https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install.asc
       gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
@@ -34,6 +34,7 @@ steps:
       source ~/.nix-profile/etc/profile.d/nix.sh
       mkdir -p .config/cachix
       nix-env -iA cachix -f https://cachix.org/api/v1/install
+      nix-env -iA jq
       cachix use dissolve-nix
     displayName: 'Install Cachix'
   - bash: |
@@ -42,6 +43,14 @@ steps:
       nix build -L .#${{ parameters.package }}
       nix build --json .#${{ parameters.package }} > archive.json
     displayName: 'Build'
+  - bash: |
+      set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      cp /usr/bin/env ./
+      rm -rf /usr/*
+      mkdir -p /usr/bin
+      cp ./env /usr/bin/env
+    displayName: 'Remove redundant ubuntu executables'
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
