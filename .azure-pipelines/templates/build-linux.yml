@@ -33,10 +33,11 @@ steps:
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
       cp /usr/bin/env ./
-      du -sh /usr/*
+      ls /
+      sudo rm -rf /usr/lib*
       sudo rm -rf /usr/local*
-      sudo rm -rf /usr/src*
       sudo rm -rf /usr/share*
+      sudo rm -rf /usr/src*
       sudo mkdir -p /usr/bin
       sudo cp ./env /usr/bin/env
     displayName: 'Remove redundant ubuntu executables'
