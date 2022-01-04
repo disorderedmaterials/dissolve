@@ -21,6 +21,7 @@ stages:
             displayName: "Publish Linux GUI Artifacts"
       - job: "linux_singularity"
         displayName: "Ubuntu, Threads, CLI/GUI, Singularity"
+        timeoutInMinutes: 120
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -60,6 +61,7 @@ stages:
             displayName: "Publish Linux CLI Artifacts"
       - job: "linux_serial_singularity"
         displayName: "Ubuntu, Serial, CLI, Singularity"
+        timeoutInMinutes: 120
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -102,6 +104,7 @@ stages:
             displayName: "Publish MPI Artifacts"
       - job: "linux_mpi_singularity"
         displayName: "Ubuntu, MPI, CLI, Singularity"
+        timeoutInMinutes: 120
         pool:
           vmImage: "ubuntu-latest"
         steps:
