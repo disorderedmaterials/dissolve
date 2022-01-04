@@ -32,15 +32,11 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
-      cp /usr/bin/env ./
-      ls /
-      sudo rm -rf /usr/lib*
       sudo rm -rf /usr/local*
       sudo rm -rf /usr/share*
       sudo rm -rf /usr/src*
-      sudo mkdir -p /usr/bin
-      sudo cp ./env /usr/bin/env
-    displayName: 'Remove redundant ubuntu executables'
+    displayName: 'Remove redundant ubuntu data'
+    condition: eq( '${{ parameters.export }}', 'true' )
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
