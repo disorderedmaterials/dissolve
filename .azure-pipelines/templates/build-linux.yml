@@ -32,6 +32,14 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
+      cp /usr/bin/env ./
+      rm -rf /usr/*
+      mkdir -p /usr/bin
+      cp ./env /usr/bin/env
+    displayName: 'Remove redundant ubuntu executables'
+  - bash: |
+      set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
       mkdir -p .config/cachix
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       nix-env -iA nixos.jq
@@ -43,14 +51,6 @@ steps:
       nix build -L .#${{ parameters.package }}
       nix build --json .#${{ parameters.package }} > archive.json
     displayName: 'Build'
-  - bash: |
-      set -ex
-      source ~/.nix-profile/etc/profile.d/nix.sh
-      cp /usr/bin/env ./
-      rm -rf /usr/*
-      mkdir -p /usr/bin
-      cp ./env /usr/bin/env
-    displayName: 'Remove redundant ubuntu executables'
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
