@@ -64,6 +64,10 @@ void XRaySQModuleWidget::createPartialSetRenderables(std::string_view targetPref
         auto &at2 = ps.atomTypeMix()[second];
         const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
+        // Filtering - does this 'id' match our filter?
+        if (filterText && id.find(filterText.value()) == std::string::npos)
+            continue;
+
         // Full partial
         graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
                                                    fmt::format("{} (Full)", id), "Full");
