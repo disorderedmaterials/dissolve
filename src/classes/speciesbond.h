@@ -20,9 +20,15 @@ class BondFunctions
         Harmonic,
         EPSR
     };
-    // Return enum options for Form
+    // Return enum options for form
     static EnumOptions<Form> forms();
-}; // namespace BondFunctions
+    // Return parameters for specified form
+    static const std::vector<std::string> &parameters(Form form);
+    // Return nth parameter for the given form
+    static std::string parameter(Form form, int n);
+    // Return index of parameter in the given form
+    static std::optional<int> parameterIndex(Form form, std::string_view name);
+};
 
 // SpeciesBond Definition
 class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
@@ -108,8 +114,6 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
      * Interaction Parameters
      */
     public:
-    // Set up any necessary parameters
-    void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified distance

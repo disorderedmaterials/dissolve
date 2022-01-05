@@ -13,7 +13,7 @@ TEST(IsotopologueSetModelTest, Basic)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
-    EXPECT_TRUE(dissolve.loadInput("watermeth.txt"));
+    ASSERT_TRUE(dissolve.loadInput("watermeth.txt"));
 
     // Find the 'H5H' NeutronSQ module and grab the relevant IsotopologueSet
     auto *h5h = dynamic_cast<NeutronSQModule *>(Module::find("H5H"));

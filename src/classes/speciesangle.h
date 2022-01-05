@@ -21,8 +21,14 @@ class AngleFunctions
         Cosine,
         Cos2
     };
-    // Return enum options for Form
+    // Return enum options for form
     static EnumOptions<Form> forms();
+    // Return parameters for specified form
+    static const std::vector<std::string> &parameters(Form form);
+    // Return nth parameter for the given form
+    static std::string parameter(Form form, int n);
+    // Return index of parameter in the given form
+    static std::optional<int> parameterIndex(Form form, std::string_view name);
 };
 
 // SpeciesAngle Definition
@@ -82,8 +88,6 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
      * Interaction Parameters
      */
     public:
-    // Set up any necessary parameters
-    void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified angle

@@ -31,12 +31,10 @@ std::vector<Qt::ItemDataRole> roles = {Qt::DisplayRole, Qt::EditRole};
 
 TEST_F(SpeciesTabTest, Atoms)
 {
-
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
     auto &species = dissolve.species()[0];
 
     SpeciesAtomModel atom(species->atoms(), dissolve);
@@ -78,12 +76,10 @@ TEST_F(SpeciesTabTest, Atoms)
 
 TEST_F(SpeciesTabTest, Bonds)
 {
-
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
     auto &species = dissolve.species()[0];
 
     SpeciesBondModel bond(species->bonds(), coreData);
@@ -97,7 +93,7 @@ TEST_F(SpeciesTabTest, Bonds)
         EXPECT_EQ(bond.data(bond.index(3, 0), role).toInt(), 4);
         EXPECT_EQ(bond.data(bond.index(3, 1), role).toInt(), 5);
         EXPECT_EQ(bond.data(bond.index(3, 2), role).toString().toStdString(), "@CA-CA");
-        EXPECT_EQ(bond.data(bond.index(3, 3), role).toString().toStdString(), "3924.59, 1.4");
+        EXPECT_EQ(bond.data(bond.index(3, 3), role).toString().toStdString(), "k=3924.59 eq=1.4");
     }
 
     // Mutate bond
@@ -109,22 +105,20 @@ TEST_F(SpeciesTabTest, Bonds)
     EXPECT_FALSE(bond.setData(bond.index(3, 2), "Undefined"));
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
 
-    EXPECT_TRUE(bond.setData(bond.index(3, 3), "4.0, 5.0"));
+    EXPECT_TRUE(bond.setData(bond.index(3, 3), "4.0 5.0"));
     EXPECT_THAT(bond.data(bond.index(3, 3)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("4.0, 5.0"), testing::Eq("4, 5")));
+                testing::AnyOf(testing::Eq("k=4.0 eq=5.0"), testing::Eq("k=4 eq=5")));
 
     EXPECT_TRUE(bond.setData(bond.index(3, 2), "@CA-CA"));
-    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "3924.59, 1.4");
+    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "k=3924.59 eq=1.4");
 }
 
 TEST_F(SpeciesTabTest, Angles)
 {
-
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("restart/benzene.txt"));
     auto &species = dissolve.species()[0];
 
     SpeciesAngleModel angle(species->angles(), coreData);
@@ -139,7 +133,7 @@ TEST_F(SpeciesTabTest, Angles)
         EXPECT_EQ(angle.data(angle.index(3, 2), role).toInt(), 6);
         EXPECT_EQ(angle.data(angle.index(3, 3), role).toString().toStdString(), "@CA-CA-CA");
         EXPECT_THAT(angle.data(angle.index(3, 4), role).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
+                    testing::AnyOf(testing::Eq("k=527.184 eq=120.0"), testing::Eq("k=527.184 eq=120")));
     }
 
     // Mutate angle
@@ -151,23 +145,21 @@ TEST_F(SpeciesTabTest, Angles)
     EXPECT_FALSE(angle.setData(angle.index(3, 3), "Undefined"));
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "Harmonic"));
 
-    EXPECT_TRUE(angle.setData(angle.index(3, 4), "4.0, 5.0"));
+    EXPECT_TRUE(angle.setData(angle.index(3, 4), "4.0 5.0"));
     EXPECT_THAT(angle.data(angle.index(3, 4)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("4.0, 5.0"), testing::Eq("4, 5")));
+                testing::AnyOf(testing::Eq("k=4.0 eq=5.0"), testing::Eq("k=4 eq=5")));
 
     EXPECT_TRUE(angle.setData(angle.index(3, 3), "@CA-CA-CA"));
     EXPECT_THAT(angle.data(angle.index(3, 4)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
+                testing::AnyOf(testing::Eq("k=527.184 eq=120.0"), testing::Eq("k=527.184 eq=120")));
 }
 
 TEST_F(SpeciesTabTest, Torsions)
 {
-
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
     auto &species = dissolve.species()[0];
 
     SpeciesTorsionModel torsion(species->torsions(), coreData);
@@ -183,7 +175,7 @@ TEST_F(SpeciesTabTest, Torsions)
         EXPECT_EQ(torsion.data(torsion.index(3, 3), role).toInt(), 3);
         EXPECT_EQ(torsion.data(torsion.index(3, 4), role).toString().toStdString(), "@CA-CA-CA-CA");
         EXPECT_THAT(torsion.data(torsion.index(3, 5), role).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+                    testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=0.0"), testing::Eq("k1=0 k2=30.334 k3=0")));
     }
 
     // Mutate torsion
@@ -197,26 +189,24 @@ TEST_F(SpeciesTabTest, Torsions)
     EXPECT_FALSE(torsion.setData(torsion.index(3, 4), "Undefined"));
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "Cos3"));
 
-    EXPECT_FALSE(torsion.setData(torsion.index(3, 5), "4.0, 5.0"));
-    EXPECT_TRUE(torsion.setData(torsion.index(3, 5), "4.0, 5.0, 6.0"));
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 5), "4.0 5.0"));
+    EXPECT_TRUE(torsion.setData(torsion.index(3, 5), "4.0 5.0 6.0"));
     EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("4.0, 5.0, 6.0"), testing::Eq("4, 5, 6")));
+                testing::AnyOf(testing::Eq("k1=4.0 k2=5.0 k3=6.0"), testing::Eq("k1=4 k2=5 k3=6")));
 
     EXPECT_FALSE(torsion.setData(torsion.index(3, 8), 8));
     EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "@CA-CA-CA-CA"));
     EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+                testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=0.0"), testing::Eq("k1=0 k2=30.334 k3=0")));
 }
 
 TEST_F(SpeciesTabTest, Impropers)
 {
-
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    dissolve.clear();
-    dissolve.loadInput("energyforce4/py5-ntf2.txt");
+    ASSERT_TRUE(dissolve.loadInput("inputs/py5-ntf2.txt"));
     auto &species = dissolve.species()[0];
 
     SpeciesImproperModel improper(species->impropers(), coreData);
@@ -232,7 +222,7 @@ TEST_F(SpeciesTabTest, Impropers)
         EXPECT_EQ(improper.data(improper.index(3, 3), role).toInt(), 9);
         EXPECT_EQ(improper.data(improper.index(3, 4), role).toString().toStdString(), "@impgeneral");
         EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("4.606, 2.0, 180.0, 1.0"), testing::Eq("4.606, 2, 180, 1")));
+                    testing::AnyOf(testing::Eq("k=4.606 n=2.0 eq=180.0 s=1.0"), testing::Eq("k=4.606 n=2 eq=180 s=1")));
     }
 
     // Mutate improper
@@ -241,20 +231,20 @@ TEST_F(SpeciesTabTest, Impropers)
     EXPECT_FALSE(improper.setData(improper.index(3, 2), 7));
     EXPECT_FALSE(improper.setData(improper.index(3, 3), 8));
 
-    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0, 4.0, 5.0, 6.0"));
+    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0, 4.0 5.0 6.0"));
 
     EXPECT_FALSE(improper.setData(improper.index(3, 4), "Undefined"));
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "Cos3"));
 
-    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0, 4.0, 5.0"));
-    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0"));
-    EXPECT_TRUE(improper.setData(improper.index(3, 5), "3.0, 4.0, 5.0, 6.0"));
+    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0 4.0 5.0 6.0"));
+    EXPECT_FALSE(improper.setData(improper.index(3, 5), "3.0 4.0 5.0 6.0 7.0 8.0 8.0"));
+    EXPECT_TRUE(improper.setData(improper.index(3, 5), "3.0 4.0 5.0"));
     EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("3.0, 4.0, 5.0, 6.0"), testing::Eq("3, 4, 5, 6")));
+                testing::AnyOf(testing::Eq("k1=3.0 k2=4.0 k3=5.0"), testing::Eq("k1=3 k2=4 k3=5")));
 
     EXPECT_TRUE(improper.setData(improper.index(3, 4), "@impgeneral"));
     EXPECT_THAT(improper.data(improper.index(3, 5)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("4.606, 2.0, 180.0, 1.0"), testing::Eq("4.606, 2, 180, 1")));
+                testing::AnyOf(testing::Eq("k=4.606 n=2.0 eq=180.0 s=1.0"), testing::Eq("k=4.606 n=2 eq=180 s=1")));
 }
 
 TEST_F(SpeciesTabTest, Isotopologues)
@@ -263,8 +253,7 @@ TEST_F(SpeciesTabTest, Isotopologues)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    dissolve.clear();
-    dissolve.loadInput("energyforce1/water3000-full.txt");
+    ASSERT_TRUE(dissolve.loadInput("inputs/water.txt"));
     auto &species = dissolve.species()[0];
 
     SpeciesIsoModel isos(*species);
@@ -274,7 +263,7 @@ TEST_F(SpeciesTabTest, Isotopologues)
     EXPECT_EQ(isos.rowCount(), 1);
     EXPECT_EQ(isos.data(isos.index(0, 1)), QVariant());
     auto naturalIndex = isos.index(0, 0);
-    EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Natural1");
+    EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Deuteriated");
     EXPECT_TRUE(isos.setData(naturalIndex, "Example"));
     EXPECT_EQ(isos.data(naturalIndex).toString().toStdString(), "Example");
     EXPECT_TRUE(isos.hasChildren(naturalIndex));
@@ -288,15 +277,15 @@ TEST_F(SpeciesTabTest, Isotopologues)
     EXPECT_EQ(isos.data(isos.index(0, 1, naturalIndex)).toString().toStdString(), "OW");
     EXPECT_EQ(isos.data(isos.index(0, 2, naturalIndex)).toString().toStdString(), "Natural (bc = 5.803)");
     EXPECT_EQ(isos.data(isos.index(1, 1, naturalIndex)).toString().toStdString(), "HW");
-    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "Natural (bc = -3.739)");
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "2 (bc = 6.671)");
 
     // Update Isotope
-    EXPECT_TRUE(isos.setData(isos.index(1, 2, naturalIndex), QVariant::fromValue(Sears91::isotope(Elements::Element(1), 2)),
+    EXPECT_TRUE(isos.setData(isos.index(1, 2, naturalIndex), QVariant::fromValue(Sears91::isotope(Elements::Element(1), 0)),
                              Qt::UserRole));
-    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "2 (bc = 6.671)");
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "Natural (bc = -3.739)");
     EXPECT_FALSE(isos.setData(isos.index(1, 2, naturalIndex), QVariant::fromValue(Sears91::isotope(Elements::Element(16), 33)),
                               Qt::UserRole));
-    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "2 (bc = 6.671)");
+    EXPECT_EQ(isos.data(isos.index(1, 2, naturalIndex)).toString().toStdString(), "Natural (bc = -3.739)");
 }
 
 } // namespace UnitTest
