@@ -41,7 +41,6 @@ class DerivativesTest : public ::testing::Test
     {
         intraTerm.setForm(form);
         intraTerm.setParameters(params);
-        intraTerm.setUp();
 
         auto x = xMin;
         const auto dx = xDelta / 100.0;

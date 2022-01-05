@@ -158,10 +158,9 @@ int main(int args, char **argv)
         result = dissolve.prepare();
         if (result)
             result = dissolve.iterate(options.nIterations());
-    }
 
-    // Print timing information
-    dissolve.printTiming();
+        dissolve.printTiming();
+    }
 
     // Clear all data
     dissolve.clear();

@@ -19,6 +19,8 @@ TEST(CellsTest, Basic)
     CoreData coreData;
     Dissolve dissolve(coreData);
     dissolve.setPairPotentialRange(9.0);
+    dissolve.setAutomaticChargeSource(false);
+    dissolve.setForceChargeSource(true);
     PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
 
     // Add atom types and LJ pair potentials (only one real one - between Ar and OW

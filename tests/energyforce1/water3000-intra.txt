@@ -59,5 +59,7 @@ PairPotentials
   Delta  0.050000
   Parameters  'OW'  O  0.0    LJGeometric    0.0      0.0
   Parameters  'HW'  H  0.0    LJGeometric    0.0      0.0
+  ManualChargeSource  True
+  ForceChargeSource  True
 EndPairPotentials
 

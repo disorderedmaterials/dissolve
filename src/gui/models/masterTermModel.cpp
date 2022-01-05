@@ -2,19 +2,9 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/models/masterTermModel.h"
-#include "templates/algorithms.h"
 
 namespace
 {
-template <class Intra> bool splitParameters(const QString &params, Intra &destination)
-{
-    std::vector<std::string> terms(destination.parameters().size());
-    if (splitString(params.toStdString(), terms.begin(), terms.size()) != terms.size())
-        return false;
-    for (int i = 0; i < terms.size(); ++i)
-        destination.setParameter(i, std::stod(terms[i]));
-    return true;
-}
 constexpr int BASECOLUMNCOUNT = 3;
 } // namespace
 
@@ -112,7 +102,7 @@ QVariant MasterTermBondModel::getTermData(int index, MasterTermModelData::DataTy
         case (MasterTermModelData::DataType::Form):
             return QString::fromStdString(std::string(BondFunctions::forms().keyword(masterBond->form())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(joinStrings(masterBond->parameters()));
+            return QString::fromStdString(masterBond->parametersAsString());
         default:
             return {};
     }
@@ -120,7 +110,7 @@ QVariant MasterTermBondModel::getTermData(int index, MasterTermModelData::DataTy
 
 bool MasterTermBondModel::setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!bonds_ || index < 0 || index > bonds_->get().size())
+    if (!bonds_ || index < 0 || index >= bonds_->get().size())
         return false;
 
     auto &masterBond = bonds_->get()[index];
@@ -141,7 +131,7 @@ bool MasterTermBondModel::setTermData(int index, MasterTermModelData::DataType d
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!splitParameters(value.toString(), *masterBond))
+            if (!masterBond->setParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
@@ -177,7 +167,7 @@ QVariant MasterTermAngleModel::getTermData(int index, MasterTermModelData::DataT
         case (MasterTermModelData::DataType::Form):
             return QString::fromStdString(std::string(AngleFunctions::forms().keyword(masterAngle->form())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(joinStrings(masterAngle->parameters()));
+            return QString::fromStdString(masterAngle->parametersAsString());
         default:
             return {};
     }
@@ -185,7 +175,7 @@ QVariant MasterTermAngleModel::getTermData(int index, MasterTermModelData::DataT
 
 bool MasterTermAngleModel::setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!angles_ || index < 0 || index > angles_->get().size())
+    if (!angles_ || index < 0 || index >= angles_->get().size())
         return false;
 
     auto &masterAngle = angles_->get()[index];
@@ -206,7 +196,7 @@ bool MasterTermAngleModel::setTermData(int index, MasterTermModelData::DataType 
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!splitParameters(value.toString(), *masterAngle))
+            if (!masterAngle->setParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
@@ -243,7 +233,7 @@ QVariant MasterTermTorsionModel::getTermData(int index, MasterTermModelData::Dat
         case (MasterTermModelData::DataType::Form):
             return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(masterTorsion->form())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(joinStrings(masterTorsion->parameters()));
+            return QString::fromStdString(masterTorsion->parametersAsString());
         default:
             return {};
     }
@@ -251,7 +241,7 @@ QVariant MasterTermTorsionModel::getTermData(int index, MasterTermModelData::Dat
 
 bool MasterTermTorsionModel::setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!torsions_ || index < 0 || index > torsions_->get().size())
+    if (!torsions_ || index < 0 || index >= torsions_->get().size())
         return false;
 
     auto &masterTorsion = torsions_->get()[index];
@@ -272,7 +262,7 @@ bool MasterTermTorsionModel::setTermData(int index, MasterTermModelData::DataTyp
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!splitParameters(value.toString(), *masterTorsion))
+            if (!masterTorsion->setParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
@@ -309,7 +299,7 @@ QVariant MasterTermImproperModel::getTermData(int index, MasterTermModelData::Da
         case (MasterTermModelData::DataType::Form):
             return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(masterImproper->form())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(joinStrings(masterImproper->parameters()));
+            return QString::fromStdString(masterImproper->parametersAsString());
         default:
             return {};
     }
@@ -317,7 +307,7 @@ QVariant MasterTermImproperModel::getTermData(int index, MasterTermModelData::Da
 
 bool MasterTermImproperModel::setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!impropers_ || index < 0 || index > impropers_->get().size())
+    if (!impropers_ || index < 0 || index >= impropers_->get().size())
         return false;
 
     auto &masterImproper = impropers_->get()[index];
@@ -338,7 +328,7 @@ bool MasterTermImproperModel::setTermData(int index, MasterTermModelData::DataTy
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!splitParameters(value.toString(), *masterImproper))
+            if (!masterImproper->setParameters(value.toString().toStdString()))
                 return false;
             break;
         default:

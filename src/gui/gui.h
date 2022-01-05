@@ -157,6 +157,7 @@ class DissolveWindow : public QMainWindow
     void on_FileSaveAsAction_triggered(bool checked);
     void on_FileQuitAction_triggered(bool checked);
     // Simulation
+    void on_SimulationCheckAction_triggered(bool checked);
     void on_SimulationRunAction_triggered(bool checked);
     void on_SimulationRunForAction_triggered(bool checked);
     void on_SimulationStepAction_triggered(bool checked);

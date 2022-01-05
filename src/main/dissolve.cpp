@@ -17,11 +17,7 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
     clear();
 }
 
-Dissolve::~Dissolve()
-{
-    // Clear main data
-    clear();
-}
+Dissolve::~Dissolve() { clear(); }
 
 /*
  * Core
@@ -44,7 +40,9 @@ void Dissolve::clear()
     pairPotentialDelta_ = 0.005;
     pairPotentialRange_ = 15.0;
     pairPotentialRangeSquared_ = pairPotentialRange_ * pairPotentialRange_;
-    pairPotentialsIncludeCoulomb_ = true;
+    automaticChargeSource_ = true;
+    forceChargeSource_ = false;
+    atomTypeChargeSource_ = true;
     pairPotentials_.clear();
     potentialMap_.clear();
     pairPotentialAtomTypeVersion_ = -1;

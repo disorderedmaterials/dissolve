@@ -31,9 +31,9 @@ TEST(GeometryMinimisationTest, Water)
     water.atom(0).setAtomType(atH);
     water.atom(1).setAtomType(atO);
     water.atom(2).setAtomType(atH);
-    water.addBond(0, 1).setFormAndParameters(BondFunctions::Form::Harmonic, {4000.0, 1.0});
-    water.addBond(1, 2).setFormAndParameters(BondFunctions::Form::Harmonic, {4000.0, 1.2});
-    water.addAngle(0, 1, 2).setFormAndParameters(AngleFunctions::Form::Harmonic, {4000.0, 123.45});
+    water.addBond(0, 1).setFormAndParameters(BondFunctions::Form::Harmonic, "k=4000.0 eq=1.0");
+    water.addBond(1, 2).setFormAndParameters(BondFunctions::Form::Harmonic, "k=4000.0 eq=1.2");
+    water.addAngle(0, 1, 2).setFormAndParameters(AngleFunctions::Form::Harmonic, "k=4000.0 eq=123.45");
 
     // Run the geometry optimisation
     GeometryOptimisationModule geomOpt;

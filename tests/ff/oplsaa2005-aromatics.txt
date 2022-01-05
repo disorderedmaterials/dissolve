@@ -195,6 +195,11 @@ Species 'Naphthalene'
   Forcefield  'OPLSAA2005/Aromatics'
 EndSpecies
 
+PairPotentials
+  ManualChargeSource  True
+  ForceChargeSource  True
+EndPairPotentials
+
 Layer  'Checks'
 
   Module  'CheckSpecies'

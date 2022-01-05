@@ -154,6 +154,8 @@
     <property name="title">
      <string>S&amp;imulation</string>
     </property>
+    <addaction name="SimulationCheckAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationRunAction"/>
     <addaction name="SimulationRunForAction"/>
     <addaction name="separator"/>
@@ -866,6 +868,11 @@
   <action name="SpeciesSetChargesInSelectionAction">
    <property name="text">
     <string>Set Atom C&amp;harges in Selection...</string>
+   </property>
+  </action>
+  <action name="SimulationCheckAction">
+   <property name="text">
+    <string>Prepare / Check</string>
    </property>
   </action>
  </widget>

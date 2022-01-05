@@ -34,6 +34,8 @@ PairPotentials
   Parameters  'Be'  Be  0.0  LJGeometric   0.0  0.0
   Parameters  'N'   N   0.0  LJGeometric   0.0  0.0
   Parameters  'Dy'  Dy  0.0  LJGeometric   0.0  0.0
+  ManualChargeSource  True
+  ForceChargeSource  True
 EndPairPotentials
 
 #------------------------#

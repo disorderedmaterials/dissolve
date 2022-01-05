@@ -60,11 +60,11 @@ void PairPotential::setShortRangeTruncationWidth(double width) { shortRangeTrunc
 // Return width of short-range potential over which to truncate (if scheme = Cosine)
 double PairPotential::shortRangeTruncationWidth() { return shortRangeTruncationWidth_; }
 
-// Set whether Coulomb term should be included in the generated potential
-void PairPotential::setIncludeCoulomb(bool b) { includeCoulomb_ = b; }
+// Set whether atom type charges should be included in the generated potential
+void PairPotential::setIncludeAtomTypeCharges(bool b) { includeAtomTypeCharges_ = b; }
 
-// Return whether Coulomb term should be included in the generated potential
-bool PairPotential::includeCoulomb() { return includeCoulomb_; }
+// Return whether atom type charges should be included in the generated potential
+bool PairPotential::includeAtomTypeCharges() const { return includeAtomTypeCharges_; }
 
 // Set Coulomb truncation scheme
 void PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme scheme)
@@ -381,14 +381,14 @@ void PairPotential::calculateDUFull()
 
     // Set first and last points
     dUFull_.value(0) = 10.0 * dUFull_.value(1);
-    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2);
+    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2) + (dUFull_.value(nPoints_ - 2) - dUFull_.value(nPoints_ - 3));
 
     // Update interpolation
     dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 }
 
 // Generate energy and force tables
-bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
+bool PairPotential::tabulate(double maxR, double delta, bool includeAtomTypeCharges)
 {
     // Check that AtomType pointers were set at some pointer
     if ((atomTypeI_ == nullptr) || (atomTypeJ_ == nullptr))
@@ -401,7 +401,7 @@ bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
     delta_ = delta;
     rDelta_ = 1.0 / delta_;
     range_ = maxR;
-    includeCoulomb_ = includeCoulomb;
+    includeAtomTypeCharges_ = includeAtomTypeCharges;
     nPoints_ = range_ / delta_;
 
     // Calculate energies and forces at the cutoff distance, for later use in truncation schemes
@@ -452,7 +452,7 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
         uOriginal_.value(n) += analyticShortRangeEnergy(r, shortRangeType_);
 
         // -- Add Coulomb contribution
-        if (includeCoulomb_)
+        if (includeAtomTypeCharges_)
             uOriginal_.value(n) += analyticCoulombEnergy(chargeI_ * chargeJ_, r);
     }
 
@@ -497,7 +497,7 @@ double PairPotential::analyticEnergy(double qiqj, double r, PairPotential::Coulo
 }
 
 // Return analytic coulomb potential energy of specified charges
-double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)
@@ -541,7 +541,7 @@ double PairPotential::analyticForce(double qiqj, double r, PairPotential::Coulom
 }
 
 // Return analytic coulomb force of specified charges
-double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)

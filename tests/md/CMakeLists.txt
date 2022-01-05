@@ -1,1 +1,1 @@
-dissolve_system_test(md1 benzene.txt 1 --restart=9.restart)
+dissolve_system_test(md1 benzene.txt 2 --restart=8.restart)

@@ -14,7 +14,9 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
         "PairPotentialsKeyword", {{PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1},
                                   {PairPotentialsBlock::DeltaKeyword, "Delta", 1},
                                   {PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials"},
+                                  {PairPotentialsBlock::ForceChargeSourceKeyword, "ForceChargeSource", 1},
                                   {PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1},
+                                  {PairPotentialsBlock::ManualChargeSourceKeyword, "ManualChargeSource", 1},
                                   {PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber},
                                   {PairPotentialsBlock::RangeKeyword, "Range", 1},
                                   {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
@@ -65,8 +67,14 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                                  BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
                 blockDone = true;
                 break;
+            case (PairPotentialsBlock::ForceChargeSourceKeyword):
+                dissolve->setForceChargeSource(parser.argb(1));
+                break;
             case (PairPotentialsBlock::IncludeCoulombKeyword):
-                dissolve->setPairPotentialsIncludeCoulomb(parser.argb(1));
+                dissolve->setAtomTypeChargeSource(parser.argb(1));
+                break;
+            case (PairPotentialsBlock::ManualChargeSourceKeyword):
+                dissolve->setAutomaticChargeSource(!parser.argb(1));
                 break;
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element

@@ -3,6 +3,7 @@
 
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
+#include <map>
 
 // Return enum options for AngleFunction
 EnumOptions<AngleFunctions::Form> AngleFunctions::forms()
@@ -11,6 +12,34 @@ EnumOptions<AngleFunctions::Form> AngleFunctions::forms()
                                                                {AngleFunctions::Form::Harmonic, "Harmonic", 2},
                                                                {AngleFunctions::Form::Cosine, "Cos", 4},
                                                                {AngleFunctions::Form::Cos2, "Cos2", 4}});
+}
+
+// Return parameters for specified form
+const std::vector<std::string> &AngleFunctions::parameters(Form form)
+{
+    static std::map<AngleFunctions::Form, std::vector<std::string>> params_ = {
+        {AngleFunctions::Form::None, {}},
+        {AngleFunctions::Form::Harmonic, {"k", "eq"}},
+        {AngleFunctions::Form::Cosine, {"k", "n", "eq", "s"}},
+        {AngleFunctions::Form::Cos2, {"k", "C0", "C1", "C2"}}};
+    return params_[form];
+}
+
+// Return nth parameter for the given form
+std::string AngleFunctions::parameter(Form form, int n)
+{
+    return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
+}
+
+// Return index of parameter in the given form
+std::optional<int> AngleFunctions::parameterIndex(Form form, std::string_view name)
+{
+    auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
+                           [name](const auto &param) { return DissolveSys::sameString(name, param); });
+    if (it == parameters(form).end())
+        return {};
+
+    return it - parameters(form).begin();
 }
 
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(AngleFunctions::Form::None) {}
@@ -179,9 +208,6 @@ void SpeciesAngle::detach()
 /*
  * Interaction Parameters
  */
-
-// Set up any necessary parameters
-void SpeciesAngle::setUp() {}
 
 // Calculate and return fundamental frequency for the interaction
 double SpeciesAngle::fundamentalFrequency(double reducedMass) const

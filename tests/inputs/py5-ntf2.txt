@@ -1,44 +1,46 @@
-# Input file written by Dissolve v0.7.0 at 14:54:08 on 11-08-2020.
+# Input file written by Dissolve v0.7.0 at 10:20:02 on 12-08-2020.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
 #------------------------------------------------------------------------------#
 
 Master
-  Improper  'impgeneral'  Cos     4.606     2.000   180.000  1.0
+  Improper  'impgeneral'  Cos     4.606     2.000   180.000   1.0
 EndMaster
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
 #------------------------------------------------------------------------------#
 
-Species 'Py4OH'
+Species 'Py5'
   # Atoms
-  Atom    1    N  1.088000e-01  4.840000e-02  6.280000e-02  'nc'  0.0
-  Atom    2    C  1.022000e-01  5.060000e-02  1.400600e+00  'ca_o'  0.0
-  Atom    3    C  1.273100e+00  5.630000e-02  2.119100e+00  'ca_m'  0.0
-  Atom    4    C  2.479000e+00  5.970000e-02  1.431300e+00  'ca_p'  0.0
-  Atom    5    C  2.471800e+00  5.630000e-02  4.290000e-02  'ca_m'  0.0
-  Atom    6    C  1.264000e+00  5.060000e-02  -6.118000e-01  'ca_o'  0.0
-  Atom    7    H  -8.600000e-01  5.010000e-02  1.873800e+00  'ha_o'  0.0
-  Atom    8    H  1.235900e+00  6.180000e-02  3.191200e+00  'ha_m'  0.0
-  Atom    9    H  3.409300e+00  6.720000e-02  1.968400e+00  'ha_p'  0.0
-  Atom   10    H  3.381600e+00  6.180000e-02  -5.253000e-01  'ha_m'  0.0
-  Atom   11    H  1.192800e+00  5.010000e-02  -1.681700e+00  'ha_o'  0.0
-  Atom   12    C  -1.182700e+00  4.300000e-03  -6.829000e-01  'ct_1'  0.0
-  Atom   13    C  -1.641100e+00  -1.427600e+00  -9.475000e-01  'ct_2'  0.0
-  Atom   14    H  -1.903700e+00  5.501000e-01  -9.190000e-02  'hc_1'  0.0
-  Atom   15    H  -1.031400e+00  5.501000e-01  -1.602700e+00  'hc_1'  0.0
-  Atom   16    C  -2.966700e+00  -1.436700e+00  -1.712800e+00  'ct_3'  0.0
-  Atom   17    H  -8.758000e-01  -1.951600e+00  -1.514400e+00  'hc_2'  0.0
-  Atom   18    H  -1.749500e+00  -1.951600e+00  -1.300000e-03  'hc_2'  0.0
-  Atom   19    C  -3.466100e+00  -2.844400e+00  -2.001100e+00  'ct_4'  0.0
-  Atom   20    H  -3.731900e+00  -9.134000e-01  -1.146900e+00  'hc_3'  0.0
-  Atom   21    H  -2.859100e+00  -9.134000e-01  -2.658500e+00  'hc_3'  0.0
-  Atom   22    O  -4.670700e+00  -2.710400e+00  -2.696600e+00  'oh'  0.0
-  Atom   23    H  -2.734400e+00  -3.388700e+00  -2.594600e+00  'hc_4'  0.0
-  Atom   24    H  -3.614200e+00  -3.388700e+00  -1.070800e+00  'hc_4'  0.0
-  Atom   25    H  -5.039400e+00  -3.556900e+00  -2.909500e+00  'ho'  0.0
+  Atom    1    N  6.330000e-02  -7.050000e-02  2.357000e-01  'nc'  0.0
+  Atom    2    C  1.972000e-01  -1.032000e-01  1.566100e+00  'ca_o'  0.0
+  Atom    3    C  1.436800e+00  -9.150000e-02  2.158500e+00  'ca_m'  0.0
+  Atom    4    C  2.563600e+00  -4.360000e-02  1.349000e+00  'ca_p'  0.0
+  Atom    5    C  2.410600e+00  -8.200000e-03  -3.050000e-02  'ca_m'  0.0
+  Atom    6    C  1.141000e+00  -2.250000e-02  -5.553000e-01  'ca_o'  0.0
+  Atom    7    H  -7.096000e-01  -1.409000e-01  2.136900e+00  'ha_o'  0.0
+  Atom    8    H  1.512300e+00  -1.225000e-01  3.228100e+00  'ha_m'  0.0
+  Atom    9    H  3.545000e+00  -3.610000e-02  1.785800e+00  'ha_p'  0.0
+  Atom   10    H  3.255500e+00  2.650000e-02  -6.903000e-01  'ha_m'  0.0
+  Atom   11    H  9.579000e-01  1.700000e-03  -1.611500e+00  'ha_o'  0.0
+  Atom   12    C  -1.300800e+00  -4.260000e-02  -3.701000e-01  'ct_1'  0.0
+  Atom   13    C  -1.816600e+00  1.383500e+00  -5.452000e-01  'ct_2'  0.0
+  Atom   14    H  -1.232600e+00  -5.618000e-01  -1.315100e+00  'hc_1'  0.0
+  Atom   15    H  -1.941400e+00  -6.226000e-01  2.781000e-01  'hc_1'  0.0
+  Atom   16    C  -3.216100e+00  1.397000e+00  -1.167900e+00  'ct_3'  0.0
+  Atom   17    H  -1.836900e+00  1.880800e+00  4.210000e-01  'hc_2'  0.0
+  Atom   18    H  -1.127100e+00  1.941800e+00  -1.173100e+00  'hc_2'  0.0
+  Atom   19    C  -3.760500e+00  2.815200e+00  -1.355900e+00  'ct_4'  0.0
+  Atom   20    H  -3.189700e+00  8.907000e-01  -2.130600e+00  'hc_3'  0.0
+  Atom   21    H  -3.898600e+00  8.296000e-01  -5.384000e-01  'hc_3'  0.0
+  Atom   22    C  -5.156400e+00  2.829800e+00  -1.976900e+00  'cm'  0.0
+  Atom   23    H  -3.786600e+00  3.321300e+00  -3.936000e-01  'hc_4'  0.0
+  Atom   24    H  -3.078100e+00  3.382400e+00  -1.984700e+00  'hc_4'  0.0
+  Atom   25    H  -5.514400e+00  3.846300e+00  -2.097300e+00  'hm'  0.0
+  Atom   26    H  -5.156900e+00  2.361200e+00  -2.956500e+00  'hm'  0.0
+  Atom   27    H  -5.870500e+00  2.299700e+00  -1.353800e+00  'hm'  0.0
 
   # Bonds
   Bond    1    2
@@ -66,6 +68,8 @@ Species 'Py4OH'
   Bond   19   23
   Bond   19   24
   Bond   22   25
+  Bond   22   26
+  Bond   22   27
 
   # Angles
   Angle    6    1    2
@@ -111,6 +115,11 @@ Species 'Py4OH'
   Angle   24   19   22
   Angle   24   19   23
   Angle   19   22   25
+  Angle   19   22   26
+  Angle   26   22   25
+  Angle   19   22   27
+  Angle   27   22   25
+  Angle   27   22   26
 
   # Torsions
   Torsion    6    1    2    3
@@ -173,17 +182,23 @@ Species 'Py4OH'
   Torsion   16   19   22   25
   Torsion   23   19   22   25
   Torsion   24   19   22   25
+  Torsion   16   19   22   26
+  Torsion   23   19   22   26
+  Torsion   24   19   22   26
+  Torsion   16   19   22   27
+  Torsion   23   19   22   27
+  Torsion   24   19   22   27
 
+  # Impropers
   Improper    1    2    6   12  @impgeneral
   Improper    2    1    3    7  @impgeneral
   Improper    3    2    4    8  @impgeneral
   Improper    4    3    5    9  @impgeneral
   Improper    5    4    6   10  @impgeneral
   Improper    6    1    5   11  @impgeneral
-
 EndSpecies
 
-Species 'Ntf2'
+Species 'NTf2'
   # Atoms
   Atom    1    C  2.492100e+00  3.796000e-01  -6.620000e-02  'C'  0.0
   Atom    2    S  1.144900e+00  -8.304000e-01  1.205000e-01  'S'  0.0
@@ -277,103 +292,32 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  C  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  S  S     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  N  N      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  F  F      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  O  O      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  nc  N     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ca_o  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ca_m  C      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ca_p  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ha_o  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ha_m  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ha_p  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_1  C      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_2  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_1  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_3  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_2  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_4  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_3  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  oh  O      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_4  H      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ho  H     0.0       LJ  0.0  0.0  0.0  0.0
+  Parameters  nc  N  0.0  LJ  0.0  0.0
+  Parameters  ca_o  C  0.0  LJ  0.0  0.0
+  Parameters  ca_m  C  0.0  LJ  0.0  0.0
+  Parameters  ca_p  C  0.0  LJ  0.0  0.0
+  Parameters  ha_o  H  0.0  LJ  0.0  0.0
+  Parameters  ha_m  H  0.0  LJ  0.0  0.0
+  Parameters  ha_p  H  0.0  LJ  0.0  0.0
+  Parameters  ct_1  C  0.0  LJ  0.0  0.0
+  Parameters  ct_2  C  0.0  LJ  0.0  0.0
+  Parameters  hc_1  H  0.0  LJ  0.0  0.0
+  Parameters  ct_3  C  0.0  LJ  0.0  0.0
+  Parameters  hc_2  H  0.0  LJ  0.0  0.0
+  Parameters  ct_4  C  0.0  LJ  0.0  0.0
+  Parameters  hc_3  H  0.0  LJ  0.0  0.0
+  Parameters  cm  C  0.0  LJ  0.0  0.0
+  Parameters  hc_4  H  0.0  LJ  0.0  0.0
+  Parameters  hm  H  0.0  LJ  0.0  0.0
+  Parameters  C  C  0.0  LJ  0.0  0.0
+  Parameters  S  S  0.0  LJ  0.0  0.0
+  Parameters  N  N  0.0  LJ  0.0  0.0
+  Parameters  F  F  0.0  LJ  0.0  0.0
+  Parameters  O  O  0.0  LJ  0.0  0.0
   Range  9.000000
   Delta  0.005000
   IncludeCoulomb  False
-  ManualChargeSource  True
-  ForceChargeSource  True
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
 EndPairPotentials
-
-#------------------------------------------------------------------------------#
-#                                Configurations                                #
-#------------------------------------------------------------------------------#
-
-Configuration  'Py4OH-NTf2'
-
-  # Modules
-  Generator
-    Box
-      Lengths  2.000000e+01  2.000000e+01  2.000000e+01
-      Angles  9.000000e+01  9.000000e+01  9.000000e+01
-      NonPeriodic  False
-    EndBox
-    Add
-      Species  'Py4OH'
-      Population  '1'
-      BoxAction  None
-      Rotate  True
-      Positioning  Random
-    EndAdd
-    Add
-      Species  'Ntf2'
-      Population  '1'
-      BoxAction  None
-      Rotate  True
-      Positioning  Random
-    EndAdd
-  EndGenerator
-    InputCoordinates  moscito  '../_data/moscito/py4oh_impropers/py4oh-ntf2-final.str'
-    EndInputCoordinates
-
-  Temperature  298.150000
-
-  # Modules
-  # -- None
-EndConfiguration
-
-#------------------------------------------------------------------------------#
-#                              Processing Layers                               #
-#------------------------------------------------------------------------------#
-
-Layer  'Processing'
-
-    Module  Energy
-    Test  On
-    TestAnalytic  On
-    Configuration  'Py4OH-NTf2'
-    TestReferenceIntra     0.055228   # (0.027614 per molecule) * 2 molecules
-    TestThreshold  1.0e-4
-    EndModule
-
-    Module Forces
-    Test  On
-    Configuration  'Py4OH-NTf2'
-    TestReference  moscito  '../_data/moscito/py4oh_impropers/py4oh-ntf2-final.str'
-    EndTestReference
-    TestThreshold  5.0e-3
-    EndModule
-
-EndLayer
-
-#------------------------------------------------------------------------------#
-#                                  Simulation                                  #
-#------------------------------------------------------------------------------#
-
-Simulation
-  Seed  -1
-EndSimulation
 

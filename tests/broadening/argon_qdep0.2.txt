@@ -54,4 +54,6 @@ EndLayer
 
 PairPotentials
   Parameters  Ar  Ar  0.0  LJGeometric  0.979   3.401
+  ManualChargeSource  True
+  ForceChargeSource  True
 EndPairPotentials

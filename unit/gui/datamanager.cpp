@@ -26,7 +26,7 @@ TEST_F(DataManagerTest, DataManager)
     std::vector<ReferencePoint> points;
 
     dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("restart/benzene.txt"));
 
     DataManagerReferencePointModel model(dissolve, points);
 

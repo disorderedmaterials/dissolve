@@ -58,9 +58,8 @@ EndLayer
 # Pair Potentials
 PairPotentials
   Range  15.000000
-  Delta  0.005
+  Delta  0.0005
   ShortRangeTruncation  None
   Parameters  'OW'  O  -0.82   LJGeometric   0.6503    3.165492
   Parameters  'HW'  H  0.41    LJGeometric   0.0       0.0
-  IncludeCoulomb  False
 EndPairPotentials

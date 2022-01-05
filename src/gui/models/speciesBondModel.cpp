@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2022 Team Dissolve and contributors
+
 #include "gui/models/speciesBondModel.h"
 #include "classes/coredata.h"
-#include "gui/models/speciesModelUtils.h"
-#include "templates/algorithms.h"
 
 SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, const CoreData &coreData)
     : bonds_(bonds), coreData_(coreData)
@@ -43,7 +44,7 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
                 return bond.masterTerm() ? QString::fromStdString("@" + std::string(bond.masterTerm()->name()))
                                          : QString::fromStdString(std::string(BondFunctions::forms().keyword(bond.form())));
             case 3:
-                return QString::fromStdString(joinStrings(bond.parameters()));
+                return QString::fromStdString(bond.parametersAsString());
             default:
                 return {};
         }
@@ -81,7 +82,7 @@ Qt::ItemFlags SpeciesBondModel::flags(const QModelIndex &index) const
 
 bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    auto &item = bonds_[index.row()];
+    auto &bond = bonds_[index.row()];
     switch (index.column())
     {
         case 0:
@@ -92,7 +93,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             {
                 auto master = coreData_.getMasterBond(value.toString().toStdString());
                 if (master)
-                    item.setMasterTerm(&master->get());
+                    bond.setMasterTerm(&master->get());
                 else
                     return false;
             }
@@ -101,8 +102,8 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
                 try
                 {
                     auto bf = BondFunctions::forms().enumeration(value.toString().toStdString());
-                    item.detachFromMasterTerm();
-                    item.setForm(bf);
+                    bond.detachFromMasterTerm();
+                    bond.setForm(bf);
                 }
                 catch (std::runtime_error &e)
                 {
@@ -111,7 +112,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             }
             break;
         case 3:
-            if (!splitParameters(value.toString(), item))
+            if (!bond.setParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
