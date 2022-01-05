@@ -3,6 +3,7 @@
 
 #include "gui/models/procedureModel.h"
 #include "classes/species.h"
+#include "expression/variable.h"
 #include "keywords/bool.h"
 #include "keywords/expressionvariablevector.h"
 #include "keywords/integer.h"
@@ -44,6 +45,8 @@ QString KeywordBaseToString(KeywordBase *k)
     //   return n->value().asString();
     if (SpeciesKeyword *s = dynamic_cast<SpeciesKeyword *>(k))
       return QString::fromStdString(std::string(s->data()->name()));
+    if (ExpressionVariableVectorKeyword *e = dynamic_cast<ExpressionVariableVectorKeyword *>(k))
+	return QString::fromStdString(joinStrings(e->data(), ", ", [](const auto &v){return v->value().asString();}));
     if (Vec3DoubleKeyword *v = dynamic_cast<Vec3DoubleKeyword *>(k))
       return QString::fromStdString(fmt::format("{},{},{}", v->data().x, v->data().y, v->data().z));
     if (Vec3NodeValueKeyword *v = dynamic_cast<Vec3NodeValueKeyword *>(k))
