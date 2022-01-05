@@ -7,8 +7,6 @@
 #include "gui/selectspecieswidget.h"
 #include "templates/variantpointer.h"
 
-Q_DECLARE_METATYPE(const Species *)
-
 SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);

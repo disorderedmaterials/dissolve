@@ -8,9 +8,6 @@
 #include "gui/speciestab.h"
 #include <memory>
 
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
-Q_DECLARE_METATYPE(Sears91::Isotope)
-
 /*
  * Private Functions
  */

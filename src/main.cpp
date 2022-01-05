@@ -155,7 +155,10 @@ int main(int args, char **argv)
     auto result = true;
     if (options.nIterations() > 0)
     {
-        result = dissolve.prepare() && dissolve.iterate(options.nIterations());
+        result = dissolve.prepare();
+        if (result)
+            result = dissolve.iterate(options.nIterations());
+
         dissolve.printTiming();
     }
 

@@ -88,17 +88,17 @@ void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeight
     weights.clear();
     auto populations = rdfModule->speciesPopulations();
 
-    for (auto speciesPop : populations)
+    for (auto &[sp, pop] : populations)
     {
         // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-        auto isoRef = isotopologueSet_.getIsotopologues(speciesPop.first);
+        auto isoRef = isotopologueSet_.getIsotopologues(sp);
         if (isoRef)
         {
             const Isotopologues &topes = *isoRef;
             for (const auto &isoWeight : topes.mix())
-                weights.addIsotopologue(speciesPop.first, speciesPop.second, isoWeight.isotopologue(), isoWeight.weight());
+                weights.addIsotopologue(sp, pop, isoWeight.isotopologue(), isoWeight.weight());
         }
         else
-            weights.addIsotopologue(speciesPop.first, speciesPop.second, speciesPop.first->naturalIsotopologue(), 1.0);
+            weights.addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
     }
 }

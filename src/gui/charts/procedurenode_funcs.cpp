@@ -4,7 +4,6 @@
 #include "gui/charts/proceduremetrics.h"
 #include "gui/charts/procedurenode.h"
 #include "procedure/nodes/node.h"
-#include "templates/variantpointer.h"
 #include <QPainter>
 #include <QPainterPath>
 

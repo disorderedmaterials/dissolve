@@ -17,10 +17,6 @@
 #include "main/dissolve.h"
 #include <QListWidgetItem>
 
-Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
-Q_DECLARE_METATYPE(PairPotential *)
-
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this), pairs_(dissolve.pairPotentials())
 {

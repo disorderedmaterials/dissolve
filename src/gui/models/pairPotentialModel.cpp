@@ -5,9 +5,6 @@
 #include "base/sysfunc.h"
 #include "templates/algorithms.h"
 
-Q_DECLARE_METATYPE(PairPotential *);
-Q_DECLARE_METATYPE(const PairPotential *);
-
 PairPotentialModel::PairPotentialModel(const std::vector<std::unique_ptr<PairPotential>> &pairs) : pairs_(pairs) {}
 
 /*

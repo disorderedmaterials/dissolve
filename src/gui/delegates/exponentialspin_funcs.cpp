@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/delegates/exponentialspin.hui"
-#include <stdio.h>
 
 ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, int nDecimals)
     : QItemDelegate(parent)

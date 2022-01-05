@@ -190,7 +190,13 @@ bool Dissolve::prepare()
     if (!setUpMPIPools())
         return Messenger::error("Failed to set up parallel communications.\n");
 
-    return true;
+    // Set up all modules
+    auto setUpResult = true;
+    for (auto &layer : processingLayers_)
+        if (!layer->setUpAll(*this, worldPool()))
+            setUpResult = false;
+
+    return setUpResult;
 }
 
 // Iterate main simulation

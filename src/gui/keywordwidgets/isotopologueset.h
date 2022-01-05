@@ -10,9 +10,6 @@
 #include "keywords/isotopologueset.h"
 #include <QWidget>
 
-// Forward Declarations
-class QComboBox;
-
 class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro

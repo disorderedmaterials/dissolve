@@ -12,8 +12,6 @@
 #include <QSortFilterProxyModel>
 #include <vector>
 
-Q_DECLARE_METATYPE(const ReferencePoint *)
-
 // Forward Declarations
 class Dissolve;
 

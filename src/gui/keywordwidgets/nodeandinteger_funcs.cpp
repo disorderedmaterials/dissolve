@@ -5,8 +5,6 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/nodeandinteger.h"
 
-Q_DECLARE_METATYPE(const ProcedureNode *)
-
 NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, NodeAndIntegerKeywordBase *keyword,
                                                          const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)

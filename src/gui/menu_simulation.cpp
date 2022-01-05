@@ -27,7 +27,7 @@ void DissolveWindow::setupIteration(int count)
     dissolveState_ = DissolveWindow::RunningState;
 
     // Update the controls
-    updateStatusBar();
+    fullUpdate();
 
     emit iterate(count);
 }

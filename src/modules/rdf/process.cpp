@@ -28,7 +28,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_);
     Messenger::print("RDF: Bin-width to use is {} Angstroms.\n", binWidth_);
     if (averagingLength_ <= 1)
-        Messenger::print("RDF: No averagingLength_ of partials will be performed.\n");
+        Messenger::print("RDF: No averaging of partials will be performed.\n");
     else
         Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
                          Averaging::averagingSchemes().keyword(averagingScheme_));

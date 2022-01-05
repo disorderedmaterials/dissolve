@@ -4,7 +4,6 @@
 #include "gui/render/renderableconfiguration.h"
 #include "base/lineparser.h"
 #include "classes/box.h"
-#include "classes/cell.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 #include "data/elementcolours.h"

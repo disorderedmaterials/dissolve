@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "main/dissolve.h"
 #include <QFileDialog>
 #include <QMessageBox>
 

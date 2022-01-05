@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "base/lineparser.h"
 #include "gui/keywordwidgets/producers.h"
 #include "gui/keywordwidgets/widget.hui"
 #include "main/dissolve.h"
