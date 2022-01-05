@@ -25,4 +25,4 @@ Back on the workspace tab we now have both datasets visible.
 
 
 {{< button pos="left" text="Previous Step" path="step8/">}}
-{{< button pos="right" text="Back to Index" path="examples/">}}
+{{< button pos="right" text="Back to Index" path="examples/previous/0.8">}}

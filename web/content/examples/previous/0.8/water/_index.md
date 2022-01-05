@@ -1,8 +1,7 @@
 ---
 title: Liquid Water
-description: Structure of liquid water at 298 K, refining against three isotopically-labelled neutron datasets
 type: docs
-weight: 2
+weight: 3
 ---
 
 {{< label color="blue" text="60 - 75 minutes" >}}

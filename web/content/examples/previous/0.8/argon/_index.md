@@ -1,8 +1,6 @@
 ---
-title: Beginner's Guide - Argon
-description: Step-by-step set up of a simple simulation, recommended for first-time users of the code
+title: Liquid Argon
 type: docs
-weight: 1
 ---
 
 {{< label color="blue" icon="fa-clock" text="20 minute read" >}}
@@ -17,7 +15,7 @@ Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip
 
 
 {{< action type="dissolve" text="Open the Dissolve GUI" >}}
-{{< step text="Choose **Empty Simulation** from the _Create_ section" >}} 
+{{< step text="Choose **Empty Simulation** from the _Create_ section" >}}
 {{< action type="menu" text="Save As..." >}}
 {{< step text="Save your own input file under a sensible name in the `argon` directory of the example data" >}}
 

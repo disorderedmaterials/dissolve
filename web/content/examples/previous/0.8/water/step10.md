@@ -52,4 +52,4 @@ Spatial density functions take a relatively long to accumulate to a point where 
 
 
 {{< button pos="left" text="Previous Step" path="step9">}}
-{{< button pos="right" text="Back to Index" path="examples/">}}
+{{< button pos="right" text="Back to Index" path="examples/previous/0.8">}}

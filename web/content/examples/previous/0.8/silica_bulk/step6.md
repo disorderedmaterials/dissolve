@@ -36,4 +36,4 @@ The second and third tabs display us the distance-angle correlation graphs, whic
 
 
 {{< button pos="left" text="Previous Step" path="step5/">}}
-{{< button pos="right" text="Back to Index" path="examples/">}}
+{{< button pos="right" text="Back to Index" path="examples/previous/0.8">}}
