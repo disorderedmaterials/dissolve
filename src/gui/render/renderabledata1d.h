@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -92,22 +92,4 @@ class RenderableData1D : public Renderable
     void setDisplayStyle(Data1DDisplayStyle displayStyle);
     // Return display style for the renderable
     Data1DDisplayStyle displayStyle() const;
-
-    /*
-     * Style I/O
-     */
-    public:
-    // Data1DStyle Keywords Enum
-    enum Data1DStyleKeyword
-    {
-        DisplayKeyword,  /* 'Display' - General display style for renderable */
-        EndStyleKeyword, /* 'EndStyle' - End of Style block */
-        nData1DStyleKeywords
-    };
-    // Return enum option info for RenderableKeyword
-    static EnumOptions<RenderableData1D::Data1DStyleKeyword> data1DStyleKeywords();
-    // Write style information
-    bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
-    // Read style information
-    bool readStyleBlock(LineParser &parser);
 };

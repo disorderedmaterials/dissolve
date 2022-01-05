@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -52,4 +52,6 @@ class SQModuleWidget : public ModuleWidget
     private slots:
     void on_PartialsButton_clicked(bool checked);
     void on_TotalButton_clicked(bool checked);
+    void on_FilterEdit_textChanged(QString text);
+    void on_ClearFilterButton_clicked(bool checked);
 };

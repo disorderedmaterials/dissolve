@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -81,6 +81,12 @@ class DissolveWindow : public QMainWindow
     QLabel *iterationLabel_;
     // Label for simulation ETA (when using RunFor)
     QLabel *etaLabel_;
+
+    private:
+    // Add text label to status bar
+    QLabel *addStatusBarLabel(QString text);
+    // Add text label to status bar
+    QLabel *addStatusBarIcon(QString resource);
 
     /*
      * File

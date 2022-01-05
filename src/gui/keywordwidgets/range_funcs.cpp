@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/range.h"
@@ -40,9 +40,8 @@ void RangeKeywordWidget::on_Spin1_valueChanged(double value)
         return;
 
     keyword_->data().setMinimum(value);
-    keyword_->setAsModified();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Spin box value changed
@@ -52,9 +51,8 @@ void RangeKeywordWidget::on_Spin2_valueChanged(double value)
         return;
 
     keyword_->data().setMaximum(value);
-    keyword_->setAsModified();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

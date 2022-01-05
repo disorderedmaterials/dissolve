@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/vec3double.h"
@@ -60,7 +60,7 @@ void Vec3DoubleKeywordWidget::on_Spin1_valueChanged(double value)
     newVec.x = value;
     keyword_->setData(newVec);
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Spin box value changed
@@ -73,7 +73,7 @@ void Vec3DoubleKeywordWidget::on_Spin2_valueChanged(double value)
     newVec.y = value;
     keyword_->setData(newVec);
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Spin box value changed
@@ -86,7 +86,7 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
     newVec.z = value;
     keyword_->setData(newVec);
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

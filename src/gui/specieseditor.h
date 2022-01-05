@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -16,7 +16,7 @@ class SpeciesEditor : public QWidget
 
     public:
     SpeciesEditor(QWidget *parent = 0);
-    ~SpeciesEditor();
+    ~SpeciesEditor() = default;
 
     private:
     // Main Dissolve pointer

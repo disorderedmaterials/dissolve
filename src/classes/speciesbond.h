@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -10,8 +10,28 @@
 class SpeciesAtom;
 class Species;
 
+// Bond functional forms
+class BondFunctions
+{
+    public:
+    enum class Form
+    {
+        None,
+        Harmonic,
+        EPSR
+    };
+    // Return enum options for form
+    static EnumOptions<Form> forms();
+    // Return parameters for specified form
+    static const std::vector<std::string> &parameters(Form form);
+    // Return nth parameter for the given form
+    static std::string parameter(Form form, int n);
+    // Return index of parameter in the given form
+    static std::optional<int> parameterIndex(Form form, std::string_view name);
+};
+
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra
+class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
@@ -94,25 +114,30 @@ class SpeciesBond : public SpeciesIntra
      * Interaction Parameters
      */
     public:
-    // Bond functional forms
-    enum BondFunction
-    {
-        NoForm,
-        HarmonicForm,
-        EPSRForm
-    };
-    // Return enum options for BondFunction
-    static EnumOptions<BondFunction> bondFunctions();
-
-    public:
-    // Set up any necessary parameters
-    void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
-    // Return type of this interaction
-    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified distance
     double energy(double distance) const;
     // Return force multiplier for specified distance
     double force(double distance) const;
+};
+
+// MasterBond Definition
+class MasterBond : public SpeciesBond
+{
+    public:
+    explicit MasterBond(std::string_view name) : SpeciesBond(), name_{name} {};
+
+    /*
+     * Identifying Name
+     */
+    private:
+    // Identifying name
+    std::string name_;
+
+    public:
+    // Set identifying name
+    void setName(std::string_view name) override { name_ = name; }
+    // Return identifying name
+    std::string_view name() const override { return name_; };
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -307,8 +307,43 @@ void Dissolve::resetIterationCounter() { iteration_ = 0; }
 // Return current simulation step
 int Dissolve::iteration() const { return iteration_; }
 
-// Return per-iteration time in seconds
-double Dissolve::iterationTime() const { return iterationTime_.value(); }
+// Estimate time in seconds required to perform next n steps (if possible to determine)
+std::optional<double> Dissolve::estimateRequiredTime(int nIterations)
+{
+    auto seconds = 0.0;
+    auto n = 0;
+
+    for (const auto &layer : processingLayers_)
+    {
+        if (!layer->isEnabled())
+            continue;
+
+        // Determine how many times this layer will run in the provided number of iterations
+        auto nLayer = ((iteration_ % layer->frequency()) + nIterations) / layer->frequency();
+        if (nLayer == 0)
+            continue;
+
+        // Determine the iteration count of the layer
+        auto layerIteration = iteration_ / layer->frequency();
+
+        // For each module in the layer, determine how many times it will run in the number of layer iterations
+        for (const auto &module : layer->modules())
+        {
+            auto nModule = ((layerIteration % module->frequency()) + nLayer) / module->frequency();
+            if (nModule == 0)
+                continue;
+
+            // Do we have valid timing information for the module?
+            if (module->processTimes().count() > 0)
+            {
+                ++n;
+                seconds += nModule * module->processTimes();
+            }
+        }
+    }
+
+    return n > 0 ? std::optional<double>(seconds) : std::optional<double>();
+}
 
 // Print timing information
 void Dissolve::printTiming()

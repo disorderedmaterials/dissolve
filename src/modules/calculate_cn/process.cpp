@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "modules/calculate_cn/cn.h"
@@ -28,9 +28,9 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 
     // Test?
-    if (keywords_.hasBeenSet("TestRangeA"))
+    if (testRangeA_)
     {
-        const auto delta = testRangeA_ - sum1D_->sum(0);
+        const auto delta = testRangeA_.value() - sum1D_->sum(0);
 
         Messenger::print("Reference coordination number delta with correct value for range A is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
@@ -38,14 +38,14 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
             return false;
     }
-    if (keywords_.hasBeenSet("TestRangeB"))
+    if (testRangeB_)
     {
         // Is range B enabled?
         if (!isRangeBEnabled())
             return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const auto delta = testRangeB_ - sum1D_->sum(1);
+        const auto delta = testRangeB_.value() - sum1D_->sum(1);
 
         Messenger::print("Reference coordination number delta with correct value for range B is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
@@ -53,14 +53,14 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
             return false;
     }
-    if (keywords_.hasBeenSet("TestRangeC"))
+    if (testRangeC_)
     {
         // Is range B enabled?
         if (!isRangeBEnabled())
             return Messenger::error("Test coordination number for range C supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const auto delta = testRangeC_ - sum1D_->sum(2);
+        const auto delta = testRangeC_.value() - sum1D_->sum(2);
 
         Messenger::print("Reference coordination number delta with correct value for range C is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",

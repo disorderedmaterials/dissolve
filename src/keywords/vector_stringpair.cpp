@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/vector_stringpair.h"
 #include "base/lineparser.h"
@@ -30,8 +30,6 @@ bool StringPairVectorKeyword::deserialise(LineParser &parser, int startArg, cons
     // Read value pairs
     for (auto n = startArg; n < parser.nArgs(); n += 2)
         data_.emplace_back(parser.argsv(n), parser.argsv(n + 1));
-
-    setAsModified();
 
     return true;
 }

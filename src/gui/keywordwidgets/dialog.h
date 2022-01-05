@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
 #include "gui/keywordwidgets/ui_dialog.h"
+#include "keywords/signals.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -17,7 +18,7 @@ class KeywordsDialog : public QDialog
 
     public:
     KeywordsDialog(QWidget *parent, KeywordStore &keywords, const CoreData &coreData);
-    ~KeywordsDialog();
+    ~KeywordsDialog() = default;
 
     private:
     // Main form declaration
@@ -26,22 +27,21 @@ class KeywordsDialog : public QDialog
     const CoreData &coreData_;
     // Whether any keywords have been modified in the current 'show'
     bool keywordsModified_;
-    // Whether any set-up needs to be re-run following keyword modification
-    bool setUpRequired_;
+    // Combined signal mask for all keyword changes
+    KeywordSignals keywordSignalMask_;
 
     public:
     // Run the dialog
     void showOptions();
     // Return whether any keywords have been modified in the current 'show'
     bool keywordsModified() const;
-    // Return whether any set-up needs to be re-run following keyword modification
-    bool isSetUpRequired() const;
+    // Return combined signal mask for all keyword changes
+    KeywordSignals keywordSignalMask() const;
 
     /*
      * Slots
      */
     private slots:
-    void keywordChanged();
-    void setUpRequired();
+    void keywordChanged(int signalMask);
     void on_OKButton_clicked(bool checked);
 };

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
 #include "keywords/base.h"
 #include <any>
+#include <cassert>
 #include <functional>
 #include <string>
 #include <typeindex>

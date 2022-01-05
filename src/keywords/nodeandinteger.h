@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -78,15 +78,11 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
             data_.first = std::dynamic_pointer_cast<const N>(node);
             assert(data_.first);
         }
-        setAsModified();
+
         return true;
     }
     // Set index
-    virtual void setIndex(int i)
-    {
-        data_.second = i;
-        setAsModified();
-    }
+    virtual void setIndex(int i) { data_.second = i; }
 
     /*
      * Arguments

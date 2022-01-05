@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/store.h"
 #include "base/lineparser.h"
@@ -26,7 +26,7 @@ std::vector<KeywordBase *> KeywordStore::allKeywords_;
 KeywordTypeMap::KeywordTypeMap()
 {
     // PODs
-    registerDirectMapping<bool, BoolKeyword>();
+    registerDirectMapping<bool, BoolKeyword>([](BoolKeyword *keyword, const double value) { return keyword->setData(value); });
     // -- Double and int keywords must use the setData() function as they have validation
     registerDirectMapping<double, DoubleKeyword>(
         [](DoubleKeyword *keyword, const double value) { return keyword->setData(value); });
@@ -85,38 +85,19 @@ const KeywordBase *KeywordStore::find(std::string_view name) const
 }
 
 // Return keywords
-const std::map<std::string_view, KeywordBase *> KeywordStore::keywords() const { return keywords_; }
+const std::map<std::string_view, KeywordBase *> &KeywordStore::keywords() const { return keywords_; }
 
 // Return "Target" group keywords
-const std::vector<KeywordBase *> KeywordStore::targetsGroup() const { return targetsGroup_; }
+const std::vector<KeywordBase *> &KeywordStore::targetsGroup() const { return targetsGroup_; }
+
+// Return restartable keywords
+const std::vector<KeywordBase *> &KeywordStore::restartables() const { return restartables_; }
 
 // Return keyword group mappings
-const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> KeywordStore::displayGroups() const
+const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &KeywordStore::displayGroups() const
 {
     return displayGroups_;
 };
-
-// Return whether the keyword has been set, and is not currently empty (if relevant)
-bool KeywordStore::hasBeenSet(std::string_view name) const
-{
-    // Find the named keyword
-    auto *keyword = find(name);
-    if (!keyword)
-        throw(std::runtime_error(fmt::format("No Module keyword named '{}' exists to check whether it is set.\n", name)));
-
-    return keyword->hasBeenSet();
-}
-
-// Flag that the specified keyword has been set by some external means
-void KeywordStore::setAsModified(std::string_view name) const
-{
-    // Find the named keyword
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("No Module keyword named '{}' exists to set its modification status.\n", name)));
-
-    it->second->setAsModified();
-}
 
 /*
  * Set
@@ -139,8 +120,6 @@ void KeywordStore::set(std::string_view name, const std::any value)
 
     // Attempt to set the keyword
     setters().set(it->second, value);
-
-    it->second->setAsModified();
 }
 
 /*
@@ -174,14 +153,8 @@ KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const Cor
 bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
     for (const auto &[name, keyword] : keywords_)
-    {
-        // If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-        if (onlyIfSet && (!keyword->hasBeenSet()))
-            continue;
-
         if (!keyword->serialise(parser, name, prefix))
             return false;
-    }
 
     return true;
 }

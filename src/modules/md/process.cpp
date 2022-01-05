@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/timer.h"
@@ -345,7 +345,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Variable timestep?
         if (variableTimestep_)
-            keywords_.setAsModified("DeltaT");
+            keywords_.set("DeltaT", deltaT_);
 
         // Increment configuration changeCount
         cfg->incrementContentsVersion();

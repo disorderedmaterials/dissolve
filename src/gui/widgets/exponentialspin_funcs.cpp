@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/widgets/exponentialspin.hui"
 #include "math/doubleexp.h"
@@ -104,7 +104,11 @@ void ExponentialSpin::valueEditingFinished()
     setValue(lineEdit()->text().toDouble());
 }
 
-void ExponentialSpin::returnPressed() { lineEdit()->selectAll(); }
+void ExponentialSpin::returnPressed()
+{
+    lineEdit()->selectAll();
+    valueEditingFinished();
+}
 
 /*
  * Reimplementations

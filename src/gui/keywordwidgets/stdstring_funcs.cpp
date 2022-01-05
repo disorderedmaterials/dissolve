@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/keywordwidgets/stdstring.hui"
 
@@ -23,9 +23,8 @@ void StringKeywordWidget::lineEditTextChanged(const QString &text)
         return;
 
     keyword_->data() = qPrintable(text);
-    keyword_->setAsModified();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

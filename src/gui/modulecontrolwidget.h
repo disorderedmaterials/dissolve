@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -39,10 +39,6 @@ class ModuleControlWidget : public QWidget
     // Associated Module
     Module *module_;
 
-    private slots:
-    // Run the set-up stage of the associated Module
-    void setUpModule();
-
     public:
     // Set target Module to display
     void setModule(Module *module, Dissolve *dissolve);
@@ -76,10 +72,7 @@ class ModuleControlWidget : public QWidget
     void on_ModuleOutputButton_clicked(bool checked);
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
-    // Keyword data for Module has been modified
-    void keywordDataModified();
-    // Target keyword data changed
-    void targetKeywordDataChanged(int flags);
+    void moduleKeywordChanged(int signalMask);
 
     signals:
     // Notify that the Module's data has been modified in some way

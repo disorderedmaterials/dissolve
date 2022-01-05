@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/referencepoint.h"
 #include "gui/models/dataManagerReferencePointModel.h"
@@ -26,7 +26,7 @@ TEST_F(DataManagerTest, DataManager)
     std::vector<ReferencePoint> points;
 
     dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("restart/benzene.txt"));
 
     DataManagerReferencePointModel model(dissolve, points);
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/models/xmlImproperModel.h"
 #include <pugixml.hpp>
@@ -199,7 +199,7 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
         }
 
         result.emplace_back(std::get<0>(improper), std::get<1>(improper), std::get<2>(improper), std::get<3>(improper),
-                            SpeciesTorsion::CosNForm, params);
+                            TorsionFunctions::Form::CosN, params);
     }
     return result;
 }

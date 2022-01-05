@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "gui/gui.h"
@@ -21,8 +21,7 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
     moduleWidget_ = nullptr;
 
     // Connect signals from keywords widget
-    connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
-    connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
+    connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(moduleKeywordChanged(int)));
 
     // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
     // will exist in a QScrollArea)
@@ -57,7 +56,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
                 throw(std::runtime_error(fmt::format("No widget created for keyword '{}'.\n", keyword->name())));
 
             // Connect it up
-            connect(widget, SIGNAL(keywordValueChanged(int)), this, SLOT(targetKeywordDataChanged(int)));
+            connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(moduleKeywordChanged(int)));
 
             // Create the label
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
@@ -91,19 +90,6 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
 
 // Return target Module for the widget
 Module *ModuleControlWidget::module() const { return module_; }
-
-// Run the set-up stage of the associated Module
-void ModuleControlWidget::setUpModule()
-{
-    if ((!module_) || (!dissolve_))
-        return;
-
-    // Run the Module's set-up stage
-    module_->setUp(*dissolve_, dissolve_->worldPool());
-
-    if (moduleWidget_)
-        moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
-}
 
 /*
  * Update
@@ -195,11 +181,8 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
     emit(dataModified());
 }
 
-// Keyword data for Module has been modified
-void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }
-
 // Target keyword data changed
-void ModuleControlWidget::targetKeywordDataChanged(int flags)
+void ModuleControlWidget::moduleKeywordChanged(int signalMask)
 {
     if (refreshLock_.isLocked())
         return;
@@ -207,7 +190,13 @@ void ModuleControlWidget::targetKeywordDataChanged(int flags)
     // Always emit the 'dataModified' signal
     emit(dataModified());
 
-    // Set-up of encompassing class required?
-    if (flags & KeywordBase::ModificationRequiresSetUpOption)
-        setUpModule();
+    // If we have a signal mask set, call the module's setUp() function with it
+    if (signalMask > 0)
+    {
+        module_->setUp(*dissolve_, dissolve_->worldPool(), KeywordSignals(signalMask));
+        if (moduleWidget_)
+            moduleWidget_->updateControls(signalMask & KeywordSignals::RecreateRenderables
+                                              ? ModuleWidget::UpdateType::RecreateRenderables
+                                              : ModuleWidget::UpdateType::Normal);
+    }
 }

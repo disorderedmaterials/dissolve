@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/binary.h"
 #include "math/mathfunc.h"
@@ -80,4 +80,34 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
     }
 
     return result;
+}
+
+// Return string representation of node
+std::string ExpressionBinaryOperatorNode::asString() const
+{
+    // Must be two child nodes
+    if (children_.size() != 2)
+        return "";
+
+    // Evaluate LHS and RHS nodes
+    auto lhs = children_[0]->asString();
+    auto rhs = children_[1]->asString();
+
+    switch (operator_)
+    {
+        case (OperatorAdd):
+            return fmt::format("{}+{}", lhs, rhs);
+        case (OperatorDivide):
+            return fmt::format("{}/{}", lhs, rhs);
+        case (OperatorSubtract):
+            return fmt::format("{}-{}", lhs, rhs);
+        case (OperatorPow):
+            return fmt::format("{}^{}", lhs, rhs);
+        case (OperatorMultiply):
+            return fmt::format("{}*{}", lhs, rhs);
+        default:
+            throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
+    }
+
+    return "";
 }

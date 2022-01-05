@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/fileandformat.h"
 #include "base/lineparser.h"
@@ -38,14 +38,15 @@ bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const C
     if (!data_.read(parser, startArg, endKeyword_, coreData))
         return Messenger::error("Failed to read file/format.\n");
 
-    set_ = true;
-
     return true;
 }
 
 // Serialise data to specified LineParser
 bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (!data_.hasFilename())
+        return true;
+
     if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
         return false;
     if (!data_.writeBlock(parser, prefix))

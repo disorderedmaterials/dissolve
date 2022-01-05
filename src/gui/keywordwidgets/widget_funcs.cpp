@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "gui/keywordwidgets/producers.h"
@@ -46,7 +46,7 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
             }
 
             // Connect signals
-            connect(widget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+            connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(keywordDataChanged(int)));
 
             // Create a label and add it and the widget to our layout
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
@@ -79,12 +79,4 @@ void KeywordsWidget::updateControls()
  */
 
 // Keyword data changed
-void KeywordsWidget::keywordDataChanged(int flags)
-{
-    // Always emit the 'dataModified' signal
-    emit(dataModified());
-
-    // Set-up of encompassing class required?
-    if (flags & KeywordBase::ModificationRequiresSetUpOption)
-        emit(setUpRequired());
-}
+void KeywordsWidget::keywordDataChanged(int keywordSignalMask) { emit(keywordChanged(keywordSignalMask)); }

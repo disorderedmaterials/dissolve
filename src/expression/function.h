@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -49,4 +49,6 @@ class ExpressionFunctionNode : public ExpressionNode
     public:
     // Evaluate node
     std::optional<ExpressionValue> evaluate() const override;
+    // Return string representation of node
+    std::string asString() const override;
 };

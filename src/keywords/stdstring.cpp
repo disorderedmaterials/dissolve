@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/stdstring.h"
 #include "base/lineparser.h"
@@ -26,7 +26,6 @@ bool StringKeyword::deserialise(LineParser &parser, int startArg, const CoreData
     if (parser.hasArg(startArg))
     {
         data_ = parser.argsv(startArg);
-        set_ = true;
 
         return true;
     }

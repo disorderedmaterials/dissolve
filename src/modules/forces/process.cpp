@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -11,7 +11,7 @@
 #include "modules/import_trajectory/importtraj.h"
 
 // Run set-up stage
-bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
+bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
 {
     if (referenceForces_.hasFilename())
     {

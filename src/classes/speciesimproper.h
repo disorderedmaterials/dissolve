@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -12,7 +12,7 @@ class SpeciesAtom;
 class Species;
 
 // SpeciesImproper Definition
-class SpeciesImproper : public SpeciesIntra
+class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
 {
     public:
     SpeciesImproper();
@@ -76,14 +76,30 @@ class SpeciesImproper : public SpeciesIntra
      * Interaction Parameters
      */
     public:
-    // Set up any necessary parameters
-    void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
-    // Return type of this interaction
-    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
+};
+
+// MasterImproper Definition
+class MasterImproper : public SpeciesImproper
+{
+    public:
+    explicit MasterImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
+
+    /*
+     * Identifying Name
+     */
+    private:
+    // Identifying name
+    std::string name_;
+
+    public:
+    // Set identifying name
+    void setName(std::string_view name) override { name_ = name; }
+    // Return identifying name
+    std::string_view name() const override { return name_; };
 };

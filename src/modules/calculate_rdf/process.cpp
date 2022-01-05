@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "main/dissolve.h"
@@ -9,7 +9,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run set-up stage
-bool CalculateRDFModule::setUp(Dissolve &dissolve, ProcessPool &procPool) { return true; }
+bool CalculateRDFModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
 
 // Run main processing
 bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)

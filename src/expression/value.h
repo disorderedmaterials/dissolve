@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -59,7 +59,7 @@ class ExpressionValue
     public:
     // Return whether the contained type is an integer
     bool isInteger() const;
-    // Return whether the contained type is an double
+    // Return whether the contained type is a double
     bool isDouble() const;
     // Return the supplied ExpressionValues both contain integer types
     static bool bothIntegers(const ExpressionValue &a, const ExpressionValue &b);

@@ -7,6 +7,7 @@ add_library(
   forces.cpp
   pairpotential.cpp
   trajectory.cpp
+  values.cpp
   coordinates.h
   data1d.h
   data2d.h
@@ -14,6 +15,7 @@ add_library(
   forces.h
   pairpotential.h
   trajectory.h
+  values.h
 )
 
 include_directories(export PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)

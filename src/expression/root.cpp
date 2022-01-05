@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/root.h"
 
-ExpressionRootNode::ExpressionRootNode() : ExpressionNode() {}
+ExpressionRootNode::ExpressionRootNode(bool parenthesesEnclosed) : ExpressionNode(), parenthesesEnclosed_(parenthesesEnclosed)
+{
+}
 
 /*
  * Nodes
@@ -31,4 +33,12 @@ std::optional<ExpressionValue> ExpressionRootNode::evaluate() const
         return std::nullopt;
 
     return children_[0]->evaluate();
+}
+
+// Return string representation of node
+std::string ExpressionRootNode::asString() const
+{
+    if (children_.size() == 0)
+        return "";
+    return parenthesesEnclosed_ ? fmt::format("({})", children_[0]->asString()) : children_[0]->asString();
 }

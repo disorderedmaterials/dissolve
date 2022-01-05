@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/elementvector.h"
 #include "base/lineparser.h"
@@ -11,9 +11,6 @@ ElementVectorKeyword::ElementVectorKeyword(std::vector<Elements::Element> &data)
 /*
  * Data
  */
-
-// Return if the current data object is empty
-bool ElementVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data
 std::vector<Elements::Element> &ElementVectorKeyword::data() { return data_; }
@@ -45,8 +42,6 @@ bool ElementVectorKeyword::deserialise(LineParser &parser, int startArg, const C
         data_.push_back(el);
     }
 
-    set_ = true;
-
     return true;
 }
 
@@ -56,6 +51,6 @@ bool ElementVectorKeyword::serialise(LineParser &parser, std::string_view keywor
     if (data_.empty())
         return true;
 
-    return parser.writeLineF("{}{}{}\n", prefix, keywordName,
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
                              joinStrings(data_, "  ", [](const auto &el) { return Elements::symbol(el); }));
 }

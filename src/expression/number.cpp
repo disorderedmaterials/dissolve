@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/number.h"
 
@@ -29,3 +29,6 @@ std::optional<ExpressionValue> ExpressionNumberNode::evaluate() const
 
     return value_;
 }
+
+// Return string representation of node
+std::string ExpressionNumberNode::asString() const { return value_.asString(); }

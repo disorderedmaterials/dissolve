@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/isotopologueset.h"
 #include "base/lineparser.h"
@@ -43,8 +43,6 @@ bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const
 
     // Add the isotopologue to the set
     data_.add(iso, parser.argd(startArg + 2));
-
-    set_ = true;
 
     return true;
 }

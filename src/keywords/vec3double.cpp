@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/vec3double.h"
 #include "base/lineparser.h"
@@ -34,7 +34,6 @@ bool Vec3DoubleKeyword::setData(Vec3<double> value)
         return false;
 
     data_ = value;
-    set_ = true;
 
     return true;
 }

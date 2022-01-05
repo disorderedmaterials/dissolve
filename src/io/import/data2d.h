@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -29,9 +29,9 @@ class Data2DImportFileFormat : public FileAndFormat
      */
     private:
     // Min, max, and delta to assume for x axis
-    Vec3<double> xAxis_{0.0, 0.0, 0.0};
+    Vec3<double> xAxis_{0.0, 10.0, 0.1};
     // Min, max, and delta to assume for y axis
-    Vec3<double> yAxis_{0.0, 0.0, 0.0};
+    Vec3<double> yAxis_{0.0, 10.0, 0.1};
 
     private:
     // Set up keywords for the format

@@ -1,14 +1,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/speciesbond.h"
 #include "base/sysfunc.h"
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
+#include <map>
 
-SpeciesBond::SpeciesBond() : SpeciesIntra(SpeciesBond::NoForm) {}
+// Return enum options for BondFunction
+EnumOptions<BondFunctions::Form> BondFunctions::forms()
+{
+    return EnumOptions<BondFunctions::Form>("BondFunction", {{BondFunctions::Form::None, "None"},
+                                                             {BondFunctions::Form::Harmonic, "Harmonic", 2},
+                                                             {BondFunctions::Form::EPSR, "EPSR", 2}});
+}
 
-SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(SpeciesBond::NoForm) { assign(i, j); }
+// Return parameters for specified form
+const std::vector<std::string> &BondFunctions::parameters(Form form)
+{
+    static std::map<BondFunctions::Form, std::vector<std::string>> params_ = {{BondFunctions::Form::None, {}},
+                                                                              {BondFunctions::Form::Harmonic, {"k", "eq"}},
+                                                                              {BondFunctions::Form::EPSR, {"C/2", "eq"}}};
+    return params_[form];
+}
+
+// Return nth parameter for the given form
+std::string BondFunctions::parameter(Form form, int n)
+{
+    return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
+}
+
+// Return index of parameter in the given form
+std::optional<int> BondFunctions::parameterIndex(Form form, std::string_view name)
+{
+    auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
+                           [name](const auto &param) { return DissolveSys::sameString(name, param); });
+    if (it == parameters(form).end())
+        return {};
+
+    return it - parameters(form).begin();
+}
+
+SpeciesBond::SpeciesBond() : SpeciesIntra(BondFunctions::Form::None) {}
+
+SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(BondFunctions::Form::None) { assign(i, j); }
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 
@@ -25,6 +60,7 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -37,6 +73,7 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -52,6 +89,7 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     // Clean source
@@ -186,35 +224,6 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
  * Interaction Parameters
  */
 
-// Return enum options for BondFunction
-EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
-{
-    return EnumOptions<SpeciesBond::BondFunction>(
-        "BondFunction",
-        {{SpeciesBond::NoForm, "None"}, {SpeciesBond::HarmonicForm, "Harmonic", 2}, {SpeciesBond::EPSRForm, "EPSR", 2}});
-}
-
-// Set up any necessary parameters
-void SpeciesBond::setUp()
-{
-    // Get pointer to relevant parameters array
-    const auto &params = parameters();
-
-    /*
-     * Depending on the form, we may have other dependent parameters to set up
-     * These are always stored in the *local* SpeciesIntra array, rather than those in any associated master parameters
-     * This way, we can reference both general master parameters as well as others which depend on the atoms involved, for
-     * instance
-     */
-    if (form() == SpeciesBond::EPSRForm)
-    {
-        // Work out omega-squared(ab) from mass of natural isotopes
-        double massI = AtomicMass::mass(i_->Z());
-        double massJ = AtomicMass::mass(j_->Z());
-        parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
-    }
-}
-
 // Return fundamental frequency for the interaction
 double SpeciesBond::fundamentalFrequency(double reducedMass) const
 {
@@ -222,9 +231,9 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
     const auto &params = parameters();
 
     double k = 0.0;
-    if (form() == SpeciesBond::HarmonicForm)
+    if (form() == BondFunctions::Form::Harmonic)
         k = params[0];
-    else if (form() == SpeciesBond::EPSRForm)
+    else if (form() == BondFunctions::Form::EPSR)
         k = params[0];
     else
     {
@@ -245,39 +254,40 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
     return v;
 }
 
-// Return type of this interaction
-SpeciesIntra::InteractionType SpeciesBond::type() const { return SpeciesIntra::InteractionType::Bond; }
-
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
     // Get pointer to relevant parameters array
     const auto &params = parameters();
 
-    if (form() == SpeciesBond::NoForm)
+    if (form() == BondFunctions::Form::None)
         return 0.0;
-    else if (form() == SpeciesBond::HarmonicForm)
+    else if (form() == BondFunctions::Form::Harmonic)
     {
         /*
          * Parameters:
          * 0 : force constant
          * 1 : equilibrium distance
          */
-        double delta = distance - params[1];
+        auto delta = distance - params[1];
         return 0.5 * params[0] * delta * delta;
     }
-    else if (form() == SpeciesBond::EPSRForm)
+    else if (form() == BondFunctions::Form::EPSR)
     {
         /*
-         * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
+         * Basically a harmonic oscillator metered by the mass of the atoms
          *
          * Parameters:
          * 0 : general force constant C / 2.0
          * 1 : equilibrium distance
-         * 2 : omega squared (LOCAL parameter)
+         *                        eq
+         * omegaSq = -----------------------------
+         *           sqrt( (mi + mj) / (mi * mj) )
          */
-        double delta = distance - params[1];
-        return params[0] * (delta * delta) / parameters_[2];
+        auto delta = distance - params[1];
+        auto massI = AtomicMass::mass(i_->Z());
+        auto massJ = AtomicMass::mass(j_->Z());
+        return params[0] * delta * delta / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
 
     Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate energy.\n");
@@ -290,9 +300,9 @@ double SpeciesBond::force(double distance) const
     // Get pointer to relevant parameters array
     const auto &params = parameters();
 
-    if (form() == SpeciesBond::NoForm)
+    if (form() == BondFunctions::Form::None)
         return 0.0;
-    else if (form() == SpeciesBond::HarmonicForm)
+    else if (form() == BondFunctions::Form::Harmonic)
     {
         /*
          * V = -k * (r - eq)
@@ -303,17 +313,18 @@ double SpeciesBond::force(double distance) const
          */
         return -params[0] * (distance - params[1]);
     }
-    else if (form() == SpeciesBond::EPSRForm)
+    else if (form() == BondFunctions::Form::EPSR)
     {
         /*
-         * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
+         * Basically a harmonic oscillator metered by the mass of the atoms
          *
          * Parameters:
          * 0 : general force constant C / 2.0
          * 1 : equilibrium distance
-         * 2 : omega squared (LOCAL parameter)
          */
-        return -2.0 * params[0] * (distance - params[1]) / params[2];
+        auto massI = AtomicMass::mass(i_->Z());
+        auto massJ = AtomicMass::mass(j_->Z());
+        return -2.0 * params[0] * (distance - params[1]) / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
 
     Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");

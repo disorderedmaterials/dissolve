@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/reference.h"
 
@@ -28,9 +28,15 @@ std::shared_ptr<ExpressionNode> ExpressionReferenceNode::duplicate()
 // Evaluate node
 std::optional<ExpressionValue> ExpressionReferenceNode::evaluate() const
 {
-    // Must have a valid pointer
-    if (!variable_)
-        return std::nullopt;
+    assert(variable_);
 
     return (variable_->value());
+}
+
+// Return string representation of node
+std::string ExpressionReferenceNode::asString() const
+{
+    assert(variable_);
+
+    return std::string(variable_->name());
 }

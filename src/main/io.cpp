@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -185,44 +185,24 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
         for (auto &b : coreData_.masterBonds())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::BondKeyword),
-                                           b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-            for (auto p : b->parameters())
-                line += fmt::format("  {:8.3f}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
+                                   BondFunctions::forms().keyword(b->form()), b->parametersAsString()))
                 return false;
-        }
 
         for (auto &a : coreData_.masterAngles())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
-                                           a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-            for (auto p : a->parameters())
-                line += fmt::format("  {:8.3f}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
+                                   a->name(), AngleFunctions::forms().keyword(a->form()), a->parametersAsString()))
                 return false;
-        }
 
         for (auto &t : coreData_.masterTorsions())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
-                                           t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-            for (auto p : t->parameters())
-                line += fmt::format("  {:8.3f}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
+                                   t->name(), TorsionFunctions::forms().keyword(t->form()), t->parametersAsString()))
                 return false;
-        }
 
         for (auto &imp : coreData_.masterImpropers())
-        {
-            std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                           imp->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(imp->form()));
-            for (auto p : imp->parameters())
-                line += fmt::format("  {:8.3f}", p);
-            if (!parser.writeLine(line))
+            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
+                                   imp->name(), TorsionFunctions::forms().keyword(imp->form()), imp->parametersAsString()))
                 return false;
-        }
 
         // Done with the master terms
         if (!parser.writeLineF("{}\n", MasterBlock::keywords().keyword(MasterBlock::EndMasterKeyword)))
@@ -602,15 +582,9 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module Keyword Data
     for (const auto *module : Module::instances())
     {
-        for (auto &[name, keyword] : module->keywords().keywords())
-        {
-            // If the keyword is not flagged to be saved in the restart file, skip it
-            if (!keyword->isOptionSet(KeywordBase::InRestartFileOption))
-                continue;
-
-            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), name)))
+        for (auto &keyword : module->keywords().restartables())
+            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), keyword->name())))
                 return false;
-        }
     }
 
     // Processing Module Data

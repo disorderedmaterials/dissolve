@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_expressionvariablevector.h"
+#include "gui/models/expressionVariableVectorModel.h"
 #include "keywords/expressionvariablevector.h"
-#include "procedure/nodes/node.h"
-
-Q_DECLARE_METATYPE(ExpressionNode *);
 
 // Forward Declarations
 class QWidget;
@@ -34,18 +32,15 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     private:
     // Main form declaration
     Ui::ExpressionVariableVectorWidget ui_;
-
-    private:
-    // Variable table update function
-    void updateVariableTableRow(int row, std::shared_ptr<ExpressionVariable> variable, bool createItem);
+    // Model for table
+    ExpressionVariableVectorModel variableModel_;
 
     private slots:
-    // Variables table item changed
-    void on_VariablesTable_itemChanged(QTableWidgetItem *item);
+    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     signals:
-    // Keyword value changed
-    void keywordValueChanged(int flags);
+    // Keyword data changed
+    void keywordDataChanged(int flags);
 
     /*
      * Update

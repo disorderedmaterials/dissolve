@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -36,7 +36,7 @@ class CheckSpeciesModule : public Module
     // Target species to check
     const Species *targetSpecies_{nullptr};
     // Check the total charge of the species against the specified value
-    double totalCharge_{0.0};
+    std::optional<double> totalCharge_;
     // Tolerance beyond which parameters are said to differ
     double tolerance_{1.0e-3};
 

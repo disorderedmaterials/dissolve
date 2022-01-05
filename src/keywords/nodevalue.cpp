@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/nodevalue.h"
 #include "base/lineparser.h"
@@ -28,12 +28,7 @@ bool NodeValueKeyword::setData(std::string_view expressionText)
     // Get any variables currently in scope
     auto vars = parentNode_->parametersInScope();
 
-    if (!data_.set(expressionText, vars))
-        return false;
-
-    set_ = true;
-
-    return true;
+    return data_.set(expressionText, vars);
 }
 
 /*

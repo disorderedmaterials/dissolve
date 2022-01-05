@@ -39,6 +39,7 @@ Layer  'Processing'
     Test on
     TestAnalytic on
     TestReferenceIntra  5584.45180873
+    TestThreshold  1.0e-6
   EndModule
 
   # Test production forces against reference forces
@@ -47,6 +48,7 @@ Layer  'Processing'
     Test on
     TestReference  dlpoly  '../_data/dlpoly/water3000_intra/REVCON'
     EndTestReference
+    TestThreshold 1.0e-6
   EndModule
 
 EndLayer

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "data/ff/improperterm.h"
 #include "data/ff/atomtype.h"
 #include "data/ff/ff.h"
 
 ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                                               std::string_view typeL, SpeciesTorsion::TorsionFunction form,
+                                               std::string_view typeL, TorsionFunctions::Form form,
                                                const std::vector<double> &parameters)
 {
     typeI_ = typeI;
@@ -15,7 +15,7 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::stri
     typeL_ = typeL;
     form_ = form;
     parameters_ = parameters;
-    if (!SpeciesTorsion::torsionFunctions().validNArgs(form, parameters_.size()))
+    if (!TorsionFunctions::forms().validNArgs(form, parameters_.size()))
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldImproperTerm."));
 }
 
@@ -54,7 +54,7 @@ bool ForcefieldImproperTerm::isMatch(const ForcefieldAtomType &i, const Forcefie
 }
 
 // Return functional form index of interaction
-SpeciesTorsion::TorsionFunction ForcefieldImproperTerm::form() const { return form_; }
+TorsionFunctions::Form ForcefieldImproperTerm::form() const { return form_; }
 
 // Return array of parameters
 const std::vector<double> &ForcefieldImproperTerm::parameters() const { return parameters_; }

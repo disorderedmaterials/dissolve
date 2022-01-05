@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -24,13 +24,13 @@ class PickProximityProcedureNode : public PickProcedureNodeBase
     // Species to pick
     std::vector<const Species *> speciesToPick_;
     // Minimum distance (Angstroms)
-    double minDistance_{0.0};
+    std::optional<double> minDistance_;
     // Maximum distance (Angstroms)
-    double maxDistance_{0.0};
+    std::optional<double> maxDistance_;
     // Minimum number to pick
-    int minCount_{0};
+    std::optional<int> minCount_;
     // Maximum number to pick
-    int maxCount_{0};
+    std::optional<int> maxCount_;
 
     /*
      * Execute

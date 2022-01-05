@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "classes/atomtype.h"
@@ -156,14 +156,9 @@ void Species::print() const
         Messenger::print("      I     J    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------\n");
         for (const auto &bond : bonds_)
-        {
-            std::string line =
-                fmt::format("   {:4d}  {:4d}    {}{:<12}", bond.indexI() + 1, bond.indexJ() + 1,
-                            bond.masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
-            for (const auto param : bond.parameters())
-                line += fmt::format("  {:12.4e}", param);
-            Messenger::print(line);
-        }
+            Messenger::print("   {:4d}  {:4d}    {}{:<12}  {}\n", bond.indexI() + 1, bond.indexJ() + 1,
+                             bond.masterTerm() ? '@' : ' ', BondFunctions::forms().keyword(bond.form()),
+                             bond.parametersAsString());
     }
 
     if (nAngles() > 0)
@@ -172,14 +167,9 @@ void Species::print() const
         Messenger::print("      I     J     K    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------\n");
         for (const auto &angle : angles_)
-        {
-            std::string line =
-                fmt::format("   {:4d}  {:4d}  {:4d}    {}{:<12}", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
-                            angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
-            for (const auto param : angle.parameters())
-                line += fmt::format("  {:12.4e}", param);
-            Messenger::print(line);
-        }
+            Messenger::print("   {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", angle.indexI() + 1, angle.indexJ() + 1,
+                             angle.indexK() + 1, angle.masterTerm() ? '@' : ' ', AngleFunctions::forms().keyword(angle.form()),
+                             angle.parametersAsString());
     }
 
     if (nTorsions() > 0)
@@ -189,15 +179,9 @@ void Species::print() const
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Torsions
         for (const auto &torsion : torsions())
-        {
-            std::string line =
-                fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", torsion.indexI() + 1, torsion.indexJ() + 1,
-                            torsion.indexK() + 1, torsion.indexL() + 1, torsion.masterParameters() ? '@' : ' ',
-                            SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
-            for (const auto param : torsion.parameters())
-                line += fmt::format("  {:12.4e}", param);
-            Messenger::print(line);
-        }
+            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", torsion.indexI() + 1, torsion.indexJ() + 1,
+                             torsion.indexK() + 1, torsion.indexL() + 1, torsion.masterTerm() ? '@' : ' ',
+                             TorsionFunctions::forms().keyword(torsion.form()), torsion.parametersAsString());
     }
 
     if (nImpropers() > 0)
@@ -207,15 +191,9 @@ void Species::print() const
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Impropers
         for (auto &improper : impropers())
-        {
-            std::string line =
-                fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", improper.indexI() + 1, improper.indexJ() + 1,
-                            improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
-                            SpeciesTorsion::torsionFunctions().keywordFromInt(improper.form()));
-            for (const auto param : improper.parameters())
-                line += fmt::format("  {:12.4e}", param);
-            Messenger::print(line);
-        }
+            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", improper.indexI() + 1, improper.indexJ() + 1,
+                             improper.indexK() + 1, improper.indexL() + 1, improper.masterTerm() ? '@' : ' ',
+                             TorsionFunctions::forms().keyword(improper.form()), improper.parametersAsString());
     }
 }
 

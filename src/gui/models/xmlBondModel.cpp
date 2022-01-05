@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/models/xmlBondModel.h"
 
@@ -90,7 +90,7 @@ std::vector<ForcefieldBondTerm> XmlBondModel::toVector()
 {
     std::vector<ForcefieldBondTerm> result;
     for (auto &bond : bonds_)
-        result.emplace_back(std::get<0>(bond), std::get<1>(bond), SpeciesBond::HarmonicForm,
+        result.emplace_back(std::get<0>(bond), std::get<1>(bond), BondFunctions::Form::Harmonic,
                             std::vector({std::get<3>(bond), std::get<2>(bond)}));
     return result;
 }

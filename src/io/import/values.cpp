@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "io/import/values.h"
 #include "base/lineparser.h"
@@ -49,7 +49,7 @@ bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &cu
     LineParser &parser = readFromCurrent ? currentParser : fileParser;
 
     if (!readFromCurrent && ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading())))
-        return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename_);
+        return Messenger::error("Couldn't open file '{}' for loading value data.\n", filename_);
 
     // Import the data
     auto result = false;

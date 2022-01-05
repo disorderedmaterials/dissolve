@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/helpers/comboboxupdater.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
@@ -41,7 +41,7 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
     else
         keyword_->setData(ui_.ModuleCombo->currentData(Qt::UserRole).value<Module *>());
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

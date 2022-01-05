@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -34,7 +34,7 @@ class ForcesModule : public Module
     // Include intramolecular forces in test
     bool testIntra_{true};
     // Threshold of force (%) at which test comparison will fail
-    double testThreshold_{0.1};
+    double testThreshold_{1.0e-6};
     // Reference forces for test
     ForceImportFileFormat referenceForces_;
     // Force export file and format
@@ -49,7 +49,7 @@ class ForcesModule : public Module
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) override;
 
     /*
      * Functions

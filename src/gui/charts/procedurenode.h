@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -111,7 +111,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
      */
     private slots:
     // Keyword data for node has been modified
-    void keywordDataModified();
+    void nodeKeywordChanged(int signalMask);
 
     signals:
     // Notify that the node's keyword data has been modified

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -52,19 +52,20 @@ std::optional<int> CopySpeciesTermsDialog::determineNextPage(int currentIndex) {
 bool CopySpeciesTermsDialog::prepareForPreviousPage(int currentIndex) { return true; }
 
 // Find terms of the specified type that can be copied
-template <class I>
-void CopySpeciesTermsDialog::findTermsToCopy(std::vector<std::pair<I *, const I *>> &termVector,
-                                             const std::vector<I> &sourceTerms, std::vector<I> &targetTerms)
+template <class Intra, class Form>
+void CopySpeciesTermsDialog::findTermsToCopy(std::vector<std::pair<Intra *, const Intra *>> &termVector,
+                                             const std::vector<Intra> &sourceTerms, std::vector<Intra> &targetTerms,
+                                             Form unassignedForm)
 {
     auto onlySelected = ui_.CopySelectionRadio->isChecked();
     auto onlyUnassigned = ui_.CopyNoOverwriteCheck->isChecked();
     termVector.clear();
     for (auto &targetTerm : targetTerms)
     {
-        // Only selected and/or unasssigned terms?
+        // Only selected and/or unassigned terms?
         if (onlySelected && !targetTerm.isSelected())
             continue;
-        if (onlyUnassigned && targetTerm.form() != 0)
+        if (onlyUnassigned && targetTerm.form() != unassignedForm)
             continue;
 
         // Check for a suitable term in the target species
@@ -93,11 +94,11 @@ template <class I> void CopySpeciesTermsDialog::copyTerms(const std::vector<std:
 {
     for (auto [target, source] : termVector)
     {
-        if (source->masterParameters())
-            target->setMasterParameters(source->masterParameters());
+        if (source->masterTerm())
+            target->setMasterTerm(source->masterTerm());
         else
         {
-            target->detachFromMasterIntra();
+            target->detachFromMasterTerm();
             target->setFormAndParameters(source->form(), source->parameters());
         }
     }
@@ -116,11 +117,11 @@ void CopySpeciesTermsDialog::prepareCopy()
 
     // Assemble list of bonds terms to copy
     if (ui_.CopyBondsCheck->isChecked())
-        findTermsToCopy(bondTerms_, sp->bonds(), targetSpecies_->bonds());
+        findTermsToCopy(bondTerms_, sp->bonds(), targetSpecies_->bonds(), BondFunctions::Form::None);
     if (ui_.CopyAnglesCheck->isChecked())
-        findTermsToCopy(angleTerms_, sp->angles(), targetSpecies_->angles());
+        findTermsToCopy(angleTerms_, sp->angles(), targetSpecies_->angles(), AngleFunctions::Form::None);
     if (ui_.CopyTorsionsCheck->isChecked())
-        findTermsToCopy(torsionTerms_, sp->torsions(), targetSpecies_->torsions());
+        findTermsToCopy(torsionTerms_, sp->torsions(), targetSpecies_->torsions(), TorsionFunctions::Form::None);
 }
 
 // Perform any final actions before the wizard is closed

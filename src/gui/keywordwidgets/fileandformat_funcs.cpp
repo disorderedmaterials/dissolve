@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/keywordwidgets/dialog.h"
 #include "gui/keywordwidgets/fileandformat.h"
@@ -45,7 +45,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
 
     checkFileValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
@@ -57,7 +57,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
 
     checkFileValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
@@ -88,7 +88,7 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
         ui_.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
         updateKeywordData();
         updateWidgetValues(coreData_);
-        emit(keywordValueChanged(keyword_->optionMask()));
+        emit(keywordDataChanged(keyword_->signalMask()));
     }
 }
 
@@ -99,7 +99,7 @@ void FileAndFormatKeywordWidget::on_FormatCombo_currentIndexChanged(int index)
 
     updateKeywordData();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
@@ -109,7 +109,7 @@ void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
     optionsDialog.showOptions();
 
     if (optionsDialog.keywordsModified())
-        emit(keywordValueChanged(keyword_->optionMask()));
+        emit(keywordDataChanged(optionsDialog.keywordSignalMask() + keyword_->signalMask()));
 }
 
 /*
@@ -160,6 +160,4 @@ void FileAndFormatKeywordWidget::updateKeywordData()
 
     fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
     fileAndFormat.formats().setIndex(ui_.FormatCombo->currentIndex());
-
-    keyword_->setAsModified();
 }

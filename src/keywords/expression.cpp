@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/expression.h"
 #include "base/lineparser.h"
@@ -22,8 +22,6 @@ bool ExpressionKeyword::setData(std::string_view expressionText)
 {
     if (!data_.create(expressionText, variables_))
         return false;
-
-    set_ = true;
 
     return true;
 }

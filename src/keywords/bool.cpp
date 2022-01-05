@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/bool.h"
 #include "base/lineparser.h"
@@ -21,7 +21,6 @@ bool BoolKeyword::setData(bool value)
 }
 
 // Return data
-bool &BoolKeyword::data() { return data_; }
 const bool &BoolKeyword::data() const { return data_; }
 std::string BoolKeyword::toString() const { return fmt::format("{}", data_); }
 
@@ -45,5 +44,8 @@ bool BoolKeyword::deserialise(LineParser &parser, int startArg, const CoreData &
 // Serialise data to specified LineParser
 bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (!set_)
+        return true;
+
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }

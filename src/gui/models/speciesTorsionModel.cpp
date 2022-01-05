@@ -1,8 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2022 Team Dissolve and contributors
+
 #include "gui/models/speciesTorsionModel.h"
 #include "classes/coredata.h"
-#include "classes/masterintra.h"
-#include "gui/models/speciesModelUtils.h"
-#include "templates/algorithms.h"
 
 SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, const CoreData &coreData)
     : torsions_(torsions), coreData_(coreData)
@@ -32,10 +32,10 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
-    auto &item = torsions_[index.row()];
+    auto &torsion = torsions_[index.row()];
 
     if (role == Qt::UserRole)
-        return QVariant::fromValue(&item);
+        return QVariant::fromValue(&torsion);
 
     if (role == Qt::DisplayRole || role == Qt::EditRole)
         switch (index.column())
@@ -44,13 +44,12 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
             case 1:
             case 2:
             case 3:
-                return item.index(index.column()) + 1;
+                return torsion.index(index.column()) + 1;
             case 4:
-                return item.masterParameters()
-                           ? QString::fromStdString("@" + std::string(item.masterParameters()->name()))
-                           : QString::fromStdString(SpeciesTorsion::torsionFunctions().keywordFromInt(item.form()));
+                return torsion.masterTerm() ? QString::fromStdString("@" + std::string(torsion.masterTerm()->name()))
+                                            : QString::fromStdString(TorsionFunctions::forms().keyword(torsion.form()));
             case 5:
-                return QString::fromStdString(joinStrings(item.parameters()));
+                return QString::fromStdString(torsion.parametersAsString());
             default:
                 return {};
         }
@@ -88,14 +87,14 @@ Qt::ItemFlags SpeciesTorsionModel::flags(const QModelIndex &index) const
 {
     if (index.column() < 4)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 4 && torsions_[index.row()].masterParameters())
+    if (index.column() > 4 && torsions_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
 bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    auto &item = torsions_[index.row()];
+    auto &torsion = torsions_[index.row()];
     switch (index.column())
     {
         case 0:
@@ -108,7 +107,7 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             {
                 auto master = coreData_.getMasterTorsion(value.toString().toStdString());
                 if (master)
-                    item.setMasterParameters(&master->get());
+                    torsion.setMasterTerm(&master->get());
                 else
                     return false;
             }
@@ -116,9 +115,9 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             {
                 try
                 {
-                    auto tf = SpeciesTorsion::torsionFunctions().enumeration(value.toString().toStdString());
-                    item.detachFromMasterIntra();
-                    item.setForm(tf);
+                    auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
+                    torsion.detachFromMasterTerm();
+                    torsion.setForm(tf);
                 }
                 catch (std::runtime_error &e)
                 {
@@ -127,7 +126,7 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             }
             break;
         case 5:
-            if (!splitParameters(value.toString(), item))
+            if (!torsion.setParameters(value.toString().toStdString()))
                 return false;
             break;
         default:

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/speciesimproper.h"
 #include "classes/speciesatom.h"
 #include "classes/speciestorsion.h"
 
-SpeciesImproper::SpeciesImproper() : SpeciesIntra(SpeciesTorsion::NoForm) {}
+SpeciesImproper::SpeciesImproper() : SpeciesIntra(TorsionFunctions::Form::None) {}
 
 SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(SpeciesTorsion::NoForm)
+    : SpeciesIntra(TorsionFunctions::Form::None)
 {
     assign(i, j, k, l);
 }
@@ -29,6 +29,7 @@ SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) noexcept : SpeciesInt
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -43,6 +44,7 @@ SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
     assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -55,6 +57,7 @@ SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source) noexcept
 
     assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -202,18 +205,12 @@ bool SpeciesImproper::isSelected() const
  * Interaction Parameters
  */
 
-// Set up any necessary parameters
-void SpeciesImproper::setUp() {}
-
 // Calculate and return fundamental frequency for the interaction
 double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 {
     Messenger::warn("No fundamental frequency can be calculated for this improper interaction.\n");
     return 0.0;
 }
-
-// Return type of this interaction
-SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::InteractionType::Improper; }
 
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const

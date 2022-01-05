@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -59,8 +59,10 @@ class DissolveSys
     static bool isNumber(std::string_view text, bool &isFloatingPoint);
     // Replace all occurrences of search string with replace string
     static std::string replace(const std::string_view source, const std::string_view search, const std::string_view replace);
+    // Split a string over a delimiter, returning a vector of elements
+    static std::vector<std::string> splitString(std::string_view str, std::string_view delim = " ");
     // Split a string over a delimiter, returning a vector of converted double values
-    static std::vector<double> splitStringToDoubles(std::string str, std::string_view delim = ", ");
+    static std::vector<double> splitStringToDoubles(std::string_view str, std::string_view delim = ", ");
     // Double any of the supplied characters in the string
     static std::string doubleChars(const std::string_view s, const std::string_view charsToDouble);
 

@@ -39,7 +39,6 @@ add_library(
   isotopologueset.cpp
   isotopologueweight.cpp
   kvector.cpp
-  masterintra.cpp
   molecule.cpp
   moleculedistributor.cpp
   neutronweights.cpp
@@ -67,7 +66,6 @@ add_library(
   species_site.cpp
   species_transform.cpp
   speciesimproper.cpp
-  speciesintra.cpp
   speciesring.cpp
   speciessite.cpp
   speciestorsion.cpp
@@ -100,7 +98,6 @@ add_library(
   isotopologueweight.h
   kernelflags.h
   kvector.h
-  masterintra.h
   molecule.h
   moleculedistributor.h
   neutronweights.h

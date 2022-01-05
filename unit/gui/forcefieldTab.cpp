@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "gui/models/pairPotentialModel.h"
@@ -31,7 +31,7 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     Dissolve dissolve(coreData);
 
     dissolve.clear();
-    dissolve.loadInput("molshake/benzene.txt");
+    ASSERT_TRUE(dissolve.loadInput("molshake/benzene.txt"));
     ASSERT_TRUE(dissolve.generatePairPotentials());
 
     PairPotentialModel pairs(dissolve.pairPotentials());

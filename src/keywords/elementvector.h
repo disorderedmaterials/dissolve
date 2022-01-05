@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -19,10 +19,6 @@ class ElementVectorKeyword : public KeywordBase
     private:
     // Reference to data
     std::vector<Elements::Element> &data_;
-
-    protected:
-    // Return if the current data object is empty
-    bool isDataEmpty() const override;
 
     public:
     // Return reference to data

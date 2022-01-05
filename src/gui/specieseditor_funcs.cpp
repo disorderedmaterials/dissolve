@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
+#include "data/ff/library.h"
 #include "gui/specieseditor.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
 #include "modules/geomopt/geomopt.h"
 #include <QButtonGroup>
+#include <QMessageBox>
 
 SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
 {
@@ -17,10 +19,11 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
     ui_.setupUi(this);
 
     // Create a button group for the interaction modes
-    QButtonGroup *group = new QButtonGroup;
+    auto *group = new QButtonGroup;
     group->addButton(ui_.InteractionViewButton);
     group->addButton(ui_.InteractionDrawButton);
     group->addButton(ui_.InteractionDeleteButton);
+    speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Draw);
 
     // Connect signals / slots
     connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
@@ -32,8 +35,6 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
     updateToolbar();
     updateStatusBar();
 }
-
-SpeciesEditor::~SpeciesEditor() {}
 
 // Set main Dissolve pointer
 void SpeciesEditor::setDissolve(Dissolve *dissolve) { dissolve_ = dissolve; }
@@ -201,19 +202,38 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     if (!sp)
         return;
 
-    // Apply forcefield terms now?
-    if (sp->forcefield())
-        sp->applyForcefieldTerms(dissolve_->coreData());
+    // Get the pointer to the UFF, and create some temporary objects
+    auto uff = ForcefieldLibrary::forcefield("UFF");
+    if (!uff)
+        throw(std::runtime_error("Couldn't locate UFF to perform minimisation.\n"));
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    // Clear any old forcefield terms from the species, and recreate higher-order intramolecular terms
+    sp->clearForcefieldTerms();
+    sp->updateIntramolecularTerms();
+
+    // Apply new forcefield terms
+    if (uff->assignAtomTypes(sp, coreData, Forcefield::TypeAll, false) != 0 || !uff->assignIntramolecular(sp))
+    {
+        QMessageBox::critical(this, "Error", "Failed to apply UFF to the species - molecule clean-up is not possible.");
+        return;
+    }
 
     // Check that the Species set up is valid
     if (!sp->checkSetUp())
         return;
 
+    // Create a temporary potential map
+    dissolve.regeneratePairPotentials();
     GeometryOptimisationModule optimiser;
-    optimiser.optimiseSpecies(dissolve_->potentialMap(), dissolve_->worldPool(), sp);
+    optimiser.optimiseSpecies(dissolve.potentialMap(), dissolve.worldPool(), sp);
 
     // Centre the Species back at the origin
     sp->centreAtOrigin();
+
+    // Clear the forcefield terms from the species
+    sp->clearForcefieldTerms();
 
     // Need to update the SpeciesViewer, and signal that the data shown has been modified
     speciesViewer()->view().showAllData();

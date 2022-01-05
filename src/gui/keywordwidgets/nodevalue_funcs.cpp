@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/keywordwidgets/nodevalue.h"
 
@@ -30,7 +30,7 @@ void NodeValueKeywordWidget::on_ValueEdit_editingFinished()
     keyword_->setData(qPrintable(ui_.ValueEdit->text()));
     checkValueValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void NodeValueKeywordWidget::on_ValueEdit_returnPressed()
@@ -41,7 +41,7 @@ void NodeValueKeywordWidget::on_ValueEdit_returnPressed()
     keyword_->setData(qPrintable(ui_.ValueEdit->text()));
     checkValueValidity();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

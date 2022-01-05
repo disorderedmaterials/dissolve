@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "modules/calculate_rdf/rdf.h"
 #include "keywords/bool.h"
@@ -75,6 +75,7 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
 
     // -- -- Collect1D: 'RDF'
     collectDistance_ = std::make_shared<Collect1DProcedureNode>(calcDistance);
+    collectDistance_->setName("Histo-AB");
     forEachB->addNode(collectDistance_);
 
     // Process1D: @dataName

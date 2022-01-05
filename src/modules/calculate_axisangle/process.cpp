@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "main/dissolve.h"
@@ -9,7 +9,7 @@
 #include "procedure/nodes/select.h"
 
 // Run set-up stage
-bool CalculateAxisAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool) { return true; }
+bool CalculateAxisAngleModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
 
 // Run main processing
 bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)

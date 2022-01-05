@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/nodebranch.h"
 #include "base/lineparser.h"
@@ -11,13 +11,6 @@ NodeBranchKeyword::NodeBranchKeyword(std::shared_ptr<SequenceProcedureNode> &dat
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), branchContext_(branchContext)
 {
 }
-
-/*
- * Data
- */
-
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool NodeBranchKeyword::isDataEmpty() const { return data_ == nullptr || data_->nNodes() == 0; }
 
 /*
  * Arguments

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/models/xmlTorsionModel.h"
 #include <algorithm>
@@ -200,7 +200,7 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
         }
 
         result.emplace_back(std::get<0>(torsion), std::get<1>(torsion), std::get<2>(torsion), std::get<3>(torsion),
-                            SpeciesTorsion::CosNForm, params);
+                            TorsionFunctions::Form::CosN, params);
     }
     return result;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -32,11 +32,11 @@ class EnergyModule : public Module
     // Use analytic interatomic energies rather than (production) tabulated potentials for tests
     bool testAnalytic_{false};
     // Reference value for interatomic energy against which to test calculated value
-    double testReferenceInter_{0.0};
+    std::optional<double> testReferenceInter_;
     // Reference value for intramolecular energy against which to test calculated value
-    double testReferenceIntra_{0.0};
+    std::optional<double> testReferenceIntra_;
     // Threshold of energy at which test comparison will fail
-    double testThreshold_{0.1};
+    double testThreshold_{1.0e-6};
 
     /*
      * Functions
@@ -84,5 +84,5 @@ class EnergyModule : public Module
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) override;
 };

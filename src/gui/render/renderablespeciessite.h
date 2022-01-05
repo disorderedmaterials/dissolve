@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -67,22 +67,4 @@ class RenderableSpeciesSite : public Renderable
     void setDisplayStyle(SpeciesSiteDisplayStyle displayStyle);
     // Return display style for the renderable
     SpeciesSiteDisplayStyle displayStyle() const;
-
-    /*
-     * Style I/O
-     */
-    public:
-    // SpeciesSiteStyle Keywords Enum
-    enum SpeciesSiteStyleKeyword
-    {
-        DisplayKeyword,  /* 'Display' - General display style for renderable */
-        EndStyleKeyword, /* 'EndStyle' - End of Style block */
-        nSpeciesSiteStyleKeywords
-    };
-    // Return enum option info for RenderableKeyword
-    static EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> speciesSiteStyleKeywords();
-    // Write style information
-    bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
-    // Read style information
-    bool readStyleBlock(LineParser &parser);
 };

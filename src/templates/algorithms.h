@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 #pragma once
 
 #include "classes/pair_iter.h"
@@ -262,25 +262,4 @@ template <class Class> std::string joinStrings(Class range, std::string delim = 
 template <class Class, class Lam> std::string joinStrings(Class range, std::string delim, Lam lambda)
 {
     return joinStrings(range.begin(), range.end(), delim, lambda);
-}
-
-// Split a string over a delimiter and store the results in an iterator.  Returns the number of elements split, or -1 if the
-// number of elements exceeds the givens size of the container.
-template <class T> int splitString(std::string str, T iterator, int size, std::string delim = " ")
-{
-    int found = 0, index = 0, count = 0;
-    while (true)
-    {
-        found = str.find(delim, index);
-        count += 1;
-        if (count > size)
-            return -1;
-        if (found == std::string::npos)
-        {
-            *iterator++ = str.substr(index);
-            return count;
-        }
-        *iterator++ = str.substr(index, found - index);
-        index = found + delim.size();
-    }
 }

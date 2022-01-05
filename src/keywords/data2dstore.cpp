@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/data2dstore.h"
 #include "base/lineparser.h"
@@ -33,8 +33,6 @@ bool Data2DStoreKeyword::deserialise(LineParser &parser, int startArg, const Cor
 
     if (!data_.addData(parser.argsv(startArg), parser, startArg + 1, fmt::format("End{}", name()), coreData))
         return Messenger::error("Failed to add data.\n");
-
-    set_ = true;
 
     return true;
 }

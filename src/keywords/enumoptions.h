@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -32,13 +32,6 @@ class EnumOptionsBaseKeyword : public KeywordBase
     virtual int enumerationByIndex() const = 0;
     // Set new option index, informing KeywordBase
     virtual void setEnumerationByIndex(int optionIndex) = 0;
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    virtual int optionMask() const = 0;
 };
 
 // Keyword based on EnumOptions
@@ -87,7 +80,6 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
                 return optionData_.errorAndPrintValid(parser.argsv(startArg));
 
             data_ = optionData_.enumeration(parser.argsv(startArg));
-            setAsModified();
 
             return true;
         }
@@ -113,16 +105,5 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
         throw(std::runtime_error("Couldn't retrieve index for enumeration as it doesn't exist.\n"));
     };
     // Set new option index
-    void setEnumerationByIndex(int optionIndex) override
-    {
-        data_ = optionData_.enumerationByIndex(optionIndex);
-        setAsModified();
-    }
-
-    /*
-     * Access to KeywordBase
-     */
-    public:
-    // Return option mask for keyword
-    int optionMask() const override { return KeywordBase::optionMask(); }
+    void setEnumerationByIndex(int optionIndex) override { data_ = optionData_.enumerationByIndex(optionIndex); }
 };

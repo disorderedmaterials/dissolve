@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,8 +35,8 @@ class ParametersProcedureNode : public ProcedureNode
     public:
     // Add new parameter
     void addParameter(std::string_view name, ExpressionValue initialValue);
-    // Return whether this node has the named parameter specified
-    std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
+    // Return the named parameter (if it exists)
+    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
                                                      std::shared_ptr<ExpressionVariable> excludeParameter) override;
     // Return vector of all parameters for this node
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;

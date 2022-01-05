@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -14,11 +14,11 @@ class ExponentialSpinDelegate : public QItemDelegate
 
     private:
     // Parameters for ExponentialSpin
-    double min_, max_, step_, nDecimals_;
+    double min_, max_, step_;
+    int nDecimals_;
 
     public:
-    ExponentialSpinDelegate(QObject *parent = 0, double vmin = -1e6, double vmax = 1e6, double vstep = 1.0,
-                            double nDecimals = 5);
+    ExponentialSpinDelegate(QObject *parent = 0, double vmin = -1e6, double vmax = 1e6, double vstep = 1.0, int nDecimals = 5);
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     // Set the data to appear when the editor is called

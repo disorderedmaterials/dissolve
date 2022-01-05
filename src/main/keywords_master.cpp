@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -23,9 +23,9 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
 {
     Messenger::print("\nParsing {} block...\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword));
 
-    SpeciesBond::BondFunction bf;
-    SpeciesAngle::AngleFunction af;
-    SpeciesTorsion::TorsionFunction tf;
+    BondFunctions::Form bf;
+    AngleFunctions::Form af;
+    TorsionFunctions::Form tf;
     auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
@@ -46,38 +46,37 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
         {
             case (MasterBlock::AngleKeyword):
                 // Check the functional form specified
-                if (!SpeciesAngle::angleFunctions().isValid(parser.argsv(2)))
+                if (!AngleFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of angle ({}) not recognised.\n", parser.argsv(2));
                     error = true;
                     break;
                 }
-                af = SpeciesAngle::angleFunctions().enumeration(parser.argsv(2));
+                af = AngleFunctions::forms().enumeration(parser.argsv(2));
 
                 // Create a new master angle definition
                 try
                 {
-                    auto &masterIntra = coreData.addMasterAngle(parser.argsv(1));
-                    masterIntra.setForm(af);
-
-                    std::string termInfo = fmt::format("     {:<10}  {:<12}", masterIntra.name(),
-                                                       SpeciesAngle::angleFunctions().keywordFromInt(masterIntra.form()));
+                    auto &masterAngle = coreData.addMasterAngle(parser.argsv(1));
+                    masterAngle.setForm(af);
 
                     // Check number of args provided
-                    if (!SpeciesAngle::angleFunctions().validNArgs(af, parser.nArgs() - 3))
+                    if (!AngleFunctions::forms().validNArgs(af, parser.nArgs() - 3))
                     {
                         error = true;
                         break;
                     }
 
                     // Set parameters
-                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    if (!masterAngle.setParameters(parser, 3))
                     {
-                        masterIntra.addParameter(parser.argd(n));
-                        termInfo += fmt::format("  {:12.4e}", masterIntra.parameter(n - 3));
+                        error = true;
+                        break;
                     }
 
-                    Messenger::printVerbose("Defined master angle term: {}\n", termInfo);
+                    Messenger::printVerbose("Defined master angle term: {:<10}  {:<12}  {}\n", masterAngle.name(),
+                                            AngleFunctions::forms().keyword(masterAngle.form()),
+                                            masterAngle.parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {
@@ -87,38 +86,36 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 break;
             case (MasterBlock::BondKeyword):
                 // Check the functional form specified
-                if (!SpeciesBond::bondFunctions().isValid(parser.argsv(2)))
+                if (!BondFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of bond ({}) not recognised.\n", parser.argsv(2));
                     error = true;
                     break;
                 }
-                bf = SpeciesBond::bondFunctions().enumeration(parser.argsv(2));
+                bf = BondFunctions::forms().enumeration(parser.argsv(2));
 
                 // Create a new master bond definition
                 try
                 {
-                    auto &masterIntra = coreData.addMasterBond(parser.argsv(1));
-                    masterIntra.setForm(bf);
-
-                    std::string termInfo = fmt::format("{:<10}  {:<12}", masterIntra.name(),
-                                                       SpeciesBond::bondFunctions().keywordFromInt(masterIntra.form()));
+                    auto &masterBond = coreData.addMasterBond(parser.argsv(1));
+                    masterBond.setForm(bf);
 
                     // Check number of args provided
-                    if (!SpeciesBond::bondFunctions().validNArgs(bf, parser.nArgs() - 3))
+                    if (!BondFunctions::forms().validNArgs(bf, parser.nArgs() - 3))
                     {
                         error = true;
                         break;
                     }
 
                     // Set parameters
-                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    if (!masterBond.setParameters(parser, 3))
                     {
-                        masterIntra.addParameter(parser.argd(n));
-                        termInfo += fmt::format("  {:12.4e}", masterIntra.parameter(n - 3));
+                        error = true;
+                        break;
                     }
 
-                    Messenger::printVerbose("Defined master bond term: {}\n", termInfo);
+                    Messenger::printVerbose("Defined master bond term: {:<10}  {:<12}  {}\n", masterBond.name(),
+                                            BondFunctions::forms().keyword(masterBond.form()), masterBond.parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {
@@ -132,38 +129,37 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 break;
             case (MasterBlock::ImproperKeyword):
                 // Check the functional form specified
-                if (!SpeciesTorsion::torsionFunctions().isValid(parser.argsv(2)))
+                if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of improper ({}) not recognised.\n", parser.argsv(2));
                     error = true;
                     break;
                 }
-                tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argsv(2));
+                tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
 
                 // Create a new master improper definition
                 try
                 {
-                    auto &masterIntra = coreData.addMasterImproper(parser.argsv(1));
-                    masterIntra.setForm(tf);
-
-                    std::string termInfo = fmt::format("     {:<10}  {:<12}", masterIntra.name(),
-                                                       SpeciesTorsion::torsionFunctions().keywordFromInt(masterIntra.form()));
+                    auto &masterImproper = coreData.addMasterImproper(parser.argsv(1));
+                    masterImproper.setForm(tf);
 
                     // Check number of args provided
-                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 3))
+                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
                     {
                         error = true;
                         break;
                     }
 
                     // Set parameters
-                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    if (!masterImproper.setParameters(parser, 3))
                     {
-                        masterIntra.addParameter(parser.argd(n));
-                        termInfo += fmt::format("  {:12.4e}", masterIntra.parameter(n - 3));
+                        error = true;
+                        break;
                     }
 
-                    Messenger::printVerbose("Defined master improper term: {}\n", termInfo);
+                    Messenger::printVerbose("Defined master improper term: {:<10}  {:<12}  {}\n", masterImproper.name(),
+                                            TorsionFunctions::forms().keyword(masterImproper.form()),
+                                            masterImproper.parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {
@@ -173,38 +169,37 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 break;
             case (MasterBlock::TorsionKeyword):
                 // Check the functional form specified
-                if (!SpeciesTorsion::torsionFunctions().isValid(parser.argsv(2)))
+                if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of torsion ({}) not recognised.\n", parser.argsv(2));
                     error = true;
                     break;
                 }
-                tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argsv(2));
+                tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
 
                 // Create a new master torsion definition
                 try
                 {
-                    auto &masterIntra = coreData.addMasterTorsion(parser.argsv(1));
-                    masterIntra.setForm(tf);
-
-                    std::string termInfo = fmt::format("     {:<10}  {:<12}", masterIntra.name(),
-                                                       SpeciesTorsion::torsionFunctions().keywordFromInt(masterIntra.form()));
+                    auto &masterTorsion = coreData.addMasterTorsion(parser.argsv(1));
+                    masterTorsion.setForm(tf);
 
                     // Check number of args provided
-                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 3))
+                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
                     {
                         error = true;
                         break;
                     }
 
                     // Set parameters
-                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    if (!masterTorsion.setParameters(parser, 3))
                     {
-                        masterIntra.addParameter(parser.argd(n));
-                        termInfo += fmt::format("  {:12.4e}", masterIntra.parameter(n - 3));
+                        error = true;
+                        break;
                     }
 
-                    Messenger::printVerbose("Defined master torsion term: {}\n", termInfo);
+                    Messenger::printVerbose("Defined master torsion term: {:<10}  {:<12}  {}\n", masterTorsion.name(),
+                                            TorsionFunctions::forms().keyword(masterTorsion.form()),
+                                            masterTorsion.parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {

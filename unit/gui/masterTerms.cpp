@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 #include "gui/models/masterTermModel.h"
 #include "main/dissolve.h"
 #include <QTableView>
@@ -24,16 +24,14 @@ std::vector<Qt::ItemDataRole> roles = {Qt::DisplayRole, Qt::EditRole};
 
 TEST_F(MasterTermsTableModelTest, MasterBonds)
 {
+    std::vector<std::shared_ptr<MasterBond>> masterBonds;
+    auto &b1 = masterBonds.emplace_back(std::make_shared<MasterBond>("CA-CA"));
+    b1->setFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.590   eq=1.400");
+    auto &b2 = masterBonds.emplace_back(std::make_shared<MasterBond>("CA-HA"));
+    b2->setFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.060   eq=1.080");
 
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
-
-    auto &masterBonds = dissolve.coreData().masterBonds();
-
-    MasterTermBondModel model(masterBonds);
+    MasterTermBondModel model;
+    model.setSourceData(masterBonds);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -46,8 +44,8 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
         EXPECT_EQ(model.data(model.index(1, 0), role).toString().toStdString(), "CA-HA");
         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Harmonic");
         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Harmonic");
-        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "3924.59, 1.4");
-        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "3071.06, 1.08");
+        EXPECT_EQ(model.data(model.index(0, 2), role).toString().toStdString(), "k=3924.59 eq=1.4");
+        EXPECT_EQ(model.data(model.index(1, 2), role).toString().toStdString(), "k=3071.06 eq=1.08");
     }
 
     // Mutate table contents
@@ -60,22 +58,23 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
     EXPECT_FALSE(model.setData(model.index(0, 1), "NON_EXISTING_ENUM"));
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "EPSR");
 
-    EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
+    EXPECT_FALSE(model.setData(model.index(0, 2), "3 4 1"));
+    EXPECT_FALSE(model.setData(model.index(0, 2), "k=3 eq=4"));
+    EXPECT_TRUE(model.setData(model.index(0, 2), "3 4"));
     EXPECT_THAT(model.data(model.index(0, 2)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("3.0, 4.0"), testing::Eq("3, 4")));
+                testing::AnyOf(testing::Eq("C/2=3.0 eq=4.0"), testing::Eq("C/2=3 eq=4")));
 }
+
 TEST_F(MasterTermsTableModelTest, MasterAngles)
 {
+    std::vector<std::shared_ptr<MasterAngle>> masterAngles;
+    auto &a1 = masterAngles.emplace_back(std::make_shared<MasterAngle>("CA-CA-CA"));
+    a1->setFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184   eq=120.000");
+    auto &a2 = masterAngles.emplace_back(std::make_shared<MasterAngle>("CA-CA-HA"));
+    a2->setFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.880   eq=120.000");
 
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
-
-    auto &masterAngles = dissolve.coreData().masterAngles();
-
-    MasterTermAngleModel model(masterAngles);
+    MasterTermAngleModel model;
+    model.setSourceData(masterAngles);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -89,9 +88,9 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
         EXPECT_EQ(model.data(model.index(0, 1), role).toString().toStdString(), "Harmonic");
         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Harmonic");
         EXPECT_THAT(model.data(model.index(0, 2), role).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("527.184, 120.0"), testing::Eq("527.184, 120")));
+                    testing::AnyOf(testing::Eq("k=527.184 eq=120.0"), testing::Eq("k=527.184 eq=120")));
         EXPECT_THAT(model.data(model.index(1, 2), role).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("292.88, 120.0"), testing::Eq("292.88, 120")));
+                    testing::AnyOf(testing::Eq("k=292.88 eq=120.0"), testing::Eq("k=292.88 eq=120")));
     }
 
     // Mutate table contents
@@ -104,22 +103,24 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
     EXPECT_FALSE(model.setData(model.index(0, 1), "NON_EXISTING_ENUM"));
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos");
 
-    EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4"));
+    EXPECT_FALSE(model.setData(model.index(0, 2), "3 4"));
+    EXPECT_TRUE(model.setData(model.index(0, 2), "3 4 1 1"));
     EXPECT_THAT(model.data(model.index(0, 2)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("3.0, 4.0"), testing::Eq("3, 4")));
+                testing::AnyOf(testing::Eq("k=3.0 n=4.0 eq=1.0 s=1.0"), testing::Eq("k=3 n=4 eq=1 s=1")));
 }
+
 TEST_F(MasterTermsTableModelTest, MasterTorsions)
 {
+    std::vector<std::shared_ptr<MasterTorsion>> masterTorsions;
+    auto &t1 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("CA-CA-CA-CA"));
+    t1->setFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     0.000");
+    auto &t2 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("CA-CA-CA-HA"));
+    t2->setFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     1.000");
+    auto &t3 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("HA-CA-CA-HA"));
+    t3->setFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     2.000");
 
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    dissolve.clear();
-    dissolve.loadInput("restart/benzene.txt");
-
-    auto &masterTorsions = dissolve.coreData().masterTorsions();
-
-    MasterTermTorsionModel model(masterTorsions);
+    MasterTermTorsionModel model;
+    model.setSourceData(masterTorsions);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -135,11 +136,11 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
         EXPECT_EQ(model.data(model.index(1, 1), role).toString().toStdString(), "Cos3");
         EXPECT_EQ(model.data(model.index(2, 1), role).toString().toStdString(), "Cos3");
         EXPECT_THAT(model.data(model.index(0, 2), role).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+                    testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=0.0"), testing::Eq("k1=0 k2=30.334 k3=0")));
         EXPECT_THAT(model.data(model.index(1, 2), role).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+                    testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=1.0"), testing::Eq("k1=0 k2=30.334 k3=1")));
         EXPECT_THAT(model.data(model.index(2, 2), role).toString().toStdString(),
-                    testing::AnyOf(testing::Eq("0.0, 30.334, 0.0"), testing::Eq("0, 30.334, 0")));
+                    testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=2.0"), testing::Eq("k1=0 k2=30.334 k3=2")));
     }
 
     // Mutate table contents
@@ -152,9 +153,10 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
     EXPECT_FALSE(model.setData(model.index(0, 1), "NON_EXISTING_ENUM"));
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "Cos3C");
 
-    EXPECT_TRUE(model.setData(model.index(0, 2), "3, 4, 5"));
+    EXPECT_FALSE(model.setData(model.index(0, 2), "3 4 5"));
+    EXPECT_TRUE(model.setData(model.index(0, 2), "1.0 3 4 5"));
     EXPECT_THAT(model.data(model.index(0, 2)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("3.0, 4.0, 5.0"), testing::Eq("3, 4, 5")));
+                testing::AnyOf(testing::Eq("k0=1.0 k1=3.0 k2=4.0 k3=5.0"), testing::Eq("k0=1 k1=3 k2=4 k3=5")));
 }
 
 } // namespace UnitTest

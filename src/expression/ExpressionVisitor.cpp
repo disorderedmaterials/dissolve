@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/ExpressionVisitor.h"
 #include "data/ff/ff.h"
@@ -45,7 +45,7 @@ void ExpressionVisitor::create(
 
 antlrcpp::Any ExpressionVisitor::visitParentheses(ExpressionParser::ParenthesesContext *ctx)
 {
-    auto node = std::make_shared<ExpressionRootNode>();
+    auto node = std::make_shared<ExpressionRootNode>(true);
 
     currentContext()->addChild(node);
 

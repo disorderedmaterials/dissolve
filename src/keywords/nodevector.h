@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -72,7 +72,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         if (std::find(data_.begin(), data_.end(), castNode) != data_.end())
             return false;
         data_.emplace_back(castNode);
-        setAsModified();
+
         return true;
     }
     // Remove node from vector
@@ -84,7 +84,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         if (it == data_.end())
             return false;
         data_.erase(it);
-        setAsModified();
+
         return true;
     }
     // Return whether specified node is currently in the vector

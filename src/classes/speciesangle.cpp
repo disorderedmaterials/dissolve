@@ -1,12 +1,50 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
+#include <map>
 
-SpeciesAngle::SpeciesAngle() : SpeciesIntra(SpeciesAngle::NoForm) {}
+// Return enum options for AngleFunction
+EnumOptions<AngleFunctions::Form> AngleFunctions::forms()
+{
+    return EnumOptions<AngleFunctions::Form>("AngleFunction", {{AngleFunctions::Form::None, "None"},
+                                                               {AngleFunctions::Form::Harmonic, "Harmonic", 2},
+                                                               {AngleFunctions::Form::Cosine, "Cos", 4},
+                                                               {AngleFunctions::Form::Cos2, "Cos2", 4}});
+}
 
-SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(SpeciesAngle::NoForm)
+// Return parameters for specified form
+const std::vector<std::string> &AngleFunctions::parameters(Form form)
+{
+    static std::map<AngleFunctions::Form, std::vector<std::string>> params_ = {
+        {AngleFunctions::Form::None, {}},
+        {AngleFunctions::Form::Harmonic, {"k", "eq"}},
+        {AngleFunctions::Form::Cosine, {"k", "n", "eq", "s"}},
+        {AngleFunctions::Form::Cos2, {"k", "C0", "C1", "C2"}}};
+    return params_[form];
+}
+
+// Return nth parameter for the given form
+std::string AngleFunctions::parameter(Form form, int n)
+{
+    return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
+}
+
+// Return index of parameter in the given form
+std::optional<int> AngleFunctions::parameterIndex(Form form, std::string_view name)
+{
+    auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
+                           [name](const auto &param) { return DissolveSys::sameString(name, param); });
+    if (it == parameters(form).end())
+        return {};
+
+    return it - parameters(form).begin();
+}
+
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(AngleFunctions::Form::None) {}
+
+SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(AngleFunctions::Form::None)
 {
     assign(i, j, k);
 }
@@ -26,6 +64,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) noexcept : SpeciesIntra(source
     // Copy data
     assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -38,6 +77,7 @@ SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
     // Copy data
     assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -52,6 +92,7 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source) noexcept
     // Copy data
     assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
+    masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
     // Clean source
@@ -168,18 +209,6 @@ void SpeciesAngle::detach()
  * Interaction Parameters
  */
 
-// Return enum options for AngleFunction
-EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
-{
-    return EnumOptions<SpeciesAngle::AngleFunction>("AngleFunction", {{SpeciesAngle::NoForm, "None"},
-                                                                      {SpeciesAngle::HarmonicForm, "Harmonic", 2},
-                                                                      {SpeciesAngle::CosineForm, "Cos", 4},
-                                                                      {SpeciesAngle::Cos2Form, "Cos2", 4}});
-}
-
-// Set up any necessary parameters
-void SpeciesAngle::setUp() {}
-
 // Calculate and return fundamental frequency for the interaction
 double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 {
@@ -187,7 +216,7 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
     const auto &params = parameters();
 
     double k = 0.0;
-    if (form() == SpeciesAngle::HarmonicForm)
+    if (form() == AngleFunctions::Form::Harmonic)
         k = params[0];
     else
     {
@@ -208,18 +237,15 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
     return v;
 }
 
-// Return type of this interaction
-SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::InteractionType::Angle; }
-
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
     const auto &params = parameters();
 
-    if (form() == SpeciesAngle::NoForm)
+    if (form() == AngleFunctions::Form::None)
         return 0.0;
-    else if (form() == SpeciesAngle::HarmonicForm)
+    else if (form() == AngleFunctions::Form::Harmonic)
     {
         /*
          * U(theta) = 0.5 * forcek * (theta - eq)**2
@@ -231,7 +257,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
         const auto delta = (angleInDegrees - params[1]) / DEGRAD;
         return 0.5 * params[0] * delta * delta;
     }
-    else if (form() == SpeciesAngle::CosineForm)
+    else if (form() == AngleFunctions::Form::Cosine)
     {
         /*
          * U(theta) = forcek * (1 + s * cos(n*theta - eq))
@@ -244,7 +270,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          */
         return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2] / DEGRAD));
     }
-    else if (form() == SpeciesAngle::Cos2Form)
+    else if (form() == AngleFunctions::Form::Cos2)
     {
         /*
          * U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
@@ -284,9 +310,9 @@ double SpeciesAngle::force(double angleInDegrees) const
     // Convert angle to radians
     const auto angleInRadians = angleInDegrees / DEGRAD;
 
-    if (form() == SpeciesAngle::NoForm)
+    if (form() == AngleFunctions::Form::None)
         return 0.0;
-    else if (form() == SpeciesAngle::HarmonicForm)
+    else if (form() == AngleFunctions::Form::Harmonic)
     {
         /*
          * dU/dTheta = k * (theta - eq)
@@ -298,7 +324,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 
         return params[0] * ((angleInDegrees - params[1]) / DEGRAD) / sin(angleInRadians);
     }
-    else if (form() == SpeciesAngle::CosineForm)
+    else if (form() == AngleFunctions::Form::Cosine)
     {
         /*
          * dU/dTheta = -k * n * s * sin(n*theta - eq)
@@ -312,7 +338,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 
         return -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2] / DEGRAD) / sin(angleInRadians);
     }
-    else if (form() == SpeciesAngle::Cos2Form)
+    else if (form() == AngleFunctions::Form::Cos2)
     {
         /*
          * dU/dTheta = -k * (c1 * sin(theta) + 2 * c2 * sin(2*theta))

@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/coredata.h"
-#include "classes/masterintra.h"
 #include "classes/species.h"
 #include "data/atomicradii.h"
 #include "templates/algorithms.h"
@@ -520,29 +519,30 @@ void Species::generateAttachedAtomLists()
 void Species::detachFromMasterTerms()
 {
     for (auto &bond : bonds_)
-        bond.detachFromMasterIntra();
+        bond.detachFromMasterTerm();
 
     for (auto &angle : angles_)
-        angle.detachFromMasterIntra();
+        angle.detachFromMasterTerm();
 
     for (auto &torsion : torsions_)
-        torsion.detachFromMasterIntra();
+        torsion.detachFromMasterTerm();
 
     for (auto &improper : impropers_)
-        improper.detachFromMasterIntra();
+        improper.detachFromMasterTerm();
 }
 
-void generateMasterTerm(SpeciesIntra &term, std::string_view termName,
-                        std::function<OptionalReferenceWrapper<MasterIntra>(std::string_view termName)> termGetter,
-                        std::function<MasterIntra &(std::string_view termName)> termCreator)
+template <class Master, class Intra>
+void generateMasterTerm(Intra &term, std::string_view termName,
+                        std::function<OptionalReferenceWrapper<Master>(std::string_view termName)> termGetter,
+                        std::function<Master &(std::string_view termName)> termCreator)
 {
     // Search for an existing master term by this name, or a related one suffixed with a number
-    OptionalReferenceWrapper<MasterIntra> optMaster;
+    OptionalReferenceWrapper<Master> optMaster;
     auto index = 0;
     while ((optMaster = termGetter(index == 0 ? termName : fmt::format("{}_{}", termName, index))))
     {
         // Are the parameters the same as our local term?
-        const MasterIntra &master = optMaster->get();
+        const Master &master = optMaster->get();
         if (master.form() != term.form() || master.nParameters() != term.nParameters())
             continue;
         else
@@ -565,7 +565,7 @@ void generateMasterTerm(SpeciesIntra &term, std::string_view termName,
         optMaster->get().setParameters(term.parameters());
     }
 
-    term.setMasterParameters(&optMaster->get());
+    term.setMasterTerm(&optMaster->get());
 }
 
 // Reduce intramolecular terms to master terms
@@ -581,9 +581,9 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
         // Construct a name for the master term based on the atom types
         std::vector<std::string_view> names = {bond.i()->atomType()->name(), bond.j()->atomType()->name()};
         std::sort(names.begin(), names.end());
-        generateMasterTerm(bond, joinStrings(names, "-"),
-                           [&coreData](std::string_view name) { return coreData.getMasterBond(name); },
-                           [&coreData](auto name) -> MasterIntra & { return coreData.addMasterBond(name); });
+        generateMasterTerm<MasterBond>(bond, joinStrings(names, "-"),
+                                       [&coreData](std::string_view name) { return coreData.getMasterBond(name); },
+                                       [&coreData](auto name) -> MasterBond & { return coreData.addMasterBond(name); });
     }
 
     // Angles
@@ -595,17 +595,17 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
 
         // Construct a name for the master term based on the atom types
         if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
-            generateMasterTerm(angle,
-                               fmt::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
-                                           angle.k()->atomType()->name()),
-                               [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
-                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterAngle(name); });
+            generateMasterTerm<MasterAngle>(angle,
+                                            fmt::format("{}-{}-{}", angle.i()->atomType()->name(),
+                                                        angle.j()->atomType()->name(), angle.k()->atomType()->name()),
+                                            [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
+                                            [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
         else
-            generateMasterTerm(angle,
-                               fmt::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
-                                           angle.i()->atomType()->name()),
-                               [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
-                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterAngle(name); });
+            generateMasterTerm<MasterAngle>(angle,
+                                            fmt::format("{}-{}-{}", angle.k()->atomType()->name(),
+                                                        angle.j()->atomType()->name(), angle.i()->atomType()->name()),
+                                            [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
+                                            [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
     }
 
     // Torsions
@@ -617,17 +617,19 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
 
         // Construct a name for the master term based on the atom types
         if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
-            generateMasterTerm(torsion,
-                               fmt::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
-                                           torsion.k()->atomType()->name(), torsion.l()->atomType()->name()),
-                               [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
-                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterTorsion(name); });
+            generateMasterTerm<MasterTorsion>(
+                torsion,
+                fmt::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
+                            torsion.k()->atomType()->name(), torsion.l()->atomType()->name()),
+                [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
+                [&coreData](auto name) -> MasterTorsion & { return coreData.addMasterTorsion(name); });
         else
-            generateMasterTerm(torsion,
-                               fmt::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
-                                           torsion.j()->atomType()->name(), torsion.i()->atomType()->name()),
-                               [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
-                               [&coreData](auto name) -> MasterIntra & { return coreData.addMasterTorsion(name); });
+            generateMasterTerm<MasterTorsion>(
+                torsion,
+                fmt::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
+                            torsion.j()->atomType()->name(), torsion.i()->atomType()->name()),
+                [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
+                [&coreData](auto name) -> MasterTorsion & { return coreData.addMasterTorsion(name); });
     }
 
     // Impropers
@@ -641,9 +643,10 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
         std::vector<std::string_view> jkl = {improper.j()->atomType()->name(), improper.k()->atomType()->name(),
                                              improper.l()->atomType()->name()};
         std::sort(jkl.begin(), jkl.end());
-        generateMasterTerm(improper, fmt::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")),
-                           [&coreData](std::string_view name) { return coreData.getMasterImproper(name); },
-                           [&coreData](auto name) -> MasterIntra & { return coreData.addMasterImproper(name); });
+        generateMasterTerm<MasterImproper>(
+            improper, fmt::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")),
+            [&coreData](std::string_view name) { return coreData.getMasterImproper(name); },
+            [&coreData](auto name) -> MasterImproper & { return coreData.addMasterImproper(name); });
     }
 }
 

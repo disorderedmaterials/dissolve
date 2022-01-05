@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/speciessite.h"
 #include "base/lineparser.h"
@@ -54,8 +54,6 @@ bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const Cor
             "Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
             data_->name(), name());
 
-    set_ = true;
-
     return true;
 }
 
@@ -67,8 +65,6 @@ bool SpeciesSiteKeyword::serialise(LineParser &parser, std::string_view keywordN
         if (!parser.writeLineF("{}{}  '{}'  '{}'\n", prefix, keywordName, data_->parent()->name(), data_->name()))
             return false;
     }
-    else if (!parser.writeLineF("{}{}  '?_?'  '?_?'\n", prefix, name()))
-        return false;
 
     return true;
 }

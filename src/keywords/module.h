@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -66,7 +66,6 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
             data_ = dynamic_cast<const M *>(module);
             assert(data_);
         }
-        setAsModified();
 
         return true;
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -88,7 +88,7 @@ class Module
 
     public:
     // Run set-up stage
-    virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool);
+    virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals = {});
     // Run main processing stage
     bool executeProcessing(Dissolve &dissolve, ProcessPool &procPool);
 

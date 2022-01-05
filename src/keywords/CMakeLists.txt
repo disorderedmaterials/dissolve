@@ -23,8 +23,10 @@ add_library(
   nodeunderlay.cpp
   nodevalue.cpp
   optionaldouble.cpp
+  optionalint.cpp
   procedure.cpp
   range.cpp
+  signals.cpp
   species.cpp
   speciessite.cpp
   speciessitevector.cpp
@@ -68,8 +70,10 @@ add_library(
   nodevalueenumoptions.h
   nodevector.h
   optionaldouble.h
+  optionalint.h
   procedure.h
   range.h
+  signals.h
   species.h
   speciessite.h
   speciessitevector.h

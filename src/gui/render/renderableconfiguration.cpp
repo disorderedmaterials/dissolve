@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/render/renderableconfiguration.h"
 #include "base/lineparser.h"
@@ -225,70 +225,3 @@ void RenderableConfiguration::setDisplayStyle(ConfigurationDisplayStyle displayS
 
 // Return display style for the renderable
 RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::displayStyle() const { return displayStyle_; }
-
-/*
- * Style I/O
- */
-
-// Return enum option info for RenderableKeyword
-EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
-{
-    return EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword>(
-        "ConfigurationStyleKeyword",
-        {{RenderableConfiguration::DisplayKeyword, "Display", 1}, {RenderableConfiguration::EndStyleKeyword, "EndStyle"}});
-}
-
-// Write style information
-bool RenderableConfiguration::writeStyleBlock(LineParser &parser, int indentLevel) const
-{
-    // Construct indent string
-    char *indent = new char[indentLevel * 2 + 1];
-    for (auto n = 0; n < indentLevel * 2; ++n)
-        indent[n] = ' ';
-    indent[indentLevel * 2] = '\0';
-
-    if (!parser.writeLineF("{}{}  {}\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword),
-                           configurationDisplayStyles().keyword(displayStyle_)))
-        return false;
-
-    return true;
-}
-
-// Read style information
-bool RenderableConfiguration::readStyleBlock(LineParser &parser)
-{
-    while (!parser.eofOrBlank())
-    {
-        // Get line from file
-        if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
-            return false;
-
-        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!configurationStyleKeywords().isValid(parser.argsv(0)))
-            return configurationStyleKeywords().errorAndPrintValid(parser.argsv(0));
-        auto kwd = configurationStyleKeywords().enumeration(parser.argsv(0));
-        if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
-
-        // All OK, so process the keyword
-        switch (kwd)
-        {
-            // Display style
-            case (RenderableConfiguration::DisplayKeyword):
-                if (!configurationDisplayStyles().isValid(parser.argsv(1)))
-                    return configurationDisplayStyles().errorAndPrintValid(parser.argsv(1));
-                displayStyle_ = configurationDisplayStyles().enumeration(parser.argsv(1));
-                break;
-            // End of block
-            case (RenderableConfiguration::EndStyleKeyword):
-                return true;
-            // Unrecognised Keyword
-            default:
-                Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: {}\n", parser.argsv(0));
-                return false;
-                break;
-        }
-    }
-
-    return true;
-}

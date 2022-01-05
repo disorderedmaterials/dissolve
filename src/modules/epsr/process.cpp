@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
@@ -28,7 +28,7 @@
 #include <functional>
 
 // Run set-up stage
-bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
+bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
 {
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;

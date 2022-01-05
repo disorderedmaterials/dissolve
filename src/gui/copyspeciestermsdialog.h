@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -77,11 +77,11 @@ class CopySpeciesTermsDialog : public WizardDialog
 
     private:
     // Find terms of the specified type that can be copied
-    template <class I>
-    void findTermsToCopy(std::vector<std::pair<I *, const I *>> &termVector, const std::vector<I> &sourceTerms,
-                         std::vector<I> &targetTerms);
+    template <class Intra, class Form>
+    void findTermsToCopy(std::vector<std::pair<Intra *, const Intra *>> &termVector, const std::vector<Intra> &sourceTerms,
+                         std::vector<Intra> &targetTerms, Form unassignedForm);
     // Copy terms between pairs
-    template <class I> void copyTerms(const std::vector<std::pair<I *, const I *>> &termVector);
+    template <class Intra> void copyTerms(const std::vector<std::pair<Intra *, const Intra *>> &termVector);
     // Prepare for copy of terms
     void prepareCopy();
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/vector_intstring.h"
 #include "base/lineparser.h"
@@ -66,8 +66,6 @@ bool IntegerStringVectorKeyword::deserialise(LineParser &parser, int startArg, c
 
     // Add tuple to vector
     data_.emplace_back(i, s);
-
-    setAsModified();
 
     return true;
 }

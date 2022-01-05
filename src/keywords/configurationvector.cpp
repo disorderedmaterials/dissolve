@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/configurationvector.h"
 #include "base/lineparser.h"
@@ -15,9 +15,6 @@ ConfigurationVectorKeyword::ConfigurationVectorKeyword(std::vector<Configuration
 /*
  * Data
  */
-
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool ConfigurationVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return reference to data vector
 std::vector<Configuration *> &ConfigurationVectorKeyword::data() { return data_; }
@@ -48,8 +45,6 @@ bool ConfigurationVectorKeyword::deserialise(LineParser &parser, int startArg, c
         data_.push_back(cfg);
     }
 
-    set_ = true;
-
     return true;
 }
 
@@ -60,7 +55,7 @@ bool ConfigurationVectorKeyword::serialise(LineParser &parser, std::string_view 
         return true;
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
-                             joinStrings(data_, "  ", [](const auto *cfg) { return fmt::format("{}", cfg->name()); }));
+                             joinStrings(data_, "  ", [](const auto *cfg) { return fmt::format("'{}'", cfg->name()); }));
 }
 
 /*

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -11,7 +11,7 @@
 // Forward Declarations
 class Expression;
 
-// NETA Node
+// Expression Node
 class ExpressionNode
 {
     public:
@@ -41,4 +41,6 @@ class ExpressionNode
     public:
     // Evaluate node
     virtual std::optional<ExpressionValue> evaluate() const = 0;
+    // Return string representation of node
+    virtual std::string asString() const = 0;
 };

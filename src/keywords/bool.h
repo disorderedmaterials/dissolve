@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -18,12 +18,13 @@ class BoolKeyword : public KeywordBase
     private:
     // Reference to target data
     bool &data_;
+    // Whether the data has been set
+    bool set_{false};
 
     public:
     // Set data
     bool setData(bool value);
     // Return data
-    bool &data();
     const bool &data() const;
     std::string toString() const override;
 

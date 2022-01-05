@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/render/renderablespeciessite.h"
 #include "base/lineparser.h"
@@ -107,70 +107,3 @@ void RenderableSpeciesSite::setDisplayStyle(SpeciesSiteDisplayStyle displayStyle
 
 // Return display style for the renderable
 RenderableSpeciesSite::SpeciesSiteDisplayStyle RenderableSpeciesSite::displayStyle() const { return displayStyle_; }
-
-/*
- * Style I/O
- */
-
-// Return enum option info for RenderableKeyword
-EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> RenderableSpeciesSite::speciesSiteStyleKeywords()
-{
-    return EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword>(
-        "SpeciesSiteStyleKeyword",
-        {{RenderableSpeciesSite::DisplayKeyword, "Display", 1}, {RenderableSpeciesSite::EndStyleKeyword, "EndStyle"}});
-}
-
-// Write style information
-bool RenderableSpeciesSite::writeStyleBlock(LineParser &parser, int indentLevel) const
-{
-    // Construct indent string
-    char *indent = new char[indentLevel * 2 + 1];
-    for (auto n = 0; n < indentLevel * 2; ++n)
-        indent[n] = ' ';
-    indent[indentLevel * 2] = '\0';
-
-    if (!parser.writeLineF("{}{}  {}\n", indent, speciesSiteStyleKeywords().keyword(RenderableSpeciesSite::DisplayKeyword),
-                           speciesSiteDisplayStyles().keyword(displayStyle_)))
-        return false;
-
-    return true;
-}
-
-// Read style information
-bool RenderableSpeciesSite::readStyleBlock(LineParser &parser)
-{
-    while (!parser.eofOrBlank())
-    {
-        // Get line from file
-        if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
-            return false;
-
-        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!speciesSiteStyleKeywords().isValid(parser.argsv(0)))
-            return speciesSiteStyleKeywords().errorAndPrintValid(parser.argsv(0));
-        auto kwd = speciesSiteStyleKeywords().enumeration(parser.argsv(0));
-        if (!speciesSiteStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
-
-        // All OK, so process the keyword
-        switch (kwd)
-        {
-            // Display style
-            case (RenderableSpeciesSite::DisplayKeyword):
-                if (!speciesSiteDisplayStyles().isValid(parser.argsv(1)))
-                    return speciesSiteDisplayStyles().errorAndPrintValid(parser.argsv(1));
-                displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argsv(1));
-                break;
-            // End of block
-            case (RenderableSpeciesSite::EndStyleKeyword):
-                return true;
-            // Unrecognised Keyword
-            default:
-                Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: {}\n", parser.argsv(0));
-                return false;
-                break;
-        }
-    }
-
-    return true;
-}

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
@@ -35,13 +35,12 @@ class DerivativesTest : public ::testing::Test
     protected:
     // Test supplied intramolecular function over the supplied range, comparing numerical and analytical derivatives at each
     // point
-    template <class T>
-    void intraTest(T &intraTerm, int form, const std::vector<double> &params, double xMin, double xMax, double xDelta,
+    template <class Intra, class Form>
+    void intraTest(Intra &intraTerm, Form form, const std::vector<double> &params, double xMin, double xMax, double xDelta,
                    bool angular = false)
     {
         intraTerm.setForm(form);
         intraTerm.setParameters(params);
-        intraTerm.setUp();
 
         auto x = xMin;
         const auto dx = xDelta / 100.0;
@@ -68,10 +67,10 @@ TEST_F(DerivativesTest, BondFunctions)
     tolerance_ = 1.0e-8;
 
     // Harmonic form (parameters = k, eq)
-    intraTest<SpeciesBond>(bond_, SpeciesBond::HarmonicForm, {4184.0, 1.5}, 1.0, 2.0, 0.01);
+    intraTest<SpeciesBond>(bond_, BondFunctions::Form::Harmonic, {4184.0, 1.5}, 1.0, 2.0, 0.01);
 
     // EPSR form (parameters = C/2, eq)
-    intraTest<SpeciesBond>(bond_, SpeciesBond::EPSRForm, {65.0, 1.1}, 0.6, 1.6, 0.01);
+    intraTest<SpeciesBond>(bond_, BondFunctions::Form::EPSR, {65.0, 1.1}, 0.6, 1.6, 0.01);
 }
 
 TEST_F(DerivativesTest, AngleFunctions)
@@ -79,13 +78,13 @@ TEST_F(DerivativesTest, AngleFunctions)
     tolerance_ = 5.0e-7;
 
     // Harmonic form (parameters = k, eq)
-    intraTest<SpeciesAngle>(angle_, SpeciesAngle::HarmonicForm, {418.4, 109.5}, 80.0, 120.0, 0.1, true);
+    intraTest<SpeciesAngle>(angle_, AngleFunctions::Form::Harmonic, {418.4, 109.5}, 80.0, 120.0, 0.1, true);
 
     // Cosine form (parameters = k, n, eq, s)
-    intraTest<SpeciesAngle>(angle_, SpeciesAngle::CosineForm, {418.4, 2.0, 95.0, -1}, 70.0, 120.0, 0.1, true);
+    intraTest<SpeciesAngle>(angle_, AngleFunctions::Form::Cosine, {418.4, 2.0, 95.0, -1}, 70.0, 120.0, 0.1, true);
 
     // Cos2 form (parameters = k, C0, C1, C2)
-    intraTest<SpeciesAngle>(angle_, SpeciesAngle::Cos2Form, {418.4, 0.5, 2.0 / 3.0, 0.7}, 70.0, 120.0, 0.1, true);
+    intraTest<SpeciesAngle>(angle_, AngleFunctions::Form::Cos2, {418.4, 0.5, 2.0 / 3.0, 0.7}, 70.0, 120.0, 0.1, true);
 }
 
 TEST_F(DerivativesTest, TorsionFunctions)
@@ -95,39 +94,42 @@ TEST_F(DerivativesTest, TorsionFunctions)
     auto thetaMin = 1.0, thetaMax = 179.0;
 
     // Cosine form (parameters = k, n, eq, s)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::CosineForm, {41.84, 3.0, 120.0, 1.0}, thetaMin, thetaMax, 1.0, true);
-
-    // Cos3 form (parameters = k1, k2, k3)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::Cos3Form, {0.0, 11.4, 0.0}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::Cos3Form, {19.0, 1.2, 5.6}, thetaMin, thetaMax, 1.0, true);
-
-    // Cos3C form (parameters = k0, k1, k2, k3)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::Cos3CForm, {4.0, 0.0, 11.4, 0.0}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::Cos3CForm, {2.2, 19.0, 1.2, 5.6}, thetaMin, thetaMax, 1.0, true);
-
-    // Cos4 form (parameters = k1, k2, k3, k4)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::Cos4Form, {4.0, 0.0, 11.4, 0.0}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::Cos4Form, {2.2, 19.0, 1.2, 5.6}, thetaMin, thetaMax, 1.0, true);
-
-    // CosN form (parameters = k1, ..., kn)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::CosNForm, {4.0}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::CosNForm, {1.8, 15.9}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::CosNForm, {1.8, 15.9, 0.4, 5.7, 7.8}, thetaMin, thetaMax, 1.0, true);
-
-    // CosNC form (parameters = k0, ..., kn)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::CosNCForm, {1.04, 4.0}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::CosNCForm, {2.89, 1.8, 15.9}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::CosNCForm, {98.0, 1.8, 15.9, 0.4, 5.7, 7.8}, thetaMin, thetaMax, 1.0,
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::Cosine, {41.84, 3.0, 120.0, 1.0}, thetaMin, thetaMax, 1.0,
                               true);
 
+    // Cos3 form (parameters = k1, k2, k3)
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::Cos3, {0.0, 11.4, 0.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::Cos3, {19.0, 1.2, 5.6}, thetaMin, thetaMax, 1.0, true);
+
+    // Cos3C form (parameters = k0, k1, k2, k3)
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::Cos3C, {4.0, 0.0, 11.4, 0.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::Cos3C, {2.2, 19.0, 1.2, 5.6}, thetaMin, thetaMax, 1.0, true);
+
+    // Cos4 form (parameters = k1, k2, k3, k4)
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::Cos4, {4.0, 0.0, 11.4, 0.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::Cos4, {2.2, 19.0, 1.2, 5.6}, thetaMin, thetaMax, 1.0, true);
+
+    // CosN form (parameters = k1, ..., kn)
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::CosN, {4.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::CosN, {1.8, 15.9}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::CosN, {1.8, 15.9, 0.4, 5.7, 7.8}, thetaMin, thetaMax, 1.0,
+                              true);
+
+    // CosNC form (parameters = k0, ..., kn)
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::CosNC, {1.04, 4.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::CosNC, {2.89, 1.8, 15.9}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::CosNC, {98.0, 1.8, 15.9, 0.4, 5.7, 7.8}, thetaMin, thetaMax,
+                              1.0, true);
+
     // UFF Cosine form (parameters = k, n, eq)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::UFFCosineForm, {10.7, 3, 109.5}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::UFFCosineForm, {19.0, 4, 90.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::UFFCosine, {10.7, 3, 109.5}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::UFFCosine, {19.0, 4, 90.0}, thetaMin, thetaMax, 1.0, true);
 
     // FourierN form (parameters = k, C0, C1, ..., Cn)
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::FourierNForm, {12.0, 1.0}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::FourierNForm, {44.0, 1.0, -1.0, 0.0}, thetaMin, thetaMax, 1.0, true);
-    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::FourierNForm, {44.0, 1.0, -2.0, 3.0, 4.0, -5.0}, thetaMin, thetaMax,
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::FourierN, {12.0, 1.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::FourierN, {44.0, 1.0, -1.0, 0.0}, thetaMin, thetaMax, 1.0,
+                              true);
+    intraTest<SpeciesTorsion>(torsion_, TorsionFunctions::Form::FourierN, {44.0, 1.0, -2.0, 3.0, 4.0, -5.0}, thetaMin, thetaMax,
                               1.0, true);
 }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -26,12 +26,9 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
 
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
-
     public:
     // Return reference to vector of data
+    std::vector<std::shared_ptr<ExpressionVariable>> &data();
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
     // Return parent ProcedureNode
     const ProcedureNode *parentNode() const;

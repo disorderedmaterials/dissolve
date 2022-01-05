@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/procedure.h"
 #include "base/lineparser.h"
@@ -29,12 +29,7 @@ std::optional<int> ProcedureKeyword::maxArguments() const { return 0; }
 // Deserialise from supplied LineParser, starting at given argument offset
 bool ProcedureKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    if (!data_.deserialise(parser, coreData))
-        return false;
-
-    set_ = true;
-
-    return true;
+    return data_.deserialise(parser, coreData);
 }
 
 // Serialise data to specified LineParser

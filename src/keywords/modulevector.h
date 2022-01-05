@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -27,10 +27,6 @@ class ModuleVectorKeyword : public KeywordBase
     std::vector<std::string> moduleTypes_;
     // Maximum number of modules to allow
     std::optional<int> maxModules_;
-
-    protected:
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
 
     public:
     // Return the data vector

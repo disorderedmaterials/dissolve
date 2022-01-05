@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/unary.h"
 
@@ -31,14 +31,14 @@ std::optional<ExpressionValue> ExpressionUnaryOperatorNode::evaluate() const
     if (children_.size() != 1)
         return std::nullopt;
 
-    // Evaluate LHS node
-    auto optl = children_[0]->evaluate();
-    if (!optl)
+    // Evaluate RHS node
+    auto optr = children_[0]->evaluate();
+    if (!optr)
         return std::nullopt;
 
     // Perform the operation
     ExpressionValue result;
-    auto rhs = (*optl);
+    auto rhs = (*optr);
     switch (operator_)
     {
         case (OperatorNegate):
@@ -52,4 +52,25 @@ std::optional<ExpressionValue> ExpressionUnaryOperatorNode::evaluate() const
     }
 
     return result;
+}
+
+// Return string representation of node
+std::string ExpressionUnaryOperatorNode::asString() const
+{
+    // Must be a single child node
+    if (children_.size() != 1)
+        return "";
+
+    // Evaluate RHS node
+    auto rhs = children_[0]->asString();
+
+    switch (operator_)
+    {
+        case (OperatorNegate):
+            return fmt::format("-{}", rhs);
+        default:
+            throw(std::runtime_error(fmt::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", operator_)));
+    }
+
+    return "";
 }

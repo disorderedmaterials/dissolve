@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -59,7 +59,7 @@ class CalculateDAngleModule : public Module
      */
     private:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) override;
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 };

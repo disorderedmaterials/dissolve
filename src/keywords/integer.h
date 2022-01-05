@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -21,6 +21,8 @@ class IntegerKeyword : public KeywordBase
     int &data_;
     // Validation limits to apply (if any)
     std::optional<int> minimumLimit_, maximumLimit_;
+    // Whether the data has been set
+    bool set_{false};
 
     public:
     // Set data

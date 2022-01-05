@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/helpers/comboboxcontroller.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
@@ -46,9 +46,8 @@ void NodeAndIntegerKeywordWidget::on_IntegerSpin_valueChanged(int value)
         return;
 
     keyword_->setIndex(value);
-    keyword_->setAsModified();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
@@ -57,9 +56,8 @@ void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
         return;
 
     keyword_->setNode(allowedNodes_[ui_.NodeCombo->currentIndex()]);
-    keyword_->setAsModified();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

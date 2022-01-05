@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/coredata.h"
@@ -12,20 +12,16 @@ KeywordsDialog::KeywordsDialog(QWidget *parent, KeywordStore &keywords, const Co
 
     ui_.Keywords->setUp(keywords, coreData);
 
-    connect(ui_.Keywords, SIGNAL(dataModified()), this, SLOT(keywordChanged()));
-    connect(ui_.Keywords, SIGNAL(setUpRequired()), this, SLOT(setUpRequired()));
+    connect(ui_.Keywords, SIGNAL(keywordChanged(int)), this, SLOT(keywordChanged(int)));
 
     keywordsModified_ = false;
-    setUpRequired_ = false;
 }
-
-KeywordsDialog::~KeywordsDialog() {}
 
 // Run the dialog
 void KeywordsDialog::showOptions()
 {
     keywordsModified_ = false;
-    setUpRequired_ = false;
+    keywordSignalMask_ = 0;
 
     exec();
 }
@@ -33,15 +29,17 @@ void KeywordsDialog::showOptions()
 // Return whether any keywords have been modified in the current 'show'
 bool KeywordsDialog::keywordsModified() const { return keywordsModified_; }
 
-// Return whether any set-up needs to be re-run following keyword modification
-bool KeywordsDialog::isSetUpRequired() const { return setUpRequired_; }
+// Return combined signal mask for all keyword changes
+KeywordSignals KeywordsDialog::keywordSignalMask() const { return keywordSignalMask_; }
 
 /*
  * Slots
  */
 
-void KeywordsDialog::keywordChanged() { keywordsModified_ = true; }
-
-void KeywordsDialog::setUpRequired() { setUpRequired_ = true; }
+void KeywordsDialog::keywordChanged(int signalMask)
+{
+    keywordsModified_ = true;
+    keywordSignalMask_ += signalMask;
+}
 
 void KeywordsDialog::on_OKButton_clicked(bool checked) { accept(); }

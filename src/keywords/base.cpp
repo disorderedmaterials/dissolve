@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/base.h"
 #include "base/messenger.h"
 
-KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex), set_(false) {}
+KeywordBase::KeywordBase(const std::type_index typeIndex) : typeIndex_(typeIndex) {}
 
 /*
  * Keyword Description
@@ -20,34 +20,11 @@ void KeywordBase::setBaseInfo(std::string_view name, std::string_view descriptio
 // Return typeindex for the keyword
 const std::type_index KeywordBase::typeIndex() const { return typeIndex_; }
 
-// Set option mask
-void KeywordBase::setOptionMask(int optionMask) { optionMask_ = optionMask; }
-
-// Flag that data has been set by some other means
-void KeywordBase::setAsModified() { set_ = true; }
-
 // Return keyword name
 std::string_view KeywordBase::name() const { return name_; }
 
 // Return keyword description
 std::string_view KeywordBase::description() const { return description_; }
-
-// Display value in the gui
-std::string KeywordBase::toString() const {
-  return fmt::format("{}", typeIndex_.name());
-}
-
-// Return keyword option mask
-int KeywordBase::optionMask() const { return optionMask_; }
-
-// Return whether specified option is set
-bool KeywordBase::isOptionSet(KeywordOption opt) const { return (optionMask_ & opt); }
-
-// Return whether the data has ever been set
-bool KeywordBase::isDataEmpty() const { return !set_; }
-
-// Return whether the keyword has been set, and is not currently empty (if relevant)
-bool KeywordBase::hasBeenSet() const { return set_ && !isDataEmpty(); }
 
 /*
  * Arguments
@@ -69,6 +46,16 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
 
     return true;
 }
+
+/*
+ * GUI Signalling
+ */
+
+// Set signals to be emitted (via Qt) when editing this keyword in the GUI
+void KeywordBase::setSignalMask(int mask) { signals_ = mask; }
+
+// Return signals to be emitted (via Qt) when editing this keyword in the GUI
+KeywordSignals KeywordBase::signalMask() const { return signals_; }
 
 /*
  * Object Management

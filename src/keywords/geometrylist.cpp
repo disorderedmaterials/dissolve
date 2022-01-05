@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/geometrylist.h"
 #include "base/lineparser.h"
@@ -54,8 +54,6 @@ bool GeometryListKeyword::deserialise(LineParser &parser, int startArg, const Co
     else
         g.set(parser.argd(4 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
               parser.argi(2 + startArg) - 1, parser.argi(3 + startArg) - 1);
-
-    setAsModified();
 
     return true;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "classes/species.h"
@@ -40,11 +40,10 @@ void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
         return;
 
     keyword_->data() = site;
-    keyword_->setAsModified();
 
     updateSummaryText();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

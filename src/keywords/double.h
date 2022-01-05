@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -22,6 +22,8 @@ class DoubleKeyword : public KeywordBase
     double &data_;
     // Validation limits to apply (if any)
     std::optional<double> minimumLimit_, maximumLimit_;
+    // Whether the data has been set
+    bool set_{false};
 
     public:
     // Set data

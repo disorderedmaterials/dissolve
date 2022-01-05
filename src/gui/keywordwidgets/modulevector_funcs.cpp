@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "gui/helpers/listwidgetupdater.h"
@@ -41,9 +41,7 @@ void ModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMod
 
     updateSummaryText();
 
-    keyword_->setAsModified();
-
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

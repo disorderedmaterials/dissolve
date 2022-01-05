@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -177,15 +177,6 @@ class Renderable
     LineStyle &lineStyle();
     // Return style version
     int styleVersion() const;
-
-    /*
-     * Style I/O
-     */
-    public:
-    // Write style information
-    virtual bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const = 0;
-    // Read style information
-    virtual bool readStyleBlock(LineParser &parser) = 0;
 
     /*
      * Rendering Primitives

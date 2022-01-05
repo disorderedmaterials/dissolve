@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/render/renderablespecies.h"
 #include "base/lineparser.h"
@@ -392,7 +392,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
         // Draw the temporary bond between the atoms
         interactionAssembly_.createCylinderBond(bondPrimitive_, fromAtom->r(), j.r(), j.r() - fromAtom->r(),
-                                                ElementColours::colour(fromAtom->Z()), ElementColours::colour(j.Z()), true,
+                                                ElementColours::colour(j.Z()), ElementColours::colour(fromAtom->Z()), true,
                                                 spheresBondRadius_);
     }
 }
@@ -515,70 +515,3 @@ void RenderableSpecies::setDisplayStyle(SpeciesDisplayStyle displayStyle)
 
 // Return display style for the renderable
 RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const { return displayStyle_; }
-
-/*
- * Style I/O
- */
-
-// Return enum option info for RenderableKeyword
-EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
-{
-    return EnumOptions<RenderableSpecies::SpeciesStyleKeyword>(
-        "SpeciesStyleKeyword",
-        {{RenderableSpecies::DisplayKeyword, "Display", 1}, {RenderableSpecies::EndStyleKeyword, "EndStyle"}});
-}
-
-// Write style information
-bool RenderableSpecies::writeStyleBlock(LineParser &parser, int indentLevel) const
-{
-    // Construct indent string
-    char *indent = new char[indentLevel * 2 + 1];
-    for (auto n = 0; n < indentLevel * 2; ++n)
-        indent[n] = ' ';
-    indent[indentLevel * 2] = '\0';
-
-    if (!parser.writeLineF("{}{}  {}\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword),
-                           speciesDisplayStyles().keyword(displayStyle_)))
-        return false;
-
-    return true;
-}
-
-// Read style information
-bool RenderableSpecies::readStyleBlock(LineParser &parser)
-{
-    while (!parser.eofOrBlank())
-    {
-        // Get line from file
-        if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
-            return false;
-
-        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!speciesStyleKeywords().isValid(parser.argsv(0)))
-            return speciesStyleKeywords().errorAndPrintValid(parser.argsv(0));
-        auto kwd = speciesStyleKeywords().enumeration(parser.argsv(0));
-        if (!speciesStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
-
-        // All OK, so process the keyword
-        switch (kwd)
-        {
-            // Display style
-            case (RenderableSpecies::DisplayKeyword):
-                if (!speciesDisplayStyles().isValid(parser.argsv(1)))
-                    return speciesDisplayStyles().errorAndPrintValid(parser.argsv(1));
-                displayStyle_ = speciesDisplayStyles().enumeration(parser.argsv(1));
-                break;
-            // End of block
-            case (RenderableSpecies::EndStyleKeyword):
-                return true;
-            // Unrecognised Keyword
-            default:
-                Messenger::warn("Unrecognised display style keyword for RenderableSpecies: {}\n", parser.argsv(0));
-                return false;
-                break;
-        }
-    }
-
-    return true;
-}

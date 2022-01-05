@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -11,7 +11,7 @@
 #include "modules/energy/energy.h"
 
 // Run set-up stage
-bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
+bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
 {
     // For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are
     // targeting it
@@ -42,10 +42,6 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.assignProcessesToGroups(cfg->processPool());
         auto strategy = procPool.bestStrategy();
 
-        // Retrieve control parameters from Configuration
-        auto hasReferenceInter = keywords_.hasBeenSet("TestReferenceInter");
-        auto hasReferenceIntra = keywords_.hasBeenSet("TestReferenceIntra");
-
         // Print parameter summary
         if (test_)
         {
@@ -53,10 +49,10 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                              "production values.\n");
             if (testAnalytic_)
                 Messenger::print("Energy: Exact, analytical potential will be used in test.");
-            if (hasReferenceInter)
-                Messenger::print("Energy: Reference interatomic energy is {:15.9e} kJ/mol.\n", testReferenceInter_);
-            if (hasReferenceIntra)
-                Messenger::print("Energy: Reference intramolecular energy is {:15.9e} kJ/mol.\n", testReferenceIntra_);
+            if (testReferenceInter_)
+                Messenger::print("Energy: Reference interatomic energy is {:15.9e} kJ/mol.\n", testReferenceInter_.value());
+            if (testReferenceIntra_)
+                Messenger::print("Energy: Reference intramolecular energy is {:15.9e} kJ/mol.\n", testReferenceIntra_.value());
         }
 
         Messenger::print("\n");
@@ -250,32 +246,32 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Compare production vs reference values
             double delta;
-            if (hasReferenceInter)
+            if (testReferenceInter_)
             {
-                delta = testReferenceInter_ - correctInterEnergy;
+                delta = testReferenceInter_.value() - correctInterEnergy;
                 Messenger::print("Reference interatomic energy delta with correct value is {:15.9e} kJ/mol and "
                                  "is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
                 if (!procPool.allTrue(fabs(delta) < testThreshold_))
                     return false;
 
-                delta = testReferenceInter_ - interEnergy;
+                delta = testReferenceInter_.value() - interEnergy;
                 Messenger::print("Reference interatomic energy delta with production value is {:15.9e} kJ/mol "
                                  "and is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
                 if (!procPool.allTrue(fabs(delta) < testThreshold_))
                     return false;
             }
-            if (hasReferenceIntra)
+            if (testReferenceIntra_)
             {
-                delta = testReferenceIntra_ - correctIntraEnergy;
+                delta = testReferenceIntra_.value() - correctIntraEnergy;
                 Messenger::print("Reference intramolecular energy delta with correct value is {:15.9e} kJ/mol "
                                  "and is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
                 if (!procPool.allTrue(fabs(delta) < testThreshold_))
                     return false;
 
-                delta = testReferenceIntra_ - intraEnergy;
+                delta = testReferenceIntra_.value() - intraEnergy;
                 Messenger::print("Reference intramolecular energy delta with production value is {:15.9e} kJ/mol "
                                  "and is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);

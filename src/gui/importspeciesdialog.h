@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
+#include "gui/models/masterTermModel.h"
 #include "gui/models/speciesModel.h"
 #include "gui/ui_importspeciesdialog.h"
 #include "gui/wizard.hui"
@@ -30,6 +31,8 @@ class ImportSpeciesDialog : public WizardDialog
     SpeciesModel speciesModel_;
     // Model for atom types list
     AtomTypeModel atomTypesModel_;
+    // Model for master terms (all)
+    MasterTermTreeModel masterTermModel_;
 
     /*
      * Data
@@ -99,17 +102,11 @@ class ImportSpeciesDialog : public WizardDialog
      * MasterTerms Page
      */
     private:
-    // Parental tree widgets for master terms
-    QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
-
-    private:
-    // Row update function for MasterTermsTree
-    void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra, bool createItem);
     void updateMasterTermsPage();
 
     private slots:
-    void on_MasterTermsTree_itemSelectionChanged();
-    void masterTermsTreeEdited(QWidget *lineEdit);
+    void masterTermDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void masterTermSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_MasterTermsPrefixButton_clicked(bool checked);
     void on_MasterTermsSuffixButton_clicked(bool checked);
 

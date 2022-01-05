@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "main/dissolve.h"
@@ -7,7 +7,7 @@
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
 {
     // Clear species
     averageSpecies_.clear();

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/modulevector.h"
 #include "base/lineparser.h"
@@ -22,9 +22,6 @@ ModuleVectorKeyword::ModuleVectorKeyword(std::vector<Module *> &data, std::vecto
 /*
  * Data
  */
-
-// Determine whether current data is 'empty', and should be considered as 'not set'
-bool ModuleVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return the data vector
 std::vector<Module *> &ModuleVectorKeyword::data() { return data_; }
@@ -63,8 +60,6 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
 
         data_.emplace_back(module);
     }
-
-    set_ = true;
 
     return true;
 }

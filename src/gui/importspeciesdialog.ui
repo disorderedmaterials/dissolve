@@ -43,7 +43,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="ImportSpeciesSelectFilePage">
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -370,7 +370,7 @@
              <number>4</number>
             </property>
             <item>
-             <widget class="QTreeWidget" name="MasterTermsTree">
+             <widget class="QTreeView" name="MasterTermsTree">
               <property name="selectionMode">
                <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
@@ -383,14 +383,9 @@
                 <height>20</height>
                </size>
               </property>
-              <attribute name="headerVisible">
-               <bool>false</bool>
+              <attribute name="headerDefaultSectionSize">
+               <number>26</number>
               </attribute>
-              <column>
-               <property name="text">
-                <string notr="true">1</string>
-               </property>
-              </column>
              </widget>
             </item>
             <item>

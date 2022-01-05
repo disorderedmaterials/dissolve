@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "data/ff/ff.h"
 #include "classes/atomtype.h"
@@ -201,29 +201,29 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
  */
 
 // Add bond term
-void Forcefield::addBondTerm(std::string_view typeI, std::string_view typeJ, SpeciesBond::BondFunction form,
+void Forcefield::addBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
                              const std::vector<double> &parameters)
 {
     bondTerms_.emplace_back(typeI, typeJ, form, parameters);
 }
 
 // Add angle term
-void Forcefield::addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                              SpeciesAngle::AngleFunction form, const std::vector<double> &parameters)
+void Forcefield::addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, AngleFunctions::Form form,
+                              const std::vector<double> &parameters)
 {
     angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameters);
 }
 
 // Add torsion term
 void Forcefield::addTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                SpeciesTorsion::TorsionFunction form, const std::vector<double> &parameters)
+                                TorsionFunctions::Form form, const std::vector<double> &parameters)
 {
     torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
 
 // Add improper term
 void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                 SpeciesTorsion::TorsionFunction form, const std::vector<double> &parameters)
+                                 TorsionFunctions::Form form, const std::vector<double> &parameters)
 {
     improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
@@ -448,7 +448,7 @@ bool Forcefield::assignImproperTermParameters(ForcefieldImproperTerm &improper, 
     auto optTerm = getImproperTerm(atomTypes[0], atomTypes[1], atomTypes[2], atomTypes[3]);
     if (!optTerm)
         improper = {atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName(),
-                    atomTypes[2].get().equivalentName(), atomTypes[3].get().equivalentName(), SpeciesTorsion::NoForm};
+                    atomTypes[2].get().equivalentName(), atomTypes[3].get().equivalentName(), TorsionFunctions::Form::None};
     else
         improper = *optTerm;
 
@@ -537,7 +537,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                         if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))
                             return false;
 
-                        if (improperTerm.form() == SpeciesTorsion::NoForm)
+                        if (improperTerm.form() == TorsionFunctions::Form::None)
                             continue;
 
                         // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new

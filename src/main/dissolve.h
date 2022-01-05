@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -58,20 +58,6 @@ class Dissolve
     void clearAtomTypes();
 
     /*
-     * Master Terms
-     * (Exposes functions in coreData_)
-     */
-    public:
-    // Return list of master Bond parameters
-    const std::vector<std::shared_ptr<MasterIntra>> &masterBonds() const;
-    // Return list of master Angle parameters
-    const std::vector<std::shared_ptr<MasterIntra>> &masterAngles() const;
-    // Return list of master Torsion parameters
-    const std::vector<std::shared_ptr<MasterIntra>> &masterTorsions() const;
-    // Return list of master Improper parameters
-    const std::vector<std::shared_ptr<MasterIntra>> &masterImpropers() const;
-
-    /*
      * Species Definitions
      * (Exposes functions in coreData_)
      */
@@ -88,8 +74,11 @@ class Dissolve
     Species *findSpecies(std::string_view name) const;
     // Copy AtomType, creating a new one if necessary
     void copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom);
-    // Copy intramolecular interaction parameters, adding MasterIntra if necessary
-    void copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &destIntra);
+    // Copy intramolecular interaction parameters, adding master term if necessary
+    void copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest);
+    void copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest);
+    void copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest);
+    void copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest);
     // Copy Species
     Species *copySpecies(const Species *species);
 
@@ -234,8 +223,8 @@ class Dissolve
     void resetIterationCounter();
     // Return current simulation step
     int iteration() const;
-    // Return per-iteration time in seconds
-    double iterationTime() const;
+    // Estimate time in seconds required to perform next n steps (if possible to determine)
+    std::optional<double> estimateRequiredTime(int nIterations);
     // Print timing information
     void printTiming();
 

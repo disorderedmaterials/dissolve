@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/optionaldouble.hui"
@@ -40,7 +40,7 @@ void OptionalDoubleKeywordWidget::spinBoxValueChanged(double newValue)
         return;
 
     if (keyword_->setData(newValue))
-        emit(keywordValueChanged(keyword_->optionMask()));
+        emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Spin box value nullified
@@ -50,7 +50,7 @@ void OptionalDoubleKeywordWidget::spinBoxValueNullified()
         return;
 
     keyword_->setData(std::nullopt);
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*

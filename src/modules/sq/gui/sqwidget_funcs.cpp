@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/isotopedata.h"
@@ -53,12 +53,21 @@ void SQModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 
     const PartialSet &ps = *targetPartials_;
 
+    // Get the filter text (if there is any)
+    std::optional<std::string> filterText;
+    if (!ui_.FilterEdit->text().isEmpty())
+        filterText = ui_.FilterEdit->text().toStdString();
+
     PairIterator pairs(ps.atomTypeMix().nItems());
     for (auto [first, second] : pairs)
     {
         auto &at1 = ps.atomTypeMix()[first];
         auto &at2 = ps.atomTypeMix()[second];
         const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+
+        // Filtering - does this 'id' match our filter?
+        if (filterText && id.find(filterText.value()) == std::string::npos)
+            continue;
 
         // Full partial
         sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
@@ -128,5 +137,13 @@ void SQModuleWidget::on_PartialsButton_clicked(bool checked)
     sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     sqGraph_->view().axes().setTitle(1, "S(Q)");
 
+    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+}
+
+void SQModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::UpdateType::RecreateRenderables); }
+
+void SQModuleWidget::on_ClearFilterButton_clicked(bool checked)
+{
+    ui_.FilterEdit->setText("");
     updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }

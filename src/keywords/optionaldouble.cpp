@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/optionaldouble.h"
 #include "base/lineparser.h"
@@ -28,7 +28,6 @@ bool OptionalDoubleKeyword::setData(std::optional<double> value)
     }
 
     data_ = value;
-    set_ = data_.has_value();
 
     return true;
 }
@@ -78,5 +77,5 @@ bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywo
     if (!data_.has_value())
         return true;
 
-    return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_.value());
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value());
 }

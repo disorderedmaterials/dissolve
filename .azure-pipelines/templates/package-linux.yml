@@ -21,6 +21,7 @@ stages:
             displayName: "Publish Linux GUI Artifacts"
       - job: "linux_singularity"
         displayName: "Ubuntu, Threads, CLI/GUI, Singularity"
+        timeoutInMinutes: 120
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -31,13 +32,14 @@ stages:
             parameters:
               export: true
               exportExe: false
+              exportSingularity: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"
               ArtifactName: "gui-singularity"
             displayName: "Publish Linux GUI Singularity"
       - job: "linux_serial"
-        displayName: "Ubuntu, Serial, CLI"
+        displayName: "Ubuntu, Serial, CLI, Exe"
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -50,18 +52,37 @@ stages:
               docker: "docker"
               singularity: "singularity"
               export: true
+              exportExe: true
+              exportSingularity: false
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
               ArtifactName: "linux-cli-artifacts"
             displayName: "Publish Linux CLI Artifacts"
+      - job: "linux_serial_singularity"
+        displayName: "Ubuntu, Serial, CLI, Singularity"
+        timeoutInMinutes: 120
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: set-short-hash.yml
+          - template: build-linux.yml
+            parameters:
+              package: "dissolve"
+              docker: "docker"
+              singularity: "singularity"
+              export: true
+              exportExe: false
+              exportSingularity: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"
               ArtifactName: "cli-singularity"
             displayName: "Publish Linux CLI Singularity"
       - job: "linux_mpi"
-        displayName: "Ubuntu, MPI, CLI"
+        displayName: "Ubuntu, MPI, CLI, Exe"
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -74,11 +95,30 @@ stages:
               docker: "docker-mpi"
               singularity: "singularity-mpi"
               export: true
+              exportExe: true
+              exportSingularity: false
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
               ArtifactName: "mpi-artifacts"
             displayName: "Publish MPI Artifacts"
+      - job: "linux_mpi_singularity"
+        displayName: "Ubuntu, MPI, CLI, Singularity"
+        timeoutInMinutes: 120
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: set-short-hash.yml
+          - template: build-linux.yml
+            parameters:
+              package: "dissolve-mpi"
+              docker: "docker-mpi"
+              singularity: "singularity-mpi"
+              export: true
+              exportExe: false
+              exportSingularity: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"

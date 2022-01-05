@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -106,24 +106,4 @@ class RenderableData3D : public Renderable
     void setUpperCutoff(double cutoff);
     // Return upper cutoff for surface generation
     double upperCutoff() const;
-
-    /*
-     * Style I/O
-     */
-    public:
-    // Data3DStyle Keywords Enum
-    enum Data3DStyleKeyword
-    {
-        DisplayKeyword,     /* 'Display' - General display style for renderable */
-        EndStyleKeyword,    /* 'EndStyle' - End of Style block */
-        LowerCutoffKeyword, /* 'LowerCutoff' - Lower cutoff value for surface generation */
-        UpperCutoffKeyword, /* 'UpperCutoff' - Upper cutoff value for surface generation */
-        nData3DStyleKeywords
-    };
-    // Return enum option info for RenderableKeyword
-    static EnumOptions<RenderableData3D::Data3DStyleKeyword> data3DStyleKeywords();
-    // Write style information
-    bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
-    // Read style information
-    bool readStyleBlock(LineParser &parser);
 };

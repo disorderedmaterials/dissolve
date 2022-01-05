@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/charts/proceduremetrics.h"
 #include "gui/charts/procedurenode.h"
@@ -33,7 +33,7 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, NodeRef node, 
 
     // Set up our keywords widget
     ui_.NodeKeywordsWidget->setUp(node->keywords(), coreData);
-    connect(ui_.NodeKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
+    connect(ui_.NodeKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(nodeKeywordChanged(int)));
 
     // Update our controls
     ui_.TopLabel->setText(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node_->type()))));
@@ -190,4 +190,4 @@ void ProcedureChartNodeBlock::enableSensitiveControls()
  */
 
 // Keyword data for node has been modified
-void ProcedureChartNodeBlock::keywordDataModified() { emit(dataModified()); }
+void ProcedureChartNodeBlock::nodeKeywordChanged(int signalMask) { emit(dataModified()); }

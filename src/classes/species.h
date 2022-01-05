@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -247,6 +247,8 @@ class Species
     std::shared_ptr<Forcefield> forcefield() const;
     // Apply terms from source Forcefield
     bool applyForcefieldTerms(CoreData &coreData);
+    // Clear forcefield terms
+    void clearForcefieldTerms(bool nullifyAtomTypes = true);
 
     /*
      * Isotopologues

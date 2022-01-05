@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -24,8 +24,6 @@ class AtomTypeVectorKeyword : public KeywordBase
     // Return reference to data vector
     std::vector<std::shared_ptr<AtomType>> &data();
     const std::vector<std::shared_ptr<AtomType>> &data() const;
-    // Determine whether current data is 'empty', and should be considered as 'not set'
-    bool isDataEmpty() const override;
 
     /*
      * Arguments

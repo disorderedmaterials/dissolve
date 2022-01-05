@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -80,22 +80,4 @@ class RenderableConfiguration : public Renderable
     void setDisplayStyle(ConfigurationDisplayStyle displayStyle);
     // Return display style for the renderable
     ConfigurationDisplayStyle displayStyle() const;
-
-    /*
-     * Style I/O
-     */
-    public:
-    // ConfigurationStyle Keywords Enum
-    enum ConfigurationStyleKeyword
-    {
-        DisplayKeyword,  /* 'Display' - General display style for renderable */
-        EndStyleKeyword, /* 'EndStyle' - End of Style block */
-        nConfigurationStyleKeywords
-    };
-    // Return enum option info for RenderableKeyword
-    static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> configurationStyleKeywords();
-    // Write style information
-    bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
-    // Read style information
-    bool readStyleBlock(LineParser &parser);
 };

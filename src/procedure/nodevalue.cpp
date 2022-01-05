@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "procedure/nodevalue.h"
 #include "base/sysfunc.h"
@@ -122,7 +122,7 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
     if (type_ == IntegerNodeValue)
         return fmt::format("{}", valueI_);
     else if (type_ == DoubleNodeValue)
-        return fmt::format("{:12.6e}", valueD_);
+        return fmt::format("{}", valueD_);
     else
     {
         if (addQuotesIfRequired)

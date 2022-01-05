@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "io/import/data2d.h"
@@ -14,15 +14,10 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
      * The x and y values are assumed to be centre-bin values.
      */
 
-    // Must have axis ranges - otherwise tricky to work out axis limits without reading the whole file in twice
-    if ((!keywords_.hasBeenSet("XRange")) || (!keywords_.hasBeenSet("YRange")))
-        return Messenger::error("Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
-
     // Set up our data
     const auto xMin = xAxis_.x;
     const auto xMax = xAxis_.y;
     const auto xDelta = xAxis_.z;
-    ;
     const auto yMin = yAxis_.x;
     const auto yMax = yAxis_.y;
     const auto yDelta = yAxis_.z;

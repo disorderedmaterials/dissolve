@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/function1d.h"
@@ -68,7 +68,7 @@ void Function1DKeywordWidget::functionCombo_currentIndexChanged(int index)
 
     updateWidgetValues(coreData_);
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 // Parameter value changed
@@ -81,7 +81,7 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
 
     updateSummaryText();
 
-    emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordDataChanged(keyword_->signalMask()));
 }
 
 /*
@@ -131,7 +131,6 @@ void Function1DKeywordWidget::updateKeywordData()
 
     // Set new data
     function.setFunctionAndParameters(func, newParams);
-    keyword_->setAsModified();
 }
 
 // Update summary text

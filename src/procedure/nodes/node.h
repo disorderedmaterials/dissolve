@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -181,8 +181,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
      * Parameters
      */
     public:
-    // Return whether this node has the named parameter specified
-    virtual std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
+    // Return the named parameter (if it exists)
+    virtual std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
                                                              std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
     // Return references to all parameters for this node
     virtual OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const;

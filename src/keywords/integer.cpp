@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/integer.h"
 #include "base/lineparser.h"
@@ -72,5 +72,8 @@ bool IntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreDat
 // Serialise data to specified LineParser
 bool IntegerKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    if (!set_)
+        return true;
+
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }

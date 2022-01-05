@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -7,12 +7,9 @@
 #include "templates/optionalref.h"
 
 // Forward Declarations
-class CoreData;
-class Species;
 class SpeciesAngle;
 class SpeciesAtom;
 class SpeciesBond;
-class SpeciesIntra;
 class SpeciesTorsion;
 
 // Universal Forcefield

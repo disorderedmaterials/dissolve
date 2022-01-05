@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/range.h"
 #include "base/lineparser.h"
@@ -36,7 +36,6 @@ bool RangeKeyword::deserialise(LineParser &parser, int startArg, const CoreData 
     if (parser.hasArg(startArg + 1))
     {
         data_.set(parser.argd(startArg), parser.argd(startArg + 1));
-        set_ = true;
 
         return true;
     }

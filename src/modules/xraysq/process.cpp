@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -15,12 +15,12 @@
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
+bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename())
+    if (referenceFQ_.hasFilename() && actionSignals.setOrNone(KeywordSignals::ReloadExternalData))
     {
         // Load the data
         Data1D referenceData;

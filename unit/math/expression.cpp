@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/expression.h"
 #include "expression/reference.h"
 #include "expression/variable.h"
+#include "math/mathfunc.h"
 #include <fmt/format.h>
 #include <gtest/gtest.h>
 #include <string_view>
@@ -24,16 +25,17 @@ class ExpressionTest : public ::testing::Test
         variables.emplace_back(std::make_shared<ExpressionVariable>("bee", 100.0));
     }
 
-    void exprTest(std::string_view expr, const ExpressionValue &val, bool fail)
+    private:
+    void checkExpr(std::string_view expr, const ExpressionValue &val, bool shouldFail)
     {
         auto generationResult = expression.create(expr, variables);
-        ASSERT_NE(bool(generationResult), fail);
-        if (fail)
+        ASSERT_NE(bool(generationResult), shouldFail);
+        if (shouldFail)
             return;
         auto optResult = expression.evaluate();
         ASSERT_TRUE(optResult);
         auto result = (*optResult);
-        ASSERT_EQ(result.type(), val.type());
+        ASSERT_TRUE(result.type() == val.type());
         switch (val.type())
         {
             case (ExpressionValue::ValueType::Double):
@@ -43,6 +45,20 @@ class ExpressionTest : public ::testing::Test
                 EXPECT_EQ(result.asInteger(), val.asInteger());
                 break;
         }
+    }
+
+    protected:
+    void exprTest(std::string_view expr, const ExpressionValue &val, bool shouldFail)
+    {
+        // Test expression
+        checkExpr(expr, val, shouldFail);
+        if (shouldFail)
+            return;
+
+        // Regenerate expression string from nodes and re-test
+        expression.setExpressionStringFromNodes();
+        EXPECT_EQ(expr, expression.expressionString());
+        checkExpr(expression.expressionString(), val, shouldFail);
     }
 
     std::vector<std::shared_ptr<ExpressionVariable>> variables;
@@ -63,9 +79,9 @@ TEST_F(ExpressionTest, BasicIntegerMath)
 
 TEST_F(ExpressionTest, BasicFloatMath)
 {
-    exprTest("1.0+24*3.4", 1.0 + 24 * 3.4, false);
+    exprTest("1+24*3.4", 1.0 + 24 * 3.4, false);
     exprTest("(9.231-4*89.4)/76.92+7", (9.231 - 4 * 89.4) / 76.92 + 7, false);
-    exprTest("-3.0^3", pow(-3.0, 3), false);
+    exprTest("-3^3", DissolveMath::power(-3, 3), false);
     exprTest("cos(45)", cos(M_PI_4), false);
     exprTest("exp(cos(45))", exp(cos(M_PI_4)), false);
     exprTest("sqrt(sin(78.9)*cos(45))", sqrt(sin(78.9 * M_PI / 180.0) * cos(M_PI_4)), false);
@@ -78,8 +94,7 @@ TEST_F(ExpressionTest, Variables)
     auto a = variables[0];
     auto bee = variables[1];
     exprTest("a/5", a->value().asDouble() / 5, false);
-    exprTest("a + sqrt(bee)", a->value().asDouble() + sqrt(bee->value().asDouble()), false);
+    exprTest("a+sqrt(bee)", a->value().asDouble() + sqrt(bee->value().asDouble()), false);
     exprTest("1.8*wasp", 0, true);
-};
-
+}
 } // namespace UnitTest

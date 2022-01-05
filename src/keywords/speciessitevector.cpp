@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "keywords/speciessitevector.h"
 #include "base/lineparser.h"
@@ -57,8 +57,6 @@ bool SpeciesSiteVectorKeyword::deserialise(LineParser &parser, int startArg, con
         // Add site to the vector
         data_.push_back(speciesSite);
     }
-
-    set_ = true;
 
     return true;
 }

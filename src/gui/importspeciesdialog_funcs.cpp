@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -36,22 +36,28 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     connect(ui_.AtomTypesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(atomTypeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
-    // Create parent items for MasterTerms tree
-    masterBondItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
-    masterBondItemParent_->setFlags(Qt::ItemIsEnabled);
-    masterBondItemParent_->setExpanded(true);
-    masterBondItemParent_->setText(0, "Bonds");
-    masterAngleItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
-    masterAngleItemParent_->setFlags(Qt::ItemIsEnabled);
-    masterAngleItemParent_->setText(0, "Angles");
-    masterAngleItemParent_->setExpanded(true);
-    masterTorsionItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
-    masterTorsionItemParent_->setFlags(Qt::ItemIsEnabled);
-    masterTorsionItemParent_->setText(0, "Torsions");
-    masterTorsionItemParent_->setExpanded(true);
-
-    // Connect signals / slots
-    connect(ui_.MasterTermsTree->itemDelegate(), SIGNAL(commitData(QWidget *)), this, SLOT(masterTermsTreeEdited(QWidget *)));
+    // Set model and signals for the master terms tree
+    masterTermModel_.setBondIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
+                                                              : ":/general/icons/general_true.svg");
+    });
+    masterTermModel_.setAngleIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
+                                                               : ":/general/icons/general_true.svg");
+    });
+    masterTermModel_.setTorsionIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
+                                                                 : ":/general/icons/general_true.svg");
+    });
+    masterTermModel_.setImproperIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
+                                                                  : ":/general/icons/general_true.svg");
+    });
+    ui_.MasterTermsTree->setModel(&masterTermModel_);
+    connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+            SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(ui_.MasterTermsTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterTermSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Register pages with the wizard
     registerPage(ImportSpeciesDialog::SelectFilePage, "Choose Input File", ImportSpeciesDialog::SelectSpeciesPage);
@@ -102,6 +108,11 @@ bool ImportSpeciesDialog::prepareForNextPage(int currentIndex)
             speciesModel_.setData(temporaryDissolve_.species());
 
             updateAtomTypesPage();
+            masterTermModel_.setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(),
+                                     temporaryCoreData_.masterTorsions(), temporaryCoreData_.masterImpropers());
+            ui_.MasterTermsTree->expandAll();
+            ui_.MasterTermsTree->resizeColumnToContents(0);
+            ui_.MasterTermsTree->resizeColumnToContents(1);
             updateMasterTermsPage();
             break;
         default:
@@ -118,7 +129,8 @@ std::optional<int> ImportSpeciesDialog::determineNextPage(int currentIndex)
     {
         case (ImportSpeciesDialog::AtomTypesPage):
             // If there are master terms present, go to that page first. Otherwise, skip straight to naming
-            if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() || temporaryCoreData_.nMasterTorsions())
+            if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() ||
+                temporaryCoreData_.nMasterTorsions() || temporaryCoreData_.nMasterImpropers())
                 return ImportSpeciesDialog::MasterTermsPage;
             else
                 return ImportSpeciesDialog::SpeciesNamePage;
@@ -261,60 +273,31 @@ void ImportSpeciesDialog::on_AtomTypesSuffixButton_clicked(bool checked)
  * MasterTerms Page
  */
 
-// Row update function for MasterTermsList
-void ImportSpeciesDialog::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra,
-                                                     bool createItem)
-{
-    QTreeWidgetItem *item;
-    if (createItem)
-    {
-        item = new QTreeWidgetItem;
-        item->setData(0, Qt::UserRole, VariantPointer<MasterIntra>(masterIntra));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-        parent->insertChild(childIndex, item);
-    }
-    else
-        item = parent->child(childIndex);
-
-    // Set item data
-    item->setText(0, QString::fromStdString(std::string(masterIntra->name())));
-    item->setIcon(0, QIcon(dissolve_.coreData().findMasterTerm(masterIntra->name()) ? ":/general/icons/general_warn.svg"
-                                                                                    : ":/general/icons/general_true.svg"));
-}
-
 // Update page with MasterTerms in our temporary Dissolve reference
 void ImportSpeciesDialog::updateMasterTermsPage()
 {
-    // Update the list against the global MasterTerm tree
-    TreeWidgetUpdater<ImportSpeciesDialog, MasterIntra> bondUpdater(masterBondItemParent_, temporaryCoreData_.masterBonds(),
-                                                                    this, &ImportSpeciesDialog::updateMasterTermsTreeChild);
-    TreeWidgetUpdater<ImportSpeciesDialog, MasterIntra> angleUpdater(masterAngleItemParent_, temporaryCoreData_.masterAngles(),
-                                                                     this, &ImportSpeciesDialog::updateMasterTermsTreeChild);
-    TreeWidgetUpdater<ImportSpeciesDialog, MasterIntra> torsionUpdater(
-        masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this, &ImportSpeciesDialog::updateMasterTermsTreeChild);
-
     // Determine whether we have any naming conflicts
     auto conflicts = false;
     for (auto &intra : temporaryCoreData_.masterBonds())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterBond(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterAngles())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterAngle(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterTorsions())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterTorsion(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterImpropers())
-        if (dissolve_.coreData().findMasterTerm(intra->name()))
+        if (dissolve_.coreData().getMasterImproper(intra->name()))
         {
             conflicts = true;
             break;
@@ -326,47 +309,17 @@ void ImportSpeciesDialog::updateMasterTermsPage()
         ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
 }
 
-void ImportSpeciesDialog::on_MasterTermsTree_itemSelectionChanged()
+void ImportSpeciesDialog::masterTermDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
-    // Enable / disable prefix and suffix buttons as appropriate
-    auto isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
-    ui_.MasterTermsPrefixButton->setEnabled(isSelection);
-    ui_.MasterTermsSuffixButton->setEnabled(isSelection);
+    updateMasterTermsPage();
 }
 
-void ImportSpeciesDialog::masterTermsTreeEdited(QWidget *lineEdit)
+void ImportSpeciesDialog::masterTermSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
-    // Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here
-    // before updating the page
-    for (auto n = 0; n < masterBondItemParent_->childCount(); ++n)
-    {
-        QTreeWidgetItem *item = masterBondItemParent_->child(n);
-        MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
-        if (!intra)
-            continue;
-
-        intra->setName(qPrintable(item->text(0)));
-    }
-    for (auto n = 0; n < masterAngleItemParent_->childCount(); ++n)
-    {
-        QTreeWidgetItem *item = masterAngleItemParent_->child(n);
-        MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
-        if (!intra)
-            continue;
-
-        intra->setName(qPrintable(item->text(0)));
-    }
-    for (auto n = 0; n < masterTorsionItemParent_->childCount(); ++n)
-    {
-        QTreeWidgetItem *item = masterTorsionItemParent_->child(n);
-        MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
-        if (!intra)
-            continue;
-
-        intra->setName(qPrintable(item->text(0)));
-    }
-
-    updateMasterTermsPage();
+    // Enable / disable prefix and suffix buttons as appropriate
+    auto isSelection = current.count() > 0;
+    ui_.MasterTermsPrefixButton->setEnabled(isSelection);
+    ui_.MasterTermsSuffixButton->setEnabled(isSelection);
 }
 
 void ImportSpeciesDialog::on_MasterTermsPrefixButton_clicked(bool checked)
@@ -377,12 +330,7 @@ void ImportSpeciesDialog::on_MasterTermsPrefixButton_clicked(bool checked)
     if (!ok)
         return;
 
-    QList<QTreeWidgetItem *> selectedItems = ui_.MasterTermsTree->selectedItems();
-    for (auto i : selectedItems)
-    {
-        MasterIntra *intra = VariantPointer<MasterIntra>(i->data(0, Qt::UserRole));
-        intra->setName(fmt::format("{}{}", qPrintable(prefix), intra->name()));
-    }
+    masterTermModel_.prefixNames(ui_.MasterTermsTree->selectionModel()->selection().indexes(), prefix);
 
     updateMasterTermsPage();
 }
@@ -395,12 +343,7 @@ void ImportSpeciesDialog::on_MasterTermsSuffixButton_clicked(bool checked)
     if (!ok)
         return;
 
-    QList<QTreeWidgetItem *> selectedItems = ui_.MasterTermsTree->selectedItems();
-    for (auto i : selectedItems)
-    {
-        MasterIntra *intra = VariantPointer<MasterIntra>(i->data(0, Qt::UserRole));
-        intra->setName(fmt::format("{}{}", intra->name(), qPrintable(suffix)));
-    }
+    masterTermModel_.suffixNames(ui_.MasterTermsTree->selectionModel()->selection().indexes(), suffix);
 
     updateMasterTermsPage();
 }

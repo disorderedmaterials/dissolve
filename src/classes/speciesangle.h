@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #pragma once
 
@@ -10,8 +10,29 @@
 class SpeciesAtom;
 class Species;
 
+// Angle functional forms
+class AngleFunctions
+{
+    public:
+    enum class Form
+    {
+        None,
+        Harmonic,
+        Cosine,
+        Cos2
+    };
+    // Return enum options for form
+    static EnumOptions<Form> forms();
+    // Return parameters for specified form
+    static const std::vector<std::string> &parameters(Form form);
+    // Return nth parameter for the given form
+    static std::string parameter(Form form, int n);
+    // Return index of parameter in the given form
+    static std::optional<int> parameterIndex(Form form, std::string_view name);
+};
+
 // SpeciesAngle Definition
-class SpeciesAngle : public SpeciesIntra
+class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
@@ -67,26 +88,30 @@ class SpeciesAngle : public SpeciesIntra
      * Interaction Parameters
      */
     public:
-    // Angle functional forms
-    enum AngleFunction
-    {
-        NoForm,
-        HarmonicForm,
-        CosineForm,
-        Cos2Form
-    };
-    // Return enum options for AngleFunction
-    static EnumOptions<AngleFunction> angleFunctions();
-
-    public:
-    // Set up any necessary parameters
-    void setUp() override;
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
-    // Return type of this interaction
-    SpeciesIntra::InteractionType type() const override;
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
+};
+
+// MasterAngle Definition
+class MasterAngle : public SpeciesAngle
+{
+    public:
+    explicit MasterAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
+
+    /*
+     * Identifying Name
+     */
+    private:
+    // Identifying name
+    std::string name_;
+
+    public:
+    // Set identifying name
+    void setName(std::string_view name) override { name_ = name; }
+    // Return identifying name
+    std::string_view name() const override { return name_; };
 };

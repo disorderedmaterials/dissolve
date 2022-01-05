@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "data/ff/strader2002/dmso.h"
 #include "base/sysfunc.h"
@@ -31,19 +31,19 @@ bool Forcefield_Strader2002::setUp()
     addAtomType(Elements::H, 4, "HD", "-C", "DMSO hydrogen", 0.090, {0.10046, 2.3876});
 
     // Bond terms
-    addBondTerm("CD", "SD", SpeciesBond::HarmonicForm, {2009.28, 1.80});
-    addBondTerm("SD", "OD", SpeciesBond::HarmonicForm, {4520.88, 1.53});
-    addBondTerm("CD", "HD", SpeciesBond::HarmonicForm, {2695.78, 1.11});
+    addBondTerm("CD", "SD", BondFunctions::Form::Harmonic, {2009.28, 1.80});
+    addBondTerm("SD", "OD", BondFunctions::Form::Harmonic, {4520.88, 1.53});
+    addBondTerm("CD", "HD", BondFunctions::Form::Harmonic, {2695.78, 1.11});
 
     // Angle terms
-    addAngleTerm("CD", "SD", "CD", SpeciesAngle::HarmonicForm, {284.65, 95.0});
-    addAngleTerm("CD", "SD", "OD", SpeciesAngle::HarmonicForm, {661.39, 106.75});
-    addAngleTerm("HD", "CD", "SD", SpeciesAngle::HarmonicForm, {385.94, 111.30});
-    addAngleTerm("HD", "CD", "HD", SpeciesAngle::HarmonicForm, {297.21, 108.40});
+    addAngleTerm("CD", "SD", "CD", AngleFunctions::Form::Harmonic, {284.65, 95.0});
+    addAngleTerm("CD", "SD", "OD", AngleFunctions::Form::Harmonic, {661.39, 106.75});
+    addAngleTerm("HD", "CD", "SD", AngleFunctions::Form::Harmonic, {385.94, 111.30});
+    addAngleTerm("HD", "CD", "HD", AngleFunctions::Form::Harmonic, {297.21, 108.40});
 
     // Dihedral terms
-    addTorsionTerm("HD", "CD", "SD", "OD", SpeciesTorsion::CosineForm, {0.8372, 3.0, 0.0, 1});
-    addTorsionTerm("HD", "CD", "SD", "CD", SpeciesTorsion::CosineForm, {0.8372, 3.0, 0.0, 1});
+    addTorsionTerm("HD", "CD", "SD", "OD", TorsionFunctions::Form::Cosine, {0.8372, 3.0, 0.0, 1});
+    addTorsionTerm("HD", "CD", "SD", "CD", TorsionFunctions::Form::Cosine, {0.8372, 3.0, 0.0, 1});
 
     return true;
 }

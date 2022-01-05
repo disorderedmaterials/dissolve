@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/delegates/exponentialspin.hui"
 #include <stdio.h>
 
-ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, double nDecimals)
+ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, int nDecimals)
     : QItemDelegate(parent)
 {
     // Private variables
@@ -43,9 +43,7 @@ void ExponentialSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 {
     auto *spinBox = static_cast<ExponentialSpin *>(editor);
 
-    double value = spinBox->value();
-
-    model->setData(index, value, Qt::EditRole);
+    model->setData(index, spinBox->value(), Qt::EditRole);
 }
 
 // Update widget geometry

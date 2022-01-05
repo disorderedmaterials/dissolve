@@ -39,7 +39,8 @@ Layer  'Processing'
     Test on
     TestAnalytic on
     TestReferenceInter  -27393.217815     # 1770.1666370083758 LJ + -29163.384451743802 Coulomb (LJ correction accounted for)
-    TestReferenceIntra  5584.45180873  
+    TestReferenceIntra  5584.45180873
+    TestThreshold  5.0e-2
   EndModule
 
   # Test production forces against reference forces
@@ -63,4 +64,3 @@ PairPotentials
   Parameters  'HW'  H  0.41    LJGeometric   0.0       0.0
   IncludeCoulomb  False
 EndPairPotentials
-

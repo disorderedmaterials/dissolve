@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/processpool.h"
 #include "base/timer.h"
@@ -182,7 +182,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             stepSize_ = stepSizeMin_;
         else if (stepSize_ > stepSizeMax_)
             stepSize_ = stepSizeMax_;
-        keywords_.setAsModified("StepSize");
+        keywords_.set("StepSize", stepSize_);
 
         Messenger::print("Updated step size is {} Angstroms.\n", stepSize_);
 
