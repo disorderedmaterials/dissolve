@@ -1,0 +1,1 @@
+<span class='gui-button{{ if .Get "type"  }} gui-button-{{ .Get "type" }}{{ end }}'>{{ with .Get "text" }}{{ . | markdownify }}{{ end }}</span>

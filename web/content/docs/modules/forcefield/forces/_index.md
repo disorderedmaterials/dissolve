@@ -6,7 +6,7 @@ description: Calculate atomic forces for configurations
 
 ## Overview
 
-The `Forces` module calculates the total atomic forces present in one or more configurations arising from intramolecular and intermolecular interactions between atoms. It is not normally required to be present in a typical simulation - modules such as [`MD`]({{< ref "md" >}}) directly call the necessary force functions, for instance - but it can be used to test against reference data in order to ensure consistency with other simulation codes.
+The `Forces` module calculates the total atomic forces present in one or more configurations arising from intramolecular and intermolecular interactions between atoms. It is not normally required to be present in a typical simulation - modules such as {{< gui-module "MD" >}} directly call the necessary force functions, for instance - but it can be used to test against reference data in order to ensure consistency with other simulation codes.
 
 ## Description
 

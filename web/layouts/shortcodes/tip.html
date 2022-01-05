@@ -1,3 +1,4 @@
 <blockquote class="tip">
-{{ with .Get "text" }}<p>{{ . | markdownify }}</p>{{ end }}
+{{ if .Inner }}<p>{{ .Inner | safeHTML | markdownify }}</p>{{ end }}
+{{ if .Get "text" }}<p>{{ .Get "text" | safeHTML | markdownify }}</p>{{ end }}
 </blockquote>

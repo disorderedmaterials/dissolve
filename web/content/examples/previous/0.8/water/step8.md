@@ -17,11 +17,11 @@ The EPSR algorithm implemented within Dissolve doesn't contain any attempts at a
 If you now take a look at the r-factors for your water simulation you should see that they have steadily decreased while you've been reading. In fact, an **EReq** value of around 5 or 6 represents the "limit of no improvement", so let's pause the simulation step up to that value now:
 
 
-{{< step text="Pause the simulation with **Esc**" >}}
-{{< action type="tabs" text=" **Refine (EPSR)** tab" >}}
-{{< action type="groups" text="Open the **Calculation** settings group" >}}
-{{< step text="Set **EReq** to 6.0" >}}
-{{< step text="Start the simulation running again with **Ctrl-R**" >}}
+{{< step text="Pause the simulation with **Esc**" />}}
+{{< action type="tabs" text=" **Refine (EPSR)** tab" />}}
+{{< action type="groups" text="Open the **Calculation** settings group" />}}
+{{< step text="Set **EReq** to 6.0" />}}
+{{< step text="Start the simulation running again with **Ctrl-R**" />}}
 
 Now that we're running again with a higher value of **EReq** the r-factors should start to come down again, and with a value of 6.0 the total r-factor should soon approach a value of around 1.55&times;10<sup>-4</sup>. The simulated F(Q) should now agree pretty well with the experimental data:
 
@@ -31,5 +31,6 @@ We can observe some discrepancies at the low _Q_ end of the data, but there is l
 
 At this point, we can start to think about what kind of structural properties we want to calculate from our refined simulation.
 
+* * *
 {{< button pos="left" text="Previous Step" path="step7/">}}
 {{< button pos="right" text="Next Step" path="step9/">}}

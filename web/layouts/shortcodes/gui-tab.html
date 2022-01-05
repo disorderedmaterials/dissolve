@@ -1,0 +1,2 @@
+{{ $type := .Get "type"  }}
+<span class="gui-tab gui-tab-{{ $type }}">{{ if .Get "text" }}{{ .Get "text" | safeHTML | markdownify }}{{ else }}{{ $type | safeHTML | markdownify }}{{ end }}</span>

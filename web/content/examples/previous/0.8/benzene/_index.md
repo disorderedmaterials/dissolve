@@ -16,10 +16,10 @@ You will set up and equilibrate a small liquid benzene simulation before calcula
 
 Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already.
 
-{{< action type="dissolve" text="Open the Dissolve GUI" >}}
-{{< step text="Choose **Empty Simulation** from the _Create_ section" >}}
-{{< action type="menu" text="Save As..." >}}
-{{< step text="Save your own input file under a sensible name in the `benzene` directory of the example data" >}}
+{{< action type="dissolve" text="Open the Dissolve GUI" />}}
+{{< step text="Choose **Empty Simulation** from the _Create_ section" />}}
+{{< action type="menu" text="Save As..." />}}
+{{< step text="Save your own input file under a sensible name in the `benzene` directory of the example data" />}}
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 

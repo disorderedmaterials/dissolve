@@ -1,4 +1,7 @@
-// Navbar
+/*
+ * Navbar
+ */
+
 .td-navbar .navbar-brand {
     svg {
         margin: 5px 10px;
@@ -10,7 +13,10 @@
   background-color: #17132a;
 }
 
-// Labels
+/*
+ * Labels
+ */
+
 .label {
     border-radius: 5px;
     display: inline-block;
@@ -50,8 +56,124 @@
     padding: 1px 10px 1px 10px;
 }
 
-// Left-aligned button
-.btn.left { 
+/*
+ * GUI Element Indicators
+ */
+
+// Tab
+.gui-tab {
+   border-radius: 2px;
+   border: 1px solid #aebfcd;
+   background-color: #eeefed;
+   padding: 1px 10px 1px 30px;
+   font-size: 85%;
+   margin: 5px 0 5px 0;
+   position: relative;
+   line-height: 1.0;
+}
+
+.gui-tab::before {
+  content: '';
+  width: 15px;
+  height: 15px;
+  left: 7px;
+  top: 0px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 18px;
+}
+.gui-tab.gui-tab-Forcefield::before {
+  background-image: url(/img/tabs_ff.png);
+}
+.gui-tab.gui-tab-Layer::before {
+  background-image: url(/img/tabs_modulelayer.png);
+}
+.gui-tab.gui-tab-Species::before {
+  background-image: url(/img/tabs_species.png);
+}
+
+.gui-tab::after {
+  content: '';
+}
+
+// Button
+.gui-button {
+   display: inline-block;
+   border-radius: 5px;
+   border: 1px solid #aebfcd;
+   background-color: #edefed;
+   padding: 3px 25px 1px 25px;
+   font-size: 85%;
+   font-weight: bold;
+   position: relative;
+   margin: 2px 0 2px 0;
+   line-height: 1.0;
+}
+
+.gui-button::before {
+  content: ' ';
+  width: 15px;
+  height: 15px;
+  left: 7px;
+  top: 0px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 17px;
+}
+.gui-button.gui-button-add::before {
+  background-image: url(/img/general_add.png);
+}
+.gui-button.gui-button-options::before {
+  background-image: url(/img/general_options.png);
+}
+.gui-button.gui-button-output::before {
+  background-image: url(/img/tabs_workspace.png);
+}
+
+.gui-button::after {
+  content: '';
+}
+
+// Module
+.gui-module {
+   padding: 0px 0px 0px 1.2em;
+   position: relative;
+}
+
+.gui-module::before {
+  content: '';
+  width: 1.1em;
+  height: 1.1em;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 1.1em;
+}
+
+.gui-module::after {
+  content: '';
+}
+
+@mixin gui-module($module) {
+  .gui-module.gui-module-#{$module}::before{
+       background-image: url(/img/modules_#{$module}.png);
+  }
+}
+@mixin generate-gui-module(){
+   @each $module in $modules{
+     @include gui-module($module);
+   }
+}
+$modules: ("atomshake", "calculatecn", "calculaterdf", "energy", "epsr", "forces", "md", "molshake", "neutronsq", "rdf", "sq", "xraysq");
+@include generate-gui-module();
+
+/*
+ * Buttons
+ */
+
+// Left-aligned navigation button
+.btn.left {
     border-radius: 5px;
     width: inherit;
     margin: 5px auto 5px 0;
@@ -60,7 +182,7 @@
     padding: auto;
 }
 
-// Right-aligned button
+// Right-aligned navigation button
 .btn.right {
     border-radius: 5px;
     width: inherit;
@@ -87,7 +209,7 @@ blockquote {
   padding-top: 15px;
   padding-bottom: 1px;
   padding-right: 10px;
-  border-left: 8px solid #ddd ;
+  border-left: 8px solid #ddd;
   line-height: 1.6;
   position: relative;
   background: #f9f9f9;
@@ -152,19 +274,16 @@ blockquote.actionquote {
 blockquote.action {
   width: 85%;
   margin-bottom: 10px;
-  line-height: 1.0;
   border-left: 8px solid #478cc6;
 }
 blockquote.iconaction {
   width: 85%;
   margin-bottom: 10px;
-  line-height: 1.0;
   border-left: 8px solid #6947c6;
 }
 blockquote.step {
   width: 85%;
   margin-bottom: 10px;
-  line-height: 1.0;
   border-left: 16px solid #aebfcd;
 }
 blockquote.step::before {

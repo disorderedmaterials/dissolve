@@ -8,7 +8,7 @@ description: Calculate radial distribution functions between all atom types
 
 The `RDF` module calculates a full set of partial radial distribution functions, $g_{ij}(r)$ for each unique pair of atom types $i$ and $j$ present in the target configuration(s).
 
-The `RDF` module is designed to calculate the necessary input for other modules such as [`SQ`]({{< ref "sq" >}}) - there is no facility for calculating other types of radial distribution function, e.g. those between the centres-of-mass of molecules. To calculate such quantities see the [analysis modules]({{< ref "analysis" >}}).
+The `RDF` module is designed to calculate the necessary input for other modules such as {{< gui-module "SQ" >}} - there is no facility for calculating other types of radial distribution function, e.g. those between the centres-of-mass of molecules. To calculate such quantities see the [analysis modules]({{< ref "analysis" >}}).
 
 ## Description
 

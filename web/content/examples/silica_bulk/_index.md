@@ -11,15 +11,12 @@ Amorphous silica (SiO<sub>2</sub>) is found in a variety of places, and is a rel
 
 ## Preparation
 
-Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already.
-
-{{< action type="dissolve" text="Open the Dissolve GUI">}}
-{{< step text="Choose **Empty Simulation** from the _Create_ section" >}}
-{{< action type="menu" text="Save As...">}}
-{{< step text="Save your own input file under a sensible name in the `silica_bulk` directory of the example data" >}}
-
-Alternatively, download the data files listed below and save them to a location of your choice.
+Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
 
 - Neutron data file: [SiO2_NIMROD.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/silica_bulk/data/SiO2_NIMROD.mint01)
+
+{{< action type="menu" text="File &#8680; New" />}}
+{{< action type="menu" text="File &#8680; Save As..." />}}
+{{< step text="Save your input file under a sensible name in same directory as the example data" />}}
 
 {{< button pos="left" text="Let's begin!" path="step1/">}}

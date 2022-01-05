@@ -6,9 +6,9 @@ description: Calculate neutron-weighted S(Q) and G(r)
 
 ## Overview
 
-`NeutronSQ` is responsible for taking a set of previously calculated $S(Q)$ from an [`SQ`]({{< ref "sq" >}}) module and generating a new set of neutron-weighted structure factors. The total neutron-weighted structure factor, $F^{N}(Q)$, is generated through summation of the individual partial neutron-weighted $S(Q)$. Neutron-weighted partial and total radial distribution functions are also calculated.
+`NeutronSQ` is responsible for taking a set of previously calculated $S(Q)$ from an {{< gui-module "SQ" >}} module and generating a new set of neutron-weighted structure factors. The total neutron-weighted structure factor, $F^{N}(Q)$, is generated through summation of the individual partial neutron-weighted $S(Q)$. Neutron-weighted partial and total radial distribution functions are also calculated.
 
-The `NeutronSQ` module does not target any configurations itself - the underlying [`RDF`]({{< ref "sq" >}}) module, referenced by the [`SQ`]({{< ref "sq" >}}) module, dictates the source configuration data.
+The `NeutronSQ` module does not target any configurations itself - the underlying [`RDF`]({{< ref "sq" >}}) module, referenced by the {{< gui-module "SQ" >}} module, dictates the source configuration data.
 
 ## Description
 
@@ -32,7 +32,7 @@ With isotopologues and exchangeable atoms provided, matrices of weighting factor
 
 ### Instrumental Broadening
 
-The application of instrumental broadening is the responsibility of the source [`SQ`]({{< ref "sq" >}}) module - see its [`QBroadening`]({{< ref "sq#control-keywords" >}}) keyword.
+The application of instrumental broadening is the responsibility of the source {{< gui-module "SQ" >}} module - see its [`QBroadening`]({{< ref "sq#control-keywords" >}}) keyword.
 
 ## Configuration
 
@@ -42,7 +42,7 @@ The application of instrumental broadening is the responsibility of the source [
 |`Exchangeable`|`AtomType` ...|--|A list of one or more atom types in the system that are exchangeable with each other|
 |`Isotopologue`|`Configuration`</br>`Species`</br>`Isotopologue`</br>`double`|--|Set/add an isotopologue and its population for a particular species. The `Isotopologue` keyword may be used as many times as is necessary to satisfy the number of species in the system and their blends of isotopologues|
 |`Normalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Quantity against which to normalise the total structure factor|
-|`SourceSQs`|`Module`|--|{{< required-label >}} Source [`SQ`]({{< ref "sq" >}}) module from which to take unweighted $S(Q)$.|
+|`SourceSQs`|`Module`|--|{{< required-label >}} Source {{< gui-module "SQ" >}} module from which to take unweighted $S(Q)$.|
 
 ### Reference Data
 Keyword|Arguments|Default|Description|

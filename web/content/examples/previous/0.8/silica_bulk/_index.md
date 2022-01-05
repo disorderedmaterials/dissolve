@@ -13,10 +13,10 @@ Amorphous silica (SiO<sub>2</sub>) is found in a variety of places, and is a rel
 
 Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already.
 
-{{< action type="dissolve" text="Open the Dissolve GUI">}}
-{{< step text="Choose **Empty Simulation** from the _Create_ section" >}}
-{{< action type="menu" text="Save As...">}}
-{{< step text="Save your own input file under a sensible name in the `silica_bulk` directory of the example data" >}}
+{{< action type="dissolve" text="Open the Dissolve GUI" />}}
+{{< step text="Choose **Empty Simulation** from the _Create_ section" />}}
+{{< action type="menu" text="Save As..." />}}
+{{< step text="Save your own input file under a sensible name in the `silica_bulk` directory of the example data" />}}
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 

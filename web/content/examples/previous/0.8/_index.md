@@ -8,7 +8,7 @@ Here you can find various usage examples, tutorials, and step-by-step walkthroug
 
 Important things are highlighted in the following manner:
 
-{{< action type="mouse" text="Action - Instructs you to do something in the GUI" >}}
+{{< action type="mouse" text="Action - Instructs you to do something in the GUI" />}}
 
 {{< tip text="Tip - Provides a helpful bit of extra advice" >}}
 
