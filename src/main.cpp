@@ -151,11 +151,13 @@ int main(int args, char **argv)
                      ProcessPool::nWorldProcesses());
 #endif
 
-    // Run main simulation?
-    auto result = dissolve.iterate(options.nIterations());
-
-    // Print timing information
-    dissolve.printTiming();
+    // Run main simulation
+    auto result = true;
+    if (options.nIterations() > 0)
+    {
+        result = dissolve.prepare() && dissolve.iterate(options.nIterations());
+        dissolve.printTiming();
+    }
 
     // Clear all data
     dissolve.clear();

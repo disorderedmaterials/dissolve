@@ -3401,6 +3401,11 @@ Species 'MOF5'
   Forcefield 'UFF4MOF'
 EndSpecies
 
+PairPotentials
+  ManualChargeSource  True
+  ForceChargeSource  True
+EndPairPotentials
+
 #==============================================================================#
 #                              Processing Layers                               #
 #==============================================================================#

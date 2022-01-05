@@ -32,6 +32,15 @@ void DissolveWindow::setupIteration(int count)
     emit iterate(count);
 }
 
+void DissolveWindow::on_SimulationCheckAction_triggered(bool checked)
+{
+    clearMessages();
+
+    dissolve_.prepare();
+
+    fullUpdate();
+}
+
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked) { setupIteration(-1); }
 
 void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
