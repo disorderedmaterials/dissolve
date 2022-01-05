@@ -2,9 +2,17 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/models/procedureModel.h"
+#include "classes/species.h"
 #include "keywords/bool.h"
+#include "keywords/expressionvariablevector.h"
 #include "keywords/integer.h"
+#include "keywords/node.h"
+#include "keywords/nodevalue.h"
+#include "keywords/nodevalueenumoptions.h"
+#include "keywords/species.h"
 #include "keywords/stdstring.h"
+#include "keywords/vec3double.h"
+#include "keywords/vec3nodevalue.h"
 #include "procedure/procedure.h"
 
 Q_DECLARE_METATYPE(KeywordBase *);
@@ -28,7 +36,19 @@ QString KeywordBaseToString(KeywordBase *k)
     {
         return QString::fromStdString(s->data());
     }
-    return "Unknown Keyword Type:";
+    // if (NodeKeyword *n = dynamic_cast<NodeKeyword *>(k))
+    //   return n->data()->name()
+    if (NodeValueKeyword *n = dynamic_cast<NodeValueKeyword *>(k))
+      return QString::fromStdString(n->data().asString());
+    // if (NodeValueEnumOptionsKeyword *n = dynamic_cast<NodeValueEnumOptionsKeyword *>(k))
+    //   return n->value().asString();
+    if (SpeciesKeyword *s = dynamic_cast<SpeciesKeyword *>(k))
+      return QString::fromStdString(std::string(s->data()->name()));
+    if (Vec3DoubleKeyword *v = dynamic_cast<Vec3DoubleKeyword *>(k))
+      return QString::fromStdString(fmt::format("{},{},{}", v->data().x, v->data().y, v->data().z));
+    if (Vec3NodeValueKeyword *v = dynamic_cast<Vec3NodeValueKeyword *>(k))
+      return QString::fromStdString(fmt::format("{},{},{}", v->data().x.asString(), v->data().y.asString(), v->data().z.asString()));
+    return QString::fromStdString(fmt::format("UKT: {}", k->typeIndex().name()));
 }
 
 ProcedureModel::ProcedureModel(Procedure &procedure) : procedure_(procedure)
