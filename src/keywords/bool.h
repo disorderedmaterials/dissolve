@@ -26,7 +26,6 @@ class BoolKeyword : public KeywordBase
     bool setData(bool value);
     // Return data
     const bool &data() const;
-    std::string toString() const override;
 
     /*
      * Arguments
