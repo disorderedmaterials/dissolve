@@ -15,8 +15,61 @@
 #include "keywords/vec3double.h"
 #include "keywords/vec3nodevalue.h"
 #include "procedure/procedure.h"
+#include <functional>
+#include <map>
 
 Q_DECLARE_METATYPE(KeywordBase *);
+
+static const std::map<std::type_index, std::function<QString(KeywordBase *)>> readers = {
+    {typeid(BoolKeyword *),
+     [](KeywordBase *k)
+     {
+         BoolKeyword *b = static_cast<BoolKeyword *>(k);
+         return b->data() ? "True" : "False";
+     }},
+    {typeid(StringKeyword *),
+     [](KeywordBase *k)
+     {
+         StringKeyword *s = static_cast<StringKeyword *>(k);
+         return QString::fromStdString(s->data());
+     }},
+    {typeid(NodeValueKeyword *),
+     [](KeywordBase *k)
+     {
+         NodeValueKeyword *n = static_cast<NodeValueKeyword *>(k);
+         return QString::fromStdString(n->data().asString());
+     }},
+    {typeid(SpeciesKeyword *),
+     [](KeywordBase *k)
+     {
+         SpeciesKeyword *s = static_cast<SpeciesKeyword *>(k);
+         return QString::fromStdString(std::string(s->data()->name()));
+     }},
+    {typeid(ExpressionVariableVectorKeyword *),
+     [](KeywordBase *k)
+     {
+         ExpressionVariableVectorKeyword *e = static_cast<ExpressionVariableVectorKeyword *>(k);
+         return QString::fromStdString(joinStrings(
+             e->data(), ", ", [](const auto &v) { return fmt::format("{}={}", v->name(), v->value().asString()); }));
+     }},
+    {typeid(Vec3DoubleKeyword *),
+     [](KeywordBase *k)
+     {
+         Vec3DoubleKeyword *v = static_cast<Vec3DoubleKeyword *>(k);
+         return QString::fromStdString(fmt::format("{},{},{}", v->data().x, v->data().y, v->data().z));
+     }},
+    {typeid(Vec3NodeValueKeyword *),
+     [](KeywordBase *k)
+     {
+         Vec3NodeValueKeyword *v = static_cast<Vec3NodeValueKeyword *>(k);
+         return QString::fromStdString(
+             fmt::format("{},{},{}", v->data().x.asString(), v->data().y.asString(), v->data().z.asString()));
+     }},
+    {typeid(IntegerKeyword *), [](KeywordBase *k)
+     {
+         IntegerKeyword *i = static_cast<IntegerKeyword *>(k);
+         return QString::number(i->data());
+     }}};
 
 /*
  * QAbstractItemModel overrides
@@ -25,32 +78,13 @@ const quintptr OFFSET = 0x10000;
 
 QString KeywordBaseToString(KeywordBase *k)
 {
-    if (BoolKeyword *b = dynamic_cast<BoolKeyword *>(k))
-    {
-        return b->data() ? "True" : "False";
-    }
-    if (IntegerKeyword *i = dynamic_cast<IntegerKeyword *>(k))
-    {
-        return QString::fromStdString(fmt::format("{}", i->data()));
-    }
-    if (StringKeyword *s = dynamic_cast<StringKeyword *>(k))
-    {
-        return QString::fromStdString(s->data());
-    }
+    auto action = readers.find(k->typeIndex());
+    if (action != readers.end())
+        return action->second(k);
     // if (NodeKeyword *n = dynamic_cast<NodeKeyword *>(k))
     //   return n->data()->name()
-    if (NodeValueKeyword *n = dynamic_cast<NodeValueKeyword *>(k))
-      return QString::fromStdString(n->data().asString());
     // if (NodeValueEnumOptionsKeyword *n = dynamic_cast<NodeValueEnumOptionsKeyword *>(k))
     //   return n->value().asString();
-    if (SpeciesKeyword *s = dynamic_cast<SpeciesKeyword *>(k))
-      return QString::fromStdString(std::string(s->data()->name()));
-    if (ExpressionVariableVectorKeyword *e = dynamic_cast<ExpressionVariableVectorKeyword *>(k))
-	return QString::fromStdString(joinStrings(e->data(), ", ", [](const auto &v){return v->value().asString();}));
-    if (Vec3DoubleKeyword *v = dynamic_cast<Vec3DoubleKeyword *>(k))
-      return QString::fromStdString(fmt::format("{},{},{}", v->data().x, v->data().y, v->data().z));
-    if (Vec3NodeValueKeyword *v = dynamic_cast<Vec3NodeValueKeyword *>(k))
-      return QString::fromStdString(fmt::format("{},{},{}", v->data().x.asString(), v->data().y.asString(), v->data().z.asString()));
     return QString::fromStdString(fmt::format("UKT: {}", k->typeIndex().name()));
 }
 
