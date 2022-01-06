@@ -59,8 +59,7 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     registerPage(AddForcefieldTermsDialog::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsDialog::AtomTypesPage);
     registerPage(AddForcefieldTermsDialog::AtomTypesPage, "Determine Atom Types",
                  AddForcefieldTermsDialog::AtomTypesConflictsPage);
-    registerPage(AddForcefieldTermsDialog::AtomTypesConflictsPage, "Check Atom Types",
-                 AddForcefieldTermsDialog::IntramolecularPage);
+    registerPage(AddForcefieldTermsDialog::AtomTypesConflictsPage, "Check Atom Types");
     registerPage(AddForcefieldTermsDialog::IntramolecularPage, "Assign Intramolecular Terms");
     registerPage(AddForcefieldTermsDialog::MasterTermsPage, "Check Master Terms");
 
@@ -164,6 +163,13 @@ std::optional<int> AddForcefieldTermsDialog::determineNextPage(int currentIndex)
     if (currentIndex == AddForcefieldTermsDialog::IntramolecularPage && !ui_.IntramolecularTermsAssignNoneRadio->isChecked() &&
         !ui_.NoMasterTermsCheck->isChecked())
         return AddForcefieldTermsDialog::MasterTermsPage;
+    else if (currentIndex == AddForcefieldTermsDialog::AtomTypesConflictsPage)
+    {
+        if (targetSpecies_->nAtoms() == 1)
+            return std::nullopt;
+        else
+            return AddForcefieldTermsDialog::IntramolecularPage;
+    }
 
     return std::nullopt;
 }
