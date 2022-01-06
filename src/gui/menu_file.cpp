@@ -84,6 +84,10 @@ void DissolveWindow::on_FileOpenAction_triggered(bool checked)
         return;
 
     openLocalFile(qPrintable(inputFile), "", false, false);
+
+    // Fully update GUI
+    ui_.MainStack->setCurrentIndex(1);
+    fullUpdate();
 }
 
 void DissolveWindow::on_FileCloseAction_triggered(bool checked)

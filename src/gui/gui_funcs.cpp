@@ -148,10 +148,10 @@ QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
 bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile,
                                    bool ignoreLayoutFile)
 {
+    // Clear any current tabs
     refreshing_ = true;
-
-    // Clear any existing tabs etc.
     ui_.MainTabs->clearTabs();
+    refreshing_ = false;
 
     // Clear Dissolve itself
     dissolve_.clear();
@@ -210,12 +210,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     else
         Messenger::print("\nRestart file (if it exists) will be ignored.\n");
 
-    refreshing_ = true;
-
-    ui_.MainTabs->reconcileTabs(this);
-
-    refreshing_ = false;
-
     // Does a window state exist for this input file?
     stateFilename_ = QStringLiteral("%1.state").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
 
@@ -225,10 +219,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
 
     modified_ = false;
     dissolveIterating_ = false;
-
-    // Fully update GUI
-    fullUpdate();
-    ui_.MainStack->setCurrentIndex(1);
 
     return true;
 }
@@ -259,6 +249,10 @@ void DissolveWindow::openRecent()
     {
         std::string filePath = action->data().toString().toUtf8().constData();
         openLocalFile(filePath, "", false, false);
+
+        // Fully update GUI
+        ui_.MainStack->setCurrentIndex(1);
+        fullUpdate();
     }
 }
 
