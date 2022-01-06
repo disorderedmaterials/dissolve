@@ -35,8 +35,8 @@ class CLIOptions
     bool ignoreRestartFile_{false};
     // Whether to ignore GUI state file (if it exists)
     bool ignoreStateFile_{false};
-    // Whether to prevent writing of all output files
-    bool writeNoFiles_{false};
+    // Whether to prevent writing of the restart file
+    bool noRestartFile_{false};
 
     public:
     // Parse Result enum
@@ -64,6 +64,6 @@ class CLIOptions
     bool ignoreRestartFile() const;
     // Return whether to ignore GUI state file (if it exists)
     bool ignoreStateFile() const;
-    // Return whether to prevent writing of all output files
-    bool writeNoFiles() const;
+    // Return whether to prevent writing of the restart file
+    bool noRestartFile() const;
 };

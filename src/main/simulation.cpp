@@ -214,7 +214,7 @@ bool Dissolve::iterate(int nIterations)
         Messenger::banner(" START MAIN LOOP ITERATION {:10d}         {}", iteration_, DissolveSys::currentTimeAndDate());
 
         /*
-         *  0)	Print schedule of tasks to run, and write heartbeat file
+         *  0)	Print schedule of tasks to run
          */
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
@@ -243,18 +243,6 @@ bool Dissolve::iterate(int nIterations)
         if (nEnabledModules == 0)
             return Messenger::error("No modules or layers enabled - nothing to do!\n");
 
-        // Write heartbeat file or display appropriate message
-        if (worldPool().isMaster() && (writeHeartBeat()))
-        {
-            Messenger::print("Write heartbeat file...");
-
-            saveHeartBeat(fmt::format("{}.beat", inputFilename_), thisTime);
-        }
-        if (!writeHeartBeat())
-        {
-            Messenger::print("No Heartbeat file will be written.");
-        }
-
         /*
          *  1)	Loop over Configurations and perform any upkeep tasks
          */
@@ -264,13 +252,12 @@ bool Dissolve::iterate(int nIterations)
         {
             Messenger::heading("'{}'", cfg->name());
 
-            // Perform any necessary actions before we start processing this Configuration's Modules
-            // -- Apply the current size factor
+            // Apply the current size factor
             cfg->applySizeFactor(potentialMap_);
         }
 
         // Sync up all processes
-        Messenger::printVerbose("Waiting for other processes at end of Configuration processing...\n");
+        Messenger::printVerbose("Waiting for other processes at end of Configuration upkeep...\n");
         worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
@@ -292,13 +279,8 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", module->type(), module->uniqueName());
 
-                auto result = module->executeProcessing(*this, worldPool());
-
-                if (!result)
-                {
-                    Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->type());
-                    return false;
-                }
+                if (!module->executeProcessing(*this, worldPool()))
+                    return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->type());
             }
         }
 
@@ -307,7 +289,7 @@ bool Dissolve::iterate(int nIterations)
         worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
-         *  4)	Write restart file.
+         *  3)	Write restart file.
          */
         if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0))
         {

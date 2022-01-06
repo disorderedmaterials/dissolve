@@ -9,7 +9,7 @@ void DissolveWindow::disableSensitiveControls()
 {
     // Disable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(false);
-    ui_.SimulationPauseAction->setEnabled(true);
+    ui_.SimulationStopAction->setEnabled(true);
     ui_.SimulationStepAction->setEnabled(false);
     ui_.SimulationStepFiveAction->setEnabled(false);
     ui_.SimulationSaveRestartPointAction->setEnabled(false);
@@ -30,7 +30,7 @@ void DissolveWindow::enableSensitiveControls()
 {
     // Enable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(true);
-    ui_.SimulationPauseAction->setEnabled(false);
+    ui_.SimulationStopAction->setEnabled(false);
     ui_.SimulationStepAction->setEnabled(true);
     ui_.SimulationStepFiveAction->setEnabled(true);
     ui_.SimulationSaveRestartPointAction->setEnabled(true);
@@ -44,9 +44,6 @@ void DissolveWindow::enableSensitiveControls()
 
     // Enable sensitive controls in all tabs
     ui_.MainTabs->enableSensitiveControls();
-
-    // Reset the state
-    dissolveState_ = EditingState;
 }
 
 // All iterations requested are complete
@@ -54,6 +51,9 @@ void DissolveWindow::iterationsComplete()
 {
     enableSensitiveControls();
     Renderable::setSourceDataAccessEnabled(true);
+    dissolveIterating_ = false;
+
+    fullUpdate();
 }
 
 /*
@@ -80,6 +80,9 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
     // Update menu items
     updateMenus();
 }
+
+// Return whether the GUI is currently running a simulation
+bool DissolveWindow::dissolveIterating() const { return dissolveIterating_; }
 
 // Return list of all current tabs
 const std::vector<MainTab *> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }

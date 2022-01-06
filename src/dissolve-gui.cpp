@@ -60,14 +60,8 @@ int main(int args, char **argv)
         if (dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
                                          options.ignoreRestartFile(), options.ignoreStateFile()))
         {
-            // Set restart file frequency and whether to write heartbeat file
-            if (options.writeNoFiles())
-            {
-                dissolve.setRestartFileFrequency(0);
-                dissolve.setWriteHeartBeat(false);
-            }
-            else
-                dissolve.setRestartFileFrequency(options.restartFileFrequency());
+            // Set restart file frequency
+            dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
 
             // Iterate before launching the GUI?
             if (options.nIterations() > 0)

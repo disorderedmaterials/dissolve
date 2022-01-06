@@ -627,39 +627,6 @@ bool Dissolve::saveRestart(std::string_view filename)
     return true;
 }
 
-// Save heartbeat file
-bool Dissolve::saveHeartBeat(std::string_view filename, double estimatedNSecs)
-{
-    // Open file
-    LineParser parser;
-    if (!parser.openOutput(filename, true) || (!parser.isFileGoodForWriting()))
-    {
-        Messenger::error("Couldn't open heartbeat file '{}'.\n", filename);
-        return false;
-    }
-
-    // Write title comment
-    if (!parser.writeLineF("# Heartbeat file written by Dissolve v{} at {}.\n", Version::info(),
-                           DissolveSys::currentTimeAndDate()))
-        return false;
-
-    // Write current date and time
-    if (!parser.writeLineF("{}\n", DissolveSys::currentTimeAndDate()))
-        return false;
-
-    // Write current iteration number
-    if (!parser.writeLineF("{}\n", iteration_))
-        return false;
-
-    // Write estimated number of seconds this iteration will take
-    if (!parser.writeLineF("{}\n", estimatedNSecs))
-        return false;
-
-    parser.closeFiles();
-
-    return true;
-}
-
 // Return whether an input filename has been set
 bool Dissolve::hasInputFilename() const { return (!inputFilename_.empty()); }
 
@@ -681,9 +648,3 @@ std::string_view Dissolve::restartFilename() const { return restartFilename_; }
 
 // Return whether a restart filename has been set
 bool Dissolve::hasRestartFilename() const { return (!restartFilename_.empty()); }
-
-// Set whether to write the heartbeat file
-void Dissolve::setWriteHeartBeat(bool b) { writeHeartBeat_ = b; }
-
-// Return whether a heartbeat file needs to be written
-bool Dissolve::writeHeartBeat() const { return writeHeartBeat_; }
