@@ -103,7 +103,7 @@
      <x>0</x>
      <y>0</y>
      <width>1146</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -259,8 +259,8 @@
       <rect>
        <x>990</x>
        <y>290</y>
-       <width>218</width>
-       <height>195</height>
+       <width>211</width>
+       <height>172</height>
       </rect>
      </property>
      <property name="font">
@@ -329,7 +329,7 @@
        </font>
       </property>
       <property name="title">
-       <string>E&amp;volution...</string>
+       <string>E&amp;volution</string>
       </property>
       <addaction name="LayerCreateEvolveBasicAtomicAction"/>
       <addaction name="LayerCreateEvolveAtomicAction"/>
@@ -343,23 +343,23 @@
        </font>
       </property>
       <property name="title">
-       <string>&amp;Refinement...</string>
+       <string>&amp;Refinement</string>
       </property>
       <addaction name="LayerCreateRefineEPSRAction"/>
      </widget>
-     <widget class="QMenu" name="LayerCreateCalculateMenu">
+     <widget class="QMenu" name="LayerCreateCorrelationsMenu">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
        </font>
       </property>
       <property name="title">
-       <string>&amp;Calculate...</string>
+       <string>&amp;Correlations</string>
       </property>
-      <addaction name="LayerCreateCalculateRDFAction"/>
-      <addaction name="LayerCreateCalculateRDFStructureFactorAction"/>
-      <addaction name="LayerCreateCalculateRDFNeutronAction"/>
-      <addaction name="LayerCreateCalculateRDFNeutronXRayAction"/>
+      <addaction name="LayerCreateCorrelationsRDFAction"/>
+      <addaction name="LayerCreateCorrelationsRDFStructureFactorAction"/>
+      <addaction name="LayerCreateCorrelationsRDFNeutronAction"/>
+      <addaction name="LayerCreateCorrelationsRDFNeutronXRayAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateAnalyseMenu">
       <property name="font">
@@ -368,7 +368,7 @@
        </font>
       </property>
       <property name="title">
-       <string>Analysis...</string>
+       <string>Analysis</string>
       </property>
       <addaction name="LayerCreateAnalyseRDFCNAction"/>
       <addaction name="LayerCreateAnalyseAvgMolSDFAction"/>
@@ -376,7 +376,7 @@
      <addaction name="LayerCreateEmptyAction"/>
      <addaction name="separator"/>
      <addaction name="LayerCreateEvolutionMenu"/>
-     <addaction name="LayerCreateCalculateMenu"/>
+     <addaction name="LayerCreateCorrelationsMenu"/>
      <addaction name="LayerCreateRefinementMenu"/>
      <addaction name="LayerCreateAnalyseMenu"/>
     </widget>
@@ -712,12 +712,12 @@
     <string>&amp;Delete</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFNeutronAction">
+  <action name="LayerCreateCorrelationsRDFNeutronAction">
    <property name="text">
     <string>RDF and &amp;Neutron S(Q)</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFNeutronXRayAction">
+  <action name="LayerCreateCorrelationsRDFNeutronXRayAction">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -725,12 +725,12 @@
     <string>RDF, Neutron S(Q), and &amp;X-ray S(Q)</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFStructureFactorAction">
+  <action name="LayerCreateCorrelationsRDFStructureFactorAction">
    <property name="text">
     <string>RDF and &amp;Unweighted S(Q)</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFAction">
+  <action name="LayerCreateCorrelationsRDFAction">
    <property name="text">
     <string>&amp;RDF Only</string>
    </property>
