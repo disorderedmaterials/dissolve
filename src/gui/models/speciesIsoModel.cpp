@@ -1,7 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2022 Team Dissolve and contributors
+
 #include "gui/models/speciesIsoModel.h"
 #include "classes/atomtype.h"
 #include "gui/delegates/isotopecombo.hui"
-#include "templates/variantpointer.h"
 
 SpeciesIsoModel::SpeciesIsoModel(Species &species) : species_(species) {}
 
@@ -33,16 +35,16 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
     {
         if (index.row() > species_.isotopologues().size())
             return {};
-        if (index.column() > 0)
-            return {};
         auto iso = species_.isotopologue(index.row());
         switch (role)
         {
             case Qt::DisplayRole:
             case Qt::EditRole:
+                if (index.column() > 0)
+                    return {};
                 return QString::fromStdString(std::string(iso->name()));
             case Qt::UserRole:
-                return VariantPointer<Isotopologue>(iso);
+                return QVariant::fromValue(iso);
             default:
                 return {};
         }
@@ -147,16 +149,22 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
     return true;
 }
 
-void SpeciesIsoModel::addIso()
+QModelIndex SpeciesIsoModel::addIso()
 {
-    beginResetModel();
+    beginInsertRows({}, species_.nIsotopologues(), species_.nIsotopologues());
     species_.addIsotopologue("NewIsotopologue");
-    endResetModel();
+    endInsertRows();
+
+    auto newIndex = createIndex(species_.nIsotopologues() - 1, 0);
+    emit(dataChanged(newIndex, newIndex));
+    return newIndex;
 }
 
-void SpeciesIsoModel::removeIso(Isotopologue *iso)
+void SpeciesIsoModel::removeIso(const QModelIndex &index)
 {
-    beginResetModel();
-    species_.removeIsotopologue(iso);
-    endResetModel();
+    // We might be given a child of the isotopologue...
+    auto row = index.parent().isValid() ? index.parent().row() : index.row();
+    beginRemoveRows({}, row, row);
+    species_.removeIsotopologue(species_.isotopologue(row));
+    endRemoveRows();
 }

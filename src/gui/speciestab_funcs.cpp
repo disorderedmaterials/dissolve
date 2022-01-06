@@ -47,8 +47,10 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
                                       dissolve.coreData().masterImpropers()));
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setModel(&isos_);
-    connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,
-            SLOT(setModified()));
+    connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+            SLOT(isotopologuesChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
+    connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(isotopologuesSelectionChanged(const QItemSelection &, const QItemSelection &)));
     ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
     ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
@@ -109,8 +111,6 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(updateIsotopologuesTab()));
-
-    connect(ui_.IsotopologueAddButton, SIGNAL(clicked()), &isos_, SLOT(addIso()));
 }
 
 /*
