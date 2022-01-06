@@ -17,7 +17,7 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
-              ArtifactName: "linux-GUI-artifacts"
+              ArtifactName: "linux-gui-artifacts"
             displayName: "Publish Linux GUI Artifacts"
       - job: "linux_singularity"
         displayName: "Ubuntu, Threads, CLI/GUI, Singularity"
@@ -36,7 +36,7 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"
-              ArtifactName: "gui-singularity"
+              ArtifactName: "singularity-gui-artifacts"
             displayName: "Publish Linux GUI Singularity"
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI, Exe"
@@ -79,7 +79,7 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"
-              ArtifactName: "cli-singularity"
+              ArtifactName: "singularity-cli-artifacts"
             displayName: "Publish Linux CLI Singularity"
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI, Exe"
@@ -100,8 +100,8 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
-              ArtifactName: "mpi-artifacts"
-            displayName: "Publish MPI Artifacts"
+              ArtifactName: "linux-mpi-artifacts"
+            displayName: "Publish Linux MPI Artifacts"
       - job: "linux_mpi_singularity"
         displayName: "Ubuntu, MPI, CLI, Singularity"
         timeoutInMinutes: 120
@@ -122,5 +122,5 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "singularity/"
-              ArtifactName: "mpi-singularity"
+              ArtifactName: "singularity-mpi-artifacts"
             displayName: "Publish Linux MPI Singularity"
