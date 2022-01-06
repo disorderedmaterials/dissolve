@@ -200,7 +200,6 @@ set(gui_SRCS
     workspacetab_funcs.cpp
     # Main UI
     gui_funcs.cpp
-    gui_io.cpp
     gui_simulation.cpp
     menu_configuration.cpp
     menu_file.cpp

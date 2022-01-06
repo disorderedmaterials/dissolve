@@ -85,7 +85,8 @@ class DissolveWindow : public QMainWindow
      */
     public:
     // Open specified input file
-    bool openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+    bool openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile = std::nullopt,
+                       bool ignoreRestartFile = false);
 
     /*
      * Reference Points
@@ -243,17 +244,4 @@ class DissolveWindow : public QMainWindow
     signals:
     void iterate(int);
     void stopIterating();
-
-    /*
-     * GUI State
-     */
-    private:
-    // Filename containing current GUI state
-    QString stateFilename_;
-
-    public:
-    // Save current GUI state
-    bool saveState();
-    // Load GUI state
-    bool loadState();
 };

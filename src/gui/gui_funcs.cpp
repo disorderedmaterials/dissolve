@@ -83,7 +83,7 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
             QApplication::processEvents();
     }
 
-    // Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
+    // Clear tabs before we try to close down the application, otherwise we might get in to trouble with object deletion
     refreshing_ = true;
     ui_.MainTabs->clearTabs();
     ui_.MainTabs->clear();
@@ -145,8 +145,8 @@ QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile,
-                                   bool ignoreLayoutFile)
+bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile,
+                                   bool ignoreRestartFile)
 {
     // Clear any current tabs
     refreshing_ = true;
@@ -187,9 +187,9 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
 
     // Load restart file if it exists
     Messenger::banner("Parse Restart File");
-    if (!ignoreRestartFile)
+    if (restartFile && !ignoreRestartFile)
     {
-        std::string actualRestartFile{restartFile};
+        std::string actualRestartFile{restartFile.value()};
         if (actualRestartFile.empty())
             actualRestartFile = fmt::format("{}.restart", dissolve_.inputFilename());
 
@@ -209,13 +209,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
     }
     else
         Messenger::print("\nRestart file (if it exists) will be ignored.\n");
-
-    // Does a window state exist for this input file?
-    stateFilename_ = QStringLiteral("%1.state").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
-
-    // Try to load in the window state file
-    if (QFile::exists(stateFilename_) && (!ignoreLayoutFile))
-        loadState();
 
     modified_ = false;
     dissolveIterating_ = false;
@@ -248,7 +241,7 @@ void DissolveWindow::openRecent()
     if (action)
     {
         std::string filePath = action->data().toString().toUtf8().constData();
-        openLocalFile(filePath, "", false, false);
+        openLocalFile(filePath);
 
         // Fully update GUI
         ui_.MainStack->setCurrentIndex(1);

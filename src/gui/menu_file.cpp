@@ -83,7 +83,7 @@ void DissolveWindow::on_FileOpenAction_triggered(bool checked)
     if (inputFile.isEmpty())
         return;
 
-    openLocalFile(qPrintable(inputFile), "", false, false);
+    openLocalFile(qPrintable(inputFile), "", false);
 
     // Fully update GUI
     ui_.MainStack->setCurrentIndex(1);
