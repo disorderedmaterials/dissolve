@@ -67,8 +67,10 @@ steps:
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
       nix bundle -L .#${{ parameters.package }}
+      # Get program version and move/rename artifact
+      DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
       mkdir -p packages
-      cp ${{ parameters.package }} packages/${{ parameters.package }}
+      cp ${{ parameters.package }} packages/${{ parameters.package }}-${DISSOLVE_VERSION}
       rm ${{ parameters.package }}
     displayName: 'Package Executable'
     condition: and(eq( '${{ parameters.export }}', 'true' ), eq( '${{ parameters.exportExe }}', 'true' ))
@@ -77,7 +79,9 @@ steps:
       source ~/.nix-profile/etc/profile.d/nix.sh
       cachix use dissolve-nix
       nix build -L .#${{ parameters.singularity }}
+      # Get program version and move/rename artifact
+      DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
       mkdir -p singularity
-      cp result singularity/${{ parameters.package }}.sif
+      cp result singularity/${{ parameters.package }}-${DISSOLVE_VERSION}.sif
     displayName: 'Package Singularity'
     condition: and(eq( '${{ parameters.export }}', 'true' ), eq( '${{ parameters.exportSingularity }}', 'true' ))
