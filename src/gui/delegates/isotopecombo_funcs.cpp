@@ -7,8 +7,6 @@
 
 IsotopeComboDelegate::IsotopeComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
-IsotopeComboDelegate::~IsotopeComboDelegate() {}
-
 // Create editor
 QWidget *IsotopeComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -66,7 +64,7 @@ void IsotopeComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpt
 QString IsotopeComboDelegate::textForIsotope(Sears91::Isotope isotope)
 {
     if (Sears91::A(isotope) == 0)
-        return QString("Natural (bc = %1)").arg(Sears91::boundCoherent(isotope));
+        return QString("Natural (bc = %1 fm)").arg(Sears91::boundCoherent(isotope));
     else
-        return QString("%1 (bc = %2)").arg(Sears91::A(isotope)).arg(Sears91::boundCoherent(isotope));
+        return QString("%1 (bc = %2 fm)").arg(Sears91::A(isotope)).arg(Sears91::boundCoherent(isotope));
 }
