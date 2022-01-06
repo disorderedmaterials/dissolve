@@ -4,8 +4,6 @@
 #include "gui/models/speciesFilterProxy.h"
 #include "classes/species.h"
 
-Q_DECLARE_METATYPE(const Species *);
-
 SpeciesFilterProxy::SpeciesFilterProxy(int flags) : filterFlags_(flags) {}
 
 // Set filter flags

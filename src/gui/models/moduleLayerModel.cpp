@@ -62,6 +62,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         moduleLayer_->modules()[index.row()]->setUniqueName(value.toString().toStdString());
 
         emit dataChanged(index, index);
+        emit(moduleNameChanged(index));
 
         return true;
     }

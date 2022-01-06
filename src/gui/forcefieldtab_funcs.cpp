@@ -17,10 +17,6 @@
 #include "main/dissolve.h"
 #include <QListWidgetItem>
 
-Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
-Q_DECLARE_METATYPE(PairPotential *)
-
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this), pairs_(dissolve.pairPotentials())
 {
@@ -79,7 +75,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Set item delegates for tables
     // -- Short Range Functional Forms
     ui_.AtomTypesTable->setItemDelegateForColumn(
-        3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
+        3, new ComboListDelegate(this, new ComboEnumOptionsItems<ShortRangeFunctions::Form>(ShortRangeFunctions::forms())));
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.AtomTypesTable->horizontalHeader()->setFont(font());
@@ -150,10 +146,14 @@ void ForcefieldTab::updateControls()
     }
     ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
     ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
-    if (dissolve_.pairPotentialsIncludeCoulomb())
-        ui_.PairPotentialsIncludeCoulombRadio->setChecked(true);
+    ui_.AutomaticChargeSourceCheck->setChecked(dissolve_.automaticChargeSource());
+    ui_.PairPotentialsAtomTypeChargesRadio->setDisabled(dissolve_.automaticChargeSource());
+    ui_.PairPotentialsSpeciesAtomChargesRadio->setDisabled(dissolve_.automaticChargeSource());
+    ui_.ForceChargeSourceCheck->setChecked(dissolve_.forceChargeSource());
+    if (dissolve_.atomTypeChargeSource())
+        ui_.PairPotentialsAtomTypeChargesRadio->setChecked(true);
     else
-        ui_.PairPotentialsShortRangeOnlyRadio->setChecked(true);
+        ui_.PairPotentialsSpeciesAtomChargesRadio->setChecked(true);
     ui_.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
     ui_.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
     ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() ==
@@ -245,12 +245,12 @@ void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
+void ForcefieldTab::on_PairPotentialsAtomTypeChargesRadio_clicked(bool checked)
 {
     if (refreshLock_.isLocked())
         return;
 
-    dissolve_.setPairPotentialsIncludeCoulomb(checked);
+    dissolve_.setAtomTypeChargeSource(checked);
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
     {
@@ -262,9 +262,9 @@ void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_PairPotentialsShortRangeOnlyRadio_clicked(bool checked)
+void ForcefieldTab::on_PairPotentialsSpeciesAtomChargesRadio_clicked(bool checked)
 {
-    on_PairPotentialsIncludeCoulombRadio_clicked(false);
+    on_PairPotentialsAtomTypeChargesRadio_clicked(false);
 }
 
 void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
@@ -292,11 +292,33 @@ void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 
     PairPotential::setCoulombTruncationScheme((PairPotential::CoulombTruncationScheme)index);
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked() && dissolve_.pairPotentialsIncludeCoulomb())
+    if (ui_.AutoUpdatePairPotentialsCheck->isChecked() && dissolve_.atomTypeChargeSource())
     {
         dissolve_.regeneratePairPotentials();
         updateControls();
     }
+
+    dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_AutomaticChargeSourceCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked())
+        return;
+
+    dissolve_.setAutomaticChargeSource(checked);
+
+    dissolveWindow_->setModified();
+
+    updateControls();
+}
+
+void ForcefieldTab::on_ForceChargeSourceCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked())
+        return;
+
+    dissolve_.setForceChargeSource(checked);
 
     dissolveWindow_->setModified();
 }

@@ -20,7 +20,7 @@ class PCL2019BaseForcefield : public Forcefield
     // Return formatted publication references
     std::string_view publicationReferences() const;
     // Return short-range interaction style for AtomTypes
-    Forcefield::ShortRangeType shortRangeType() const override;
+    ShortRangeFunctions::Form shortRangeForm() const override;
 
     /*
      * Atom Type Data

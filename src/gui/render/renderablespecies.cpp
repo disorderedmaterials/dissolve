@@ -62,35 +62,45 @@ void RenderableSpecies::transformValues()
     if (valuesTransformDataVersion_ == dataVersion())
         return;
 
-    // Loop over Atoms, seeking extreme x, y, and z values
-    for (auto i = 0; i < source_->atoms().size(); ++i)
+    // For periodic systems use the box - otherwise, loop over Atoms seeking extreme x, y, and z values
+    if (source_->box()->type() != Box::BoxType::NonPeriodic)
     {
-        auto &atom = source_->atom(i);
-        if (i == 0)
-        {
-            limitsMin_ = atom.r();
-            limitsMax_ = atom.r();
-        }
-        else
-        {
-            if (atom.r().x < limitsMin_.x)
-                limitsMin_.x = atom.r().x;
-            else if (atom.r().x > limitsMax_.x)
-                limitsMax_.x = atom.r().x;
-            if (atom.r().y < limitsMin_.y)
-                limitsMin_.y = atom.r().y;
-            else if (atom.r().y > limitsMax_.y)
-                limitsMax_.y = atom.r().y;
-            if (atom.r().z < limitsMin_.z)
-                limitsMin_.z = atom.r().z;
-            else if (atom.r().z > limitsMax_.z)
-                limitsMax_.z = atom.r().z;
-        }
-    }
+        // Minimum corresponds to lower left corner of the box at {0,0,0}
+        limitsMin_.zero();
 
-    // Need to add on a little extra to the limits since the atoms have a radius
-    limitsMin_ -= 1.0;
-    limitsMax_ += 1.0;
+        // Transform extreme upper right corner from unit to real space to get maxima
+        limitsMax_ = source_->box()->getReal(Vec3<double>(1.0, 1.0, 1.0));
+    }
+    else if (source_->nAtoms() > 0)
+    {
+        limitsMin_ = source_->atoms()[0].r();
+        limitsMax_ = source_->atoms()[0].r();
+
+        for (const auto &i : source_->atoms())
+        {
+            if (i.r().x < limitsMin_.x)
+                limitsMin_.x = i.r().x;
+            else if (i.r().x > limitsMax_.x)
+                limitsMax_.x = i.r().x;
+            if (i.r().y < limitsMin_.y)
+                limitsMin_.y = i.r().y;
+            else if (i.r().y > limitsMax_.y)
+                limitsMax_.y = i.r().y;
+            if (i.r().z < limitsMin_.z)
+                limitsMin_.z = i.r().z;
+            else if (i.r().z > limitsMax_.z)
+                limitsMax_.z = i.r().z;
+        }
+
+        // Need to add on a little extra to the limits since the atoms have a radius
+        limitsMin_ -= 1.0;
+        limitsMax_ += 1.0;
+    }
+    else
+    {
+        limitsMin_ = -1.0;
+        limitsMax_ = 1.0;
+    }
 
     positiveLimitsMin_.x = limitsMin_.x < 0.0 ? 0.01 : limitsMin_.x;
     positiveLimitsMin_.y = limitsMin_.y < 0.0 ? 0.01 : limitsMin_.y;

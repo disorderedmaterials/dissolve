@@ -61,7 +61,7 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         Messenger::print("\nChecking total charge...\n");
 
-        auto q = targetSpecies_->totalCharge(dissolve.pairPotentialsIncludeCoulomb());
+        auto q = targetSpecies_->totalCharge(dissolve.atomTypeChargeSource());
         auto qDiff = fabs(q - totalCharge_.value());
         if (qDiff > chargeTolerance_)
         {

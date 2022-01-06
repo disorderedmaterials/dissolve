@@ -5,7 +5,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/pairpotential.h"
-#include "math/data1d.h"
 
 PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view filename, PairPotentialExportFormat format)
     : FileAndFormat(formats_, filename)

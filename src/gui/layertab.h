@@ -9,6 +9,7 @@
 #include "gui/ui_layertab.h"
 
 // Forward Declarations
+class ModuleControlWidget;
 class ModuleLayer;
 
 // Layer Tab
@@ -18,9 +19,8 @@ class LayerTab : public QWidget, public MainTab
     Q_OBJECT
 
     public:
-    LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
-             ModuleLayer *layer);
-    ~LayerTab() = default;
+    LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, QString title, ModuleLayer *layer);
+    ~LayerTab() override = default;
 
     /*
      * UI
@@ -44,22 +44,27 @@ class LayerTab : public QWidget, public MainTab
      */
     public:
     // Return tab type
-    MainTab::TabType type() const;
+    MainTab::TabType type() const override;
     // Raise suitable dialog for entering / checking new tab name
-    QString getNewTitle(bool &ok);
+    QString getNewTitle(bool &ok) override;
     // Return whether the title of the tab can be changed
-    bool canChangeTitle() const;
+    bool canChangeTitle() const override;
     // Return whether the tab can be closed (after any necessary user querying, etc.)
-    bool canClose() const;
+    bool canClose() const override;
 
     /*
      * Widgets
      */
+    private:
+    // Return ModuleControlWidget for the specified Module (if it exists)
+    ModuleControlWidget *getControlWidget(const Module *module, bool setAsCurrent = false);
+
     private slots:
     void on_ShowAvailableModulesButton_clicked(bool checked);
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
     void moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+    void moduleNameChanged(const QModelIndex &);
     void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateModuleList();
 
@@ -68,9 +73,9 @@ class LayerTab : public QWidget, public MainTab
      */
     protected:
     // Update controls in tab
-    void updateControls();
+    void updateControls() override;
     // Disable sensitive controls within tab
-    void disableSensitiveControls();
+    void disableSensitiveControls() override;
     // Enable sensitive controls within tab
-    void enableSensitiveControls();
+    void enableSensitiveControls() override;
 };

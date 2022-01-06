@@ -354,31 +354,33 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  C  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  S  S     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  N  N      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  F  F      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  O  O      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  nc  N     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ca_o  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ca_m  C      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ca_p  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ha_o  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ha_m  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ha_p  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_1  C      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_2  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_1  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_3  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_2  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ct_4  C     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_3  H     0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  oh  O      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  hc_4  H      0.0       LJ  0.0  0.0  0.0  0.0
-  Parameters  ho  H     0.0       LJ  0.0  0.0  0.0  0.0
+  Parameters  C  C     0.0       LJ  0.0  0.0
+  Parameters  S  S     0.0       LJ  0.0  0.0
+  Parameters  N  N      0.0       LJ  0.0  0.0
+  Parameters  F  F      0.0       LJ  0.0  0.0
+  Parameters  O  O      0.0       LJ  0.0  0.0
+  Parameters  nc  N     0.0       LJ  0.0  0.0
+  Parameters  ca_o  C     0.0       LJ  0.0  0.0
+  Parameters  ca_m  C      0.0       LJ  0.0  0.0
+  Parameters  ca_p  C     0.0       LJ  0.0  0.0
+  Parameters  ha_o  H     0.0       LJ  0.0  0.0
+  Parameters  ha_m  H     0.0       LJ  0.0  0.0
+  Parameters  ha_p  H     0.0       LJ  0.0  0.0
+  Parameters  ct_1  C      0.0       LJ  0.0  0.0
+  Parameters  ct_2  C     0.0       LJ  0.0  0.0
+  Parameters  hc_1  H     0.0       LJ  0.0  0.0
+  Parameters  ct_3  C     0.0       LJ  0.0  0.0
+  Parameters  hc_2  H     0.0       LJ  0.0  0.0
+  Parameters  ct_4  C     0.0       LJ  0.0  0.0
+  Parameters  hc_3  H     0.0       LJ  0.0  0.0
+  Parameters  oh  O      0.0       LJ  0.0  0.0
+  Parameters  hc_4  H      0.0       LJ  0.0  0.0
+  Parameters  ho  H     0.0       LJ  0.0  0.0
   Range  9.000000
   Delta  0.005000
   IncludeCoulomb  False
+  ManualChargeSource  True
+  ForceChargeSource  True
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
 EndPairPotentials

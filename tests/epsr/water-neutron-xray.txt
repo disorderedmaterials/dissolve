@@ -53,8 +53,8 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  OW  O  -8.200000e-01  LJ  6.503000e-01  3.165492e+00  0.000000e+00  0.000000e+00
-  Parameters  HW  H  4.100000e-01  LJ  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+  Parameters  OW  O  -8.200000e-01  LJ  6.503000e-01  3.165492e+00
+  Parameters  HW  H  4.100000e-01  LJ  0.000000e+00  0.000000e+00
   Range  15.000000
   Delta  0.005000
   CoulombTruncation  Shifted

@@ -63,7 +63,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) noexcept : SpeciesIntra(source
 
     // Copy data
     assign(source.i_, source.j_, source.k_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
 
     // Reset source data
@@ -76,7 +76,7 @@ SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
 {
     // Copy data
     assign(source.i_, source.j_, source.k_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
@@ -91,7 +91,7 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source) noexcept
 
     // Copy data
     assign(source.i_, source.j_, source.k_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
@@ -213,10 +213,11 @@ void SpeciesAngle::detach()
 double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 {
     // Get pointer to relevant parameters array
-    const auto &params = parameters();
+    const auto &params = interactionParameters();
+    const auto angleForm = interactionForm();
 
     double k = 0.0;
-    if (form() == AngleFunctions::Form::Harmonic)
+    if (angleForm == AngleFunctions::Form::Harmonic)
         k = params[0];
     else
     {
@@ -241,11 +242,12 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 double SpeciesAngle::energy(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const auto &params = parameters();
+    const auto &params = interactionParameters();
+    const auto angleForm = interactionForm();
 
-    if (form() == AngleFunctions::Form::None)
+    if (angleForm == AngleFunctions::Form::None)
         return 0.0;
-    else if (form() == AngleFunctions::Form::Harmonic)
+    else if (angleForm == AngleFunctions::Form::Harmonic)
     {
         /*
          * U(theta) = 0.5 * forcek * (theta - eq)**2
@@ -257,7 +259,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
         const auto delta = (angleInDegrees - params[1]) / DEGRAD;
         return 0.5 * params[0] * delta * delta;
     }
-    else if (form() == AngleFunctions::Form::Cosine)
+    else if (angleForm == AngleFunctions::Form::Cosine)
     {
         /*
          * U(theta) = forcek * (1 + s * cos(n*theta - eq))
@@ -270,7 +272,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          */
         return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2] / DEGRAD));
     }
-    else if (form() == AngleFunctions::Form::Cos2)
+    else if (angleForm == AngleFunctions::Form::Cos2)
     {
         /*
          * U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
@@ -285,8 +287,8 @@ double SpeciesAngle::energy(double angleInDegrees) const
         return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
     }
 
-    Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate energy.\n");
-    return 0.0;
+    throw(std::runtime_error(fmt::format("Angle functional form '{}' not accounted for, so can't calculate energy.\n",
+                                         AngleFunctions::forms().keyword(angleForm))));
 }
 
 // Return force multiplier for specified angle
@@ -305,14 +307,15 @@ double SpeciesAngle::force(double angleInDegrees) const
      */
 
     // Get pointer to relevant parameters array
-    const auto &params = parameters();
+    const auto &params = interactionParameters();
+    const auto angleForm = interactionForm();
 
     // Convert angle to radians
     const auto angleInRadians = angleInDegrees / DEGRAD;
 
-    if (form() == AngleFunctions::Form::None)
+    if (angleForm == AngleFunctions::Form::None)
         return 0.0;
-    else if (form() == AngleFunctions::Form::Harmonic)
+    else if (angleForm == AngleFunctions::Form::Harmonic)
     {
         /*
          * dU/dTheta = k * (theta - eq)
@@ -324,7 +327,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 
         return params[0] * ((angleInDegrees - params[1]) / DEGRAD) / sin(angleInRadians);
     }
-    else if (form() == AngleFunctions::Form::Cosine)
+    else if (angleForm == AngleFunctions::Form::Cosine)
     {
         /*
          * dU/dTheta = -k * n * s * sin(n*theta - eq)
@@ -338,7 +341,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 
         return -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2] / DEGRAD) / sin(angleInRadians);
     }
-    else if (form() == AngleFunctions::Form::Cos2)
+    else if (angleForm == AngleFunctions::Form::Cos2)
     {
         /*
          * dU/dTheta = -k * (c1 * sin(theta) + 2 * c2 * sin(2*theta))
@@ -354,6 +357,6 @@ double SpeciesAngle::force(double angleInDegrees) const
                sin(angleInRadians);
     }
 
-    Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate force.\n");
-    return 0.0;
+    throw(std::runtime_error(fmt::format("Angle functional form '{}' not accounted for, so can't calculate force.\n",
+                                         AngleFunctions::forms().keyword(angleForm))));
 }

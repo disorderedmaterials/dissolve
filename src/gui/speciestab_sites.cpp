@@ -6,8 +6,6 @@
 #include "gui/speciestab.h"
 #include "templates/algorithms.h"
 
-Q_DECLARE_METATYPE(SpeciesSite *)
-
 /*
  * Private Functions
  */

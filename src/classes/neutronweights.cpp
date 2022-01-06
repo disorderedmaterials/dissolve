@@ -51,7 +51,7 @@ void NeutronWeights::clear()
 }
 
 // Add Isotopologue for Species
-void NeutronWeights::addIsotopologue(const Species *sp, int speciesPopulation, const Isotopologue *iso,
+void NeutronWeights::addIsotopologue(const Species *sp, double speciesPopulation, const Isotopologue *iso,
                                      double isotopologueRelativePopulation)
 {
     // Does an Isotopologues definition already exist for the supplied Species?
@@ -84,7 +84,7 @@ void NeutronWeights::print() const
         for (auto it = topes.mix().begin(); it != topes.mix().end(); ++it)
         {
             if (it == topes.mix().begin())
-                Messenger::print("  {:<15}  {:<15}  {:<10d}  {}\n", topes.species()->name(), it->isotopologue()->name(),
+                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", topes.species()->name(), it->isotopologue()->name(),
                                  topes.speciesPopulation(), it->weight());
             else
                 Messenger::print("                   {:<15}              {}\n", it->isotopologue()->name(), it->weight());

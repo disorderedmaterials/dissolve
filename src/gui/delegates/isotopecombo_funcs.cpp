@@ -5,8 +5,6 @@
 #include "gui/delegates/isotopecombo.hui"
 #include "templates/variantpointer.h"
 
-Q_DECLARE_METATYPE(Sears91::Isotope);
-
 IsotopeComboDelegate::IsotopeComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
 IsotopeComboDelegate::~IsotopeComboDelegate() {}

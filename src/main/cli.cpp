@@ -46,7 +46,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     app.add_option("--restart", restartFilename_,
                    "Read restart file specified instead of the default one (but still write to the default one)")
         ->group("Output Files");
-    app.add_flag("-x,--no-files", writeNoFiles_, "Don't write restart or heartbeat files while running")->group("Output Files");
+    app.add_flag("-x,--no-restart-file", noRestartFile_, "Don't write restart file at all")->group("Output Files");
 
     // Add GUI-specific options - if this is not the GUI, make the input file a required parameter
     if (isGUI)
@@ -105,5 +105,5 @@ bool CLIOptions::ignoreRestartFile() const { return ignoreRestartFile_; }
 // Return whether to ignore GUI state file (if it exists)
 bool CLIOptions::ignoreStateFile() const { return ignoreStateFile_; }
 
-// Return whether to prevent writing of all output files
-bool CLIOptions::writeNoFiles() const { return writeNoFiles_; };
+// Return whether to prevent writing of the restart file
+bool CLIOptions::noRestartFile() const { return noRestartFile_; };

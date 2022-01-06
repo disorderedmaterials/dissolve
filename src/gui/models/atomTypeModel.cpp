@@ -6,8 +6,6 @@
 #include "classes/atomtype.h"
 #include "templates/algorithms.h"
 
-Q_DECLARE_METATYPE(AtomType *);
-
 // Set source AtomType data
 void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &species)
 {
@@ -72,10 +70,11 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
                 return QString::number(rawData(index)->charge());
             // Short Range Form
             case (3):
-                return QString::fromStdString(Forcefield::shortRangeTypes().keyword(rawData(index)->shortRangeType()));
+                return QString::fromStdString(
+                    ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
             // Short Range Parameters
             case (4):
-                return QString::fromStdString(joinStrings(rawData(index)->shortRangeParameters()));
+                return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
             default:
                 return {};
         }
@@ -129,14 +128,14 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 break;
             // Short Range Form
             case (3):
-                atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(value.toString().toStdString()));
+                atomType->interactionPotential().setForm(
+                    ShortRangeFunctions::forms().enumeration(value.toString().toStdString()));
                 break;
             // Short Range Parameters
             case (4):
-                values = DissolveSys::splitStringToDoubles(value.toString().toStdString());
-                if (!Forcefield::shortRangeTypes().validNArgs(atomType->shortRangeType(), values.size()))
+                if (!atomType->interactionPotential().parseParameters(value.toString().toStdString()))
                     return false;
-                atomType->setShortRangeParameters(values);
+                break;
             default:
                 return false;
         }

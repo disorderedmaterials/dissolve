@@ -12,9 +12,6 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-Q_DECLARE_METATYPE(AtomType *)
-Q_DECLARE_METATYPE(const Species *)
-
 ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_)
 {

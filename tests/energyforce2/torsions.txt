@@ -171,4 +171,6 @@ PairPotentials
   Delta  0.050000
   Parameters  'CT'  C   0.0       LJGeometric  0.0      3.500000  
   Parameters  'HC'  H   0.0       LJGeometric  0.0      2.500000 
+  ManualChargeSource  True
+  ForceChargeSource  True
 EndPairPotentials

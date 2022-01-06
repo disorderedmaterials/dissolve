@@ -130,14 +130,8 @@ int main(int args, char **argv)
         return 1;
     }
 
-    // Set restart file frequency and whether to write heartbeat file
-    if (options.writeNoFiles())
-    {
-        dissolve.setRestartFileFrequency(0);
-        dissolve.setWriteHeartBeat(false);
-    }
-    else
-        dissolve.setRestartFileFrequency(options.restartFileFrequency());
+    // Set restart file frequency
+    dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
 
     if (dissolve.restartFileFrequency() <= 0)
         Messenger::print("Restart file will not be written.\n");
@@ -151,11 +145,16 @@ int main(int args, char **argv)
                      ProcessPool::nWorldProcesses());
 #endif
 
-    // Run main simulation?
-    auto result = dissolve.iterate(options.nIterations());
+    // Run main simulation
+    auto result = true;
+    if (options.nIterations() > 0)
+    {
+        result = dissolve.prepare();
+        if (result)
+            result = dissolve.iterate(options.nIterations());
 
-    // Print timing information
-    dissolve.printTiming();
+        dissolve.printTiming();
+    }
 
     // Clear all data
     dissolve.clear();

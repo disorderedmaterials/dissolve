@@ -29,7 +29,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
     public:
     explicit BaseViewer(QWidget *parent);
-    ~BaseViewer() = default;
+    ~BaseViewer() override = default;
 
     /*
      * Main UI
@@ -213,11 +213,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
     private:
     // Initialise context widget (when created by Qt)
-    void initializeGL();
+    void initializeGL() override;
     // Widget repaint
-    void paintGL();
+    void paintGL() override;
     // Resize function
-    void resizeGL(int width, int height);
+    void resizeGL(int width, int height) override;
     // Main rendering function
     void renderGL(int xOffset = 0, int yOffset = 0);
     // Create viewer update stack
@@ -272,21 +272,21 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
     private:
     // Mouse press event
-    void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
     // Mouse release event
-    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event) override;
     // Mouse move event
-    void mouseMoveEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event) override;
     // Mouse wheel event
-    void wheelEvent(QWheelEvent *event);
+    void wheelEvent(QWheelEvent *event) override;
     // Mouse double click event
-    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
     private slots:
     // Key press event
-    void keyPressEvent(QKeyEvent *);
+    void keyPressEvent(QKeyEvent *) override;
     // Key release event
-    void keyReleaseEvent(QKeyEvent *);
+    void keyReleaseEvent(QKeyEvent *) override;
 
     protected:
     // Mouse moved

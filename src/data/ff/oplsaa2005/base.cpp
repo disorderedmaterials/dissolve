@@ -12,7 +12,7 @@ OPLSAA2005BaseForcefield::~OPLSAA2005BaseForcefield() = default;
  */
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType OPLSAA2005BaseForcefield::shortRangeType() const
+ShortRangeFunctions::Form OPLSAA2005BaseForcefield::shortRangeForm() const
 {
-    return Forcefield::ShortRangeType::LennardJonesGeometric;
+    return ShortRangeFunctions::Form::LennardJonesGeometric;
 }

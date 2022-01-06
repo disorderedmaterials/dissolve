@@ -9,8 +9,6 @@
 #include "templates/algorithms.h"
 #include <QInputDialog>
 
-Q_DECLARE_METATYPE(AtomType *)
-
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp)
     : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_), targetSpecies_(sp),
       intramolecularTermsAssigned_(false)
@@ -213,8 +211,7 @@ void AddForcefieldTermsDialog::finalise()
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
         {
-            original.atomType()->setShortRangeParameters(modified.atomType()->shortRangeParameters());
-            original.atomType()->setShortRangeType(modified.atomType()->shortRangeType());
+            original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
             original.atomType()->setCharge(modified.atomType()->charge());
             dissolve_.coreData().bumpAtomTypesVersion();
         }

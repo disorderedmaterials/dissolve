@@ -8,7 +8,6 @@
 #include "gui/render/TextPrimitiveErrorListeners.h"
 #include "gui/render/TextPrimitiveVisitor.h"
 #include "gui/render/fontinstance.h"
-#include "gui/render/symbol.h"
 #include "gui/render/textprimitive.h"
 #include <QtGui/qopengl.h>
 

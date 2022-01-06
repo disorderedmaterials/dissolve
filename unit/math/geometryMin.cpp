@@ -14,9 +14,9 @@ TEST(GeometryMinimisationTest, Water)
     // Set up CoreData
     CoreData coreData;
     auto atO = coreData.addAtomType(Elements::O);
-    atO->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
+    atO->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     auto atH = coreData.addAtomType(Elements::H);
-    atH->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
+    atH->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     std::vector<std::unique_ptr<PairPotential>> pairPotentials;
     pairPotentials.emplace_back(std::make_unique<PairPotential>())->setUp(atO, atO);
     pairPotentials.emplace_back(std::make_unique<PairPotential>())->setUp(atH, atH);
@@ -31,9 +31,9 @@ TEST(GeometryMinimisationTest, Water)
     water.atom(0).setAtomType(atH);
     water.atom(1).setAtomType(atO);
     water.atom(2).setAtomType(atH);
-    water.addBond(0, 1).setFormAndParameters(BondFunctions::Form::Harmonic, "k=4000.0 eq=1.0");
-    water.addBond(1, 2).setFormAndParameters(BondFunctions::Form::Harmonic, "k=4000.0 eq=1.2");
-    water.addAngle(0, 1, 2).setFormAndParameters(AngleFunctions::Form::Harmonic, "k=4000.0 eq=123.45");
+    water.addBond(0, 1).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4000.0 eq=1.0");
+    water.addBond(1, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4000.0 eq=1.2");
+    water.addAngle(0, 1, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=4000.0 eq=123.45");
 
     // Run the geometry optimisation
     GeometryOptimisationModule geomOpt;

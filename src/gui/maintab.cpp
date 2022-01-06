@@ -2,11 +2,8 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/maintab.h"
-#include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
 #include "gui/gui.h"
-#include "gui/modulecontrolwidget.h"
 #include "module/module.h"
 #include <QFrame>
 #include <QInputDialog>

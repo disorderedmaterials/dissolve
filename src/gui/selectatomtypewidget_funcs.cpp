@@ -6,8 +6,6 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/selectatomtypewidget.h"
 
-Q_DECLARE_METATYPE(const AtomType *)
-
 SelectAtomTypeWidget::SelectAtomTypeWidget(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);

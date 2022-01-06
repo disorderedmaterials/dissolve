@@ -16,7 +16,10 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
     PairPotential::ShiftedShortRangeTruncation;
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
-PairPotential::PairPotential() : uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_) {}
+PairPotential::PairPotential()
+    : interactionPotential_(ShortRangeFunctions::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+{
+}
 
 // Return enum option info for CoulombTruncationScheme
 EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTruncationSchemes()
@@ -39,12 +42,6 @@ EnumOptions<PairPotential::ShortRangeTruncationScheme> PairPotential::shortRange
  * Seed Interaction Type
  */
 
-// Set short-ranged type
-void PairPotential::setShortRangeType(Forcefield::ShortRangeType srType) { shortRangeType_ = srType; }
-
-// Return short-ranged type
-Forcefield::ShortRangeType PairPotential::shortRangeType() const { return shortRangeType_; }
-
 // Set short-ranged truncation scheme
 void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme scheme)
 {
@@ -60,11 +57,11 @@ void PairPotential::setShortRangeTruncationWidth(double width) { shortRangeTrunc
 // Return width of short-range potential over which to truncate (if scheme = Cosine)
 double PairPotential::shortRangeTruncationWidth() { return shortRangeTruncationWidth_; }
 
-// Set whether Coulomb term should be included in the generated potential
-void PairPotential::setIncludeCoulomb(bool b) { includeCoulomb_ = b; }
+// Set whether atom type charges should be included in the generated potential
+void PairPotential::setIncludeAtomTypeCharges(bool b) { includeAtomTypeCharges_ = b; }
 
-// Return whether Coulomb term should be included in the generated potential
-bool PairPotential::includeCoulomb() { return includeCoulomb_; }
+// Return whether atom type charges should be included in the generated potential
+bool PairPotential::includeAtomTypeCharges() const { return includeAtomTypeCharges_; }
 
 // Set Coulomb truncation scheme
 void PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme scheme)
@@ -105,15 +102,15 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
 
     atomTypeI_ = typeI;
     atomTypeJ_ = typeJ;
-    parameters_.clear();
+    interactionPotential_.setFormAndParameters(ShortRangeFunctions::Form::None, "");
     setData1DNames();
-    auto &paramsI = atomTypeI_->shortRangeParameters();
-    auto &paramsJ = atomTypeJ_->shortRangeParameters();
-    auto srI = atomTypeI_->shortRangeType(), srJ = atomTypeJ_->shortRangeType();
+    auto &paramsI = atomTypeI_->interactionPotential().parameters();
+    auto &paramsJ = atomTypeJ_->interactionPotential().parameters();
+    auto srI = atomTypeI_->interactionPotential().form(), srJ = atomTypeJ_->interactionPotential().form();
 
     // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
     if ((paramsI.empty() || paramsJ.empty()) &&
-        (srI != Forcefield::ShortRangeType::NoInteraction && srJ != Forcefield::ShortRangeType::NoInteraction))
+        (srI != ShortRangeFunctions::Form::None && srJ != ShortRangeFunctions::Form::None))
         return Messenger::error(
             "Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
             paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
@@ -121,66 +118,57 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
     if (srI == srJ)
     {
-        shortRangeType_ = srI;
-        switch (shortRangeType_)
+        switch (srI)
         {
-            case (Forcefield::ShortRangeType::Undefined):
-                return Messenger::error("PairPotential between atom types '{}' and '{}' is undefined.\n", atomTypeI_->name(),
-                                        atomTypeJ_->name());
-            case (Forcefield::ShortRangeType::NoInteraction):
+            case (ShortRangeFunctions::Form::None):
                 break;
-            case (Forcefield::ShortRangeType::LennardJones):
+            case (ShortRangeFunctions::Form::LennardJones):
                 /*
                  * Combine parameters (Lorentz-Berthelot):
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                parameters_.push_back(sqrt(paramsI[0] * paramsJ[0]));
-                parameters_.push_back((paramsI[1] + paramsJ[1]) * 0.5);
+                interactionPotential_.setFormAndParameters(
+                    srI, std::vector<double>{sqrt(paramsI[0] * paramsJ[0]), (paramsI[1] + paramsJ[1]) * 0.5});
                 break;
-            case (Forcefield::ShortRangeType::LennardJonesGeometric):
+            case (ShortRangeFunctions::Form::LennardJonesGeometric):
                 /*
                  * Combine parameters (Geometric):
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                parameters_.push_back(sqrt(paramsI[0] * paramsJ[0]));
-                parameters_.push_back(sqrt(paramsI[1] * paramsJ[1]));
+                interactionPotential_.setFormAndParameters(
+                    srI, std::vector<double>{sqrt(paramsI[0] * paramsJ[0]), sqrt(paramsI[1] * paramsJ[1])});
                 break;
             default:
-                return Messenger::error("Short-range type {} is not accounted for in PairPotential::setUp().\n",
-                                        shortRangeType_);
+                throw(std::runtime_error(fmt::format("Short-range type {} is not accounted for in PairPotential::setUp().\n",
+                                                     ShortRangeFunctions::forms().keyword(srI))));
         }
     }
     else
     {
         // In the case of combining LJ and LJGeometric, default to standard Lorentz-Berthelot rules
-        auto ljI = srI == Forcefield::ShortRangeType::LennardJones || srI == Forcefield::ShortRangeType::LennardJonesGeometric;
-        auto ljJ = srJ == Forcefield::ShortRangeType::LennardJones || srJ == Forcefield::ShortRangeType::LennardJonesGeometric;
+        auto ljI = srI == ShortRangeFunctions::Form::LennardJones || srI == ShortRangeFunctions::Form::LennardJonesGeometric;
+        auto ljJ = srJ == ShortRangeFunctions::Form::LennardJones || srJ == ShortRangeFunctions::Form::LennardJonesGeometric;
         if (ljI && ljJ)
         {
             Messenger::warn("Defaulting to Lorentz-Berthelot rules to combine parameters between atom types '{}' and '{}.\n",
                             atomTypeI_->name(), atomTypeJ_->name());
 
-            shortRangeType_ = Forcefield::ShortRangeType::LennardJones;
             /*
              * Combine parameters (Lorentz-Berthelot):
              * Parameter 0 = Epsilon
              * Parameter 1 = Sigma
              */
-            parameters_.push_back(sqrt(paramsI[0] * paramsJ[0]));
-            parameters_.push_back((paramsI[1] + paramsJ[1]) * 0.5);
+            interactionPotential_.setFormAndParameters(
+                ShortRangeFunctions::Form::LennardJones,
+                std::vector<double>{sqrt(paramsI[0] * paramsJ[0]), (paramsI[1] + paramsJ[1]) * 0.5});
         }
         else
-        {
-            // Can't mix parameters of different functional forms in general, so complain...
-            shortRangeType_ = Forcefield::ShortRangeType::Undefined;
             return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
                                     "short-range types {} and {}.\n",
-                                    atomTypeI_->name(), atomTypeJ_->name(),
-                                    Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()),
-                                    Forcefield::shortRangeTypes().keyword(atomTypeJ_->shortRangeType()));
-        }
+                                    atomTypeI_->name(), atomTypeJ_->name(), ShortRangeFunctions::forms().keyword(srI),
+                                    ShortRangeFunctions::forms().keyword(srJ));
     }
 
     // Set charges
@@ -189,6 +177,10 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
 
     return true;
 }
+
+// Return interaction potential
+InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() { return interactionPotential_; }
+const InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() const { return interactionPotential_; }
 
 // Return first AtomType name
 std::string_view PairPotential::atomTypeNameI() const
@@ -210,18 +202,6 @@ std::shared_ptr<AtomType> PairPotential::atomTypeI() const { return atomTypeI_; 
 // Return second source AtomType
 std::shared_ptr<AtomType> PairPotential::atomTypeJ() const { return atomTypeJ_; }
 
-// Set parameter with index specified
-void PairPotential::setParameter(int index, double value) { parameters_[index] = value; }
-
-// Set parameters vector
-void PairPotential::setParameters(std::vector<double> parameters) { parameters_ = std::move(parameters); }
-
-// Return parameters vector
-const std::vector<double> &PairPotential::parameters() const { return parameters_; }
-
-// Return short-range parameter with index specified
-double PairPotential::parameter(int index) const { return parameters_[index]; }
-
 // Set charge I
 void PairPotential::setChargeI(double value) { chargeI_ = value; }
 
@@ -239,22 +219,24 @@ double PairPotential::chargeJ() const { return chargeJ_; }
  */
 
 // Return analytic short range potential energy
-double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeType type,
-                                               PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
-    if (type == Forcefield::ShortRangeType::NoInteraction)
+    auto &params = interactionPotential_.parameters();
+
+    if (interactionPotential_.form() == ShortRangeFunctions::Form::None)
         return 0.0;
-    else if ((type == Forcefield::ShortRangeType::LennardJones) || (type == Forcefield::ShortRangeType::LennardJonesGeometric))
+    else if ((interactionPotential_.form() == ShortRangeFunctions::Form::LennardJones) ||
+             (interactionPotential_.form() == ShortRangeFunctions::Form::LennardJonesGeometric))
     {
         /*
          * Standard Lennard-Jones potential
          * Parameter 0 = Epsilon
          * Parameter 1 = Sigma
          */
-        auto sigmar = parameters_[1] / r;
+        auto sigmar = params[1] / r;
         auto sigmar6 = pow(sigmar, 6.0);
         auto sigmar12 = sigmar6 * sigmar6;
-        auto energy = 4.0 * parameters_[0] * (sigmar12 - sigmar6);
+        auto energy = 4.0 * params[0] * (sigmar12 - sigmar6);
 
         // Apply the selected truncation scheme
         if (truncation == PairPotential::ShiftedShortRangeTruncation)
@@ -275,20 +257,22 @@ double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeT
         return energy;
     }
 
-    Messenger::error("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeEnergy(). "
-                     "Returning 0.0...\n",
-                     type);
+    throw(std::runtime_error(
+        fmt::format("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeEnergy().\n",
+                    ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
 
     return 0.0;
 }
 
 // Return analytic short range force
-double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeType type,
-                                              PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
-    if (type == Forcefield::ShortRangeType::NoInteraction)
+    auto &params = interactionPotential_.parameters();
+
+    if (interactionPotential_.form() == ShortRangeFunctions::Form::None)
         return 0.0;
-    else if ((type == Forcefield::ShortRangeType::LennardJones) || (type == Forcefield::ShortRangeType::LennardJonesGeometric))
+    else if ((interactionPotential_.form() == ShortRangeFunctions::Form::LennardJones) ||
+             (interactionPotential_.form() == ShortRangeFunctions::Form::LennardJonesGeometric))
     {
         /*
          * Standard Lennard-Jones potential
@@ -298,16 +282,16 @@ double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeTy
 
         // f = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
 
-        auto sigmar = parameters_[1] / r;
+        auto sigmar = params[1] / r;
         auto sigmar6 = pow(sigmar, 6.0);
         auto sigmar12 = sigmar6 * sigmar6;
 
         // Apply the selected truncation scheme
         if (truncation == PairPotential::NoShortRangeTruncation)
-            return 48.0 * parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+            return 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
         else if (truncation == PairPotential::ShiftedShortRangeTruncation)
         {
-            return (48.0 * parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r) - shortRangeForceAtCutoff_;
+            return (48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r) - shortRangeForceAtCutoff_;
         }
         else if (truncation == PairPotential::CosineShortRangeTruncation)
         {
@@ -317,22 +301,20 @@ double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeTy
             {
                 // Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
                 // d/dx = -PI*sin((PI*truncr)/shortRangeTruncationWidth_) / shortRangeTruncationWidth_
-                double de_t = (-48.0 * parameters_[0] * ((sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)))) *
+                double de_t = (-48.0 * params[0] * ((sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)))) *
                               (cos(PI * (truncr / shortRangeTruncationWidth_)) + 1) * 0.5;
-                double e_dt = (4.0 * parameters_[0] * (sigmar12 - sigmar6)) * -PI *
-                              sin((PI * truncr) / shortRangeTruncationWidth_) / shortRangeTruncationWidth_;
+                double e_dt = (4.0 * params[0] * (sigmar12 - sigmar6)) * -PI * sin((PI * truncr) / shortRangeTruncationWidth_) /
+                              shortRangeTruncationWidth_;
                 return de_t * e_dt;
             }
             else
-                return 48.0 * parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+                return 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
         }
     }
 
-    Messenger::error("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeForce(). "
-                     "Returning 0.0...\n",
-                     type);
-
-    return 0.0;
+    throw(std::runtime_error(
+        fmt::format("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeForce().\n",
+                    ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
 }
 
 // Calculate full potential
@@ -381,14 +363,14 @@ void PairPotential::calculateDUFull()
 
     // Set first and last points
     dUFull_.value(0) = 10.0 * dUFull_.value(1);
-    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2);
+    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2) + (dUFull_.value(nPoints_ - 2) - dUFull_.value(nPoints_ - 3));
 
     // Update interpolation
     dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 }
 
 // Generate energy and force tables
-bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
+bool PairPotential::tabulate(double maxR, double delta, bool includeAtomTypeCharges)
 {
     // Check that AtomType pointers were set at some pointer
     if ((atomTypeI_ == nullptr) || (atomTypeJ_ == nullptr))
@@ -401,12 +383,12 @@ bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
     delta_ = delta;
     rDelta_ = 1.0 / delta_;
     range_ = maxR;
-    includeCoulomb_ = includeCoulomb;
+    includeAtomTypeCharges_ = includeAtomTypeCharges;
     nPoints_ = range_ / delta_;
 
     // Calculate energies and forces at the cutoff distance, for later use in truncation schemes
-    shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, shortRangeType_, PairPotential::NoShortRangeTruncation);
-    shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, shortRangeType_, PairPotential::NoShortRangeTruncation);
+    shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, PairPotential::NoShortRangeTruncation);
+    shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, PairPotential::NoShortRangeTruncation);
     coulombEnergyAtCutoff_ = analyticCoulombEnergy(chargeI_ * chargeJ_, range_, PairPotential::NoCoulombTruncation);
     coulombForceAtCutoff_ = analyticCoulombForce(chargeI_ * chargeJ_, range_, PairPotential::NoCoulombTruncation);
 
@@ -449,10 +431,10 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
         uOriginal_.value(n) = 0.0;
 
         // Short-range potential contribution
-        uOriginal_.value(n) += analyticShortRangeEnergy(r, shortRangeType_);
+        uOriginal_.value(n) += analyticShortRangeEnergy(r);
 
         // -- Add Coulomb contribution
-        if (includeCoulomb_)
+        if (includeAtomTypeCharges_)
             uOriginal_.value(n) += analyticCoulombEnergy(chargeI_ * chargeJ_, r);
     }
 
@@ -473,13 +455,13 @@ double PairPotential::energy(double r)
 }
 
 // Return analytic potential at specified r, including Coulomb term from local atomtype charges
-double PairPotential::analyticEnergy(double r)
+double PairPotential::analyticEnergy(double r) const
 {
     if (r > range_)
         return 0.0;
 
     // Short-range potential
-    auto energy = analyticShortRangeEnergy(r, shortRangeType_);
+    auto energy = analyticShortRangeEnergy(r);
 
     // Coulomb contribution
     energy += analyticCoulombEnergy(chargeI_ * chargeJ_, r);
@@ -488,16 +470,16 @@ double PairPotential::analyticEnergy(double r)
 }
 
 // Return analytic potential at specified r, including Coulomb term from supplied charge product
-double PairPotential::analyticEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     if (r > range_)
         return 0.0;
 
-    return analyticShortRangeEnergy(r, shortRangeType_) + analyticCoulombEnergy(qiqj, r, truncation);
+    return analyticShortRangeEnergy(r) + analyticCoulombEnergy(qiqj, r, truncation);
 }
 
 // Return analytic coulomb potential energy of specified charges
-double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)
@@ -517,13 +499,13 @@ double PairPotential::force(double r)
 }
 
 // Return analytic force at specified r
-double PairPotential::analyticForce(double r)
+double PairPotential::analyticForce(double r) const
 {
     if (r > range_)
         return 0.0;
 
     // Short-range potential
-    double force = analyticShortRangeForce(r, shortRangeType_);
+    double force = analyticShortRangeForce(r);
 
     // Coulomb contribution
     force += analyticCoulombForce(chargeI_ * chargeJ_, r);
@@ -532,16 +514,16 @@ double PairPotential::analyticForce(double r)
 }
 
 // Return analytic force at specified r, including Coulomb term from supplied charge product
-double PairPotential::analyticForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     if (r > range_)
         return 0.0;
 
-    return analyticShortRangeForce(r, shortRangeType_) + analyticCoulombForce(qiqj, r);
+    return analyticShortRangeForce(r) + analyticCoulombForce(qiqj, r);
 }
 
 // Return analytic coulomb force of specified charges
-double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)

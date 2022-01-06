@@ -92,11 +92,15 @@ class Dissolve
     double pairPotentialRangeSquared_;
     // Delta to use in tabulation
     double pairPotentialDelta_;
-    // Whether Coulomb terms are included in generated PairPotentials
-    bool pairPotentialsIncludeCoulomb_;
+    // Whether to automatically determine charge source
+    bool automaticChargeSource_;
+    // Whether to force the use of the specified charge source (if not automatic choice)
+    bool forceChargeSource_;
+    // Whether charges from atom types are to be used (and included in PairPotentials)
+    bool atomTypeChargeSource_;
     // Simulation PairPotentials
     std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
-    // Version of AtomTypes at which PairPotential were last generated
+    // Version of AtomTypes at which PairPotentials were last generated
     int pairPotentialAtomTypeVersion_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
@@ -112,10 +116,18 @@ class Dissolve
     void setPairPotentialDelta(double delta);
     // Return delta to use in tabulations
     double pairPotentialDelta() const;
-    // Set whether Coulomb term should be included in generated PairPotentials
-    void setPairPotentialsIncludeCoulomb(bool b);
-    // Return whether Coulomb term should be included in generated PairPotentials
-    bool pairPotentialsIncludeCoulomb();
+    // Set whether to automatically determine charge source
+    void setAutomaticChargeSource(bool b);
+    // Return whether to automatically determine charge source
+    bool automaticChargeSource() const;
+    // Set whether to force the use of the specified charge source (if not automatic choice)
+    void setForceChargeSource(bool b);
+    // Return whether to force the use of the specified charge source (if not automatic choice)
+    bool forceChargeSource() const;
+    // Set whether charges from atom types are to be used (and included in PairPotentials)
+    void setAtomTypeChargeSource(bool b);
+    // Return whether charges from atom types are to be used (and included in PairPotentials)
+    bool atomTypeChargeSource() const;
     // Return index of specified PairPotential
     int indexOf(PairPotential *pp);
     // Return number of defined PairPotentials
@@ -238,8 +250,6 @@ class Dissolve
     std::string restartFilename_;
     // Accumulated timing information for saving restart file
     SampledDouble saveRestartTimes_;
-    // Check if heartbeat file needs to be written or not
-    bool writeHeartBeat_;
 
     private:
     // Load input file through supplied parser
@@ -258,15 +268,9 @@ class Dissolve
     bool loadRestartAsReference(std::string_view filename, std::string_view dataSuffix);
     // Save restart file
     bool saveRestart(std::string_view filename);
-    // Save heartbeat file
-    bool saveHeartBeat(std::string_view filename, double estimatedNSecs);
-    // Set bool for heartbeat file to be written
-    void setWriteHeartBeat(bool b);
-    // write heartbeat file
-    bool writeHeartBeat() const;
     // Return whether an input filename has been set
     bool hasInputFilename() const;
-    // Set current input filenamea
+    // Set current input filename
     void setInputFilename(std::string_view filename);
     // Return current input filename
     std::string_view inputFilename() const;

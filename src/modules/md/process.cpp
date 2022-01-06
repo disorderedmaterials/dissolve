@@ -111,26 +111,16 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * Calculation Begins
          */
 
-        // Read in or assign random velocities
-        // Realise the velocity array from the moduleData
-        auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
-            fmt::format("{}//Velocities", cfg->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
-        if (status == GenericItem::ItemStatus::Created)
-        {
-            randomVelocities_ = true;
-            velocities.resize(cfg->nAtoms(), Vec3<double>());
-        }
-        if (randomVelocities_)
-            Messenger::print("Random initial velocities will be assigned.\n");
-        else
-            Messenger::print("Existing velocities will be used.\n");
-        Messenger::print("\n");
-
         // Initialise the random number buffer for all processes
         procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 
-        // Assign random velocities?
-        if (randomVelocities_)
+        // Read in or assign random velocities
+        auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
+            fmt::format("{}//Velocities", cfg->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+        if (status == GenericItem::ItemStatus::Created || randomVelocities_)
+        {
+            Messenger::print("Random initial velocities will be assigned.\n");
+            velocities.resize(cfg->nAtoms(), Vec3<double>());
             for (auto &&[v, iFree] : zip(velocities, free))
             {
                 if (iFree)
@@ -139,6 +129,10 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     v.zero();
                 v /= sqrt(TWOPI);
             }
+        }
+        else
+            Messenger::print("Existing velocities will be used.\n");
+        Messenger::print("\n");
 
         // Store atomic masses for future use
         for (auto &&[i, m] : zip(atoms, mass))

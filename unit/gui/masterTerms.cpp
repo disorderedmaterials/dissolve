@@ -26,9 +26,9 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
 {
     std::vector<std::shared_ptr<MasterBond>> masterBonds;
     auto &b1 = masterBonds.emplace_back(std::make_shared<MasterBond>("CA-CA"));
-    b1->setFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.590   eq=1.400");
+    b1->setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.590   eq=1.400");
     auto &b2 = masterBonds.emplace_back(std::make_shared<MasterBond>("CA-HA"));
-    b2->setFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.060   eq=1.080");
+    b2->setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.060   eq=1.080");
 
     MasterTermBondModel model;
     model.setSourceData(masterBonds);
@@ -69,9 +69,9 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
 {
     std::vector<std::shared_ptr<MasterAngle>> masterAngles;
     auto &a1 = masterAngles.emplace_back(std::make_shared<MasterAngle>("CA-CA-CA"));
-    a1->setFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184   eq=120.000");
+    a1->setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184   eq=120.000");
     auto &a2 = masterAngles.emplace_back(std::make_shared<MasterAngle>("CA-CA-HA"));
-    a2->setFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.880   eq=120.000");
+    a2->setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.880   eq=120.000");
 
     MasterTermAngleModel model;
     model.setSourceData(masterAngles);
@@ -113,11 +113,11 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
 {
     std::vector<std::shared_ptr<MasterTorsion>> masterTorsions;
     auto &t1 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("CA-CA-CA-CA"));
-    t1->setFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     0.000");
+    t1->setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     0.000");
     auto &t2 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("CA-CA-CA-HA"));
-    t2->setFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     1.000");
+    t2->setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     1.000");
     auto &t3 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("HA-CA-CA-HA"));
-    t3->setFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     2.000");
+    t3->setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     2.000");
 
     MasterTermTorsionModel model;
     model.setSourceData(masterTorsions);

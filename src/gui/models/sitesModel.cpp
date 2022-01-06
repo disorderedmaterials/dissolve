@@ -3,8 +3,6 @@
 
 #include "gui/models/sitesModel.h"
 
-Q_DECLARE_METATYPE(SpeciesSite *);
-
 SitesModel::SitesModel(OptionalReferenceWrapper<const std::vector<std::unique_ptr<Species>>> species,
                        OptionalReferenceWrapper<std::vector<const SpeciesSite *>> checkedItems)
 {

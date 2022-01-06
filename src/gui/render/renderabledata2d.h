@@ -58,9 +58,9 @@ class RenderableData2D : public Renderable
 
     protected:
     // Recreate necessary primitives / primitive assemblies for the data
-    void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
+    void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition) override;
     // Send primitives for rendering
-    const void sendToGL(const double pixelScaling);
+    const void sendToGL(double pixelScaling) override;
 
     /*
      * Style
