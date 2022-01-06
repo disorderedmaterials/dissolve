@@ -3,8 +3,29 @@
 
 #pragma once
 
+#include "base/enumoptions.h"
+#include "classes/interactionpotential.h"
 #include "data/elements.h"
-#include "data/ff/ff.h"
+
+// Short-range functional forms
+class ShortRangeFunctions
+{
+    public:
+    enum class Form
+    {
+        None,                 /* No short-range dispersive forces */
+        LennardJones,         /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
+        LennardJonesGeometric /* Lennard-Jones 12-6 form with Geometric combination rules */
+    };
+    // Return enum options for form
+    static EnumOptions<Form> forms();
+    // Return parameters for specified form
+    static const std::vector<std::string> &parameters(Form form);
+    // Return nth parameter for the given form
+    static std::string parameter(Form form, int n);
+    // Return index of parameter in the given form
+    static std::optional<int> parameterIndex(Form form, std::string_view name);
+};
 
 // AtomType Definition
 class AtomType
@@ -36,26 +57,17 @@ class AtomType
      * Interaction Parameters
      */
     private:
-    // Short-range interaction type
-    Forcefield::ShortRangeType shortRangeType_{Forcefield::ShortRangeType::Undefined};
-    // Vector of parameters for short-range potential
-    std::vector<double> parameters_;
+    // Short-range interaction potential
+    InteractionPotential<ShortRangeFunctions> interactionPotential_;
     // Atomic charge
     double charge_{0.0};
     // Index of this type in the master type index
     int index_{-1};
 
     public:
-    // Set short-range interaction type
-    void setShortRangeType(Forcefield::ShortRangeType srType);
-    // Return short-range interaction type
-    Forcefield::ShortRangeType shortRangeType() const;
-    // Set short-range parameters vector
-    void setShortRangeParameters(const std::vector<double> &parameters);
-    // Set single short-range parameter
-    void setShortRangeParameter(int index, double parameter);
-    // Return short-range parameters vector
-    const std::vector<double> &shortRangeParameters() const;
+    // Return short-range interaction potential
+    InteractionPotential<ShortRangeFunctions> &interactionPotential();
+    const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
     // Set atomic charge
     void setCharge(double q);
     // Return atomic charge

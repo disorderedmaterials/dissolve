@@ -79,10 +79,8 @@ class PairPotential
     private:
     // Original source AtomTypes
     std::shared_ptr<AtomType> atomTypeI_, atomTypeJ_;
-    // Parameters for short-range potential
-    std::vector<double> parameters_;
-    // Short range type (determined from AtomTypes)
-    Forcefield::ShortRangeType shortRangeType_{Forcefield::ShortRangeType::Undefined};
+    // Interaction potential
+    InteractionPotential<ShortRangeFunctions> interactionPotential_;
     // Charge on I (taken from AtomType)
     double chargeI_{0.0};
     // Charge on J (taken from AtomType)
@@ -95,10 +93,9 @@ class PairPotential
     public:
     // Set up PairPotential parameters from specified AtomTypes
     bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ);
-    // Set short-ranged type
-    void setShortRangeType(Forcefield::ShortRangeType srType);
-    // Return short-ranged type
-    Forcefield::ShortRangeType shortRangeType() const;
+    // Return interaction potential
+    InteractionPotential<ShortRangeFunctions> &interactionPotential();
+    const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
     // Return first AtomType name
     std::string_view atomTypeNameI() const;
     // Return second AtomType name
@@ -107,14 +104,6 @@ class PairPotential
     std::shared_ptr<AtomType> atomTypeI() const;
     // Return second source AtomType
     std::shared_ptr<AtomType> atomTypeJ() const;
-    // Set parameter specified
-    void setParameter(int index, double value);
-    // Set parameters vector
-    void setParameters(std::vector<double> parameters);
-    // Return parameters vector
-    const std::vector<double> &parameters() const;
-    // Return short-range parameter specified
-    double parameter(int index) const;
     // Set charge I
     void setChargeI(double value);
     // Return charge I
@@ -150,12 +139,10 @@ class PairPotential
     private:
     // Return analytic short range potential energy
     double analyticShortRangeEnergy(
-        double r, Forcefield::ShortRangeType type,
-        PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
+        double r, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme()) const;
     // Return analytic short range force
-    double
-    analyticShortRangeForce(double r, Forcefield::ShortRangeType type,
-                            PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
+    double analyticShortRangeForce(
+        double r, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme()) const;
     // Calculate full potential
     void calculateUFull();
     // Calculate derivative of potential
@@ -175,10 +162,10 @@ class PairPotential
     // Return potential at specified r
     double energy(double r);
     // Return analytic potential at specified r, including Coulomb term from local atomtype charges
-    double analyticEnergy(double r);
+    double analyticEnergy(double r) const;
     // Return analytic potential at specified r, including Coulomb term from supplied charge product
     double analyticEnergy(double qiqj, double r,
-                          PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
+                          PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme()) const;
     // Return analytic coulomb potential energy of specified charge product
     double
     analyticCoulombEnergy(double qiqj, double r,
@@ -186,10 +173,10 @@ class PairPotential
     // Return derivative of potential at specified r
     double force(double r);
     // Return analytic force at specified r, including Coulomb term from local atomtype charges
-    double analyticForce(double r);
+    double analyticForce(double r) const;
     // Return analytic force at specified r, including Coulomb term from supplied charge product
     double analyticForce(double qiqj, double r,
-                         PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
+                         PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme()) const;
     // Return analytic coulomb force of specified charge product
     double
     analyticCoulombForce(double qiqj, double r,

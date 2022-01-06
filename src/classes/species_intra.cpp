@@ -547,10 +547,11 @@ void generateMasterTerm(Intra &term, std::string_view termName,
     {
         // Are the parameters the same as our local term?
         const Master &master = optMaster->get();
-        if (master.form() != term.form() || master.nParameters() != term.nParameters())
+        if (master.interactionForm() != term.interactionForm() ||
+            master.interactionParameters().size() != term.interactionParameters().size())
             continue;
         else
-            for (auto &&[localValue, masterValue] : zip(term.parameters(), master.parameters()))
+            for (auto &&[localValue, masterValue] : zip(term.interactionParameters(), master.interactionParameters()))
                 if (fabs(localValue - masterValue) > 1.0e-8)
                     optMaster = std::nullopt;
 
@@ -565,8 +566,7 @@ void generateMasterTerm(Intra &term, std::string_view termName,
     if (!optMaster)
     {
         optMaster = termCreator(index == 0 ? termName : fmt::format("{}_{}", termName, index));
-        optMaster->get().setForm(term.form());
-        optMaster->get().setParameters(term.parameters());
+        optMaster->get().setInteractionFormAndParameters(term.interactionForm(), term.interactionParameters());
     }
 
     term.setMasterTerm(&optMaster->get());

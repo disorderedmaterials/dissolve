@@ -186,22 +186,26 @@ bool Dissolve::saveInput(std::string_view filename)
 
         for (auto &b : coreData_.masterBonds())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
-                                   BondFunctions::forms().keyword(b->form()), b->parametersAsString()))
+                                   BondFunctions::forms().keyword(b->interactionForm()),
+                                   b->interactionPotential().parametersAsString()))
                 return false;
 
         for (auto &a : coreData_.masterAngles())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
-                                   a->name(), AngleFunctions::forms().keyword(a->form()), a->parametersAsString()))
+                                   a->name(), AngleFunctions::forms().keyword(a->interactionForm()),
+                                   a->interactionPotential().parametersAsString()))
                 return false;
 
         for (auto &t : coreData_.masterTorsions())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
-                                   t->name(), TorsionFunctions::forms().keyword(t->form()), t->parametersAsString()))
+                                   t->name(), TorsionFunctions::forms().keyword(t->interactionForm()),
+                                   t->interactionPotential().parametersAsString()))
                 return false;
 
         for (auto &imp : coreData_.masterImpropers())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                   imp->name(), TorsionFunctions::forms().keyword(imp->form()), imp->parametersAsString()))
+                                   imp->name(), TorsionFunctions::forms().keyword(imp->interactionForm()),
+                                   imp->interactionPotential().parametersAsString()))
                 return false;
 
         // Done with the master terms
@@ -229,16 +233,12 @@ bool Dissolve::saveInput(std::string_view filename)
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
     for (const auto &atomType : atomTypes())
-    {
-        std::string line = fmt::format("  {}  {}  {}  {:12.6e}  {}",
-                                       PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
-                                       atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
-                                       Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
-        for (auto x : atomType->shortRangeParameters())
-            line += fmt::format("  {:12.6e}", x);
-        if (!parser.writeLine(line))
+        if (!parser.writeLineF("  {}  {}  {}  {:12.6e}  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
+                               atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
+                               ShortRangeFunctions::forms().keyword(atomType->interactionPotential().form()),
+                               atomType->interactionPotential().parametersAsString()))
             return false;
-    }
 
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword),
                            pairPotentialRange_))

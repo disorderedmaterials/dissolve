@@ -91,6 +91,7 @@ add_library(
   empiricalformula.h
   energykernel.h
   forcekernel.h
+  interactionpotential.h
   isotopedata.h
   isotopologue.h
   isotopologues.h

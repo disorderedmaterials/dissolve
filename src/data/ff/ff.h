@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/atomtype.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesimproper.h"
@@ -49,22 +50,12 @@ class Forcefield
      * Definition
      */
     public:
-    // ShortRange Interaction Type
-    enum class ShortRangeType
-    {
-        Undefined,            /* Undefined short-range type */
-        NoInteraction,        /* No short-range dispersive forces */
-        LennardJones,         /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
-        LennardJonesGeometric /* Lennard-Jones 12-6 form with Geometric combination rules */
-    };
-    // Return enum options for ShortRangeType
-    static EnumOptions<ShortRangeType> shortRangeTypes();
     // Return name of Forcefield
     virtual std::string_view name() const = 0;
     // Return description of Forcefield
     virtual std::string_view description() const = 0;
     // Return short-range interaction style for AtomTypes
-    virtual ShortRangeType shortRangeType() const = 0;
+    virtual ShortRangeFunctions::Form shortRangeForm() const = 0;
 
     /*
      * Atom Type Data

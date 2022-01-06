@@ -39,8 +39,7 @@ class DerivativesTest : public ::testing::Test
     void intraTest(Intra &intraTerm, Form form, const std::vector<double> &params, double xMin, double xMax, double xDelta,
                    bool angular = false)
     {
-        intraTerm.setForm(form);
-        intraTerm.setParameters(params);
+        intraTerm.setInteractionFormAndParameters(form, params);
 
         auto x = xMin;
         const auto dx = xDelta / 100.0;

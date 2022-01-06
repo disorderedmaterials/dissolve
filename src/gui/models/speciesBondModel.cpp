@@ -41,10 +41,13 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
             case 1:
                 return bond.index(index.column()) + 1;
             case 2:
-                return bond.masterTerm() ? QString::fromStdString("@" + std::string(bond.masterTerm()->name()))
-                                         : QString::fromStdString(std::string(BondFunctions::forms().keyword(bond.form())));
+                return bond.masterTerm()
+                           ? QString::fromStdString("@" + std::string(bond.masterTerm()->name()))
+                           : QString::fromStdString(std::string(BondFunctions::forms().keyword(bond.interactionForm())));
             case 3:
-                return QString::fromStdString(bond.parametersAsString());
+                return bond.masterTerm()
+                           ? QString::fromStdString(bond.masterTerm()->interactionPotential().parametersAsString())
+                           : QString::fromStdString(bond.interactionPotential().parametersAsString());
             default:
                 return {};
         }
@@ -103,7 +106,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
                 {
                     auto bf = BondFunctions::forms().enumeration(value.toString().toStdString());
                     bond.detachFromMasterTerm();
-                    bond.setForm(bf);
+                    bond.setInteractionForm(bf);
                 }
                 catch (std::runtime_error &e)
                 {
@@ -112,7 +115,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             }
             break;
         case 3:
-            if (!bond.setParameters(value.toString().toStdString()))
+            if (!bond.setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
         default:

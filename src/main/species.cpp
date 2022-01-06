@@ -53,8 +53,7 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     {
         at = addAtomType(sourceAtom->Z());
         at->setName(sourceAtom->atomType()->name());
-        at->setShortRangeParameters(sourceAtom->atomType()->shortRangeParameters());
-        at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
+        at->interactionPotential() = sourceAtom->atomType()->interactionPotential();
     }
 
     destAtom->setAtomType(at);
@@ -69,12 +68,12 @@ void Dissolve::copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest)
         if (!master)
         {
             master = coreData_.addMasterBond(source.masterTerm()->name());
-            master->get().setFormAndParameters(source.form(), source.parameters());
+            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         }
         dest.setMasterTerm(&master->get());
     }
     else
-        dest.setFormAndParameters(source.form(), source.parameters());
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
 }
 void Dissolve::copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest)
 {
@@ -84,12 +83,12 @@ void Dissolve::copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest)
         if (!master)
         {
             master = coreData_.addMasterAngle(source.masterTerm()->name());
-            master->get().setFormAndParameters(source.form(), source.parameters());
+            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         }
         dest.setMasterTerm(&master->get());
     }
     else
-        dest.setFormAndParameters(source.form(), source.parameters());
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
 }
 void Dissolve::copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest)
 {
@@ -99,12 +98,12 @@ void Dissolve::copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &
         if (!master)
         {
             master = coreData_.addMasterTorsion(source.masterTerm()->name());
-            master->get().setFormAndParameters(source.form(), source.parameters());
+            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         }
         dest.setMasterTerm(&master->get());
     }
     else
-        dest.setFormAndParameters(source.form(), source.parameters());
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
 }
 void Dissolve::copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest)
 {
@@ -114,12 +113,12 @@ void Dissolve::copySpeciesImproper(const SpeciesImproper &source, SpeciesImprope
         if (!master)
         {
             master = coreData_.addMasterImproper(source.masterTerm()->name());
-            master->get().setFormAndParameters(source.form(), source.parameters());
+            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         }
         dest.setMasterTerm(&master->get());
     }
     else
-        dest.setFormAndParameters(source.form(), source.parameters());
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
 }
 
 // Copy Species from supplied instance

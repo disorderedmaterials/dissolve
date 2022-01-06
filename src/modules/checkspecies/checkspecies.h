@@ -57,7 +57,7 @@ class CheckSpeciesModule : public Module
             return Messenger::error("No {} {} exists in the species.", intraType, indexString);
 
         const T &intra = *term;
-        const auto &sourceParams = intra.parameters();
+        const auto &sourceParams = intra.interactionParameters();
 
         // Check parameter values
         auto result = true;

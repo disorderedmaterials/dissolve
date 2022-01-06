@@ -211,8 +211,7 @@ void AddForcefieldTermsDialog::finalise()
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
         {
-            original.atomType()->setShortRangeParameters(modified.atomType()->shortRangeParameters());
-            original.atomType()->setShortRangeType(modified.atomType()->shortRangeType());
+            original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
             original.atomType()->setCharge(modified.atomType()->charge());
             dissolve_.coreData().bumpAtomTypesVersion();
         }

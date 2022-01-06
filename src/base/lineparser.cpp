@@ -819,7 +819,7 @@ bool LineParser::commitCache()
 int LineParser::nArgs() const { return arguments_.size(); }
 
 // Returns the specified argument as a string
-std::string LineParser::args(int i)
+std::string LineParser::args(int i) const
 {
     if ((i < 0) || (i >= nArgs()))
     {
@@ -830,7 +830,7 @@ std::string LineParser::args(int i)
 }
 
 // Returns the specified argument as a character string view
-std::string_view LineParser::argsv(int i)
+std::string_view LineParser::argsv(int i) const
 {
     if ((i < 0) || (i >= nArgs()))
     {
@@ -841,7 +841,7 @@ std::string_view LineParser::argsv(int i)
 }
 
 // Returns the specified argument as an integer
-int LineParser::argi(int i)
+int LineParser::argi(int i) const
 {
     if ((i < 0) || (i >= nArgs()))
     {
@@ -852,7 +852,7 @@ int LineParser::argi(int i)
 }
 
 // Returns the specified argument as a long integer
-long int LineParser::argli(int i)
+long int LineParser::argli(int i) const
 {
     if ((i < 0) || (i >= nArgs()))
     {
@@ -863,7 +863,7 @@ long int LineParser::argli(int i)
 }
 
 // Returns the specified argument as a double
-double LineParser::argd(int i)
+double LineParser::argd(int i) const
 {
     if ((i < 0) || (i >= nArgs()))
     {
@@ -895,7 +895,7 @@ double LineParser::argd(int i)
 }
 
 // Returns the specified argument as a bool
-bool LineParser::argb(int i)
+bool LineParser::argb(int i) const
 {
     if ((i < 0) || (i >= nArgs()))
     {
@@ -906,7 +906,7 @@ bool LineParser::argb(int i)
 }
 
 // Return the specified and next two arguments as a Vec3<int>
-Vec3<int> LineParser::arg3i(int i)
+Vec3<int> LineParser::arg3i(int i) const
 {
     if ((i < 0) || (i >= (nArgs() - 2)))
     {
@@ -917,7 +917,7 @@ Vec3<int> LineParser::arg3i(int i)
 }
 
 // Return the specified and next two arguments as a Vec3<double>
-Vec3<double> LineParser::arg3d(int i)
+Vec3<double> LineParser::arg3d(int i) const
 {
     if ((i < 0) || (i >= (nArgs() - 2)))
     {
@@ -928,7 +928,7 @@ Vec3<double> LineParser::arg3d(int i)
 }
 
 // Return a vector of double parameters, starting from the specified argument
-std::vector<double> LineParser::argvd(int i)
+std::vector<double> LineParser::argvd(int i) const
 {
     if ((i < 0) || (i >= nArgs()))
     {

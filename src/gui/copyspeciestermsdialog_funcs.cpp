@@ -65,7 +65,7 @@ void CopySpeciesTermsDialog::findTermsToCopy(std::vector<std::pair<Intra *, cons
         // Only selected and/or unassigned terms?
         if (onlySelected && !targetTerm.isSelected())
             continue;
-        if (onlyUnassigned && targetTerm.form() != unassignedForm)
+        if (onlyUnassigned && targetTerm.interactionForm() != unassignedForm)
             continue;
 
         // Check for a suitable term in the target species
@@ -99,7 +99,7 @@ template <class I> void CopySpeciesTermsDialog::copyTerms(const std::vector<std:
         else
         {
             target->detachFromMasterTerm();
-            target->setFormAndParameters(source->form(), source->parameters());
+            target->setInteractionFormAndParameters(source->interactionForm(), source->interactionParameters());
         }
     }
 }
