@@ -96,6 +96,9 @@ ProcedureModel::ProcedureModel(Procedure &procedure) : procedure_(procedure)
 int ProcedureModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+
+    // FIXME: We shouldn't just be counting the nodes but all of the
+    // keywords
     return procedure_.nodes().size();
 }
 
