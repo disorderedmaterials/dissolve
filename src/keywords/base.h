@@ -9,6 +9,7 @@
 #include <optional>
 #include <string>
 #include <typeindex>
+#include <utility>
 #include <vector>
 
 // Forward Declarations
@@ -88,9 +89,9 @@ class KeywordBase
 
     public:
     // Set signals to be emitted (via Qt) when editing this keyword in the GUI
-    void setSignalMask(int signalMask);
+    void setEditSignals(std::initializer_list<KeywordSignals::KeywordSignal> editSignals);
     // Return signals to be emitted (via Qt) when editing this keyword in the GUI
-    KeywordSignals signalMask() const;
+    KeywordSignals editSignals() const;
 
     /*
      * Object Management
