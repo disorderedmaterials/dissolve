@@ -17,7 +17,7 @@
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
-  : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this), procedureModel_(cfg->generator())
+  : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this), procedureModel_(cfg->generator()), activeWidget_(nullptr)
 {
     ui_.setupUi(this);
 
@@ -231,8 +231,12 @@ void ConfigurationTab::updateProcedureWidget(const QModelIndex &index) {
   
   if (data != nullptr) {
     QWidget *widget = KeywordWidgetProducer::create(data->keywords().displayGroups()[0].second[0], dissolve_.coreData()).first;
-    ui_.verticalLayout_2->addWidget(widget);
+    if (!activeWidget_)
+      ui_.ProcedureLayout->addWidget(widget);
+    else
+      ui_.ProcedureLayout->replaceWidget(activeWidget_, widget);
     ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
+    activeWidget_ = widget;
   }
   else
     ui_.TempLabel->setText(var.typeName());
