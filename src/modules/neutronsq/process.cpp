@@ -24,14 +24,14 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSi
         // Load the data
         Data1D referenceData;
         if (!referenceFQ_.importData(referenceData, &procPool))
-            return Messenger::error("Failed to load reference data '{}'.\n", referenceFQ_.filename());
+            return Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", uniqueName_, referenceFQ_.filename());
 
         // Get dependent modules
         if (!sourceSQ_)
-            return Messenger::error("A source SQ module must be provided.\n");
+            return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", uniqueName_);
         auto *rdfModule = sourceSQ_->sourceRDF();
         if (!rdfModule)
-            return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
+            return Messenger::error("[SETUP {}] A source RDF module (in the SQ module) must be provided.\n", uniqueName_);
 
         // Remove normalisation_ factor from data
         if (referenceNormalisation_ != StructureFactors::NoNormalisation)
@@ -44,14 +44,14 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSi
             if (referenceNormalisation_ == StructureFactors::AverageOfSquaresNormalisation)
             {
                 referenceData *= weights.boundCoherentAverageOfSquares();
-                Messenger::print("NeutronSQ: Removed <b>**2 normalisation_ from reference data ('{}'), factor = {}.\n",
-                                 uniqueName(), weights.boundCoherentAverageOfSquares());
+                Messenger::print("[SETUP {}] Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n",
+                                 uniqueName_, uniqueName(), weights.boundCoherentAverageOfSquares());
             }
             else if (referenceNormalisation_ == StructureFactors::SquareOfAverageNormalisation)
             {
                 referenceData *= weights.boundCoherentSquareOfAverage();
-                Messenger::print("NeutronSQ: Removed <b**2> normalisation_ from reference data ('{}'), factor = {}.\n",
-                                 uniqueName(), weights.boundCoherentSquareOfAverage());
+                Messenger::print("[SETUP {}] Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n",
+                                 uniqueName_, uniqueName(), weights.boundCoherentSquareOfAverage());
             }
         }
 
@@ -59,10 +59,11 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSi
         auto ftQMin = referenceFTQMin_.value_or(0.0);
         auto ftQMax = referenceFTQMax_.value_or(referenceData.xAxis().back() + 1.0);
         if (referenceWindowFunction_ == WindowFunction::Form::None)
-            Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
+            Messenger::print("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).",
+                             uniqueName_);
         else
-            Messenger::print("Window function to be applied in Fourier transform of reference data is {}.",
-                             WindowFunction::forms().keyword(referenceWindowFunction_));
+            Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of reference data is {}.",
+                             uniqueName_, WindowFunction::forms().keyword(referenceWindowFunction_));
 
         // Store the reference data in processing
         referenceData.setTag(uniqueName());
@@ -77,7 +78,9 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSi
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
         auto rho = rdfModule->effectiveDensity();
-        Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
+        Messenger::print(
+            "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n",
+            uniqueName_, rho);
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
                         WindowFunction(referenceWindowFunction_));
 

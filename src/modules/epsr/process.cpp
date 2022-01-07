@@ -42,26 +42,28 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals
             sqModule = optSQModule.value();
         if (!sqModule)
             return Messenger::error(
-                "Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
-                module->uniqueName());
+                "[SETUP {}] Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
+                uniqueName_, module->uniqueName());
 
         auto *rdfModule = sqModule->sourceRDF();
         if (!rdfModule)
-            return Messenger::error("Target '{}'s S(Q) module doesn't reference an RDFModule, it can't be used as a target "
-                                    "for the EPSR module.",
-                                    module->uniqueName());
+            return Messenger::error(
+                "[SETUP {}] Target '{}'s S(Q) module doesn't reference an RDFModule, it can't be used as a target "
+                "for the EPSR module.",
+                uniqueName_, module->uniqueName());
 
         // Check for number of targets, or different target if there's only 1
         auto rdfConfigs = rdfModule->keywords().get<std::vector<Configuration *>>("Configuration");
         if (rdfConfigs.size() != 1)
-            return Messenger::error("RDF module '{}' targets multiple configurations, which is not permitted when using "
-                                    "its data in the EPSR module.",
-                                    rdfModule->uniqueName());
+            return Messenger::error(
+                "[SETUP {}] RDF module '{}' targets multiple configurations, which is not permitted when using "
+                "its data in the EPSR module.",
+                uniqueName_, rdfModule->uniqueName());
 
         if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfConfigs.front()))
-            return Messenger::error("RDF module '{}' targets a configuration which is different from another target "
+            return Messenger::error("[SETUP {}] RDF module '{}' targets a configuration which is different from another target "
                                     "module, and which is not permitted when using its data in the EPSR module.",
-                                    rdfModule->uniqueName());
+                                    uniqueName_, rdfModule->uniqueName());
         else
             targetConfiguration_ = rdfConfigs.front();
 
@@ -71,11 +73,11 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals
     // If a pcof file was provided, read in the parameters from it here
     if (!pCofFilename_.empty())
     {
-        Messenger::print("Reading potential coefficients from '{}'...\n", pCofFilename_);
+        Messenger::print("[SETUP {}] Reading potential coefficients from '{}'...\n", uniqueName_, pCofFilename_);
 
         // Read in the coefficients / setup from the supplied file
         if (!readPCof(dissolve, procPool, pCofFilename_))
-            return Messenger::error("Failed to read in potential coefficients from EPSR pcof file.\n");
+            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n");
 
         // Set up the additional potentials - reconstruct them from the current coefficients
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
