@@ -230,8 +230,8 @@ void ConfigurationTab::updateProcedureWidget(const QModelIndex &index) {
   auto data = var.value<const ProcedureNode *>();
   
   if (data != nullptr) {
-    QWidget *widget = KeywordWidgetProducer::create(data, dissolve_.coreData());
-    ui_.verticalLayout_2.addWidget(widget);
+    QWidget *widget = KeywordWidgetProducer::create(data->keywords().displayGroups()[0].second[0], dissolve_.coreData()).first;
+    ui_.verticalLayout_2->addWidget(widget);
     ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
   }
   else
