@@ -37,7 +37,7 @@ void AtomTypeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

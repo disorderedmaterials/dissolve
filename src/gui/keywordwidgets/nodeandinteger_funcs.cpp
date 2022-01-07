@@ -45,7 +45,7 @@ void NodeAndIntegerKeywordWidget::on_IntegerSpin_valueChanged(int value)
 
     keyword_->setIndex(value);
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
@@ -55,7 +55,7 @@ void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
 
     keyword_->setNode(allowedNodes_[ui_.NodeCombo->currentIndex()]);
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*
