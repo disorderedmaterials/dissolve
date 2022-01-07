@@ -101,4 +101,6 @@ void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeight
         else
             weights.addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
     }
+
+    weights.createFromIsotopologues(exchangeable_);
 }

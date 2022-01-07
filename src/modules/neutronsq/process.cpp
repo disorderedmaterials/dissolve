@@ -155,10 +155,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &weights =
         dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", uniqueName_, GenericItem::InRestartFileFlag);
     calculateWeights(rdfModule, weights);
-
-    // Create, print, and store weights
     Messenger::print("Isotopologue and isotope composition:\n\n");
-    weights.createFromIsotopologues(exchangeable_);
     weights.print();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
