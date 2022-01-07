@@ -152,7 +152,8 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
         switch (index.column())
         {
             case 0:
-                return QString::fromStdString(std::string(nodes[index.row()]->name()));
+                // auto type = node->type();
+                return QString::fromStdString(nodes[index.row()]->nodeTypes().keyword(nodes[index.row()]->type()));
             default:
                 return {};
         }
