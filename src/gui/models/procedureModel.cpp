@@ -93,100 +93,26 @@ ProcedureModel::ProcedureModel(Procedure &procedure) : procedure_(procedure)
     QMetaType::registerConverter<KeywordBase *, QString>(KeywordBaseToString);
 }
 
-QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent) const
-{
-    quintptr child;
-    if (!parent.isValid())
-        child = 0;
-    else if (!parent.parent().isValid())
-        child = parent.row() + 1;
-    else
-        child = OFFSET * (parent.row() + 1) + parent.parent().row() + 1;
-
-    return createIndex(row, column, child);
-}
-
-QModelIndex ProcedureModel::parent(const QModelIndex &index) const
-{
-    quintptr root = 0;
-    if (index.internalId() == 0)
-        return {};
-    if (index.internalId() < OFFSET)
-        return createIndex(index.internalId() - 1, 0, root);
-    return createIndex(index.internalId() / OFFSET - 1, 0, index.internalId() % OFFSET);
-}
-
-bool ProcedureModel::hasChildren(const QModelIndex &parent) const
-{
-    return !parent.internalId() || !parent.parent().internalId();
-}
-
-int ProcedureModel::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
-    return 2;
-}
-
 int ProcedureModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    auto nodes = procedure_.nodes();
-    if (!parent.isValid())
-        return nodes.size();
-    if (!parent.parent().isValid())
-    {
-        auto groups = nodes[parent.row()]->keywords().displayGroups();
-        return groups.size();
-    }
-    auto groups = nodes[parent.parent().row()]->keywords().displayGroups();
-    return groups[parent.row()].second.size();
+    return procedure_.nodes().size();
 }
 
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
 {
     if (role != Qt::DisplayRole)
         return {};
-    auto nodes = procedure_.nodes();
-    if (!index.parent().isValid())
+    auto node = procedure_.nodes()[index.row()];
+    switch (role)
     {
-        switch (index.column())
-        {
-            case 0:
-                // auto type = node->type();
-                return QString::fromStdString(nodes[index.row()]->nodeTypes().keyword(nodes[index.row()]->type()));
-            default:
-                return {};
-        }
+        case Qt::DisplayRole:
+            return QString::fromStdString(node->nodeTypes().keyword(node->type()));
+        case Qt::UserRole:
+            return QVariant::fromValue(node);
+        default:
+            return {};
     }
-    else if (!index.parent().parent().isValid())
-    {
-        auto groups = nodes[index.parent().row()]->keywords().displayGroups();
-
-        switch (index.column())
-        {
-            case 0:
-                return QString::fromStdString(std::string(groups[index.row()].first));
-            default:
-                return {};
-        }
-    }
-    else
-    {
-        auto groups = nodes[index.parent().parent().row()]->keywords().displayGroups();
-        auto keyword = groups[index.parent().row()].second[index.row()];
-
-        switch (index.column())
-        {
-            case 0:
-                return QString::fromStdString(std::string(keyword->name()));
-            case 1:
-                return QVariant::fromValue(keyword);
-            default:
-                return {};
-        }
-    }
-
-    return {};
 }
 
 bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, int role) { return false; }
@@ -199,15 +125,7 @@ QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, in
         return {};
 
     if (orientation == Qt::Horizontal)
-        switch (section)
-        {
-            case 0:
-                return "Name";
-            case 1:
-                return "Type";
-            default:
-                return {};
-        }
+        return "Name";
 
     return {};
 }

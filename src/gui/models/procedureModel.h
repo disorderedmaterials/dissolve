@@ -10,7 +10,7 @@
 
 #include <vector>
 
-class ProcedureModel : public QAbstractItemModel
+class ProcedureModel : public QAbstractListModel
 {
     Q_OBJECT
 
@@ -23,10 +23,6 @@ class ProcedureModel : public QAbstractItemModel
      */
     public:
     ProcedureModel(Procedure &procedure);
-    QModelIndex index(int row, int column, const QModelIndex& parent) const override;
-    QModelIndex parent(const QModelIndex& index) const override;
-    bool hasChildren(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
