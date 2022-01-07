@@ -150,6 +150,7 @@ void ForcefieldTab::updateControls()
     ui_.PairPotentialsAtomTypeChargesRadio->setDisabled(dissolve_.automaticChargeSource());
     ui_.PairPotentialsSpeciesAtomChargesRadio->setDisabled(dissolve_.automaticChargeSource());
     ui_.ForceChargeSourceCheck->setChecked(dissolve_.forceChargeSource());
+    ui_.ForceChargeSourceCheck->setDisabled(dissolve_.automaticChargeSource());
     if (dissolve_.atomTypeChargeSource())
         ui_.PairPotentialsAtomTypeChargesRadio->setChecked(true);
     else

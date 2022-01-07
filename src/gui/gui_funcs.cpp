@@ -195,7 +195,7 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
 
         if (DissolveSys::fileExists(actualRestartFile))
         {
-            Messenger::print("\nRestart file '{}' exists and will be loaded.\n", actualRestartFile);
+            Messenger::print("Restart file '{}' exists and will be loaded.\n", actualRestartFile);
             if (!dissolve_.loadRestart(actualRestartFile))
                 QMessageBox::warning(this, "Restart file contained errors.",
                                      "The restart file failed to load correctly.\nSee the messages for more details.",
@@ -205,10 +205,10 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
             dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
         }
         else
-            Messenger::print("\nRestart file '{}' does not exist.\n", actualRestartFile);
+            Messenger::print("Restart file '{}' does not exist.\n", actualRestartFile);
     }
     else
-        Messenger::print("\nRestart file (if it exists) will be ignored.\n");
+        Messenger::print("Restart file (if it exists) will be ignored.\n");
 
     modified_ = false;
     dissolveIterating_ = false;
