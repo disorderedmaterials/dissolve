@@ -213,7 +213,9 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
     modified_ = false;
     dissolveIterating_ = false;
 
-    return true;
+    Messenger::banner("Setting Up Processing Modules");
+
+    return dissolve_.setUpProcessingLayerModules();
 }
 
 /*

@@ -194,6 +194,8 @@ class Dissolve
     std::string uniqueProcessingLayerName(std::string_view baseName) const;
     // Return list of processing layers
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
+    // Run the set-up stages of all modules in all layers
+    bool setUpProcessingLayerModules();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
 
