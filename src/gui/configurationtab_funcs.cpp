@@ -10,6 +10,7 @@
 #include "gui/getconfigurationnamedialog.h"
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
+#include "gui/keywordwidgets/producers.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
@@ -228,8 +229,11 @@ void ConfigurationTab::updateProcedureWidget(const QModelIndex &index) {
   QVariant var = procedureModel_.data(index, Qt::UserRole);
   auto data = var.value<const ProcedureNode *>();
   
-  if (data != nullptr)
+  if (data != nullptr) {
+    QWidget *widget = KeywordWidgetProducer::create(data, dissolve_.coreData());
+    ui_.verticalLayout_2.addWidget(widget);
     ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
+  }
   else
     ui_.TempLabel->setText(var.typeName());
 }
