@@ -190,21 +190,21 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 // Target keyword data changed
 void ModuleControlWidget::moduleKeywordChanged(int signalMask)
 {
-    printf("HERE IN MODULEKEYWORDCHANGED : signalmask = %i\n", signalMask);
     if (refreshLock_.isLocked())
         return;
 
     // Always emit the 'dataModified' signal
     emit(dataModified());
-    printf("NOw here.\n");
 
-    // If we have a signal mask set, call the module's setUp() function with it
-    if (signalMask > 0)
-    {
-        module_->setUp(*dissolve_, dissolve_->worldPool(), KeywordSignals(signalMask));
-        if (moduleWidget_)
-            moduleWidget_->updateControls(signalMask & KeywordSignals::RecreateRenderables
-                                              ? ModuleWidget::UpdateType::RecreateRenderables
-                                              : ModuleWidget::UpdateType::Normal);
-    }
+    KeywordSignals keywordSignals(signalMask);
+
+    // Call the module's setUp() function with it
+    if (keywordSignals.anySet())
+        module_->setUp(*dissolve_, dissolve_->worldPool(), keywordSignals);
+
+    // Handle specific flags for the module widget
+    if (moduleWidget_)
+        moduleWidget_->updateControls(keywordSignals.isSet(KeywordSignals::RecreateRenderables)
+                                          ? ModuleWidget::UpdateType::RecreateRenderables
+                                          : ModuleWidget::UpdateType::Normal);
 }
