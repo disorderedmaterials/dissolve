@@ -18,7 +18,7 @@
 #include <functional>
 #include <map>
 
-Q_DECLARE_METATYPE(KeywordBase *);
+Q_DECLARE_METATYPE(const KeywordBase *);
 
 static const std::map<std::type_index, std::function<QString(KeywordBase *)>> readers = {
     {typeid(BoolKeyword *),
@@ -101,15 +101,13 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
 
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
 {
-    if (role != Qt::DisplayRole)
-        return {};
     auto node = procedure_.nodes()[index.row()];
     switch (role)
     {
         case Qt::DisplayRole:
             return QString::fromStdString(node->nodeTypes().keyword(node->type()));
         case Qt::UserRole:
-            return QVariant::fromValue(node);
+            return QVariant::fromValue(node.get());
         default:
             return {};
     }

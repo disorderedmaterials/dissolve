@@ -678,7 +678,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QTreeView" name="ProcedureWidget" native="true">
+       <widget class="QListView" name="ProcedureWidget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -687,6 +687,19 @@
         </property>
        </widget>
       </item>
+        <item>
+         <widget class="QLabel" name="TempLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Place</string>
+          </property>
+         </widget>
+        </item>
      </layout>
     </widget>
    </item>

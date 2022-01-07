@@ -91,4 +91,5 @@ class ConfigurationTab : public QWidget, public MainTab
     void on_CoordinatesFileSelectButton_clicked(bool checked);
     // Size Factor Scaling
     void on_RequestedSizeFactorSpin_valueChanged(double value);
+    void updateProcedureWidget(const QModelIndex &);
 };

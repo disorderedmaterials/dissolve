@@ -37,6 +37,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     // Set target for ProcedureEditor, and connect signals
     ui_.ProcedureWidget->setModel(&procedureModel_);
     connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
+    connect(ui_.ProcedureWidget, SIGNAL(clicked(const QModelIndex &)), this, SLOT(updateProcedureWidget(const QModelIndex &)));
 }
 
 /*
@@ -221,4 +222,14 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
     configuration_->setRequestedSizeFactor(value);
 
     dissolveWindow_->setModified();
+}
+
+void ConfigurationTab::updateProcedureWidget(const QModelIndex &index) {
+  QVariant var = procedureModel_.data(index, Qt::UserRole);
+  auto data = var.value<const ProcedureNode *>();
+  
+  if (data != nullptr)
+    ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
+  else
+    ui_.TempLabel->setText(var.typeName());
 }
