@@ -61,6 +61,9 @@ void DissolveWindow::startNew()
 
     refreshing_ = false;
 
+    // Explicitly show the main stack page
+    ui_.MainStack->setCurrentIndex(1);
+
     fullUpdate();
 }
 
@@ -85,8 +88,6 @@ void DissolveWindow::on_FileOpenAction_triggered(bool checked)
 
     openLocalFile(qPrintable(inputFile), "", false);
 
-    // Fully update GUI
-    ui_.MainStack->setCurrentIndex(1);
     fullUpdate();
 }
 
@@ -110,6 +111,7 @@ void DissolveWindow::on_FileCloseAction_triggered(bool checked)
     dissolveIterating_ = false;
     modified_ = false;
 
+    // Set the stack back to the ident page
     ui_.MainStack->setCurrentIndex(0);
     fullUpdate();
 }

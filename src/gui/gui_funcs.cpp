@@ -177,10 +177,15 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
         }
 
         if (!loadResult)
+        {
             QMessageBox::warning(this, "Input file contained errors.",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
+
+            // Forcibly show the main stack page so the user can see what happened (the input file name will remain unset)
+            ui_.MainStack->setCurrentIndex(1);
+        }
     }
     else
         return Messenger::error("Input file does not exist.\n");
@@ -245,8 +250,6 @@ void DissolveWindow::openRecent()
         std::string filePath = action->data().toString().toUtf8().constData();
         openLocalFile(filePath);
 
-        // Fully update GUI
-        ui_.MainStack->setCurrentIndex(1);
         fullUpdate();
     }
 }
@@ -396,6 +399,10 @@ void DissolveWindow::updateMenus()
 void DissolveWindow::fullUpdate()
 {
     refreshing_ = true;
+
+    // Move off the ident page if we currently have an input file (name)
+    if (dissolve_.hasInputFilename())
+        ui_.MainStack->setCurrentIndex(1);
 
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();
