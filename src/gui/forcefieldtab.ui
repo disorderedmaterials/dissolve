@@ -269,35 +269,6 @@
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QToolButton" name="UpdatePairPotentialsButton">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Update All</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="main.qrc">
-                    <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>16</width>
-                    <height>16</height>
-                   </size>
-                  </property>
-                  <property name="toolButtonStyle">
-                   <enum>Qt::ToolButtonTextBesideIcon</enum>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
               <item>
@@ -1232,22 +1203,5 @@
  <resources>
   <include location="main.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>AutoUpdatePairPotentialsCheck</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>UpdatePairPotentialsButton</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>616</x>
-     <y>82</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>715</x>
-     <y>84</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

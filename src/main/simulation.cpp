@@ -156,7 +156,7 @@ bool Dissolve::prepare()
     }
 
     // Make sure pair potentials are up-to-date
-    if (!generatePairPotentials())
+    if (!regeneratePairPotentials())
         return false;
 
     // Create PairPotential matrix

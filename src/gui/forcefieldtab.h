@@ -50,6 +50,10 @@ class ForcefieldTab : public QWidget, public MainTab
     MasterTermTorsionModel masterTorsionsTableModel_;
     MasterTermImproperModel masterImpropersTableModel_;
 
+    private:
+    // Update all pair potentials
+    void updatePairPotentials();
+
     protected:
     // Update controls in tab
     void updateControls() override;
@@ -79,7 +83,6 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_AutomaticChargeSourceCheck_clicked(bool checked);
     void on_ForceChargeSourceCheck_clicked(bool checked);
     void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
-    void on_UpdatePairPotentialsButton_clicked(bool checked);
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
     void pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous);
     // Master Terms

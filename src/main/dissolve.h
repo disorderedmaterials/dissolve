@@ -145,7 +145,7 @@ class Dissolve
     // Return map for PairPotentials
     const PotentialMap &potentialMap();
     // Clear and regenerate all PairPotentials, replacing those currently defined
-    void regeneratePairPotentials();
+    bool regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
     bool generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving = nullptr);
 
