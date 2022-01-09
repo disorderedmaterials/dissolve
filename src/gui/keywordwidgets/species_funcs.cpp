@@ -2,37 +2,44 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/coredata.h"
-#include "classes/species.h"
-#include "gui/helpers/comboboxupdater.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
-#include "gui/keywordwidgets/species.hui"
+#include "gui/keywordwidgets/species.h"
 
 SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, SpeciesKeyword *keyword, const CoreData &coreData)
-    : QComboBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Set current information
-    updateValue();
+    // Setup our UI
+    ui_.setupUi(this);
 
-    // Connect the
-    connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxIndexChanged(int)));
+    refreshing_ = true;
+    speciesModel_.setData(coreData.species());
+    ui_.SpeciesCombo->setModel(&speciesModel_);
+    auto it = std::find_if(coreData.species().begin(), coreData.species().end(),
+                           [keyword](const auto &sp) { return sp.get() == keyword->data(); });
+    ui_.SpeciesCombo->setCurrentIndex(it == coreData.species().end() ? -1 : it - coreData.species().begin());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
-    installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+    ui_.SpeciesCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.SpeciesCombo));
+
+    refreshing_ = false;
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
-// Combo box item changed
-void SpeciesKeywordWidget::comboBoxIndexChanged(int index)
+// Value changed
+void SpeciesKeywordWidget::on_SpeciesCombo_currentIndexChanged(int index)
 {
     if (refreshing_)
         return;
 
-    Species *sp = (index == -1 ? nullptr : VariantPointer<Species>(itemData(index, Qt::UserRole)));
-    keyword_->data() = sp;
+    // Get data from the selected item
+    if (index == -1)
+        keyword_->data() = nullptr;
+    else
+        keyword_->data() = ui_.SpeciesCombo->currentData(Qt::UserRole).value<Species *>();
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
@@ -42,12 +49,4 @@ void SpeciesKeywordWidget::comboBoxIndexChanged(int index)
  */
 
 // Update value displayed in widget
-void SpeciesKeywordWidget::updateValue()
-{
-    refreshing_ = true;
-
-    // Update the QComboBox against the global Species list
-    ComboBoxUpdater<Species> comboUpdater(this, coreData_.species(), keyword_->data());
-
-    refreshing_ = false;
-}
+void SpeciesKeywordWidget::updateValue() {}

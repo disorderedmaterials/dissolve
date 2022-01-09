@@ -4,13 +4,12 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_species.h"
+#include "gui/models/speciesModel.h"
 #include "keywords/species.h"
-#include <QComboBox>
+#include <QWidget>
 
-// Forward Declarations
-class Species;
-
-class SpeciesKeywordWidget : public QComboBox, public KeywordWidgetBase
+class SpeciesKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
@@ -26,11 +25,17 @@ class SpeciesKeywordWidget : public QComboBox, public KeywordWidgetBase
     SpeciesKeyword *keyword_;
 
     /*
-     * Signals / Slots
+     * Widgets
      */
+    private:
+    // Main form declaration
+    Ui::SpeciesKeywordWidget ui_;
+    // Model for combo box
+    SpeciesModel speciesModel_;
+
     private slots:
-    // Combo box item changed
-    void comboBoxIndexChanged(int index);
+    // Value changed
+    void on_SpeciesCombo_currentIndexChanged(int index);
 
     signals:
     // Keyword data changed
