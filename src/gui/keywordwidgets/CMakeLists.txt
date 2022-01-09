@@ -24,7 +24,6 @@ set(keywordwidgets_MOC_HDRS
     speciesvector.h
     vec3double.h
     vec3integer.h
-    vec3labels.h
     vec3nodevalue.h
     bool.hui
     configuration.hui
@@ -106,6 +105,7 @@ set(keywordwidgets_SRCS
     vec3labels.cpp
     vec3nodevalue_funcs.cpp
     base.h
+    vec3labels.h
     producers.h
 )
 
