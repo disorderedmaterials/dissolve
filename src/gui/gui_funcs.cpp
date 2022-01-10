@@ -185,6 +185,8 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
 
             // Forcibly show the main stack page so the user can see what happened (the input file name will remain unset)
             ui_.MainStack->setCurrentIndex(1);
+
+            return false;
         }
     }
     else
