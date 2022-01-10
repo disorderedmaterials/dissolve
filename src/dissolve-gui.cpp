@@ -71,9 +71,7 @@ int main(int args, char **argv)
                     return 1;
 
                 // Run main simulation
-                auto result = dissolve.iterate(options.nIterations());
-                if (!result)
-                    return 1;
+                dissolve.iterate(options.nIterations());
             }
         }
     }
