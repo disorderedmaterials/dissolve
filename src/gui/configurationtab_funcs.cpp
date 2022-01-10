@@ -17,7 +17,8 @@
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
-  : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this), procedureModel_(cfg->generator()), activeWidget_(nullptr)
+    : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
+      procedureModel_(cfg->generator()), activeWidget_(nullptr)
 {
     ui_.setupUi(this);
 
@@ -37,8 +38,11 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     // Set target for ProcedureEditor, and connect signals
     ui_.ProcedureWidget->setModel(&procedureModel_);
-    connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
+    connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow,
+            SLOT(setModified()));
     connect(ui_.ProcedureWidget, SIGNAL(clicked(const QModelIndex &)), this, SLOT(updateProcedureWidget(const QModelIndex &)));
+    connect(ui_.ProcedureWidget, SIGNAL(activated(const QModelIndex &)), this,
+            SLOT(updateProcedureWidget(const QModelIndex &)));
 }
 
 /*
@@ -144,7 +148,7 @@ void ConfigurationTab::updateControls()
     ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
 
     // Generator
-    ui_.ProcedureWidget->updateControls();
+    // ui_.ProcedureWidget->updateControls();
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
@@ -225,19 +229,21 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
     dissolveWindow_->setModified();
 }
 
-void ConfigurationTab::updateProcedureWidget(const QModelIndex &index) {
-  QVariant var = procedureModel_.data(index, Qt::UserRole);
-  auto data = var.value<const ProcedureNode *>();
-  
-  if (data != nullptr) {
-    QWidget *widget = KeywordWidgetProducer::create(data->keywords().displayGroups()[0].second[0], dissolve_.coreData()).first;
-    if (!activeWidget_)
-      ui_.ProcedureLayout->addWidget(widget);
+void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
+{
+    QVariant var = procedureModel_.data(index, Qt::UserRole);
+    auto data = var.value<KeywordBase *>();
+
+    if (data != nullptr)
+    {
+        QWidget *widget = KeywordWidgetProducer::create(data, dissolve_.coreData()).first;
+        if (!activeWidget_)
+            ui_.ProcedureLayout->addWidget(widget);
+        else
+            ui_.ProcedureLayout->replaceWidget(activeWidget_, widget);
+        ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
+        activeWidget_ = widget;
+    }
     else
-      ui_.ProcedureLayout->replaceWidget(activeWidget_, widget);
-    ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
-    activeWidget_ = widget;
-  }
-  else
-    ui_.TempLabel->setText(var.typeName());
+        ui_.TempLabel->setText(var.typeName());
 }

@@ -16,7 +16,8 @@ class ProcedureModel : public QAbstractListModel
 
     private:
     // Source ProcedureNode data
-    Procedure& procedure_;
+    Procedure &procedure_;
+    std::vector<std::pair<std::string, KeywordBase *>> getKeywords_() const;
 
     /*
      * QAbstractItemModel overrides
@@ -25,7 +26,5 @@ class ProcedureModel : public QAbstractListModel
     ProcedureModel(Procedure &procedure);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 };
