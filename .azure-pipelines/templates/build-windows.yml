@@ -4,7 +4,7 @@ parameters:
   - name: qtver
     default: 6.1.1
   - name: ftrepo
-    default: git://git.sv.nongnu.org/freetype/freetype2.git
+    default: https://gitlab.freedesktop.org/freetype/freetype.git
   - name: ftglrepo
     default: https://github.com/frankheckenbach/ftgl.git
   - name: threading
