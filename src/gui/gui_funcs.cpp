@@ -192,11 +192,11 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
 
     // Load restart file if it exists
     Messenger::banner("Parse Restart File");
-    if (restartFile && !ignoreRestartFile)
+    if (ignoreRestartFile)
+        Messenger::print("Restart file (if it exists) will be ignored.\n");
+    else
     {
-        std::string actualRestartFile{restartFile.value()};
-        if (actualRestartFile.empty())
-            actualRestartFile = fmt::format("{}.restart", dissolve_.inputFilename());
+        std::string actualRestartFile{restartFile.value_or(fmt::format("{}.restart", dissolve_.inputFilename()))};
 
         if (DissolveSys::fileExists(actualRestartFile))
         {
@@ -212,8 +212,6 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
         else
             Messenger::print("Restart file '{}' does not exist.\n", actualRestartFile);
     }
-    else
-        Messenger::print("Restart file (if it exists) will be ignored.\n");
 
     modified_ = false;
     dissolveIterating_ = false;
