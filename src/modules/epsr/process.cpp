@@ -199,6 +199,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Retrieve the weighted S(Q)/F(Q)
+        if (!dissolve.processingModuleData().contains("WeightedSQ", module->uniqueName()))
+            return Messenger::error("Weighted partials data not found for target '{}'.\n", module->uniqueName());
         const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
@@ -212,9 +214,13 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 module->uniqueName());
 
         // Retrieve the unweighted S(Q)/F(Q)
+        if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
+            return Messenger::error("Unweighted partials data not found for target '{}'.\n", sqModule->uniqueName());
         const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName());
 
         // Retrieve the ReferenceData
+        if (!dissolve.processingModuleData().contains("ReferenceData", module->uniqueName()))
+            return Messenger::error("Reference data not found for target '{}'.\n", module->uniqueName());
         const auto &originalReferenceData =
             dissolve.processingModuleData().value<Data1D>("ReferenceData", module->uniqueName());
 
