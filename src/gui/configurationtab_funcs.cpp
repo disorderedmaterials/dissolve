@@ -240,7 +240,11 @@ void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
         if (!activeWidget_)
             ui_.ProcedureLayout->addWidget(widget);
         else
+        {
+            auto temp = activeWidget_;
             ui_.ProcedureLayout->replaceWidget(activeWidget_, widget);
+            delete temp;
+        }
         ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
         activeWidget_ = widget;
     }
