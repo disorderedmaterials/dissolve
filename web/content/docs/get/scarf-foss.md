@@ -21,7 +21,7 @@ Dissolve needs a compiler with C++17 support, which in FOSS (as of February 2021
 
 ```
 module load foss
-module load cmake/3.10.2
+module load CMake/3.16.4-GCCcore-9.3.0
 ```
 
 ## 3. Install Conan
