@@ -12,7 +12,7 @@ CalculateAvgMolModule::CalculateAvgMolModule() : Module("CalculateAvgMol")
     keywords_
         .add<SpeciesSiteKeyword>("Control", "Site", "Target site about which to calculate average species geometry",
                                  targetSite_, true)
-        ->setSignalMask(KeywordSignals::ReloadExternalData);
+        ->setEditSignals({KeywordSignals::ReloadExternalData});
 
     targetSpecies_ = nullptr;
 }

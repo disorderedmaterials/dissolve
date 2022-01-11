@@ -19,15 +19,12 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSi
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename() && actionSignals.setOrNone(KeywordSignals::ReloadExternalData))
+    if (referenceFQ_.hasFilename() && actionSignals.isSetOrNone(KeywordSignals::ReloadExternalData))
     {
         // Load the data
         Data1D referenceData;
         if (!referenceFQ_.importData(referenceData, &procPool))
-        {
-            Messenger::error("Failed to load reference data '{}'.\n", referenceFQ_.filename());
-            return false;
-        }
+            return Messenger::error("Failed to load reference data '{}'.\n", referenceFQ_.filename());
 
         // Get dependent modules
         if (!sourceSQ_)

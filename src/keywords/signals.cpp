@@ -15,15 +15,22 @@ KeywordSignals &KeywordSignals::operator=(int signalMask)
     return *this;
 }
 
+void KeywordSignals::operator+=(KeywordSignals::KeywordSignal signal) { signalMask_.set(signal); }
+
 void KeywordSignals::operator+=(int signalMask) { signalMask_ |= signalMask; }
+
+void KeywordSignals::operator-=(KeywordSignals::KeywordSignal signal) { signalMask_.reset(signal); }
 
 KeywordSignals::operator int() const { return signalMask_.to_ulong(); }
 
+// Return whether any signals are set
+bool KeywordSignals::anySet() const { return signalMask_.any(); }
+
 // Return true if the specified signal is set
-bool KeywordSignals::set(KeywordSignal keywordSignal) const { return signalMask_.test(keywordSignal); }
+bool KeywordSignals::isSet(KeywordSignal keywordSignal) const { return signalMask_.test(keywordSignal); }
 
 // Return true if the specified signal is set, or if none are set at all
-bool KeywordSignals::setOrNone(KeywordSignal keywordSignal) const
+bool KeywordSignals::isSetOrNone(KeywordSignal keywordSignal) const
 {
     return signalMask_.none() || signalMask_.test(keywordSignal);
 }

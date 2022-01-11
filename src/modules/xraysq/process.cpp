@@ -20,7 +20,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSigna
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename() && actionSignals.setOrNone(KeywordSignals::ReloadExternalData))
+    if (referenceFQ_.hasFilename() && actionSignals.isSetOrNone(KeywordSignals::ReloadExternalData))
     {
         // Load the data
         Data1D referenceData;

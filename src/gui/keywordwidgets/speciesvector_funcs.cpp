@@ -34,7 +34,7 @@ void SpeciesVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, co
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

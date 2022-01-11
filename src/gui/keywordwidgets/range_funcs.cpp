@@ -41,7 +41,7 @@ void RangeKeywordWidget::on_Spin1_valueChanged(double value)
 
     keyword_->data().setMinimum(value);
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 // Spin box value changed
@@ -52,7 +52,7 @@ void RangeKeywordWidget::on_Spin2_valueChanged(double value)
 
     keyword_->data().setMaximum(value);
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

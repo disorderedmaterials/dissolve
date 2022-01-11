@@ -40,7 +40,7 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
     else
         keyword_->setData(ui_.ModuleCombo->currentData(Qt::UserRole).value<Module *>());
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

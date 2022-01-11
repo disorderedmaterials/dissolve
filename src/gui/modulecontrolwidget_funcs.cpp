@@ -190,11 +190,13 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 // Target keyword data changed
 void ModuleControlWidget::moduleKeywordChanged(int signalMask)
 {
+    printf("HERE IN MODULEKEYWORDCHANGED : signalmask = %i\n", signalMask);
     if (refreshLock_.isLocked())
         return;
 
     // Always emit the 'dataModified' signal
     emit(dataModified());
+    printf("NOw here.\n");
 
     // If we have a signal mask set, call the module's setUp() function with it
     if (signalMask > 0)

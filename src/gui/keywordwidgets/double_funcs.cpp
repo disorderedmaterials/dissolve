@@ -35,7 +35,7 @@ void DoubleKeywordWidget::spinBoxValueChanged(double newValue)
         return;
 
     if (keyword_->setData(newValue))
-        emit(keywordDataChanged(keyword_->signalMask()));
+        emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*
