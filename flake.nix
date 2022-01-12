@@ -25,8 +25,8 @@
           antlr4.runtime.cpp
           cmake
           cli11
-          fmt
-          fmt.dev
+          fmt_8
+          fmt_8.dev
           freetype
           inetutils # for rsh
           jre

@@ -5,6 +5,7 @@
 
 #include "classes/changedata.h"
 #include <memory>
+#include <vector>
 
 // Forward Declarations
 class Atom;

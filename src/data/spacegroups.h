@@ -6,6 +6,7 @@
 #include "math/matrix4.h"
 #include "sginfo/sginfo.h"
 #include <string>
+#include <vector>
 
 class SpaceGroup
 {

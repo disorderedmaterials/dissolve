@@ -5,6 +5,7 @@
 
 #include "data/elements.h"
 #include <fmt/core.h>
+#include <vector>
 
 namespace EmpiricalFormula
 {
