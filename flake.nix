@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
+    latest.url = "github:NixOS/nixpkgs/nixos-21.11";
     flake-utils.url = "github:numtide/flake-utils";
     flake-utils.inputs.nixpkgs.follows = "nixpkgs";
     bundler.url = "github:matthewbauer/nix-bundle";
@@ -10,7 +11,7 @@
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
-  outputs = { self, nixpkgs, flake-utils, bundler, nixGL-src, weggli }:
+  outputs = { self, nixpkgs, latest, flake-utils, bundler, nixGL-src, weggli }:
     let
       exe-name = mpi: gui:
         if mpi then
@@ -25,8 +26,8 @@
           antlr4.runtime.cpp
           cmake
           cli11
-          fmt_8
-          fmt_8.dev
+          latest.legacyPackages.${system}.fmt_8
+          latest.legacyPackages.${system}.fmt_8.dev
           freetype
           inetutils # for rsh
           jre
