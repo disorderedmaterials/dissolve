@@ -140,7 +140,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.cend())
             throw(std::runtime_error(fmt::format(
-                "Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_, enumeration)));
+                "Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_, (int)enumeration)));
 
         return it->keyword();
     }
