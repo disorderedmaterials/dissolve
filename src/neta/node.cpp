@@ -135,7 +135,7 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
             result = (lhsValue <= rhsValue);
             break;
         default:
-            Messenger::error("Unrecognised operator (id = {}) in NETANode::valueComparison.\n", op);
+            Messenger::error("Unrecognised operator (id = {}) in NETANode::valueComparison.\n", (int)op);
             break;
     }
 
