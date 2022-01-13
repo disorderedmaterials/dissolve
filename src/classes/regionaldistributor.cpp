@@ -500,7 +500,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
 
         if (DND)
             Messenger::print("  -- Checking Cell {} for process/group {}: status = {}\n", cellIndex, processOrGroup,
-                             cellStatusFlags_[cellIndex]);
+                             cellStatusFlag(cellStatusFlags_[cellIndex]));
 
         if (cellStatusFlags_[cellIndex] != CellStatusFlag::Unused)
             continue;
