@@ -11,7 +11,7 @@ class ScaledEnergyKernel : public EnergyKernel
     public:
     ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool, const Box *box,
                        const CellArray &cells, const PotentialMap &potentialMap, double energyCutoff = -1.0);
-    ~ScaledEnergyKernel();
+    ~ScaledEnergyKernel() = default;
     // Clear all data
     void clear();
 
@@ -30,5 +30,5 @@ class ScaledEnergyKernel : public EnergyKernel
      */
     private:
     // Return PairPotential energy between atoms provided as pointers, at the distance specified
-    double pairPotentialEnergy(const std::shared_ptr<Atom> &i, const std::shared_ptr<Atom> &j, double r);
+    double pairPotentialEnergy(const Atom &i, const Atom &j, double r) override;
 };
