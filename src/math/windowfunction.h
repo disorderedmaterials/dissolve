@@ -52,7 +52,7 @@ class WindowFunction
     double y(double x, double omega) const;
 };
 
-template <> struct fmt::formatter<WindowFunction::Form>::formatter<std::string>
+template <> struct fmt::formatter<WindowFunction::Form> : formatter<std::string>
 {
     // parse is inherited from formatter<string_view>.
     template <typename FormatContext> auto format(WindowFunction::Form c, FormatContext &ctx)
@@ -74,5 +74,6 @@ template <> struct fmt::formatter<WindowFunction::Form>::formatter<std::string>
             case WindowFunction::Form::Lorch0:
                 return formatter<std::string>::format("Lorch0", ctx);
         }
+        throw(std::runtime_error("Unknown WindowFunction::Form"));
     }
 };
