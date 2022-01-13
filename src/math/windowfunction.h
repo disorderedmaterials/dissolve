@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include <fmt/format.h>
 
 // Forward Declarations
 class LineParser;
@@ -49,4 +50,29 @@ class WindowFunction
     bool setUp(const Data1D &data);
     // Return value of function given parameters x (current abscissa value) and omega (target abscissa value)
     double y(double x, double omega) const;
+};
+
+template <> struct fmt::formatter<WindowFunction::Form>::formatter<std::string>
+{
+    // parse is inherited from formatter<string_view>.
+    template <typename FormatContext> auto format(WindowFunction::Form c, FormatContext &ctx)
+    {
+        switch (c)
+        {
+            case WindowFunction::Form::None:
+                return formatter<std::string>::format("None", ctx);
+            case WindowFunction::Form::Bartlett:
+                return formatter<std::string>::format("Bartlett", ctx);
+            case WindowFunction::Form::Hann:
+                return formatter<std::string>::format("Hann", ctx);
+            case WindowFunction::Form::Lanczos:
+                return formatter<std::string>::format("Lanczos", ctx);
+            case WindowFunction::Form::Nuttall:
+                return formatter<std::string>::format("Nuttall", ctx);
+            case WindowFunction::Form::Sine:
+                return formatter<std::string>::format("Sine", ctx);
+            case WindowFunction::Form::Lorch0:
+                return formatter<std::string>::format("Lorch0", ctx);
+        }
+    }
 };
