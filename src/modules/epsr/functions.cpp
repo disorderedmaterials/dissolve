@@ -41,21 +41,22 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWra
 }
 
 // Create / retrieve arrays for storage of empirical potential coefficients
-Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
+Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes,
+                                                                std::optional<int> ncoeffp)
 {
     auto &coefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
         "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
 
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
-        ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
+        (ncoeffp && ncoeffp.value() != arrayNCoeffP))
     {
         coefficients.initialise(nAtomTypes, nAtomTypes, true);
         for (auto &n : coefficients)
         {
             n.clear();
-            if (ncoeffp > 0)
-                n.resize(ncoeffp, 0);
+            if (ncoeffp && ncoeffp.value() > 0)
+                n.resize(ncoeffp.value(), 0);
         }
     }
 
@@ -64,8 +65,8 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
 
 // Generate empirical potentials from current coefficients
 bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType expansionFunction_,
-                                             double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1,
-                                             double sigma2)
+                                             double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
+                                             double sigma1, double sigma2)
 {
     const auto nAtomTypes = dissolve.nAtomTypes();
 

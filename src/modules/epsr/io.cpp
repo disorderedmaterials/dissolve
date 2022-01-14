@@ -126,7 +126,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
     for (auto &n : potentialCoefficients)
     {
         n.clear();
-        n.resize(nCoeffP_, 0.0);
+        n.resize(nCoeffP_.value_or(0), 0.0);
     }
 
     // Now we are ready to read in the potential coefficients - first line contains the number of pair potentials to expect
@@ -160,9 +160,9 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
         auto &coefficients = potentialCoefficients[{at1->index(), at2->index()}];
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read coefficients from pcof file.\n");
-        if (parser.nArgs() != nCoeffP_)
+        if (parser.nArgs() != nCoeffP_.value_or(-1))
             return Messenger::error("Number of potential coefficients ({}) does not match ncoeffp ({}).\n", parser.nArgs(),
-                                    nCoeffP_);
+                                    nCoeffP_.value_or(-1));
         for (auto i = 0; i < nCoeffP_; ++i)
             coefficients[i] = parser.argd(i);
 

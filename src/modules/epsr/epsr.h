@@ -55,9 +55,9 @@ class EPSRModule : public Module
     // Whether to apply generated perturbations to interatomic potentials
     bool modifyPotential_{true};
     // Number of coefficients used to define the empirical potential (-1 for automatic)
-    int nCoeffP_{-1};
+    std::optional<int> nCoeffP_;
     // Number of steps for refining the potential
-    int nPItSs_{1000};
+    std::optional<int> nPItSs_{1000};
     // Whether to only modify potentials if configuration energy(s) are stable
     bool onlyWhenEnergyStable_{true};
     // Overwrite potentials each time rather than summing them
@@ -110,10 +110,11 @@ class EPSRModule : public Module
 
     public:
     // Create / retrieve arrays for storage of empirical potential coefficients
-    Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
+    Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes,
+                                                        std::optional<int> ncoeffp = std::nullopt);
     // Generate empirical potentials from current coefficients
     bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho,
-                                     int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+                                     std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
     // Generate and return single empirical potential function
     Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
     // Calculate absolute energy of empirical potentials

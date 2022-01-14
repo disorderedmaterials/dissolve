@@ -77,7 +77,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals
 
         // Read in the coefficients / setup from the supplied file
         if (!readPCof(dissolve, procPool, pCofFilename_))
-            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n");
+            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", uniqueName_);
 
         // Set up the additional potentials - reconstruct them from the current coefficients
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
@@ -111,14 +111,14 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         rMaxPT_ = dissolve.pairPotentialRange();
     if (rMinPT_ < 0.0)
         rMinPT_ = rMaxPT_ - 2.0;
-    if (nCoeffP_ <= 0)
+    if (!nCoeffP_)
         nCoeffP_ = std::min(int(10.0 * rMaxPT_ + 0.0001), mcoeff);
 
     // Print option summary
     Messenger::print("EPSR: Feedback factor is {}.\n", feedback_);
     Messenger::print("EPSR: {} functions will be used to approximate difference data.\n",
                      expansionFunctionTypes().keyword(expansionFunction_));
-    Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_, pSigma2_);
+    Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_.value(), pSigma2_);
     if (modifyPotential_)
         Messenger::print("EPSR: Perturbations to interatomic potentials will be generated and applied.\n");
     else
@@ -172,7 +172,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
     const auto nAtomTypes = dissolve.nAtomTypes();
-    Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, nCoeffP_);
+    Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, nCoeffP_.value());
     fluctuationCoefficients = 0.0;
 
     // Create storage for our summed UnweightedSQ
@@ -267,26 +267,28 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 
         auto fitError = 0.0;
+        auto nIterations = nPItSs_.value_or(0);
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
             // Construct our fitting object
             GaussFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, gSigma1_, nPItSs_, 0.01, 0, 3, 3, false);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01, 0, 3,
+                                                              3, false);
             else
             {
                 if (fitCoefficients.size() != nCoeffP_)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_);
-                    fitError =
-                        coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, gSigma1_, nPItSs_, 0.01, 0, 3, 3, false);
+                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01,
+                                                                  0, 3, 3, false);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, gSigma1_, nPItSs_, 0.01, 0, 3,
-                                                                  3, false);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, gSigma1_, nIterations, 0.01, 0,
+                                                                  3, 3, false);
             }
 
             // Store the new fit coefficients
@@ -300,21 +302,21 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             PoissonFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, pSigma1_, pSigma2_, nPItSs_, 0.1, 0, 3, 3,
-                                                              false);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_, nIterations,
+                                                              0.1, 0, 3, 3, false);
             else
             {
                 if (fitCoefficients.size() != nCoeffP_)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_);
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, pSigma1_, pSigma2_, nPItSs_, 0.01, 0,
-                                                                  3, 3, false);
+                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_,
+                                                                  nIterations, 0.01, 0, 3, 3, false);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_, nPItSs_,
-                                                                  0.01, 0, 3, 3, false);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_,
+                                                                  nIterations, 0.01, 0, 3, 3, false);
             }
 
             // Store the new fit coefficients

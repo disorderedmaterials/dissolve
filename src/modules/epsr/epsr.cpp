@@ -7,6 +7,8 @@
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/modulevector.h"
+#include "keywords/optionaldouble.h"
+#include "keywords/optionalint.h"
 #include "keywords/stdstring.h"
 
 EPSRModule::EPSRModule() : Module("EPSR")
@@ -42,10 +44,12 @@ EPSRModule::EPSRModule() : Module("EPSR")
                                  0.001, 1.0);
     keywords_.add<DoubleKeyword>("Expansion Function", "GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001,
                                  1.0);
-    keywords_.add<IntegerKeyword>("Expansion Function", "NCoeffP",
-                                  "Number of coefficients used to define the empirical potential (-1 for automatic)", nCoeffP_,
-                                  -1);
-    keywords_.add<IntegerKeyword>("Expansion Function", "NPItSs", "Number of steps for refining the potential", nPItSs_, 1);
+    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NCoeffP",
+                                          "Number of coefficients used to define the empirical potential (-1 for automatic)",
+                                          nCoeffP_, 0, std::nullopt, 100, "Automatic");
+    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NPItSs",
+                                          "Number of steps for refining fits to delta functions", nPItSs_, 0, std::nullopt, 100,
+                                          "Off (No Fitting - CAUTION!)");
     keywords_.add<StringKeyword>("Expansion Function", "PCofFile",
                                  "EPSR pcof file from which to read starting coefficients from", pCofFilename_);
     keywords_.add<DoubleKeyword>("Expansion Function", "PSigma1",
