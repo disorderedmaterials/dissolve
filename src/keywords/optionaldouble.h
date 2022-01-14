@@ -28,6 +28,8 @@ class OptionalDoubleKeyword : public KeywordBase
     double valueDelta_;
     // Text to display in widget when null
     std::string textWhenNull_;
+    // Whether the data has been set
+    bool set_{false};
 
     public:
     // Set data

@@ -21,13 +21,14 @@ bool OptionalDoubleKeyword::setData(std::optional<double> value)
     // Check limits if a value was supplied
     if (value)
     {
-        if (maximumLimit_ && value > maximumLimit_)
+        if (maximumLimit_ && value.value() > maximumLimit_)
             return false;
         else if (value.value() <= minimumLimit_)
             value = std::nullopt;
     }
 
     data_ = value;
+    set_ = true;
 
     return true;
 }
@@ -74,8 +75,8 @@ bool OptionalDoubleKeyword::deserialise(LineParser &parser, int startArg, const 
 // Serialise data to specified LineParser
 bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    if (!data_.has_value())
+    if (!set_)
         return true;
 
-    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value());
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value_or(minimumLimit_));
 }
