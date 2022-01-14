@@ -290,7 +290,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Store the new fit coefficients
-            std::copy(coeffMinimiser.A().begin(), coeffMinimiser.A().end(), fitCoefficients.begin());
+            fitCoefficients = coeffMinimiser.A();
 
             deltaFQFit = coeffMinimiser.approximation();
         }
