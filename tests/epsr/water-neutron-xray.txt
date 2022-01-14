@@ -151,6 +151,7 @@ Layer  'RDF / Neutron / XRay'
 
   # Test partial S(Q) (unbound terms)
   Module  DataTest  'Partial S(Q) (unbound)'
+    Threshold  6.0e-3
     Data1D  'SQs//UnweightedSQ//OW-OW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.f01'
       Y  2
     EndData1D
@@ -284,10 +285,10 @@ Layer  'Refine (EPSR)'
     Target  'H2Ox'
     QMin  0.5
     QMax  30.0
-    NPItSs  10
+    NPItSs  0
     OnlyWhenEnergyStable  False
     #SaveSimulatedFR  On
-    #SaveEstimatedPartials  On
+    SaveEstimatedPartials  On
   EndModule
 
   Module DataTest  'SimulatedFR'
@@ -307,7 +308,7 @@ Layer  'Refine (EPSR)'
   EndModule
 
   Module DataTest  'Estimated Partials'
-    Threshold  0.02
+    Threshold  6.0e-3
     Data1D  'EPSR01//EstimatedSQ//OW-OW'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.q01'
       Y  2
     EndData1D

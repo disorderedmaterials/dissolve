@@ -100,7 +100,7 @@ EndSpecies
 #------------------------#
 
 PairPotentials
-  Range  15.000000
+  Range  12.000000
   Parameters  'CA'  C  -0.115  LJGeometric  0.29288  3.55
   Parameters  'HA'  H   0.115  LJGeometric  0.12552  2.42
 EndPairPotentials
@@ -153,7 +153,7 @@ EndModule
 
 # Test partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (bound)'
-  Threshold  0.15
+  Threshold  0.17
   Data1D  'RDFs//Liquid//OriginalGR//CA-CA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  2
   EndData1D
@@ -268,8 +268,13 @@ Module  EPSR  'EPSR01'
   Target  '5050'
   OnlyWhenEnergyStable  False
   Frequency  1
-  NPItSs  10
+  EReq 3.0
+  InpAFile  '../_data/epsr25/benzene200-neutron/benzene.EPSR.inpa'
+  NPItSs  0
   Feedback  0.9
+  TestAbsEnergyEP  CA-CA  0.4023
+  TestAbsEnergyEP  CA-HA  0.1966
+  TestAbsEnergyEP  HA-HA  0.2941
   #SaveSimulatedFR  On
   #SaveEstimatedPartials  On
 EndModule
@@ -298,6 +303,32 @@ Module DataTest
     Y  4
   EndData1D
   Data1D  'EPSR01//EstimatedSQ//HA-HA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
+    Y  6
+  EndData1D
+EndModule
+
+Module DataTest  'DeltaFQ Fits'
+  Threshold  0.002
+  Data1D  'EPSR01//DeltaFQFit//C6H6'  xy  '../_data/epsr25/benzene200-neutron/FQ.delfit'
+    Y  2
+  EndData1D
+  Data1D  'EPSR01//DeltaFQFit//C6D6'  xy  '../_data/epsr25/benzene200-neutron/FQ.delfit'
+    Y  4
+  EndData1D
+  Data1D  'EPSR01//DeltaFQFit//5050'  xy  '../_data/epsr25/benzene200-neutron/FQ.delfit'
+    Y  6
+  EndData1D
+EndModule
+
+Module DataTest  'Generated Potentials'
+  Threshold  0.02
+  Data1D  'Dissolve//Potential_CA-CA_Additional'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.p01'
+    Y  2
+  EndData1D
+  Data1D  'Dissolve//Potential_CA-HA_Additional'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.p01'
+    Y  4
+  EndData1D
+  Data1D  'Dissolve//Potential_HA-HA_Additional'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.p01'
     Y  6
   EndData1D
 EndModule
