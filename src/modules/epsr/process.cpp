@@ -551,7 +551,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             for (auto &sq : estimatedSQ)
             {
-                Data1DExportFileFormat exportFormat(sq.tag());
+                Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", uniqueName_, sq.tag()));
                 if (!exportFormat.exportData(sq))
                     return procPool.decideFalse();
             }
@@ -720,7 +720,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                               // Grab pointer to the relevant pair potential
                               PairPotential *pp = dissolve.pairPotential(at1, at2);
 
-                              Data1DExportFileFormat exportFormat(fmt::format("EP-{}-{}.txt", at1->name(), at2->name()));
+                              Data1DExportFileFormat exportFormat(
+                                  fmt::format("{}-EP-{}-{}.txt", uniqueName_, at1->name(), at2->name()));
                               if (!exportFormat.exportData(pp->uAdditional()))
                                   return procPool.decideFalse();
                               return std::nullopt;
@@ -736,20 +737,21 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
-            for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                          [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
-                              // Grab reference to coefficients
-                              auto &potCoeff = coefficients[{i, j}];
+            for_each_pair(
+                dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                    // Grab reference to coefficients
+                    auto &potCoeff = coefficients[{i, j}];
 
-                              LineParser fileParser;
-                              if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
-                                  return procPool.decideFalse();
-                              for (auto n : potCoeff)
-                                  if (!fileParser.writeLineF("{}\n", n))
-                                      return procPool.decideFalse();
-                              fileParser.closeFiles();
-                              return std::nullopt;
-                          });
+                    LineParser fileParser;
+                    if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", uniqueName_, at1->name(), at2->name())))
+                        return procPool.decideFalse();
+                    for (auto n : potCoeff)
+                        if (!fileParser.writeLineF("{}\n", n))
+                            return procPool.decideFalse();
+                    fileParser.closeFiles();
+                    return std::nullopt;
+                });
 
             procPool.decideTrue();
         }
