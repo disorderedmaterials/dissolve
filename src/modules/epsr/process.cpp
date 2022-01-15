@@ -533,7 +533,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             for (auto &sq : estimatedSQ)
             {
-                Data1DExportFileFormat exportFormat(sq.tag());
+                Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", uniqueName_, sq.tag()));
                 if (!exportFormat.exportData(sq))
                     return procPool.decideFalse();
             }
@@ -707,7 +707,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                         PairPotential *pp = dissolve.pairPotential(at1, at2);
 
                                         Data1DExportFileFormat exportFormat(
-                                            fmt::format("EP-{}-{}.txt", at1->name(), at2->name()));
+                                            fmt::format("{}-EP-{}-{}.txt", uniqueName_, at1->name(), at2->name()));
                                         if (!exportFormat.exportData(pp->uAdditional()))
                                             return procPool.decideFalse();
                                         return std::nullopt;
@@ -729,7 +729,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                         auto &potCoeff = coefficients[{i, j}];
 
                                         LineParser fileParser;
-                                        if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
+                                        if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", uniqueName_, at1->name(), at2->name())))
                                             return procPool.decideFalse();
                                         for (auto n : potCoeff)
                                             if (!fileParser.writeLineF("{}\n", n))
