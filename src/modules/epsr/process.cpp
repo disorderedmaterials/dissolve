@@ -733,20 +733,21 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, nCoeffP_);
 
-            dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
-                                        // Grab reference to coefficients
-                                        auto &potCoeff = coefficients[{i, j}];
+            dissolve::for_each_pair(
+                ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                    // Grab reference to coefficients
+                    auto &potCoeff = coefficients[{i, j}];
 
-                                        LineParser fileParser;
-                                        if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", uniqueName_, at1->name(), at2->name())))
-                                            return procPool.decideFalse();
-                                        for (auto n : potCoeff)
-                                            if (!fileParser.writeLineF("{}\n", n))
-                                                return procPool.decideFalse();
-                                        fileParser.closeFiles();
-                                        return std::nullopt;
-                                    });
+                    LineParser fileParser;
+                    if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", uniqueName_, at1->name(), at2->name())))
+                        return procPool.decideFalse();
+                    for (auto n : potCoeff)
+                        if (!fileParser.writeLineF("{}\n", n))
+                            return procPool.decideFalse();
+                    fileParser.closeFiles();
+                    return std::nullopt;
+                });
 
             procPool.decideTrue();
         }
