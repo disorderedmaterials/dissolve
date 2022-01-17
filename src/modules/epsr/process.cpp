@@ -610,14 +610,26 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 [&](int i, auto at1, int j, auto at2) {
                                     auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
 
-                                    // Halve contribution from unlike terms to avoid adding double the potential for those
-                                    // partials
+                                    /*
+                                     * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
+                                     * combination with the following weighting factors (see circa line 3378 in
+                                     * epsr_standalone_rev1.f):
+                                     *
+                                     * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
+                                     * disable potential generation)
+                                     * 2. A flag controlling whether specific potentials are refined (efacp)
+                                     * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
+                                     * multiplied by the feedback factor.
+                                     */
+
+                                    // In the original EPSR the off-diagonal elements in the inverse matrix have also been
+                                    // halved so as not to double-count the i != j terms
                                     if (i != j)
                                         weight *= 0.5;
 
                                     // Store fluctuation coefficients ready for addition to potential coefficients later on.
                                     for (auto n = 0; n < nCoeffP_; ++n)
-                                        fluctuationCoefficients[{i, j, n}] += weight * fitCoefficients[n];
+                                        fluctuationCoefficients[{i, j, n}] += weight * feedback_ * fitCoefficients[n];
                                 });
 
         // Increase dataIndex
@@ -638,16 +650,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                     if (overwritePotentials_)
                                         std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
-                                    // Perform smoothing of the fluctuation coefficients before we sum them into the potential
-                                    // (the un-smoothed coefficients are stored)
-                                    Data1D smoothedCoefficients;
-                                    for (auto n = 0; n < nCoeffP_; ++n)
-                                        smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
-                                    Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
-
                                     // Add in fluctuation coefficients
                                     for (auto n = 0; n < nCoeffP_; ++n)
-                                        potCoeff[n] += weighting_ * smoothedCoefficients.value(n);
+                                        potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
 
                                     // Set first term to zero (following EPSR)
                                     potCoeff[0] = 0.0;
@@ -655,11 +660,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Determine absolute energy of empirical potentials
         energabs = absEnergyEP(dissolve);
-
-        // Apply factor of 1.0/rho to abs energy if using Poisson approximation (since this term is not present in the
-        // fit functions)
-        if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
-            energabs /= targetConfiguration_->atomicDensity();
 
         /*
          * Determine the scaling we will apply to the coefficients (if any)
