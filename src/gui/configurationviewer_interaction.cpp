@@ -53,7 +53,7 @@ void ConfigurationViewer::startInteraction()
             case (ConfigurationViewer::InteractionMode::Default):
                 break;
             default:
-                fmt::print("Unhandled primary mode {} in ConfigurationViewer::startInteraction().\n", interactionMode_);
+                fmt::print("Unhandled primary mode {} in ConfigurationViewer::startInteraction().\n", (int)interactionMode_);
                 break;
         }
     }
@@ -76,7 +76,7 @@ void ConfigurationViewer::endInteraction()
                 case (ConfigurationViewer::InteractionMode::Default):
                     break;
                 default:
-                    fmt::print("Unhandled primary mode {} in ConfigurationViewer::endInteraction().\n", interactionMode_);
+                    fmt::print("Unhandled primary mode {} in ConfigurationViewer::endInteraction().\n", (int)interactionMode_);
                     break;
             }
             break;
@@ -85,7 +85,8 @@ void ConfigurationViewer::endInteraction()
             // Rotation / translation has already been modified, so nothing more to do
             break;
         default:
-            fmt::print("Unhandled secondary mode {} in ConfigurationViewer::endInteraction().\n", transientInteractionMode_);
+            fmt::print("Unhandled secondary mode {} in ConfigurationViewer::endInteraction().\n",
+                       (int)transientInteractionMode_);
             break;
     }
 
