@@ -8,9 +8,6 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 
-// Run set-up stage
-bool CalculateRDFModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
-
 // Run main processing
 bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {

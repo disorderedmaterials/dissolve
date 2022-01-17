@@ -18,12 +18,12 @@ set(keywordwidgets_MOC_HDRS
     nodevalueenumoptions.h
     nodevector.h
     range.h
+    species.h
     speciessite.h
     speciessitevector.h
     speciesvector.h
     vec3double.h
     vec3integer.h
-    vec3labels.h
     vec3nodevalue.h
     bool.hui
     configuration.hui
@@ -33,7 +33,6 @@ set(keywordwidgets_MOC_HDRS
     integer.hui
     optionaldouble.hui
     optionalint.hui
-    species.hui
     stdstring.hui
     widget.hui
 )
@@ -57,6 +56,7 @@ set(keywordwidgets_UIS
     nodevalueenumoptions.ui
     nodevector.ui
     range.ui
+    species.ui
     speciessite.ui
     speciessitevector.ui
     speciesvector.ui
@@ -105,6 +105,7 @@ set(keywordwidgets_SRCS
     vec3labels.cpp
     vec3nodevalue_funcs.cpp
     base.h
+    vec3labels.h
     producers.h
 )
 

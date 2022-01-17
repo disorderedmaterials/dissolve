@@ -57,8 +57,8 @@ int main(int args, char **argv)
     // If an input file was specified, load it here
     if (options.inputFile())
     {
-        if (dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
-                                         options.ignoreRestartFile(), options.ignoreStateFile()))
+        if (dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename(),
+                                         options.ignoreRestartFile()))
         {
             // Set restart file frequency
             dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
@@ -71,9 +71,7 @@ int main(int args, char **argv)
                     return 1;
 
                 // Run main simulation
-                auto result = dissolve.iterate(options.nIterations());
-                if (!result)
-                    return 1;
+                dissolve.iterate(options.nIterations());
             }
         }
     }

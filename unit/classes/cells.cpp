@@ -39,8 +39,6 @@ TEST(CellsTest, Basic)
     dissolve.addPairPotential(oType, oType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     dissolve.addPairPotential(hType, oType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     dissolve.addPairPotential(arType, hType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
-    auto *pp = dissolve.addPairPotential(arType, oType);
-    pp->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
     // Set up pseudo-species
     auto *argon = dissolve.addSpecies();
@@ -70,8 +68,9 @@ TEST(CellsTest, Basic)
         i.setCoordinates(r);
     cfg->updateCellContents();
 
-    // Prepare the main simulation, and re-generate our specific Ar-OW potential
+    // Prepare the main simulation, and update our specific Ar-OW potential
     EXPECT_TRUE(dissolve.prepare());
+    auto *pp = dissolve.pairPotential(arType, oType);
     pp->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.35 sigma=2.166");
     pp->tabulate(dissolve.pairPotentialRange(), dissolve.pairPotentialDelta(), false);
 

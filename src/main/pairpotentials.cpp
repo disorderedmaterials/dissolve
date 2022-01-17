@@ -99,13 +99,13 @@ PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at
 const PotentialMap &Dissolve::potentialMap() { return potentialMap_; }
 
 // Clear and regenerate all PairPotentials, replacing those currently defined
-void Dissolve::regeneratePairPotentials()
+bool Dissolve::regeneratePairPotentials()
 {
     potentialMap_.clear();
     pairPotentials_.clear();
     pairPotentialAtomTypeVersion_ = -1;
 
-    generatePairPotentials();
+    return generatePairPotentials();
 }
 
 // Generate all necessary PairPotentials, adding missing terms where necessary

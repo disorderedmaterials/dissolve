@@ -122,6 +122,24 @@ MainTab::TabType ForcefieldTab::type() const { return MainTab::TabType::Forcefie
 // Return whether the tab can be closed
 bool ForcefieldTab::canClose() const { return false; }
 
+/*
+ * Update
+ */
+
+// Update all pair potentials
+void ForcefieldTab::updatePairPotentials()
+{
+    // Mute output
+    Messenger::mute();
+
+    dissolve_.generatePairPotentials();
+    pairs_.reset();
+    ui_.PairPotentialsTable->resizeColumnsToContents();
+
+    // Reinstate output
+    Messenger::unMute();
+}
+
 // Update controls in tab
 void ForcefieldTab::updateControls()
 {
@@ -137,19 +155,13 @@ void ForcefieldTab::updateControls()
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
-    // -- Automatically regenerate pair potentials (quietly)?
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-    {
-        Messenger::mute();
-        dissolve_.generatePairPotentials();
-        Messenger::unMute();
-    }
     ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
     ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
     ui_.AutomaticChargeSourceCheck->setChecked(dissolve_.automaticChargeSource());
     ui_.PairPotentialsAtomTypeChargesRadio->setDisabled(dissolve_.automaticChargeSource());
     ui_.PairPotentialsSpeciesAtomChargesRadio->setDisabled(dissolve_.automaticChargeSource());
     ui_.ForceChargeSourceCheck->setChecked(dissolve_.forceChargeSource());
+    ui_.ForceChargeSourceCheck->setDisabled(dissolve_.automaticChargeSource());
     if (dissolve_.atomTypeChargeSource())
         ui_.PairPotentialsAtomTypeChargesRadio->setChecked(true);
     else
@@ -159,10 +171,6 @@ void ForcefieldTab::updateControls()
     ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() ==
                                                   PairPotential::CosineShortRangeTruncation);
     ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
-
-    // -- Table
-    pairs_.reset();
-    ui_.PairPotentialsTable->resizeColumnsToContents();
 
     refreshLocker.unlock();
 }
@@ -183,13 +191,7 @@ void ForcefieldTab::atomTypeDataModified()
     dissolve_.coreData().bumpAtomTypesVersion();
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-    {
-        Messenger::mute();
-        dissolve_.generatePairPotentials();
-        Messenger::unMute();
-
-        updateControls();
-    }
+        updatePairPotentials();
 }
 
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
@@ -221,10 +223,7 @@ void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
     dissolve_.setPairPotentialRange(value);
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-    {
-        dissolve_.regeneratePairPotentials();
-        updateControls();
-    }
+        updatePairPotentials();
 
     dissolveWindow_->setModified();
 }
@@ -237,10 +236,7 @@ void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
     dissolve_.setPairPotentialDelta(value);
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-    {
-        dissolve_.regeneratePairPotentials();
-        updateControls();
-    }
+        updatePairPotentials();
 
     dissolveWindow_->setModified();
 }
@@ -253,11 +249,7 @@ void ForcefieldTab::on_PairPotentialsAtomTypeChargesRadio_clicked(bool checked)
     dissolve_.setAtomTypeChargeSource(checked);
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-    {
-        dissolve_.regeneratePairPotentials();
-
-        updateControls();
-    }
+        updatePairPotentials();
 
     dissolveWindow_->setModified();
 }
@@ -277,10 +269,7 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
                                                   PairPotential::CosineShortRangeTruncation);
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-    {
-        dissolve_.regeneratePairPotentials();
-        updateControls();
-    }
+        updatePairPotentials();
 
     dissolveWindow_->setModified();
 }
@@ -293,10 +282,7 @@ void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
     PairPotential::setCoulombTruncationScheme((PairPotential::CoulombTruncationScheme)index);
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked() && dissolve_.atomTypeChargeSource())
-    {
-        dissolve_.regeneratePairPotentials();
-        updateControls();
-    }
+        updatePairPotentials();
 
     dissolveWindow_->setModified();
 }
@@ -323,24 +309,12 @@ void ForcefieldTab::on_ForceChargeSourceCheck_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
-{
-    dissolve_.regeneratePairPotentials();
-
-    updateControls();
-}
-
-void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
-{
-    dissolve_.generatePairPotentials();
-
-    updateControls();
-}
+void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked) { updatePairPotentials(); }
 
 void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
 {
     if (checked)
-        on_UpdatePairPotentialsButton_clicked(false);
+        updatePairPotentials();
 }
 
 void ForcefieldTab::pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous)

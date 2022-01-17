@@ -145,7 +145,7 @@ class Dissolve
     // Return map for PairPotentials
     const PotentialMap &potentialMap();
     // Clear and regenerate all PairPotentials, replacing those currently defined
-    void regeneratePairPotentials();
+    bool regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
     bool generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving = nullptr);
 
@@ -194,6 +194,8 @@ class Dissolve
     std::string uniqueProcessingLayerName(std::string_view baseName) const;
     // Return list of processing layers
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
+    // Run the set-up stages of all modules in all layers
+    bool setUpProcessingLayerModules();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
 

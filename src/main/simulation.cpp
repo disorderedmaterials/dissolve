@@ -156,7 +156,7 @@ bool Dissolve::prepare()
     }
 
     // Make sure pair potentials are up-to-date
-    if (!generatePairPotentials())
+    if (!regeneratePairPotentials())
         return false;
 
     // Create PairPotential matrix
@@ -190,13 +190,8 @@ bool Dissolve::prepare()
     if (!setUpMPIPools())
         return Messenger::error("Failed to set up parallel communications.\n");
 
-    // Set up all modules
-    auto setUpResult = true;
-    for (auto &layer : processingLayers_)
-        if (!layer->setUpAll(*this, worldPool()))
-            setUpResult = false;
-
-    return setUpResult;
+    // Set up all modules and return
+    return setUpProcessingLayerModules();
 }
 
 // Iterate main simulation

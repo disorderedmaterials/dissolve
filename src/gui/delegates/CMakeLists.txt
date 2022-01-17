@@ -1,7 +1,7 @@
 # Don't forget to include output directory, otherwise the UI file won't be wrapped!
 
 # Meta-Objects
-set(delegates_MOC_HDRS combolist.hui exponentialspin.hui integerspin.hui intraformcombo.hui isotopecombo.hui)
+set(delegates_MOC_HDRS combolist.hui exponentialspin.hui integerspin.hui isotopecombo.hui)
 qt6_wrap_cpp(delegates_MOC_SRCS ${delegates_MOC_HDRS})
 
 # User Interface Files SET(delegates_UIS ) QT6_WRAP_UI(delegates_UIS_H ${delegates_UIS})
@@ -14,6 +14,7 @@ set(delegates_SRCS
     isotopecombo_funcs.cpp
     null.cpp
     customcombodelegate.h
+    intraformcombo.h
     null.h
 )
 

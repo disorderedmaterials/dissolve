@@ -272,6 +272,9 @@ void trim(Data1D &data, const Data1D &ref, bool interpolateEnds, double interpol
 // Convert bin boundaries to centre-bin values
 void convertBinBoundaries(Data1D &data)
 {
+    if (data.nValues() < 2)
+        return;
+
     // Assume that input x values are histogram bin left-boundaries, so x(n) = 0.5[x(n)+x(n_1)]
     auto &x = data.xAxis();
     auto a = x[0], b = 0.0;

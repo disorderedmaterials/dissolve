@@ -83,7 +83,7 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
             QApplication::processEvents();
     }
 
-    // Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
+    // Clear tabs before we try to close down the application, otherwise we might get in to trouble with object deletion
     refreshing_ = true;
     ui_.MainTabs->clearTabs();
     ui_.MainTabs->clear();
@@ -145,13 +145,13 @@ QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile,
-                                   bool ignoreLayoutFile)
+bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile,
+                                   bool ignoreRestartFile)
 {
+    // Clear any current tabs
     refreshing_ = true;
-
-    // Clear any existing tabs etc.
     ui_.MainTabs->clearTabs();
+    refreshing_ = false;
 
     // Clear Dissolve itself
     dissolve_.clear();
@@ -177,25 +177,32 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
         }
 
         if (!loadResult)
+        {
             QMessageBox::warning(this, "Input file contained errors.",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
+
+            // Forcibly show the main stack page so the user can see what happened (the input file name will remain unset)
+            ui_.MainStack->setCurrentIndex(1);
+
+            return false;
+        }
     }
     else
         return Messenger::error("Input file does not exist.\n");
 
     // Load restart file if it exists
     Messenger::banner("Parse Restart File");
-    if (!ignoreRestartFile)
+    if (ignoreRestartFile)
+        Messenger::print("Restart file (if it exists) will be ignored.\n");
+    else
     {
-        std::string actualRestartFile{restartFile};
-        if (actualRestartFile.empty())
-            actualRestartFile = fmt::format("{}.restart", dissolve_.inputFilename());
+        std::string actualRestartFile{restartFile.value_or(fmt::format("{}.restart", dissolve_.inputFilename()))};
 
         if (DissolveSys::fileExists(actualRestartFile))
         {
-            Messenger::print("\nRestart file '{}' exists and will be loaded.\n", actualRestartFile);
+            Messenger::print("Restart file '{}' exists and will be loaded.\n", actualRestartFile);
             if (!dissolve_.loadRestart(actualRestartFile))
                 QMessageBox::warning(this, "Restart file contained errors.",
                                      "The restart file failed to load correctly.\nSee the messages for more details.",
@@ -205,32 +212,15 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
             dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
         }
         else
-            Messenger::print("\nRestart file '{}' does not exist.\n", actualRestartFile);
+            Messenger::print("Restart file '{}' does not exist.\n", actualRestartFile);
     }
-    else
-        Messenger::print("\nRestart file (if it exists) will be ignored.\n");
-
-    refreshing_ = true;
-
-    ui_.MainTabs->reconcileTabs(this);
-
-    refreshing_ = false;
-
-    // Does a window state exist for this input file?
-    stateFilename_ = QStringLiteral("%1.state").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
-
-    // Try to load in the window state file
-    if (QFile::exists(stateFilename_) && (!ignoreLayoutFile))
-        loadState();
 
     modified_ = false;
     dissolveIterating_ = false;
 
-    // Fully update GUI
-    fullUpdate();
-    ui_.MainStack->setCurrentIndex(1);
+    Messenger::banner("Setting Up Processing Modules");
 
-    return true;
+    return dissolve_.setUpProcessingLayerModules();
 }
 
 /*
@@ -258,7 +248,9 @@ void DissolveWindow::openRecent()
     if (action)
     {
         std::string filePath = action->data().toString().toUtf8().constData();
-        openLocalFile(filePath, "", false, false);
+        openLocalFile(filePath);
+
+        fullUpdate();
     }
 }
 
@@ -407,6 +399,10 @@ void DissolveWindow::updateMenus()
 void DissolveWindow::fullUpdate()
 {
     refreshing_ = true;
+
+    // Move off the ident page if we currently have an input file (name)
+    if (dissolve_.hasInputFilename())
+        ui_.MainStack->setCurrentIndex(1);
 
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();

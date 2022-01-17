@@ -2,8 +2,6 @@
 
 # Meta-Objects
 set(widgets_MOC_HDRS
-    mimestrings.h
-    mimetreewidgetitem.h
     nocontrols.h
     sampleddoublelabel.h
     checkindicator.hui
@@ -33,6 +31,8 @@ set(widgets_SRCS
     nocontrols_funcs.cpp
     sampleddoublelabel_funcs.cpp
     superstackedwidget_funcs.cpp
+    mimestrings.h
+    mimetreewidgetitem.h
 )
 
 # Target 'gui'

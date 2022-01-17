@@ -59,6 +59,10 @@ bool Data1DImportFileFormat::importData(Data1D &data, ProcessPool *procPool)
 
     parser.closeFiles();
 
+    // Validity check on number of points in loaded file
+    if (result && data.nValues() == 0)
+        return Messenger::error("File '{}' contains no data.\n", filename_);
+
     return result;
 }
 

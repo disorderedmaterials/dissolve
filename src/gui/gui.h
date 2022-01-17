@@ -85,7 +85,8 @@ class DissolveWindow : public QMainWindow
      */
     public:
     // Open specified input file
-    bool openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+    bool openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile = std::nullopt,
+                       bool ignoreRestartFile = false);
 
     /*
      * Reference Points
@@ -190,10 +191,10 @@ class DissolveWindow : public QMainWindow
     void on_LayerCreateEvolveMolecularAction_triggered(bool checked);
     void on_LayerCreateEvolveEPSRAction_triggered(bool checked);
     void on_LayerCreateRefineEPSRAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFStructureFactorAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bool checked);
     void on_LayerCreateAnalyseRDFCNAction_triggered(bool checked);
     void on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked);
     void on_LayerRenameAction_triggered(bool checked);
@@ -243,17 +244,4 @@ class DissolveWindow : public QMainWindow
     signals:
     void iterate(int);
     void stopIterating();
-
-    /*
-     * GUI State
-     */
-    private:
-    // Filename containing current GUI state
-    QString stateFilename_;
-
-    public:
-    // Save current GUI state
-    bool saveState();
-    // Load GUI state
-    bool loadState();
 };

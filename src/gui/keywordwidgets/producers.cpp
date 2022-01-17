@@ -25,7 +25,7 @@
 #include "gui/keywordwidgets/optionaldouble.hui"
 #include "gui/keywordwidgets/optionalint.hui"
 #include "gui/keywordwidgets/range.h"
-#include "gui/keywordwidgets/species.hui"
+#include "gui/keywordwidgets/species.h"
 #include "gui/keywordwidgets/speciessite.h"
 #include "gui/keywordwidgets/speciessitevector.h"
 #include "gui/keywordwidgets/speciesvector.h"

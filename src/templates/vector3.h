@@ -170,9 +170,6 @@ template <class T> class Vec3
             return z;
 
         throw(std::runtime_error(fmt::format("Vec3 - array access failed - index {} is out of bounds.", index)));
-
-        static T dummy;
-        return dummy;
     }
 
     /*

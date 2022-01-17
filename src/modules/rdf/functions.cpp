@@ -23,7 +23,6 @@
 
 namespace
 {
-
 void addHistogramsToPartialSet(Array2D<Histogram1D> &histograms, PartialSet &target)
 {
     for (auto k = 0; k < target.nAtomTypes(); ++k)
@@ -34,6 +33,7 @@ void addHistogramsToPartialSet(Array2D<Histogram1D> &histograms, PartialSet &tar
         }
 }
 } // namespace
+
 /*
  * Private Functions
  */

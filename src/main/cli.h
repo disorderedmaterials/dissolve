@@ -33,8 +33,6 @@ class CLIOptions
     bool writeInputAndReload_{false};
     // Whether to ignore restart file (if it exists)
     bool ignoreRestartFile_{false};
-    // Whether to ignore GUI state file (if it exists)
-    bool ignoreStateFile_{false};
     // Whether to prevent writing of the restart file
     bool noRestartFile_{false};
 
@@ -62,8 +60,6 @@ class CLIOptions
     bool writeInputAndReload() const;
     // Return whether to ignore restart file if it exists
     bool ignoreRestartFile() const;
-    // Return whether to ignore GUI state file (if it exists)
-    bool ignoreStateFile() const;
     // Return whether to prevent writing of the restart file
     bool noRestartFile() const;
 };
