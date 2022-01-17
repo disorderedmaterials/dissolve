@@ -3,7 +3,7 @@
 
 #include "data/isotopes.h"
 #include <algorithm>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <stdexcept>
 
 namespace Sears91
