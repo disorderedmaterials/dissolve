@@ -92,6 +92,16 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals
         }
     }
 
+    // If an inpa file was provided, read in the parameters from it here
+    if (!inpaFilename_.empty())
+    {
+        Messenger::print("[SETUP {}] Reading fit coefficients from '{}'...\n", uniqueName_, inpaFilename_);
+
+        // Read in the coefficients / setup from the supplied file
+        if (!readFitCoefficients(dissolve, procPool, inpaFilename_))
+            return Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", uniqueName_);
+    }
+
     // Try to calculate the deltaSQ array
     updateDeltaSQ(dissolve.processingModuleData());
 

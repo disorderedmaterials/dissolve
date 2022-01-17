@@ -172,3 +172,50 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
 
     return true;
 }
+
+// Read fit coefficients from 'inpa' file
+bool EPSRModule::readFitCoefficients(Dissolve &dissolve, ProcessPool &procPool, std::string_view inpaFilename)
+{
+    /*
+     * Read EPSR fit coefficients from supplied file.
+     * All potential coefficients matching pair potentials that exist in the simulation will be set.
+     * All others will be set to zero.
+     */
+
+    LineParser parser(&procPool);
+    if (!parser.openInput(inpaFilename))
+        return Messenger::error("Couldn't open inpa file for reading.\n");
+
+    // First line contains parameters relating to energy / pressure calculation which we can skip
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return Messenger::error("Failed to read initial parameters from inpa file.\n");
+
+    // Read fit coefficients, indexed by dataset - we assume that the data in the file is the same size as our target data
+    for (auto &target : targets_)
+    {
+        // Data file index
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return Messenger::error("Failed to read initial parameters from inpa file.\n");
+        Messenger::print("Reading fit coefficients for data file {} ({})...\n", parser.argi(0), target->uniqueName());
+
+        // Number of coefficients, stepsize in r, sigma2
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return Messenger::error("Failed to read basic coefficient data from inpa file.\n");
+        const auto nCoeff = parser.argi(0);
+
+        // Coefficients
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return Messenger::error("Failed to read coefficient data from inpa file.\n");
+        if (parser.nArgs() != nCoeff)
+            return Messenger::error("Number of potential coefficients ({}) does not match ncoeffp ({}).\n", parser.nArgs(),
+                                    nCoeff);
+        auto &fitCoefficients = dissolve.processingModuleData().realise<std::vector<double>>(
+            fmt::format("FitCoefficients_{}", target->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+        fitCoefficients.resize(nCoeff);
+        for (auto i = 0; i < nCoeff; ++i)
+            fitCoefficients[i] = parser.argd(i);
+    }
+
+    parser.closeFiles();
+    return true;
+}

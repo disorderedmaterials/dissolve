@@ -42,6 +42,8 @@ class EPSRModule : public Module
     EPSRModule::ExpansionFunctionType expansionFunction_{EPSRModule::PoissonExpansionFunction};
     // Confidence factor
     double feedback_{0.8};
+    // EPSR 'inpa' file from which to read deltaFQ fit coefficients from
+    std::string inpaFilename_;
     // Maximum Q value over which to generate potentials from total scattering data
     double qMax_{30.0};
     // Minimum Q value over which to generate potentials from total scattering data
@@ -156,6 +158,8 @@ class EPSRModule : public Module
     public:
     // Read data from supplied pcof file
     bool readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string_view filename);
+    // Read Poisson coefficients from 'inpa' file
+    bool readFitCoefficients(Dissolve &dissolve, ProcessPool &procPool, std::string_view inpaFilename);
 
     /*
      * Processing

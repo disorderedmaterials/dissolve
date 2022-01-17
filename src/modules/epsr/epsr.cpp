@@ -50,8 +50,10 @@ EPSRModule::EPSRModule() : Module("EPSR")
     keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NPItSs",
                                           "Number of steps for refining fits to delta functions", nPItSs_, 0, std::nullopt, 100,
                                           "Off (No Fitting - CAUTION!)");
+    keywords_.add<StringKeyword>("Expansion Function", "InpAFile",
+                                 "EPSR inpa file from which to read starting coefficients from", inpaFilename_);
     keywords_.add<StringKeyword>("Expansion Function", "PCofFile",
-                                 "EPSR pcof file from which to read starting coefficients from", pCofFilename_);
+                                 "EPSR pcof file from which to read empirical potential coefficients from", pCofFilename_);
     keywords_.add<DoubleKeyword>("Expansion Function", "PSigma1",
                                  "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_,
                                  0.001, 1.0);
