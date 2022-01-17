@@ -4,6 +4,7 @@
 
 #include "classes/pair_iter.h"
 #include "templates/parallel_defs.h"
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <functional>
 #include <optional>

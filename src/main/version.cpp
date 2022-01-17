@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "main/version.h"
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 #define DISSOLVEVERSION "0.9.0"

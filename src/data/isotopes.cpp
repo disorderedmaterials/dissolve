@@ -3,6 +3,7 @@
 
 #include "data/isotopes.h"
 #include <algorithm>
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <stdexcept>
 

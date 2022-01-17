@@ -6,6 +6,7 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include <any>
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <functional>
 #include <typeindex>

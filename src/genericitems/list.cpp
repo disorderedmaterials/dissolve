@@ -5,6 +5,7 @@
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 #include <cassert>
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <typeindex>
 

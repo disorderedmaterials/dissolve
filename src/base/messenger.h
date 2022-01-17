@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/outputhandler.h"
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <functional>
 
