@@ -5,6 +5,7 @@
 
 #include "gui/render/primitiveinfo.h"
 #include <deque>
+#include <vector>
 
 // Rendering Primitive List
 class PrimitiveAssembly
