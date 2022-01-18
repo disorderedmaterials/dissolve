@@ -93,7 +93,7 @@ void SpeciesViewer::startInteraction()
                     speciesRenderable_->clearInteractionPrimitive();
                 break;
             default:
-                fmt::print("Unhandled primary mode {} in SpeciesViewer::startInteraction().\n", interactionMode_);
+                fmt::print("Unhandled primary mode {} in SpeciesViewer::startInteraction().\n", (int)interactionMode_);
                 break;
         }
     }
@@ -243,7 +243,7 @@ void SpeciesViewer::endInteraction()
                     postRedisplay();
                     break;
                 default:
-                    fmt::print("Unhandled primary mode {} in SpeciesViewer::endInteraction().\n", interactionMode_);
+                    fmt::print("Unhandled primary mode {} in SpeciesViewer::endInteraction().\n", (int)interactionMode_);
                     break;
             }
             break;
@@ -252,7 +252,7 @@ void SpeciesViewer::endInteraction()
             // Rotation / translation has already been modified, so nothing more to do
             break;
         default:
-            fmt::print("Unhandled secondary mode {} in SpeciesViewer::endInteraction().\n", transientInteractionMode_);
+            fmt::print("Unhandled secondary mode {} in SpeciesViewer::endInteraction().\n", (int)transientInteractionMode_);
             break;
     }
 
