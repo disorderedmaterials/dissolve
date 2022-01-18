@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/timer.h"
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 Timer::Timer() { start(); }

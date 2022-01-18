@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/wizard.hui"
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <stdexcept>
 

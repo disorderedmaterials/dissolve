@@ -4,7 +4,6 @@
 #pragma once
 
 #include "data/elements.h"
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <vector>
 

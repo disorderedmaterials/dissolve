@@ -6,7 +6,6 @@
 #include "math/constants.h"
 #include "math/mathfunc.h"
 #include <cmath>
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <stdexcept>
 

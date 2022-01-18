@@ -6,7 +6,6 @@
 #include "base/messenger.h"
 #include "base/processpool.h"
 #include "templates/vector3.h"
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <fstream>
 #include <iostream>

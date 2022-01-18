@@ -6,7 +6,6 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 // Forward Declarations

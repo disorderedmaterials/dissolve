@@ -4,7 +4,6 @@
 #include "math/doubleexp.h"
 #include "base/sysfunc.h"
 #include <cmath>
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <limits>
 
