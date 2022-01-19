@@ -4,7 +4,7 @@
 #include "math/doubleexp.h"
 #include "base/sysfunc.h"
 #include <cmath>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <limits>
 
 DoubleExp::DoubleExp()

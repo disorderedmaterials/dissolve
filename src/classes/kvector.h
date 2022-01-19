@@ -4,6 +4,7 @@
 #pragma once
 
 #include "templates/vector3.h"
+#include <vector>
 
 // Forward Declarations
 class BraggReflection;

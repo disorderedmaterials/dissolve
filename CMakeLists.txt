@@ -34,6 +34,8 @@ else(CONAN)
   find_package(pugixml REQUIRED)
 endif(CONAN)
 
+add_compile_definitions(FMT_HEADER_ONLY)
+
 # Catch defines
 if(PARALLEL)
   add_definitions("-DPARALLEL")

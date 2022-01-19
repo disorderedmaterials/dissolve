@@ -53,11 +53,27 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1641229786,
-        "narHash": "sha256-WPPcLNbVu6ryj772GooUpF285LOvRHdOo/UNJgPnFYI=",
+        "lastModified": 1641870998,
+        "narHash": "sha256-6HkxR2WZsm37VoQS7jgp6Omd71iw6t1kP8bDbaqCDuI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "88579effa7e88c25087faf6de6388d0cd1738dc0",
+        "rev": "386234e2a61e1e8acf94dfa3a3d3ca19a6776efb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-21.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "outdated": {
+      "locked": {
+        "lastModified": 1641734288,
+        "narHash": "sha256-/7YwWbvkjinc4uu5aUQMRw3xAthhOVH/esm4tCXPzIQ=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "df123677560db3b0db7c19d71981b11091fbeaf6",
         "type": "github"
       },
       "original": {
@@ -73,6 +89,7 @@
         "flake-utils": "flake-utils",
         "nixGL-src": "nixGL-src",
         "nixpkgs": "nixpkgs",
+        "outdated": "outdated",
         "weggli": "weggli"
       }
     },

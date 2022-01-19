@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "expression/value.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 ExpressionValue::ExpressionValue()
 {

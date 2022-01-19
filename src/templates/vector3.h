@@ -6,7 +6,7 @@
 #include "math/constants.h"
 #include "math/mathfunc.h"
 #include <cmath>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <stdexcept>
 
 // 3D vector

@@ -1,6 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     flake-utils.url = "github:numtide/flake-utils";
     flake-utils.inputs.nixpkgs.follows = "nixpkgs";
     bundler.url = "github:matthewbauer/nix-bundle";
@@ -10,7 +11,7 @@
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
-  outputs = { self, nixpkgs, flake-utils, bundler, nixGL-src, weggli }:
+  outputs = { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
     let
       exe-name = mpi: gui:
         if mpi then
@@ -25,8 +26,8 @@
           antlr4.runtime.cpp
           cmake
           cli11
-          fmt
-          fmt.dev
+          fmt_8
+          fmt_8.dev
           freetype
           inetutils # for rsh
           jre
@@ -101,7 +102,7 @@
             { }))
           // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
         mkSingularity = { mpi ? false, gui ? false, threading ? true }:
-          pkgs.singularity-tools.buildImage {
+          outdated.legacyPackages.${system}.singularity-tools.buildImage {
             name = "${exe-name mpi gui}-${version}";
             diskSize = 1024 * 25;
             contents = [ (dissolve { inherit mpi gui threading; }) ];

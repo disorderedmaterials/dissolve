@@ -5,6 +5,7 @@
 
 #include "module/group.h"
 #include "templates/refdatalist.h"
+#include <vector>
 
 // Forward Declarations
 class Module;

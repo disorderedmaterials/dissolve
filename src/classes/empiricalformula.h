@@ -4,7 +4,8 @@
 #pragma once
 
 #include "data/elements.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
+#include <vector>
 
 namespace EmpiricalFormula
 {

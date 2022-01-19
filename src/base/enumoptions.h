@@ -140,7 +140,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.cend())
             throw(std::runtime_error(fmt::format(
-                "Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_, enumeration)));
+                "Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_, (int)enumeration)));
 
         return it->keyword();
     }
@@ -162,7 +162,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.cend())
-            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", enumeration)));
+            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", (int)enumeration)));
         return *it;
     }
     // Return minimum number of arguments for the specified enumeration
@@ -171,7 +171,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.begin(), options_.end(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.end())
-            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", enumeration)));
+            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", (int)enumeration)));
         return it->minArgs();
     }
     // Return maximum number of arguments for the specified enumeration
@@ -180,7 +180,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.begin(), options_.end(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.end())
-            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", enumeration)));
+            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", (int)enumeration)));
         return it->maxArgs();
     }
     // Check number of arguments provided to keyword
