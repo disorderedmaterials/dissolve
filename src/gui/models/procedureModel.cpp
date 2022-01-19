@@ -2,12 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "gui/models/procedureModel.h"
-#include "classes/species.h"
-#include "expression/variable.h"
-#include "procedure/nodes/node.h"
 #include "procedure/procedure.h"
-#include <functional>
-#include <map>
 
 /*
  * QAbstractItemModel overrides
