@@ -11,6 +11,7 @@
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
 #include "gui/keywordwidgets/producers.h"
+#include "gui/keywordwidgets/widget.hui"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
@@ -232,11 +233,12 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
 {
     QVariant var = procedureModel_.data(index, Qt::UserRole);
-    auto data = var.value<KeywordBase *>();
+    auto data = var.value<std::shared_ptr<const ProcedureNode>>();
 
     if (data != nullptr)
     {
-        QWidget *widget = KeywordWidgetProducer::create(data, dissolve_.coreData()).first;
+        KeywordsWidget *widget = new KeywordsWidget(this);
+        widget->setUp(data->keywords(), dissolve_.coreData());
         if (!activeWidget_)
             ui_.ProcedureLayout->addWidget(widget);
         else
