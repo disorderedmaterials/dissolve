@@ -6,7 +6,6 @@
 #include "classes/site.h"
 #include "data/elements.h"
 #include "procedure/nodes/node.h"
-#include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include <memory>
 #include <vector>

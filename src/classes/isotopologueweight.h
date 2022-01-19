@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "templates/refdatalist.h"
-
 // Forward Declarations
 class Species;
 class Isotopologue;

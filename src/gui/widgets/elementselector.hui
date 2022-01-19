@@ -4,7 +4,6 @@
 #pragma once
 
 #include "data/elements.h"
-#include "templates/refdatalist.h"
 #include <QTimer>
 #include <QWidget>
 
