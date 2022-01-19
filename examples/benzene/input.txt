@@ -110,8 +110,8 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  CA  C  -1.150000e-01  LJGeometric  2.928800e-01  3.550000e+00  0.000000e+00  0.000000e+00
-  Parameters  HA  H  1.150000e-01  LJGeometric  1.255200e-01  2.420000e+00  0.000000e+00  0.000000e+00
+  Parameters  CA  C  -1.150000e-01  LJGeometric  2.928800e-01  3.550000e+00
+  Parameters  HA  H  1.150000e-01  LJGeometric  1.255200e-01  2.420000e+00
   Range  12.0
   Delta  0.005
   IncludeCoulomb  True

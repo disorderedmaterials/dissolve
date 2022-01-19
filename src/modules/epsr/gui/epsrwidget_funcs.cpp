@@ -5,6 +5,7 @@
 #include "gui/dataviewer.hui"
 #include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
+#include "keywords/module.h"
 #include "main/dissolve.h"
 #include "module/group.h"
 #include "modules/epsr/epsr.h"
@@ -49,6 +50,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     graph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
     graph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
     graph_->groupManager().setGroupColouring("Phi", RenderableGroup::AutomaticIndividualColouring);
+    graph_->groupManager().setGroupVerticalShifting("Phi", RenderableGroup::PreventVerticalShifting);
     graph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
 
     refreshing_ = false;
@@ -130,16 +132,18 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             const auto targets = module_->keywords().get<std::vector<Module *>>("Target");
             if (!targets.empty())
             {
-                auto *sqModule = targets[0]->keywords().get<const SQModule *>("SourceSQs");
-                if (!sqModule)
+                auto optSQModule = targets[0]->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
+                if (!optSQModule)
                     Messenger::error("Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will "
                                      "be unavailable.",
                                      module_->uniqueName());
                 else
                 {
-                    auto *rdfModule = sqModule->keywords().get<const RDFModule *>("SourceRDFs");
-                    if (rdfModule)
-                        rdfModuleName = rdfModule->uniqueName();
+                    auto optRDFModule =
+                        optSQModule.value().get()->keywords().get<const RDFModule *, ModuleKeyword<const RDFModule>>(
+                            "SourceRDFs");
+                    if (optRDFModule)
+                        rdfModuleName = optRDFModule.value().get()->uniqueName();
                     else
                         rdfModuleName = "UNKNOWN_RDF_MODULE";
                 }
@@ -191,6 +195,8 @@ void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         }
         else if (ui_.RFactorButton->isChecked())
         {
+            graph_->groupManager().removeVerticalShifts();
+
             // Add total R-factor followed by those for each target
             graph_->createRenderable<RenderableData1D>(fmt::format("{}//RFactor", module_->uniqueName()), "Total", "Total")
                 ->lineStyle()

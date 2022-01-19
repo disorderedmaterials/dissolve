@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/charts/charthotspot.h"
-#include <stdio.h>
 
 ChartHotSpot::ChartHotSpot()
 {

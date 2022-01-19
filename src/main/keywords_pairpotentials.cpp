@@ -14,7 +14,9 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
         "PairPotentialsKeyword", {{PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1},
                                   {PairPotentialsBlock::DeltaKeyword, "Delta", 1},
                                   {PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials"},
+                                  {PairPotentialsBlock::ForceChargeSourceKeyword, "ForceChargeSource", 1},
                                   {PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1},
+                                  {PairPotentialsBlock::ManualChargeSourceKeyword, "ManualChargeSource", 1},
                                   {PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber},
                                   {PairPotentialsBlock::RangeKeyword, "Range", 1},
                                   {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
@@ -29,7 +31,6 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     std::shared_ptr<AtomType> at1;
     auto blockDone = false, error = false;
     Elements::Element Z;
-    std::vector<double> parameters;
 
     while (!parser.eofOrBlank())
     {
@@ -65,8 +66,14 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                                  BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
                 blockDone = true;
                 break;
+            case (PairPotentialsBlock::ForceChargeSourceKeyword):
+                dissolve->setForceChargeSource(parser.argb(1));
+                break;
             case (PairPotentialsBlock::IncludeCoulombKeyword):
-                dissolve->setPairPotentialsIncludeCoulomb(parser.argb(1));
+                dissolve->setAtomTypeChargeSource(parser.argb(1));
+                break;
+            case (PairPotentialsBlock::ManualChargeSourceKeyword):
+                dissolve->setAutomaticChargeSource(!parser.argb(1));
                 break;
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element
@@ -102,19 +109,18 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 at1->setCharge(parser.argd(3));
 
                 // Get short-range type
-                if (!Forcefield::shortRangeTypes().isValid(parser.argsv(4)))
+                if (!ShortRangeFunctions::forms().isValid(parser.argsv(4)))
                 {
-                    Forcefield::shortRangeTypes().errorAndPrintValid(parser.argsv(4));
+                    ShortRangeFunctions::forms().errorAndPrintValid(parser.argsv(4));
                     error = true;
                     break;
                 }
-                at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argsv(4)));
-
-                // Get interaction parameters
-                parameters.clear();
-                for (int n = 5; n < parser.nArgs(); ++n)
-                    parameters.push_back(parser.argd(n));
-                at1->setShortRangeParameters(parameters);
+                at1->interactionPotential().setForm(ShortRangeFunctions::forms().enumeration(parser.argsv(4)));
+                if (!at1->interactionPotential().parseParameters(parser, 5))
+                {
+                    error = true;
+                    break;
+                }
                 break;
             case (PairPotentialsBlock::RangeKeyword):
                 dissolve->setPairPotentialRange(parser.argd(1));

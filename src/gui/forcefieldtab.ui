@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
-    <height>710</height>
+    <width>1085</width>
+    <height>972</height>
    </rect>
   </property>
   <property name="font">
@@ -39,123 +39,11 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="AtomTypesTab">
-      <attribute name="title">
-       <string>Atom Types</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>4</number>
-       </property>
-       <property name="topMargin">
-        <number>4</number>
-       </property>
-       <property name="rightMargin">
-        <number>4</number>
-       </property>
-       <property name="bottomMargin">
-        <number>4</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <property name="spacing">
-          <number>4</number>
-         </property>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="AtomTypeRemoveButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Remove</string>
-           </property>
-           <property name="icon">
-            <iconset resource="main.qrc">
-             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="AtomTypeAddButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Add</string>
-           </property>
-           <property name="icon">
-            <iconset resource="main.qrc">
-             <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QTableView" name="AtomTypesTable">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="PairPotentialsTab">
       <attribute name="title">
-       <string>Pair Potentials</string>
+       <string>Atom Types / Pair Potentials</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <layout class="QHBoxLayout" name="horizontalLayout_11">
        <property name="spacing">
         <number>4</number>
        </property>
@@ -172,316 +60,17 @@
         <number>4</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QGroupBox" name="PairPotentialControlGroup">
-           <property name="title">
-            <string>Control</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout">
-            <property name="leftMargin">
-             <number>4</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item row="0" column="1">
-             <widget class="ExponentialSpin" name="PairPotentialRangeSpin">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="decimals">
-               <number>4</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_887">
-              <property name="text">
-               <string>Range</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_888">
-              <property name="text">
-               <string>Delta</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="ExponentialSpin" name="PairPotentialDeltaSpin">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="decimals">
-               <number>4</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Å</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QLabel" name="label_8">
-              <property name="text">
-               <string>Å</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="ShortRangeTruncationGroup">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title">
-            <string>Short-Range Truncation</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <property name="leftMargin">
-             <number>4</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_889">
-              <property name="text">
-               <string>Width</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="ExponentialSpin" name="ShortRangeTruncationWidthSpin">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="decimals">
-               <number>2</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_890">
-              <property name="text">
-               <string>Style</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Å</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" colspan="2">
-             <widget class="QComboBox" name="ShortRangeTruncationCombo">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="CoulombTruncationGroup">
-           <property name="title">
-            <string>Coulomb Truncation</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QLabel" name="label_891">
-              <property name="text">
-               <string>Style</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="CoulombTruncationCombo">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="PairPotentialStyleGroup">
-           <property name="title">
-            <string> Style</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="2" column="0" colspan="2">
-             <widget class="QRadioButton" name="PairPotentialsShortRangeOnlyRadio">
-              <property name="text">
-               <string>Short-Range terms only</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_5">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <italic>true</italic>
-               </font>
-              </property>
-              <property name="text">
-               <string>Charges taken from atom types and included in tabulated pair potentials</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <spacer name="horizontalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QRadioButton" name="PairPotentialsIncludeCoulombRadio">
-              <property name="text">
-               <string>Short-Range and Coulomb terms</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="label_6">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <italic>true</italic>
-               </font>
-              </property>
-              <property name="text">
-               <string>Charges taken from species atoms and not included in tabulated pair potentials</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="PairPotentialsGroup">
+        <widget class="QGroupBox" name="AtomTypesGroup">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>2</horstretch>
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>1</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Pair Potentials</string>
+          <string>Atom Types</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout_6">
           <property name="spacing">
            <number>4</number>
           </property>
@@ -498,9 +87,28 @@
            <number>4</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <property name="spacing">
+             <number>4</number>
+            </property>
             <item>
-             <widget class="QToolButton" name="RegenerateAllPairPotentialsButton">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="AtomTypeRemoveButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -508,7 +116,11 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Regenerate All</string>
+               <string>Remove</string>
+              </property>
+              <property name="icon">
+               <iconset resource="main.qrc">
+                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -522,33 +134,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="AutoUpdatePairPotentialsCheck">
-              <property name="text">
-               <string>Auto</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="UpdatePairPotentialsButton">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
+             <widget class="QToolButton" name="AtomTypeAddButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -556,11 +142,11 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Update All</string>
+               <string>Add</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
+                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -576,17 +162,17 @@
            </layout>
           </item>
           <item>
-           <widget class="QTableView" name="PairPotentialsTable">
+           <widget class="QTableView" name="AtomTypesTable">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>10</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
              </font>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::SingleSelection</enum>
-            </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
             </property>
             <attribute name="horizontalHeaderVisible">
              <bool>false</bool>
@@ -595,6 +181,505 @@
              <bool>false</bool>
             </attribute>
            </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="PairPotentialsGroup">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>2</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Pair Potentials</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QToolButton" name="RegenerateAllPairPotentialsButton">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Regenerate All</string>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                  <property name="toolButtonStyle">
+                   <enum>Qt::ToolButtonTextBesideIcon</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="AutoUpdatePairPotentialsCheck">
+                  <property name="text">
+                   <string>Auto</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QTableView" name="PairPotentialsTable">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <attribute name="horizontalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <item>
+               <widget class="QGroupBox" name="PairPotentialControlGroup">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Control</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout">
+                 <property name="leftMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="spacing">
+                  <number>4</number>
+                 </property>
+                 <item row="0" column="1">
+                  <widget class="ExponentialSpin" name="PairPotentialRangeSpin">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="decimals">
+                    <number>4</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_887">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Range</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_888">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Delta</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="ExponentialSpin" name="PairPotentialDeltaSpin">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="decimals">
+                    <number>4</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QLabel" name="label_7">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Å</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QLabel" name="label_8">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Å</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="ShortRangeTruncationGroup">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Short-Range Truncation</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_2">
+                 <property name="leftMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="spacing">
+                  <number>4</number>
+                 </property>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_889">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Width</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="ExponentialSpin" name="ShortRangeTruncationWidthSpin">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="decimals">
+                    <number>2</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_890">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Style</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QLabel" name="label_9">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Å</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" colspan="2">
+                  <widget class="QComboBox" name="ShortRangeTruncationCombo">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <item>
+               <widget class="QGroupBox" name="PairPotentialStyleGroup">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Charge Source</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <property name="spacing">
+                  <number>4</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>4</number>
+                 </property>
+                 <item>
+                  <widget class="QCheckBox" name="AutomaticChargeSourceCheck">
+                   <property name="text">
+                    <string>Choose Automatically</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="PairPotentialsAtomTypeChargesRadio">
+                   <property name="toolTip">
+                    <string>If selected, charges from atom types are included in tabulated pair potentials</string>
+                   </property>
+                   <property name="text">
+                    <string>Atom Types</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="PairPotentialsSpeciesAtomChargesRadio">
+                   <property name="toolTip">
+                    <string>If selected, tabulated pair potentials only contain short-range terms, with charges taken from species atoms</string>
+                   </property>
+                   <property name="text">
+                    <string>Species Atoms</string>
+                   </property>
+                   <property name="checked">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="ForceChargeSourceCheck">
+                   <property name="text">
+                    <string>Force Choice</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="CoulombTruncationGroup">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Coulomb Truncation</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <property name="spacing">
+                  <number>4</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>4</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_891">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Style</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="CoulombTruncationCombo">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>166</width>
+                  <height>37</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QFrame" name="PairPotentialsPlotFrame">
@@ -627,7 +712,14 @@
               <number>4</number>
              </property>
              <item>
-              <widget class="DataWidget" name="PairPotentialsPlotWidget" native="true"/>
+              <widget class="DataWidget" name="PairPotentialsPlotWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -675,6 +767,7 @@
              <property name="font">
               <font>
                <pointsize>10</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -782,6 +875,7 @@
              <property name="font">
               <font>
                <pointsize>10</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -889,6 +983,7 @@
              <property name="font">
               <font>
                <pointsize>10</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -996,6 +1091,7 @@
              <property name="font">
               <font>
                <pointsize>10</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -1107,22 +1203,5 @@
  <resources>
   <include location="main.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>AutoUpdatePairPotentialsCheck</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>UpdatePairPotentialsButton</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>382</x>
-     <y>212</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>467</x>
-     <y>220</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

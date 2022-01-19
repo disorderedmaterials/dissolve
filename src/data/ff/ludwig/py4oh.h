@@ -28,5 +28,5 @@ class Forcefield_Ludwig_Py4OH : public Forcefield
     // Return description for Forcefield
     std::string_view description() const override;
     // Return short-range interaction style for AtomTypes
-    Forcefield::ShortRangeType shortRangeType() const override;
+    ShortRangeFunctions::Form shortRangeForm() const override;
 };

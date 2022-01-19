@@ -20,7 +20,7 @@
 #include <iostream>
 
 DissolveWindow::DissolveWindow(Dissolve &dissolve)
-    : QMainWindow(nullptr), dissolve_(dissolve), recentFileNo_(10), threadController_(this, dissolve)
+    : QMainWindow(nullptr), dissolve_(dissolve), recentFileLimit_(10), threadController_(this, dissolve)
 {
     // Initialise resources
     Q_INIT_RESOURCE(main);
@@ -42,17 +42,18 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
 
     refreshing_ = false;
     modified_ = false;
-    localSimulation_ = true;
-    dissolveState_ = NoState;
+    dissolveIterating_ = false;
 
     // Create statusbar widgets
-
+    addStatusBarIcon(":/control/icons/control_step.svg")->setToolTip("Current step / iteration number");
     iterationLabel_ = addStatusBarLabel("00000");
-    addStatusBarIcon(":/general/icons/general_clock.svg");
+    iterationLabel_->setToolTip("Current step / iteration number");
+    addStatusBarIcon(":/general/icons/general_clock.svg")->setToolTip("Time remaining to completion");
     etaLabel_ = addStatusBarLabel("--:--:--");
-    heartbeatFileIndicator_ = addStatusBarIcon(":/general/icons/general_heartbeat.svg");
+    etaLabel_->setToolTip("Time remaining to completion");
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
-    localSimulationIndicator_ = addStatusBarIcon(":/general/icons/general_local.svg");
+    statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
+    statusLabel_ = addStatusBarLabel("Unknown", false);
 
     updateWindowTitle();
     updateStatusBar();
@@ -72,17 +73,17 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
     saveState();
 
     // If Dissolve is running, stop the thread now
-    if (dissolveState_ == RunningState)
+    if (dissolveIterating_)
     {
         // Send the signal to stop
         emit(stopIterating());
 
         // Wait for the thread to stop
-        while (dissolveState_ == RunningState)
+        while (dissolveIterating_)
             QApplication::processEvents();
     }
 
-    // Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
+    // Clear tabs before we try to close down the application, otherwise we might get in to trouble with object deletion
     refreshing_ = true;
     ui_.MainTabs->clearTabs();
     ui_.MainTabs->clear();
@@ -114,22 +115,28 @@ const Dissolve &DissolveWindow::dissolve() const { return dissolve_; }
  */
 
 // Add text label to status bar
-QLabel *DissolveWindow::addStatusBarLabel(QString text)
+QLabel *DissolveWindow::addStatusBarLabel(QString text, bool permanent)
 {
     auto *label = new QLabel(text);
-    statusBar()->addPermanentWidget(label);
+    if (permanent)
+        statusBar()->addPermanentWidget(label);
+    else
+        statusBar()->addWidget(label);
     return label;
 }
 
 // Add text label to status bar
-QLabel *DissolveWindow::addStatusBarIcon(QString resource)
+QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
 {
     const auto iconSize = statusBar()->font().pointSize() * 1.75;
     auto *label = new QLabel;
     label->setPixmap(QPixmap(resource));
     label->setMaximumSize(QSize(iconSize, iconSize));
     label->setScaledContents(true);
-    statusBar()->addPermanentWidget(label);
+    if (permanent)
+        statusBar()->addPermanentWidget(label);
+    else
+        statusBar()->addWidget(label);
     return label;
 }
 
@@ -138,13 +145,13 @@ QLabel *DissolveWindow::addStatusBarIcon(QString resource)
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile,
-                                   bool ignoreLayoutFile)
+bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile,
+                                   bool ignoreRestartFile)
 {
+    // Clear any current tabs
     refreshing_ = true;
-
-    // Clear any existing tabs etc.
     ui_.MainTabs->clearTabs();
+    refreshing_ = false;
 
     // Clear Dissolve itself
     dissolve_.clear();
@@ -170,25 +177,32 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
         }
 
         if (!loadResult)
+        {
             QMessageBox::warning(this, "Input file contained errors.",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
+
+            // Forcibly show the main stack page so the user can see what happened (the input file name will remain unset)
+            ui_.MainStack->setCurrentIndex(1);
+
+            return false;
+        }
     }
     else
         return Messenger::error("Input file does not exist.\n");
 
     // Load restart file if it exists
     Messenger::banner("Parse Restart File");
-    if (!ignoreRestartFile)
+    if (ignoreRestartFile)
+        Messenger::print("Restart file (if it exists) will be ignored.\n");
+    else
     {
-        std::string actualRestartFile{restartFile};
-        if (actualRestartFile.empty())
-            actualRestartFile = fmt::format("{}.restart", dissolve_.inputFilename());
+        std::string actualRestartFile{restartFile.value_or(fmt::format("{}.restart", dissolve_.inputFilename()))};
 
         if (DissolveSys::fileExists(actualRestartFile))
         {
-            Messenger::print("\nRestart file '{}' exists and will be loaded.\n", actualRestartFile);
+            Messenger::print("Restart file '{}' exists and will be loaded.\n", actualRestartFile);
             if (!dissolve_.loadRestart(actualRestartFile))
                 QMessageBox::warning(this, "Restart file contained errors.",
                                      "The restart file failed to load correctly.\nSee the messages for more details.",
@@ -198,41 +212,15 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view 
             dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
         }
         else
-            Messenger::print("\nRestart file '{}' does not exist.\n", actualRestartFile);
+            Messenger::print("Restart file '{}' does not exist.\n", actualRestartFile);
     }
-    else
-        Messenger::print("\nRestart file (if it exists) will be ignored.\n");
 
-    refreshing_ = true;
-
-    ui_.MainTabs->reconcileTabs(this);
-
-    refreshing_ = false;
-
-    // Does a window state exist for this input file?
-    stateFilename_ = QStringLiteral("%1.state").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
-
-    // Try to load in the window state file
-    if (QFile::exists(stateFilename_) && (!ignoreLayoutFile))
-        loadState();
-
-    localSimulation_ = true;
     modified_ = false;
+    dissolveIterating_ = false;
 
-    // Check the beat file
-    QString beatFile = QStringLiteral("%1.beat").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
-    if (QFile::exists(beatFile))
-    {
-        // TODO
-        // 		if (
-    }
+    Messenger::banner("Setting Up Processing Modules");
 
-    dissolveState_ = EditingState;
-
-    // Fully update GUI
-    fullUpdate();
-
-    return true;
+    return dissolve_.setUpProcessingLayerModules();
 }
 
 /*
@@ -245,8 +233,8 @@ void DissolveWindow::addRecentFile(const QString &filePath)
     QStringList recentFilePaths = settings.value("recentFiles").toStringList();
     recentFilePaths.removeAll(filePath);
     recentFilePaths.prepend(filePath);
-    if (recentFilePaths.size() > recentFileNo_)
-        recentFilePaths.erase(recentFilePaths.begin() + recentFileNo_, recentFilePaths.end());
+    if (recentFilePaths.size() > recentFileLimit_)
+        recentFilePaths.erase(recentFilePaths.begin() + recentFileLimit_, recentFilePaths.end());
     settings.setValue("recentFiles", recentFilePaths);
     updateRecentActionList();
 }
@@ -256,31 +244,30 @@ void DissolveWindow::openRecent()
     if (!checkSaveCurrentInput())
         return;
 
-    std::string filePath = "";
-    QAction *action = qobject_cast<QAction *>(sender());
+    auto *action = qobject_cast<QAction *>(sender());
     if (action)
     {
-        filePath = action->data().toString().toUtf8().constData();
-        openLocalFile(filePath, "", false, false);
+        std::string filePath = action->data().toString().toUtf8().constData();
+        openLocalFile(filePath);
+
+        fullUpdate();
     }
 }
 
 void DissolveWindow::createRecentMenu()
 {
-    int recentLength = recentFileNo_;
-    QAction *recentFileAction = 0;
-
     QFont font = ui_.SessionMenu->font();
     ui_.FileOpenRecentMenu->setFont(font);
 
-    for (auto i = 0; i < recentLength; i++)
+    for (auto i = 0; i < recentFileLimit_; ++i)
     {
-        recentFileAction = new QAction(this);
+        auto *recentFileAction = new QAction(this);
         recentFileAction->setVisible(false);
         QObject::connect(recentFileAction, SIGNAL(triggered(bool)), this, SLOT(openRecent()));
         ui_.FileOpenRecentMenu->addAction(recentFileAction);
         recentFileActionList_.append(recentFileAction);
     }
+
     updateRecentActionList();
 }
 
@@ -290,16 +277,12 @@ void DissolveWindow::updateRecentActionList()
     QStringList recentFilePaths = settings.value("recentFiles").toStringList();
 
     // Fill recent menu
-    for (auto i = 0u; i < recentFileNo_; ++i)
+    for (auto i = 0; i < recentFileLimit_; ++i)
     {
-        QFileInfo fileInfo;
-        QString strippedName, filePath;
         if (i < recentFilePaths.size())
         {
-            fileInfo = QFileInfo(recentFilePaths.at(i));
-            strippedName = fileInfo.fileName();
-            filePath = fileInfo.absoluteDir().absolutePath();
-            recentFileActionList_.at(i)->setText(strippedName + "    (" + filePath + ")");
+            auto fileInfo = QFileInfo(recentFilePaths.at(i));
+            recentFileActionList_.at(i)->setText(fileInfo.fileName() + "    (" + fileInfo.absoluteDir().absolutePath() + ")");
             recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
             recentFileActionList_.at(i)->setVisible(true);
         }
@@ -333,39 +316,56 @@ void DissolveWindow::updateStatusBar()
     // Set current iteration number
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
-    // Set relevant file locations
-    if (localSimulation_)
+    // Set restart file locations
+    restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
+    restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename()
+                                          ? QStringLiteral("Current restart file is '%1'")
+                                                .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
+                                          : "No restart file available");
+
+    // Set status
+    if (Messenger::nErrors() > 0)
     {
-        localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
-        restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
-        restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename()
-                                              ? QStringLiteral("Current restart file is '%1'")
-                                                    .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
-                                              : "No restart file available");
-        heartbeatFileIndicator_->setEnabled(false);
-        heartbeatFileIndicator_->setToolTip("Heartbeat file not monitored.");
+        statusLabel_->setText(QString("%1 %2 (see Messages)")
+                                  .arg(QString::number(Messenger::nErrors()), Messenger::nErrors() == 1 ? "Error" : "Errors"));
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_false.svg"));
+    }
+    else if (dissolveIterating_)
+    {
+        statusLabel_->setText("Running (ESC to stop)");
+        statusIndicator_->setPixmap(QPixmap(":/control/icons/control_play.svg"));
     }
     else
     {
-        localSimulationIndicator_->setPixmap(QPixmap(":/menu/icons/menu_connect.svg"));
-        // TODO!
+        statusLabel_->setText("Idle");
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_true.svg"));
     }
+
+    // Set restart file info
+    restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
+    restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename()
+                                          ? QStringLiteral("Current restart file is '%1'")
+                                                .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
+                                          : "No restart file available");
 }
 
 // Update menus
 void DissolveWindow::updateMenus()
 {
+    auto hasSimulation = ui_.MainStack->currentIndex() == 1;
+    auto allowEditing = hasSimulation && !dissolveIterating_;
+
     // File Menu - always active, but available items depends on state
-    ui_.FileSaveAction->setEnabled(dissolveState_ != NoState);
-    ui_.FileSaveAsAction->setEnabled(dissolveState_ != NoState);
-    ui_.FileCloseAction->setEnabled(dissolveState_ != NoState && dissolveState_ != RunningState);
+    ui_.FileSaveAction->setEnabled(hasSimulation && modified_);
+    ui_.FileSaveAsAction->setEnabled(allowEditing);
+    ui_.FileCloseAction->setEnabled(allowEditing);
 
     // Enable / disable other menu items as appropriate
-    ui_.SimulationMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.SpeciesMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.ConfigurationMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.LayerMenu->setEnabled(dissolveState_ == EditingState);
-    ui_.WorkspaceMenu->setEnabled(dissolveState_ == EditingState);
+    ui_.SimulationMenu->setEnabled(allowEditing);
+    ui_.SpeciesMenu->setEnabled(allowEditing);
+    ui_.ConfigurationMenu->setEnabled(allowEditing);
+    ui_.LayerMenu->setEnabled(allowEditing);
+    ui_.WorkspaceMenu->setEnabled(allowEditing);
 
     auto activeTab = ui_.MainTabs->currentTab();
     if (!activeTab)
@@ -400,8 +400,10 @@ void DissolveWindow::fullUpdate()
 {
     refreshing_ = true;
 
-    // Make sure correct stack page is shown
-    ui_.MainStack->setCurrentIndex(dissolveState_ == NoState ? 0 : 1);
+    // Move off the ident page if we currently have an input file (name)
+    if (dissolve_.hasInputFilename())
+        ui_.MainStack->setCurrentIndex(1);
+
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();
     updateRecentActionList();
@@ -440,4 +442,8 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 }
 
 // Clear the messages window
-void DissolveWindow::clearMessages() { ui_.MainTabs->messagesTab()->clearMessages(); }
+void DissolveWindow::clearMessages()
+{
+    ui_.MainTabs->messagesTab()->clearMessages();
+    Messenger::clearErrorCounts();
+}

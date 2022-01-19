@@ -20,9 +20,9 @@ class ConfigurationTab : public QWidget, public MainTab
     Q_OBJECT
 
     public:
-    ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
+    ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, QString title,
                      Configuration *cfg);
-    ~ConfigurationTab() = default;
+    ~ConfigurationTab() override = default;
 
     /*
      * UI
@@ -40,13 +40,13 @@ class ConfigurationTab : public QWidget, public MainTab
      */
     public:
     // Return tab type
-    MainTab::TabType type() const;
+    MainTab::TabType type() const override;
     // Raise suitable dialog for entering / checking new tab name
-    QString getNewTitle(bool &ok);
+    QString getNewTitle(bool &ok) override;
     // Return whether the title of the tab can be changed
-    bool canChangeTitle() const;
+    bool canChangeTitle() const override;
     // Return whether the tab can be closed (after any necessary user querying, etc.)
-    bool canClose() const;
+    bool canClose() const override;
 
     /*
      * Configuration Target
@@ -65,18 +65,16 @@ class ConfigurationTab : public QWidget, public MainTab
      * Update
      */
     private:
-    // Row update function for BondsTable
-    void updateSpeciesInfoTableRow(int row, SpeciesInfo *speciesInfo, bool createItems);
     // Update density label
     void updateDensityLabel();
 
     protected:
     // Update controls in tab
-    void updateControls();
+    void updateControls() override;
     // Disable sensitive controls within tab
-    void disableSensitiveControls();
+    void disableSensitiveControls() override;
     // Enable sensitive controls within tab
-    void enableSensitiveControls();
+    void enableSensitiveControls() override;
 
     /*
      * Signals / Slots

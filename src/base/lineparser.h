@@ -220,23 +220,23 @@ class LineParser
     // Returns number of arguments grabbed from last parse
     int nArgs() const;
     // Returns the specified argument as a string
-    std::string args(int i);
+    std::string args(int i) const;
     // Returns the specified argument as a string view
-    std::string_view argsv(int i);
+    std::string_view argsv(int i) const;
     // Returns the specified argument as an integer
-    int argi(int i);
+    int argi(int i) const;
     // Returns the specified argument as a long integer
-    long int argli(int i);
+    long int argli(int i) const;
     // Returns the specified argument as a double
-    double argd(int i);
+    double argd(int i) const;
     // Returns the specified argument as a bool
-    bool argb(int i);
+    bool argb(int i) const;
     // Return the specified and next two arguments as a Vec3<int>
-    Vec3<int> arg3i(int i);
+    Vec3<int> arg3i(int i) const;
     // Return the specified and next two arguments as a Vec3<double>
-    Vec3<double> arg3d(int i);
+    Vec3<double> arg3d(int i) const;
     // Return a vector of double parameters, starting from the specified argument
-    std::vector<double> argvd(int i);
+    std::vector<double> argvd(int i) const;
     // Returns whether the specified argument exists
     bool hasArg(int i) const;
 };

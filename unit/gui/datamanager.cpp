@@ -46,9 +46,8 @@ TEST_F(DataManagerTest, DataManager)
     EXPECT_EQ(model.data(model.index(0, 1)).toString().toStdString(), "restart/benzene.txt.restart.test");
 
     EXPECT_EQ(sim.columnCount(), 3);
-    // There are 38 processing data items in the restart file, but an additional "IsEnergyModuleTarget" is created when
-    // the EnergyModule setup stage is automatically run
-    EXPECT_EQ(sim.rowCount(), 39);
+    // There are 38 processing data items in the restart file
+    EXPECT_EQ(sim.rowCount(), 38);
     EXPECT_EQ(sim.data(sim.index(0, 0)).toString().toStdString(), "5050//FullWeights@benzene");
     EXPECT_EQ(sim.data(sim.index(0, 1)).toString().toStdString(), "NeutronWeights");
     EXPECT_EQ(sim.data(sim.index(0, 2)).toInt(), 1);

@@ -11,7 +11,9 @@ bool Messenger::muted_ = false;
 bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
 bool Messenger::masterOnly_ = true;
-LineParser Messenger::parser_; //= new LineParser;
+int Messenger::nErrors_ = 0;
+int Messenger::nWarnings_ = 0;
+LineParser Messenger::parser_;
 OutputHandler *Messenger::outputHandler_ = nullptr;
 std::string Messenger::outputPrefix_;
 
@@ -60,6 +62,19 @@ bool Messenger::isVerbose() { return verbose_; }
 
 // Set status of master-only mode
 void Messenger::setMasterOnly(bool b) { masterOnly_ = b; }
+
+// Clear error and warning counts
+void Messenger::clearErrorCounts()
+{
+    nErrors_ = 0;
+    nWarnings_ = 0;
+}
+
+// Return number of warnings
+int Messenger::nWarnings() { return nWarnings_; }
+
+// Return number of errors
+int Messenger::nErrors() { return nErrors_; }
 
 // Print normal message (no formatters)
 void Messenger::print(std::string_view s)

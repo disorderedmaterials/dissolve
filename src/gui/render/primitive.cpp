@@ -3,7 +3,6 @@
 
 #include "gui/render/primitive.h"
 #include "base/messenger.h"
-#include <string.h>
 
 Primitive::Primitive()
 {

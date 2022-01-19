@@ -16,7 +16,7 @@ class IsotopeComboDelegate : public QItemDelegate
 
     public:
     IsotopeComboDelegate(QObject *parent);
-    virtual ~IsotopeComboDelegate();
+    virtual ~IsotopeComboDelegate() = default;
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     // Set the data to appear when the editor is called

@@ -37,7 +37,7 @@ class Forcefield_UFF : public Forcefield
     // Return description for Forcefield
     std::string_view description() const override;
     // Return short-range interaction style for AtomTypes
-    Forcefield::ShortRangeType shortRangeType() const override;
+    ShortRangeFunctions::Form shortRangeForm() const override;
 
     /*
      * Atom Type Data

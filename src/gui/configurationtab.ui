@@ -123,7 +123,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -158,7 +158,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -193,7 +193,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -228,7 +228,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -260,7 +260,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -292,7 +292,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -324,7 +324,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -343,7 +343,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -365,7 +365,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -390,7 +390,7 @@
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -404,44 +404,44 @@
         </item>
         <item row="5" column="0">
          <widget class="QLabel" name="label_atom_pop">
-          <property name="text">
-           <string>Atoms</string>
-          </property>
-	  <property name="font">
+          <property name="font">
            <font>
-            <weight>75</weight>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
-	 </widget>
-	</item>
+          <property name="text">
+           <string>Atoms</string>
+          </property>
+         </widget>
+        </item>
         <item row="5" column="1">
          <widget class="QLabel" name="AtomPopulation">
           <property name="text">
            <string>0</string>
           </property>
-	 </widget>
-	</item>
+         </widget>
+        </item>
         <item row="6" column="0">
          <widget class="QLabel" name="label_mol_pop">
-          <property name="text">
-	    <string>Molecules</string>
-	  </property>
-	  <property name="font">
-	   <font>
-            <weight>75</weight>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
             <bold>true</bold>
            </font>
           </property>
-	 </widget>
-	</item>
+          <property name="text">
+           <string>Molecules</string>
+          </property>
+         </widget>
+        </item>
         <item row="6" column="1">
          <widget class="QLabel" name="MolPopulation">
           <property name="text">
            <string>0</string>
           </property>
-	 </widget>
-	</item>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -560,7 +560,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_16">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -577,27 +577,9 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="ExponentialSpin" name="AppliedSizeFactorSpin">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Current size factor scaling of the Configuration's Box and contents</string>
-          </property>
-          <property name="readOnly">
-           <bool>false</bool>
-          </property>
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-          <property name="minimum">
-           <double>1.000000000000000</double>
+         <widget class="QLabel" name="AppliedSizeFactorLabel">
+          <property name="text">
+           <string>0.0</string>
           </property>
          </widget>
         </item>

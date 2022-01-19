@@ -55,7 +55,7 @@ void SiteViewer::startInteraction()
                 setInteractionMode(SiteViewer::InteractionMode::SelectArea);
                 break;
             default:
-                fmt::print("Unhandled primary mode {} in SiteViewer::startInteraction().\n", interactionMode_);
+                fmt::print("Unhandled primary mode {} in SiteViewer::startInteraction().\n", (int)interactionMode_);
                 break;
         }
     }
@@ -128,7 +128,7 @@ void SiteViewer::endInteraction()
                     setInteractionMode(SiteViewer::InteractionMode::Select);
                     break;
                 default:
-                    fmt::print("Unhandled primary mode {} in SiteViewer::endInteraction().\n", interactionMode_);
+                    fmt::print("Unhandled primary mode {} in SiteViewer::endInteraction().\n", (int)interactionMode_);
                     break;
             }
             break;
@@ -137,7 +137,7 @@ void SiteViewer::endInteraction()
             // Rotation / translation has already been modified, so nothing more to do
             break;
         default:
-            fmt::print("Unhandled secondary mode {} in SiteViewer::endInteraction().\n", transientInteractionMode_);
+            fmt::print("Unhandled secondary mode {} in SiteViewer::endInteraction().\n", (int)transientInteractionMode_);
             break;
     }
 

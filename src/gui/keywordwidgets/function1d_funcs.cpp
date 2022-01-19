@@ -6,8 +6,6 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 
-Q_DECLARE_METATYPE(Functions::Function1D);
-
 #define MaxParams 6
 
 Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyword *keyword, const CoreData &coreData)
@@ -68,7 +66,7 @@ void Function1DKeywordWidget::functionCombo_currentIndexChanged(int index)
 
     updateWidgetValues(coreData_);
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 // Parameter value changed
@@ -81,7 +79,7 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

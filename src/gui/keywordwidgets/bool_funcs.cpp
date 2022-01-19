@@ -25,7 +25,7 @@ void BoolKeywordWidget::checkBoxClicked(bool checked)
 
     keyword_->setData(checked);
 
-    emit(keywordDataChanged(keyword_->signalMask()));
+    emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

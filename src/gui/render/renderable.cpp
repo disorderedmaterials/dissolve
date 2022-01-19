@@ -6,8 +6,6 @@
 #include "base/sysfunc.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
-#include "math/interpolator.h"
-#include <limits>
 
 // Static Singletons
 bool Renderable::sourceDataAccessEnabled_ = true;

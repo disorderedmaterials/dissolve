@@ -52,13 +52,11 @@ set(gui_MOC_HDRS
     configurationtab.h
     forcefieldtab.h
     layertab.h
-    maintab.h
     messagestab.h
     speciestab.h
     workspacetab.h
     # Main UI
     gui.h
-    stockcolours.h
     outputhandler.hui
     tmdiarea.hui
     thread.hui
@@ -198,9 +196,9 @@ set(gui_SRCS
     speciestab_isotopologues.cpp
     speciestab_sites.cpp
     workspacetab_funcs.cpp
+    maintab.h
     # Main UI
     gui_funcs.cpp
-    gui_io.cpp
     gui_simulation.cpp
     menu_configuration.cpp
     menu_file.cpp
@@ -213,6 +211,7 @@ set(gui_SRCS
     stockcolours.cpp
     thread_funcs.cpp
     tmdiarea_funcs.cpp
+    stockcolours.h
 )
 
 # Resources

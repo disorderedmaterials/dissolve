@@ -145,7 +145,7 @@ void ConfigurationTab::updateControls()
 
     // Size Factor
     ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
-    ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
+    ui_.AppliedSizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor()));
 
     // Generator
     // ui_.ProcedureWidget->updateControls();

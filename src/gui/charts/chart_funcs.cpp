@@ -5,7 +5,6 @@
 #include "gui/widgets/mimestrings.h"
 #include <QApplication>
 #include <QDrag>
-#include <QMimeData>
 #include <QMouseEvent>
 
 ChartBase::ChartBase(QWidget *parent) : QWidget(parent)

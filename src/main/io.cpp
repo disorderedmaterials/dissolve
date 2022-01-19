@@ -186,22 +186,26 @@ bool Dissolve::saveInput(std::string_view filename)
 
         for (auto &b : coreData_.masterBonds())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
-                                   BondFunctions::forms().keyword(b->form()), b->parametersAsString()))
+                                   BondFunctions::forms().keyword(b->interactionForm()),
+                                   b->interactionPotential().parametersAsString()))
                 return false;
 
         for (auto &a : coreData_.masterAngles())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
-                                   a->name(), AngleFunctions::forms().keyword(a->form()), a->parametersAsString()))
+                                   a->name(), AngleFunctions::forms().keyword(a->interactionForm()),
+                                   a->interactionPotential().parametersAsString()))
                 return false;
 
         for (auto &t : coreData_.masterTorsions())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
-                                   t->name(), TorsionFunctions::forms().keyword(t->form()), t->parametersAsString()))
+                                   t->name(), TorsionFunctions::forms().keyword(t->interactionForm()),
+                                   t->interactionPotential().parametersAsString()))
                 return false;
 
         for (auto &imp : coreData_.masterImpropers())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                   imp->name(), TorsionFunctions::forms().keyword(imp->form()), imp->parametersAsString()))
+                                   imp->name(), TorsionFunctions::forms().keyword(imp->interactionForm()),
+                                   imp->interactionPotential().parametersAsString()))
                 return false;
 
         // Done with the master terms
@@ -229,16 +233,12 @@ bool Dissolve::saveInput(std::string_view filename)
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
     for (const auto &atomType : atomTypes())
-    {
-        std::string line = fmt::format("  {}  {}  {}  {:12.6e}  {}",
-                                       PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
-                                       atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
-                                       Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
-        for (auto x : atomType->shortRangeParameters())
-            line += fmt::format("  {:12.6e}", x);
-        if (!parser.writeLine(line))
+        if (!parser.writeLineF("  {}  {}  {}  {:12.6e}  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
+                               atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
+                               ShortRangeFunctions::forms().keyword(atomType->interactionPotential().form()),
+                               atomType->interactionPotential().parametersAsString()))
             return false;
-    }
 
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword),
                            pairPotentialRange_))
@@ -246,9 +246,22 @@ bool Dissolve::saveInput(std::string_view filename)
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword),
                            pairPotentialDelta_))
         return false;
-    if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::IncludeCoulombKeyword),
-                           DissolveSys::btoa(pairPotentialsIncludeCoulomb_)))
-        return false;
+    if (!automaticChargeSource_)
+    {
+        if (!parser.writeLineF("  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ManualChargeSourceKeyword),
+                               DissolveSys::btoa(true)))
+            return false;
+        if (!parser.writeLineF("  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::IncludeCoulombKeyword),
+                               DissolveSys::btoa(atomTypeChargeSource_)))
+            return false;
+        if (forceChargeSource_ &&
+            !parser.writeLineF("  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ForceChargeSourceKeyword),
+                               DissolveSys::btoa(true)))
+            return false;
+    }
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::CoulombTruncationKeyword),
                            PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme())))
         return false;
@@ -614,39 +627,6 @@ bool Dissolve::saveRestart(std::string_view filename)
     return true;
 }
 
-// Save heartbeat file
-bool Dissolve::saveHeartBeat(std::string_view filename, double estimatedNSecs)
-{
-    // Open file
-    LineParser parser;
-    if (!parser.openOutput(filename, true) || (!parser.isFileGoodForWriting()))
-    {
-        Messenger::error("Couldn't open heartbeat file '{}'.\n", filename);
-        return false;
-    }
-
-    // Write title comment
-    if (!parser.writeLineF("# Heartbeat file written by Dissolve v{} at {}.\n", Version::info(),
-                           DissolveSys::currentTimeAndDate()))
-        return false;
-
-    // Write current date and time
-    if (!parser.writeLineF("{}\n", DissolveSys::currentTimeAndDate()))
-        return false;
-
-    // Write current iteration number
-    if (!parser.writeLineF("{}\n", iteration_))
-        return false;
-
-    // Write estimated number of seconds this iteration will take
-    if (!parser.writeLineF("{}\n", estimatedNSecs))
-        return false;
-
-    parser.closeFiles();
-
-    return true;
-}
-
 // Return whether an input filename has been set
 bool Dissolve::hasInputFilename() const { return (!inputFilename_.empty()); }
 
@@ -668,9 +648,3 @@ std::string_view Dissolve::restartFilename() const { return restartFilename_; }
 
 // Return whether a restart filename has been set
 bool Dissolve::hasRestartFilename() const { return (!restartFilename_.empty()); }
-
-// Set whether to write the heartbeat file
-void Dissolve::setWriteHeartBeat(bool b) { writeHeartBeat_ = b; }
-
-// Return whether a heartbeat file needs to be written
-bool Dissolve::writeHeartBeat() const { return writeHeartBeat_; }

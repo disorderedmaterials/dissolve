@@ -1,15 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
-#include "gui/delegates/isotopecombo.hui"
 #include "gui/gui.h"
-#include "gui/helpers/treewidgetupdater.h"
 #include "gui/speciestab.h"
-#include <memory>
-
-Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
-Q_DECLARE_METATYPE(Sears91::Isotope)
 
 /*
  * Private Functions
@@ -23,20 +16,37 @@ Isotopologue *SpeciesTab::currentIsotopologue()
     if (!model->hasSelection())
         return nullptr;
     auto item = model->currentIndex();
-    if (item.parent().isValid())
-        return VariantPointer<Isotopologue>(isos_.data(item.parent(), Qt::UserRole));
-    else
-        return VariantPointer<Isotopologue>(isos_.data(item, Qt::UserRole));
+    return isos_.data(item.parent().isValid() ? item.parent() : item, Qt::UserRole).value<Isotopologue *>();
 }
 
 /*
  * Private Slots
  */
 
+void SpeciesTab::isotopologuesSelectionChanged(const QItemSelection &, const QItemSelection &) { updateIsotopologuesTab(); }
+
+void SpeciesTab::isotopologuesChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)
+{
+    updateIsotopologuesTab();
+
+    dissolveWindow_->setModified();
+}
+
+void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
+{
+    auto newIndex = isos_.addIso();
+
+    ui_.IsotopologuesTree->expand(newIndex);
+}
+
 void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
 {
     // Get current Isotopologue
-    Isotopologue *iso = currentIsotopologue();
+    auto model = ui_.IsotopologuesTree->selectionModel();
+    if (!model->hasSelection())
+        return;
+    auto item = model->currentIndex();
+    auto *iso = isos_.data(item.parent().isValid() ? item.parent() : item, Qt::UserRole).value<Isotopologue *>();
     if (!iso)
         return;
 
@@ -44,9 +54,9 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
     KeywordStore::objectNoLongerValid<Isotopologue>(iso);
 
     // Finally, remove the Isotopologue from the Species
-    isos_.removeIso(iso);
+    isos_.removeIso(item);
 
-    updateControls();
+    dissolveWindow_->fullUpdate();
 }
 
 void SpeciesTab::on_IsotopologueGenerateButton_clicked(bool checked)
@@ -66,6 +76,5 @@ void SpeciesTab::on_IsotopologueCollapseAllButton_clicked(bool checked) { ui_.Is
 void SpeciesTab::updateIsotopologuesTab()
 {
     ui_.IsotopologuesTree->resizeColumnToContents(0);
-    Isotopologue *isotopologue = currentIsotopologue();
-    ui_.IsotopologueRemoveButton->setEnabled(isotopologue != nullptr);
+    ui_.IsotopologueRemoveButton->setEnabled(ui_.IsotopologuesTree->selectionModel()->hasSelection());
 }

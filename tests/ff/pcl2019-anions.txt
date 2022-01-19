@@ -1034,6 +1034,11 @@ Species 'tso'
   Forcefield  'PCL2019/Anions'
 EndSpecies
 
+PairPotentials
+  ManualChargeSource  True
+  ForceChargeSource  True
+EndPairPotentials
+
 Layer  'Processing'
 
   Module  'CheckSpecies'

@@ -76,7 +76,7 @@ void DataViewer::endInteraction()
             }
             break;
         default:
-            Messenger::error("Internal Error: Don't know how to complete interaction mode {}\n", interactionMode());
+            Messenger::error("Internal Error: Don't know how to complete interaction mode {}\n", (int)interactionMode());
             break;
     }
 

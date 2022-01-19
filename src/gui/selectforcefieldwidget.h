@@ -7,9 +7,6 @@
 #include "gui/ui_selectforcefieldwidget.h"
 #include <QWidget>
 
-Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
-Q_DECLARE_METATYPE(std::shared_ptr<Forcefield>)
-
 // Forward Declarations
 class Dissolve;
 class Forcefield;

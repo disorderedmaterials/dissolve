@@ -15,7 +15,7 @@ bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSigna
 {
     if (referenceForces_.hasFilename())
     {
-        Messenger::print("Reading test reference forces.\n");
+        Messenger::print("[SETUP {}] Reading test reference forces.\n", uniqueName_);
 
         // Realise and read the force array
         auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>("ReferenceForces", uniqueName());

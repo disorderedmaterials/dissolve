@@ -8,9 +8,6 @@
 #include <QButtonGroup>
 #include <QInputDialog>
 
-Q_DECLARE_METATYPE(std::shared_ptr<Renderable>)
-Q_DECLARE_METATYPE(RenderableGroup *)
-
 DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 {
     // Set up our UI

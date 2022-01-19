@@ -106,7 +106,13 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     if (!species_->checkSetUp())
         return Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", species_->name());
 
-    Messenger::print("[Add] Adding species '{}' - population is {}.\n", species_->name(), population_.asInteger());
+    if (population_ > 0)
+        Messenger::print("[Add] Adding species '{}' - population is {}.\n", species_->name(), population_.asInteger());
+    else
+    {
+        Messenger::print("[Add] Population of species '{}' is zero so it will not be added.\n", species_->name());
+        return true;
+    }
 
     const auto nAtomsToAdd = population_ * species_->nAtoms();
     auto [rho, rhoUnits] = density_;

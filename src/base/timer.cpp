@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/timer.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 Timer::Timer() { start(); }
 

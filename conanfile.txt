@@ -1,6 +1,6 @@
 [requires]
 cli11/1.9.1
-fmt/7.0.3
+fmt/8.1.1
 gtest/1.10.0
 pugixml/1.11
 tbb/2020.3

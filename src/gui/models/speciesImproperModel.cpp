@@ -46,10 +46,13 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
             case 3:
                 return improper.index(index.column()) + 1;
             case 4:
-                return improper.masterTerm() ? QString::fromStdString("@" + std::string(improper.masterTerm()->name()))
-                                             : QString::fromStdString(TorsionFunctions::forms().keyword(improper.form()));
+                return improper.masterTerm()
+                           ? QString::fromStdString("@" + std::string(improper.masterTerm()->name()))
+                           : QString::fromStdString(TorsionFunctions::forms().keyword(improper.interactionForm()));
             case 5:
-                return QString::fromStdString(improper.parametersAsString());
+                return improper.masterTerm()
+                           ? QString::fromStdString(improper.masterTerm()->interactionPotential().parametersAsString())
+                           : QString::fromStdString(improper.interactionPotential().parametersAsString());
             default:
                 return {};
         }
@@ -117,7 +120,7 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
                 {
                     auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
                     improper.detachFromMasterTerm();
-                    improper.setForm(tf);
+                    improper.setInteractionForm(tf);
                 }
                 catch (std::runtime_error &e)
                 {
@@ -126,7 +129,7 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
             }
             break;
         case 5:
-            if (!improper.setParameters(value.toString().toStdString()))
+            if (!improper.setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
         default:

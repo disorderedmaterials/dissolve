@@ -156,7 +156,7 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
     ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF"));
@@ -177,7 +177,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
     ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Unweighted S(Q)"));
@@ -202,7 +202,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(b
     ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q)"));
@@ -231,7 +231,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
     ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q) / X-Ray S(Q)"));

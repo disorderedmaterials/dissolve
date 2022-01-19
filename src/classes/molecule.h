@@ -5,6 +5,7 @@
 
 #include "templates/dynamicarrayobject.h"
 #include "templates/vector3.h"
+#include <functional>
 #include <memory>
 #include <vector>
 

@@ -10,10 +10,6 @@
 
 void DissolveWindow::setupIteration(int count)
 {
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
-
     // Ensure that the simulation can run
     if (dissolve_.inputFilename().empty())
     {
@@ -21,15 +17,34 @@ void DissolveWindow::setupIteration(int count)
         return;
     }
 
+    // Clear the messages tab
+    clearMessages();
+
+    // Prepare the simulation
+    if (!dissolve_.prepare())
+    {
+        updateStatusBar();
+        return;
+    }
+
     // Prepare the GUI
     disableSensitiveControls();
     Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
+    dissolveIterating_ = true;
 
     // Update the controls
-    updateStatusBar();
+    fullUpdate();
 
     emit iterate(count);
+}
+
+void DissolveWindow::on_SimulationCheckAction_triggered(bool checked)
+{
+    clearMessages();
+
+    dissolve_.prepare();
+
+    fullUpdate();
 }
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked) { setupIteration(-1); }
@@ -49,12 +64,7 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked) { setupIter
 
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked) { setupIteration(5); }
 
-void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
-{
-    emit(stopIterating());
-
-    Renderable::setSourceDataAccessEnabled(true);
-}
+void DissolveWindow::on_SimulationStopAction_triggered(bool checked) { emit(stopIterating()); }
 
 void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 {
@@ -65,9 +75,9 @@ void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
         return;
 
     if (dissolve_.saveRestart(qPrintable(filename)))
-        Messenger::print("Saved restart point to '{}'.\n", qPrintable(filename));
+        statusBar()->showMessage(QString("Saved restart point to '%1'.").arg(filename), 3000);
     else
-        Messenger::error("Failed to save restart point to '{}'.\n", qPrintable(filename));
+        statusBar()->showMessage(QString("ERROR: Failed to save restart point to '%1'.").arg(filename), 3000);
 }
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)

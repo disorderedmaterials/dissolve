@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "main/dissolve.h"
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -57,11 +56,13 @@ void DissolveWindow::startNew()
     // Clear Dissolve itself
     dissolve_.clear();
 
-    dissolveState_ = DissolveWindow::EditingState;
-    localSimulation_ = true;
+    dissolveIterating_ = false;
     modified_ = false;
 
     refreshing_ = false;
+
+    // Explicitly show the main stack page
+    ui_.MainStack->setCurrentIndex(1);
 
     fullUpdate();
 }
@@ -74,23 +75,20 @@ void DissolveWindow::on_FileNewAction_triggered(bool checked)
     startNew();
 }
 
-void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
+void DissolveWindow::on_FileOpenAction_triggered(bool checked)
 {
     if (!checkSaveCurrentInput())
         return;
 
     // Request a new file to open
     QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(),
-                                                     "Dissolve input files Text files (*.txt);;All Files (*)");
+                                                     "Dissolve input files (*.txt);;All Files (*)");
     if (inputFile.isEmpty())
         return;
 
-    openLocalFile(qPrintable(inputFile), "", false, false);
-}
+    openLocalFile(qPrintable(inputFile), "", false);
 
-void DissolveWindow::on_FileConnectAction_triggered(bool checked)
-{
-    // TODO
+    fullUpdate();
 }
 
 void DissolveWindow::on_FileCloseAction_triggered(bool checked)
@@ -104,15 +102,17 @@ void DissolveWindow::on_FileCloseAction_triggered(bool checked)
     ui_.MainTabs->clearTabs();
 
     // Clear the messages widget
-    ui_.MainTabs->messagesTab()->clearMessages();
+    clearMessages();
 
     refreshing_ = false;
 
     // Clear Dissolve
     dissolve_.clear();
-    dissolveState_ = DissolveWindow::NoState;
+    dissolveIterating_ = false;
     modified_ = false;
 
+    // Set the stack back to the ident page
+    ui_.MainStack->setCurrentIndex(0);
     fullUpdate();
 }
 
@@ -146,6 +146,9 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
     updateStatusBar();
 
     updateWindowTitle();
+
+    statusBar()->showMessage(
+        QString("Input file saved to '%1'.").arg(QString::fromStdString(std::string(dissolve_.inputFilename()))), 3000);
 }
 
 void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
@@ -175,6 +178,9 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
     updateStatusBar();
 
     updateWindowTitle();
+
+    statusBar()->showMessage(
+        QString("Input file saved to '%1'.").arg(QString::fromStdString(std::string(dissolve_.inputFilename()))), 3000);
 }
 
 void DissolveWindow::on_FileQuitAction_triggered(bool checked)

@@ -95,9 +95,11 @@ std::vector<std::unique_ptr<Module>> &ModuleLayer::modules() { return modules_; 
 // Run set-up stages for all modules
 bool ModuleLayer::setUpAll(Dissolve &dissolve, ProcessPool &procPool)
 {
+    auto result = true;
+
     for (auto &module : modules_)
         if (!module->setUp(dissolve, procPool))
-            return false;
+            result = false;
 
-    return true;
+    return result;
 }

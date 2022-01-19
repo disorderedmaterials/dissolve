@@ -18,8 +18,8 @@ class WorkspaceTab : public QWidget, public MainTab
     Q_OBJECT
 
     public:
-    WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title);
-    ~WorkspaceTab() = default;
+    WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, QString title);
+    ~WorkspaceTab() override = default;
     // Main form declaration
     Ui::WorkspaceTab ui;
 
@@ -28,22 +28,22 @@ class WorkspaceTab : public QWidget, public MainTab
      */
     public:
     // Return tab type
-    MainTab::TabType type() const;
+    MainTab::TabType type() const override;
     // Raise suitable dialog for entering / checking new tab name
-    QString getNewTitle(bool &ok);
+    QString getNewTitle(bool &ok) override;
     // Return whether the title of the tab can be changed
-    bool canChangeTitle() const;
+    bool canChangeTitle() const override;
 
     /*
      * Update
      */
     protected:
     // Update controls in tab
-    void updateControls();
+    void updateControls() override;
     // Disable sensitive controls within tab
-    void disableSensitiveControls();
+    void disableSensitiveControls() override;
     // Enable sensitive controls within tab
-    void enableSensitiveControls();
+    void enableSensitiveControls() override;
 
     /*
      * Gizmo Management

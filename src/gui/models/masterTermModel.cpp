@@ -100,9 +100,9 @@ QVariant MasterTermBondModel::getTermData(int index, MasterTermModelData::DataTy
         case (MasterTermModelData::DataType::Name):
             return QString::fromStdString(std::string(masterBond->name()));
         case (MasterTermModelData::DataType::Form):
-            return QString::fromStdString(std::string(BondFunctions::forms().keyword(masterBond->form())));
+            return QString::fromStdString(std::string(BondFunctions::forms().keyword(masterBond->interactionForm())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(masterBond->parametersAsString());
+            return QString::fromStdString(masterBond->interactionPotential().parametersAsString());
         default:
             return {};
     }
@@ -123,7 +123,7 @@ bool MasterTermBondModel::setTermData(int index, MasterTermModelData::DataType d
             try
             {
                 auto bf = BondFunctions::forms().enumeration(value.toString().toStdString());
-                masterBond->setForm(bf);
+                masterBond->setInteractionForm(bf);
             }
             catch (std::runtime_error &e)
             {
@@ -131,7 +131,7 @@ bool MasterTermBondModel::setTermData(int index, MasterTermModelData::DataType d
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!masterBond->setParameters(value.toString().toStdString()))
+            if (!masterBond->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
@@ -165,9 +165,9 @@ QVariant MasterTermAngleModel::getTermData(int index, MasterTermModelData::DataT
         case (MasterTermModelData::DataType::Name):
             return QString::fromStdString(std::string(masterAngle->name()));
         case (MasterTermModelData::DataType::Form):
-            return QString::fromStdString(std::string(AngleFunctions::forms().keyword(masterAngle->form())));
+            return QString::fromStdString(std::string(AngleFunctions::forms().keyword(masterAngle->interactionForm())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(masterAngle->parametersAsString());
+            return QString::fromStdString(masterAngle->interactionPotential().parametersAsString());
         default:
             return {};
     }
@@ -188,7 +188,7 @@ bool MasterTermAngleModel::setTermData(int index, MasterTermModelData::DataType 
             try
             {
                 auto af = AngleFunctions::forms().enumeration(value.toString().toStdString());
-                masterAngle->setForm(af);
+                masterAngle->setInteractionForm(af);
             }
             catch (std::runtime_error &e)
             {
@@ -196,7 +196,7 @@ bool MasterTermAngleModel::setTermData(int index, MasterTermModelData::DataType 
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!masterAngle->setParameters(value.toString().toStdString()))
+            if (!masterAngle->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
@@ -231,9 +231,9 @@ QVariant MasterTermTorsionModel::getTermData(int index, MasterTermModelData::Dat
         case (MasterTermModelData::DataType::Name):
             return QString::fromStdString(std::string(masterTorsion->name()));
         case (MasterTermModelData::DataType::Form):
-            return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(masterTorsion->form())));
+            return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(masterTorsion->interactionForm())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(masterTorsion->parametersAsString());
+            return QString::fromStdString(masterTorsion->interactionPotential().parametersAsString());
         default:
             return {};
     }
@@ -254,7 +254,7 @@ bool MasterTermTorsionModel::setTermData(int index, MasterTermModelData::DataTyp
             try
             {
                 auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
-                masterTorsion->setForm(tf);
+                masterTorsion->setInteractionForm(tf);
             }
             catch (std::runtime_error &e)
             {
@@ -262,7 +262,7 @@ bool MasterTermTorsionModel::setTermData(int index, MasterTermModelData::DataTyp
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!masterTorsion->setParameters(value.toString().toStdString()))
+            if (!masterTorsion->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
@@ -297,9 +297,9 @@ QVariant MasterTermImproperModel::getTermData(int index, MasterTermModelData::Da
         case (MasterTermModelData::DataType::Name):
             return QString::fromStdString(std::string(masterImproper->name()));
         case (MasterTermModelData::DataType::Form):
-            return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(masterImproper->form())));
+            return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(masterImproper->interactionForm())));
         case (MasterTermModelData::DataType::Parameters):
-            return QString::fromStdString(masterImproper->parametersAsString());
+            return QString::fromStdString(masterImproper->interactionPotential().parametersAsString());
         default:
             return {};
     }
@@ -320,7 +320,7 @@ bool MasterTermImproperModel::setTermData(int index, MasterTermModelData::DataTy
             try
             {
                 auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
-                masterImproper->setForm(tf);
+                masterImproper->setInteractionForm(tf);
             }
             catch (std::runtime_error &e)
             {
@@ -328,7 +328,7 @@ bool MasterTermImproperModel::setTermData(int index, MasterTermModelData::DataTy
             }
             break;
         case (MasterTermModelData::DataType::Parameters):
-            if (!masterImproper->setParameters(value.toString().toStdString()))
+            if (!masterImproper->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
         default:

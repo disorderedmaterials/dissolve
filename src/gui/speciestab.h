@@ -29,9 +29,8 @@ class SpeciesTab : public QWidget, public MainTab
     Q_OBJECT
 
     public:
-    SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
-               Species *species);
-    ~SpeciesTab() = default;
+    SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, QString title, Species *species);
+    ~SpeciesTab() override = default;
 
     /*
      * UI
@@ -49,24 +48,24 @@ class SpeciesTab : public QWidget, public MainTab
 
     public slots:
     // Update controls in tab
-    void updateControls();
+    void updateControls() override;
     // Disable sensitive controls within tab
-    void disableSensitiveControls();
+    void disableSensitiveControls() override;
     // Enable sensitive controls within tab
-    void enableSensitiveControls();
+    void enableSensitiveControls() override;
 
     /*
      * MainTab Reimplementations
      */
     public:
     // Return tab type
-    MainTab::TabType type() const;
+    MainTab::TabType type() const override;
     // Raise suitable dialog for entering / checking new tab name
-    QString getNewTitle(bool &ok);
+    QString getNewTitle(bool &ok) override;
     // Return whether the title of the tab can be changed
-    bool canChangeTitle() const;
+    bool canChangeTitle() const override;
     // Return whether the tab can be closed (after any necessary user querying, etc.)
-    bool canClose() const;
+    bool canClose() const override;
 
     /*
      * Species Target
@@ -110,6 +109,9 @@ class SpeciesTab : public QWidget, public MainTab
     Isotopologue *currentIsotopologue();
 
     private slots:
+    void isotopologuesSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void isotopologuesChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &);
+    void on_IsotopologueAddButton_clicked(bool checked);
     void on_IsotopologueRemoveButton_clicked(bool checked);
     void on_IsotopologueGenerateButton_clicked(bool checked);
     void on_IsotopologueExpandAllButton_clicked(bool checked);

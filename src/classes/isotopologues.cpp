@@ -18,7 +18,7 @@ Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
  */
 
 // Set associated Species
-void Isotopologues::setSpecies(const Species *sp, int population)
+void Isotopologues::setSpecies(const Species *sp, double population)
 {
     species_ = sp;
     speciesPopulation_ = population;
@@ -28,7 +28,7 @@ void Isotopologues::setSpecies(const Species *sp, int population)
 const Species *Isotopologues::species() const { return species_; }
 
 // Return associated Species population
-int Isotopologues::speciesPopulation() const { return speciesPopulation_; }
+double Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 
 // Add specific Isotopologue to list
 void Isotopologues::add(const Isotopologue *iso, double relativeWeight)

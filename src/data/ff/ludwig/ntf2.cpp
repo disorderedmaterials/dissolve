@@ -74,4 +74,4 @@ std::string_view Forcefield_Ludwig_NTf2::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Ludwig_NTf2::shortRangeType() const { return Forcefield::ShortRangeType::LennardJones; }
+ShortRangeFunctions::Form Forcefield_Ludwig_NTf2::shortRangeForm() const { return ShortRangeFunctions::Form::LennardJones; }

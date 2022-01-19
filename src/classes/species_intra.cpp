@@ -447,7 +447,9 @@ void Species::generateAttachedAtomLists()
         auto selection = fragment(angle.i()->index(), *ji, *jk);
 
         // Remove Atom 'j' from the list if it's there
-        selection.erase(std::remove(selection.begin(), selection.end(), angle.j()->index()));
+        auto jit = std::find(selection.begin(), selection.end(), angle.j()->index());
+        if (jit != selection.end())
+            selection.erase(jit);
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
@@ -469,7 +471,9 @@ void Species::generateAttachedAtomLists()
         selection = fragment(angle.k()->index(), *ji, jk);
 
         // Remove Atom 'j' from the list if it's there
-        selection.erase(std::remove(selection.begin(), selection.end(), angle.j()->index()));
+        jit = std::find(selection.begin(), selection.end(), angle.j()->index());
+        if (jit != selection.end())
+            selection.erase(jit);
 
         angle.setAttachedAtoms(1, selection);
     }
@@ -543,10 +547,11 @@ void generateMasterTerm(Intra &term, std::string_view termName,
     {
         // Are the parameters the same as our local term?
         const Master &master = optMaster->get();
-        if (master.form() != term.form() || master.nParameters() != term.nParameters())
+        if (master.interactionForm() != term.interactionForm() ||
+            master.interactionParameters().size() != term.interactionParameters().size())
             continue;
         else
-            for (auto &&[localValue, masterValue] : zip(term.parameters(), master.parameters()))
+            for (auto &&[localValue, masterValue] : zip(term.interactionParameters(), master.interactionParameters()))
                 if (fabs(localValue - masterValue) > 1.0e-8)
                     optMaster = std::nullopt;
 
@@ -561,8 +566,7 @@ void generateMasterTerm(Intra &term, std::string_view termName,
     if (!optMaster)
     {
         optMaster = termCreator(index == 0 ? termName : fmt::format("{}_{}", termName, index));
-        optMaster->get().setForm(term.form());
-        optMaster->get().setParameters(term.parameters());
+        optMaster->get().setInteractionFormAndParameters(term.interactionForm(), term.interactionParameters());
     }
 
     term.setMasterTerm(&optMaster->get());

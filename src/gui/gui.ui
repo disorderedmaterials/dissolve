@@ -19,11 +19,26 @@
    <string>Dissolve-GUI</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="main.qrc">
     <normaloff>:/dissolve/icons/dissolve.png</normaloff>:/dissolve/icons/dissolve.png</iconset>
   </property>
   <widget class="QWidget" name="Centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>4</number>
+    </property>
+    <property name="leftMargin">
+     <number>4</number>
+    </property>
+    <property name="topMargin">
+     <number>4</number>
+    </property>
+    <property name="rightMargin">
+     <number>4</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QStackedWidget" name="MainStack">
       <widget class="QWidget" name="LogoPage">
@@ -34,7 +49,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>:/dissolve/icons/simple.png</pixmap>
+           <pixmap resource="main.qrc">:/dissolve/icons/simple.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
@@ -107,8 +122,7 @@
     </widget>
     <addaction name="FileNewAction"/>
     <addaction name="separator"/>
-    <addaction name="FileOpenLocalAction"/>
-    <addaction name="FileConnectAction"/>
+    <addaction name="FileOpenAction"/>
     <addaction name="FileOpenRecentMenu"/>
     <addaction name="separator"/>
     <addaction name="FileCloseAction"/>
@@ -139,10 +153,12 @@
     <property name="title">
      <string>S&amp;imulation</string>
     </property>
+    <addaction name="SimulationCheckAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationRunAction"/>
     <addaction name="SimulationRunForAction"/>
     <addaction name="separator"/>
-    <addaction name="SimulationPauseAction"/>
+    <addaction name="SimulationStopAction"/>
     <addaction name="SimulationStepFiveAction"/>
     <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
@@ -183,7 +199,7 @@
       <string>&amp;Create</string>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="main.qrc">
        <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
      </property>
      <addaction name="SpeciesCreateAtomicAction"/>
@@ -256,7 +272,7 @@
       <string>&amp;Create</string>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="main.qrc">
        <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
      </property>
      <addaction name="ConfigurationCreateEmptyAction"/>
@@ -303,7 +319,7 @@
       <string>&amp;Create</string>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="main.qrc">
        <normaloff>:/tabs/icons/tabs_modulelayer.svg</normaloff>:/tabs/icons/tabs_modulelayer.svg</iconset>
      </property>
      <widget class="QMenu" name="LayerCreateEvolutionMenu">
@@ -313,7 +329,7 @@
        </font>
       </property>
       <property name="title">
-       <string>E&amp;volution...</string>
+       <string>E&amp;volution</string>
       </property>
       <addaction name="LayerCreateEvolveBasicAtomicAction"/>
       <addaction name="LayerCreateEvolveAtomicAction"/>
@@ -327,23 +343,23 @@
        </font>
       </property>
       <property name="title">
-       <string>&amp;Refinement...</string>
+       <string>&amp;Refinement</string>
       </property>
       <addaction name="LayerCreateRefineEPSRAction"/>
      </widget>
-     <widget class="QMenu" name="LayerCreateCalculateMenu">
+     <widget class="QMenu" name="LayerCreateCorrelationsMenu">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
        </font>
       </property>
       <property name="title">
-       <string>&amp;Calculate...</string>
+       <string>&amp;Correlations</string>
       </property>
-      <addaction name="LayerCreateCalculateRDFAction"/>
-      <addaction name="LayerCreateCalculateRDFStructureFactorAction"/>
-      <addaction name="LayerCreateCalculateRDFNeutronAction"/>
-      <addaction name="LayerCreateCalculateRDFNeutronXRayAction"/>
+      <addaction name="LayerCreateCorrelationsRDFAction"/>
+      <addaction name="LayerCreateCorrelationsRDFStructureFactorAction"/>
+      <addaction name="LayerCreateCorrelationsRDFNeutronAction"/>
+      <addaction name="LayerCreateCorrelationsRDFNeutronXRayAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateAnalyseMenu">
       <property name="font">
@@ -352,7 +368,7 @@
        </font>
       </property>
       <property name="title">
-       <string>Analysis...</string>
+       <string>Analysis</string>
       </property>
       <addaction name="LayerCreateAnalyseRDFCNAction"/>
       <addaction name="LayerCreateAnalyseAvgMolSDFAction"/>
@@ -360,7 +376,7 @@
      <addaction name="LayerCreateEmptyAction"/>
      <addaction name="separator"/>
      <addaction name="LayerCreateEvolutionMenu"/>
-     <addaction name="LayerCreateCalculateMenu"/>
+     <addaction name="LayerCreateCorrelationsMenu"/>
      <addaction name="LayerCreateRefinementMenu"/>
      <addaction name="LayerCreateAnalyseMenu"/>
     </widget>
@@ -377,13 +393,13 @@
    <addaction name="HelpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="FileOpenLocalAction">
+  <action name="FileOpenAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Local...</string>
+    <string>&amp;Open...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -391,7 +407,7 @@
   </action>
   <action name="FileSaveAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/menu/icons/menu_save.svg</normaloff>:/menu/icons/menu_save.svg</iconset>
    </property>
    <property name="text">
@@ -411,7 +427,7 @@
   </action>
   <action name="WorkspaceCreateEmptyAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/tabs/icons/tabs_workspace.svg</normaloff>:/tabs/icons/tabs_workspace.svg</iconset>
    </property>
    <property name="text">
@@ -462,7 +478,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/menu/icons/menu_connect.svg</normaloff>:/menu/icons/menu_connect.svg</iconset>
    </property>
    <property name="text">
@@ -474,7 +490,7 @@
   </action>
   <action name="SimulationRunAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/control/icons/control_play.svg</normaloff>:/control/icons/control_play.svg</iconset>
    </property>
    <property name="text">
@@ -486,7 +502,7 @@
   </action>
   <action name="SimulationStepAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/control/icons/control_step.svg</normaloff>:/control/icons/control_step.svg</iconset>
    </property>
    <property name="text">
@@ -504,16 +520,16 @@
     <string>Ctrl+5</string>
    </property>
   </action>
-  <action name="SimulationPauseAction">
+  <action name="SimulationStopAction">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>:/control/icons/control_pause.svg</normaloff>:/control/icons/control_pause.svg</iconset>
+    <iconset resource="main.qrc">
+     <normaloff>:/control/icons/control_stop.svg</normaloff>:/control/icons/control_stop.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Pause</string>
+    <string>Stop</string>
    </property>
    <property name="shortcut">
     <string>Esc</string>
@@ -521,7 +537,7 @@
   </action>
   <action name="FileNewAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
    </property>
    <property name="text">
@@ -530,7 +546,7 @@
   </action>
   <action name="FileCloseAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/general/icons/general_cross.svg</normaloff>:/general/icons/general_cross.svg</iconset>
    </property>
    <property name="text">
@@ -539,7 +555,7 @@
   </action>
   <action name="HelpOnlineManualAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/start/icons/start_manual.svg</normaloff>:/start/icons/start_manual.svg</iconset>
    </property>
    <property name="text">
@@ -551,7 +567,7 @@
   </action>
   <action name="HelpOnlineTutorialsAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/start/icons/start_tutorials.svg</normaloff>:/start/icons/start_tutorials.svg</iconset>
    </property>
    <property name="text">
@@ -568,7 +584,7 @@
   </action>
   <action name="LayerAddAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/tabs/icons/tabs_modulelayer.svg</normaloff>:/tabs/icons/tabs_modulelayer.svg</iconset>
    </property>
    <property name="text">
@@ -577,7 +593,7 @@
   </action>
   <action name="SpeciesAddForcefieldTermsAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/tabs/icons/tabs_ff.svg</normaloff>:/tabs/icons/tabs_ff.svg</iconset>
    </property>
    <property name="text">
@@ -586,7 +602,7 @@
   </action>
   <action name="FileNewFromTemplateAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/start/icons/start_template.svg</normaloff>:/start/icons/start_template.svg</iconset>
    </property>
    <property name="text">
@@ -608,7 +624,7 @@
   </action>
   <action name="SpeciesCreateEmptyAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
    </property>
    <property name="text">
@@ -637,7 +653,7 @@
   </action>
   <action name="LayerCreateEmptyAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
    </property>
    <property name="text">
@@ -666,7 +682,7 @@
   </action>
   <action name="LayerDeleteAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
    </property>
    <property name="text">
@@ -680,7 +696,7 @@
   </action>
   <action name="ConfigurationDeleteAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
    </property>
    <property name="text">
@@ -689,19 +705,19 @@
   </action>
   <action name="SpeciesDeleteAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFNeutronAction">
+  <action name="LayerCreateCorrelationsRDFNeutronAction">
    <property name="text">
     <string>RDF and &amp;Neutron S(Q)</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFNeutronXRayAction">
+  <action name="LayerCreateCorrelationsRDFNeutronXRayAction">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -709,12 +725,12 @@
     <string>RDF, Neutron S(Q), and &amp;X-ray S(Q)</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFStructureFactorAction">
+  <action name="LayerCreateCorrelationsRDFStructureFactorAction">
    <property name="text">
     <string>RDF and &amp;Unweighted S(Q)</string>
    </property>
   </action>
-  <action name="LayerCreateCalculateRDFAction">
+  <action name="LayerCreateCorrelationsRDFAction">
    <property name="text">
     <string>&amp;RDF Only</string>
    </property>
@@ -736,7 +752,7 @@
   </action>
   <action name="SimulationDataManagerAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="main.qrc">
      <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
    </property>
    <property name="text">
@@ -853,6 +869,11 @@
     <string>Set Atom C&amp;harges in Selection...</string>
    </property>
   </action>
+  <action name="SimulationCheckAction">
+   <property name="text">
+    <string>Prepare / Check</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -862,6 +883,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="main.qrc"/>
+ </resources>
  <connections/>
 </ui>

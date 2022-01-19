@@ -41,20 +41,6 @@ bool Forcefield::prepare()
 }
 
 /*
- * Definition
- */
-
-// Return enum options for ShortRangeType
-EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
-{
-    return EnumOptions<Forcefield::ShortRangeType>("ShortRangeType",
-                                                   {{Forcefield::ShortRangeType::Undefined, "Undefined"},
-                                                    {Forcefield::ShortRangeType::NoInteraction, "None"},
-                                                    {Forcefield::ShortRangeType::LennardJones, "LJ", 2, 2},
-                                                    {Forcefield::ShortRangeType::LennardJonesGeometric, "LJGeometric", 2, 2}});
-}
-
-/*
  * Atom Type Data
  */
 
@@ -349,9 +335,8 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, C
     // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
     std::vector<double> params;
     params.insert(params.begin(), ffa.parameters().begin(),
-                  ffa.parameters().begin() + Forcefield::shortRangeTypes().minArgs(shortRangeType()).value_or(0));
-    at->setShortRangeParameters(params);
-    at->setShortRangeType(shortRangeType());
+                  ffa.parameters().begin() + ShortRangeFunctions::forms().minArgs(shortRangeForm()).value_or(0));
+    at->interactionPotential().setFormAndParameters(shortRangeForm(), params);
     at->setCharge(ffa.charge());
 
     // Set the charge on the SpeciesAtom if requested
@@ -379,8 +364,7 @@ bool Forcefield::assignBondTermParameters(SpeciesBond &bond, bool determineTypes
                                 atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName());
     const ForcefieldBondTerm &term = *optTerm;
 
-    bond.setForm(term.form());
-    bond.setParameters(term.parameters());
+    bond.setInteractionFormAndParameters(term.form(), term.parameters());
 
     return true;
 }
@@ -404,8 +388,7 @@ bool Forcefield::assignAngleTermParameters(SpeciesAngle &angle, bool determineTy
                                 atomTypes[2].get().equivalentName());
     const ForcefieldAngleTerm &term = *optTerm;
 
-    angle.setForm(term.form());
-    angle.setParameters(term.parameters());
+    angle.setInteractionFormAndParameters(term.form(), term.parameters());
 
     return true;
 }
@@ -431,8 +414,7 @@ bool Forcefield::assignTorsionTermParameters(SpeciesTorsion &torsion, bool deter
                                 atomTypes[3].get().equivalentName());
     const ForcefieldTorsionTerm &term = *optTerm;
 
-    torsion.setForm(term.form());
-    torsion.setParameters(term.parameters());
+    torsion.setInteractionFormAndParameters(term.form(), term.parameters());
 
     return true;
 }
@@ -547,8 +529,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                             optImproper = sp->addImproper(&i, j, k, l);
                         SpeciesImproper &improper = *optImproper;
 
-                        improper.setForm(improperTerm.form());
-                        improper.setParameters(improperTerm.parameters());
+                        improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
                     }
                 }
             }

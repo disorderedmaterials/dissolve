@@ -6,6 +6,8 @@
 #include "data/elements.h"
 #include "templates/optionalref.h"
 #include "templates/vector3.h"
+#include <algorithm>
+#include <vector>
 
 // CIF Symmetry-Unique Atom
 class CIFSymmetryAtom

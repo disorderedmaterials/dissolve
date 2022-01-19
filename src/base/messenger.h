@@ -25,6 +25,8 @@ class Messenger
     static bool verbose_;
     // Master-only mode
     static bool masterOnly_;
+    // Number of errors and warnings accrued in output
+    static int nErrors_, nWarnings_;
 
     private:
     // Split supplied text into lines (delimited by '\n') and send for output
@@ -45,6 +47,12 @@ class Messenger
     static bool isVerbose();
     // Set status of master-only mode
     static void setMasterOnly(bool b);
+    // Clear error and warning counts
+    static void clearErrorCounts();
+    // Return number of warnings
+    static int nWarnings();
+    // Return number of errors
+    static int nErrors();
     // Print normal message (no formatters)
     static void print(std::string_view s);
     // Print normal message
@@ -81,6 +89,8 @@ class Messenger
             outputHandler_->resetStyling();
         outputBlank();
 
+        ++nErrors_;
+
         return false;
     }
     // Print warn message
@@ -98,6 +108,8 @@ class Messenger
         clearOutputPrefix();
         if (outputHandler_)
             outputHandler_->resetStyling();
+
+        ++nWarnings_;
     }
     // Print banner message
     template <typename... Args> static void banner(std::string_view format, Args... args)
@@ -134,7 +146,7 @@ class Messenger
     }
 
     /*
-     * Text Output Routine
+     * Text Output
      */
     private:
     // Output handler (if any)

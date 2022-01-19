@@ -47,12 +47,6 @@ class DissolveWindow : public QMainWindow
     private:
     // Dissolve reference
     Dissolve &dissolve_;
-    // Whether any data has been modified
-    bool modified_;
-    // Whether window is currently refreshing
-    bool refreshing_;
-    // Whether the current simulation is on the local machine
-    bool localSimulation_;
 
     private:
     // Prepare the simulation and run for a set count
@@ -71,29 +65,28 @@ class DissolveWindow : public QMainWindow
      * StatusBar
      */
     private:
-    // Label for local / remote simulation indicator
-    QLabel *localSimulationIndicator_;
     // Label for restart file indicator
     QLabel *restartFileIndicator_;
-    // Label for heartbeat file indicator
-    QLabel *heartbeatFileIndicator_;
     // Label for iteration number
     QLabel *iterationLabel_;
     // Label for simulation ETA (when using RunFor)
     QLabel *etaLabel_;
+    // General status indicator and label
+    QLabel *statusIndicator_, *statusLabel_;
 
     private:
     // Add text label to status bar
-    QLabel *addStatusBarLabel(QString text);
+    QLabel *addStatusBarLabel(QString text, bool permanent = true);
     // Add text label to status bar
-    QLabel *addStatusBarIcon(QString resource);
+    QLabel *addStatusBarIcon(QString resource, bool permanent = true);
 
     /*
      * File
      */
     public:
     // Open specified input file
-    bool openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+    bool openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile = std::nullopt,
+                       bool ignoreRestartFile = false);
 
     /*
      * Reference Points
@@ -102,13 +95,15 @@ class DissolveWindow : public QMainWindow
     // List of ReferencePoints currently loaded
     std::vector<ReferencePoint> referencePoints_;
 
-    private:
-    QList<QAction *> recentFileActionList_;
-    const int recentFileNo_;
-
     /*
-     * OpenRecent Functions
+     * Recent Files
      */
+    private:
+    // Convenience list of recent file menu actions
+    QList<QAction *> recentFileActionList_;
+    // Maximum number of recent files to retain
+    const int recentFileLimit_;
+
     public slots:
     // Manage opening of recent files
     void openRecent();
@@ -148,18 +143,18 @@ class DissolveWindow : public QMainWindow
     public slots:
     // File
     void on_FileNewAction_triggered(bool checked);
-    void on_FileOpenLocalAction_triggered(bool checked);
-    void on_FileConnectAction_triggered(bool checked);
+    void on_FileOpenAction_triggered(bool checked);
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);
     void on_FileSaveAsAction_triggered(bool checked);
     void on_FileQuitAction_triggered(bool checked);
     // Simulation
+    void on_SimulationCheckAction_triggered(bool checked);
     void on_SimulationRunAction_triggered(bool checked);
     void on_SimulationRunForAction_triggered(bool checked);
     void on_SimulationStepAction_triggered(bool checked);
     void on_SimulationStepFiveAction_triggered(bool checked);
-    void on_SimulationPauseAction_triggered(bool checked);
+    void on_SimulationStopAction_triggered(bool checked);
     void on_SimulationSaveRestartPointAction_triggered(bool checked);
     void on_SimulationDataManagerAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);
@@ -196,10 +191,10 @@ class DissolveWindow : public QMainWindow
     void on_LayerCreateEvolveMolecularAction_triggered(bool checked);
     void on_LayerCreateEvolveEPSRAction_triggered(bool checked);
     void on_LayerCreateRefineEPSRAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
-    void on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFStructureFactorAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bool checked);
     void on_LayerCreateAnalyseRDFCNAction_triggered(bool checked);
     void on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked);
     void on_LayerRenameAction_triggered(bool checked);
@@ -215,29 +210,24 @@ class DissolveWindow : public QMainWindow
     void currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow);
 
     /*
-     * Widgets / UI
+     * Simulation
      */
-    public:
-    // Dissolve State Enum
-    enum DissolveState
-    {
-        NoState,         /* Dissolve has no active simulation */
-        EditingState,    /* Dissolve is currently editing a file in the GUI */
-        RunningState,    /* Dissolve is currently running in the GUI */
-        MonitoringState, /* Dissolve is running in the background, and we are monitoring it via the restart file */
-        nDissolveStates
-    };
-
     private:
     // Thread controller
     DissolveThreadController threadController_;
-    // Current state of Dissolve
-    DissolveState dissolveState_;
+    // Whether the GUI is currently running a simulation
+    bool dissolveIterating_;
+    // Whether any data has been modified
+    bool modified_;
+    // Whether window is currently refreshing
+    bool refreshing_;
 
     private slots:
     void on_MainTabs_currentChanged(int index);
 
     public:
+    // Return whether the GUI is currently running a simulation
+    bool dissolveIterating() const;
     // Return list of all current tabs
     const std::vector<MainTab *> allTabs() const;
 
@@ -254,17 +244,4 @@ class DissolveWindow : public QMainWindow
     signals:
     void iterate(int);
     void stopIterating();
-
-    /*
-     * GUI State
-     */
-    private:
-    // Filename containing current GUI state
-    QString stateFilename_;
-
-    public:
-    // Save current GUI state
-    bool saveState();
-    // Load GUI state
-    bool loadState();
 };

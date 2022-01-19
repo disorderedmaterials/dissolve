@@ -124,7 +124,7 @@ SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(
 
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
 
     // Reset source data
@@ -139,7 +139,7 @@ SpeciesTorsion::~SpeciesTorsion() { detach(); }
 SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
 {
     assign(source.i_, source.j_, source.k_, source.l_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
@@ -153,7 +153,7 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source) noexcept
 
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
-    form_ = source.form_;
+    interactionPotential_ = source.interactionPotential_;
     masterTerm_ = source.masterTerm_;
     SpeciesIntra::operator=(source);
 
@@ -420,14 +420,14 @@ double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form
         return U;
     }
 
-    Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate energy.\n");
-    return 0.0;
+    throw(std::runtime_error(fmt::format("Torsion functional form '{}' not accounted for, so can't calculate energy.\n",
+                                         TorsionFunctions::forms().keyword(form))));
 }
 
 // Return energy for specified angle
 double SpeciesTorsion::energy(double angleInDegrees) const
 {
-    return SpeciesTorsion::energy(angleInDegrees, form(), parameters());
+    return SpeciesTorsion::energy(angleInDegrees, interactionForm(), interactionParameters());
 }
 
 // Return force multiplier for specified angle and functional form, given supplied parameters
@@ -583,12 +583,12 @@ double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form,
         return -dU_dphi * dphi_dcosphi;
     }
 
-    Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate force.\n");
-    return 0.0;
+    throw(std::runtime_error(fmt::format("Torsion functional form '{}' not accounted for, so can't calculate force.\n",
+                                         TorsionFunctions::forms().keyword(form))));
 }
 
 // Return force multiplier for specified angle
 double SpeciesTorsion::force(double angleInDegrees) const
 {
-    return SpeciesTorsion::force(angleInDegrees, form(), parameters());
+    return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }

@@ -19,29 +19,26 @@ TEST(CellsTest, Basic)
     CoreData coreData;
     Dissolve dissolve(coreData);
     dissolve.setPairPotentialRange(9.0);
+    dissolve.setAutomaticChargeSource(false);
+    dissolve.setForceChargeSource(true);
     PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
 
     // Add atom types and LJ pair potentials (only one real one - between Ar and OW
     auto arType = dissolve.addAtomType(Elements::Ar);
     arType->setName("Ar");
-    arType->setShortRangeType(Forcefield::ShortRangeType::LennardJones);
-    arType->setShortRangeParameters({0.0, 0.0});
+    arType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
     auto hType = dissolve.addAtomType(Elements::H);
     hType->setName("HW");
-    hType->setShortRangeType(Forcefield::ShortRangeType::LennardJones);
-    hType->setShortRangeParameters({0.0, 0.0});
+    hType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
     auto oType = dissolve.addAtomType(Elements::O);
     oType->setName("OW");
-    oType->setShortRangeType(Forcefield::ShortRangeType::LennardJones);
-    oType->setShortRangeParameters({0.0, 0.0});
-    dissolve.addPairPotential(arType, arType)->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
-    dissolve.addPairPotential(hType, hType)->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
-    dissolve.addPairPotential(oType, oType)->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
-    dissolve.addPairPotential(hType, oType)->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
-    dissolve.addPairPotential(arType, hType)->setShortRangeType(Forcefield::ShortRangeType::NoInteraction);
-    auto *pp = dissolve.addPairPotential(arType, oType);
-    pp->setShortRangeType(Forcefield::ShortRangeType::LennardJones);
-    pp->setParameters({0.0, 0.0});
+    oType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+
+    dissolve.addPairPotential(arType, arType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    dissolve.addPairPotential(hType, hType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    dissolve.addPairPotential(oType, oType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    dissolve.addPairPotential(hType, oType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    dissolve.addPairPotential(arType, hType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
 
     // Set up pseudo-species
     auto *argon = dissolve.addSpecies();
@@ -71,10 +68,10 @@ TEST(CellsTest, Basic)
         i.setCoordinates(r);
     cfg->updateCellContents();
 
-    // Prepare the main simulation, and re-generate our specific Ar-OW parameters
+    // Prepare the main simulation, and update our specific Ar-OW potential
     EXPECT_TRUE(dissolve.prepare());
-    pp->setShortRangeType(Forcefield::ShortRangeType::LennardJones);
-    pp->setParameters({0.35, 2.166});
+    auto *pp = dissolve.pairPotential(arType, oType);
+    pp->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.35 sigma=2.166");
     pp->tabulate(dissolve.pairPotentialRange(), dissolve.pairPotentialDelta(), false);
 
     // Test consistency of energy calculation with DL_POLY reference energies

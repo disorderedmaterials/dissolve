@@ -6,7 +6,7 @@
 #include "math/constants.h"
 #include "math/mathfunc.h"
 #include <cmath>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <stdexcept>
 
 // 3D vector
@@ -170,9 +170,6 @@ template <class T> class Vec3
             return z;
 
         throw(std::runtime_error(fmt::format("Vec3 - array access failed - index {} is out of bounds.", index)));
-
-        static T dummy;
-        return dummy;
     }
 
     /*

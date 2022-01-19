@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 // Forward Declarations
 template <class T, class D> class RefDataList;

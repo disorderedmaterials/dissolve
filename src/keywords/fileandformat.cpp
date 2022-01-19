@@ -36,7 +36,7 @@ std::optional<int> FileAndFormatKeyword::maxArguments() const { return 2; }
 bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!data_.read(parser, startArg, endKeyword_, coreData))
-        return Messenger::error("Failed to read file/format.\n");
+        Messenger::warn("Failed to read file/format for '{}'.\n", name());
 
     return true;
 }

@@ -4,8 +4,6 @@
 #include "gui/models/sitesFilterProxy.h"
 #include "classes/speciessite.h"
 
-Q_DECLARE_METATYPE(SpeciesSite *);
-
 SitesFilterProxy::SitesFilterProxy(int flags) : filterFlags_(flags) {}
 
 // Set filter flags

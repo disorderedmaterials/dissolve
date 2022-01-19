@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "main/version.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #define DISSOLVEVERSION "0.9.0"
 #define DISSOLVESHORTHASH ""

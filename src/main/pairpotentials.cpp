@@ -25,11 +25,23 @@ void Dissolve::setPairPotentialDelta(double delta) { pairPotentialDelta_ = delta
 // Return delta to use in tabulations
 double Dissolve::pairPotentialDelta() const { return pairPotentialDelta_; }
 
-// Set whether Coulomb term should be included in generated PairPotentials
-void Dissolve::setPairPotentialsIncludeCoulomb(bool b) { pairPotentialsIncludeCoulomb_ = b; }
+// Set whether to automatically determine charge source
+void Dissolve::setAutomaticChargeSource(bool b) { automaticChargeSource_ = b; };
 
-// Return whether Coulomb term should be included in generated PairPotentials
-bool Dissolve::pairPotentialsIncludeCoulomb() { return pairPotentialsIncludeCoulomb_; }
+// Return whether to automatically determine charge source
+bool Dissolve::automaticChargeSource() const { return automaticChargeSource_; }
+
+// Set whether to force the use of the specified charge source (if not automatic choice)
+void Dissolve::setForceChargeSource(bool b) { forceChargeSource_ = b; }
+
+// Return whether to force the use of the specified charge source (if not automatic choice)
+bool Dissolve::forceChargeSource() const { return forceChargeSource_; }
+
+// Set whether charges from atom types are to be used (and included in PairPotentials)
+void Dissolve::setAtomTypeChargeSource(bool b) { atomTypeChargeSource_ = b; }
+
+// Return whether charges from atom types are to be used (and included in PairPotentials)
+bool Dissolve::atomTypeChargeSource() const { return atomTypeChargeSource_; }
 
 // Return index of specified PairPotential
 int Dissolve::indexOf(PairPotential *pp)
@@ -87,13 +99,13 @@ PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at
 const PotentialMap &Dissolve::potentialMap() { return potentialMap_; }
 
 // Clear and regenerate all PairPotentials, replacing those currently defined
-void Dissolve::regeneratePairPotentials()
+bool Dissolve::regeneratePairPotentials()
 {
     potentialMap_.clear();
     pairPotentials_.clear();
     pairPotentialAtomTypeVersion_ = -1;
 
-    generatePairPotentials();
+    return generatePairPotentials();
 }
 
 // Generate all necessary PairPotentials, adding missing terms where necessary
@@ -134,9 +146,7 @@ bool Dissolve::generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvol
             }
 
             // Check the implied short-range form of the potential
-            if (pot->shortRangeType() == Forcefield::ShortRangeType::Undefined)
-                ++nUndefined;
-            else if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
+            if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_))
                 return false;
 
             // Retrieve additional potential from the processing module data, if present
@@ -149,5 +159,5 @@ bool Dissolve::generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvol
 
     pairPotentialAtomTypeVersion_ = coreData_.atomTypesVersion();
 
-    return (nUndefined == 0);
+    return true;
 }

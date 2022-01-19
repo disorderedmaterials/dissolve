@@ -59,10 +59,16 @@ PCL2019BaseForcefield::~PCL2019BaseForcefield() = default;
  */
 
 // Return formatted publication references
-std::string_view PCL2019BaseForcefield::publicationReferences() const { return "TODO!"; }
+std::string_view PCL2019BaseForcefield::publicationReferences() const
+{
+    return "The complete ionic liquids forcefield of Padua and Canongia Lopes, as found at <a "
+           "href=\"https://github.com/agiliopadua/ilff](https://github.com/agiliopadua/ilff/\"></a> (commit <a "
+           "href=\"https://github.com/agiliopadua/ilff/commit/1df07bdaf24897a85540d9e859843442e1fd8355\">1df07bd</a>)), "
+           "covering a variety of normal and fluorinated cations and anions.";
+}
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType PCL2019BaseForcefield::shortRangeType() const
+ShortRangeFunctions::Form PCL2019BaseForcefield::shortRangeForm() const
 {
-    return Forcefield::ShortRangeType::LennardJonesGeometric;
+    return ShortRangeFunctions::Form::LennardJonesGeometric;
 }

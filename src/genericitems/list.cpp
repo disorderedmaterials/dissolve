@@ -5,7 +5,7 @@
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
 #include <cassert>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <typeindex>
 
 // Clear all items (except those that are marked protected)

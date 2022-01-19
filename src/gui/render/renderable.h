@@ -207,7 +207,7 @@ class Renderable
     // Recreate necessary primitives / primitive assemblies for the data
     virtual void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition) = 0;
     // Send primitives for rendering
-    virtual const void sendToGL(const double pixelScaling) = 0;
+    virtual const void sendToGL(double pixelScaling) = 0;
 
     public:
     // Update primitives and send to display

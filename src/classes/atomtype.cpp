@@ -4,8 +4,45 @@
 #include "classes/atomtype.h"
 #include "data/elements.h"
 #include "templates/algorithms.h"
+#include <map>
 
-AtomType::AtomType(Elements::Element Z) : Z_(Z) {}
+// Return enum options for ShortRangeType
+EnumOptions<ShortRangeFunctions::Form> ShortRangeFunctions::forms()
+{
+    return EnumOptions<ShortRangeFunctions::Form>("ShortRangeType",
+                                                  {{ShortRangeFunctions::Form::None, "None"},
+                                                   {ShortRangeFunctions::Form::LennardJones, "LJ", 2, 2},
+                                                   {ShortRangeFunctions::Form::LennardJonesGeometric, "LJGeometric", 2, 2}});
+}
+
+// Return parameters for specified form
+const std::vector<std::string> &ShortRangeFunctions::parameters(Form form)
+{
+    static std::map<ShortRangeFunctions::Form, std::vector<std::string>> params_ = {
+        {ShortRangeFunctions::Form::None, {}},
+        {ShortRangeFunctions::Form::LennardJones, {"epsilon", "sigma"}},
+        {ShortRangeFunctions::Form::LennardJonesGeometric, {"epsilon", "sigma"}}};
+    return params_[form];
+}
+
+// Return nth parameter for the given form
+std::string ShortRangeFunctions::parameter(Form form, int n)
+{
+    return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
+}
+
+// Return index of parameter in the given form
+std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_view name)
+{
+    auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
+                           [name](const auto &param) { return DissolveSys::sameString(name, param); });
+    if (it == parameters(form).end())
+        return {};
+
+    return it - parameters(form).begin();
+}
+
+AtomType::AtomType(Elements::Element Z) : interactionPotential_(ShortRangeFunctions::Form::None), Z_(Z) {}
 
 /*
  * Character
@@ -27,20 +64,9 @@ Elements::Element AtomType::Z() const { return Z_; }
  * Interaction Parameters
  */
 
-// Set short-range interaction type
-void AtomType::setShortRangeType(Forcefield::ShortRangeType srType) { shortRangeType_ = srType; }
-
-// Return short-range interaction type
-Forcefield::ShortRangeType AtomType::shortRangeType() const { return shortRangeType_; }
-
-// Set short-range parameters vector
-void AtomType::setShortRangeParameters(const std::vector<double> &parameters) { parameters_ = parameters; }
-
-// Set single short-range parameter
-void AtomType::setShortRangeParameter(int index, double parameter) { parameters_[index] = parameter; }
-
-// Return short-range parameters vector
-const std::vector<double> &AtomType::shortRangeParameters() const { return parameters_; }
+// Return short-range interaction potential
+InteractionPotential<ShortRangeFunctions> &AtomType::interactionPotential() { return interactionPotential_; }
+const InteractionPotential<ShortRangeFunctions> &AtomType::interactionPotential() const { return interactionPotential_; }
 
 // Set atomic charge
 void AtomType::setCharge(double q) { charge_ = q; }
@@ -57,11 +83,12 @@ int AtomType::index() const { return index_; }
 // Return whether our parameters are the same as those provided
 bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
 {
-    if (Z_ != other->Z_ || shortRangeType_ != other->shortRangeType_ || parameters_.size() != other->parameters_.size())
+    if (Z_ != other->Z_ || interactionPotential_.form() != other->interactionPotential_.form() ||
+        interactionPotential_.nParameters() != other->interactionPotential_.nParameters())
         return false;
     if (checkCharge && fabs(charge_ - other->charge_) > 1.0e-8)
         return false;
-    for (auto &&[p1, p2] : zip(parameters_, other->parameters_))
+    for (auto &&[p1, p2] : zip(interactionPotential_.parameters(), other->interactionPotential_.parameters()))
         if (fabs(p1 - p2) > 1.0e-8)
             return false;
     return true;

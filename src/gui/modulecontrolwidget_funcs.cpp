@@ -129,6 +129,9 @@ void ModuleControlWidget::updateControls()
 // Disable sensitive controls
 void ModuleControlWidget::disableSensitiveControls()
 {
+    ui_.FrequencySpin->setEnabled(false);
+    ui_.EnabledButton->setEnabled(false);
+    ui_.TargetsGroup->setEnabled(false);
     ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
         moduleWidget_->disableSensitiveControls();
@@ -137,6 +140,9 @@ void ModuleControlWidget::disableSensitiveControls()
 // Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
+    ui_.FrequencySpin->setEnabled(true);
+    ui_.EnabledButton->setEnabled(true);
+    ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
         moduleWidget_->enableSensitiveControls();
@@ -190,13 +196,15 @@ void ModuleControlWidget::moduleKeywordChanged(int signalMask)
     // Always emit the 'dataModified' signal
     emit(dataModified());
 
-    // If we have a signal mask set, call the module's setUp() function with it
-    if (signalMask > 0)
-    {
-        module_->setUp(*dissolve_, dissolve_->worldPool(), KeywordSignals(signalMask));
-        if (moduleWidget_)
-            moduleWidget_->updateControls(signalMask & KeywordSignals::RecreateRenderables
-                                              ? ModuleWidget::UpdateType::RecreateRenderables
-                                              : ModuleWidget::UpdateType::Normal);
-    }
+    KeywordSignals keywordSignals(signalMask);
+
+    // Call the module's setUp() function with it
+    if (keywordSignals.anySet())
+        module_->setUp(*dissolve_, dissolve_->worldPool(), keywordSignals);
+
+    // Handle specific flags for the module widget
+    if (moduleWidget_)
+        moduleWidget_->updateControls(keywordSignals.isSet(KeywordSignals::RecreateRenderables)
+                                          ? ModuleWidget::UpdateType::RecreateRenderables
+                                          : ModuleWidget::UpdateType::Normal);
 }

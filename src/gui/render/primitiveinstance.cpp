@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/render/primitiveinstance.h"
-#include <string.h>
 
 // Static members
 PrimitiveInstance::InstanceType PrimitiveInstance::globalInstanceType_ = PrimitiveInstance::VBOInstance;

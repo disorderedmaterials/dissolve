@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "gui/keywordwidgets/dialog.h"

@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/widgets/exponentialspin.hui"
-#include "math/doubleexp.h"
 #include <QFocusEvent>
 #include <QLineEdit>
 

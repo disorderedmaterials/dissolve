@@ -4,7 +4,6 @@
 #include "io/export/data1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "math/data1d.h"
 #include "math/sampleddata1d.h"
 #include "templates/algorithms.h"
 
