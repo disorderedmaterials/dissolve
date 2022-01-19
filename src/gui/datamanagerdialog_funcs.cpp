@@ -5,10 +5,10 @@
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
+#include <QCompleter>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QRegularExpression>
 
 DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints,
                                      GenericList &items)
@@ -22,6 +22,22 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::v
     ui_.SimulationDataTable->setModel(&simProxy_);
     ui_.SimulationDataTable->setSortingEnabled(true);
 
+    QCompleter *completer = new QCompleter(&simModel_, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setCompletionRole(Qt::DisplayRole);
+    completer->setFilterMode(Qt::MatchContains);
+    ui_.SimulationDataFilterEdit->setCompleter(completer);
+
+    connect(completer, QOverload<const QString &>::of(&QCompleter::activated),
+            // [=](const QModelIndex &index)
+            [&](const QString &text)
+            {
+                int row = 0;
+                while (simProxy_.data(simProxy_.index(row, 0)) != text)
+                    row++;
+                ui_.SimulationDataTable->selectRow(row);
+            });
+
     updateControls();
 }
 
@@ -30,14 +46,6 @@ DataManagerDialog::~DataManagerDialog() {}
 /*
  * UI
  */
-
-// Update the specified table of GenericItems, optionally filtering them by name and description
-void DataManagerDialog::filterTable(QString filterText)
-{
-    simProxy_.setFilterRegularExpression(
-        QRegularExpression(filterText.replace("*", ".*"), QRegularExpression::CaseInsensitiveOption));
-    simProxy_.setFilterKeyColumn(0);
-}
 
 // Return currently-selected ReferencePoint
 ReferencePoint *DataManagerDialog::currentReferencePoint() const
@@ -59,9 +67,6 @@ void DataManagerDialog::updateControls()
     refModel_.update();
     ui_.ReferencePointsTable->resizeColumnsToContents();
 }
-
-// Simulation Data
-void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString &text) { filterTable(text); }
 
 // Refernce Points
 void DataManagerDialog::on_ReferencePointRemoveButton_clicked(bool checked)

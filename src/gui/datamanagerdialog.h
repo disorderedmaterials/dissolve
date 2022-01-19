@@ -44,8 +44,6 @@ class DataManagerDialog : public QDialog
     Ui::DataManagerDialog ui_;
 
     private:
-    // Update the specified table of GenericItems, optionally filtering them by name and description
-    void filterTable(QString filterText);
     // Update ReferencePoint table row
     void referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems);
     // Return currently-selected ReferencePoint
@@ -54,8 +52,6 @@ class DataManagerDialog : public QDialog
     void updateControls();
 
     private slots:
-    // Simulation Data
-    void on_SimulationDataFilterEdit_textChanged(const QString &text);
     // Reference Points
     void on_ReferencePointRemoveButton_clicked(bool checked);
     void on_ReferencePointCreateButton_clicked(bool checked);
