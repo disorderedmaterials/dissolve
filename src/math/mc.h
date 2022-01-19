@@ -168,7 +168,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
                 smoothingNAccepted = 0;
             }
 
-            if (iter % (maxIterations_ / 10) == 0)
+            if (maxIterations_ < 10 || (iter % (maxIterations_ / 10) == 0))
                 Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Iteration {} error = {}, stepSize = {}\n",
                                         iter + 1, currentError, stepSize_);
         }
