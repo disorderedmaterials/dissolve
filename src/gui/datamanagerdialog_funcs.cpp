@@ -30,8 +30,7 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::v
 
     connect(completer, QOverload<const QString &>::of(&QCompleter::activated),
             // [=](const QModelIndex &index)
-            [&](const QString &text)
-            {
+            [&](const QString &text) {
                 int row = 0;
                 while (simProxy_.data(simProxy_.index(row, 0)) != text)
                     row++;
