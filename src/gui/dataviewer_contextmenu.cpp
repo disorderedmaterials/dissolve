@@ -44,7 +44,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
 {
     QMenu menu;
     QAction *action;
-    RefDataList<QAction, Gizmo *> copyToActions;
+    std::vector<std::pair<QAction *, Gizmo *>> copyToActions;
     QFont italicFont(menu.font());
     italicFont.setItalic(true);
 
@@ -75,7 +75,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
         for (Gizmo *destination : destinations)
         {
             action = copyToMenu->addAction(destination->uniqueName());
-            copyToActions.append(action, destination);
+            copyToActions.emplace_back(action, destination);
         }
     }
 
@@ -134,14 +134,15 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 }
             }
         }
-        else if (copyToActions.contains(selectedAction))
+        else if (std::find_if(copyToActions.begin(), copyToActions.end(),
+                              [selectedAction](const auto act) { return act.first == selectedAction; }) != copyToActions.end())
         {
-            Gizmo *destination = copyToActions.dataForItem(selectedAction);
-            if (!destination)
+            auto it = std::find_if(copyToActions.begin(), copyToActions.end(),
+                                   [selectedAction](const auto act) { return act.first == selectedAction; });
+            if (it == copyToActions.end())
                 return;
-            destination->sendData(
-                QString::fromStdString(std::string(Renderable::renderableTypes().keyword(renderable->type()))),
-                renderable->tag(), renderable->name());
+            it->second->sendData(QString::fromStdString(std::string(Renderable::renderableTypes().keyword(renderable->type()))),
+                                 renderable->tag(), renderable->name());
         }
         else if (selectedAction == removeAction)
             removeRenderable(renderable);
