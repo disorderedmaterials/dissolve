@@ -118,8 +118,6 @@ bool Dissolve::generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvol
         return true;
     }
 
-    auto nUndefined = 0;
-
     // Loop over all atomtype pairs and update / add pair potentials as necessary
     for (auto at1 = coreData_.atomTypes().begin(); at1 != coreData_.atomTypes().end(); ++at1)
     {
