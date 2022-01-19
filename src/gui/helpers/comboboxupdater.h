@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QComboBox>
@@ -54,15 +53,14 @@ template <class I> class ComboBoxUpdater
     }
 
     // Update QComboBox from supplied RefDataList, using the QString data as the item's name
-    ComboBoxUpdater(QComboBox *comboBox, const RefDataList<I, std::string> &data, const I *currentItem, int startIndex = 0,
-                    int indexIfNoCurrentItem = -1)
+    ComboBoxUpdater(QComboBox *comboBox, const std::vector<std::pair<I *, std::string>> &data, const I *currentItem,
+                    int startIndex = 0, int indexIfNoCurrentItem = -1)
     {
         comboBox_ = comboBox;
         currentIndex_ = startIndex;
 
-        RefDataListIterator<I, std::string> dataIterator(data);
-        while (I *dataItem = dataIterator.iterate())
-            updateItem(dataIterator.currentData(), dataItem, dataItem == currentItem);
+        for (auto dataItem : data)
+            updateItem(dataItem.second, dataItem.first, dataItem.first == currentItem);
 
         // If there are still rows remaining in the widget, delete them now
         while (currentIndex_ < comboBox_->count())
