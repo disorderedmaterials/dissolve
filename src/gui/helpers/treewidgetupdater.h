@@ -193,8 +193,9 @@ template <class T, class I> class TreeWidgetUpdater
         genericTreeUpdater([treeWidget](int index) { return treeWidget->topLevelItem(index); },
                            [treeWidget]() { return treeWidget->topLevelItemCount(); },
                            [treeWidget](int index, auto unused) { treeWidget->takeTopLevelItem(index); },
-                           [treeWidget, functionParent, updateTopLevelFunction](int index, I &item, bool something)
-                           { return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something); },
+                           [treeWidget, functionParent, updateTopLevelFunction](int index, I &item, bool something) {
+                               return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something);
+                           },
                            count, dataItem);
     }
 

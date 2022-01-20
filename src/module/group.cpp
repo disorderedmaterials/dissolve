@@ -21,7 +21,7 @@ bool ModuleGroup::isName(std::string_view queryName) const { return DissolveSys:
 void ModuleGroup::add(Module *module)
 {
     if (!contains(module))
-	modules_.push_back(module);
+        modules_.push_back(module);
 }
 
 // Remove Module from group
