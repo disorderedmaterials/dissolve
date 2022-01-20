@@ -6,8 +6,8 @@
 #include "gui/charts/chartblock.h"
 #include "gui/charts/charthotspot.h"
 #include "gui/widgets/mimestrings.h"
-#include "templates/reflist.h"
 #include <QWidget>
+#include <vector>
 
 // Forward Declarations
 class LineParser;
@@ -29,8 +29,8 @@ class ChartBase : public QWidget
      * Chart Blocks
      */
     protected:
-    // RefList of ChartBlocks present in the widget
-    RefList<ChartBlock> chartBlocks_;
+    // Vector of ChartBlocks present in the widget
+    std::vector<ChartBlock *> chartBlocks_;
 
     protected:
     // Update the content block widgets against the current target data

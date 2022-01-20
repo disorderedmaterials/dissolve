@@ -6,7 +6,6 @@
 #include "gui/charts/chartblock.h"
 #include "gui/charts/ui_procedurenode.h"
 #include "procedure/nodes/aliases.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class CoreData;
@@ -31,13 +30,13 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
     NodeRef node_;
 
     // Widgets that exist in the branch of our Procedure node
-    RefList<ProcedureChartNodeBlock> branchWidgets_;
+    std::vector<ProcedureChartNodeBlock *> branchWidgets_;
 
     public:
     // Return displayed node
     NodeRef node() const;
-    // Return RefList of widgets that exist in the branch of our Procedure node
-    RefList<ProcedureChartNodeBlock> &branchWidgets();
+    // Return vector of widgets that exist in the branch of our Procedure node
+    std::vector<ProcedureChartNodeBlock *> &branchWidgets();
 
     /*
      * Controls

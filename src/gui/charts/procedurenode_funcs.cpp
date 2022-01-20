@@ -66,8 +66,8 @@ void ProcedureChartNodeBlock::setKeywordsExpanded(bool expanded, bool permanent)
 // Hide the remove button
 void ProcedureChartNodeBlock::hideRemoveButton() { ui_.RemoveButton->setVisible(false); }
 
-// Return RefList of widgets that exist in the branch of our Procedure node
-RefList<ProcedureChartNodeBlock> &ProcedureChartNodeBlock::branchWidgets() { return branchWidgets_; }
+// Return vector of widgets that exist in the branch of our Procedure node
+std::vector<ProcedureChartNodeBlock *> &ProcedureChartNodeBlock::branchWidgets() { return branchWidgets_; }
 
 void ProcedureChartNodeBlock::on_ToggleKeywordsButton_clicked(bool checked)
 {
