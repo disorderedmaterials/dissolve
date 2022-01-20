@@ -237,7 +237,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
                 continue;
 
             // Check Site exclusions
-            if (excludedSites_.end() != std::find(excludedSites_.begin(), excludedSites_.end(), &site))
+            if (std::find(excludedSites_.begin(), excludedSites_.end(), &site) != excludedSites_.end())
                 continue;
 
             // Check distance from reference site (if defined)
