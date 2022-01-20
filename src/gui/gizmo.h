@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/sysfunc.h"
-#include "templates/reflist.h"
 #include <QWidget>
+#include <vector>
 
 // Forward Declarations
 class Dissolve;
@@ -30,7 +30,7 @@ class Gizmo
     // QMdiSubWindow containing the Gizmo
     QMdiSubWindow *window_;
     // Reference list of all Gizmos
-    static RefList<Gizmo> allGizmos_;
+    static std::vector<Gizmo *> allGizmos_;
 
     public:
     // Return string specifying Gizmo type
@@ -50,12 +50,12 @@ class Gizmo
     // Find Gizmo contained in specified subwindow
     static Gizmo *find(QMdiSubWindow *window);
     // Find all Gizmos of the specified type
-    template <class G> static RefList<G> findAll(const QString gizmoType)
+    template <class G> static std::vector<G *> findAll(const QString gizmoType)
     {
-        RefList<G> gizmos;
+        std::vector<G *> gizmos;
         for (Gizmo *gizmo : allGizmos_)
             if (gizmo->type() == gizmoType)
-                gizmos.append(dynamic_cast<G *>(gizmo));
+                gizmos.push_back(dynamic_cast<G *>(gizmo));
         return gizmos;
     }
 
@@ -85,7 +85,7 @@ class Gizmo
     // Return whether this Gizmo accepts data of the specified type
     virtual bool acceptsData(const QString &dataType);
     // Return all Gizmos that accept data of the specified type
-    static RefList<Gizmo> allThatAccept(const QString &ataType);
+    static std::vector<Gizmo *> allThatAccept(const QString &ataType);
     // Send data (referenced by its object tag) to the Gizmo
     virtual bool sendData(const QString &dataType, std::string_view tag, std::string_view name = "");
 };

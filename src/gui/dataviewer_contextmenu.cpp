@@ -66,9 +66,9 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
     QMenu *copyToMenu = menu.addMenu("&Copy to...");
     copyToMenu->setFont(menu.font());
     // Get list of viable destinations that will accept our data
-    RefList<Gizmo> destinations =
+    std::vector<Gizmo *> destinations =
         Gizmo::allThatAccept(QString::fromStdString(std::string(Renderable::renderableTypes().keyword(renderable->type()))));
-    if (destinations.nItems() == 0)
+    if (destinations.empty())
         copyToMenu->setEnabled(false);
     else
     {
