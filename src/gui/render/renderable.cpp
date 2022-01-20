@@ -9,7 +9,7 @@
 
 // Static Singletons
 bool Renderable::sourceDataAccessEnabled_ = true;
-RefList<Renderable> Renderable::instances_;
+std::vector<Renderable *> Renderable::instances_;
 
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
@@ -25,7 +25,7 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 Renderable::Renderable(Renderable::RenderableType type, std::string_view tag)
 {
     // Instance
-    instances_.append(this);
+    instances_.push_back(this);
 
     // Identity
     type_ = type;
@@ -60,7 +60,11 @@ Renderable::Renderable(Renderable::RenderableType type, std::string_view tag)
     styleVersion_ = 0;
 }
 
-Renderable::~Renderable() { instances_.remove(this); }
+Renderable::~Renderable()
+{
+    auto it = std::find(instances_.begin(), instances_.end(), this);
+    instances_.erase(it);
+}
 
 /*
  * Identity
