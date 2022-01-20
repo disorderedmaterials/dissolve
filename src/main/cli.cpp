@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2021 Team Dissolve and contributors
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "main/cli.h"
 #include "base/messenger.h"
@@ -15,9 +15,9 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 {
     // Create CLI object
 #ifdef PARALLEL
-    CLI::App app{fmt::format("Dissolve PARALLEL version {}, 2021 Team Dissolve and contributors.", Version::info())};
+    CLI::App app{fmt::format("Dissolve PARALLEL version {}, 2022 Team Dissolve and contributors.", Version::info())};
 #else
-    CLI::App app{fmt::format("Dissolve SERIAL version {}, 2021 Team Dissolve and contributors.", Version::info())};
+    CLI::App app{fmt::format("Dissolve SERIAL version {}, 2022 Team Dissolve and contributors.", Version::info())};
 #endif
 
     // Add positionals
