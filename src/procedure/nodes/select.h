@@ -7,6 +7,7 @@
 #include "procedure/nodes/node.h"
 #include "templates/reflist.h"
 #include <memory>
+#include <set>
 
 // Forward Declarations
 class DynamicSiteProcedureNode;
@@ -58,7 +59,7 @@ class SelectProcedureNode : public ProcedureNode
     // Other sites (nodes) which will exclude one of our sites if it is the same site
     std::vector<std::shared_ptr<const SelectProcedureNode>> sameSiteExclusions_;
     // Sites currently excluded from selection
-    RefList<const Site> excludedSites_;
+    std::set<const Site *> excludedSites_;
     // Molecule (from site) in which the site must exist
     std::shared_ptr<const SelectProcedureNode> sameMolecule_;
     // Site to use for distance check
