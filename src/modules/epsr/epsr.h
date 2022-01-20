@@ -88,6 +88,10 @@ class EPSRModule : public Module
     std::vector<Module *> targets_;
     // Test against supplied reference data
     bool test_{false};
+    // Test absolute EP energy values
+    std::vector<std::pair<std::string, double>> testAbsEnergyEP_;
+    // Test threshold for absolute EP energies
+    double testAbsEnergyEPThreshold_{1.0e-4};
     // Test reference data
     Data1DStore testReferenceData_;
     // Test threshold (%error) above which test fails
@@ -121,6 +125,8 @@ class EPSRModule : public Module
     Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
     // Calculate absolute energy of empirical potentials
     double absEnergyEP(Dissolve &dissolve);
+    // Test absolute energy of empirical potentials
+    bool testAbsEnergyEP(Dissolve &dissolve);
     // Truncate the supplied data
     void truncate(Data1D &data, double rMin, double rMax);
 

@@ -5,11 +5,10 @@
 #include "keywords/bool.h"
 #include "keywords/data1dstore.h"
 #include "keywords/double.h"
-#include "keywords/integer.h"
 #include "keywords/modulevector.h"
-#include "keywords/optionaldouble.h"
 #include "keywords/optionalint.h"
 #include "keywords/stdstring.h"
+#include "keywords/vector_stringdouble.h"
 
 EPSRModule::EPSRModule() : Module("EPSR")
 {
@@ -68,6 +67,10 @@ EPSRModule::EPSRModule() : Module("EPSR")
 
     // Test
     keywords_.add<BoolKeyword>("Test", "Test", "Test against supplied reference data", test_);
+    keywords_.add<StringDoubleVectorKeyword>("Test", "TestAbsEnergyEP",
+                                             "Specify test absolute EP energy values for pair potentials", testAbsEnergyEP_);
+    keywords_.add<DoubleKeyword>("Test", "TestAbsEnergyEPThreshold", "Test threshold above which absolute EP energy test fails",
+                                 testAbsEnergyEPThreshold_, 1.0e-8);
     keywords_.add<Data1DStoreKeyword>("Test", "TestReference", "Specify test reference data", testReferenceData_);
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Test threshold (%error) above which test fails", testThreshold_,
                                  1.0e-5);

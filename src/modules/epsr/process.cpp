@@ -706,6 +706,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         energabs = absEnergyEP(dissolve);
 
+    // Test absolute EP energy?
+    if (!testAbsEnergyEP_.empty() && !testAbsEnergyEP(dissolve))
+        return false;
+
     // Save data?
     if (saveEmpiricalPotentials_)
     {
