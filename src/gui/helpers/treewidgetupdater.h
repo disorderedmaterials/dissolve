@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "templates/optionalref.h"
-#include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QTreeWidget>

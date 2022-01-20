@@ -59,20 +59,21 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, std::string_v
     if (context_ == ProcedureNode::AnalysisContext)
     {
         // Check that the Configuration has changed before we do any more analysis on it
-        RefDataItem<Configuration, int> *ri = configurationPoints_.contains(cfg);
-        if (ri)
+        auto ri = std::find_if(configurationPoints_.begin(), configurationPoints_.end(),
+                               [cfg](const auto pair) { return pair.first == cfg; });
+        if (ri != configurationPoints_.end())
         {
             // A Configuration we've processed before - check the index
-            if (cfg->contentsVersion() == ri->data())
+            if (cfg->contentsVersion() == ri->second)
             {
                 Messenger::warn("Refusing to analyse Configuration '{}' since it has not changed.\n", cfg->name());
                 return true;
             }
             else
-                ri->data() = cfg->contentsVersion();
+                ri->second = cfg->contentsVersion();
         }
         else
-            configurationPoints_.append(cfg, cfg->contentsVersion());
+            configurationPoints_.emplace_back(cfg, cfg->contentsVersion());
     }
 
     // Prepare the nodes

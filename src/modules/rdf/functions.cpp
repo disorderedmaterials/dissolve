@@ -506,7 +506,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // RefList for simplicity
-    RefDataList<Configuration, double> configWeights;
+    std::vector<std::pair<Configuration *, double>> configWeights;
     double totalWeight = 0.0;
     for (Configuration *cfg : parentCfgs)
     {
@@ -514,28 +514,26 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
         auto weight = 1.0;
 
         // Add our Configuration target
-        configWeights.append(cfg, weight);
+        configWeights.emplace_back(cfg, weight);
         totalWeight += weight;
     }
 
     // Calculate overall density of combined system
-    double rho0 = 0.0;
-    RefDataListIterator<Configuration, double> weightsIterator(configWeights);
-    while (Configuration *cfg = weightsIterator.iterate())
-        rho0 += (weightsIterator.currentData() / totalWeight) / cfg->atomicDensity();
+    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0, [totalWeight](double acc, auto pair) {
+        return acc + pair.second / totalWeight / pair.first->atomicDensity();
+    });
     rho0 = 1.0 / rho0;
 
     // Sum Configurations into the PartialSet
     std::string fingerprint;
-    weightsIterator.restart();
-    while (Configuration *cfg = weightsIterator.iterate())
+    for (auto [cfg, cfgWeight] : configWeights)
     {
         // Update fingerprint
         fingerprint +=
             fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
 
         // Calculate weighting factor
-        double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
+        double weight = ((cfgWeight / totalWeight) * cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
         if (!processingData.contains(fmt::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))

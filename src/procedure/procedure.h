@@ -5,7 +5,6 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
-#include "templates/refdatalist.h"
 
 // Forward Declarations
 class Configuration;
@@ -48,7 +47,7 @@ class Procedure
      */
     private:
     // List of Configurations and the coordinate indices at which they were last processed
-    RefDataList<Configuration, int> configurationPoints_;
+    std::vector<std::pair<Configuration *, int>> configurationPoints_;
 
     public:
     // Run procedure on specified Configuration, storing / retrieving generated data from supplied list
