@@ -430,7 +430,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
                 // Check that the cell is not already in the list by querying the cellNbrs vector
                 nbr = cell(x, y, z);
-                if (cellNbrs.end() != std::find(cellNbrs.begin(), cellNbrs.end(), nbr))
+                if (std::find(cellNbrs.begin(), cellNbrs.end(), nbr) != cellNbrs.end())
                     continue;
                 neighbourIndices.emplace_back(x, y, z);
                 cellNbrs.push_back(nbr);
