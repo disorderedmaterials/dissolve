@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "templates/optionalref.h"
-#include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QTreeWidget>
 #include <functional>
@@ -194,27 +193,12 @@ template <class T, class I> class TreeWidgetUpdater
         genericTreeUpdater([treeWidget](int index) { return treeWidget->topLevelItem(index); },
                            [treeWidget]() { return treeWidget->topLevelItemCount(); },
                            [treeWidget](int index, auto unused) { treeWidget->takeTopLevelItem(index); },
-                           [treeWidget, functionParent, updateTopLevelFunction](int index, I &item, bool something) {
-                               return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something);
-                           },
+                           [treeWidget, functionParent, updateTopLevelFunction](int index, I &item, bool something)
+                           { return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something); },
                            count, dataItem);
     }
 
     public:
-    // Update the children of the specified parent QTreeWidgetItem
-    TreeWidgetUpdater(QTreeWidgetItem *parentItem, const RefList<I> &data, T *functionParent,
-                      TreeWidgetChildUpdateFunction updateChildFunction)
-    {
-        int count = 0;
-
-        for (I *dataItem : data)
-            updateTreeChildren(parentItem, count++, dataItem, functionParent, updateChildFunction);
-
-        // If there are still items remaining in the widget, delete them now
-        while (count < parentItem->childCount())
-            parentItem->removeChild(parentItem->child(count));
-    }
-
     // Update the top-level items of the specified parent QTreeWidget
     TreeWidgetUpdater(QTreeWidget *treeWidget, std::vector<I> &data, T *functionParent,
                       TreeWidgetTopLevelUpdateRefFunction updateTopLevelFunction)

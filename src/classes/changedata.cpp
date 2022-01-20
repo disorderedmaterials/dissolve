@@ -5,6 +5,7 @@
 #include "base/messenger.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
+#include <cassert>
 
 ChangeData::ChangeData() : atom_(nullptr) {}
 

@@ -9,7 +9,6 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data1d.h"
-#include "templates/reflist.h"
 #include <QMenu>
 #include <QObject>
 #include <QOffscreenSurface>

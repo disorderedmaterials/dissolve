@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/distributor.h"
+#include "base/messenger.h"
 #include "base/processpool.h"
 #include "classes/cell.h"
 
