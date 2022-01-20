@@ -4,6 +4,7 @@
 #include "module/groups.h"
 #include "base/sysfunc.h"
 #include "module/group.h"
+#include <algorithm>
 
 /*
  * Module Types
@@ -40,9 +41,9 @@ const std::vector<std::string> &ModuleGroups::allowedModuleTypes() const { retur
 ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
 {
     // Does the specified group exist?
-    auto moduleGroup = std::find_if(groups_.begin(), groups_.end(), [groupName](auto &moduleGroup) {
-        return DissolveSys::sameString(moduleGroup->name(), groupName);
-    });
+    auto moduleGroup =
+        std::find_if(groups_.begin(), groups_.end(),
+                     [groupName](auto &moduleGroup) { return DissolveSys::sameString(moduleGroup->name(), groupName); });
 
     if (moduleGroup == groups_.end())
     {
