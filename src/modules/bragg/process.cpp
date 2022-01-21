@@ -10,15 +10,6 @@
 #include "modules/bragg/bragg.h"
 #include "templates/algorithms.h"
 
-// Set target data
-void XRaySQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
-                              const std::map<std::string, std::vector<const Module *>> &moduleMap)
-{
-    auto sqIt = moduleMap.find("SQ");
-    if (sqIt != moduleMap.end())
-        sourceSQ_ = dynamic_cast<const SQModule *>(sqIt->second.front());
-}
-
 // Run main processing
 bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
