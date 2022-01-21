@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
 #include "main/dissolve.h"
 #include "modules/test/test.h"
 
