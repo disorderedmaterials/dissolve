@@ -17,7 +17,7 @@ class AtomShakeModule : public Module
      */
     private:
     // Target configurations
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Interatomic cutoff distance to use for energy calculation
     std::optional<double> cutoffDistance_;
     // Number of shakes to attempt per atom

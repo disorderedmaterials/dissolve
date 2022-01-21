@@ -17,7 +17,7 @@ class TestModule : public Module
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
 
     /*
      * Processing

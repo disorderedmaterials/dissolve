@@ -17,7 +17,7 @@ class SkeletonModule : public Module
      */
     private:
     // Target configurations
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
 
     /*
      * Processing
