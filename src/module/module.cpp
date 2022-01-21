@@ -100,6 +100,12 @@ bool Module::isDisabled() const { return !enabled_; }
 // Run main processing
 bool Module::process(Dissolve &dissolve, ProcessPool &procPool) { return false; }
 
+// Set target data
+void Module::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+                        const std::map<std::string, std::vector<const Module *>> &moduleMap)
+{
+}
+
 // Run set-up stage
 bool Module::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
 

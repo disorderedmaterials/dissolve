@@ -87,6 +87,9 @@ class Module
     virtual bool process(Dissolve &dissolve, ProcessPool &procPool) = 0;
 
     public:
+    // Set target data
+    virtual void setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+                            const std::map<std::string, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
     virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals = {});
     // Run main processing stage
