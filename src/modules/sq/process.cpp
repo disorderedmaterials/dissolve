@@ -11,6 +11,15 @@
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
+// Set target data
+void SQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+                          const std::map<std::string, std::vector<const Module *>> &moduleMap)
+{
+    auto sqIt = moduleMap.find("RDF");
+    if (sqIt != moduleMap.end())
+        sourceRDF_ = dynamic_cast<const RDFModule *>(sqIt->second.front());
+}
+
 // Run main processing
 bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
