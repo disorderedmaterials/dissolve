@@ -14,17 +14,13 @@ bool SkeletonModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+    if (!targetConfiguration_)
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
-    // Loop over target Configurations
-    for (auto *cfg : targetConfigurations_)
-    {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
+    // Set up process pool - must do this to ensure we are using all available processes
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
-        // MODULE CODE
-    }
+    // MODULE CODE
 
     return false;
 }

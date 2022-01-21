@@ -20,7 +20,7 @@ class EnergyModule : public Module
      */
     private:
     // Target configuration
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_;
     // Save calculated energies to disk, one file per targetted configuration
     bool save_{false};
     // Threshold value at which energy is deemed stable over the defined windowing period

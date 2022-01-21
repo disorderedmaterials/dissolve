@@ -53,7 +53,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();

@@ -3,6 +3,7 @@
 
 #include "modules/md/md.h"
 #include "keywords/bool.h"
+#include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/optionaldouble.h"
@@ -11,8 +12,7 @@
 MDModule::MDModule() : Module("MD")
 {
     // Targets
-    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
-                                                    targetConfigurations_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Control
     keywords_.add<OptionalDoubleKeyword>(

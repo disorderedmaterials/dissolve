@@ -17,7 +17,7 @@ class SkeletonModule : public Module
      */
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_;
 
     /*
      * Processing

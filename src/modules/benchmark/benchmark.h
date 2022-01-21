@@ -17,7 +17,7 @@ class BenchmarkModule : public Module
      */
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_;
     // Number of times to run each benchmark in order to form average
     int nRepeats_{5};
     // Whether to save new timings to the restart file

@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "modules/atomshake/atomshake.h"
-#include "keywords/configurationvector.h"
+#include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/optionaldouble.h"
@@ -10,8 +10,7 @@
 AtomShakeModule::AtomShakeModule() : Module("AtomShake")
 {
     // Targets
-    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
-                                                    targetConfigurations_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Control
     keywords_.add<OptionalDoubleKeyword>(

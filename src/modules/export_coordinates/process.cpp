@@ -19,7 +19,7 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(targetConfiguration_->processPool());

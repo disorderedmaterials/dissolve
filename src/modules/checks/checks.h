@@ -18,7 +18,7 @@ class ChecksModule : public Module
      */
     private:
     // Target configuration
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_;
     // Distances to check
     std::vector<Geometry> distances_;
     // Threshold at which distance checks will fail (Angstroms)

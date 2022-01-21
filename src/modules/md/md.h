@@ -20,7 +20,7 @@ class MDModule : public Module
      */
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_;
     // Control whether atomic forces are capped every step
     bool capForces_{false};
     // Set cap on allowable force (kJ/mol) per atom

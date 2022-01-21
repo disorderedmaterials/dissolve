@@ -24,7 +24,7 @@ class GeometryOptimisationModule : public Module
      */
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_;
     // Initial step size to employ
     double initialStepSize_{1.0e-5};
     // Maximum number of minimisation cycles to perform
