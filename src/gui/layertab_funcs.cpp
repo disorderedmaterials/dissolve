@@ -196,10 +196,6 @@ void LayerTab::moduleNameChanged(const QModelIndex &index)
         mcw->updateControls();
 }
 
-/*
- * Update
- */
-
 // Update the module list
 void LayerTab::updateModuleList()
 {
@@ -211,6 +207,15 @@ void LayerTab::updateModuleList()
     if (selectedIndex)
         ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
 }
+
+void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)
+{
+    moduleLayerModel_.appendNew(modulePaletteModel_.data(index, Qt::DisplayRole).toString());
+}
+
+/*
+ * Update
+ */
 
 // Update controls in tab
 void LayerTab::updateControls()
