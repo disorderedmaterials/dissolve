@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
 #include "gui/helpers/comboboxcontroller.h"
 #include "gui/render/renderabledata1d.h"
