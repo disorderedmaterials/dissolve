@@ -16,12 +16,6 @@
 // Run main processing
 bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    /*
-     * Perform a Molecule shake
-     *
-     * This is a parallel routine, with processes operating as groups.
-     */
-
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());

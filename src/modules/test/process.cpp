@@ -7,11 +7,6 @@
 // Run main processing
 bool TestModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    /*
-     * This is a XXX routine.
-     * XXX
-     */
-
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());

@@ -16,12 +16,6 @@
 // Run main processing
 bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    /*
-     * Perform intramolecular shakes, modifying individual bound terms on molecules.
-     *
-     * This is a parallel routine, with processes operating as one pool
-     */
-
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());

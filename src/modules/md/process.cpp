@@ -17,12 +17,6 @@
 // Run main processing
 bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    /*
-     * Perform Molecular Dynamics on a given Configuration.
-     *
-     * This is a parallel routine, with processes operating in groups.
-     */
-
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());

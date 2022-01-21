@@ -31,12 +31,6 @@ bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSigna
 // Run main processing
 bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    /*
-     * Calculate Forces for the target Configuration(s)
-     *
-     * This is a parallel routine, with processes operating in groups, unless in TEST mode.
-     */
-
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
